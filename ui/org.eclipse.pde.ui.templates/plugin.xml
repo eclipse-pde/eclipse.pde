@@ -505,7 +505,7 @@
       </wizard>
             <wizard
             class="org.eclipse.pde.internal.ui.templates.e4.E4ApplicationNewWizard"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/e4.png"
             id="org.eclipse.pde.ui.e4EmptyApplication"
             java="true"
             name="%pluginContent.e4RCP.name"
@@ -516,6 +516,20 @@
             %pluginContent.e4RCP.description
          </description>
       </wizard>
+            <wizard
+                  class="org.eclipse.pde.internal.ui.templates.e4.E4ViewNewWizard"
+                  icon="$nl$/icons/etool16/e4.png"
+                  id="org.eclipse.pde.ui.templates.e4View"
+                  java="true"
+                  name="%pluginContent.e4View.name"
+                  pureOSGi="false"
+                  rcp="false"
+                  requiresActivator="false"
+                  ui-content="true">
+               <description>
+                  %pluginContent.e4View.description
+               </description>
+            </wizard>
         
    </extension>
    

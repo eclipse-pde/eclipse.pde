@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation (bug #441331,  466269, 466680)
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation (bug #473570)
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.e4;
 
@@ -14,21 +14,27 @@ import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 
-public class E4ApplicationNewWizard extends AbstractE4NewPluginTemplateWizard {
+public class E4ViewNewWizard extends AbstractE4NewPluginTemplateWizard {
 
 	@Override
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDETemplateMessages.E4ApplicationNewWizard_title);
+		setWindowTitle(PDETemplateMessages.E4ViewNewWizard_wtitle);
 	}
 
 	@Override
 	public ITemplateSection[] createTemplateSections() {
-		return new ITemplateSection[] {new E4ApplicationTemplate()};
+		return new ITemplateSection[] {new E4ViewTemplate()};
 	}
 
+	@Override
 	protected String getFilenameToEdit() {
-		return E4ApplicationTemplate.E4_MODEL_FILE;
+		return E4ViewTemplate.E4_FRAGMENT_FILE;
+	}
+
+	@Override
+	public String[] getImportPackages() {
+		return new String[] {"javax.annotation;version=\"1.2.0\""}; //$NON-NLS-1$
 	}
 
 }
