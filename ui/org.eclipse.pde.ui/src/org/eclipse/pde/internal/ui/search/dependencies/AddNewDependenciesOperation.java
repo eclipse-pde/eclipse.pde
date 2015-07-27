@@ -66,7 +66,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_mainTask, 100);
 		final IBundle bundle = fBase.getBundleModel().getBundle();
-		final Set<String> ignorePkgs = new HashSet<String>();
+		final Set<String> ignorePkgs = new HashSet<>();
 		final String[] secDeps = findSecondaryBundles(bundle, ignorePkgs);
 		if (secDeps == null || secDeps.length == 0) {
 			monitor.done();
@@ -78,7 +78,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		addProjectPackages(bundle, ignorePkgs);
 		monitor.worked(4);
 
-		final Map<ExportPackageDescription, String> additionalDeps = new HashMap<ExportPackageDescription, String>();
+		final Map<ExportPackageDescription, String> additionalDeps = new HashMap<>();
 		monitor.subTask(PDEUIMessages.AddNewDependenciesOperation_searchProject);
 
 		boolean useRequireBundle = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID).getBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, true);
@@ -97,7 +97,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			return null;
 		Set<String> manifestPlugins = findManifestPlugins(bundle, ignorePkgs);
 
-		List<String> result = new LinkedList<String>();
+		List<String> result = new LinkedList<>();
 		for (int i = 0; i < secDeps.length; i++)
 			if (!manifestPlugins.contains(secDeps[i]))
 				result.add(secDeps[i]);
@@ -127,7 +127,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	private Set<String> findManifestPlugins(IBundle bundle, Set<String> ignorePkgs) {
 		IManifestHeader header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header == null)
-			return new HashSet<String>(0);
+			return new HashSet<>(0);
 		Set<String> plugins = (header instanceof RequireBundleHeader) ? findManifestPlugins((RequireBundleHeader) header, ignorePkgs) : findManifestPlugins(ignorePkgs);
 		if (plugins.contains(IPDEBuildConstants.BUNDLE_CORE_RUNTIME))
 			plugins.add("system.bundle"); //$NON-NLS-1$
@@ -136,8 +136,8 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 
 	private Set<String> findManifestPlugins(RequireBundleHeader header, Set<String> ignorePkgs) {
 		RequireBundleObject[] bundles = header.getRequiredBundles();
-		Set<String> result = new HashSet<String>((4 / 3) * (bundles.length) + 2);
-		ArrayList<IPluginBase> plugins = new ArrayList<IPluginBase>();
+		Set<String> result = new HashSet<>((4 / 3) * (bundles.length) + 2);
+		ArrayList<IPluginBase> plugins = new ArrayList<>();
 		for (int i = 0; i < bundles.length; i++) {
 			String id = bundles[i].getId();
 			result.add(id);
@@ -154,8 +154,8 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 
 	private Set<String> findManifestPlugins(Set<String> ignorePkgs) {
 		BundleSpecification[] bundles = fBase.getBundleDescription().getRequiredBundles();
-		Set<String> result = new HashSet<String>((4 / 3) * (bundles.length) + 2);
-		ArrayList<IPluginBase> plugins = new ArrayList<IPluginBase>();
+		Set<String> result = new HashSet<>((4 / 3) * (bundles.length) + 2);
+		ArrayList<IPluginBase> plugins = new ArrayList<>();
 		for (int i = 0; i < bundles.length; i++) {
 			String id = bundles[i].getName();
 			result.add(id);
@@ -176,8 +176,8 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			String value = bundle.getHeader(Constants.BUNDLE_SYMBOLICNAME);
 			int index = (value != null) ? value.indexOf(';') : -1;
 			String projectBundleId = (index > 0) ? value.substring(0, index) : value;
-			List<ExportPackageDescription> result = new LinkedList<ExportPackageDescription>();
-			Stack<BaseDescription> stack = new Stack<BaseDescription>();
+			List<ExportPackageDescription> result = new LinkedList<>();
+			Stack<BaseDescription> stack = new Stack<>();
 			stack.add(desc);
 			while (!stack.isEmpty()) {
 				BundleDescription bdesc = (BundleDescription) stack.pop();
@@ -233,7 +233,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		IJavaProject jProject = JavaCore.create(fProject);
 		SearchEngine engine = new SearchEngine();
 		if (ignorePkgs == null)
-			ignorePkgs = new HashSet<String>(2);
+			ignorePkgs = new HashSet<>(2);
 		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_searchProject, secDeps.length);
 		for (int j = 0; j < secDeps.length; j++) {
 			try {
@@ -391,7 +391,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	protected final void addRequireBundles(final Collection<String> depsToAdd, final IBundle bundle, IBuildEntry entry) {
 		if (bundle == null)
 			return;
-		HashSet<String> added = new HashSet<String>();
+		HashSet<String> added = new HashSet<>();
 		Iterator<String> it = depsToAdd.iterator();
 		IManifestHeader mheader = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (mheader instanceof RequireBundleHeader) {
@@ -426,7 +426,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	}
 
 	protected final void addRequireBundles(final Collection<String> depsToAdd, final IPluginBase base, IBuildEntry entry) {
-		HashSet<String> added = new HashSet<String>();
+		HashSet<String> added = new HashSet<>();
 		Iterator<String> it = depsToAdd.iterator();
 		// must call getImports to initialize IPluginBase.  Otherwise the .add(plugin) will not trigger a modification event.
 		base.getImports();
@@ -449,7 +449,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	}
 
 	protected final void minimizeBundles(Collection<String> pluginIds) {
-		Stack<String> stack = new Stack<String>();
+		Stack<String> stack = new Stack<>();
 		Iterator<String> it = pluginIds.iterator();
 		while (it.hasNext())
 			stack.push(it.next().toString());

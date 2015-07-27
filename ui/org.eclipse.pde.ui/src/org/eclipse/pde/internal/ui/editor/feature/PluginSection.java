@@ -176,7 +176,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			@Override
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
-				ArrayList<IPluginModelBase> newModels = new ArrayList<IPluginModelBase>();
+				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);

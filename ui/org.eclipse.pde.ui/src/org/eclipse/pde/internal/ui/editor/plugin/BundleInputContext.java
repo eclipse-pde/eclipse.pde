@@ -37,7 +37,7 @@ import org.eclipse.ui.*;
 public class BundleInputContext extends UTF8InputContext {
 	public static final String CONTEXT_ID = "bundle-context"; //$NON-NLS-1$
 
-	private HashMap<IDocumentKey, TextEdit> fOperationTable = new HashMap<IDocumentKey, TextEdit>();
+	private HashMap<IDocumentKey, TextEdit> fOperationTable = new HashMap<>();
 
 	/**
 	 * @param editor

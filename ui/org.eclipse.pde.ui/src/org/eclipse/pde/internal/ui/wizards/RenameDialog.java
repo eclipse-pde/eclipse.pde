@@ -65,7 +65,7 @@ public class RenameDialog extends SelectionStatusDialog {
 	}
 
 	public void initialize() {
-		oldNames = new ArrayList<String>();
+		oldNames = new ArrayList<>();
 		setStatusLineAboveButtons(true);
 	}
 

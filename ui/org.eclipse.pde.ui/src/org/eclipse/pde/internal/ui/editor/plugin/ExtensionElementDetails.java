@@ -41,7 +41,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	public ExtensionElementDetails(PDESection masterSection, ISchemaElement schemaElement) {
 		super(masterSection);
 		this.schemaElement = schemaElement;
-		rows = new ArrayList<ExtensionAttributeRow>();
+		rows = new ArrayList<>();
 	}
 
 	@Override

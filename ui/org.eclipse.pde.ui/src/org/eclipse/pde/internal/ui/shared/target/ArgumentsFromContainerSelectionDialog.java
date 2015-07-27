@@ -66,7 +66,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 		ITargetLocation[] containers = fTarget.getTargetLocations();
 		boolean foundArguments = false;
 		if (containers != null) {
-			fAllArguments = new HashMap<ITargetLocation, Object[]>(containers.length);
+			fAllArguments = new HashMap<>(containers.length);
 			for (int i = 0; i < containers.length; i++) {
 				String[] args = containers[i].getVMArguments();
 				if (args != null) {
@@ -259,7 +259,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 
 	@Override
 	protected void okPressed() {
-		List<String> arguments = new ArrayList<String>();
+		List<String> arguments = new ArrayList<>();
 		Object[] checked = fTree.getCheckedElements();
 		for (int i = 0; i < checked.length; i++) {
 			if (checked[i] instanceof String) {

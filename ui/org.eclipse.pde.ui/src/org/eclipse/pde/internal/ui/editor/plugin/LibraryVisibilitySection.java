@@ -217,7 +217,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				String[] names;
 				names = fCurrentLibrary.getContentFilters();
-				Vector<String> existing = new Vector<String>();
+				Vector<String> existing = new Vector<>();
 				if (names != null) {
 					for (int i = 0; i < names.length; i++) {
 						existing.add(names[i]);

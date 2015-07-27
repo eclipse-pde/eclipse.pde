@@ -117,7 +117,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 				if (jarOrderEntry == null)
 					return libraries;
 
-				Vector<IBuildEntry> libList = new Vector<IBuildEntry>();
+				Vector<IBuildEntry> libList = new Vector<>();
 				String[] tokens = jarOrderEntry.getTokens();
 				for (int i = 0; i < tokens.length; i++) {
 					IBuildEntry entry = build.getEntry(IBuildEntry.JAR_PREFIX + tokens[i]);
@@ -275,7 +275,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	private IPackageFragmentRoot[] computeSourceFolders() {
-		ArrayList<IPackageFragmentRoot> folders = new ArrayList<IPackageFragmentRoot>();
+		ArrayList<IPackageFragmentRoot> folders = new ArrayList<>();
 		IBuildModel buildModel = getBuildModel();
 		IProject project = buildModel.getUnderlyingResource().getProject();
 		try {
@@ -542,7 +542,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		IBuildEntry buildEntry = getLibrarySelection();
 		if (buildEntry == null)
 			return;
-		Set<String> outputFolders = new HashSet<String>();
+		Set<String> outputFolders = new HashSet<>();
 		String[] jarFolders = buildEntry.getTokens();
 		IPackageFragmentRoot[] sourceFolders = computeSourceFolders();
 		for (int j = 0; j < jarFolders.length; j++) {

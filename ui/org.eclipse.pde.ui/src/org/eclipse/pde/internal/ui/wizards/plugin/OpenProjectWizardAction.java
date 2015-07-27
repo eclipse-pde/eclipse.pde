@@ -41,7 +41,7 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 
 	@Override
 	public void run(String[] params, ICheatSheetManager manager) {
-		Hashtable<String, String> defValues = new Hashtable<String, String>();
+		Hashtable<String, String> defValues = new Hashtable<>();
 		if (params.length > 0)
 			defValues.put(NewPluginProjectWizard.DEF_PROJECT_NAME, params[0]);
 		if (params.length > 1)

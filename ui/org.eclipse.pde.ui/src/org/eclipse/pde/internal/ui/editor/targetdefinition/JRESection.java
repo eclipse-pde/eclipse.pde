@@ -183,7 +183,7 @@ public class JRESection extends SectionPart {
 	 * Initializes the combo with possible execution enviroments
 	 */
 	protected void initializeValues() {
-		fExecEnvChoices = new TreeSet<String>();
+		fExecEnvChoices = new TreeSet<>();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 		for (int i = 0; i < envs.length; i++)

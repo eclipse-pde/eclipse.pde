@@ -110,7 +110,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			try {
 				if (entry != null) {
 					String[] tokens = entry.getTokens();
-					fAdditionalBundles = new Vector<String>(tokens.length);
+					fAdditionalBundles = new Vector<>(tokens.length);
 					for (int i = 0; i < tokens.length; i++) {
 						fAdditionalBundles.add(tokens[i].trim());
 					}
@@ -411,7 +411,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 
 	private IPluginModelBase[] getAvailablePlugins() {
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
-		HashSet<String> currentPlugins = new HashSet<String>();
+		HashSet<String> currentPlugins = new HashSet<>();
 		if (fAdditionalBundles != null) {
 			currentPlugins.addAll(fAdditionalBundles);
 		}
@@ -424,7 +424,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			}
 		}
 
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		for (int i = 0; i < plugins.length; i++) {
 			if (!currentPlugins.contains(plugins[i].getPluginBase().getId()))
 				result.add(plugins[i]);
@@ -539,7 +539,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	}
 
 	private HashSet<String> createSecondaryDepSet() {
-		HashSet<String> secondaryDepSet = new HashSet<String>();
+		HashSet<String> secondaryDepSet = new HashSet<>();
 		// Get the build model
 		IBuildModel buildModel = getBuildModel(true);
 		// Ensure the build model is defined

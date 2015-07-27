@@ -109,7 +109,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 	}
 
 	private ISchemaObject[] createObjectRepresentation(IStructuredSelection selection) {
-		ArrayList<Object> objects = new ArrayList<Object>();
+		ArrayList<Object> objects = new ArrayList<>();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof ISchemaObject)

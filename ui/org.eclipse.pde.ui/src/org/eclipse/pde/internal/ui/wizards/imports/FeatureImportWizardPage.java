@@ -256,7 +256,7 @@ public class FeatureImportWizardPage extends WizardPage {
 			doOther = initialSettings.getBoolean(SETTINGS_DOOTHER);
 			binary = !initialSettings.getBoolean(SETTINGS_NOT_BINARY);
 
-			ArrayList<String> items = new ArrayList<String>();
+			ArrayList<String> items = new ArrayList<>();
 			for (int i = 0; i < 6; i++) {
 				String curr = initialSettings.get(SETTINGS_DROPLOCATION + String.valueOf(i));
 				if (curr != null && !items.contains(curr))
@@ -462,7 +462,7 @@ public class FeatureImportWizardPage extends WizardPage {
 			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask(PDEUIMessages.FeatureImportWizard_messages_updating, IProgressMonitor.UNKNOWN);
-				ArrayList<IFeatureModel> result = new ArrayList<IFeatureModel>();
+				ArrayList<IFeatureModel> result = new ArrayList<>();
 				if (useRuntimeLocation) {
 					IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 					for (int i = 0; i < allModels.length; i++)
@@ -500,7 +500,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		File[] dirs = path.listFiles();
 		if (dirs == null)
 			return null;
-		ArrayList<IStatus> resultStatus = new ArrayList<IStatus>();
+		ArrayList<IStatus> resultStatus = new ArrayList<>();
 		for (int i = 0; i < dirs.length; i++) {
 			File dir = dirs[i];
 			if (dir.isDirectory()) {

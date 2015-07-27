@@ -199,7 +199,7 @@ public class PDELabelUtility {
 	public static String generateName(String[] names, String base, boolean bracketed) {
 		StringBuffer result = new StringBuffer(base);
 		// Used to track auto-generated numbers used
-		HashSet<Integer> set = new HashSet<Integer>();
+		HashSet<Integer> set = new HashSet<>();
 
 		// Linear search O(n).  
 		// Performance hit unnoticeable because number of items per cheatsheet

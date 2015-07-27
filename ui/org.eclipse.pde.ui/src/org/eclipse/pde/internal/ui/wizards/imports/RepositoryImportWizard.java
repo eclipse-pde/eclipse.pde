@@ -41,7 +41,7 @@ public class RepositoryImportWizard extends Wizard {
 	/**
 	 * Map of importer identifier to associated wizard import page
 	 */
-	private Map<String, IScmUrlImportWizardPage> fIdToPages = new HashMap<String, IScmUrlImportWizardPage>();
+	private Map<String, IScmUrlImportWizardPage> fIdToPages = new HashMap<>();
 
 	private static final String STORE_SECTION = "RepositoryImportWizard"; //$NON-NLS-1$
 
@@ -93,9 +93,9 @@ public class RepositoryImportWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		// collect the bundle descriptions from each page and import
-		List<Object> plugins = new ArrayList<Object>();
+		List<Object> plugins = new ArrayList<>();
 		IWizardPage[] pages = getPages();
-		Map<IBundleImporter, ScmUrlImportDescription[]> importMap = new HashMap<IBundleImporter, ScmUrlImportDescription[]>();
+		Map<IBundleImporter, ScmUrlImportDescription[]> importMap = new HashMap<>();
 		for (int i = 0; i < pages.length; i++) {
 			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) pages[i];
 			if (page.finish()) {

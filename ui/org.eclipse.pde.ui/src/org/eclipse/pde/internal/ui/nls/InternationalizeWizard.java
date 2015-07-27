@@ -168,7 +168,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	public void ensurePluginsAreExternalized() {
 		GetNonExternalizedStringsAction externalize = new GetNonExternalizedStringsAction();
 
-		List<IProject> projects = new ArrayList<IProject>();
+		List<IProject> projects = new ArrayList<>();
 		List<?> pluginModels = getPluginModelsForInternationalization();
 
 		for (Iterator<?> it = pluginModels.iterator(); it.hasNext();) {

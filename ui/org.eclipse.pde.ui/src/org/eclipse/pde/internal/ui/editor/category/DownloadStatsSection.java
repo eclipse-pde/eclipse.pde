@@ -52,7 +52,7 @@ public class DownloadStatsSection extends TableSection {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			// model = (IStatsInfo) inputElement;
-			ArrayList<IWritable> result = new ArrayList<IWritable>();
+			ArrayList<IWritable> result = new ArrayList<>();
 			IStatsInfo info = (IStatsInfo) inputElement;
 			ISiteFeature[] features = info.getFeatureArtifacts();
 			for (int i = 0; i < features.length; i++) {
@@ -257,7 +257,7 @@ public class DownloadStatsSection extends TableSection {
 			@Override
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
+				ArrayList<IFeatureModel> newModels = new ArrayList<>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
@@ -282,7 +282,7 @@ public class DownloadStatsSection extends TableSection {
 			@Override
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getAllModels();
-				ArrayList<IPluginModelBase> newModels = new ArrayList<IPluginModelBase>();
+				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);

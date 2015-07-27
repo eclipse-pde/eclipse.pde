@@ -146,7 +146,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 	}
 
 	private String[] getLaunchConfigurations() {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);

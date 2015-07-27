@@ -87,22 +87,22 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	/**
 	 * Models that can be imported from a repository
 	 */
-	protected Set<Object> repositoryModels = new HashSet<Object>();
+	protected Set<Object> repositoryModels = new HashSet<>();
 
 	/**
 	 * Maps bundle importers to import instructions
 	 */
-	private Map<IBundleImporter, ScmUrlImportDescription[]> importerToInstructions = new HashMap<IBundleImporter, ScmUrlImportDescription[]>();
+	private Map<IBundleImporter, ScmUrlImportDescription[]> importerToInstructions = new HashMap<>();
 
 	/**
 	 * Map of bundle importer extension id to associated wizard page
 	 */
-	private Map<String, IScmUrlImportWizardPage> importIdToWizardPage = new HashMap<String, IScmUrlImportWizardPage>();
+	private Map<String, IScmUrlImportWizardPage> importIdToWizardPage = new HashMap<>();
 
 	/**
 	 * Array of next wizard pages (in order)
 	 */
-	private List<IScmUrlImportWizardPage> nextPages = new ArrayList<IScmUrlImportWizardPage>();
+	private List<IScmUrlImportWizardPage> nextPages = new ArrayList<>();
 
 	public PluginImportWizardFirstPage(String name) {
 		super(name);
@@ -156,7 +156,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void initialize() {
 		IDialogSettings settings = getDialogSettings();
 
-		ArrayList<String> items = new ArrayList<String>();
+		ArrayList<String> items = new ArrayList<>();
 		for (int i = 0; i < 6; i++) {
 			String curr = settings.get(SETTINGS_DROPLOCATION + String.valueOf(i));
 			if (curr != null && !items.contains(curr)) {
@@ -224,7 +224,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		ITargetPlatformService service = getTargetPlatformService();
 		if (service != null) {
 			ITargetHandle[] targets = service.getTargets(null);
-			targetDefinitions = new ArrayList<ITargetDefinition>();
+			targetDefinitions = new ArrayList<>();
 			for (int i = 0; i < targets.length; i++) {
 				try {
 					targetDefinitions.add(targets[i].getTargetDefinition());
@@ -555,8 +555,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				}
 				// We allow importing of bundles that are unchecked in the target definition
 				TargetBundle[] allBundles = target.getAllBundles();
-				Map<SourceLocationKey, TargetBundle> sourceMap = new HashMap<SourceLocationKey, TargetBundle>();
-				List<URL> all = new ArrayList<URL>();
+				Map<SourceLocationKey, TargetBundle> sourceMap = new HashMap<>();
+				List<URL> all = new ArrayList<>();
 				for (int i = 0; i < allBundles.length; i++) {
 					TargetBundle bundle = allBundles[i];
 					try {
@@ -574,8 +574,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				}
 				state = new PDEState(all.toArray(new URL[0]), false, false, subMon.newChild(30));
 				models = state.getTargetModels();
-				List<IPluginModelBase> sourceModels = new ArrayList<IPluginModelBase>();
-				List<TargetBundle> sourceBundles = new ArrayList<TargetBundle>();
+				List<IPluginModelBase> sourceModels = new ArrayList<>();
+				List<TargetBundle> sourceBundles = new ArrayList<>();
 				for (int i = 0; i < models.length; i++) {
 					IPluginBase base = models[i].getPluginBase();
 					TargetBundle bundle = sourceMap.get(new SourceLocationKey(base.getId(), new Version(base.getVersion())));
@@ -691,7 +691,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @return map of bundle import descriptions to process, by importers
 	 */
 	Map<IBundleImporter, ScmUrlImportDescription[]> getImportDescriptions() {
-		Map<IBundleImporter, ScmUrlImportDescription[]> map = new HashMap<IBundleImporter, ScmUrlImportDescription[]>();
+		Map<IBundleImporter, ScmUrlImportDescription[]> map = new HashMap<>();
 		if (getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
 			IBundleImporter[] importers = Team.getBundleImporters();
 			for (int i = 0; i < importers.length; i++) {
@@ -847,11 +847,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 */
 	public void configureBundleImportPages(IPluginModelBase[] models) {
 		// make a set of the models to import for quick lookup
-		Set<IPluginModelBase> modelsSet = new HashSet<IPluginModelBase>();
+		Set<IPluginModelBase> modelsSet = new HashSet<>();
 		for (int i = 0; i < models.length; i++) {
 			modelsSet.add(models[i]);
 		}
-		Map<IBundleImporter, List<ScmUrlImportDescription>> importerToImportees = new HashMap<IBundleImporter, List<ScmUrlImportDescription>>();
+		Map<IBundleImporter, List<ScmUrlImportDescription>> importerToImportees = new HashMap<>();
 		Iterator<Entry<IBundleImporter, ScmUrlImportDescription[]>> iterator = importerToInstructions.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
@@ -862,7 +862,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				if (modelsSet.contains(model)) {
 					List<ScmUrlImportDescription> importees = importerToImportees.get(importer);
 					if (importees == null) {
-						importees = new ArrayList<ScmUrlImportDescription>();
+						importees = new ArrayList<>();
 						importerToImportees.put(importer, importees);
 					}
 					importees.add(descriptions[i]);

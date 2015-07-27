@@ -84,7 +84,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		PDECore.getDefault().getModelManager().getExternalModelManager().addModelProviderListener(this);
 
 		fInternationalizeModelTable = modelTable;
-		fSelected = new HashMap<Object, Object>();
+		fSelected = new HashMap<>();
 
 		IWizardContainer container = getContainer();
 		if (container != null)
@@ -184,7 +184,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 
 	public List<Object> getLocalesForInternationalization() {
 		TableItem[] items = fSelectedListViewer.getTable().getItems();
-		List<Object> result = new ArrayList<Object>();
+		List<Object> result = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			result.add(items[i].getData());
 		}
@@ -347,7 +347,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 
 	protected void refreshPage() {
 		fSelectedListViewer.getTable().removeAll();
-		fSelected = new HashMap<Object, Object>();
+		fSelected = new HashMap<>();
 		fAvailableListViewer.refresh();
 		pageChanged();
 	}
@@ -414,7 +414,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	private void handleAddAll() {
 		TableItem[] items = fAvailableListViewer.getTable().getItems();
 
-		ArrayList<Object> data = new ArrayList<Object>();
+		ArrayList<Object> data = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			data.add(items[i].getData());
 		}
@@ -472,7 +472,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	private void handleRemoveAll() {
 		TableItem[] items = fSelectedListViewer.getTable().getItems();
 
-		ArrayList<Object> data = new ArrayList<Object>();
+		ArrayList<Object> data = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			data.add(items[i].getData());
 		}

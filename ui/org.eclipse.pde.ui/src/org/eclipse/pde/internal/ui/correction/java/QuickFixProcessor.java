@@ -31,7 +31,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 
 	@Override
 	public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
-		ArrayList<Object> results = new ArrayList<Object>();
+		ArrayList<Object> results = new ArrayList<>();
 
 		AbstractClassResolutionCollector collector = createCollector(results);
 
@@ -115,7 +115,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	 * Adds IJavaCompletionProposals for a Require-Bundle if user is using an Import-Package from the bundle
 	 */
 	private void handleAccessRestrictionByImportPackage(IPackageFragment fragment, AbstractClassResolutionCollector collector) {
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		IProject project = fragment.getJavaProject().getProject();
 		String pkgName = fragment.getElementName();
 		IPluginModelBase base = PluginRegistry.findModel(project);
@@ -231,7 +231,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 		return new AbstractClassResolutionCollector() {
 
 			// the list of package names for which an import package resolution has been created
-			private Set<String> addedImportPackageResolutions = new HashSet<String>();
+			private Set<String> addedImportPackageResolutions = new HashSet<>();
 
 			boolean isDone = false;
 

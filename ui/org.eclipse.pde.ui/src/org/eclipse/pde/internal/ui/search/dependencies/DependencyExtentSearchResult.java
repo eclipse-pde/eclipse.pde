@@ -51,7 +51,7 @@ public class DependencyExtentSearchResult extends SearchResult {
 		IEditorInput editorInput = editor.getEditorInput();
 		IJavaElement element = (IJavaElement) editorInput.getAdapter(IJavaElement.class);
 		if (element != null) {
-			Set<Match> matches = new HashSet<Match>();
+			Set<Match> matches = new HashSet<>();
 			collectMatches(matches, element);
 			return matches.toArray(new Match[matches.size()]);
 		}

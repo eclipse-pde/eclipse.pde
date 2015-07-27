@@ -112,7 +112,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 		if (selection.size() == 0)
 			return;
 
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			IPluginModelBase model = getModel(iter.next());

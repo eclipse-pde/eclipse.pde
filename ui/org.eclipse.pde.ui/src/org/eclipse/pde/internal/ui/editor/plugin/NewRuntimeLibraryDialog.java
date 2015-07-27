@@ -55,7 +55,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		super(parent);
 		this.libraries = libraries;
 		this.validator = new DuplicateStatusValidator();
-		librarySet = new HashSet<Path>();
+		librarySet = new HashSet<>();
 		for (int i = 0; i < libraries.length; i++) {
 			librarySet.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
 		}

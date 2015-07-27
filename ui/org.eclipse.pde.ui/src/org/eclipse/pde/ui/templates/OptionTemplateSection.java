@@ -40,14 +40,14 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * @since 2.0
  */
 public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
-	private ArrayList<TemplatePage> pages = new ArrayList<TemplatePage>();
+	private ArrayList<TemplatePage> pages = new ArrayList<>();
 
 	private static class TemplatePage {
 		WizardPage page;
 		ArrayList<TemplateOption> options;
 
 		public TemplatePage() {
-			options = new ArrayList<TemplateOption>();
+			options = new ArrayList<>();
 		}
 	}
 

@@ -100,7 +100,7 @@ public class RuntimeInstallJob extends Job {
 				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
 			}
 
-			List<IInstallableUnit> toInstall = new ArrayList<IInstallableUnit>();
+			List<IInstallableUnit> toInstall = new ArrayList<>();
 			for (int i = 0; i < fInfo.items.length; i++) {
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
@@ -192,7 +192,7 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.setVersion(patchVersion);
 		iuPatchDescription.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(iuPatchDescription.getId(), new VersionRange(Version.createOSGi(0, 0, 0), true, patchVersion, false), 0, null));
 
-		ArrayList<IProvidedCapability> list = new ArrayList<IProvidedCapability>(1);
+		ArrayList<IProvidedCapability> list = new ArrayList<>(1);
 		list.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iuPatchDescription.getId(), iuPatchDescription.getVersion()));
 		iuPatchDescription.addProvidedCapabilities(list);
 

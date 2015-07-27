@@ -77,7 +77,7 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 
 	private void createCandidates() {
 		ArrayList<Object> candidates;
-		candidates = new ArrayList<Object>();
+		candidates = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(PDEPlugin.getPluginId(), "templates"); //$NON-NLS-1$
 		for (int i = 0; i < elements.length; i++) {

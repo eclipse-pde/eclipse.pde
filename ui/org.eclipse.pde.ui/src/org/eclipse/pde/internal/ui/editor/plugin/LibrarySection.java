@@ -402,7 +402,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 				if (entry == null) {
 					IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
 					IJavaProject jproject = JavaCore.create(project);
-					ArrayList<String> tokens = new ArrayList<String>();
+					ArrayList<String> tokens = new ArrayList<>();
 					IClasspathEntry[] entries = jproject.getRawClasspath();
 					for (int i = 0; i < entries.length; i++)
 						if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE)
@@ -448,7 +448,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage);
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
 		IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
-		HashSet<IPath> set = new HashSet<IPath>();
+		HashSet<IPath> set = new HashSet<>();
 		for (int i = 0; i < libraries.length; i++) {
 			IPath bundlePath = new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName()));
 			IPath buildPath = PDEProject.getBundleRoot(project).getProjectRelativePath().append(bundlePath);
@@ -465,7 +465,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 			String[] bundlePaths = new String[elements.length];
 			String[] buildPaths = new String[elements.length];
 			IPluginModelBase model = getModel();
-			ArrayList<IPluginLibrary> list = new ArrayList<IPluginLibrary>();
+			ArrayList<IPluginLibrary> list = new ArrayList<>();
 			for (int i = 0; i < elements.length; i++) {
 				IResource elem = (IResource) elements[i];
 				IContainer bundleRoot = PDEProject.getBundleRoot(project);
@@ -546,7 +546,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		IJavaProject jproject = JavaCore.create(project);
 		try {
 			IClasspathEntry[] entries = jproject.getRawClasspath();
-			ArrayList<IClasspathEntry> toBeAdded = new ArrayList<IClasspathEntry>();
+			ArrayList<IClasspathEntry> toBeAdded = new ArrayList<>();
 			int index = -1;
 			entryLoop: for (int i = 0; i < entries.length; i++) {
 				if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
@@ -671,7 +671,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	private HashSet<Path> createPluginLibrarySet() {
 		// Get the current libraries and add them to a set for easy searching
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
-		HashSet<Path> librarySet = new HashSet<Path>();
+		HashSet<Path> librarySet = new HashSet<>();
 		for (int i = 0; i < libraries.length; i++) {
 			librarySet.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
 		}

@@ -42,7 +42,7 @@ public class AnnotationHover implements IAnnotationHover {
 		if (model == null)
 			return new String[0];
 
-		ArrayList<String> messages = new ArrayList<String>();
+		ArrayList<String> messages = new ArrayList<>();
 
 		Iterator<?> iter = model.getAnnotationIterator();
 		while (iter.hasNext()) {

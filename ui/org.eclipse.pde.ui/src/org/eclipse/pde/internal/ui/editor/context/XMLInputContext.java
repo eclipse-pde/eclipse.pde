@@ -21,8 +21,8 @@ import org.eclipse.text.edits.*;
 import org.eclipse.ui.IEditorInput;
 
 public abstract class XMLInputContext extends UTF8InputContext {
-	protected HashMap<Object, TextEdit> fOperationTable = new HashMap<Object, TextEdit>();
-	protected HashMap<IDocumentElementNode, MoveSourceEdit> fMoveOperations = new HashMap<IDocumentElementNode, MoveSourceEdit>();
+	protected HashMap<Object, TextEdit> fOperationTable = new HashMap<>();
+	protected HashMap<IDocumentElementNode, MoveSourceEdit> fMoveOperations = new HashMap<>();
 
 	/**
 	 * @param editor

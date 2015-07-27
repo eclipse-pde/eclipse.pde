@@ -37,7 +37,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 	}
 
 	private void init() {
-		fCatMap = new TreeMap<Category, ArrayList<Command>>(new Comparator<Object>() {
+		fCatMap = new TreeMap<>(new Comparator<Object>() {
 			@Override
 			public int compare(Object arg0, Object arg1) {
 				String comA = CommandList.getText(arg0);
@@ -47,7 +47,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 				return +1; // undefined ids should go last
 			}
 		});
-		fConMap = new TreeMap<Object, Object>();
+		fConMap = new TreeMap<>();
 		Command[] commands = fComServ.getDefinedCommands();
 		for (int i = 0; i < commands.length; i++) {
 			/*
@@ -61,7 +61,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 				Category cat = commands[i].getCategory();
 				ArrayList<Command> list = fCatMap.get(cat);
 				if (list == null)
-					fCatMap.put(cat, list = new ArrayList<Command>());
+					fCatMap.put(cat, list = new ArrayList<>());
 				list.add(commands[i]);
 			} catch (NotDefinedException e) {
 				continue;

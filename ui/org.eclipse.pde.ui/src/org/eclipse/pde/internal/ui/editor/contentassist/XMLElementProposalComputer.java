@@ -37,7 +37,7 @@ public class XMLElementProposalComputer {
 
 	private static TreeSet<ISchemaElement> computeElementProposal(ISchemaElement sElement, HashMap<String, Integer> tagNameMap) {
 
-		TreeSet<ISchemaElement> elementSet = new TreeSet<ISchemaElement>(new XMLElementProposalComparator());
+		TreeSet<ISchemaElement> elementSet = new TreeSet<>(new XMLElementProposalComparator());
 		// Get this element's compositor
 		ISchemaCompositor compositor = ((ISchemaComplexType) sElement.getType()).getCompositor();
 		// Track multiplicity
@@ -56,7 +56,7 @@ public class XMLElementProposalComputer {
 	 */
 	private static HashMap<String, Integer> countXMLChildrenByTagName(IDocumentElementNode node) {
 		IDocumentElementNode[] children = node.getChildNodes();
-		HashMap<String, Integer> tagNameMap = new HashMap<String, Integer>();
+		HashMap<String, Integer> tagNameMap = new HashMap<>();
 		for (int i = 0; i < children.length; i++) {
 			String key = children[i].getXMLTagName();
 			if (tagNameMap.containsKey(key)) {

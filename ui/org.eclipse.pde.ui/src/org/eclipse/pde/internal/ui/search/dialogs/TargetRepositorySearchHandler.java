@@ -51,7 +51,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler {
 		if (status == Window.OK) {
 			Object[] result = dialog.getResult();
 			if (result != null) {
-				Set<Object> set = new HashSet<Object>();
+				Set<Object> set = new HashSet<>();
 				for (int i = 0; i < result.length; i++) {
 					if (result[i] instanceof IUPackage)
 						set.add(((IUPackage) result[i]).getIU());

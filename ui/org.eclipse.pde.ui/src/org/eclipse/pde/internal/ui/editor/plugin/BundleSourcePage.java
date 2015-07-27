@@ -110,7 +110,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			if (parent instanceof BundleModel) {
 				BundleModel model = (BundleModel) parent;
 				Map<?, ?> manifest = ((Bundle) model.getBundle()).getHeaders();
-				ArrayList<IDocumentKey> keys = new ArrayList<IDocumentKey>();
+				ArrayList<IDocumentKey> keys = new ArrayList<>();
 				for (Iterator<?> elements = manifest.keySet().iterator(); elements.hasNext();) {
 					IDocumentKey key = (IDocumentKey) manifest.get(elements.next());
 					if (key.getOffset() > -1)

@@ -30,7 +30,7 @@ import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
  */
 public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 
-	private Set<Object> checkState = new HashSet<Object>();
+	private Set<Object> checkState = new HashSet<>();
 	private static final Object[] NO_ELEMENTS = new Object[0];
 
 	/**
@@ -52,7 +52,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 		if (state) {
 			// Add the item (or its children) to the cache
 			if (checkState == null) {
-				checkState = new HashSet<Object>();
+				checkState = new HashSet<>();
 			}
 
 			ITreeContentProvider contentProvider = null;
@@ -161,7 +161,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	public void setCheckedElements(Object[] elements) {
 		super.setCheckedElements(elements);
 		if (checkState == null) {
-			checkState = new HashSet<Object>();
+			checkState = new HashSet<>();
 		} else {
 			checkState.clear();
 		}
@@ -188,7 +188,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 			// Find all visible children, add only the visible leaf nodes to the check state cache
 			Object[] visible = getFilteredChildren(getRoot());
 			if (checkState == null) {
-				checkState = new HashSet<Object>();
+				checkState = new HashSet<>();
 			}
 
 			ITreeContentProvider contentProvider = null;
@@ -201,7 +201,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 					checkState.add(visible[i]);
 				}
 			} else {
-				Set<Object> toCheck = new HashSet<Object>();
+				Set<Object> toCheck = new HashSet<>();
 				for (int i = 0; i < visible.length; i++) {
 					addFilteredChildren(visible[i], contentProvider, toCheck);
 				}

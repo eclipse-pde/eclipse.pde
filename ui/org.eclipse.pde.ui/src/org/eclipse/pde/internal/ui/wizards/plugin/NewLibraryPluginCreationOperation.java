@@ -139,8 +139,8 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 	private static void updateRequiredPlugins(IJavaProject javaProject, IProgressMonitor monitor, IPluginModelBase model) throws CoreException {
 		IClasspathEntry[] entries = javaProject.getRawClasspath();
-		List<IClasspathEntry> classpath = new ArrayList<IClasspathEntry>();
-		List<IClasspathEntry> requiredProjects = new ArrayList<IClasspathEntry>();
+		List<IClasspathEntry> classpath = new ArrayList<>();
+		List<IClasspathEntry> requiredProjects = new ArrayList<>();
 		for (int i = 0; i < entries.length; i++) {
 			if (isPluginProjectEntry(entries[i])) {
 				requiredProjects.add(entries[i]);
@@ -211,8 +211,8 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 	private IClasspathEntry[] getUpdatedClasspath(IClasspathEntry[] cp, IJavaProject currentProject) {
 		boolean exposed = false;
 		int refIndex = -1;
-		List<IClasspathEntry> result = new ArrayList<IClasspathEntry>();
-		Set<Manifest> manifests = new HashSet<Manifest>();
+		List<IClasspathEntry> result = new ArrayList<>();
+		Set<Manifest> manifests = new HashSet<>();
 		for (int i = 0; i < fData.getLibraryPaths().length; ++i) {
 			try (JarFile jarFile = new JarFile(fData.getLibraryPaths()[i])) {
 				manifests.add(jarFile.getManifest());
@@ -437,9 +437,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			value = "."; //$NON-NLS-1$
 		try {
 			ManifestElement[] elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
-			HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+			HashMap<String, ArrayList<String>> map = new HashMap<>();
 			for (int i = 0; i < elems.length; i++) {
-				ArrayList<String> filter = new ArrayList<String>();
+				ArrayList<String> filter = new ArrayList<>();
 				filter.add("*"); //$NON-NLS-1$
 				map.put(elems[i].getValue(), filter);
 			}
@@ -463,7 +463,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 	}
 
 	private Set<String> findPackages(IProject proj, Map<?, List<?>> libs, IBuild build) {
-		TreeSet<String> result = new TreeSet<String>();
+		TreeSet<String> result = new TreeSet<>();
 		IJavaProject jp = JavaCore.create(proj);
 		Iterator<?> it = libs.entrySet().iterator();
 		while (it.hasNext()) {
@@ -553,7 +553,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				protected void addProjectPackages(IBundle bundle, Set<String> ignorePkgs) {
 					if (!unzip)
 						super.addProjectPackages(bundle, ignorePkgs);
-					Stack<IResource> stack = new Stack<IResource>();
+					Stack<IResource> stack = new Stack<>();
 					stack.push(fProject);
 					try {
 						while (!stack.isEmpty()) {

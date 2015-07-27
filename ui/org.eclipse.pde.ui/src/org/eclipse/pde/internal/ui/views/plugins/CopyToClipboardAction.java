@@ -58,7 +58,7 @@ public class CopyToClipboardAction extends Action {
 	public void run() {
 		if (selection.isEmpty())
 			return;
-		ArrayList<Object> files = new ArrayList<Object>();
+		ArrayList<Object> files = new ArrayList<>();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof FileAdapter)

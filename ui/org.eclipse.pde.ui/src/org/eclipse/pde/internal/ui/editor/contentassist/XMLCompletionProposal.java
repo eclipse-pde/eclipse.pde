@@ -310,7 +310,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 						break;
 				}
 			} else if (fRange instanceof IDocumentElementNode && base instanceof IDocumentElementNode) {
-				Stack<IDocumentElementNode> s = new Stack<IDocumentElementNode>();
+				Stack<IDocumentElementNode> s = new Stack<>();
 				IDocumentElementNode node = (IDocumentElementNode) fRange;
 				IDocumentElementNode newSearch = (IDocumentElementNode) base;
 				// traverse up old model, pushing all nodes onto the stack along the way

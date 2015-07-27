@@ -416,7 +416,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private void initializeChoices() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(PDECore.PLUGIN_ID);
 
-		fOSChoices = new TreeSet<String>();
+		fOSChoices = new TreeSet<>();
 		String[] os = Platform.knownOSValues();
 		for (int i = 0; i < os.length; i++) {
 			fOSChoices.add(os[i]);
@@ -426,7 +426,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			addExtraChoices(fOSChoices, pref);
 		}
 
-		fWSChoices = new TreeSet<String>();
+		fWSChoices = new TreeSet<>();
 		String[] ws = Platform.knownWSValues();
 		for (int i = 0; i < ws.length; i++) {
 			fWSChoices.add(ws[i]);
@@ -436,7 +436,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			addExtraChoices(fWSChoices, pref);
 		}
 
-		fArchChoices = new TreeSet<String>();
+		fArchChoices = new TreeSet<>();
 		String[] arch = Platform.knownOSArchValues();
 		for (int i = 0; i < arch.length; i++) {
 			fArchChoices.add(arch[i]);
@@ -446,7 +446,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			addExtraChoices(fArchChoices, pref);
 		}
 
-		fNLChoices = new TreeSet<String>();
+		fNLChoices = new TreeSet<>();
 		String[] nl = LocaleUtil.getLocales();
 		for (int i = 0; i < nl.length; i++) {
 			fNLChoices.add(nl[i]);
@@ -513,7 +513,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * Initializes the combo with possible execution environments
 	 */
 	protected void initializeJREValues() {
-		fExecEnvChoices = new TreeSet<String>();
+		fExecEnvChoices = new TreeSet<>();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 		for (int i = 0; i < envs.length; i++)
@@ -729,7 +729,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 			if (pluginSelectionDialog.open() == Window.OK) {
 				Object[] result = pluginSelectionDialog.getResult();
-				Set<NameVersionDescriptor> allDependencies = new HashSet<NameVersionDescriptor>();
+				Set<NameVersionDescriptor> allDependencies = new HashSet<>();
 				for (Object resultItem : result) {
 					IPluginModelBase desc = (IPluginModelBase) resultItem;
 					allDependencies.add(new NameVersionDescriptor(desc.getBundleDescription().getSymbolicName(), null));
@@ -751,7 +751,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 */
 	protected Collection<IPluginModelBase> getValidPluginModelBundles() throws CoreException {
 		NameVersionDescriptor[] current = getTargetDefinition().getImplicitDependencies();
-		Set<String> currentBundles = new HashSet<String>();
+		Set<String> currentBundles = new HashSet<>();
 		if (current != null) {
 			for (NameVersionDescriptor nameVersionDescriptor : current) {
 				currentBundles.add(nameVersionDescriptor.getId());
@@ -759,7 +759,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		}
 
 		TargetBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
-		List<IPluginModelBase> targetBundles = new ArrayList<IPluginModelBase>();
+		List<IPluginModelBase> targetBundles = new ArrayList<>();
 
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
@@ -785,14 +785,14 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	protected BundleInfo[] getValidBundles() throws CoreException {
 		NameVersionDescriptor[] current = getTargetDefinition().getImplicitDependencies();
 
-		Set<String> currentBundles = new HashSet<String>();
+		Set<String> currentBundles = new HashSet<>();
 		if (current != null) {
 			for (NameVersionDescriptor nameVersionDescriptor : current) {
 					currentBundles.add(nameVersionDescriptor.getId());
 			}
 		}
 
-		List<BundleInfo> targetBundles = new ArrayList<BundleInfo>();
+		List<BundleInfo> targetBundles = new ArrayList<>();
 		TargetBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
@@ -810,7 +810,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	private void handleRemove() {
-		LinkedList<NameVersionDescriptor> bundles = new LinkedList<NameVersionDescriptor>();
+		LinkedList<NameVersionDescriptor> bundles = new LinkedList<>();
 		bundles.addAll(Arrays.asList(getTargetDefinition().getImplicitDependencies()));
 		Object[] removeBundles = ((IStructuredSelection) fElementViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {

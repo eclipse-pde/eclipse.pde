@@ -244,7 +244,7 @@ public class PluginConfigurationSection extends TableSection {
 
 	private Collection<IPluginModelBase> getPluginModelBasesByFeature() {
 
-		Collection<IPluginModelBase> pluginModelBases = new ArrayList<IPluginModelBase>();
+		Collection<IPluginModelBase> pluginModelBases = new ArrayList<>();
 
 		IProductFeature[] features = getProduct().getFeatures();
 		for (IProductFeature feature : features) {
@@ -271,7 +271,7 @@ public class PluginConfigurationSection extends TableSection {
 	}
 
 	private Collection<IPluginModelBase> getPluginModelBasesByPlugin() {
-		Collection<IPluginModelBase> pluginModelBases = new ArrayList<IPluginModelBase>();
+		Collection<IPluginModelBase> pluginModelBases = new ArrayList<>();
 
 		IProductPlugin[] allPlugins = getProduct().getPlugins();
 		IPluginConfiguration[] configs = getProduct().getPluginConfigurations();
@@ -317,7 +317,7 @@ public class PluginConfigurationSection extends TableSection {
 
 	private void handleAddDefaults() {
 		StringTokenizer tok = new StringTokenizer(getBundlesWithStartLevels(), ","); //$NON-NLS-1$
-		ArrayList<String[]> plugins = new ArrayList<String[]>();
+		ArrayList<String[]> plugins = new ArrayList<>();
 		IProduct product = getProduct();
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();

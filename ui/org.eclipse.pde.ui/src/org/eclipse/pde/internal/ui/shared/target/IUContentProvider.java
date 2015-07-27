@@ -44,7 +44,7 @@ public class IUContentProvider extends DefaultTableProvider implements ITreeCont
 				}
 				IInstallableUnit[] units = location.getInstallableUnits();
 				// Wrap the units so that they remember their parent container
-				List<IUWrapper> wrappedUnits = new ArrayList<IUWrapper>(units.length);
+				List<IUWrapper> wrappedUnits = new ArrayList<>(units.length);
 				for (int i = 0; i < units.length; i++) {
 					wrappedUnits.add(new IUWrapper(units[i], location));
 				}

@@ -95,7 +95,7 @@ public class TemplateSelectionPage extends WizardPage {
 		fDescriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
 		fDescriptionBrowser.setText(""); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		fVisiblePages = new ArrayList<WizardPage>();
+		fVisiblePages = new ArrayList<>();
 	}
 
 	@Override

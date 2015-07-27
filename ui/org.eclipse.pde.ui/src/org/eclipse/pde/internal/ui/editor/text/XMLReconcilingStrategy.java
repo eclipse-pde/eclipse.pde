@@ -68,7 +68,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		 */
 		@Override
 		public void beginCollecting() {
-			fAddAnnotations = new HashMap<SpellingAnnotation, Position>();
+			fAddAnnotations = new HashMap<>();
 		}
 
 		/*

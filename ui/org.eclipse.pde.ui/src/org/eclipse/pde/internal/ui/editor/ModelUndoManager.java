@@ -29,7 +29,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 
 	public ModelUndoManager(PDEFormEditor editor) {
 		this.editor = editor;
-		operations = new Vector<IModelChangedEvent>();
+		operations = new Vector<>();
 	}
 
 	/*
@@ -51,7 +51,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	}
 
 	private void initialize() {
-		operations = new Vector<IModelChangedEvent>();
+		operations = new Vector<>();
 		cursor = -1;
 		updateActions();
 	}

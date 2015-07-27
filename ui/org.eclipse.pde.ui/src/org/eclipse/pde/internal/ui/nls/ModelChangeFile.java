@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IFile;
 public class ModelChangeFile {
 	private IFile fFile;
 	private ModelChange fModel;
-	private ArrayList<ModelChangeElement> fChanges = new ArrayList<ModelChangeElement>();
+	private ArrayList<ModelChangeElement> fChanges = new ArrayList<>();
 	private int fNumChanges = 0;
 
 	public ModelChangeFile(IFile file, ModelChange model) {

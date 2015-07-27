@@ -481,7 +481,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	private void generateFiles(ZipFile zipFile, IPath path, IContainer dst, boolean firstLevel, boolean binary, IProgressMonitor monitor) throws CoreException {
 		int pathLength = path.segmentCount();
 		// Immidiate children
-		Map<String, ZipEntry> childZipEntries = new HashMap<String, ZipEntry>(); // "dir/" or "dir/file.java"
+		Map<String, ZipEntry> childZipEntries = new HashMap<>(); // "dir/" or "dir/file.java"
 
 		for (Enumeration<?> zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
 			ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();

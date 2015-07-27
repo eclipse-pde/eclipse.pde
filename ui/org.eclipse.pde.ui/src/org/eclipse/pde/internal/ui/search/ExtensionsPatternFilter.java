@@ -39,9 +39,9 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	protected String fSearchPattern;
 
-	protected Set<String> fSearchPatterns = new HashSet<String>();
-	protected final Set<IPluginObject> fMatchingLeafs = new HashSet<IPluginObject>();
-	protected final Set<Object> fFoundAnyElementsCache = new HashSet<Object>();
+	protected Set<String> fSearchPatterns = new HashSet<>();
+	protected final Set<IPluginObject> fMatchingLeafs = new HashSet<>();
+	protected final Set<Object> fFoundAnyElementsCache = new HashSet<>();
 
 	/**
 	 * Check if the leaf element is a match with the filter text. The default behavior 
@@ -89,7 +89,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 							if (attributeElement != null && attributeElement.getValue() != null) {
 								String[] attributes = getAttributeSplit(attributeElement.getValue(), quoted);
 								if (attributes != null) {
-									List<String> attributeList = new ArrayList<String>(Arrays.asList(attributes));
+									List<String> attributeList = new ArrayList<>(Arrays.asList(attributes));
 									attributeList.addAll(syntheticAttributes);
 									if (matchWithAttributes(pluginElement, searchPattern, attributeElement.getName(), attributeList, quoted)) {
 										return true;
@@ -221,7 +221,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 			}
 		}
 		if (fFoundAnyElementsCache.size() > 0) {
-			List<Object> found = new ArrayList<Object>();
+			List<Object> found = new ArrayList<>();
 			for (int i = 0; i < elements.length; i++) {
 				if (fFoundAnyElementsCache.contains(elements[i])) {
 					found.add(elements[i]);

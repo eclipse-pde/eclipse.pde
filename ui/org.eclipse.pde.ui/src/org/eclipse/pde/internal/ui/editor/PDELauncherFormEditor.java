@@ -134,9 +134,9 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.ui.launchShortcuts"); //$NON-NLS-1$
 		// validate elements
-		ArrayList<IConfigurationElement> runList = new ArrayList<IConfigurationElement>();
-		ArrayList<IConfigurationElement> debugList = new ArrayList<IConfigurationElement>();
-		ArrayList<IConfigurationElement> profileList = new ArrayList<IConfigurationElement>();
+		ArrayList<IConfigurationElement> runList = new ArrayList<>();
+		ArrayList<IConfigurationElement> debugList = new ArrayList<>();
+		ArrayList<IConfigurationElement> profileList = new ArrayList<>();
 		// limit to specific shortcuts based on project settings (if specified)
 		IResource resource = (IResource) getEditorInput().getAdapter(IResource.class);
 		Set<String> specificIds = null;
@@ -145,7 +145,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 			if (project != null) {
 				String[] values = PDEProject.getLaunchShortcuts(project);
 				if (values != null) {
-					specificIds = new HashSet<String>();
+					specificIds = new HashSet<>();
 					for (int i = 0; i < values.length; i++) {
 						specificIds.add(values[i]);
 					}

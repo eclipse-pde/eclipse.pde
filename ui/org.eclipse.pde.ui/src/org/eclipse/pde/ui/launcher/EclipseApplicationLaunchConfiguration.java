@@ -55,7 +55,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		ArrayList<String> programArgs = new ArrayList<String>();
+		ArrayList<String> programArgs = new ArrayList<>();
 
 		// If a product is specified, then add it to the program args
 		if (configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.USE_PRODUCT, false)) {
@@ -250,7 +250,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		fWorkspaceLocation = null;
 
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
-		fAllBundles = new HashMap<String, IPluginModelBase>(fModels.size());
+		fAllBundles = new HashMap<>(fModels.size());
 		Iterator<?> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();

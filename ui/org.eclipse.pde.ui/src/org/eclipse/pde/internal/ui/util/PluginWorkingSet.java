@@ -117,7 +117,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	@Override
 	public void finish() {
 		Object[] checked = fTree.getCheckboxTreeViewer().getCheckedElements();
-		ArrayList<PersistablePluginObject> list = new ArrayList<PersistablePluginObject>();
+		ArrayList<PersistablePluginObject> list = new ArrayList<>();
 		for (int i = 0; i < checked.length; i++) {
 			String id = ((IPluginModelBase) checked[i]).getPluginBase().getId();
 			if (id != null && id.length() > 0)
@@ -231,7 +231,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	 */
 	private void initialize() {
 		if (fWorkingSet != null) {
-			HashSet<String> set = new HashSet<String>();
+			HashSet<String> set = new HashSet<>();
 			IAdaptable[] elements = fWorkingSet.getElements();
 			for (int i = 0; i < elements.length; i++) {
 				if (elements[i] instanceof PersistablePluginObject)

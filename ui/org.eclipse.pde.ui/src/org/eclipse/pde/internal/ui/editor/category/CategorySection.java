@@ -58,7 +58,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		@Override
 		public Object[] getElements(Object inputElement) {
 			// model = (ISite) inputElement;
-			ArrayList<IWritable> result = new ArrayList<IWritable>();
+			ArrayList<IWritable> result = new ArrayList<>();
 			ISiteCategoryDefinition[] catDefs = fModel.getSite().getCategoryDefinitions();
 			for (int i = 0; i < catDefs.length; i++) {
 				result.add(catDefs[i]);
@@ -81,7 +81,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			if (parent instanceof ISiteCategoryDefinition) {
 				ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) parent;
 				ISiteFeature[] features = fModel.getSite().getFeatures();
-				HashSet<IWritable> result = new HashSet<IWritable>();
+				HashSet<IWritable> result = new HashSet<>();
 				for (int i = 0; i < features.length; i++) {
 					ISiteCategory[] cats = features[i].getCategories();
 					for (int j = 0; j < cats.length; j++) {
@@ -426,7 +426,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
 		Iterator<?> iterator = ssel.iterator();
 		boolean success = true;
-		Set<?> removedCategories = new HashSet<Object>();
+		Set<?> removedCategories = new HashSet<>();
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			if (object == null)
@@ -696,7 +696,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			@Override
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
+				ArrayList<IFeatureModel> newModels = new ArrayList<>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
@@ -721,7 +721,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			@Override
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getAllModels();
-				ArrayList<IPluginModelBase> newModels = new ArrayList<IPluginModelBase>();
+				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);

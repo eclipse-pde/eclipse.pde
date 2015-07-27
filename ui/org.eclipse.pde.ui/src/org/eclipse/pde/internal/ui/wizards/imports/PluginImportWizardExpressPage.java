@@ -47,7 +47,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		@Override
 		public Object[] getElements(Object parent) {
 			IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
-			ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+			ArrayList<IPluginModelBase> result = new ArrayList<>();
 			for (int i = 0; i < projects.length; i++) {
 				if (WorkspaceModelManager.isPluginProject(projects[i]) && !WorkspaceModelManager.isBinaryProject(projects[i])) {
 					IPluginModelBase model = PluginRegistry.findModel(projects[i]);
@@ -193,7 +193,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 	private void initialize() {
 		Object[] items = fInitialSelection.toArray();
-		ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> list = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			Object item = items[i];
 			if (item instanceof IJavaProject) {
@@ -214,7 +214,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void computeModelsToImport() {
 		fImportListViewer.getTable().removeAll();
 
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		Object[] wModels = fTablePart.getSelection();
 		for (int i = 0; i < wModels.length; i++) {
 			IPluginModelBase model = (IPluginModelBase) wModels[i];

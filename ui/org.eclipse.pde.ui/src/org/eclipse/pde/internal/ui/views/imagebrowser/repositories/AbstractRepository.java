@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.ImageData;
 
 public abstract class AbstractRepository extends Job {
 
-	protected List<ImageElement> mElementsCache = new LinkedList<ImageElement>();
+	protected List<ImageElement> mElementsCache = new LinkedList<>();
 
 	private IImageTarget mTarget;
 
@@ -137,7 +137,7 @@ public abstract class AbstractRepository extends Job {
 				String pluginName = getPluginName(new FileInputStream(manifest));
 				int directoryPathLength = directory.getAbsolutePath().length();
 
-				Collection<File> locations = new HashSet<File>();
+				Collection<File> locations = new HashSet<>();
 				locations.add(directory);
 				do {
 					File next = locations.iterator().next();

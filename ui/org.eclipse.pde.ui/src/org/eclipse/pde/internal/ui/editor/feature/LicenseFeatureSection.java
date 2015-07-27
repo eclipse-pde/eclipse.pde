@@ -254,7 +254,7 @@ public class LicenseFeatureSection extends PDESection {
 			@Override
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
+				ArrayList<IFeatureModel> newModels = new ArrayList<>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);

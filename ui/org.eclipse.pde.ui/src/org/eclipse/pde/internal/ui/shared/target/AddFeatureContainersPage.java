@@ -158,7 +158,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 							location = featureDir;
 						}
 					}
-					List<ExternalFeatureModel> result = new ArrayList<ExternalFeatureModel>();
+					List<ExternalFeatureModel> result = new ArrayList<>();
 					MultiStatus errors = doLoadFeatures(result, location);
 					if (errors != null && errors.getChildren().length > 0) {
 						setErrorMessage(errors.getChildren()[0].getMessage());
@@ -207,7 +207,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	 */
 	public ITargetLocation[] getBundleContainers() throws CoreException {
 		Object[] elements = fFeatureTable.getCheckedElements();
-		List<ITargetLocation> containers = new ArrayList<ITargetLocation>(elements.length);
+		List<ITargetLocation> containers = new ArrayList<>(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] instanceof IFeatureModel) {
 				String version = null;
@@ -242,7 +242,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		File[] dirs = path.listFiles();
 		if (dirs == null)
 			return null;
-		ArrayList<IStatus> resultStatus = new ArrayList<IStatus>();
+		ArrayList<IStatus> resultStatus = new ArrayList<>();
 		for (int i = 0; i < dirs.length; i++) {
 			File dir = dirs[i];
 			if (dir.isDirectory()) {

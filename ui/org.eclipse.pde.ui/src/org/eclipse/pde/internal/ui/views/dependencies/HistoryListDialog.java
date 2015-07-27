@@ -37,7 +37,7 @@ public class HistoryListDialog extends StatusDialog {
 		}
 	}
 
-	private List<String> fHistoryList = new ArrayList<String>();
+	private List<String> fHistoryList = new ArrayList<>();
 
 	private IStatus fHistoryStatus;
 

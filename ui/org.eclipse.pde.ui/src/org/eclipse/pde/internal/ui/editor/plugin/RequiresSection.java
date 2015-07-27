@@ -453,7 +453,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	private IPluginModelBase[] getAvailablePlugins(IPluginModelBase model) {
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
 		HashSet<?> existingImports = PluginSelectionDialog.getExistingImports(model, false);
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		for (int i = 0; i < plugins.length; i++) {
 			if (!existingImports.contains(plugins[i].getPluginBase().getId())) {
 				result.add(plugins[i]);
@@ -647,7 +647,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	private void createImportObjects() {
-		fImports = new Vector<ImportObject>();
+		fImports = new Vector<>();
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginImport[] iimports = model.getPluginBase().getImports();
 		for (int i = 0; i < iimports.length; i++) {

@@ -46,7 +46,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
-			Vector<IProject> initialSelection = new Vector<IProject>(elems.length);
+			Vector<IProject> initialSelection = new Vector<>(elems.length);
 
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
@@ -90,7 +90,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 	}
 
 	private IProject[] getUnconvertedProjects() {
-		ArrayList<IProject> unconverted = new ArrayList<IProject>();
+		ArrayList<IProject> unconverted = new ArrayList<>();
 		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (projects[i].isOpen() && !PDE.hasPluginNature(projects[i]) && !PDE.hasFeatureNature(projects[i]) && !PDE.hasUpdateSiteNature(projects[i]) && projects[i].getName().indexOf('%') == -1 && projects[i].getLocation().toString().indexOf('%') == -1)

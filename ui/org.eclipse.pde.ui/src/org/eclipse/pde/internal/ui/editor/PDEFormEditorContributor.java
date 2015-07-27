@@ -43,7 +43,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 
 	private SelectAllAction fSelectAllAction;
 
-	private Hashtable<String, Action> fGlobalActions = new Hashtable<String, Action>();
+	private Hashtable<String, Action> fGlobalActions = new Hashtable<>();
 
 	private ISharedImages fSharedImages;
 

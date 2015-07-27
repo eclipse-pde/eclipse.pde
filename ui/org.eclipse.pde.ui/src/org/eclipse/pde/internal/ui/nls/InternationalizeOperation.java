@@ -55,7 +55,7 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 
-			fSelectedModels = new ArrayList<Object>(elems.length);
+			fSelectedModels = new ArrayList<>(elems.length);
 			for (int i = 0; i < elems.length; i++) {
 				//If a file was selected, get its parent project
 				if (elems[i] instanceof IFile)

@@ -23,7 +23,7 @@ public class FileExtensionsFilter extends ViewerFilter {
 	private HashSet<String> fExtensions;
 
 	public FileExtensionsFilter() {
-		fExtensions = new HashSet<String>();
+		fExtensions = new HashSet<>();
 	}
 
 	@Override

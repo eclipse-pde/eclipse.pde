@@ -77,7 +77,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				workspaceId = IPDELauncherConstants.WORKSPACE_BUNDLES;
 				targetId = IPDELauncherConstants.TARGET_BUNDLES;
 			}
-			Set<String> set = new HashSet<String>();
+			Set<String> set = new HashSet<>();
 			Map<IPluginModelBase, String> map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set, workspaceId);
 			map.putAll(BundleLauncherHelper.getTargetBundleMap(fLaunchConfiguration, set, targetId));
 

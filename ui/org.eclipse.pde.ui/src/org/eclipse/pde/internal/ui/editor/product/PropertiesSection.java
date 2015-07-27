@@ -397,7 +397,7 @@ public class PropertiesSection extends TableSection {
 	 * @return A list of property names currently in use by the product, possibly empty
 	 */
 	private Set<String> getExistingNames() {
-		Set<String> result = new HashSet<String>();
+		Set<String> result = new HashSet<>();
 		IConfigurationProperty[] properties = getProduct().getConfigurationProperties();
 		for (int i = 0; i < properties.length; i++) {
 			result.add(properties[i].getName());

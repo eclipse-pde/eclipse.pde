@@ -24,7 +24,7 @@ public class PluginAdapter implements IWorkingSetElementAdapter {
 
 	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
-		HashSet<PersistablePluginObject> set = new HashSet<PersistablePluginObject>();
+		HashSet<PersistablePluginObject> set = new HashSet<>();
 		for (int i = 0; i < elements.length; i++) {
 			IResource res = (IResource) elements[i].getAdapter(IResource.class);
 			if (res == null)

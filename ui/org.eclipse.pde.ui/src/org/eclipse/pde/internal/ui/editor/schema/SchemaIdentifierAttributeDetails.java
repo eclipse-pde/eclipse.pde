@@ -139,7 +139,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 				if (text != null && text.length() > 0) {
 					ISchemaSimpleType type = getAttribute().getType();
 					ChoiceRestriction res = (ChoiceRestriction) type.getRestriction();
-					java.util.List<ISchemaEnumeration> vres = new Vector<ISchemaEnumeration>();
+					java.util.List<ISchemaEnumeration> vres = new Vector<>();
 					if (res != null) {
 						ISchemaEnumeration[] currRes = res.getChildren();
 						for (int i = 0; i < currRes.length; i++) {
@@ -170,7 +170,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 				Object[] aselection = sselection.toArray();
 				ISchemaSimpleType type = getAttribute().getType();
 				ChoiceRestriction res = (ChoiceRestriction) type.getRestriction();
-				java.util.List<ISchemaEnumeration> vres = new Vector<ISchemaEnumeration>();
+				java.util.List<ISchemaEnumeration> vres = new Vector<>();
 				if (res != null) {
 					ISchemaEnumeration[] currRes = res.getChildren();
 					for (int i = 0; i < currRes.length; i++) {

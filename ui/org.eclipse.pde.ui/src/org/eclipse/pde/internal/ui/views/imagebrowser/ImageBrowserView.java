@@ -39,7 +39,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private final UpdateUI mUIJob = new UpdateUI();
 
-	private final List<IFilter> mFilters = new ArrayList<IFilter>();
+	private final List<IFilter> mFilters = new ArrayList<>();
 	private final IFilter disabledIcons;
 	private final IFilter enabledIcons;
 	private final IFilter wizard;
@@ -56,7 +56,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	private Button nextButton;
 	private Spinner spinMaxImages;
 
-	private List<Image> displayedImages = new ArrayList<Image>();
+	private List<Image> displayedImages = new ArrayList<>();
 
 	private AbstractRepository repository;
 
@@ -105,7 +105,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			}
 		});
 
-		ArrayList<Object> sourceComboInput = new ArrayList<Object>();
+		ArrayList<Object> sourceComboInput = new ArrayList<>();
 		sourceComboInput.add(new TargetPlatformRepository(this, true));
 		sourceComboInput.add(new TargetPlatformRepository(this, false));
 		sourceComboInput.add(new WorkspaceRepository(this));
@@ -285,7 +285,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private class UpdateUI extends FocusAdapter implements Runnable {
 
-		Collection<ImageElement> mElements = new LinkedList<ImageElement>();
+		Collection<ImageElement> mElements = new LinkedList<>();
 		String mLastPlugin = ""; //$NON-NLS-1$
 		private Composite mPluginImageContainer = null;
 		private final RowLayout mRowLayout = new RowLayout(SWT.HORIZONTAL);

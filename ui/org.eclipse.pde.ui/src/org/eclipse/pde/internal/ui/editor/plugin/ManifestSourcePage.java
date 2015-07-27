@@ -90,7 +90,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		public Object[] getChildren(Object parent) {
 			PluginModelBase model = (PluginModelBase) getInputContext().getModel();
 
-			ArrayList<Object> result = new ArrayList<Object>();
+			ArrayList<Object> result = new ArrayList<>();
 			if (parent instanceof IPluginBase) {
 				IPluginBase pluginBase = (IPluginBase) parent;
 				if (pluginBase.getLibraries().length > 0)

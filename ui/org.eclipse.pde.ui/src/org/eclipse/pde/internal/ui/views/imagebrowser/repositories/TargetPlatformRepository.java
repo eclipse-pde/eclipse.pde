@@ -85,7 +85,7 @@ public class TargetPlatformRepository extends AbstractRepository {
 
 					// populate bundles to visit
 					if (allBundles != null) {
-						fBundles = new ArrayList<TargetBundle>(Arrays.asList(allBundles));
+						fBundles = new ArrayList<>(Arrays.asList(allBundles));
 					} else {
 						fBundles = Collections.emptyList();
 					}

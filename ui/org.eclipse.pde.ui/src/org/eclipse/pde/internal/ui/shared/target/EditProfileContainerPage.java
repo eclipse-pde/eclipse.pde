@@ -160,7 +160,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	}
 
 	private String[] getConfigComboItems() {
-		List<String> previousConfigs = new ArrayList<String>(4);
+		List<String> previousConfigs = new ArrayList<>(4);
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
 			String location = settings.get(SETTINGS_CONFIG_1);

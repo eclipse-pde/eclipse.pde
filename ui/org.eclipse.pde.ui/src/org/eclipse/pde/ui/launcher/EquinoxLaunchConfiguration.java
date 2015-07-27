@@ -47,7 +47,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		ArrayList<String> programArgs = new ArrayList<String>();
+		ArrayList<String> programArgs = new ArrayList<>();
 
 		programArgs.add("-dev"); //$NON-NLS-1$
 		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
@@ -152,7 +152,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
-		fAllBundles = new HashMap<String, IPluginModelBase>(fModels.size());
+		fAllBundles = new HashMap<>(fModels.size());
 		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = iter.next();

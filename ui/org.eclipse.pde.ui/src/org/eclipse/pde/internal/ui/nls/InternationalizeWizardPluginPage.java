@@ -67,7 +67,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 
 	// Used to track the selection in a HashMap so as to filter
 	// selected items out of the available item list
-	private final Map<Object, ?> fSelected = new HashMap<Object, Object>();
+	private final Map<Object, ?> fSelected = new HashMap<>();
 
 	// Used to block the selection listeners from updating button enablement
 	// when programatically removing items
@@ -274,7 +274,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	private IFragmentModel[] findFragments(IPlugin plugin) {
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		for (int i = 0; i < fModels.length; i++) {
 			if (fModels[i] instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
@@ -335,7 +335,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 
 	public List<Object> getModelsToInternationalize() {
 		TableItem[] items = fSelectedViewer.getTable().getItems();
-		List<Object> result = new ArrayList<Object>();
+		List<Object> result = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			result.add(items[i].getData());
 		}
@@ -548,7 +548,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	private void handleAddAll() {
 		TableItem[] items = fAvailableViewer.getTable().getItems();
 
-		ArrayList<Object> data = new ArrayList<Object>();
+		ArrayList<Object> data = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			data.add(items[i].getData());
 		}
@@ -606,7 +606,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	private void handleRemoveAll() {
 		TableItem[] items = fSelectedViewer.getTable().getItems();
 
-		ArrayList<Object> data = new ArrayList<Object>();
+		ArrayList<Object> data = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			data.add(items[i].getData());
 		}

@@ -61,7 +61,7 @@ public class PDEModelUtility {
 	private static final int F_Bi = 0; // the manifest.mf-related object will always be 1st
 	private static final int F_Xi = 1; // the xml-related object will always be 2nd
 
-	private static Hashtable<IProject, ArrayList<PDEFormEditor>> fOpenPDEEditors = new Hashtable<IProject, ArrayList<PDEFormEditor>>();
+	private static Hashtable<IProject, ArrayList<PDEFormEditor>> fOpenPDEEditors = new Hashtable<>();
 
 	/**
 	 * PDE editors should call this during their creation.
@@ -80,7 +80,7 @@ public class PDEModelUtility {
 			if (!list.contains(editor))
 				list.add(editor);
 		} else {
-			ArrayList<PDEFormEditor> list = new ArrayList<PDEFormEditor>();
+			ArrayList<PDEFormEditor> list = new ArrayList<>();
 			list.add(editor);
 			fOpenPDEEditors.put(project, list);
 		}
@@ -295,7 +295,7 @@ public class PDEModelUtility {
 	}
 
 	private static TextFileChange[] generateModelEdits(final ModelModification modification, final IProgressMonitor monitor, boolean performEdits) {
-		ArrayList<TextFileChange> edits = new ArrayList<TextFileChange>();
+		ArrayList<TextFileChange> edits = new ArrayList<>();
 		// create own model, attach listeners and grab text edits
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		IFile[] files;

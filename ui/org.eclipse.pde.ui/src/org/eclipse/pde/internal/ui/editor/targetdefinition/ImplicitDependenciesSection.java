@@ -212,12 +212,12 @@ public class ImplicitDependenciesSection extends SectionPart {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.IMPLICIT_DEPENDENCIES_SELECTION_DIALOG);
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
-			ArrayList<NameVersionDescriptor> pluginsToAdd = new ArrayList<NameVersionDescriptor>();
+			ArrayList<NameVersionDescriptor> pluginsToAdd = new ArrayList<>();
 			for (int i = 0; i < models.length; i++) {
 				BundleInfo selected = ((BundleInfo) models[i]);
 				pluginsToAdd.add(new NameVersionDescriptor(selected.getSymbolicName(), null));
 			}
-			Set<NameVersionDescriptor> allDependencies = new HashSet<NameVersionDescriptor>();
+			Set<NameVersionDescriptor> allDependencies = new HashSet<>();
 			allDependencies.addAll(pluginsToAdd);
 			NameVersionDescriptor[] currentBundles = getTarget().getImplicitDependencies();
 			if (currentBundles != null) {
@@ -235,14 +235,14 @@ public class ImplicitDependenciesSection extends SectionPart {
 	 */
 	protected BundleInfo[] getValidBundles() throws CoreException {
 		NameVersionDescriptor[] current = getTarget().getImplicitDependencies();
-		Set<String> currentBundles = new HashSet<String>();
+		Set<String> currentBundles = new HashSet<>();
 		if (current != null) {
 			for (int i = 0; i < current.length; i++) {
 				currentBundles.add(current[i].getId());
 			}
 		}
 
-		List<BundleInfo> targetBundles = new ArrayList<BundleInfo>();
+		List<BundleInfo> targetBundles = new ArrayList<>();
 		TargetBundle[] allTargetBundles = getTarget().getAllBundles();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
@@ -257,7 +257,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 	}
 
 	private void handleRemove() {
-		LinkedList<NameVersionDescriptor> bundles = new LinkedList<NameVersionDescriptor>();
+		LinkedList<NameVersionDescriptor> bundles = new LinkedList<>();
 		bundles.addAll(Arrays.asList(getTarget().getImplicitDependencies()));
 		Object[] removeBundles = ((IStructuredSelection) fViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {

@@ -81,7 +81,7 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	 * @return an array of launch configurations
 	 */
 	private ILaunchConfiguration[] getLaunchConfigurations() {
-		ArrayList<ILaunchConfiguration> result = new ArrayList<ILaunchConfiguration>();
+		ArrayList<ILaunchConfiguration> result = new ArrayList<>();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfigurationType type = manager.getLaunchConfigurationType(getLaunchConfigurationTypeName());

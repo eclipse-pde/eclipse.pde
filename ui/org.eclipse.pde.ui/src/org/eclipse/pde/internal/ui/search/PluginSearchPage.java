@@ -56,7 +56,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		}
 	}
 
-	private static ArrayList<QueryData> previousQueries = new ArrayList<QueryData>();
+	private static ArrayList<QueryData> previousQueries = new ArrayList<>();
 
 	private Button caseSensitive;
 	private ISearchPageContainer container;
@@ -176,7 +176,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 	}
 
 	private HashSet<Object> getSelectedResources() {
-		HashSet<Object> result = new HashSet<Object>();
+		HashSet<Object> result = new HashSet<>();
 		int scope = container.getSelectedScope();
 		if (scope == ISearchPageContainer.WORKSPACE_SCOPE)
 			return null;

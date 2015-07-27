@@ -75,7 +75,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 	private void computeSelected(Collection<?> initialSelection) {
 		if (initialSelection == null || initialSelection.size() == 0)
 			return;
-		Set<IPluginModelBase> selected = new HashSet<IPluginModelBase>();
+		Set<IPluginModelBase> selected = new HashSet<>();
 		Iterator<?> iter = initialSelection.iterator();
 		while (iter.hasNext()) {
 			Object obj = iter.next();
@@ -120,7 +120,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 
 	private void computeUnmigrated() {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		ArrayList<IPluginModelBase> modelArray = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> modelArray = new ArrayList<>();
 		try {
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))

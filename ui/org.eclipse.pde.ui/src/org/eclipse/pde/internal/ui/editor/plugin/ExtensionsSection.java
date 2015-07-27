@@ -172,7 +172,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			String tagName = (parent == extension ? "extension" : parent.getName()); //$NON-NLS-1$
 			elementInfo = schema.findElement(tagName);
 		} else {
-			Stack<String> stack = new Stack<String>();
+			Stack<String> stack = new Stack<>();
 			IPluginParent parentParent = parent;
 			while (parentParent != extension && parentParent != null) {
 				stack.push(parentParent.getName());
@@ -737,7 +737,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private void loadExtensionWizards() {
-		fEditorWizards = new Hashtable<String, ArrayList<IConfigurationElement>>();
+		fEditorWizards = new Hashtable<>();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.newExtension"); //$NON-NLS-1$
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
@@ -747,7 +747,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 					continue;
 				ArrayList<IConfigurationElement> list = fEditorWizards.get(pointId);
 				if (list == null) {
-					list = new ArrayList<IConfigurationElement>();
+					list = new ArrayList<>();
 					fEditorWizards.put(pointId, list);
 				}
 				list.add(element);
@@ -1195,7 +1195,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		// HashSet of schema elements is not comparable for the source
 		// objects (schema elements are transient)
 		// Create a new HashSet with element names for comparison		
-		HashSet<String> targetElementNameSet = new HashSet<String>();
+		HashSet<String> targetElementNameSet = new HashSet<>();
 		Iterator<?> iterator = targetElementSet.iterator();
 		while (iterator.hasNext()) {
 			targetElementNameSet.add(((ISchemaElement) iterator.next()).getName());

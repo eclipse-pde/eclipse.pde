@@ -118,12 +118,12 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 	private void initialize() {
 		String value = getDialogSettings().get(CROSS_PLATFORM);
 		if (value != null) {
-			HashSet<String> set = new HashSet<String>();
+			HashSet<String> set = new HashSet<>();
 			StringTokenizer tok = new StringTokenizer(value, ","); //$NON-NLS-1$
 			while (tok.hasMoreTokens()) {
 				set.add(tok.nextToken());
 			}
-			ArrayList<Configuration> selected = new ArrayList<Configuration>();
+			ArrayList<Configuration> selected = new ArrayList<>();
 			TableItem[] items = fPlatformPart.getTableViewer().getTable().getItems();
 			for (int i = 0; i < items.length; i++) {
 				Configuration config = (Configuration) items[i].getData();
@@ -163,7 +163,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 	}
 
 	private Configuration[] getListElements() {
-		ArrayList<Configuration> list = new ArrayList<Configuration>();
+		ArrayList<Configuration> list = new ArrayList<>();
 		if (fModel != null) {
 			File bin = new File(fModel.getInstallLocation(), "bin"); //$NON-NLS-1$
 			if (bin.exists() && bin.isDirectory()) {

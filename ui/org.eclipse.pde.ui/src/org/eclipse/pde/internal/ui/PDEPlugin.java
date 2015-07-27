@@ -105,7 +105,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 
 	public Hashtable<String, Integer> getDefaultNameCounters() {
 		if (fCounters == null)
-			fCounters = new Hashtable<String, Integer>();
+			fCounters = new Hashtable<>();
 		return fCounters;
 	}
 

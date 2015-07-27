@@ -128,7 +128,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 	}
 
 	public static HashSet<String> getExistingImports(IPluginModelBase model, boolean includeImportPkg) {
-		HashSet<String> existingImports = new HashSet<String>();
+		HashSet<String> existingImports = new HashSet<>();
 		addSelfAndDirectImports(existingImports, model);
 		if (model instanceof IFragmentModel) {
 			IFragment fragment = ((IFragmentModel) model).getFragment();
@@ -203,7 +203,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 			ImportPackageHeader header = (ImportPackageHeader) bmodel.getBundle().getManifestHeader(Constants.IMPORT_PACKAGE);
 			if (header != null) {
 				// create a map of all the packages we import
-				HashMap<String, ImportPackageObject> map = new HashMap<String, ImportPackageObject>();
+				HashMap<String, ImportPackageObject> map = new HashMap<>();
 				ImportPackageObject[] packages = header.getPackages();
 				for (ImportPackageObject importPackage : packages) {
 					map.put(importPackage.getName(), importPackage);

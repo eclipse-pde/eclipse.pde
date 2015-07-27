@@ -70,7 +70,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {
 				IFeatureImport[] imports = ((IFeature) parent).getImports();
-				ArrayList<IFeatureImport> displayable = new ArrayList<IFeatureImport>();
+				ArrayList<IFeatureImport> displayable = new ArrayList<>();
 				for (int i = 0; i < imports.length; i++) {
 					if (imports[i].isPatch())
 						continue;
@@ -191,7 +191,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			@Override
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
-				ArrayList<IPluginModelBase> newModels = new ArrayList<IPluginModelBase>();
+				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
@@ -238,7 +238,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			@Override
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
+				ArrayList<IFeatureModel> newModels = new ArrayList<>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);

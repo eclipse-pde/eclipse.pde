@@ -45,7 +45,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 				IPath path = ((IContainer) element).getProjectRelativePath().removeLastSegments(1);
 				String newName = path.append(getArguments().getNewName()).toString();
 				fProject = project;
-				fElements = new HashMap<Object, String>();
+				fElements = new HashMap<>();
 				fElements.put(element, newName);
 				return true;
 			}

@@ -270,7 +270,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	}
 
 	private IPluginModelBase[] getModels() {
-		ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> list = new ArrayList<>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels(true);
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();

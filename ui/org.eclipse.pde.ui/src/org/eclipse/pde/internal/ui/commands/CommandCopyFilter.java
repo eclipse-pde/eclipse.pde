@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public abstract class CommandCopyFilter {
 
-	private static final ArrayList<CommandCopyFilter> fFilters = new ArrayList<CommandCopyFilter>();
+	private static final ArrayList<CommandCopyFilter> fFilters = new ArrayList<>();
 
 	private CommandCopyFilter() {
 		fFilters.add(this);

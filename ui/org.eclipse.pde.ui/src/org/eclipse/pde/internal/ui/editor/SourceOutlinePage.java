@@ -49,7 +49,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		fContentProvider = cProvider;
 		fDefaultComparator = defaultComparator;
 		fViewerComparator = comparator;
-		fListenerList = new ArrayList<ISelectionChangedListener>();
+		fListenerList = new ArrayList<>();
 	}
 
 	/**  

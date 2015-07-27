@@ -70,7 +70,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 		link.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				HashSet<IJavaProject> set = new HashSet<IJavaProject>();
+				HashSet<IJavaProject> set = new HashSet<>();
 				try {
 					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
 					IProject project = null;
@@ -89,7 +89,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 				}
 				ProjectSelectionDialog psd = new ProjectSelectionDialog(getShell(), set);
 				if (psd.open() == IDialogConstants.OK_ID) {
-					HashMap<String, Boolean> data = new HashMap<String, Boolean>();
+					HashMap<String, Boolean> data = new HashMap<>();
 					data.put(NO_LINK, Boolean.TRUE);
 					PreferencesUtil.createPropertyDialogOn(getShell(), ((IJavaProject) psd.getFirstResult()).getProject(), "org.eclipse.pde.internal.ui.properties.compilersPropertyPage", //$NON-NLS-1$
 							new String[] {"org.eclipse.pde.internal.ui.properties.compilersPropertyPage"}, data).open(); //$NON-NLS-1$

@@ -22,7 +22,7 @@ public class ActionMenu extends Action implements IMenuCreator {
 	Menu fMenu;
 
 	public ActionMenu(LauncherAction[] actions) {
-		fActions = new LinkedList<LauncherAction>();
+		fActions = new LinkedList<>();
 		for (int i = 0; i < actions.length; i++) {
 			fActions.add(actions[i]);
 		}

@@ -76,7 +76,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	@Override
 	public List<SourceLocation> getExtensionLocations() {
 		if (oldSourceRoots == null) {
-			oldSourceRoots = new ArrayList<SourceLocation>();
+			oldSourceRoots = new ArrayList<>();
 			for (int i = 0; i < bundles.length; i++) {
 				String path = bundles[i].getSourcePath();
 				if (path != null) {

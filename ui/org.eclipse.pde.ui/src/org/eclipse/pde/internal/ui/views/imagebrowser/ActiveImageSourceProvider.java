@@ -33,7 +33,7 @@ public class ActiveImageSourceProvider extends AbstractSourceProvider {
 
 	@Override
 	public Map getCurrentState() {
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put(ACTIVE_IMAGE, mImageData);
 		return map;
 	}

@@ -235,9 +235,9 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 */
 	public DependenciesView() {
 		super();
-		fPartsToPages = new HashMap<IWorkbenchPart, IPageBookViewPage>(4);
-		fPagesToParts = new HashMap<IPageBookViewPage, IWorkbenchPart>(4);
-		fInputHistory = new ArrayList<String>();
+		fPartsToPages = new HashMap<>(4);
+		fPagesToParts = new HashMap<>(4);
+		fInputHistory = new ArrayList<>();
 		fLoops = NO_LOOPS;
 	}
 

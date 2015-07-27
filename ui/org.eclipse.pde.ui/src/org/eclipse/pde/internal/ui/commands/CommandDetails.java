@@ -35,10 +35,10 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 public class CommandDetails {
 
-	private final HashMap<IParameter, String> fParameterToValue = new HashMap<IParameter, String>();
-	private final ArrayList<ObjectParameterControl> fObjectParamList = new ArrayList<ObjectParameterControl>();
-	private final ArrayList<ValuesParameterControl> fValueParamList = new ArrayList<ValuesParameterControl>();
-	private final ArrayList<TextParameterControl> fTextParamList = new ArrayList<TextParameterControl>();
+	private final HashMap<IParameter, String> fParameterToValue = new HashMap<>();
+	private final ArrayList<ObjectParameterControl> fObjectParamList = new ArrayList<>();
+	private final ArrayList<ValuesParameterControl> fValueParamList = new ArrayList<>();
+	private final ArrayList<TextParameterControl> fTextParamList = new ArrayList<>();
 
 	private CommandComposerPart fCCP;
 	private FormToolkit fToolkit;
@@ -168,7 +168,7 @@ public class CommandDetails {
 
 	protected ParameterizedCommand buildParameterizedCommand() {
 
-		ArrayList<Parameterization> list = new ArrayList<Parameterization>();
+		ArrayList<Parameterization> list = new ArrayList<>();
 		for (Iterator<IParameter> i = fParameterToValue.keySet().iterator(); i.hasNext();) {
 			IParameter parameter = i.next();
 			String value = fParameterToValue.get(parameter);

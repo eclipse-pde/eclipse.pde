@@ -42,7 +42,7 @@ public class ComboViewerPart {
 			fComboViewer = new ComboViewer((CCombo) fCombo);
 		}
 
-		fObjects = new ArrayList<Object>();
+		fObjects = new ArrayList<>();
 		fComboViewer.setLabelProvider(new LabelProvider());
 		fComboViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fComboViewer.setInput(fObjects);

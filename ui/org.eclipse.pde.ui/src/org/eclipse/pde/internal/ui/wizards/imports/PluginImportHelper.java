@@ -74,7 +74,7 @@ public class PluginImportHelper {
 
 			// If the caller wants to have package names collected, scan the zip file for package structures
 			if (collectedPackages != null) {
-				ArrayList<Object> collected = new ArrayList<Object>();
+				ArrayList<Object> collected = new ArrayList<>();
 				collectResources(provider, provider.getRoot(), collected);
 				collectJavaPackages(provider, collected, null, collectedPackages);
 			}
@@ -108,7 +108,7 @@ public class PluginImportHelper {
 		try {
 			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
-			ArrayList<Object> collected = new ArrayList<Object>();
+			ArrayList<Object> collected = new ArrayList<>();
 			collectResourcesFromFolder(provider, provider.getRoot(), folderPath, collected);
 			if (collectedPackages != null) {
 				collectJavaPackages(provider, collected, folderPath, collectedPackages);
@@ -143,7 +143,7 @@ public class PluginImportHelper {
 		try {
 			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
-			ArrayList<Object> collected = new ArrayList<Object>();
+			ArrayList<Object> collected = new ArrayList<>();
 			collectJavaSourceFromRoot(provider, excludeFolders, collected);
 			if (collectedPackages != null) {
 				collectJavaPackages(provider, collected, null, collectedPackages);
@@ -217,7 +217,7 @@ public class PluginImportHelper {
 	}
 
 	public static String[] getTopLevelResources(File file) {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(file);
@@ -313,7 +313,7 @@ public class PluginImportHelper {
 					// Add the file to the appropriate list in the map
 					List<Object> fileList = collected.get(destination);
 					if (fileList == null) {
-						fileList = new ArrayList<Object>();
+						fileList = new ArrayList<>();
 						collected.put(destination, fileList);
 					}
 					fileList.add(curr);
@@ -446,7 +446,7 @@ public class PluginImportHelper {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr) && folderContainsFileExtension(provider, curr, ".java")) { //$NON-NLS-1$
 					// Check if we are in an ignored folder
-					List<IPath> ignoreSubFolders = new ArrayList<IPath>();
+					List<IPath> ignoreSubFolders = new ArrayList<>();
 					boolean ignoreThisChild = false;
 					for (Iterator<IPath> iterator = ignoreFolders.iterator(); iterator.hasNext();) {
 						IPath currentPath = iterator.next();
@@ -488,7 +488,7 @@ public class PluginImportHelper {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr)) {
 					// Check if we are in an ignored folder
-					List<IPath> ignoreSubFolders = new ArrayList<IPath>();
+					List<IPath> ignoreSubFolders = new ArrayList<>();
 					boolean ignoreThisChild = false;
 					for (Iterator<IPath> iterator = ignoreFolders.iterator(); iterator.hasNext();) {
 						IPath currentPath = iterator.next();

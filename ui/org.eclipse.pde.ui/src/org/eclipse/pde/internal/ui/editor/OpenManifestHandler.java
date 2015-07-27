@@ -42,7 +42,7 @@ public class OpenManifestHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final HashSet<IProject> projects = new HashSet<IProject>();
+		final HashSet<IProject> projects = new HashSet<>();
 		if (HandlerUtil.getActivePart(event) instanceof IEditorPart) {
 			IEditorInput input = ((IEditorPart) HandlerUtil.getActivePart(event)).getEditorInput();
 			IProject proj = getProject(input);

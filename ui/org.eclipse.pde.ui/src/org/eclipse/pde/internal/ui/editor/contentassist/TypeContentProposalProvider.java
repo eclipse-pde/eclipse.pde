@@ -107,7 +107,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 	}
 
 	private ArrayList<Object> generateContentProposals(String currentContent) {
-		fInitialContentProposals = new ArrayList<Object>();
+		fInitialContentProposals = new ArrayList<>();
 		// Store the initial field contents to determine if we need to
 		// widen the scope later
 		fInitialContent = currentContent;
@@ -133,7 +133,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		String lowerCaseCurrentContent = currentContent.toLowerCase();
 		ListIterator<Object> iterator = fInitialContentProposals.listIterator();
 		// Maintain a list of filtered search results
-		ArrayList<Object> filteredContentProposals = new ArrayList<Object>();
+		ArrayList<Object> filteredContentProposals = new ArrayList<>();
 		// Iterate over the initial search results
 		while (iterator.hasNext()) {
 			IContentProposal proposal = (IContentProposal) iterator.next();

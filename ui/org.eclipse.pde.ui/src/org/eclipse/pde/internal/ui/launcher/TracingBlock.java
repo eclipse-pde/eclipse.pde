@@ -48,7 +48,7 @@ public class TracingBlock {
 	private Properties fMasterOptions = new Properties();
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
-	private Hashtable<IPluginModelBase, TracingPropertySource> fPropertySources = new Hashtable<IPluginModelBase, TracingPropertySource>();
+	private Hashtable<IPluginModelBase, TracingPropertySource> fPropertySources = new Hashtable<>();
 	private FormToolkit fToolkit;
 	private ScrolledPageBook fPageBook;
 
@@ -223,7 +223,7 @@ public class TracingBlock {
 				fPluginViewer.setAllChecked(false);
 			} else {
 				StringTokenizer tokenizer = new StringTokenizer(checked, ","); //$NON-NLS-1$
-				ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>();
+				ArrayList<IPluginModelBase> list = new ArrayList<>();
 				while (tokenizer.hasMoreTokens()) {
 					String id = tokenizer.nextToken();
 					IPluginModelBase model = PluginRegistry.findModel(id);
@@ -264,7 +264,7 @@ public class TracingBlock {
 				}
 			}
 			if (changes) {
-				HashMap<String, String> atts = new HashMap<String, String>(fMasterOptions.size());
+				HashMap<String, String> atts = new HashMap<>(fMasterOptions.size());
 				for (Entry<Object, Object> entry : fMasterOptions.entrySet()) {
 					atts.put((String) entry.getKey(), (String) entry.getValue());
 				}
@@ -333,7 +333,7 @@ public class TracingBlock {
 	private IPluginModelBase[] getTraceableModels() {
 		if (fTraceableModels == null) {
 			IPluginModelBase[] models = PluginRegistry.getActiveModels();
-			ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+			ArrayList<IPluginModelBase> result = new ArrayList<>();
 			for (int i = 0; i < models.length; i++) {
 				if (TracingOptionsManager.isTraceable(models[i]))
 					result.add(models[i]);

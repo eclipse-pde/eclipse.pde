@@ -85,7 +85,7 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof ITargetDefinition) {
 			boolean hasContainerStatus = false;
-			Collection<Object> result = new ArrayList<Object>();
+			Collection<Object> result = new ArrayList<>();
 			ITargetLocation[] containers = ((ITargetDefinition) inputElement).getTargetLocations();
 			if (containers != null) {
 				for (int i = 0; i < containers.length; i++) {

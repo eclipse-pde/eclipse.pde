@@ -67,7 +67,7 @@ public class ExtensionsFilterUtil {
 	public static final Map<String, String[]> CUSTOM_RELATIONS;
 
 	static {
-		CUSTOM_RELATIONS = new HashMap<String, String[]>();
+		CUSTOM_RELATIONS = new HashMap<>();
 		CUSTOM_RELATIONS.put(ELEMENT_COMMAND, new String[] {ATTRIBUTE_ID, ATTRIBUTE_DEFAULTHANDLER});
 		CUSTOM_RELATIONS.put(ELEMENT_INSTANCEOF, new String[] {ATTRIBUTE_VALUE});
 		CUSTOM_RELATIONS.put(ELEMENT_EQUALS, new String[] {ATTRIBUTE_VALUE});
@@ -138,7 +138,7 @@ public class ExtensionsFilterUtil {
 	 */
 	public static String getFilterRelatedPattern(IStructuredSelection selection) {
 		Iterator<?> it = selection.iterator();
-		Set<String> filterPatterns = new HashSet<String>();
+		Set<String> filterPatterns = new HashSet<>();
 		while (it.hasNext()) {
 			Object treeElement = it.next();
 			if (treeElement instanceof IPluginElement) {
@@ -200,7 +200,7 @@ public class ExtensionsFilterUtil {
 	}
 
 	public static Set<String> getCustomRelations(IPluginElement pluginElement) {
-		Set<String> customAttributes = new TreeSet<String>();
+		Set<String> customAttributes = new TreeSet<>();
 		String elementName = (pluginElement != null) ? getElementPath(pluginElement) : null;
 		if (elementName == null) {
 			return customAttributes;
@@ -259,7 +259,7 @@ public class ExtensionsFilterUtil {
 	}
 
 	public static List<String> handlePropertyTester(IPluginElement pluginElement) {
-		List<String> propertyTestAttributes = new ArrayList<String>();
+		List<String> propertyTestAttributes = new ArrayList<>();
 		if (isElementNameMatch(pluginElement, ELEMENT_PROPERTYTESTER)) {
 			Set<String> attributes = handlePropertyTester(new HashSet<String>(), pluginElement);
 			for (Iterator<String> iterator = attributes.iterator(); iterator.hasNext();) {

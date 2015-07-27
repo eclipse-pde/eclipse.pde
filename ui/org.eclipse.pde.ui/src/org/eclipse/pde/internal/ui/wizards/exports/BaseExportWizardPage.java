@@ -174,7 +174,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 
 	protected void initializeViewer() {
 		Object[] elems = fSelection.toArray();
-		ArrayList<IModel> checked = new ArrayList<IModel>(elems.length);
+		ArrayList<IModel> checked = new ArrayList<>(elems.length);
 
 		for (int i = 0; i < elems.length; i++) {
 			Object elem = elems[i];
@@ -204,7 +204,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(getShell(), true);
 		if (dialog.open() == Window.OK) {
-			ArrayList<IModel> models = new ArrayList<IModel>();
+			ArrayList<IModel> models = new ArrayList<>();
 			IWorkingSet[] workingSets = dialog.getSelection();
 			for (int i = 0; i < workingSets.length; i++) {
 				IAdaptable[] elements = workingSets[i].getElements();

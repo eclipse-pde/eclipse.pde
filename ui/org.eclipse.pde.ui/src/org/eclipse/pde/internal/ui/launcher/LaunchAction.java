@@ -50,7 +50,7 @@ public class LaunchAction extends Action {
 		fPath = path;
 		// initialize configurations... we should do this lazily
 		// TODO
-		fPluginConfigurations = new HashMap<String, IPluginConfiguration>();
+		fPluginConfigurations = new HashMap<>();
 		IPluginConfiguration[] configurations = fProduct.getPluginConfigurations();
 		for (int i = 0; i < configurations.length; i++) {
 			IPluginConfiguration config = configurations[i];
@@ -176,7 +176,7 @@ public class LaunchAction extends Action {
 	}
 
 	private IPluginModelBase[] getModels() {
-		Set<IPluginModelBase> launchPlugins = new HashSet<IPluginModelBase>();
+		Set<IPluginModelBase> launchPlugins = new HashSet<>();
 		if (fProduct.useFeatures()) {
 			IFeatureModel[] features = getUniqueFeatures();
 			for (int i = 0; i < features.length; i++) {
@@ -197,7 +197,7 @@ public class LaunchAction extends Action {
 	}
 
 	private IFeatureModel[] getUniqueFeatures() {
-		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
+		ArrayList<IFeatureModel> list = new ArrayList<>();
 		IProductFeature[] features = fProduct.getFeatures();
 		for (int i = 0; i < features.length; i++) {
 			String id = features[i].getId();
@@ -308,7 +308,7 @@ public class LaunchAction extends Action {
 	}
 
 	private ILaunchConfiguration[] getLaunchConfigurations() throws CoreException {
-		ArrayList<ILaunchConfiguration> result = new ArrayList<ILaunchConfiguration>();
+		ArrayList<ILaunchConfiguration> result = new ArrayList<>();
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);
 		ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);

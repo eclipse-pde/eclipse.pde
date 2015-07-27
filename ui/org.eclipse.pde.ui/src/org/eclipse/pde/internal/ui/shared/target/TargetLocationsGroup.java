@@ -384,7 +384,7 @@ public class TargetLocationsGroup {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		ITargetLocation[] containers = fTarget.getTargetLocations();
 		if (!selection.isEmpty() && containers != null && containers.length > 0) {
-			List<Object> toRemove = new ArrayList<Object>();
+			List<Object> toRemove = new ArrayList<>();
 			boolean removedSite = false;
 			boolean removedContainer = false;
 			for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
@@ -402,7 +402,7 @@ public class TargetLocationsGroup {
 			}
 
 			if (removedContainer) {
-				Set<ITargetLocation> newContainers = new HashSet<ITargetLocation>();
+				Set<ITargetLocation> newContainers = new HashSet<>();
 				newContainers.addAll(Arrays.asList(fTarget.getTargetLocations()));
 				newContainers.removeAll(toRemove);
 				if (newContainers.size() > 0) {
@@ -432,16 +432,16 @@ public class TargetLocationsGroup {
 	private void handleUpdate() {
 		// TODO Only IUWrapper children are added to the map for special update processing
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-		Map<ITargetLocation, Set<Object>> toUpdate = new HashMap<ITargetLocation, Set<Object>>();
+		Map<ITargetLocation, Set<Object>> toUpdate = new HashMap<>();
 		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 			Object currentSelection = iterator.next();
 			if (currentSelection instanceof ITargetLocation)
-				toUpdate.put((ITargetLocation) currentSelection, new HashSet<Object>(0));
+				toUpdate.put((ITargetLocation) currentSelection, new HashSet<>(0));
 			else if (currentSelection instanceof IUWrapper) {
 				IUWrapper wrapper = (IUWrapper) currentSelection;
 				Set<Object> iuSet = toUpdate.get(wrapper.getParent());
 				if (iuSet == null) {
-					iuSet = new HashSet<Object>();
+					iuSet = new HashSet<>();
 					iuSet.add(wrapper.getIU().getId());
 					toUpdate.put(wrapper.getParent(), iuSet);
 				} else if (!iuSet.isEmpty())

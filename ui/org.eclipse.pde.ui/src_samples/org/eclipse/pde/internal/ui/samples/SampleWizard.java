@@ -177,7 +177,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 	*/
 	public void enableActivities() {
 		IConfigurationElement[] elements = selection.getChildren("activity"); //$NON-NLS-1$
-		HashSet<String> activitiesToEnable = new HashSet<String>();
+		HashSet<String> activitiesToEnable = new HashSet<>();
 		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
 
 		for (int i = 0; i < elements.length; i++) {
@@ -187,7 +187,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 				continue;
 			activitiesToEnable.add(id);
 		}
-		HashSet<String> set = new HashSet<String>(workbenchActivitySupport.getActivityManager().getEnabledActivityIds());
+		HashSet<String> set = new HashSet<>(workbenchActivitySupport.getActivityManager().getEnabledActivityIds());
 		set.addAll(activitiesToEnable);
 		workbenchActivitySupport.setEnabledActivityIds(set);
 	}

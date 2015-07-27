@@ -176,7 +176,7 @@ public class NLSFragmentGenerator {
 	 */
 	private void internationalizePlugins(List<?> plugins, List<?> locales, Map<String, Object> overwrites) throws CoreException, IOException, InvocationTargetException, InterruptedException {
 
-		Set<IProject> created = new HashSet<IProject>();
+		Set<IProject> created = new HashSet<>();
 
 		for (Iterator<?> it = plugins.iterator(); it.hasNext();) {
 			IPluginModelBase plugin = (IPluginModelBase) it.next();
@@ -206,7 +206,7 @@ public class NLSFragmentGenerator {
 	private Object OVERWRITE = new Object();
 
 	private Map<String, Object> promptForOverwrite(List<?> plugins, List<?> locales) {
-		Map<String, Object> overwrites = new HashMap<String, Object>();
+		Map<String, Object> overwrites = new HashMap<>();
 
 		if (overwriteWithoutAsking)
 			return overwrites;
@@ -477,7 +477,7 @@ public class NLSFragmentGenerator {
 	}
 
 	private static class Filters {
-		private final List<Filter> filters = new LinkedList<Filter>();
+		private final List<Filter> filters = new LinkedList<>();
 		private final boolean default_;
 
 		public Filters(boolean default_) {

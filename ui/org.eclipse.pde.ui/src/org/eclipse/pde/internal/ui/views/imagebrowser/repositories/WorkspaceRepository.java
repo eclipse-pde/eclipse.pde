@@ -92,7 +92,7 @@ public class WorkspaceRepository extends AbstractRepository {
 	private void initialize(IProgressMonitor monitor) {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		if (projects != null)
-			fProjects = new ArrayList<IProject>(Arrays.asList(projects));
+			fProjects = new ArrayList<>(Arrays.asList(projects));
 		else
 			fProjects = Collections.emptyList();
 	}

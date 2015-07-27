@@ -224,7 +224,7 @@ public class ExportPackageSection extends TableSection {
 
 	private HashMap<?, ?> createCurrentExportPackageMap() {
 		// Dummy hash map created in order to return a defined but empty map
-		HashMap<?, ?> packageFragments = new HashMap<Object, Object>(0);
+		HashMap<?, ?> packageFragments = new HashMap<>(0);
 		// Get the model
 		IPluginModelBase model = getModel();
 		// Ensure model is defined
@@ -260,7 +260,7 @@ public class ExportPackageSection extends TableSection {
 		// Get the current packages associated with the export package header
 		Vector<?> currentExportPackages = null;
 		if (fHeader == null) {
-			currentExportPackages = new Vector<Object>();
+			currentExportPackages = new Vector<>();
 		} else {
 			currentExportPackages = fHeader.getPackageNames();
 		}
@@ -435,13 +435,13 @@ public class ExportPackageSection extends TableSection {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider, PDEUIMessages.ExportPackageSection_dialogButtonLabel);
-				final Collection<?> pckgs = fHeader == null ? new Vector<Object>() : fHeader.getPackageNames();
+				final Collection<?> pckgs = fHeader == null ? new Vector<>() : fHeader.getPackageNames();
 				final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 				Runnable runnable = new Runnable() {
 					@Override
 					public void run() {
-						ArrayList<IPackageFragment> elements = new ArrayList<IPackageFragment>();
-						ArrayList<IPackageFragment> conditional = new ArrayList<IPackageFragment>();
+						ArrayList<IPackageFragment> elements = new ArrayList<>();
+						ArrayList<IPackageFragment> conditional = new ArrayList<>();
 						IPackageFragment[] fragments = PDEJavaHelper.getPackageFragments(JavaCore.create(project), pckgs, allowJava);
 						for (int i = 0; i < fragments.length; i++) {
 							try {

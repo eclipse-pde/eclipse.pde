@@ -78,8 +78,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		int totalWork = imports.length * 3 + (packages != null ? packages.length : 0) + 1;
 		monitor.beginTask("", totalWork); //$NON-NLS-1$
 
-		HashMap<String, IPluginImport> usedPlugins = new HashMap<String, IPluginImport>();
-		fList = new ArrayList<Object>();
+		HashMap<String, IPluginImport> usedPlugins = new HashMap<>();
+		fList = new ArrayList<>();
 		for (int i = 0; i < imports.length; i++) {
 			if (monitor.isCanceled())
 				break;
@@ -90,7 +90,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			updateMonitor(monitor, fList.size());
 		}
 
-		ArrayList<ImportPackageObject> usedPackages = new ArrayList<ImportPackageObject>();
+		ArrayList<ImportPackageObject> usedPackages = new ArrayList<>();
 		if (packages != null && !monitor.isCanceled()) {
 			for (int i = 0; i < packages.length; i++) {
 				if (monitor.isCanceled())
@@ -245,7 +245,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		}
 
 		Iterator<String> it = usedPlugins.keySet().iterator();
-		Stack<String> plugins = new Stack<String>();
+		Stack<String> plugins = new Stack<>();
 		while (it.hasNext())
 			plugins.push(it.next().toString());
 

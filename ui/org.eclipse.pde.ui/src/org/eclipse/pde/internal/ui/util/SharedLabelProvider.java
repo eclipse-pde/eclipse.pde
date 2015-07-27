@@ -37,8 +37,8 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 	public static final int F_OPTIONAL = 512;
 	public static final int F_INTERNAL = 1024;
 	public static final int F_FRIEND = 2048;
-	Hashtable<Object, Image> images = new Hashtable<Object, Image>();
-	ArrayList<Object> consumers = new ArrayList<Object>();
+	Hashtable<Object, Image> images = new Hashtable<>();
+	ArrayList<Object> consumers = new ArrayList<>();
 	private Image fBlankImage;
 
 	public SharedLabelProvider() {

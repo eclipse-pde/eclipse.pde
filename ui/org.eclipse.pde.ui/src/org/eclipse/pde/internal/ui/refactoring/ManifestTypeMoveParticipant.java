@@ -32,7 +32,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
 				fProject = javaProject.getProject();
-				fElements = new HashMap<Object, String>();
+				fElements = new HashMap<>();
 				fElements.put(element, getNewName(getArguments().getDestination(), element));
 				return true;
 			}

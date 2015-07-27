@@ -24,7 +24,7 @@ public class JARFileFilter extends ViewerFilter {
 	private HashSet<?> fPaths;
 
 	public JARFileFilter() {
-		fPaths = new HashSet<Object>();
+		fPaths = new HashSet<>();
 	}
 
 	public JARFileFilter(HashSet<?> names) {

@@ -156,7 +156,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 
 	protected void addPlugins(IProductModelFactory factory, IProduct product, Map<IPluginModelBase, String> plugins) {
 		IProductPlugin[] pplugins = new IProductPlugin[plugins.size()];
-		List<IPluginConfiguration> configurations = new ArrayList<IPluginConfiguration>(3);
+		List<IPluginConfiguration> configurations = new ArrayList<>(3);
 		IPluginModelBase[] models = plugins.keySet().toArray(new IPluginModelBase[plugins.size()]);
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];

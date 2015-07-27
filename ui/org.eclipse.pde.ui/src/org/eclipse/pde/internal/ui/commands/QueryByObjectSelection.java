@@ -125,7 +125,7 @@ public class QueryByObjectSelection extends QueryControl {
 		if (objectSelection == null)
 			return null;
 
-		ArrayList<Command> hitList = new ArrayList<Command>();
+		ArrayList<Command> hitList = new ArrayList<>();
 		Command[] commands = getCommandService().getDefinedCommands();
 		for (int i = 0; i < commands.length; i++) {
 			Command command = commands[i];

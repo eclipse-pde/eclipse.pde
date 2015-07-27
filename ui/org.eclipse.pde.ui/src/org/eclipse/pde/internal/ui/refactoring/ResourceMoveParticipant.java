@@ -33,7 +33,7 @@ public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 			IProject project = ((IResource) element).getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
 				fProject = project;
-				fElements = new HashMap<Object, String>();
+				fElements = new HashMap<>();
 				fElements.put(element, getNewName(getArguments().getDestination(), element));
 				return true;
 			}

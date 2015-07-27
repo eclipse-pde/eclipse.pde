@@ -747,7 +747,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 
 	/* package */IFormPage[] getPages() {
-		ArrayList<Object> formPages = new ArrayList<Object>();
+		ArrayList<Object> formPages = new ArrayList<>();
 		for (int i = 0; i < pages.size(); i++) {
 			Object page = pages.get(i);
 			if (page instanceof IFormPage)

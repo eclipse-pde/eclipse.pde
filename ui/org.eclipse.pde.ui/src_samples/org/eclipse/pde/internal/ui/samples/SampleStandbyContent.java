@@ -135,7 +135,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		String sid = sample.getAttribute("id"); //$NON-NLS-1$
 		if (sid == null)
 			return;
-		ArrayList<IResource> items = new ArrayList<IResource>();
+		ArrayList<IResource> items = new ArrayList<>();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			if (!project.exists() || !project.isOpen())

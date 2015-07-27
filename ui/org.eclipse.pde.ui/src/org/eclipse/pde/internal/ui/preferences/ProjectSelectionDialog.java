@@ -44,7 +44,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		public Object[] getChildren(Object element) {
 			if (element instanceof IJavaModel) {
 				IJavaModel model = (IJavaModel) element;
-				HashSet<IJavaProject> set = new HashSet<IJavaProject>();
+				HashSet<IJavaProject> set = new HashSet<>();
 				try {
 					IJavaProject[] projects = model.getJavaProjects();
 					for (int i = 0; i < projects.length; i++) {

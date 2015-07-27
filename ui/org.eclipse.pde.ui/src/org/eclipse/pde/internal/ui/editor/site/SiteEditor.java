@@ -215,7 +215,7 @@ public class SiteEditor extends MultiSourceEditor {
 	}
 
 	private IFeatureModel[] getFeatureModels(ISiteFeature[] sFeatures) {
-		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
+		ArrayList<IFeatureModel> list = new ArrayList<>();
 		for (int i = 0; i < sFeatures.length; i++) {
 			IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(sFeatures[i].getId(), sFeatures[i].getVersion());
 			if (model != null)

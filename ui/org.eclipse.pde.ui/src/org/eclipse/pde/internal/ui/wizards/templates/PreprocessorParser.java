@@ -139,7 +139,7 @@ public class PreprocessorParser {
 
 	public PreprocessorParser(IVariableProvider provider) {
 		this.provider = provider;
-		exprStack = new Stack<RootEntry>();
+		exprStack = new Stack<>();
 	}
 
 	public void setVariableProvider(IVariableProvider provider) {
@@ -147,7 +147,7 @@ public class PreprocessorParser {
 	}
 
 	public static void main(String[] args) {
-		final Hashtable<String, Comparable<? extends Object>> vars = new Hashtable<String, Comparable<? extends Object>>();
+		final Hashtable<String, Comparable<? extends Object>> vars = new Hashtable<>();
 		vars.put("a", Boolean.FALSE); //$NON-NLS-1$
 		vars.put("b", "3"); //$NON-NLS-1$ //$NON-NLS-2$
 		vars.put("c", Boolean.TRUE); //$NON-NLS-1$

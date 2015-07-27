@@ -30,7 +30,7 @@ import org.eclipse.ui.*;
 public class BuildInputContext extends InputContext {
 	public static final String CONTEXT_ID = "build-context"; //$NON-NLS-1$
 
-	private HashMap<IDocumentKey, TextEdit> fOperationTable = new HashMap<IDocumentKey, TextEdit>();
+	private HashMap<IDocumentKey, TextEdit> fOperationTable = new HashMap<>();
 
 	public BuildInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);

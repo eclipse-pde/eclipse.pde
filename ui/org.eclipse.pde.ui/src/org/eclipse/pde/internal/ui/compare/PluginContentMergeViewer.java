@@ -67,7 +67,7 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 			PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyChangedListener);
 
 			if (fPropertyChangedListeners == null)
-				fPropertyChangedListeners = new ArrayList<IPropertyChangeListener>(3);
+				fPropertyChangedListeners = new ArrayList<>(3);
 			fPropertyChangedListeners.add(propertyChangedListener);
 			((SourceViewer) textViewer).configure(configuration);
 			Font font = JFaceResources.getFont(PluginContentMergeViewer.class.getName());

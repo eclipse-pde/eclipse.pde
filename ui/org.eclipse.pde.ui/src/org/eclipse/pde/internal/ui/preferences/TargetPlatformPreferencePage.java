@@ -220,17 +220,17 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	/**
 	 * Initial collection of targets (handles are realized into definitions as working copies)
 	 */
-	private List<ITargetDefinition> fTargets = new ArrayList<ITargetDefinition>();
+	private List<ITargetDefinition> fTargets = new ArrayList<>();
 
 	/**
 	 * Removed definitions (to be removed on apply) 
 	 */
-	private List<ITargetDefinition> fRemoved = new ArrayList<ITargetDefinition>();
+	private List<ITargetDefinition> fRemoved = new ArrayList<>();
 
 	/**
 	 * Moved definitions (to be moved on apply)
 	 */
-	private Map<Object, Object> fMoved = new HashMap<Object, Object>(1);
+	private Map<Object, Object> fMoved = new HashMap<>(1);
 
 	/**
 	 * The chosen active target (will be loaded on apply)

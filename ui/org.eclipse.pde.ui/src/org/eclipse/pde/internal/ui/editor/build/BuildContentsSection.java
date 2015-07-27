@@ -75,7 +75,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 				if (!(parent instanceof IFolder))
 					return new Object[0];
 				members = ((IFolder) parent).members();
-				ArrayList<IResource> results = new ArrayList<IResource>();
+				ArrayList<IResource> results = new ArrayList<>();
 				for (int i = 0; i < members.length; i++) {
 					if ((members[i].getType() == IResource.FOLDER)) {
 						results.add(members[i]);
@@ -265,14 +265,14 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 					public void run() {
 						if (fTreeViewer.getTree().isDisposed())
 							return;
-						Vector<String> fileExt = new Vector<String>();
+						Vector<String> fileExt = new Vector<>();
 						String[] inclTokens, exclTokens = new String[0];
 						if (fBundleRoot == null || includes == null)
 							return;
 						inclTokens = includes.getTokens();
 						if (excludes != null)
 							exclTokens = excludes.getTokens();
-						Set<String> temp = new TreeSet<String>();
+						Set<String> temp = new TreeSet<>();
 						for (int i = 0; i < inclTokens.length; i++)
 							temp.add(inclTokens[i]);
 						for (int i = 0; i < exclTokens.length; i++)

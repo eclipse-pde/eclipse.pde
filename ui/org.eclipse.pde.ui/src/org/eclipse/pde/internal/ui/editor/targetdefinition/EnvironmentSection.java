@@ -216,7 +216,7 @@ public class EnvironmentSection extends SectionPart {
 
 	private void initializeChoices() {
 		ITargetDefinition target = getTarget();
-		fOSChoices = new TreeSet<String>();
+		fOSChoices = new TreeSet<>();
 		String[] os = Platform.knownOSValues();
 		for (int i = 0; i < os.length; i++)
 			fOSChoices.add(os[i]);
@@ -225,7 +225,7 @@ public class EnvironmentSection extends SectionPart {
 		if (fileValue != null)
 			fOSChoices.add(fileValue);
 
-		fWSChoices = new TreeSet<String>();
+		fWSChoices = new TreeSet<>();
 		String[] ws = Platform.knownWSValues();
 		for (int i = 0; i < ws.length; i++)
 			fWSChoices.add(ws[i]);
@@ -234,7 +234,7 @@ public class EnvironmentSection extends SectionPart {
 		if (fileValue != null)
 			fWSChoices.add(fileValue);
 
-		fArchChoices = new TreeSet<String>();
+		fArchChoices = new TreeSet<>();
 		String[] arch = Platform.knownOSArchValues();
 		for (int i = 0; i < arch.length; i++)
 			fArchChoices.add(arch[i]);
@@ -243,7 +243,7 @@ public class EnvironmentSection extends SectionPart {
 		if (fileValue != null)
 			fArchChoices.add(fileValue);
 
-		fNLChoices = new TreeSet<String>();
+		fNLChoices = new TreeSet<>();
 		fNLChoices.add(""); //$NON-NLS-1$
 	}
 

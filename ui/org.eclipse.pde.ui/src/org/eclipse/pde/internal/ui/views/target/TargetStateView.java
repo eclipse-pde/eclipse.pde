@@ -80,8 +80,8 @@ public class TargetStateView extends PageBookView {
 	}
 
 	public TargetStateView() {
-		fPartsToPages = new HashMap<IWorkbenchPart, IPageBookViewPage>(4);
-		fPagesToParts = new HashMap<IPageBookViewPage, IWorkbenchPart>(4);
+		fPartsToPages = new HashMap<>(4);
+		fPagesToParts = new HashMap<>(4);
 	}
 
 	@Override

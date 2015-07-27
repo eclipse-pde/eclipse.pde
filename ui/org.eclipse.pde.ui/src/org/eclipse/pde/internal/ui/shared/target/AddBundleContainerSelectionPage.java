@@ -160,7 +160,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * @param wizardSelectionViewer
 	 */
 	private void initViewerContents(TableViewer wizardSelectionViewer) {
-		List<AbstractBundleContainerNode> choices = new ArrayList<AbstractBundleContainerNode>();
+		List<AbstractBundleContainerNode> choices = new ArrayList<>();
 		choices.addAll(getStandardChoices());
 		choices.addAll(getTargetLocationProvisionerChoices()); // Extension point contributions
 		choices.addAll(getTargetProvisionerChoices()); // Deprecated extension point contributions
@@ -172,7 +172,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * @return list of wizard nodes
 	 */
 	private List<AbstractBundleContainerNode> getStandardChoices() {
-		List<AbstractBundleContainerNode> standardChoices = new ArrayList<AbstractBundleContainerNode>(4);
+		List<AbstractBundleContainerNode> standardChoices = new ArrayList<>(4);
 		// Directory Containers
 		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_3, Messages.AddBundleContainerSelectionPage_4, PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER)) {
 			@Override
@@ -309,7 +309,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * @return list of wizard nodes
 	 */
 	private List<AbstractBundleContainerNode> getTargetLocationProvisionerChoices() {
-		List<AbstractBundleContainerNode> list = new ArrayList<AbstractBundleContainerNode>();
+		List<AbstractBundleContainerNode> list = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), TARGET_LOCATION_PROVISIONER_POINT);
 		if (point == null)
@@ -348,7 +348,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * @return list of wizard nodes
 	 */
 	private List<AbstractBundleContainerNode> getTargetProvisionerChoices() {
-		List<AbstractBundleContainerNode> list = new ArrayList<AbstractBundleContainerNode>();
+		List<AbstractBundleContainerNode> list = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), TARGET_PROVISIONER_POINT);
 		if (point == null)

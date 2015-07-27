@@ -124,7 +124,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	 * 
 	 */
 	private class VersionFilter extends ViewerFilter {
-		private HashMap<String, Version> versions = new HashMap<String, Version>();
+		private HashMap<String, Version> versions = new HashMap<>();
 
 		public void setModel(IPluginModelBase[] plugins) {
 			if (plugins != null && plugins.length > 0) {
@@ -154,7 +154,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		super(pageName, firstPage);
 		setTitle(PDEUIMessages.ImportWizard_DetailedPage_title);
 		setMessage(PDEUIMessages.ImportWizard_DetailedPage_desc);
-		fSelected = new HashSet<Object>();
+		fSelected = new HashSet<>();
 	}
 
 	@Override
@@ -510,7 +510,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void handleAddAll() {
 		TableItem[] items = fAvailableListViewer.getTable().getItems();
 
-		ArrayList<Object> data = new ArrayList<Object>();
+		ArrayList<Object> data = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			data.add(items[i].getData());
 		}
@@ -558,7 +558,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void handleRemoveAll() {
 		TableItem[] items = fImportListViewer.getTable().getItems();
 
-		ArrayList<Object> data = new ArrayList<Object>();
+		ArrayList<Object> data = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			data.add(items[i].getData());
 		}
@@ -581,7 +581,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 
 		// remove items that were in the old selection, but are not in the new one
-		List<Object> itemsToRemove = new ArrayList<Object>();
+		List<Object> itemsToRemove = new ArrayList<>();
 		for (int i = 0; i < oldSelection.length; i++) {
 			if (newSelectionList.contains(oldSelection[i])) {
 				newSelectionList.remove(oldSelection[i]);
@@ -601,7 +601,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		TableItem[] aItems = fAvailableListViewer.getTable().getItems();
 		TableItem[] iItems = fImportListViewer.getTable().getItems();
 
-		ArrayList<Object> data = new ArrayList<Object>();
+		ArrayList<Object> data = new ArrayList<>();
 		for (int i = 0; i < iItems.length; i++) {
 			data.add(iItems[i].getData());
 		}
@@ -620,7 +620,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void handleExistingProjects() {
-		ArrayList<Object> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<>();
 		for (int i = 0; i < fModels.length; i++) {
 			String id = fModels[i].getPluginBase().getId();
 			IProject project = (IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
@@ -632,7 +632,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void handleExistingUnshared() {
-		ArrayList<Object> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<>();
 		for (int i = 0; i < fModels.length; i++) {
 			String id = fModels[i].getPluginBase().getId();
 			IProject project = (IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
@@ -654,11 +654,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			}
 		}
 
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result, fAddFragmentsButton.getSelection());
 		}
-		ArrayList<Object> resultObject = new ArrayList<Object>(result.size());
+		ArrayList<Object> resultObject = new ArrayList<>(result.size());
 		resultObject.addAll(result);
 		handleSetImportSelection(resultObject);
 	}

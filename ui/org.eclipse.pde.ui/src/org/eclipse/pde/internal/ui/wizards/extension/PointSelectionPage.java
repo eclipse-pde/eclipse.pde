@@ -120,7 +120,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			if (inputElement instanceof IPluginExtensionPoint) {
 				IPluginExtensionPoint point = (IPluginExtensionPoint) inputElement;
 				String pointID = IdUtil.getFullId(point, fModel);
-				ArrayList<Object> result = new ArrayList<Object>();
+				ArrayList<Object> result = new ArrayList<>();
 				if (fTemplateCollection.getWizards() != null) {
 					Object[] wizards = fTemplateCollection.getWizards().getChildren();
 					for (int i = 0; i < wizards.length; i++) {
@@ -140,7 +140,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	class PointContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
-			ArrayList<IPluginExtensionPoint> extPoints = new ArrayList<IPluginExtensionPoint>();
+			ArrayList<IPluginExtensionPoint> extPoints = new ArrayList<>();
 			IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 			for (int i = 0; i < plugins.length; i++) {
 				IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();

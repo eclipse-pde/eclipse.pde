@@ -52,7 +52,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class TargetEditor extends FormEditor {
 
-	private List<IManagedForm> fManagedFormPages = new ArrayList<IManagedForm>(2);
+	private List<IManagedForm> fManagedFormPages = new ArrayList<>(2);
 	private InputHandler fInputHandler = new InputHandler();
 	private TargetChangedListener fTargetChangedListener;
 	private boolean fDirty;

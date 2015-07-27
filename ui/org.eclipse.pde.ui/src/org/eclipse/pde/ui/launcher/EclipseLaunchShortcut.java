@@ -136,7 +136,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			return new String[0];
 
 		IPluginExtension[] extensions = plugin.getExtensions();
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginExtension extension = extensions[i];
 			if ("org.eclipse.core.runtime.applications".equals(extension.getPoint())) { //$NON-NLS-1$

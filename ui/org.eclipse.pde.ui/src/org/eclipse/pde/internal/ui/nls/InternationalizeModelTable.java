@@ -28,8 +28,8 @@ public class InternationalizeModelTable {
 	private List<Object> fPreSelected; //Models preselected by the user
 
 	public InternationalizeModelTable() {
-		fModels = new ArrayList<Object>();
-		fPreSelected = new ArrayList<Object>();
+		fModels = new ArrayList<>();
+		fPreSelected = new ArrayList<>();
 	}
 
 	/**

@@ -55,7 +55,7 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
-			fSelectedModels = new ArrayList<Object>(elems.length);
+			fSelectedModels = new ArrayList<>(elems.length);
 			for (int i = 0; i < elems.length; i++) {
 				if (elems[i] instanceof IFile)
 					elems[i] = ((IFile) elems[i]).getProject();

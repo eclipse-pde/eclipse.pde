@@ -147,7 +147,7 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 	}
 
 	private IPluginElement[] findProductBindingElements(IPluginExtension extension) {
-		ArrayList<IPluginElement> elements = new ArrayList<IPluginElement>();
+		ArrayList<IPluginElement> elements = new ArrayList<>();
 		// Check to see if the extension has any children
 		if (extension.getChildCount() == 0) {
 			// Extension has no children

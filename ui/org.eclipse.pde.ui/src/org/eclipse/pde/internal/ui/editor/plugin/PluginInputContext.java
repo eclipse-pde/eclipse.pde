@@ -82,8 +82,8 @@ public class PluginInputContext extends XMLInputContext {
 		Iterator<Object> iter = map.keySet().iterator();
 		TextEdit runtimeInsert = null;
 		TextEdit requiresInsert = null;
-		ArrayList<TextEdit> extensionPointInserts = new ArrayList<TextEdit>();
-		ArrayList<TextEdit> extensionInserts = new ArrayList<TextEdit>();
+		ArrayList<TextEdit> extensionPointInserts = new ArrayList<>();
+		ArrayList<TextEdit> extensionInserts = new ArrayList<>();
 
 		while (iter.hasNext()) {
 			Object object = iter.next();

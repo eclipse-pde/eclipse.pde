@@ -89,7 +89,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 
 		IPackageFragmentRoot[] roots = ManifestUtils.findPackageFragmentRoots(bundleClasspathheader, project);
 		// Running list of packages in the project
-		Set<String> packages = new HashSet<String>();
+		Set<String> packages = new HashSet<>();
 		for (int i = 0; i < roots.length; i++) {
 			try {
 				if (ManifestUtils.isImmediateRoot(roots[i])) {
@@ -161,7 +161,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	private static final Set<String> getAvailableExportedPackages() {
 		State state = TargetPlatformHelper.getState();
 		ExportPackageDescription[] packages = state.getExportedPackages();
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		for (int i = 0; i < packages.length; i++) {
 			set.add(packages[i].getName());
 		}
@@ -209,12 +209,12 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 
 				IBuild build = ((IBuildModel) model).getBuild();
 				IBuildEntry[] entries = build.getBuildEntries();
-				ArrayList<String> allKeys = new ArrayList<String>(entries.length);
+				ArrayList<String> allKeys = new ArrayList<>(entries.length);
 				for (int i = 0; i < entries.length; i++)
 					if (!allKeys.contains(entries[i].getName()))
 						allKeys.add(entries[i].getName());
 
-				ArrayList<String> usedkeys = new ArrayList<String>();
+				ArrayList<String> usedkeys = new ArrayList<>();
 				findTranslatedStrings(project, modelBase, bundle, usedkeys);
 
 				for (int i = 0; i < usedkeys.size(); i++)

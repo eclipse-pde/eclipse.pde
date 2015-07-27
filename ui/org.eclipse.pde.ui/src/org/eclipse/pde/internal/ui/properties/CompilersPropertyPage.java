@@ -74,7 +74,7 @@ public class CompilersPropertyPage extends PropertyPage {
 			fWorkspaceLink.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					HashMap<String, Boolean> data = new HashMap<String, Boolean>();
+					HashMap<String, Boolean> data = new HashMap<>();
 					data.put(CompilersPreferencePage.NO_LINK, Boolean.TRUE);
 					SWTFactory.showPreferencePage(getShell(), "org.eclipse.pde.ui.CompilersPreferencePage", data); //$NON-NLS-1$
 				}

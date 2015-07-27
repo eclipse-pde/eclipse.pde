@@ -57,8 +57,8 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fPluginData = new LibraryPluginFieldData();
-		fInitialJarPaths = initialJarPaths == null ? new ArrayList<Object>() : initialJarPaths;
-		fInitialSelection = initialSelection == null ? new ArrayList<Object>() : initialSelection;
+		fInitialJarPaths = initialJarPaths == null ? new ArrayList<>() : initialJarPaths;
+		fInitialSelection = initialSelection == null ? new ArrayList<>() : initialSelection;
 	}
 
 	public NewLibraryPluginProjectWizard() {

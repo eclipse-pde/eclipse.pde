@@ -64,7 +64,7 @@ public class DependencyExtentQuery implements ISearchQuery {
 	}
 
 	public IPackageFragmentRoot[] getDirectRoots() {
-		ArrayList<IPackageFragmentRoot> result = new ArrayList<IPackageFragmentRoot>();
+		ArrayList<IPackageFragmentRoot> result = new ArrayList<>();
 		try {
 			IPackageFragmentRoot[] roots = JavaCore.create(fProject).getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {

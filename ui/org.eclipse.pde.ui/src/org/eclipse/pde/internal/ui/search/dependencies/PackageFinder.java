@@ -29,7 +29,7 @@ import org.osgi.framework.Constants;
 public class PackageFinder {
 
 	public static Set<String> findPackagesInClassFiles(IClassFile[] files, IProgressMonitor monitor) {
-		Set<String> packages = new HashSet<String>();
+		Set<String> packages = new HashSet<>();
 		monitor.beginTask(PDEUIMessages.PackageFinder_taskName, files.length);
 		for (int i = 0; i < files.length; i++) {
 			IClassFileReader reader = ToolFactory.createDefaultClassFileReader(files[i], IClassFileReader.ALL);
@@ -187,7 +187,7 @@ public class PackageFinder {
 	}
 
 	public static IClassFile[] getClassFiles(IProject project, IBundlePluginModelBase base) {
-		ArrayList<IClassFile> classFiles = new ArrayList<IClassFile>();
+		ArrayList<IClassFile> classFiles = new ArrayList<>();
 		IBundle bundle = base.getBundleModel().getBundle();
 		String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
 		if (value == null)
@@ -211,7 +211,7 @@ public class PackageFinder {
 	private static void addClassFilesFromResource(IResource res, List<IClassFile> classFiles) {
 		if (res == null)
 			return;
-		Stack<IResource> stack = new Stack<IResource>();
+		Stack<IResource> stack = new Stack<>();
 		if (res instanceof IContainer) {
 			stack.push(res);
 			while (!stack.isEmpty()) {

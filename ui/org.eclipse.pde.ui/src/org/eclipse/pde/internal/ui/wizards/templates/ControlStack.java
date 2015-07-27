@@ -23,7 +23,7 @@ public class ControlStack {
 	}
 
 	public ControlStack() {
-		stack = new Stack<Entry>();
+		stack = new Stack<>();
 		parser = new PreprocessorParser();
 	}
 

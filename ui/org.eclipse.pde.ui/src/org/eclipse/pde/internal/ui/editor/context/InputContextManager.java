@@ -39,8 +39,8 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	 */
 	public InputContextManager(PDEFormEditor editor) {
 		this.editor = editor;
-		inputContexts = new Hashtable<IEditorInput, Object>();
-		listeners = new ArrayList<IInputContextListener>();
+		inputContexts = new Hashtable<>();
+		listeners = new ArrayList<>();
 		PDEPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
@@ -178,7 +178,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	public InputContext[] getInvalidContexts() {
-		ArrayList<InputContext> result = new ArrayList<InputContext>();
+		ArrayList<InputContext> result = new ArrayList<>();
 		for (Enumeration<Object> contexts = inputContexts.elements(); contexts.hasMoreElements();) {
 			InputContext context = (InputContext) contexts.nextElement();
 			if (context.isModelCorrect() == false)
@@ -198,7 +198,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 
 	public void monitorFile(IFile file) {
 		if (monitoredFiles == null)
-			monitoredFiles = new ArrayList<IFile>();
+			monitoredFiles = new ArrayList<>();
 		monitoredFiles.add(file);
 	}
 

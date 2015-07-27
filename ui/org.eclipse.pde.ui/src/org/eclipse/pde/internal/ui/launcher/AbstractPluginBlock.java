@@ -87,8 +87,8 @@ public abstract class AbstractPluginBlock {
 
 	private boolean viewerEnabled = true;
 
-	private HashMap<Object, String> levelColumnCache = new HashMap<Object, String>();
-	private HashMap<Object, String> autoColumnCache = new HashMap<Object, String>();
+	private HashMap<Object, String> levelColumnCache = new HashMap<>();
+	private HashMap<Object, String> autoColumnCache = new HashMap<>();
 	private TreeEditor levelColumnEditor = null;
 	private TreeEditor autoColumnEditor = null;
 	private boolean fIsDisposed = false;
@@ -100,7 +100,7 @@ public abstract class AbstractPluginBlock {
 
 		PluginModelNameBuffer() {
 			super();
-			nameList = new ArrayList<String>();
+			nameList = new ArrayList<>();
 		}
 
 		void add(IPluginModelBase model) {
@@ -244,7 +244,7 @@ public abstract class AbstractPluginBlock {
 
 		@Override
 		public Object[] getElements(Object input) {
-			ArrayList<NamedElement> list = new ArrayList<NamedElement>();
+			ArrayList<NamedElement> list = new ArrayList<>();
 			if (getWorkspaceModels().length > 0)
 				list.add(fWorkspacePlugins);
 			if (getExternalModels().length > 0)
@@ -277,7 +277,7 @@ public abstract class AbstractPluginBlock {
 	protected IPluginModelBase[] getWorkspaceModels() {
 		if (fWorkspaceModels == null) {
 			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-			ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>(models.length);
+			ArrayList<IPluginModelBase> list = new ArrayList<>(models.length);
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].getBundleDescription() != null) {
 					list.add(models[i]);
@@ -735,7 +735,7 @@ public abstract class AbstractPluginBlock {
 	}
 
 	private String[] getPluginIDs(IWorkingSet[] workingSets) {
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		for (int i = 0; i < workingSets.length; i++) {
 			IAdaptable[] elements = workingSets[i].getElements();
 			for (int j = 0; j < elements.length; j++) {
@@ -765,8 +765,8 @@ public abstract class AbstractPluginBlock {
 	 * @throws CoreException
 	 */
 	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
-		levelColumnCache = new HashMap<Object, String>();
-		autoColumnCache = new HashMap<Object, String>();
+		levelColumnCache = new HashMap<>();
+		autoColumnCache = new HashMap<>();
 		fPluginFilteredTree.resetFilter();
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
@@ -787,7 +787,7 @@ public abstract class AbstractPluginBlock {
 	 */
 	protected void addRequiredPlugins() {
 		Object[] checked = fPluginTreeViewer.getCheckedElements();
-		ArrayList<Object> toCheck = new ArrayList<Object>(checked.length);
+		ArrayList<Object> toCheck = new ArrayList<>(checked.length);
 		for (int i = 0; i < checked.length; i++)
 			if (checked[i] instanceof IPluginModelBase)
 				toCheck.add(checked[i]);
@@ -915,7 +915,7 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected void handleRestoreDefaults() {
-		TreeSet<String> wtable = new TreeSet<String>();
+		TreeSet<String> wtable = new TreeSet<>();
 		fNumWorkspaceChecked = 0;
 		fNumExternalChecked = 0;
 
@@ -980,7 +980,7 @@ public abstract class AbstractPluginBlock {
 				if (fOperation.getInput().size() > 0)
 					fDialog.refresh(fOperation.getInput());
 				else {
-					Map<String, IStatus> input = new HashMap<String, IStatus>(1);
+					Map<String, IStatus> input = new HashMap<>(1);
 					input.put(PDEUIMessages.AbstractLauncherToolbar_noProblems, Status.OK_STATUS);
 					fDialog.refresh(input);
 				}

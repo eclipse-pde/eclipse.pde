@@ -173,7 +173,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	}
 
 	private IFragmentModel[] findFragments(IPlugin plugin) {
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		for (int i = 0; i < fModels.length; i++) {
 			if (fModels[i] instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
@@ -234,7 +234,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 
 	public IPluginModelBase[] getModelsToImport() {
 		TableItem[] items = fImportListViewer.getTable().getItems();
-		ArrayList<Object> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<>();
 		for (int i = 0; i < items.length; i++) {
 			result.add(items[i].getData());
 		}

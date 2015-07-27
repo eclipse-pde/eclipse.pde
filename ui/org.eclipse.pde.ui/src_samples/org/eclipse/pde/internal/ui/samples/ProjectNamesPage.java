@@ -116,7 +116,7 @@ public class ProjectNamesPage extends WizardPage {
 		Control[] children = container.getChildren();
 		boolean empty = false;
 
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof Text) {
 				String name = ((Text) children[i]).getText();

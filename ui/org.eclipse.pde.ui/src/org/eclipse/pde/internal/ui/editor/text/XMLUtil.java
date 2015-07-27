@@ -89,7 +89,7 @@ public abstract class XMLUtil {
 
 		// if element is not "extension" & has multiple sub-schemas,
 		// Then search for the element in the same schema in which the parent element if found.
-		Stack<String> stack = new Stack<String>();
+		Stack<String> stack = new Stack<>();
 		while (node != null) {
 			String tagName = node.getXMLTagName();
 			if ("extension".equals(tagName)) //$NON-NLS-1$

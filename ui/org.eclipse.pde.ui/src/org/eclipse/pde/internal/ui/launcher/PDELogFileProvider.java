@@ -41,7 +41,7 @@ public class PDELogFileProvider implements ILogFileProvider {
 			return Collections.emptyMap();
 		}
 
-		Map<String, String> sources = new HashMap<String, String>();
+		Map<String, String> sources = new HashMap<>();
 
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration configuration = configurations[i];

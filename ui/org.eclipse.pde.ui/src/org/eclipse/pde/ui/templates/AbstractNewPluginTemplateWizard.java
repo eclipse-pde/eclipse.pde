@@ -118,7 +118,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		ArrayList<IPluginReference> result = new ArrayList<IPluginReference>();
+		ArrayList<IPluginReference> result = new ArrayList<>();
 		ITemplateSection[] sections = getTemplateSections();
 		for (int i = 0; i < sections.length; i++) {
 			IPluginReference[] refs = sections[i].getDependencies(schemaVersion);
@@ -132,7 +132,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 
 	@Override
 	public String[] getNewFiles() {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		ITemplateSection[] sections = getTemplateSections();
 		for (int i = 0; i < sections.length; i++) {
 			String[] newFiles = sections[i].getNewFiles();

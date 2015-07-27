@@ -223,7 +223,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 				toInstall = current;
 			}
 		}
-		Collection<IInstallableUnit> result = new ArrayList<IInstallableUnit>(1);
+		Collection<IInstallableUnit> result = new ArrayList<>(1);
 		result.add(toInstall);
 		return result;
 	}

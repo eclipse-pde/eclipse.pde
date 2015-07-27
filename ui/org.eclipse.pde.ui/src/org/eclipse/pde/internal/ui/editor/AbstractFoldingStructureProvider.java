@@ -34,7 +34,7 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 		if (annotationModel == null)
 			return;
 
-		Set<Position> currentRegions = new HashSet<Position>();
+		Set<Position> currentRegions = new HashSet<>();
 		try {
 			addFoldingRegions(currentRegions, fModel);
 			updateFoldingRegions(annotationModel, currentRegions);
@@ -45,7 +45,7 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 	public void updateFoldingRegions(ProjectionAnnotationModel model, Set<?> currentRegions) {
 		Annotation[] deletions = computeDifferences(model, currentRegions);
 
-		Map<ProjectionAnnotation, Object> additionsMap = new HashMap<ProjectionAnnotation, Object>();
+		Map<ProjectionAnnotation, Object> additionsMap = new HashMap<>();
 		for (Iterator<?> iter = currentRegions.iterator(); iter.hasNext();) {
 			Object position = iter.next();
 			additionsMap.put(new ProjectionAnnotation(false), position);
@@ -57,7 +57,7 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 	}
 
 	private Annotation[] computeDifferences(ProjectionAnnotationModel model, Set<?> additions) {
-		List<Object> deletions = new ArrayList<Object>();
+		List<Object> deletions = new ArrayList<>();
 		for (Iterator<?> iter = model.getAnnotationIterator(); iter.hasNext();) {
 			Object annotation = iter.next();
 			if (annotation instanceof ProjectionAnnotation) {

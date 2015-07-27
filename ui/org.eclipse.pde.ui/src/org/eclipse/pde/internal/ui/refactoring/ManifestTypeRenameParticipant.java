@@ -27,7 +27,7 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
 				fProject = javaProject.getProject();
-				fElements = new HashMap<Object, String>();
+				fElements = new HashMap<>();
 				fElements.put(type, getArguments().getNewName());
 				return true;
 			}

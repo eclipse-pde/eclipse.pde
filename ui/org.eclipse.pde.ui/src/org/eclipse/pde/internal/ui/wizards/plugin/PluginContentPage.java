@@ -144,7 +144,7 @@ public class PluginContentPage extends ContentPage {
 
 		// Gather EEs 
 		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
-		TreeSet<String> availableEEs = new TreeSet<String>();
+		TreeSet<String> availableEEs = new TreeSet<>();
 		for (int i = 0; i < exeEnvs.length; i++) {
 			availableEEs.add(exeEnvs[i].getId());
 		}

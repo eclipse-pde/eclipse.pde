@@ -32,7 +32,7 @@ public class DependencyCalculator {
 
 	public void findDependencies(Object[] includedBundles) {
 		if (fDependencies == null)
-			fDependencies = new HashMap<String, IPluginModelBase>();
+			fDependencies = new HashMap<>();
 		for (int i = 0; i < includedBundles.length; i++) {
 			findObjectDependencies(includedBundles[i]);
 		}
@@ -40,7 +40,7 @@ public class DependencyCalculator {
 
 	public void findDependency(Object bundle) {
 		if (fDependencies == null)
-			fDependencies = new HashMap<String, IPluginModelBase>();
+			fDependencies = new HashMap<>();
 		findObjectDependencies(bundle);
 	}
 

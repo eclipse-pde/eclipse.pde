@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
 
 public class ElementsFilter implements IFilter {
 
-	private final List<ImageElement> mElements = new LinkedList<ImageElement>();
+	private final List<ImageElement> mElements = new LinkedList<>();
 
 	public ElementsFilter() {
 	}

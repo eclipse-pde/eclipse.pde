@@ -123,7 +123,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		int count = 0;
 		ILaunch[] launches = launchManager.getLaunches();
-		HashSet<String> imported = new HashSet<String>((4 * modelsToImport.length) / 3 + 1);
+		HashSet<String> imported = new HashSet<>((4 * modelsToImport.length) / 3 + 1);
 		for (int j = 0; j < modelsToImport.length; ++j) {
 			BundleDescription bd = modelsToImport[j].getBundleDescription();
 			if (bd != null) {

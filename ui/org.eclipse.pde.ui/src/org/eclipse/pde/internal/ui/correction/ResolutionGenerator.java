@@ -128,7 +128,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	}
 
 	private IMarkerResolution[] getBuildEntryAdditionResolutions(IMarker marker, String multiFixDescription) {
-		ArrayList<IMarkerResolution2> resolutions = new ArrayList<IMarkerResolution2>(2);
+		ArrayList<IMarkerResolution2> resolutions = new ArrayList<>(2);
 		resolutions.add(new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker));
 		for (int i = 0;; i++) {
 			try {

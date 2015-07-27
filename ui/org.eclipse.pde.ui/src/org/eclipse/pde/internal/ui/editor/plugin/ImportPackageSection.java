@@ -433,7 +433,7 @@ public class ImportPackageSection extends TableSection {
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (fHeader != null) {
-				Set<String> names = new HashSet<String>(); // set of String names, do not allow the same package to be added twice
+				Set<String> names = new HashSet<>(); // set of String names, do not allow the same package to be added twice
 				for (int i = 0; i < selected.length; i++) {
 					ImportPackageObject impObject = null;
 					if (selected[i] instanceof ImportItemWrapper)
@@ -482,10 +482,10 @@ public class ImportPackageSection extends TableSection {
 		Set<String> forbidden = getForbiddenIds();
 		boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 
-		ArrayList<ImportItemWrapper> elements = new ArrayList<ImportItemWrapper>();
-		ArrayList<ImportItemWrapper> conditional = new ArrayList<ImportItemWrapper>();
+		ArrayList<ImportItemWrapper> elements = new ArrayList<>();
+		ArrayList<ImportItemWrapper> conditional = new ArrayList<>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
-		Set<NameVersionDescriptor> nameVersions = new HashSet<NameVersionDescriptor>(); // Set of NameVersionDescriptors, used to remove duplicate entries
+		Set<NameVersionDescriptor> nameVersions = new HashSet<>(); // Set of NameVersionDescriptors, used to remove duplicate entries
 
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
@@ -736,7 +736,7 @@ public class ImportPackageSection extends TableSection {
 	}
 
 	private IPackageFragmentRoot[] getSourceRoots() throws JavaModelException {
-		ArrayList<IPackageFragmentRoot> result = new ArrayList<IPackageFragmentRoot>();
+		ArrayList<IPackageFragmentRoot> result = new ArrayList<>();
 		IProject project = getPage().getPDEEditor().getCommonProject();
 		// would normally return array of size 0, but by returning null can optimize the search to run faster.
 		if (project == null) {
@@ -784,7 +784,7 @@ public class ImportPackageSection extends TableSection {
 	}
 
 	private Set<String> getForbiddenIds() {
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
 		String id = model.getPluginBase().getId();
 		if (id != null)

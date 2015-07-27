@@ -135,7 +135,7 @@ public class TracingPropertySource {
 		fMasterOptions = masterOptions;
 		fTemplate = template;
 		fBlock = block;
-		fValues = new Hashtable<String, Object>();
+		fValues = new Hashtable<>();
 	}
 
 	public IPluginModelBase getModel() {
@@ -166,7 +166,7 @@ public class TracingPropertySource {
 	}
 
 	public void createContents(Composite parent, boolean enabled) {
-		fDescriptors = new Vector<PropertyEditor>();
+		fDescriptors = new Vector<>();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		parent.setLayout(layout);

@@ -39,7 +39,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 	/**
 	 * List of IFile and File of workspace and external Jars.
 	 */
-	protected ArrayList<Object> fJarPaths = new ArrayList<Object>();
+	protected ArrayList<Object> fJarPaths = new ArrayList<>();
 
 	protected Button fRemove;
 

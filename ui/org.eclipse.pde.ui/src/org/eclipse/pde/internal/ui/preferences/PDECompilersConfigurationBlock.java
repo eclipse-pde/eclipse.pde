@@ -262,12 +262,12 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * Map of controls to the tab they appear on. Allows for optimizing which builders
 	 * are used if changes are made
 	 */
-	private HashMap<Integer, HashSet<Control>> fControlMap = new HashMap<Integer, HashSet<Control>>(3);
+	private HashMap<Integer, HashSet<Control>> fControlMap = new HashMap<>(3);
 
 	/**
 	 * Listing of all of the {@link ExpandableComposite}s in the block
 	 */
-	private ArrayList<ExpandableComposite> fExpComps = new ArrayList<ExpandableComposite>();
+	private ArrayList<ExpandableComposite> fExpComps = new ArrayList<>();
 
 	/**
 	 * Flag used to know if the page needs saving or not
@@ -282,7 +282,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Set of builders to use when building if there are changes
 	 */
-	private HashSet<String> fBuilders = new HashSet<String>(4);
+	private HashSet<String> fBuilders = new HashSet<>(4);
 
 	/**
 	 * The parent this block has been added to 
@@ -348,7 +348,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		if (fProject == null || hasProjectSpecificSettings(fProject)) {
 			fOldProjectSettings = null;
 		} else {
-			fOldProjectSettings = new IdentityHashMap<Key, String>();
+			fOldProjectSettings = new IdentityHashMap<>();
 			for (int i = 0; i < fgAllKeys.length; i++) {
 				fOldProjectSettings.put(fgAllKeys[i], fgAllKeys[i].getStoredValue(fLookupOrder, false, fManager));
 			}
@@ -389,7 +389,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 				fOldProjectSettings = null;
 				updateControls();
 			} else {
-				fOldProjectSettings = new IdentityHashMap<Key, String>();
+				fOldProjectSettings = new IdentityHashMap<>();
 				String old = null;
 				for (int i = 0; i < fgAllKeys.length; i++) {
 					old = fgAllKeys[i].getStoredValue(fLookupOrder, false, fManager);
@@ -578,7 +578,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		Integer mapkey = new Integer(tabkind);
 		HashSet<Control> controls = fControlMap.get(mapkey);
 		if (controls == null) {
-			controls = new HashSet<Control>(8);
+			controls = new HashSet<>(8);
 			fControlMap.put(mapkey, controls);
 		}
 		controls.add(button);
@@ -622,7 +622,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		Integer mapkey = new Integer(tabkind);
 		HashSet<Control> controls = fControlMap.get(mapkey);
 		if (controls == null) {
-			controls = new HashSet<Control>(8);
+			controls = new HashSet<>(8);
 			fControlMap.put(mapkey, controls);
 		}
 		controls.add(combo);
@@ -648,7 +648,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		Integer mapkey = new Integer(tabkind);
 		HashSet<Control> controls = fControlMap.get(mapkey);
 		if (controls == null) {
-			controls = new HashSet<Control>(8);
+			controls = new HashSet<>(8);
 			fControlMap.put(mapkey, controls);
 		}
 		controls.add(text);
@@ -761,7 +761,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private void save() {
 		if (fDirty) {
 			try {
-				ArrayList<Key> changes = new ArrayList<Key>();
+				ArrayList<Key> changes = new ArrayList<>();
 				collectChanges(fLookupOrder[0], changes);
 				if (changes.size() > 0) {
 					if (fRebuildcount < 1) {

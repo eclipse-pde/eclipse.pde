@@ -39,7 +39,7 @@ public class ProductValidateAction extends Action {
 
 	@Override
 	public void run() {
-		Set<IPluginModelBase> launchPlugins = new HashSet<IPluginModelBase>();
+		Set<IPluginModelBase> launchPlugins = new HashSet<>();
 		if (fProduct.useFeatures()) {
 			IFeatureModel[] features = getUniqueFeatures();
 			for (int i = 0; i < features.length; i++) {
@@ -84,7 +84,7 @@ public class ProductValidateAction extends Action {
 	}
 
 	private IFeatureModel[] getUniqueFeatures() {
-		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
+		ArrayList<IFeatureModel> list = new ArrayList<>();
 		IProductFeature[] features = fProduct.getFeatures();
 		for (int i = 0; i < features.length; i++) {
 			String id = features[i].getId();

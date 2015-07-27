@@ -61,7 +61,7 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 	 * @return a list of IProjects that have the custom build property set, possibly empty
 	 */
 	private Set/*<IProject>*/<IProject> getProjectsWithCustomBuild(Object[] elements) {
-		Set<IProject> result = new HashSet<IProject>();
+		Set<IProject> result = new HashSet<>();
 		for (int i = 0; i < elements.length; i++) {
 			try {
 				if (elements[i] instanceof IResource) {

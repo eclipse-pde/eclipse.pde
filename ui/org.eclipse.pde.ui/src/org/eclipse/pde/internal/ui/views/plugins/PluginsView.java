@@ -638,7 +638,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
 		Set<?> set = DependencyManager.getSelfandDependencies(models, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
 		Object[] symbolicNames = set.toArray();
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>(set.size());
+		ArrayList<IPluginModelBase> result = new ArrayList<>(set.size());
 		for (int i = 0; i < symbolicNames.length; i++) {
 			IPluginModelBase model = PluginRegistry.findModel(symbolicNames[i].toString());
 			if (model != null)
@@ -650,7 +650,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private void handleSelectInJavaSearch() {
 		PluginsContentProvider provider = (PluginsContentProvider) fTreeViewer.getContentProvider();
 		Object[] elements = provider.getElements(fTreeViewer.getInput());
-		ArrayList<Object> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<>();
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
 			if (element instanceof IPluginModelBase) {
@@ -893,7 +893,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		return new IShowInSource() {
 			@Override
 			public ShowInContext getShowInContext() {
-				ArrayList<IResource> resourceList = new ArrayList<IResource>();
+				ArrayList<IResource> resourceList = new ArrayList<>();
 				IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 				IStructuredSelection resources;
 				if (selection.isEmpty()) {

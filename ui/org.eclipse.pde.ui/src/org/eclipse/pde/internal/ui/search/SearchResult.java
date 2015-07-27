@@ -72,7 +72,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 
 	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
-		ArrayList<Match> list = new ArrayList<Match>();
+		ArrayList<Match> list = new ArrayList<>();
 		Object[] objects = result.getElements();
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IPluginObject) {

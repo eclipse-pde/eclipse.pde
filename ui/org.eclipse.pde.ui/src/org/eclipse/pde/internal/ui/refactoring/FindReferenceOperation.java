@@ -33,7 +33,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
-		ArrayList<TextFileChange> list = new ArrayList<TextFileChange>();
+		ArrayList<TextFileChange> list = new ArrayList<>();
 		if (fDesc != null) {
 			monitor.beginTask("", 3); //$NON-NLS-1$
 			findRequireBundleReferences(list, new SubProgressMonitor(monitor, 1));

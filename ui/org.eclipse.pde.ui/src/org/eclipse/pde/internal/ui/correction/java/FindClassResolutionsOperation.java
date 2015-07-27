@@ -106,7 +106,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			typeName = null;
 		}
 
-		Set<IPackageFragment> packagesToExport = new HashSet<IPackageFragment>();
+		Set<IPackageFragment> packagesToExport = new HashSet<>();
 		Collection<ExportPackageDescription> validPackages = getValidPackages(typeName, packageName, packagesToExport, monitor);
 		if (validPackages != null) {
 
@@ -192,7 +192,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
 
 		IPluginModelBase[] activeModels = PluginRegistry.getActiveModels();
-		Set<IJavaProject> javaProjects = new HashSet<IJavaProject>(activeModels.length * 2);
+		Set<IJavaProject> javaProjects = new HashSet<>(activeModels.length * 2);
 
 		for (int i = 0; i < activeModels.length; i++) {
 			IResource resource = activeModels[i].getUnderlyingResource();
@@ -209,7 +209,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		try {
 			IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(javaProjects.toArray(new IJavaElement[javaProjects.size()]));
 
-			final Map<String, IPackageFragment> packages = new HashMap<String, IPackageFragment>();
+			final Map<String, IPackageFragment> packages = new HashMap<>();
 			SearchRequestor requestor = new SearchRequestor() {
 
 				@Override
@@ -235,7 +235,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 
 			if (!packages.isEmpty()) {
 				// transform to ExportPackageDescriptions
-				Map<String, ExportPackageDescription> exportDescriptions = new HashMap<String, ExportPackageDescription>(packages.size());
+				Map<String, ExportPackageDescription> exportDescriptions = new HashMap<>(packages.size());
 
 				// remove system packages if they happen to be included. Adding a system package won't resolve anything, since package package already comes from JRE
 				ExportPackageDescription[] systemPackages = PDECore.getDefault().getModelManager().getState().getState().getSystemPackages();
@@ -280,7 +280,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 
 	private static Collection<ExportPackageDescription> getValidPackages(String pkgName) {
 		ExportPackageDescription[] knownPackages = PDECore.getDefault().getModelManager().getState().getState().getExportedPackages();
-		Map<String, ExportPackageDescription> validPackages = new HashMap<String, ExportPackageDescription>();
+		Map<String, ExportPackageDescription> validPackages = new HashMap<>();
 		for (int i = 0; i < knownPackages.length; i++) {
 			if (knownPackages[i].getName().equals(pkgName)) {
 				validPackages.put(knownPackages[i].getName(), knownPackages[i]);
@@ -304,7 +304,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 			ExportPackageDescription[] visiblePkgs = helper.getVisiblePackages(desc);
 
-			HashSet<ExportPackageDescription> set = new HashSet<ExportPackageDescription>();
+			HashSet<ExportPackageDescription> set = new HashSet<>();
 			for (int i = 0; i < visiblePkgs.length; i++) {
 				set.add(visiblePkgs[i]);
 			}
@@ -322,7 +322,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 	private Set<String> getCurrentBundleNames() {
 		IPluginModelBase base = PluginRegistry.findModel(fProject);
 		if (base != null) {
-			Set<String> bundleNames = new HashSet<String>();
+			Set<String> bundleNames = new HashSet<>();
 			BundleSpecification[] reqBundles = base.getBundleDescription().getRequiredBundles();
 			for (int i = 0; i < reqBundles.length; i++) {
 				bundleNames.add(reqBundles[i].getName());

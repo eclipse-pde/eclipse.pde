@@ -75,7 +75,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase bundle) throws CoreException {
 		// if libraries are exported, compute export package (173393)
 		IPluginLibrary[] libs = fModel.getPluginBase().getLibraries();
-		Set<String> packages = new TreeSet<String>();
+		Set<String> packages = new TreeSet<>();
 		for (int i = 0; i < libs.length; i++) {
 			String[] filters = libs[i].getContentFilters();
 			// if a library is fully exported, then export all source packages (since we don't know which source folders go with which library)
@@ -340,7 +340,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private Set<String> getImportPackagesSet() {
-		TreeSet<String> set = new TreeSet<String>();
+		TreeSet<String> set = new TreeSet<>();
 		if (fGenerator != null) {
 			String[] packages = fGenerator.getImportPackages();
 			for (int i = 0; i < packages.length; i++) {
@@ -399,7 +399,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private IPluginReference[] getDependencies() {
-		ArrayList<IPluginReference> result = new ArrayList<IPluginReference>();
+		ArrayList<IPluginReference> result = new ArrayList<>();
 		if (fGenerator != null) {
 			IPluginReference[] refs = fGenerator.getDependencies();
 			for (int i = 0; i < refs.length; i++) {

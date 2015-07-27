@@ -56,7 +56,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		if (header == null)
 			return Collections.emptySet();
 
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		ExportPackageObject[] pkgs = ((ExportPackageHeader) header).getPackages();
 		for (int i = 0; i < pkgs.length; i++) {
 			// don't calculate uses directive on private packages
@@ -68,7 +68,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 
 	protected Map<String, HashSet<String>> findPackageReferences(Collection<String> packages, IProgressMonitor monitor) {
 		IJavaProject jp = JavaCore.create(fProject);
-		HashMap<String, HashSet<String>> pkgsAndUses = new HashMap<String, HashSet<String>>();
+		HashMap<String, HashSet<String>> pkgsAndUses = new HashMap<>();
 		IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, Collections.EMPTY_SET, false);
 		monitor.beginTask("", frags.length * 2); //$NON-NLS-1$
 		for (int i = 0; i < frags.length; i++) {
@@ -77,7 +77,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 			}
 			monitor.subTask(NLS.bind(PDEUIMessages.CalculateUsesOperation_calculatingDirective, frags[i].getElementName()));
 			if (packages.contains(frags[i].getElementName())) {
-				HashSet<String> pkgs = new HashSet<String>();
+				HashSet<String> pkgs = new HashSet<>();
 				pkgsAndUses.put(frags[i].getElementName(), pkgs);
 				try {
 					findReferences(frags[i].getCompilationUnits(), pkgs, new SubProgressMonitor(monitor, 1), false);

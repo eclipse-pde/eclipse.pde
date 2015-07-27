@@ -51,8 +51,8 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 	 */
 	@Override
 	public void run(IAction action) {
-		Map<Manifest, Object> filesMap = new HashMap<Manifest, Object>();
-		Set<IProject> projectSelection = new HashSet<IProject>();
+		Map<Manifest, Object> filesMap = new HashMap<>();
+		Set<IProject> projectSelection = new HashSet<>();
 		Iterator<?> i = selection.toList().iterator();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		while (i.hasNext()) {

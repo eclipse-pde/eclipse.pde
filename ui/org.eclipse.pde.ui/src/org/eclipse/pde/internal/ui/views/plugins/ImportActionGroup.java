@@ -86,7 +86,7 @@ public class ImportActionGroup extends ActionGroup {
 	}
 
 	static void handleImport(int importType, IStructuredSelection selection) {
-		ArrayList<IPluginModelBase> externalModels = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> externalModels = new ArrayList<>();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			IPluginModelBase model = getModel(iter.next());
 			if (model != null && model.getUnderlyingResource() == null)

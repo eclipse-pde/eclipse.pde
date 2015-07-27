@@ -36,7 +36,7 @@ public class CategoryOutlinePage extends FormOutlinePage {
 			if (model.isValid()) {
 				ISite site = model.getSite();
 				if (page.getId().equals(IUsPage.PAGE_ID)) {
-					ArrayList<IWritable> result = new ArrayList<IWritable>();
+					ArrayList<IWritable> result = new ArrayList<>();
 					ISiteCategoryDefinition[] catDefs = site.getCategoryDefinitions();
 					for (int i = 0; i < catDefs.length; i++) {
 						result.add(catDefs[i]);
@@ -62,7 +62,7 @@ public class CategoryOutlinePage extends FormOutlinePage {
 			if (model.isValid()) {
 				ISite site = model.getSite();
 				ISiteFeature[] features = site.getFeatures();
-				HashSet<IWritable> result = new HashSet<IWritable>();
+				HashSet<IWritable> result = new HashSet<>();
 				for (int i = 0; i < features.length; i++) {
 					ISiteCategory[] cats = features[i].getCategories();
 					for (int j = 0; j < cats.length; j++) {

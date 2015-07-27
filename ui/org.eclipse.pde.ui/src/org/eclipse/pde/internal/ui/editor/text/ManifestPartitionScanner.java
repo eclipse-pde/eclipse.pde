@@ -26,7 +26,7 @@ public class ManifestPartitionScanner extends RuleBasedPartitionScanner {
 	public ManifestPartitionScanner() {
 
 		Token value = new Token(MANIFEST_HEADER_VALUE);
-		ArrayList<SingleLineRule> rules = new ArrayList<SingleLineRule>();
+		ArrayList<SingleLineRule> rules = new ArrayList<>();
 		rules.add(new SingleLineRule("=", null, value, '\\', true, true)); //$NON-NLS-1$
 		rules.add(new SingleLineRule(":", null, value, '\\', true, true)); //$NON-NLS-1$
 		rules.add(new SingleLineRule(" ", null, value, '\\', true, true)); //$NON-NLS-1$

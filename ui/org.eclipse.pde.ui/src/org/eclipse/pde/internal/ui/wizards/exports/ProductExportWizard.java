@@ -95,7 +95,7 @@ public class ProductExportWizard extends BaseExportWizard {
 	}
 
 	private IFeatureModel[] getFeatureModels() {
-		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
+		ArrayList<IFeatureModel> list = new ArrayList<>();
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IProductFeature[] features = fProductModel.getProduct().getFeatures();
 		for (int i = 0; i < features.length; i++) {
@@ -107,7 +107,7 @@ public class ProductExportWizard extends BaseExportWizard {
 	}
 
 	private BundleDescription[] getPluginModels() {
-		ArrayList<BundleDescription> list = new ArrayList<BundleDescription>();
+		ArrayList<BundleDescription> list = new ArrayList<>();
 		State state = TargetPlatformHelper.getState();
 		IProductPlugin[] plugins = fProductModel.getProduct().getPlugins();
 		for (int i = 0; i < plugins.length; i++) {

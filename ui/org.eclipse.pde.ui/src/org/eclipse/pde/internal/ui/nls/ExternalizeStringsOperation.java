@@ -49,8 +49,8 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 	public ExternalizeStringsOperation(Object[] changeFiles, CompositeChange parentChange) {
 		fChangeFiles = changeFiles;
 		fParentChange = parentChange;
-		fCompositeChanges = new HashMap<String, CompositeChange>();
-		fFileChanges = new HashMap<IFile, TextFileChange>();
+		fCompositeChanges = new HashMap<>();
+		fFileChanges = new HashMap<>();
 	}
 
 	@Override

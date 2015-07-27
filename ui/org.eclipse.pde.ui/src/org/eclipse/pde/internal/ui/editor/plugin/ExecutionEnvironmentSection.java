@@ -342,7 +342,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		IExecutionEnvironment[] envs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
 		if (header == null)
 			return envs;
-		ArrayList<Object> list = new ArrayList<Object>();
+		ArrayList<Object> list = new ArrayList<>();
 		for (int i = 0; i < envs.length; i++) {
 			if (!header.hasExecutionEnvironment(envs[i]))
 				list.add(envs[i]);

@@ -148,7 +148,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 	class PDEQuickAssistProcessor implements IQuickAssistProcessor {
 
 		ResolutionGenerator fGenerator = new ResolutionGenerator();
-		HashMap<IMarker, IMarkerResolution[]> fResMap = new HashMap<IMarker, IMarkerResolution[]>();
+		HashMap<IMarker, IMarkerResolution[]> fResMap = new HashMap<>();
 
 		@Override
 		public String getErrorMessage() {
@@ -181,7 +181,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			// grab the local resolutions first
 			IMarker marker = annotation.getMarker();
 			if (!fResMap.containsKey(marker)) {
-				ArrayList<IMarkerResolution> resolutions = new ArrayList<IMarkerResolution>(5);
+				ArrayList<IMarkerResolution> resolutions = new ArrayList<>(5);
 				IMarkerResolution[] localResolutions = fGenerator.getResolutions(marker);
 				resolutions.addAll(Arrays.asList(localResolutions));
 
@@ -211,7 +211,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 			int offset = invocationContext.getOffset();
 			Iterator<?> it = amodel.getAnnotationIterator();
-			TreeSet<ICompletionProposal> proposalSet = new TreeSet<ICompletionProposal>(new Comparator<Object>() {
+			TreeSet<ICompletionProposal> proposalSet = new TreeSet<>(new Comparator<Object>() {
 
 				@Override
 				public int compare(Object o1, Object o2) {

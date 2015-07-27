@@ -349,7 +349,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		if (plugins.length == 0)
 			return;
 
-		ArrayList<BundleDescription> list = new ArrayList<BundleDescription>(plugins.length);
+		ArrayList<BundleDescription> list = new ArrayList<>(plugins.length);
 		for (int i = 0; i < plugins.length; i++) {
 			list.add(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null));
 		}
@@ -388,7 +388,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			IWorkingSet[] workingSets = dialog.getSelection();
 			IProduct product = getProduct();
 			IProductModelFactory factory = product.getModel().getFactory();
-			ArrayList<IProductPlugin> pluginList = new ArrayList<IProductPlugin>();
+			ArrayList<IProductPlugin> pluginList = new ArrayList<>();
 			for (int i = 0; i < workingSets.length; i++) {
 				IAdaptable[] elements = workingSets[i].getElements();
 				for (int j = 0; j < elements.length; j++) {
@@ -433,7 +433,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	}
 
 	private IPluginModelBase[] getBundles() {
-		List<IPluginModelBase> pluginModelBaseList = new ArrayList<IPluginModelBase>();
+		List<IPluginModelBase> pluginModelBaseList = new ArrayList<>();
 		IProduct product = getProduct();
 		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
 		for (BundleDescription bundleDescription : bundles) {

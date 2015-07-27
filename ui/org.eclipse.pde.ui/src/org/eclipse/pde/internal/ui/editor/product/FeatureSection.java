@@ -333,7 +333,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	private void handleAddRequired() {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IProductFeature[] currentFeatures = getProduct().getFeatures();
-		Set<String> requiredFeatures = new HashSet<String>();
+		Set<String> requiredFeatures = new HashSet<>();
 		for (int i = 0; i < currentFeatures.length; i++) {
 			IFeatureModel model = manager.findFeatureModel(currentFeatures[i].getId(), currentFeatures[i].getVersion());
 			if (model != null) {
@@ -382,7 +382,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	private IFeatureModel[] getAvailableChoices() {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
 		IProduct product = getProduct();
-		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
+		ArrayList<IFeatureModel> list = new ArrayList<>();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getFeature().getId();
 			if (id != null && !product.containsFeature(id)) {

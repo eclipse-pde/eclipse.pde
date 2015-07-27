@@ -47,7 +47,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 public class PDEJavaHelperUI {
 
-	private static HashMap<String, HashMap<String, String>> fDocMap = new HashMap<String, HashMap<String, String>>();
+	private static HashMap<String, HashMap<String, String>> fDocMap = new HashMap<>();
 
 	public static String selectType(IResource resource, int scope) {
 		if (resource == null)
@@ -160,7 +160,7 @@ public class PDEJavaHelperUI {
 	public static String getJavaDoc(String constant, IJavaProject jp, String className) {
 		HashMap<String, String> map = fDocMap.get(className);
 		if (map == null)
-			fDocMap.put(className, map = new HashMap<String, String>());
+			fDocMap.put(className, map = new HashMap<>());
 		String javaDoc = map.get(constant);
 
 		if (javaDoc == null) {

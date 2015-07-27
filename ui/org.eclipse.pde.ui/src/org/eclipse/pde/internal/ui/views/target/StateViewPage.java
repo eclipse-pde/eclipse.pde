@@ -97,7 +97,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 				if (desc.isResolved()) {
 					Object[] required = getResolvedDependencies(desc.getRequiredBundles());
 					Object[] imported = getResolvedDependencies(desc.getImportPackages());
-					ArrayList<DependencyGroup> list = new ArrayList<DependencyGroup>(2);
+					ArrayList<DependencyGroup> list = new ArrayList<>(2);
 					if (required.length > 0)
 						list.add(new DependencyGroup(required));
 					if (imported.length > 0)
@@ -129,7 +129,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		}
 
 		private Object[] getResolvedDependencies(VersionConstraint[] constraints) {
-			ArrayList<VersionConstraint> list = new ArrayList<VersionConstraint>(constraints.length);
+			ArrayList<VersionConstraint> list = new ArrayList<>(constraints.length);
 			for (int i = 0; i < constraints.length; i++)
 				if (constraints[i].isResolved())
 					list.add(constraints[i]);

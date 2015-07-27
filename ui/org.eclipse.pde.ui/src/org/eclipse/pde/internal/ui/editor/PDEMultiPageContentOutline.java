@@ -38,7 +38,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 
 	public PDEMultiPageContentOutline(PDEFormEditor editor) {
 		this.editor = editor;
-		listeners = new ArrayList<ISelectionChangedListener>();
+		listeners = new ArrayList<>();
 		sortingOn = PDEPlugin.getDefault().getPreferenceStore().getBoolean("PDEMultiPageContentOutline.SortingAction.isChecked"); //$NON-NLS-1$
 
 	}

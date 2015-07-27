@@ -64,7 +64,7 @@ public class BundleManifestChange {
 			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
 			bundle.getModel().addModelChangedListener(listener);
 
-			ArrayList<PDEManifestElement> list = new ArrayList<PDEManifestElement>();
+			ArrayList<PDEManifestElement> list = new ArrayList<>();
 			for (int i = 0; i < elements.length; i++) {
 				if (elements[i] instanceof IJavaElement) {
 					String packageName = ((IJavaElement) elements[i]).getElementName();

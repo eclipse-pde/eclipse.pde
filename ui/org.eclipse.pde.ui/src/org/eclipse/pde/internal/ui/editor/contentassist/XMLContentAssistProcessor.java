@@ -69,7 +69,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	// proposal generation type
 	private static final int F_NO_ASSIST = 0, F_ADD_ATTRIB = 1, F_ADD_CHILD = 2, F_OPEN_TAG = 3;
 
-	private static final ArrayList<VirtualSchemaObject> F_V_BOOLS = new ArrayList<VirtualSchemaObject>();
+	private static final ArrayList<VirtualSchemaObject> F_V_BOOLS = new ArrayList<>();
 	static {
 		F_V_BOOLS.add(new VirtualSchemaObject("true", null, F_ATTRIBUTE_BOOLEAN_VALUE)); //$NON-NLS-1$
 		F_V_BOOLS.add(new VirtualSchemaObject("false", null, F_ATTRIBUTE_BOOLEAN_VALUE)); //$NON-NLS-1$
@@ -221,7 +221,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				if (resource == null)
 					return null;
 				// Revisit: NEW CODE HERE
-				ArrayList<Object> list = new ArrayList<Object>();
+				ArrayList<Object> list = new ArrayList<>();
 				ICompletionProposal[] proposals = null;
 
 				generateTypePackageProposals(attrValue, resource.getProject(), list, offset - attrValue.length(), IJavaSearchConstants.CLASS_AND_INTERFACE);
@@ -240,7 +240,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			} else if (sAttr.getKind() == IMetaAttribute.IDENTIFIER) {
 				String[] validAttributes = PDESchemaHelper.getValidAttributes(sAttr).keySet().toArray(new String[0]);
 				Arrays.sort(validAttributes);
-				ArrayList<VirtualSchemaObject> objs = new ArrayList<VirtualSchemaObject>(validAttributes.length);
+				ArrayList<VirtualSchemaObject> objs = new ArrayList<>(validAttributes.length);
 				for (int i = 0; i < validAttributes.length; i++)
 					objs.add(new VirtualSchemaObject(validAttributes[i], null, F_ATTRIBUTE_ID_VALUE));
 				return computeAttributeProposal(attr, offset, attrValue, objs);
@@ -248,7 +248,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				if (sAttr.getType() == null)
 					return null;
 				ISchemaRestriction sRestr = (sAttr.getType()).getRestriction();
-				ArrayList<VirtualSchemaObject> objs = new ArrayList<VirtualSchemaObject>();
+				ArrayList<VirtualSchemaObject> objs = new ArrayList<>();
 				if (sRestr == null) {
 					ISchemaSimpleType type = sAttr.getType();
 					if (type != null && type.getName().equals("boolean")) //$NON-NLS-1$
@@ -283,7 +283,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			return convertListToProposal(allExtensionPoints, attribute, offset);
 		}
 		// Create the filtered proposal list
-		ArrayList<ISchemaObject> filteredProposalList = new ArrayList<ISchemaObject>();
+		ArrayList<ISchemaObject> filteredProposalList = new ArrayList<>();
 		// Filter the applicable extension points by the current attribute
 		// value
 		filterExtPointAttrProposals(filteredProposalList, allExtensionPoints, currentAttributeValue);
@@ -293,7 +293,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	private ICompletionProposal[] computeRootNodeProposals(IDocumentElementNode node, int offset, String filter) {
 		// Create the filtered proposal list
-		ArrayList<ISchemaObject> filteredProposalList = new ArrayList<ISchemaObject>();
+		ArrayList<ISchemaObject> filteredProposalList = new ArrayList<>();
 		// Add extension to the list
 		addToList(filteredProposalList, filter, new VirtualSchemaObject(F_STR_EXT, PDEUIMessages.XMLContentAssistProcessor_extensions, F_EXTENSION));
 		// Add extension point to the list
@@ -352,7 +352,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private ICompletionProposal[] computeAttributeProposal(IDocumentAttributeNode attr, int offset, String currValue, List<VirtualSchemaObject> validValues) {
 		if (validValues == null)
 			return null;
-		ArrayList<ISchemaObject> list = new ArrayList<ISchemaObject>();
+		ArrayList<ISchemaObject> list = new ArrayList<>();
 		for (int i = 0; i < validValues.size(); i++)
 			addToList(list, currValue, validValues.get(i));
 
@@ -409,7 +409,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 
 	private ICompletionProposal[] computeAddChildProposal(IDocumentElementNode node, int offset, IDocument doc, String filter) {
-		ArrayList<ISchemaObject> propList = new ArrayList<ISchemaObject>();
+		ArrayList<ISchemaObject> propList = new ArrayList<>();
 		if (node instanceof IPluginBase) {
 			return computeRootNodeProposals(node, offset, filter);
 		} else if (node instanceof IPluginExtensionPoint) {
@@ -610,7 +610,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			return null;
 		IDocumentAttributeNode[] attrs = node != null ? node.getNodeAttributes() : new IDocumentAttributeNode[0];
 
-		ArrayList<ISchemaObject> list = new ArrayList<ISchemaObject>();
+		ArrayList<ISchemaObject> list = new ArrayList<>();
 		for (int i = 0; i < sAttrs.length; i++) {
 			int k; // if we break early we wont add
 			for (k = 0; k < attrs.length; k++)
@@ -691,7 +691,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			return fExternalExtPoints;
 		}
 		// Query for all external extension points
-		fExternalExtPoints = new ArrayList<ISchemaObject>();
+		fExternalExtPoints = new ArrayList<>();
 		// Get all plug-ins in the workspace
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 		// Process each plugin
@@ -751,7 +751,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			// Realistically, this line should never be hit
 			return fInternalExtPoints;
 		}
-		fInternalExtPoints = new ArrayList<VirtualSchemaObject>();
+		fInternalExtPoints = new ArrayList<>();
 		// Get all extension points defined by this plugin
 		IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
 		// Process each extension point

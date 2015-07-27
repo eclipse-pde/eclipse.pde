@@ -169,7 +169,7 @@ public abstract class BaseBuildAction extends AbstractHandler {
 			if (launchCopy == null)
 				return;
 
-			Map<String, String> properties = new HashMap<String, String>();
+			Map<String, String> properties = new HashMap<>();
 			properties = launchCopy.getAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);
 			properties.put(IXMLConstants.PROPERTY_BASE_WS, TargetPlatform.getWS());
 			properties.put(IXMLConstants.PROPERTY_BASE_OS, TargetPlatform.getOS());

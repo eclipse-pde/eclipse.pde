@@ -39,12 +39,12 @@ public class CalleesListContentProvider extends CalleesContentProvider implement
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof IPluginModelBase) {
-			Map<String, Object> elements = new HashMap<String, Object>();
-			Set<Object> candidates = new HashSet<Object>();
+			Map<String, Object> elements = new HashMap<>();
+			Set<Object> candidates = new HashSet<>();
 			candidates.addAll(Arrays.asList(findCallees(((IPluginModelBase) inputElement))));
 
 			while (!candidates.isEmpty()) {
-				Set<Object> newCandidates = new HashSet<Object>();
+				Set<Object> newCandidates = new HashSet<>();
 				for (Iterator<Object> it = candidates.iterator(); it.hasNext();) {
 					Object candidate = it.next();
 					BundleDescription desc = null;

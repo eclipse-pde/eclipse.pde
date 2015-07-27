@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 public class XMLInsertionComputer {
 
 	public static void computeInsertion(ISchemaElement sElement, IPluginParent pElement) {
-		HashSet<String> visited = new HashSet<String>();
+		HashSet<String> visited = new HashSet<>();
 		if ((sElement == null) || (pElement == null)) {
 			// If there is no corresponding schema information or plug-in 
 			// model, then there is nothing to augment

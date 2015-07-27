@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Display;
 public class ColorManager implements IColorManager, IPDEColorConstants {
 
 	private static ColorManager fColorManager;
-	private Map<String, Color> fColorTable = new HashMap<String, Color>(5);
+	private Map<String, Color> fColorTable = new HashMap<>(5);
 	private static int counter = 0;
 
 	public ColorManager() {

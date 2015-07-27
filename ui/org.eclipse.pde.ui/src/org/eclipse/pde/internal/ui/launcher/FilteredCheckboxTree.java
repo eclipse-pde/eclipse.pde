@@ -121,7 +121,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		class FilteredCheckboxTreeItem {
 			Object data; // Data element
 			String state; // Checked State
-			List<FilteredCheckboxTreeItem> children = new ArrayList<FilteredCheckboxTreeItem>();
+			List<FilteredCheckboxTreeItem> children = new ArrayList<>();
 
 			public FilteredCheckboxTreeItem(Object data, String state, Map<Object, FilteredCheckboxTreeItem> itemCache, FilteredCheckboxTreeItem parent) {
 				this.data = data;
@@ -134,13 +134,13 @@ class FilteredCheckboxTree extends FilteredTree {
 		}
 
 		/* A cache of all the nodes */
-		Map<Object, FilteredCheckboxTreeItem> itemCache = new HashMap<Object, FilteredCheckboxTreeItem>();
+		Map<Object, FilteredCheckboxTreeItem> itemCache = new HashMap<>();
 		/* The preRefresh Listeners */
-		List<PreRefreshNotifier> refreshingListeners = new ArrayList<PreRefreshNotifier>();
+		List<PreRefreshNotifier> refreshingListeners = new ArrayList<>();
 
 		@Override
 		protected void unmapAllElements() {
-			itemCache = new HashMap<Object, FilteredCheckboxTreeItem>();
+			itemCache = new HashMap<>();
 			super.unmapAllElements();
 		}
 
@@ -191,7 +191,7 @@ class FilteredCheckboxTree extends FilteredTree {
 
 		public Object[] getCheckedChildren(Object element) {
 			FilteredCheckboxTreeItem item = itemCache.get(element);
-			List<Object> checkedChildren = new ArrayList<Object>();
+			List<Object> checkedChildren = new ArrayList<>();
 			if (item != null) {
 				List<FilteredCheckboxTreeItem> children = item.children;
 				Iterator<FilteredCheckboxTreeItem> iterator = children.iterator();
@@ -208,7 +208,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		@Override
 		public Object[] getCheckedElements() {
 			Iterator<FilteredCheckboxTreeItem> iterator = itemCache.values().iterator();
-			List<Object> checkedElements = new LinkedList<Object>();
+			List<Object> checkedElements = new LinkedList<>();
 			while (iterator.hasNext()) {
 				FilteredCheckboxTreeItem item = iterator.next();
 				Widget testFindItem = getViewer().testFindItem(item.data);
@@ -236,8 +236,8 @@ class FilteredCheckboxTree extends FilteredTree {
 
 		@Override
 		public void setCheckedElements(Object[] elements) {
-			Set<Object> s = new HashSet<Object>(itemCache.keySet());
-			s.removeAll(new HashSet<Object>(Arrays.asList(elements)));
+			Set<Object> s = new HashSet<>(itemCache.keySet());
+			s.removeAll(new HashSet<>(Arrays.asList(elements)));
 			for (int i = 0; i < elements.length; i++) {
 				FilteredCheckboxTreeItem item = itemCache.get(elements[i]);
 				if (item != null) {
@@ -350,7 +350,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		 * A helper method to get all the items in the tree
 		 */
 		private ArrayList<TreeItem> getAllTreeItems(TreeItem[] roots) {
-			ArrayList<TreeItem> list = new ArrayList<TreeItem>();
+			ArrayList<TreeItem> list = new ArrayList<>();
 			for (int i = 0; i < roots.length; i++) {
 				TreeItem item = roots[i];
 				list.add(item);

@@ -198,7 +198,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 
 	private LazyStartHeader[] getLazyStartHeaders() {
 		IBundle bundle = getBundle();
-		ArrayList<IManifestHeader> headers = new ArrayList<IManifestHeader>(3);
+		ArrayList<IManifestHeader> headers = new ArrayList<>(3);
 		if (bundle instanceof Bundle) {
 			String[] keys = new String[] {ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY};
 			for (int i = 0; i < keys.length; i++) {

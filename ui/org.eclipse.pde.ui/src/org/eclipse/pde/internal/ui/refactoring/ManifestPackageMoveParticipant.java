@@ -29,7 +29,7 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 			IProject project = javaProject.getProject();
 			if (PDEProject.getManifest(project).exists()) {
 				fProject = javaProject.getProject();
-				fElements = new HashMap<Object, String>();
+				fElements = new HashMap<>();
 				fElements.put(fragment, getNewName(getArguments().getDestination(), element));
 				return true;
 			}

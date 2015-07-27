@@ -40,7 +40,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class CommandList {
 
 	protected class CommandTreeLabelProvider extends LabelProvider {
-		private HashMap<Object, Image> fImgMap = new HashMap<Object, Image>();
+		private HashMap<Object, Image> fImgMap = new HashMap<>();
 		private Image fDefaultImage;
 
 		@Override

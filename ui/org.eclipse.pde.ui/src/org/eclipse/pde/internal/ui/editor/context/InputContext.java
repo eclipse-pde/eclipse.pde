@@ -49,7 +49,7 @@ public abstract class InputContext {
 	private IModelChangedListener fModelListener;
 	private IDocumentProvider fDocumentProvider;
 	private IElementStateListener fElementListener;
-	protected ArrayList<TextEdit> fEditOperations = new ArrayList<TextEdit>();
+	protected ArrayList<TextEdit> fEditOperations = new ArrayList<>();
 
 	private boolean fValidated;
 	private boolean fPrimary;

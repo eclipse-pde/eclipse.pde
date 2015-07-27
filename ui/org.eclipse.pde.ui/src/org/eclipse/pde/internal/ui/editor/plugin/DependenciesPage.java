@@ -84,7 +84,7 @@ public class DependenciesPage extends PDEFormPage {
 	}
 
 	private String[] getRequiredSectionLabels() {
-		ArrayList<String> labels = new ArrayList<String>();
+		ArrayList<String> labels = new ArrayList<>();
 		labels.add(PDEUIMessages.RequiresSection_add);
 		labels.add(PDEUIMessages.RequiresSection_delete);
 		labels.add(PDEUIMessages.RequiresSection_up);

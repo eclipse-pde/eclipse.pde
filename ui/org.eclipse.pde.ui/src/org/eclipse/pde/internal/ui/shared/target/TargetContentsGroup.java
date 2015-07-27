@@ -100,7 +100,7 @@ public class TargetContentsGroup {
 	/**
 	 * Cached list of all bundles, used to quickly obtain bundle counts.
 	 */
-	private List<TargetBundle> fAllBundles = new ArrayList<TargetBundle>();
+	private List<TargetBundle> fAllBundles = new ArrayList<>();
 
 	private int fGrouping;
 	private static final int GROUP_BY_NONE = 0;
@@ -529,7 +529,7 @@ public class TargetContentsGroup {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object[] allChecked = fTree.getCheckedLeafElements();
-				Collection<Object> required = new ArrayList<Object>();
+				Collection<Object> required = new ArrayList<>();
 				if (fFeaureModeButton.getSelection()) {
 					required.addAll(getRequiredFeatures(fTargetDefinition.getAllFeatures(), allChecked));
 				} else {
@@ -739,7 +739,7 @@ public class TargetContentsGroup {
 	 * @return list of resolved bundles from the collection to be checked
 	 */
 	private List<TargetBundle> getRequiredPlugins(final Collection<TargetBundle> allBundles, final Object[] checkedBundles) {
-		final Set<String> dependencies = new HashSet<String>();
+		final Set<String> dependencies = new HashSet<>();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor monitor) {
@@ -747,7 +747,7 @@ public class TargetContentsGroup {
 					monitor.beginTask(Messages.TargetContentsGroup_5, 150);
 
 					// Get all the bundle locations
-					List<URL> allLocations = new ArrayList<URL>(allBundles.size());
+					List<URL> allLocations = new ArrayList<>(allBundles.size());
 					for (Iterator<TargetBundle> iterator = allBundles.iterator(); iterator.hasNext();) {
 						TargetBundle current = iterator.next();
 						try {
@@ -775,7 +775,7 @@ public class TargetContentsGroup {
 
 					// Figure out which of the models have been checked
 					IPluginModelBase[] models = state.getTargetModels();
-					List<IPluginModelBase> checkedModels = new ArrayList<IPluginModelBase>(checkedBundles.length);
+					List<IPluginModelBase> checkedModels = new ArrayList<>(checkedBundles.length);
 					for (int i = 0; i < checkedBundles.length; i++) {
 						if (checkedBundles[i] instanceof TargetBundle) {
 							BundleInfo bundle = ((TargetBundle) checkedBundles[i]).getBundleInfo();
@@ -795,7 +795,7 @@ public class TargetContentsGroup {
 					// Get implicit dependencies as a list of strings
 					// This is wasteful since the dependency calculation puts them back into BundleInfos
 					NameVersionDescriptor[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
-					List<String> implicitIDs = new ArrayList<String>();
+					List<String> implicitIDs = new ArrayList<>();
 					if (implicitDependencies != null) {
 						for (int i = 0; i < implicitDependencies.length; i++) {
 							implicitIDs.add(implicitDependencies[i].getId());
@@ -818,14 +818,14 @@ public class TargetContentsGroup {
 			new ProgressMonitorDialog(fTree.getControl().getShell()).run(true, true, op);
 
 			// We want to check the dependents, the source of the dependents, and the source of the originally checked
-			Set<String> checkedNames = new HashSet<String>(checkedBundles.length);
+			Set<String> checkedNames = new HashSet<>(checkedBundles.length);
 			for (int i = 0; i < checkedBundles.length; i++) {
 				if (checkedBundles[i] instanceof TargetBundle) {
 					checkedNames.add(((TargetBundle) checkedBundles[i]).getBundleInfo().getSymbolicName());
 				}
 			}
 
-			List<TargetBundle> toCheck = new ArrayList<TargetBundle>();
+			List<TargetBundle> toCheck = new ArrayList<>();
 			for (Iterator<TargetBundle> iterator = fAllBundles.iterator(); iterator.hasNext();) {
 				TargetBundle bundle = iterator.next();
 				if (bundle.isSourceBundle()) {
@@ -855,7 +855,7 @@ public class TargetContentsGroup {
 	 * @return set of features to be checked
 	 */
 	private Set<TargetFeature> getRequiredFeatures(final TargetFeature[] allFeatures, final Object[] checkedFeatures) {
-		Set<TargetFeature> required = new HashSet<TargetFeature>();
+		Set<TargetFeature> required = new HashSet<>();
 		for (int j = 0; j < checkedFeatures.length; j++) {
 			if (checkedFeatures[j] instanceof TargetFeature) {
 				getFeatureDependencies((TargetFeature) checkedFeatures[j], allFeatures, required);
@@ -1013,7 +1013,7 @@ public class TargetContentsGroup {
 	}
 
 	private void updateCheckState() {
-		List<Object> result = new ArrayList<Object>();
+		List<Object> result = new ArrayList<>();
 		// Checked error statuses
 		if (fMissing != null) {
 			result.addAll(fMissing);
@@ -1053,13 +1053,13 @@ public class TargetContentsGroup {
 		}
 
 		// Map the bundles into their file locations
-		fFileBundleMapping = new HashMap<IPath, List<TargetBundle>>();
+		fFileBundleMapping = new HashMap<>();
 		for (Iterator<TargetBundle> iterator = fAllBundles.iterator(); iterator.hasNext();) {
 			TargetBundle currentBundle = iterator.next();
 			IPath parentPath = getParentPath(currentBundle);
 			List<TargetBundle> bundles = fFileBundleMapping.get(parentPath);
 			if (bundles == null) {
-				bundles = new ArrayList<TargetBundle>();
+				bundles = new ArrayList<>();
 				bundles.add(currentBundle);
 				fFileBundleMapping.put(parentPath, bundles);
 			} else {
@@ -1120,7 +1120,7 @@ public class TargetContentsGroup {
 	public void saveIncludedBundleState() {
 		if (fFeaureModeButton.getSelection()) {
 			// Create a list of checked bundle infos
-			List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>();
+			List<NameVersionDescriptor> included = new ArrayList<>();
 			int missingCount = 0;
 			Object[] checked = fTree.getCheckedLeafElements();
 			for (int i = 0; i < checked.length; i++) {
@@ -1150,8 +1150,8 @@ public class TargetContentsGroup {
 			}
 		} else {
 			// Figure out if there are multiple bundles sharing the same id
-			Set<String> multi = new HashSet<String>(); // BSNs of bundles with multiple versions available
-			Set<String> all = new HashSet<String>();
+			Set<String> multi = new HashSet<>(); // BSNs of bundles with multiple versions available
+			Set<String> all = new HashSet<>();
 			for (Iterator<TargetBundle> iterator = fAllBundles.iterator(); iterator.hasNext();) {
 				TargetBundle rb = iterator.next();
 				if (!all.add(rb.getBundleInfo().getSymbolicName())) {
@@ -1160,7 +1160,7 @@ public class TargetContentsGroup {
 			}
 
 			// Create a list of checked bundle infos
-			List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>();
+			List<NameVersionDescriptor> included = new ArrayList<>();
 			Object[] checked = fTree.getCheckedLeafElements();
 			for (int i = 0; i < checked.length; i++) {
 				if (checked[i] instanceof TargetBundle) {
@@ -1222,11 +1222,11 @@ public class TargetContentsGroup {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
-				List<Object> result = new ArrayList<Object>();
+				List<Object> result = new ArrayList<>();
 
 				// Check if there are any errors for missing features/bundles to display
 				if (fMissing == null || fMissing.isEmpty()) {
-					fMissing = new HashSet<TargetBundle>(); // A set is used to remove copies of problem bundles
+					fMissing = new HashSet<>(); // A set is used to remove copies of problem bundles
 					TargetBundle[] bundles = fTargetDefinition.getBundles();
 					for (int i = 0; i < bundles.length; i++) {
 						if (!bundles[i].getStatus().isOK()) {

@@ -129,7 +129,7 @@ public class IntroSection extends PDESection {
 	}
 
 	private void loadManifestAndIntroIds(boolean onlyLoadManifest) {
-		TreeSet<String> result = new TreeSet<String>();
+		TreeSet<String> result = new TreeSet<>();
 		String introId;
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.ui.intro", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {

@@ -31,7 +31,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 
 	private class ClasspathFixCollector extends AbstractClassResolutionCollector {
 
-		private ArrayList<Object> fList = new ArrayList<Object>();
+		private ArrayList<Object> fList = new ArrayList<>();
 
 		@Override
 		public void addResolutionModification(IProject project, ExportPackageDescription desc) {

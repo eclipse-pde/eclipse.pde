@@ -145,7 +145,7 @@ public class PluginBlock extends AbstractPluginBlock {
 
 			if (fInitDefaultCheckState) {
 				// If this is the first time the table is enabled, default the checkstate to all workspace plug-ins
-				TreeSet<String> checkedWorkspace = new TreeSet<String>();
+				TreeSet<String> checkedWorkspace = new TreeSet<>();
 				IPluginModelBase[] workspaceModels = getWorkspaceModels();
 				for (int i = 0; i < workspaceModels.length; i++) {
 					String id = workspaceModels[i].getPluginBase().getId();
