@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 449348
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 434428
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.dialogs;
 
@@ -69,8 +70,9 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 			int id1 = getId(o1);
 			int id2 = getId(o2);
 
-			if (id1 != id2)
+			if (id1 != id2) {
 				return id1 - id2;
+			}
 			return compareSimilarObjects(o1, o2);
 		}
 
@@ -109,9 +111,6 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		setListLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -147,8 +146,8 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 	private static void addSelfAndDirectImports(HashSet<String> set, IPluginModelBase model) {
 		set.add(model.getPluginBase().getId());
 		IPluginImport[] imports = model.getPluginBase().getImports();
-		for (int i = 0; i < imports.length; i++) {
-			String id = imports[i].getId();
+		for (IPluginImport pImport : imports) {
+			String id = pImport.getId();
 			if (set.add(id)) {
 				addReexportedImport(set, id);
 			}
@@ -159,9 +158,9 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model != null) {
 			IPluginImport[] imports = model.getPluginBase().getImports();
-			for (int i = 0; i < imports.length; i++) {
-				if (imports[i].isReexported() && set.add(imports[i].getId())) {
-					addReexportedImport(set, imports[i].getId());
+			for (IPluginImport pImport : imports) {
+				if (pImport.isReexported() && set.add(pImport.getId())) {
+					addReexportedImport(set, pImport.getId());
 				}
 			}
 		}
@@ -169,8 +168,9 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private static void addImportedPackages(IBundlePluginModelBase base, HashSet<String> existingImports) {
 		HashMap<String, ImportPackageObject> map = getImportPackages(base);
-		if (map == null)
+		if (map == null) {
 			return;
+		}
 
 		ExportPackageDescription exported[] = PDECore.getDefault().getModelManager().getState().getState().getExportedPackages();
 		for (int i = 0; i < exported.length; i++) {
@@ -180,14 +180,17 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 			if (ipo != null) {
 				// check version to make sure we only add bundles from valid packages
 				String version = ipo.getVersion();
-				if (version != null)
+				if (version != null) {
 					try {
 						if (!new VersionRange(version).isIncluded(exported[i].getVersion()))
+						 {
 							continue;
 						// NFE if ImportPackageObject's version is improperly formatted - ignore any matching imported packages since version is invalid
+						}
 					} catch (NumberFormatException e) {
 						continue;
 					}
+				}
 				existingImports.add(exported[i].getSupplier().getSymbolicName());
 			}
 		}
@@ -202,8 +205,9 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 				// create a map of all the packages we import
 				HashMap<String, ImportPackageObject> map = new HashMap<String, ImportPackageObject>();
 				ImportPackageObject[] packages = header.getPackages();
-				for (int i = 0; i < packages.length; i++)
-					map.put(packages[i].getName(), packages[i]);
+				for (ImportPackageObject importPackage : packages) {
+					map.put(importPackage.getName(), importPackage);
+				}
 				return map;
 			}
 		}
@@ -222,8 +226,8 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 
 	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
-		for (int i = 0; i < fModels.length; i++) {
-			contentProvider.add(fModels[i], itemsFilter);
+		for (IPluginModelBase fModel : fModels) {
+			contentProvider.add(fModel, itemsFilter);
 			progressMonitor.worked(1);
 		}
 		progressMonitor.done();
