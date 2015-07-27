@@ -214,8 +214,8 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		List<IClasspathEntry> result = new ArrayList<IClasspathEntry>();
 		Set<Manifest> manifests = new HashSet<Manifest>();
 		for (int i = 0; i < fData.getLibraryPaths().length; ++i) {
-			try {
-				manifests.add(new JarFile(fData.getLibraryPaths()[i]).getManifest());
+			try (JarFile jarFile = new JarFile(fData.getLibraryPaths()[i])) {
+				manifests.add(jarFile.getManifest());
 			} catch (IOException e) {
 				PDEPlugin.log(e);
 			}
