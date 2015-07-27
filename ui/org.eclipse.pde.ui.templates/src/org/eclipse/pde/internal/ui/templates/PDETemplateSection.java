@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 461877
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 461877, 473694
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.templates;
@@ -57,7 +57,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 
 	private String[] getDirectoryCandidates() {
 		double version = getTargetVersion();
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		if (version >= 3.5)
 			result.add("templates_3.5" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (version >= 3.4)

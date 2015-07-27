@@ -8,7 +8,7 @@
  * Contributors:
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation (bug #441331)
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 463821,  466269, 466680
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 463821, 467819
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 463821, 467819, 473694
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.e4;
 
@@ -206,7 +206,7 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 				"org.eclipse.e4.core.di", "org.eclipse.e4.ui.di", //$NON-NLS-1$ //$NON-NLS-2$
 				"org.eclipse.e4.core.contexts",}; //$NON-NLS-1$
 
-		final ArrayList<IPluginReference> result = new ArrayList<IPluginReference>(dependencies.length);
+		final ArrayList<IPluginReference> result = new ArrayList<>(dependencies.length);
 		for (final String dependency : dependencies) {
 			String versionString = "0.0.0"; //$NON-NLS-1$
 			result.add(new PluginReference(dependency, versionString, IMatchRules.GREATER_OR_EQUAL));
