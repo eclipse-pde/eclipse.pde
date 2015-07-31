@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -22,6 +19,9 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Delta tests for method
@@ -725,7 +725,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 	}
 
 	/**
-	 * Add type parameters
+	 * Add new type parameter
 	 */
 	public void test31() {
 		deployBundles("test31"); //$NON-NLS-1$
@@ -747,7 +747,31 @@ public class MethodDeltaTests extends DeltaTestSetup {
 	}
 	
 	/**
-	 * Add type parameter
+	 * Add new type parameter to a method that did not have a type parameter but
+	 * that had a generic signature.
+	 */
+	public void test31a() {
+		deployBundles("test31a"); //$NON-NLS-1$
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.TYPE_PARAMETERS, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals("foo<U:Ljava/lang/Number;>(TU;Ljava/util/List<TU;>;)V", child.getKey()); //$NON-NLS-1$
+	}
+
+	/**
+	 * Add another type parameter
 	 */
 	public void test32() {
 		deployBundles("test32"); //$NON-NLS-1$
@@ -766,6 +790,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals("foo<U:Ljava/lang/Object;V:Ljava/lang/Object;>(TU;)V", child.getKey()); //$NON-NLS-1$
 	}
 	
 	/**

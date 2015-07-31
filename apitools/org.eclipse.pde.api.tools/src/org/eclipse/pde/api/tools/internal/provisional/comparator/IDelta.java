@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -591,8 +591,8 @@ public interface IDelta {
 	 */
 	public static final int TYPE_PARAMETER_NAME = 50;
 	/**
-	 * Delta kind flag that denotes parameters have been added or removed from a
-	 * type. <br>
+	 * Delta kind flag that denotes type parameters have been added to a type
+	 * that didn't have type parameters before. <br>
 	 * Applies to kinds:
 	 * <ul>
 	 * <li>{@link #ADDED}</li>

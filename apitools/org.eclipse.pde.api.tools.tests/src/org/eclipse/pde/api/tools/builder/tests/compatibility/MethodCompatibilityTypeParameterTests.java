@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
+import junit.framework.Test;
+
 /**
- * Tests that the builder correctly reports compatibility problems
- * related method modifiers and visibility.
+ * Tests that the builder correctly reports compatibility problems related to
+ * method type parameters and varargs.
  * 
  * @since 1.0
  */
@@ -67,6 +67,22 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		return "classcompat"; //$NON-NLS-1$
 	}	
 	
+	/**
+	 * Tests adding the first type parameter to a method -- a compatible change.
+	 */
+	private void xAddFirstTypeParameter(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFirstTypeParameter.java"); //$NON-NLS-1$
+		performCompatibilityTest(filePath, incremental);
+	}
+
+	public void testAddFirstTypeParameterI() throws Exception {
+		xAddFirstTypeParameter(true);
+	}
+
+	public void testAddFirstTypeParameterF() throws Exception {
+		xAddFirstTypeParameter(false);
+	}
+
 	/**
 	 * Tests adding a type parameter to a method
 	 */

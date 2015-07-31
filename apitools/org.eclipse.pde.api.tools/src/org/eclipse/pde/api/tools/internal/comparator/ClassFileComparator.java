@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -542,9 +542,11 @@ public class ClassFileComparator {
 				SignatureDescriptor signatureDescriptor2 = getSignatureDescriptor(signature2);
 				TypeParameterDescriptor[] typeParameterDescriptors = signatureDescriptor2.getTypeParameterDescriptors();
 				if (typeParameterDescriptors.length != 0) {
-					this.addDelta(getElementType(element1), IDelta.ADDED, IDelta.TYPE_PARAMETERS, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, element1.getName(), new String[] { getDataFor(element1, this.type1) });
+					this.addDelta(getElementType(element1), IDelta.ADDED, IDelta.TYPE_PARAMETERS, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, getKeyFor(element2, this.type1), new String[] {
+							getDataFor(element1, this.type1) });
 				} else if (signatureDescriptor2.getTypeArguments().length != 0) {
-					this.addDelta(getElementType(element1), IDelta.ADDED, IDelta.TYPE_ARGUMENTS, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, element1.getName(), new String[] { getDataFor(element1, this.type1) });
+					this.addDelta(getElementType(element1), IDelta.ADDED, IDelta.TYPE_ARGUMENTS, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, getKeyFor(element2, this.type1), new String[] {
+							getDataFor(element1, this.type1) });
 				}
 			}
 		} else if (signature2 == null) {
@@ -555,7 +557,7 @@ public class ClassFileComparator {
 			if (length != 0) {
 				for (int i = 0; i < length; i++) {
 					TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptors[i];
-					this.addDelta(getElementType(element1), IDelta.REMOVED, IDelta.TYPE_PARAMETER, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, element1.getName(), new String[] {
+					this.addDelta(getElementType(element1), IDelta.REMOVED, IDelta.TYPE_PARAMETER, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, getKeyFor(element2, this.type1), new String[] {
 							getDataFor(element1, type1),
 							typeParameterDescriptor.name });
 				}
@@ -565,7 +567,7 @@ public class ClassFileComparator {
 				if (length != 0) {
 					for (int i = 0; i < length; i++) {
 						String typeArgument = typeArguments[i];
-						this.addDelta(getElementType(element1), IDelta.REMOVED, IDelta.TYPE_ARGUMENT, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, element1.getName(), new String[] {
+						this.addDelta(getElementType(element1), IDelta.REMOVED, IDelta.TYPE_ARGUMENT, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, getKeyFor(element2, this.type1), new String[] {
 								getDataFor(element1, type1), typeArgument });
 					}
 				}
@@ -657,7 +659,7 @@ public class ClassFileComparator {
 						boolean added = boundsMax == size2;
 						for (; index < boundsMax; index++) {
 							String currentInterfaceBound = added ? (String) interfaceBounds2.get(index) : (String) interfaceBounds1.get(index);
-							this.addDelta(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, added ? IDelta.ADDED : IDelta.REMOVED, IDelta.INTERFACE_BOUND, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, element1.getName(), new String[] {
+							this.addDelta(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, added ? IDelta.ADDED : IDelta.REMOVED, IDelta.INTERFACE_BOUND, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, getKeyFor(element2, this.type1), new String[] {
 									getDataFor(element1, type1), name,
 									currentInterfaceBound });
 						}
@@ -670,7 +672,9 @@ public class ClassFileComparator {
 				boolean added = max == length2;
 				for (; i < max; i++) {
 					TypeParameterDescriptor currentTypeParameter = added ? typeParameterDescriptors2[i] : typeParameterDescriptors1[i];
-					this.addDelta(getElementType(element1), added ? IDelta.ADDED : IDelta.REMOVED, IDelta.TYPE_PARAMETER, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, element1.getName(), new String[] {
+					int kind = added ? IDelta.ADDED : IDelta.REMOVED;
+					int flags = added && length == 0 ? IDelta.TYPE_PARAMETERS : IDelta.TYPE_PARAMETER;
+					this.addDelta(getElementType(element1), kind, flags, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, getKeyFor(element2, this.type1), new String[] {
 							getDataFor(element1, type1),
 							currentTypeParameter.name });
 				}
@@ -693,7 +697,7 @@ public class ClassFileComparator {
 				String currentTypeArgument = typeArguments[i];
 				String newTypeArgument = typeArguments2[i];
 				if (!currentTypeArgument.equals(newTypeArgument)) {
-					this.addDelta(getElementType(element1), IDelta.CHANGED, IDelta.TYPE_ARGUMENT, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, element1.getName(), new String[] {
+					this.addDelta(getElementType(element1), IDelta.CHANGED, IDelta.TYPE_ARGUMENT, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, getKeyFor(element2, this.type1), new String[] {
 							getDataFor(element1, type1), currentTypeArgument,
 							newTypeArgument });
 				}
@@ -704,7 +708,7 @@ public class ClassFileComparator {
 				boolean added = max == length2;
 				for (; i < max; i++) {
 					String currentTypeArgument = added ? typeArguments2[i] : typeArguments[i];
-					this.addDelta(getElementType(element1), added ? IDelta.ADDED : IDelta.REMOVED, IDelta.TYPE_ARGUMENT, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, element1.getName(), new String[] {
+					this.addDelta(getElementType(element1), added ? IDelta.ADDED : IDelta.REMOVED, IDelta.TYPE_ARGUMENT, this.currentDescriptorRestrictions, element1.getModifiers(), element2.getModifiers(), this.type1, getKeyFor(element2, this.type1), new String[] {
 							getDataFor(element1, type1), currentTypeArgument });
 				}
 			}
@@ -762,6 +766,20 @@ public class ClassFileComparator {
 				buffer = new StringBuffer();
 				buffer.append(type.getName()).append('.').append(member.getName());
 				return String.valueOf(buffer);
+			default:
+				break;
+		}
+		return null;
+	}
+
+	private String getKeyFor(IApiMember member, IApiType type) {
+		switch (member.getType()) {
+			case IApiElement.TYPE:
+				return member.getName();
+			case IApiElement.METHOD:
+				return getKeyForMethod((IApiMethod) member, type);
+			case IApiElement.FIELD:
+				return member.getName();
 			default:
 				break;
 		}
