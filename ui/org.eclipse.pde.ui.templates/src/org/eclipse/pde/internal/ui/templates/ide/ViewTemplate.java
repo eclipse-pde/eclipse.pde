@@ -220,7 +220,7 @@ public class ViewTemplate extends PDETemplateSection {
 	@Override
 	public Object getValue(String name) {
 		if (name.equals("useEnablement")) //$NON-NLS-1$
-			return new Boolean(getTargetVersion() >= 3.3);
+			return Boolean.valueOf(getTargetVersion() >= 3.3);
 		return super.getValue(name);
 	}
 }

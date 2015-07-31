@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2010 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public class ImportPackageObject extends PackageObject {
 
 	public void restoreProperty(String propertyName, Object oldValue, Object newValue) {
 		if (Constants.RESOLUTION_DIRECTIVE.equalsIgnoreCase(propertyName)) {
-			setOptional(new Boolean(newValue.toString()).booleanValue());
+			setOptional(Boolean.parseBoolean(newValue.toString()));
 		} else if (fVersionAttribute != null && fVersionAttribute.equalsIgnoreCase(propertyName)) {
 			setVersion(newValue.toString());
 		}

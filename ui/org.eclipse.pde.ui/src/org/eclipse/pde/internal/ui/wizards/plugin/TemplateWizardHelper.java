@@ -28,7 +28,7 @@ public class TemplateWizardHelper {
 		String value = config.getAttribute(name);
 		if (value == null)
 			return null;
-		return new Boolean(value.equalsIgnoreCase("true")); //$NON-NLS-1$
+		return Boolean.valueOf(value.equalsIgnoreCase("true")); //$NON-NLS-1$
 	}
 
 	public static boolean getFlag(WizardElement element, String name, boolean defaultValue) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2015 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 		boolean oldValue = fAutoStart;
 		fAutoStart = autostart;
 		if (isEditable() && oldValue != fAutoStart)
-			firePropertyChanged(P_AUTO_START, new Boolean(oldValue), new Boolean(fAutoStart));
+			firePropertyChanged(P_AUTO_START, Boolean.valueOf(oldValue), Boolean.valueOf(fAutoStart));
 
 	}
 

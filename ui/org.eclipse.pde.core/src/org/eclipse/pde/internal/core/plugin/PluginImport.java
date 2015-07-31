@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -166,16 +166,16 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 
 	public void setReexported(boolean value) throws CoreException {
 		ensureModelEditable();
-		Boolean oldValue = new Boolean(reexported);
+		Boolean oldValue = Boolean.valueOf(reexported);
 		this.reexported = value;
-		firePropertyChanged(P_REEXPORTED, oldValue, new Boolean(value));
+		firePropertyChanged(P_REEXPORTED, oldValue, Boolean.valueOf(value));
 	}
 
 	public void setOptional(boolean value) throws CoreException {
 		ensureModelEditable();
-		Boolean oldValue = new Boolean(this.optional);
+		Boolean oldValue = Boolean.valueOf(this.optional);
 		this.optional = value;
-		firePropertyChanged(P_OPTIONAL, oldValue, new Boolean(value));
+		firePropertyChanged(P_OPTIONAL, oldValue, Boolean.valueOf(value));
 	}
 
 	public void setVersion(String version) throws CoreException {

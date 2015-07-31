@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,9 +168,9 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 
 	public void setOptional(boolean optional) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = new Boolean(this.fOptional);
+		Object oldValue = Boolean.valueOf(this.fOptional);
 		this.fOptional = optional;
-		firePropertyChanged(P_NAME, oldValue, new Boolean(optional));
+		firePropertyChanged(P_NAME, oldValue, Boolean.valueOf(optional));
 	}
 
 	public void setOS(String os) throws CoreException {

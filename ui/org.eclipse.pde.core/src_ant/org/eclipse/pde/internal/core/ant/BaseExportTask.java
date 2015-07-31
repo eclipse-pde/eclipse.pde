@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public abstract class BaseExportTask extends Task {
 	}
 
 	public void setUseJARFormat(String useJarFormat) {
-		fUseJarFormat = new Boolean(useJarFormat).booleanValue();
+		fUseJarFormat = Boolean.parseBoolean(useJarFormat);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public abstract class BaseExportTask extends Task {
 	 * @param doExportSource whether to include source in the export
 	 */
 	public void setExportSource(String doExportSource) {
-		fExportSource = new Boolean(doExportSource).booleanValue();
+		fExportSource = Boolean.parseBoolean(doExportSource);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public abstract class BaseExportTask extends Task {
 	 * @param doExportSourceBundle whether to create a source bundle when exporting source
 	 */
 	public void setExportSourceBundle(String doExportSourceBundle) {
-		fExportSourceBundle = new Boolean(doExportSourceBundle).booleanValue();
+		fExportSourceBundle = Boolean.parseBoolean(doExportSourceBundle);
 	}
 
 	public void setDestination(String destination) {
@@ -105,11 +105,11 @@ public abstract class BaseExportTask extends Task {
 	}
 
 	public void setAllowBinaryCycles(String allowBinaryCycles) {
-		fAllowBinaryCycles = new Boolean(allowBinaryCycles).booleanValue();
+		fAllowBinaryCycles = Boolean.parseBoolean(allowBinaryCycles);
 	}
 
 	public void setUseWorkspaceCompiledClasses(String useWorkspaceCompiledClasses) {
-		fUseWorkspaceCompiledClasses = new Boolean(useWorkspaceCompiledClasses).booleanValue();
+		fUseWorkspaceCompiledClasses = Boolean.parseBoolean(useWorkspaceCompiledClasses);
 	}
 
 	public boolean isAntRunner() {

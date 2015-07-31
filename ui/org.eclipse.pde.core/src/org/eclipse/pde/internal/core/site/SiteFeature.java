@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -315,8 +315,8 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	 */
 	public void setIsPatch(boolean patch) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = new Boolean(fIsPatch);
+		Object oldValue = Boolean.valueOf(fIsPatch);
 		fIsPatch = patch;
-		firePropertyChanged(P_PATCH, oldValue, new Boolean(fIsPatch));
+		firePropertyChanged(P_PATCH, oldValue, Boolean.valueOf(fIsPatch));
 	}
 }
