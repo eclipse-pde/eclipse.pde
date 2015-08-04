@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,17 +30,11 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 		super(configuration);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation#getModels()
-	 */
 	@Override
 	protected IPluginModelBase[] getModels() throws CoreException {
 		return BundleLauncherHelper.getMergedBundles(fLaunchConfiguration, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		super.run(monitor);
@@ -71,17 +65,11 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation#hasErrors()
-	 */
 	@Override
 	public boolean hasErrors() {
 		return super.hasErrors() || fExtensionErrors.size() >= 1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation#getInput()
-	 */
 	@Override
 	public Map<Object, Object[]> getInput() {
 		Map<Object, Object[]> map = super.getInput();

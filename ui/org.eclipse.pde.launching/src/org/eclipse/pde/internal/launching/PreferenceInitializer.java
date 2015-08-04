@@ -16,9 +16,6 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(IPDEConstants.PLUGIN_ID);

@@ -18,23 +18,14 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class LaunchConfigurationListener implements ILaunchConfigurationListener {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		final File configDir = LaunchConfigurationHelper.getConfigurationLocation(configuration);

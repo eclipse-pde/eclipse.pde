@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2013 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,10 +41,6 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	 */
 	public static final String ID = "org.eclipse.pde.ui.workbenchClasspathProvider"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.StandardSourcePathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
 		List<IRuntimeClasspathEntry> sourcePath = new ArrayList<IRuntimeClasspathEntry>();
@@ -91,10 +87,6 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 		return PDELaunchingPlugin.getWorkspace().computeProjectOrder(projects).projects;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.StandardSourcePathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		List<IRuntimeClasspathEntry> all = new ArrayList<IRuntimeClasspathEntry>(entries.length);

@@ -93,12 +93,6 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 		log(status);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -140,13 +134,6 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 		return fBundleContext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (fLaunchListener != null)

@@ -49,25 +49,16 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	 */
 	private double fOSGiRuntimeVersion = Double.MIN_VALUE;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
-	 */
 	@Override
 	public void initializeParticipants() {
 		addParticipants(new ISourceLookupParticipant[] {new JavaSourceLookupParticipant()});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType)
-	 */
 	@Override
 	public boolean supportsSourceContainerType(ISourceContainerType type) {
 		return !fFilteredTypes.contains(type.getId());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#getSourceElement(java.lang.Object)
-	 */
 	@Override
 	public Object getSourceElement(Object element) {
 		PDESourceLookupQuery query = new PDESourceLookupQuery(this, element);
@@ -76,9 +67,6 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		return result != null ? result : super.getSourceElement(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#findSourceElements(java.lang.Object)
-	 */
 	@Override
 	public Object[] findSourceElements(Object object) throws CoreException {
 		Object[] sourceElements = null;
@@ -220,9 +208,6 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#dispose()
-	 */
 	@Override
 	public synchronized void dispose() {
 		Iterator<ISourceContainer[]> iterator = fSourceContainerMap.values().iterator();
