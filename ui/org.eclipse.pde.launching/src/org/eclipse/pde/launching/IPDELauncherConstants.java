@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,7 @@ public interface IPDELauncherConstants {
 	 * 
 	 * @deprecated use IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH
 	 */
+	@Deprecated
 	String VMINSTALL = "vminstall"; //$NON-NLS-1$
 
 	/**
@@ -111,6 +112,7 @@ public interface IPDELauncherConstants {
 	 * 
 	 * @deprecated As of 3.6 the feature-based self-hosting option is not supported
 	 */
+	@Deprecated
 	String USEFEATURES = "usefeatures"; //$NON-NLS-1$
 
 	/**
@@ -187,6 +189,7 @@ public interface IPDELauncherConstants {
 	 * @deprecated This option is no longer supported in the launch config.  A recent selection is stored
 	 * in dialog settings.
 	 */
+	@Deprecated
 	String TRACING_SELECTED_PLUGIN = "selectedPlugin"; //$NON-NLS-1$
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,6 +124,7 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 		}
 		if (!listenerStarted) {
 			fBundleContext.addBundleListener(new BundleListener() {
+				@Override
 				public void bundleChanged(BundleEvent event) {
 					if (event.getType() == BundleEvent.STARTED && "org.eclipse.debug.core".equals(event.getBundle().getSymbolicName())) { //$NON-NLS-1$
 						fDebugPluginUtil = new DebugPluginUtil();

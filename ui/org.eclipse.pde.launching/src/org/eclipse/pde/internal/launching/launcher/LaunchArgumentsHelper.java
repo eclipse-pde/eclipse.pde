@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -258,6 +258,7 @@ public class LaunchArgumentsHelper {
 
 				// Unjarred bundle, search for the built jar at the root of the folder
 				File[] files = bundleFile.listFiles(new FilenameFilter() {
+					@Override
 					public boolean accept(File dir, String name) {
 						return name.indexOf(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER) >= 0;
 					}

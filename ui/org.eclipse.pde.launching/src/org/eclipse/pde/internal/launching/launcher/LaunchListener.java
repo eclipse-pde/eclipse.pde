@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {
 		update(launch, true);
 	}
@@ -42,12 +43,14 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchChanged(ILaunch launch) {
 	}
 
@@ -104,6 +107,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	/**
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,13 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelegate {
 
+	@Override
 	@SuppressWarnings("deprecation")
 	public boolean isCandidate(ILaunchConfiguration candidate) throws CoreException {
 		return !candidate.getAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, false) || candidate.hasAttribute(IPDELauncherConstants.VMINSTALL);
 	}
 
+	@Override
 	public void migrate(ILaunchConfiguration candidate) throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = candidate.getWorkingCopy();
 		migrate(wc);

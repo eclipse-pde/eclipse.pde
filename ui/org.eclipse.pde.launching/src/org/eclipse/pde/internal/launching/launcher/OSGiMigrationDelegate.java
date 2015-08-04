@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,12 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 public class OSGiMigrationDelegate extends PDEMigrationDelegate {
 
+	@Override
 	public boolean isCandidate(ILaunchConfiguration candidate) throws CoreException {
 		return super.isCandidate(candidate) || !candidate.getAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "").equals("3.3"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public void migrate(ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		if (!wc.getAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "").equals("3.3")) { //$NON-NLS-1$ //$NON-NLS-2$
 			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
