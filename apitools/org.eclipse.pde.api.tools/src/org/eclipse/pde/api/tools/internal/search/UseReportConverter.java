@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal.search;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -654,6 +655,7 @@ public class UseReportConverter extends HTMLConvertor {
 	private File reportsRoot = null;
 	private File htmlIndex = null;
 	private boolean hasmissing = false;
+	private boolean useNotSearchedXml = false;
 	SAXParser parser = null;
 	private UseMetadata metadata = null;
 	private int filteredCount = -1;
@@ -976,7 +978,22 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	protected String[] getMissingBundles(File missingfile) throws Exception {
 		MissingHandler handler = new MissingHandler();
-		getParser().parse(missingfile, handler);
+		InputStream inputFile = null;
+		try{
+			inputFile = new FileInputStream(missingfile.getAbsolutePath());
+			getParser().parse(inputFile, handler);
+		}
+		catch (IOException ioe) {
+			ApiPlugin.log(ioe);
+		} finally {
+			if (inputFile != null) {
+				try {
+					inputFile.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
 		return handler.missing.toArray(new String[handler.missing.size()]);
 	}
 
@@ -1129,7 +1146,12 @@ public class UseReportConverter extends HTMLConvertor {
 				throw new Exception(SearchMessages.UseReportConverter_no_xstl_specified);
 			}
 			if (xml.exists()) {
-				applyXSLT(xslt, xml, originhtml);
+				try {
+					applyXSLT(xslt, xml, originhtml);
+				} catch (TransformerException e) {	
+					useNotSearchedXml = true;
+					ApiPlugin.logErrorMessage(SearchMessages.UseReportConverter_te_applying_xslt_skipped);
+				}
 			}
 		} catch (IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
@@ -1537,7 +1559,8 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			buffer.append(OPEN_P);
 			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {
-					"<a href=\"./not_searched.html\">", "</a></p>\n" })); //$NON-NLS-1$//$NON-NLS-2$
+					useNotSearchedXml == false ? "<a href=\"./not_searched.html\">" : "<a href=\"../xml/not_searched.xml\">", //$NON-NLS-1$//$NON-NLS-2$
+					"</a></p>\n" }));//$NON-NLS-1$
 			String additional = getAdditionalIndexInfo(scanResult.size() > 0);
 			if (additional != null) {
 				buffer.append(additional);
