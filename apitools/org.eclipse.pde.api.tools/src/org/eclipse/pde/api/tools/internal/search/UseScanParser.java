@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@ package org.eclipse.pde.api.tools.internal.search;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
@@ -284,11 +287,23 @@ public class UseScanParser {
 																	// determined
 																	// order
 										for (int k = 0; k < xmlfiles.length; k++) {
+											InputStream inputFile = null;
 											try {
 												ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfiles[k]));
-												parser.parse(xmlfiles[k], handler);
+												inputFile = new FileInputStream(xmlfiles[k].getAbsoluteFile());
+												parser.parse(inputFile, handler);
 											} catch (SAXException e) {
 											} catch (IOException e) {
+												ApiPlugin.log(e);
+											}
+											finally {
+												if (inputFile != null) {
+													try {
+														inputFile.close();
+													} catch (IOException e) {
+														// ignore
+													}
+												}
 											}
 										}
 									}
