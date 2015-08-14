@@ -696,12 +696,12 @@ public class PluginModelManager implements IModelProviderListener {
 		if (id == null)
 			return;
 
-		// remove target models by the same ID from the state, if any
+		// update target models by the same ID from the state, if any
 		ModelEntry entry = entries.get(id);
 		if (entry != null) {
 			IPluginModelBase[] models = entry.getExternalModels();
 			for (int i = 0; i < models.length; i++)
-				fState.removeBundleDescription(models[i].getBundleDescription());
+				fState.updateBundleDescription(models[i].getBundleDescription());
 		}
 
 		// add new bundle to the state
