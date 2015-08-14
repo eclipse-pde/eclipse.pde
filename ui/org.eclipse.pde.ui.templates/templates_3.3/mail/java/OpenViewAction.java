@@ -24,6 +24,7 @@ public class OpenViewAction extends Action {
 		setImageDescriptor($pluginClass$.getImageDescriptor("/icons/sample2.gif"));
 	}
 	
+	@Override
 	public void run() {
 		if(window != null) {	
 			try {

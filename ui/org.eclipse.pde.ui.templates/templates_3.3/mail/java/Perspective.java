@@ -11,6 +11,7 @@ public class Perspective implements IPerspectiveFactory {
 	 */
 	public static final String ID = "$pluginId$.perspective";
 
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);

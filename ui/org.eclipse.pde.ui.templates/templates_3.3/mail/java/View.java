@@ -23,6 +23,7 @@ public class View extends ViewPart {
 	 */
 	private Text messageText;
 	
+	@Override
 	public void createPartControl(Composite parent) {
 		Composite top = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -86,6 +87,7 @@ public class View extends ViewPart {
 		messageText.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
+	@Override
 	public void setFocus() {
 		messageText.setFocus();
 	}

@@ -19,6 +19,7 @@ public class MessagePopupAction extends Action {
         setImageDescriptor($pluginClass$.getImageDescriptor("/icons/sample3.gif"));
     }
 
+    @Override
     public void run() {
         MessageDialog.openInformation(window.getShell(), "Open", "Open Message Dialog!");
     }

@@ -61,19 +61,22 @@ public class NavigationView extends ViewPart {
 		}
 	}
 
-	class ViewContentProvider implements IStructuredContentProvider, 
-										   ITreeContentProvider {
-
+	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
+		
+		@Override
         public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
         
+        @Override
 		public void dispose() {
 		}
         
+		@Override
 		public Object[] getElements(Object parent) {
 			return getChildren(parent);
 		}
-        
+		
+		@Override
 		public Object getParent(Object child) {
 			if (child instanceof TreeObject) {
 				return ((TreeObject)child).getParent();
@@ -81,13 +84,15 @@ public class NavigationView extends ViewPart {
 			return null;
 		}
         
+		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof TreeParent) {
 				return ((TreeParent)parent).getChildren();
 			}
 			return new Object[0];
 		}
-
+		
+		@Override
         public boolean hasChildren(Object parent) {
 			if (parent instanceof TreeParent)
 				return ((TreeParent)parent).hasChildren();
@@ -97,9 +102,12 @@ public class NavigationView extends ViewPart {
 	
 	class ViewLabelProvider extends LabelProvider {
 
+		@Override
 		public String getText(Object obj) {
 			return obj.toString();
 		}
+		
+		@Override
 		public Image getImage(Object obj) {
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
 			if (obj instanceof TreeParent)
@@ -131,10 +139,7 @@ public class NavigationView extends ViewPart {
         return root;
     }
 
-	/**
-     * This is a callback that will allow us to create the viewer and initialize
-     * it.
-     */
+    @Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setContentProvider(new ViewContentProvider());
@@ -142,9 +147,7 @@ public class NavigationView extends ViewPart {
 		viewer.setInput(createDummyModel());
 	}
 
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
+    @Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
