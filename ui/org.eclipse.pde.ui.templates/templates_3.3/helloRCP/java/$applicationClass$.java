@@ -11,9 +11,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class $applicationClass$ implements IApplication {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		Display display = PlatformUI.createDisplay();
 		try {
@@ -28,9 +26,7 @@ public class $applicationClass$ implements IApplication {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
+	@Override
 	public void stop() {
 		if (!PlatformUI.isWorkbenchRunning())
 			return;
