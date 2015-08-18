@@ -43,6 +43,7 @@ public class DSHyperlinkDetector extends PDEHyperlinkDetector {
 		super(page);
 	}
 
+	@Override
 	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttributeNode attr) {
 		String attrValue = attr.getAttributeValue();
 		if (attrValue.length() == 0)
@@ -102,10 +103,12 @@ public class DSHyperlinkDetector extends PDEHyperlinkDetector {
 		return null;
 	}
 
+	@Override
 	protected IHyperlink[] detectNodeHyperlink(IDocumentElementNode node) {
 		return null;
 	}
 
+	@Override
 	protected IHyperlink[] detectTextNodeHyperlink(IDocumentTextNode node) {
 		return null;
 	}

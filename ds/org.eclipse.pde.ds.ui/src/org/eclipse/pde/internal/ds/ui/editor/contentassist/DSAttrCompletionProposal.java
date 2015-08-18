@@ -28,6 +28,7 @@ public class DSAttrCompletionProposal extends TypeCompletionProposal implements
 				startOffset, length);
 	}
 
+	@Override
 	public Point getSelection(IDocument document) {
 		return new Point(this.fBeginInsertPoint + fReplacementString.length()
 				- 1, 0);

@@ -13,6 +13,7 @@
 package org.eclipse.pde.internal.ds.core.text;
 import java.util.ArrayList;
 
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
@@ -46,141 +47,85 @@ public class DSComponent extends DSObject implements IDSComponent {
 		setInTheModel(true);
 	}
 
+	@Override
 	public boolean isRoot() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_COMPONENT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return this.getAttributeName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
-	 */
+	@Override
 	public boolean canAddChild(int objectType) {
 		return objectType == TYPE_IMPLEMENTATION
 				|| objectType == TYPE_PROPERTIES || objectType == TYPE_PROPERTY
 				|| objectType == TYPE_SERVICE || objectType == TYPE_REFERENCE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setAttributeName(java.lang.String)
-	 */
+	@Override
 	public void setAttributeName(String name) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_NAME, name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#getAttributeName()
-	 */
+	@Override
 	public String getAttributeName() {
 		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_NAME);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setEnabled(boolean)
-	 */
+	@Override
 	public void setEnabled(boolean bool) {
 		setBooleanAttributeValue(ATTRIBUTE_COMPONENT_ENABLED, bool);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getEnabled()
-	 */
+	@Override
 	public boolean getEnabled() {
 		return getBooleanAttributeValue(ATTRIBUTE_COMPONENT_ENABLED, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setFactory(java.lang.String)
-	 */
+	@Override
 	public void setFactory(String factory) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_FACTORY, factory);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#getFactory()
-	 */
+	@Override
 	public String getFactory() {
 		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_FACTORY);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setImmediate(boolean)
-	 */
+	@Override
 	public void setImmediate(boolean bool) {
 		setBooleanAttributeValue(ATTRIBUTE_COMPONENT_IMMEDIATE, bool);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getImmediate()
-	 */
+	@Override
 	public boolean getImmediate() {
 		return getBooleanAttributeValue(ATTRIBUTE_COMPONENT_IMMEDIATE, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getImplemention()
-	 */
+	@Override
 	public IDSImplementation getImplementation() {
-		ArrayList childNodesList = getChildNodesList(IDSImplementation.class,
-				true);
+		ArrayList<IDocumentElementNode> childNodesList = getChildNodesList(IDSImplementation.class, true);
 		if (childNodesList.size() == 0) {
 			return null;
 		}
 		return (IDSImplementation) childNodesList.get(0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getPropertiesElements()
-	 */
+	@Override
 	public IDSProperties[] getPropertiesElements() {
-		ArrayList childNodesList = getChildNodesList(IDSProperties.class, true);
+		ArrayList<IDocumentElementNode> childNodesList = getChildNodesList(IDSProperties.class, true);
 		IDSProperties[] array = new IDSProperties[childNodesList.size()];
 		for (int i = 0; i < childNodesList.size(); i++) {
 			array[i] = (IDSProperties) childNodesList.get(i);
@@ -188,13 +133,9 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return array;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getPropertyElements()
-	 */
+	@Override
 	public IDSProperty[] getPropertyElements() {
-		ArrayList childNodesList = getChildNodesList(IDSProperty.class, true);
+		ArrayList<IDocumentElementNode> childNodesList = getChildNodesList(IDSProperty.class, true);
 		IDSProperty[] array = new IDSProperty[childNodesList.size()];
 		for (int i = 0; i < childNodesList.size(); i++) {
 			array[i] = (IDSProperty) childNodesList.get(i);
@@ -202,13 +143,9 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return array;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getReferences()
-	 */
+	@Override
 	public IDSReference[] getReferences() {
-		ArrayList childNodesList = getChildNodesList(IDSReference.class, true);
+		ArrayList<IDocumentElementNode> childNodesList = getChildNodesList(IDSReference.class, true);
 		IDSReference[] array = new IDSReference[childNodesList.size()];
 		for (int i = 0; i < childNodesList.size(); i++) {
 			array[i] = (IDSReference) childNodesList.get(i);
@@ -216,112 +153,68 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return array;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getService()
-	 */
+	@Override
 	public IDSService getService() {
-		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		ArrayList<IDocumentElementNode> childNodesList = getChildNodesList(IDSService.class, true);
 		if (childNodesList.size() == 0) {
 			return null;
 		}
 		return (IDSService) childNodesList.get(0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#addPropertiesElement(org.eclipse.pde.internal.ds.core.IDSProperties)
-	 */
+	@Override
 	public void addPropertiesElement(IDSProperties properties) {
 		this.addChildNode(properties, true);
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#addPropertyElement(org.eclipse.pde.internal.ds.core.IDSProperty)
-	 */
+	@Override
 	public void addPropertyElement(IDSProperty property) {
 		this.addChildNode(property, true);
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#addReference(org.eclipse.pde.internal.ds.core.IDSReference)
-	 */
+	@Override
 	public void addReference(IDSReference reference) {
 		this.addChildNode(reference, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#removePropertiesElement(org.eclipse.pde.internal.ds.core.IDSProperties)
-	 */
+	@Override
 	public void removePropertiesElement(IDSProperties properties) {
 		this.removeChildNode(properties, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#removePropertyElement(org.eclipse.pde.internal.ds.core.IDSProperty)
-	 */
+	@Override
 	public void removePropertyElement(IDSProperty property) {
 		this.removeChildNode(property, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#removeReference(org.eclipse.pde.internal.ds.core.IDSReference)
-	 */
+	@Override
 	public void removeReference(IDSReference reference) {
 		this.removeChildNode(reference, true);
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setImplementation(org.eclipse.pde.internal.ds.core.IDSImplementation)
-	 */
+	@Override
 	public void setImplementation(IDSImplementation implementation) {
 		if (this.getImplementation() == null) {
 			this.addChildNode(implementation, true);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setService(org.eclipse.pde.internal.ds.core.IDSService)
-	 */
+	@Override
 	public void setService(IDSService service) {
 		if (this.getService() == null) {
 			this.addChildNode(service, true);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#removeService(org.eclipse.pde.internal.ds.core.IDSService)
-	 */
+	@Override
 	public void removeService(IDSService service) {
 		this.removeChildNode(service, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
-	 */
+	@Override
 	public String[] getAttributesNames() {
 		return new String[] { IDSConstants.ATTRIBUTE_COMPONENT_ENABLED,
 				IDSConstants.ATTRIBUTE_COMPONENT_FACTORY,
@@ -333,34 +226,42 @@ public class DSComponent extends DSObject implements IDSComponent {
 				IDSConstants.ATTRIBUTE_COMPONENT_MODIFIED };
 	}
 
+	@Override
 	public String getConfigurationPolicy() {
 		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY);
 	}
 
+	@Override
 	public void setConfigurationPolicy(String policy) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY, policy);
 	}
 
+	@Override
 	public String getActivateMethod() {
 		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_ACTIVATE);
 	}
 
+	@Override
 	public String getDeactivateMethod() {
 		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_DEACTIVATE);
 	}
 
+	@Override
 	public void setActivateMethod(String name) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_ACTIVATE, name);
 	}
 
+	@Override
 	public void setDeactivateMethod(String name) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_DEACTIVATE, name);
 	}
 
+	@Override
 	public String getModifiedMethod() {
 		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_MODIFIED);
 	}
 
+	@Override
 	public void setModifiedeMethod(String name) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_MODIFIED, name);
 	}

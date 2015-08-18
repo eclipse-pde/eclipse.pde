@@ -38,6 +38,7 @@ public class DSCompletionProposal implements ICompletionProposal {
 		fLength = length;
 	}
 
+	@Override
 	public void apply(IDocument document) {
 		try {
 			document.replace(fStartOffset, fLength, fObject.toString());
@@ -47,16 +48,19 @@ public class DSCompletionProposal implements ICompletionProposal {
 		}
 	}
 
+	@Override
 	public String getAdditionalProposalInfo() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public IContextInformation getContextInformation() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public String getDisplayString() {
 		return this.getTextbyType(fObject.getType());
 	}
@@ -89,6 +93,7 @@ public class DSCompletionProposal implements ICompletionProposal {
 		}
 	}
 
+	@Override
 	public Image getImage() {
 		if (fObject.getType() == IDSConstants.TYPE_IMPLEMENTATION) {
 			return SharedImages.getImage(SharedImages.DESC_IMPLEMENTATION);
@@ -108,6 +113,7 @@ public class DSCompletionProposal implements ICompletionProposal {
 		return null;
 	}
 
+	@Override
 	public Point getSelection(IDocument document) {
 		return new Point(fStartOffset + fObject.toString().length(), 0);
 	}

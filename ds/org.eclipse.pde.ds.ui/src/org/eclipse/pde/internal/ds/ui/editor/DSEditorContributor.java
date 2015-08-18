@@ -20,10 +20,12 @@ public class DSEditorContributor extends PDEFormTextEditorContributor {
 		super("DS Editor"); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean supportsHyperlinking() {
 		return true;
 	}
 	
+	@Override
 	public boolean supportsContentAssist() {
 		return true;
 	}

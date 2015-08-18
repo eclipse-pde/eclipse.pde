@@ -34,148 +34,100 @@ public class DSReference extends DSObject implements IDSReference {
 		this.setReferenceInterface(IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE
 				+ ref_count);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
-	 */
+	@Override
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return getReferenceName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_REFERENCE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#setReferenceName(java.lang.String)
-	 */
+	@Override
 	public void setReferenceName(String name){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_NAME, name);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#getReferenceName()
-	 */
+	@Override
 	public String getReferenceName(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_NAME);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#setReferenceInterface(java.lang.String)
-	 */
+	@Override
 	public void setReferenceInterface(String interfaceName){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_INTERFACE, interfaceName);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#getReferenceInterface()
-	 */
+	@Override
 	public String getReferenceInterface(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_INTERFACE);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#setReferenceCardinality(java.lang.String)
-	 */
+	@Override
 	public void setReferenceCardinality(String cardinality){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_CARDINALITY, cardinality);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#getReferenceCardinality()
-	 */
+	@Override
 	public String getReferenceCardinality(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_CARDINALITY);
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#setReferencePolicy(java.lang.String)
-	 */
+	@Override
 	public void setReferencePolicy(String policy){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_POLICY, policy);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#getReferencePolicy()
-	 */
+	@Override
 	public String getReferencePolicy(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_POLICY);
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#setReferenceTarget(java.lang.String)
-	 */
+	@Override
 	public void setReferenceTarget(String target){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_TARGET, target);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#getReferenceTarget()
-	 */
+	@Override
 	public String getReferenceTarget(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_TARGET);
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#setReferenceBind(java.lang.String)
-	 */
+	@Override
 	public void setReferenceBind(String bind){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_BIND, bind);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#getReferenceBind()
-	 */
+	@Override
 	public String getReferenceBind(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_BIND);
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#setReferenceUnbind(java.lang.String)
-	 */
+	@Override
 	public void setReferenceUnbind(String unbind){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_UNBIND, unbind);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSReference#getReferenceUnbind()
-	 */
+	@Override
 	public String getReferenceUnbind(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_UNBIND);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
-	 */
+	@Override
 	public String[] getAttributesNames() {
 		return new String[] { IDSConstants.ATTRIBUTE_REFERENCE_BIND,
 				IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY,
@@ -186,6 +138,7 @@ public class DSReference extends DSObject implements IDSReference {
 				IDSConstants.ATTRIBUTE_REFERENCE_UNBIND };
 	}
 
+	@Override
 	public boolean isLeafNode() {
 		return true;
 	}

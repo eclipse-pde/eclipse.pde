@@ -60,6 +60,7 @@ public class DSEditProvideDialog extends FormDialog {
 
 	}
 	
+	@Override
 	protected void createFormContent(IManagedForm mform) {
 		mform.getForm().setText(Messages.DSEditProvideDialog_dialog_title);
 		
@@ -92,10 +93,12 @@ public class DSEditProvideDialog extends FormDialog {
 		setInterfaceEntryListeners();
 	}
 
+	@Override
 	public boolean isHelpAvailable() {
 		return false;
 	}
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 		case 0:
@@ -136,14 +139,17 @@ public class DSEditProvideDialog extends FormDialog {
 		// Attribute: Interface
 		fInterfaceEntry.setFormEntryListener(new FormEntryAdapter(
 				this.fProvideSection) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// no op due to OK Button
 			}
 			
+			@Override
 			public void textDirty(FormEntry entry) {
 				// no op due to OK Button
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fInterfaceEntry.getValue();
 				value = handleLinkActivated(value, false);
@@ -151,6 +157,7 @@ public class DSEditProvideDialog extends FormDialog {
 					fInterfaceEntry.setValue(value);
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				doOpenSelectionDialog(
 						IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES,

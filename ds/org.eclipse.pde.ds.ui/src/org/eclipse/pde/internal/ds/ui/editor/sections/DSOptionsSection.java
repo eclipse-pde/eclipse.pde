@@ -25,8 +25,6 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -56,6 +54,7 @@ public class DSOptionsSection extends PDESection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
 		initializeAttributes();
@@ -112,6 +111,7 @@ IFormColors.TITLE));
 		fEnabledButton.setLayoutData(data);
 		fEnabledButton.setEnabled(isEditable());
 		fEnabledButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fModel.getDSComponent().setEnabled(
 						fEnabledButton.getSelection());
@@ -124,6 +124,7 @@ IFormColors.TITLE));
 		fImmediateButton.setLayoutData(data);
 		fImmediateButton.setEnabled(isEditable());
 		fImmediateButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fModel.getDSComponent().setImmediate(
 						fImmediateButton.getSelection());
@@ -137,11 +138,13 @@ IFormColors.TITLE));
 		fComponent = fModel.getDSComponent();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fFactoryEntry.commit();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		fComponent = fModel.getDSComponent();
 
@@ -153,11 +156,9 @@ IFormColors.TITLE));
 		if (display.getThread() == Thread.currentThread())
 			updateUIFields();
 		else
-			display.asyncExec(new Runnable() {
-				public void run() {
-					if (!fEnabledButton.isDisposed())
-						updateUIFields();
-				}
+			display.asyncExec(() -> {
+				if (!fEnabledButton.isDisposed())
+					updateUIFields();
 			});
 	}
 
@@ -206,6 +207,7 @@ IFormColors.TITLE));
 	public void setListeners() {
 		// Attribute: factory
 		fFactoryEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fComponent == null) {
@@ -215,16 +217,13 @@ IFormColors.TITLE));
 			}
 		});
 
-		fConfigurationPolicy.addModifyListener(new ModifyListener(){
-		
-			public void modifyText(ModifyEvent e) {
-				// Ensure data object is defined
-				if (fComponent == null) {
-					return;
-				}
-				fComponent.setConfigurationPolicy(fConfigurationPolicy
-						.getSelection());
+		fConfigurationPolicy.addModifyListener(e -> {
+			// Ensure data object is defined
+			if (fComponent == null) {
+				return;
 			}
+			fComponent.setConfigurationPolicy(fConfigurationPolicy
+					.getSelection());
 		});
 		
 	}

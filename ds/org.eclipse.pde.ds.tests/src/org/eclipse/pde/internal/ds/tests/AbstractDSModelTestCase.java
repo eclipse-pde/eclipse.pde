@@ -37,6 +37,7 @@ public abstract class AbstractDSModelTestCase extends TestCase {
 	public AbstractDSModelTestCase() {
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		fDocument = new Document();
 	}

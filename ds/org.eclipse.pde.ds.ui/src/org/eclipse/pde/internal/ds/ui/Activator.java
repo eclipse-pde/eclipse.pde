@@ -44,19 +44,13 @@ public class Activator extends AbstractUIPlugin {
 	public Activator() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
@@ -71,6 +65,7 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 	
+	@Override
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		registry.put(SharedImages.DESC_IMPLEMENTATION,
 				createImageDescriptor(SharedImages.DESC_IMPLEMENTATION));
@@ -142,11 +137,7 @@ public class Activator extends AbstractUIPlugin {
 		Display display = Display.getCurrent() != null ? Display.getCurrent()
 				: Display.getDefault();
 		final IStatus fstatus = status;
-		display.asyncExec(new Runnable() {
-			public void run() {
-				ErrorDialog.openError(null, title, null, fstatus);
-			}
-		});
+		display.asyncExec(() -> ErrorDialog.openError(null, title, null, fstatus));
 	}
 	
 	public static void logException(Throwable e) {

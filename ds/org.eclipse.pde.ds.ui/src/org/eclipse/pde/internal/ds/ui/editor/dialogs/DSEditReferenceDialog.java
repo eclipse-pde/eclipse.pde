@@ -71,6 +71,7 @@ public class DSEditReferenceDialog extends FormDialog {
 		fReferenceSection = referenceSection;
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm mform) {
 		mform.getForm().setText(Messages.DSEditReferenceDialog_dialog_title);
 
@@ -156,10 +157,12 @@ public class DSEditReferenceDialog extends FormDialog {
 		fPolicy.getControl().setLayoutData(gd);
 	}
 
+	@Override
 	public boolean isHelpAvailable() {
 		return false;
 	}
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 		case 0:
@@ -269,14 +272,17 @@ public class DSEditReferenceDialog extends FormDialog {
 		// Attribute: Interface
 		fInterfaceEntry.setFormEntryListener(new FormEntryAdapter(
 				this.fReferenceSection) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// no op due to OK Button
 			}
 
+			@Override
 			public void textDirty(FormEntry entry) {
 				// no op due to OK Button
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fInterfaceEntry.getValue();
 				value = handleLinkActivated(value, false);
@@ -284,6 +290,7 @@ public class DSEditReferenceDialog extends FormDialog {
 					fInterfaceEntry.setValue(value);
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				doOpenSelectionDialog(
 						IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES,

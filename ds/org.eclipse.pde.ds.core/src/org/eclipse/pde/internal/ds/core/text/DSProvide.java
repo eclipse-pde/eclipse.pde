@@ -27,65 +27,42 @@ public class DSProvide extends DSObject implements IDSProvide {
 				+ prov_count);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
-	 */
+	@Override
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return getInterface();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_PROVIDE;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProvide#setInterface(java.lang.String)
-	 */
+	@Override
 	public void setInterface(String interfaceName){
 		setXMLAttribute(ATTRIBUTE_PROVIDE_INTERFACE, interfaceName);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProvide#getInterface()
-	 */
+	@Override
 	public String getInterface(){
 		return getXMLAttributeValue(ATTRIBUTE_PROVIDE_INTERFACE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
-	 */
+	@Override
 	public String[] getAttributesNames() {
 		return new String[] { IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE };
 	}
 
+	@Override
 	public boolean isLeafNode() {
 		return true;
 	}

@@ -34,65 +34,42 @@ public class DSProperties extends DSObject implements IDSProperties {
 		setInTheModel(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
-	 */
+	@Override
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return getEntry();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_PROPERTIES;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperties#setEntry(java.lang.String)
-	 */
+	@Override
 	public void setEntry(String entry){
 		setXMLAttribute(ATTRIBUTE_PROPERTIES_ENTRY, entry);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperties#getEntry()
-	 */
+	@Override
 	public String getEntry(){
 		return getXMLAttributeValue(ATTRIBUTE_PROPERTIES_ENTRY);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
-	 */
+	@Override
 	public String[] getAttributesNames() {
 		return new String[] { IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY };
 	}
 
+	@Override
 	public boolean isLeafNode() {
 		return true;
 	}

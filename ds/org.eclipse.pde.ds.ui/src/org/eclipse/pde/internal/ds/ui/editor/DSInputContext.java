@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.ds.core.text.DSModel;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
+import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
@@ -47,11 +48,13 @@ public class DSInputContext extends XMLInputContext {
 		create();
 	}
 
-	protected void reorderInsertEdits(ArrayList ops) {
+	@Override
+	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 		// no op
 		
 	}
 
+	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		if (input instanceof IStorageEditorInput) {
 			boolean isReconciling = input instanceof IFileEditorInput;
@@ -69,7 +72,7 @@ public class DSInputContext extends XMLInputContext {
 				model.setInstallLocation(store.getParent().toString());
 				model.setCharset(getDefaultCharset());
 			} else if (input instanceof JarEntryEditorInput) {
-				File file = (File) ((JarEntryEditorInput) input)
+				File file = ((JarEntryEditorInput) input)
 						.getAdapter(File.class);
 				model.setInstallLocation(file.toString());
 				model.setCharset(getDefaultCharset());
@@ -84,10 +87,12 @@ public class DSInputContext extends XMLInputContext {
 		return null;
 	}
 
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
 
+	@Override
 	protected String getPartitionName() {
 		return "___ds_partition"; //$NON-NLS-1$
 	}

@@ -53,9 +53,7 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 		fLength = length;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void apply(IDocument document) {
 		if (fLength == -1) {
 			String current = document.get();
@@ -69,39 +67,29 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
-	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		// No additional proposal information
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getContextInformation()
-	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		// No context information
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
-	 */
+	@Override
 	public String getDisplayString() {
 		return fDisplayString;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		if (fReplacementString.equals("\"\"")) //$NON-NLS-1$
 			return new Point(fBeginInsertPoint + 1, 0);
@@ -115,6 +103,7 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 		return fReplacementString;
 	}
 
+	@Override
 	public Object getAdditionalProposalInfo(IProgressMonitor monitor) {
 		return fAdditionalInfo;
 	}
@@ -123,6 +112,7 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 		fAdditionalInfo = info;
 	}
 
+	@Override
 	public IInformationControlCreator getInformationControlCreator() {
 		if (!BrowserInformationControl.isAvailable(null))
 			return null;
@@ -133,6 +123,7 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 				/*
 				 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 				 */
+				@Override
 				public IInformationControl doCreateInformationControl(Shell parent) {
 					return new BrowserInformationControl(parent,
 							JFaceResources.DIALOG_FONT, false);
@@ -142,10 +133,12 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 		return fCreator;
 	}
 
+	@Override
 	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 		return fBeginInsertPoint;
 	}
 
+	@Override
 	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		return fReplacementString;
 	}

@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
@@ -24,12 +28,6 @@ import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ViewerComparator;
-
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-
 public class DSSourcePage extends XMLSourcePage {
 
 
@@ -37,36 +35,32 @@ public class DSSourcePage extends XMLSourcePage {
 		super(editor, id, title);
 	}
 
+	@Override
 	public boolean isQuickOutlineEnabled() {
 		return true;
 	}
 
+	@Override
 	public ViewerComparator createOutlineComparator() {
 		return null;
 	}
 
+	@Override
 	public ITreeContentProvider createOutlineContentProvider() {
 		return new DSContentProvider();
 	}
 
+	@Override
 	public ILabelProvider createOutlineLabelProvider() {
 		return new DSLabelProvider();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#isSelectionListener()
-	 */
+	@Override
 	protected boolean isSelectionListener() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
-	 */
+	@Override
 	public void updateSelection(Object object) {
 		if ((object instanceof IDocumentElementNode)
 				&& (((IDocumentElementNode) object).isErrorNode() == false)) {
@@ -76,11 +70,7 @@ public class DSSourcePage extends XMLSourcePage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#findRange()
-	 */
+	@Override
 	protected IDocumentRange findRange() {
 
 		Object selectedObject = getSelection();
@@ -91,23 +81,14 @@ public class DSSourcePage extends XMLSourcePage {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#getRangeElement(int,
-	 *      boolean)
-	 */
+	@Override
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IDocumentElementNode rootNode = ((DSModel) getInputContext().getModel())
 				.getDSComponent();
 		return findNode(rootNode, offset, searchChildren);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#synchronizeOutlinePage(int)
-	 */
+	@Override
 	protected void synchronizeOutlinePage(int offset) {
 		IDocumentRange range = getRangeElement(offset, true);
 		updateHighlightRange(range);
@@ -118,6 +99,7 @@ public class DSSourcePage extends XMLSourcePage {
 	/**
 	 * @param range
 	 */
+	@Override
 	public IDocumentRange adaptRange(IDocumentRange range) {
 		// Adapt the range to node that is viewable in the outline view
 		if (range instanceof IDocumentAttributeNode) {
@@ -134,22 +116,21 @@ public class DSSourcePage extends XMLSourcePage {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.EditorPart#setPartName(java.lang.String)
-	 */
+	@Override
 	protected void setPartName(String partName) {
 		super.setPartName(Messages.DSSourcePage_partName);
 	}
 
 
-	public Object getAdapter(Class adapter) {
+
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
 			return new DSHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
 
+	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);
 		// Update the text selection if this page is being activated
@@ -158,6 +139,7 @@ public class DSSourcePage extends XMLSourcePage {
 		}
 	}
 
+	@Override
 	protected ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(
 			IColorManager colorManager) {
 		return new DSSourceViewerConfiguration(colorManager, this);

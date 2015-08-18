@@ -40,8 +40,6 @@ import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
 import org.eclipse.pde.internal.ds.ui.SharedImages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -88,11 +86,6 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		initialize();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.CheatSheetFileWizardPage#initialize()
-	 */
 	protected void initialize() {
 		setTitle(Messages.DSFileWizardPage_title);
 		setDescription(Messages.DSFileWizardPage_description);
@@ -143,6 +136,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		}
 	}
 
+	@Override
 	protected void createAdvancedControls(Composite parent) {
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
@@ -172,11 +166,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		fDSComponentNameText = new Text(fGroup, SWT.SINGLE | SWT.BORDER);
 		fDSComponentNameText.setLayoutData(nameTextGridData);
 		fDSComponentNameText.setText(""); //$NON-NLS-1$
-		fDSComponentNameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				setPageComplete(isPageComplete());
-			}
-		});
+		fDSComponentNameText.addModifyListener(e -> setPageComplete(isPageComplete()));
 		setComponentName();
 
 		fDSImplementationClassHyperlink = new Link(fGroup, SWT.NONE);
@@ -186,6 +176,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 				.getSystemColor(SWT.COLOR_BLUE));
 		fDSImplementationClassHyperlink
 				.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						String value = fDSImplementationClassText.getText();
 						value = handleLinkActivated(value, false);
@@ -241,25 +232,24 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		classTextGridData.horizontalIndent = 3;
 		fDSImplementationClassText.setLayoutData(classTextGridData);
 		fDSImplementationClassText.setText("Component"); //$NON-NLS-1$
-		fDSImplementationClassText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				setPageComplete(isPageComplete());
-			}
-		});
+		fDSImplementationClassText.addModifyListener(e -> setPageComplete(isPageComplete()));
 
 		// Implementation Class Browse Button
 		fDSImplementationClassButton = new Button(fGroup, SWT.NONE);
 		fDSImplementationClassButton.setText(Messages.DSFileWizardPage_browse);
 		fDSImplementationClassButton.addMouseListener(new MouseListener() {
 
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void mouseDown(MouseEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void mouseUp(MouseEvent e) {
 				doOpenSelectionDialog(
 						IJavaElementSearchConstants.CONSIDER_CLASSES,
@@ -294,30 +284,23 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		return fDSImplementationClassText.getText();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
-	 */
+	@Override
 	protected IStatus validateLinkedResource() {
 		return new Status(IStatus.OK, Activator.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void createLinkTarget() {
 		// NO-OP
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Dialog.applyDialogFont(fGroup);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-	 */
+	@Override
 	public boolean isPageComplete() {
 		return validatePage();
 	}
@@ -326,9 +309,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		settings.put(S_COMPONENT_NAME, getFileName());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
-	 */
+	@Override
 	protected boolean validatePage() {
 		if (fDSComponentNameText == null || fDSImplementationClassText == null) {
 			return false;

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ds.core.text;
 
 import java.util.ArrayList;
 
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
@@ -25,68 +26,40 @@ public class DSService extends DSObject implements IDSService {
 		super(model, ELEMENT_SERVICE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
-	 */
 
+	@Override
 	public boolean canAddChild(int objectType) {
 		return objectType == TYPE_PROVIDE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return IDSConstants.ELEMENT_SERVICE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_SERVICE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#setServiceFactory(boolean)
-	 */
+	@Override
 	public void setServiceFactory(boolean bool) {
 		setBooleanAttributeValue(ATTRIBUTE_SERVICE_FACTORY, bool);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#getServiceFactory()
-	 */
+	@Override
 	public boolean getServiceFactory() {
 		return getBooleanAttributeValue(ATTRIBUTE_SERVICE_FACTORY, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#getProvidedServices()
-	 */
+	@Override
 	public IDSProvide[] getProvidedServices() {
-		ArrayList childNodesList = getChildNodesList(IDSProvide.class, true);
+		ArrayList<IDocumentElementNode> childNodesList = getChildNodesList(IDSProvide.class, true);
 		IDSProvide[] providedServices = new IDSProvide[childNodesList.size()];
 		for (int i = 0; i < childNodesList.size(); i++) {
 			providedServices[i] = (IDSProvide) childNodesList.get(i);
@@ -94,30 +67,18 @@ public class DSService extends DSObject implements IDSService {
 		return providedServices;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#addProvidedService(org.eclipse.pde.internal.ds.core.IDSProvide)
-	 */
+	@Override
 	public void addProvidedService(IDSProvide provide) {
 		this.addChildNode(provide, true);
 	}
 
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#removeProvidedService(org.eclipse.pde.internal.ds.core.IDSProvide)
-	 */
+	@Override
 	public void removeProvidedService(IDSProvide provide) {
 		this.removeChildNode(provide, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
-	 */
+	@Override
 	public String[] getAttributesNames() {
 		return new String[] { IDSConstants.ATTRIBUTE_SERVICE_FACTORY };
 	}

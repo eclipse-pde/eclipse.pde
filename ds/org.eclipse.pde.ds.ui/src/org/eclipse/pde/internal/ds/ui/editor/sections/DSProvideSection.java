@@ -73,6 +73,7 @@ public class DSProvideSection extends TableSection implements
 	private Action fEditAction;
 
 	class ContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IDSModel) {
 				IDSModel model = (IDSModel) inputElement;
@@ -88,10 +89,12 @@ public class DSProvideSection extends TableSection implements
 			return new Object[0];
 		}
 
+		@Override
 		public void dispose() {
 			// do nothing
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// do nothing
 		}
@@ -106,6 +109,7 @@ public class DSProvideSection extends TableSection implements
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setDescription(Messages.DSProvideSection_description);
 		section.setExpanded(true);
@@ -139,18 +143,21 @@ public class DSProvideSection extends TableSection implements
 		updateTitle();
 	}
 
+	@Override
 	public void dispose() {
 		IDSModel model = getDSModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
 	}
 
+	@Override
 	public void refresh() {
 		fProvidesTable.refresh();
 		updateButtons();
 		updateTitle();
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 		case 0:
@@ -186,6 +193,7 @@ public class DSProvideSection extends TableSection implements
 
 	private void makeActions() {
 		fAddAction = new Action(Messages.DSProvideSection_add) {
+			@Override
 			public void run() {
 				handleAdd();
 			}
@@ -193,6 +201,7 @@ public class DSProvideSection extends TableSection implements
 		fAddAction.setEnabled(isEditable());
 
 		fRemoveAction = new Action(Messages.DSProvideSection_remove) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -200,6 +209,7 @@ public class DSProvideSection extends TableSection implements
 		fRemoveAction.setEnabled(isEditable());
 
 		fEditAction = new Action(Messages.DSProvideSection_edit) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -218,10 +228,9 @@ public class DSProvideSection extends TableSection implements
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fProvidesTable
-				.getSelection();
+		IStructuredSelection ssel = fProvidesTable.getStructuredSelection();
 		if (ssel.size() > 0) {
-			Iterator iter = ssel.iterator();
+			Iterator<?> iter = ssel.iterator();
 			IDSService service = getDSModel().getDSComponent().getService();
 			while (iter.hasNext()) {
 				Object object = iter.next();
@@ -251,8 +260,8 @@ public class DSProvideSection extends TableSection implements
 			dialog.setTitle(Messages.DSProvideDetails_selectType);
 			if (dialog.open() == Window.OK) {
 				Object[] result = dialog.getResult();
-				for (int i = 0; i < result.length; i++) {
-					IType type = (IType) result[i];
+				for (Object element : result) {
+					IType type = (IType) element;
 					String fullyQualifiedName = type.getFullyQualifiedName('$');
 					addProvide(fullyQualifiedName);
 				}
@@ -280,16 +289,17 @@ public class DSProvideSection extends TableSection implements
 		service.addProvidedService(provide);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			Object[] objects = e.getChangedObjects();
-			for (int i = 0; i < objects.length; i++) {
+			for (Object object : objects) {
 				Table table = fProvidesTable.getTable();
-				if (objects[i] instanceof IDSProvide) {
+				if (object instanceof IDSProvide) {
 					int index = table.getSelectionIndex();
-					fProvidesTable.remove(objects[i]);
+					fProvidesTable.remove(object);
 					if (canSelect()) {
 						table.setSelection(index < table.getItemCount() ? index
 								: table.getItemCount() - 1);
@@ -324,6 +334,7 @@ public class DSProvideSection extends TableSection implements
 		return context == null ? null : (IDSModel) context.getModel();
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (!isEditable()) {
 			return false;
@@ -337,6 +348,7 @@ public class DSProvideSection extends TableSection implements
 		return false;
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
@@ -350,6 +362,7 @@ public class DSProvideSection extends TableSection implements
 						itemCount)));
 	}
 
+	@Override
 	public void doubleClick(DoubleClickEvent event) {
 		IDSProvide provide = (IDSProvide) ((IStructuredSelection) fProvidesTable
 				.getSelection()).getFirstElement();

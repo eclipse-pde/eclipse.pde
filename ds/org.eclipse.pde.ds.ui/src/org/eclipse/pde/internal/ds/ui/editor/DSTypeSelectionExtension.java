@@ -26,14 +26,15 @@ public class DSTypeSelectionExtension extends TypeSelectionExtension {
 
 	class TypeInfoFilterExtension implements ITypeInfoFilterExtension {
 
-		List fProvides = new ArrayList(3);
+		List<String> fProvides = new ArrayList<String>(3);
 
 		public TypeInfoFilterExtension(IDSProvide[] provides) {
-			for (int i = 0; i < provides.length; i++) {
-				fProvides.add(provides[i].getInterface());
+			for (IDSProvide provide : provides) {
+				fProvides.add(provide.getInterface());
 			}
 		}
 
+		@Override
 		public boolean select(ITypeInfoRequestor typeInfoRequestor) {
 			StringBuffer buffer = new StringBuffer(typeInfoRequestor.getPackageName());
 			buffer.append("."); //$NON-NLS-1$
@@ -51,6 +52,7 @@ public class DSTypeSelectionExtension extends TypeSelectionExtension {
 		fModel = model;
 	}
 
+	@Override
 	public ITypeInfoFilterExtension getFilterExtension() {
 		IDSService service = fModel.getDSComponent().getService();
 		if (service != null)

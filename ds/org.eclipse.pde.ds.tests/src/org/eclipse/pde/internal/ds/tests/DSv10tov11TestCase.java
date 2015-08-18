@@ -27,6 +27,7 @@ public class DSv10tov11TestCase extends AbstractDSModelTestCase {
 		assertEquals(component.getNamespace(), "http://www.osgi.org/xmlns/scr/v1.1.0");
 	}
 	
+	@Override
 	protected void setXMLContents(StringBuffer body, String newline) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

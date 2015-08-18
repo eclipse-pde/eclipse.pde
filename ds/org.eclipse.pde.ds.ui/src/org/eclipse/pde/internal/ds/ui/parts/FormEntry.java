@@ -19,7 +19,6 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -117,6 +116,7 @@ public class FormEntry {
 		if (browseText != null) {
 			fBrowse = toolkit.createButton(parent, browseText, SWT.PUSH);
 			fBrowse.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (fListener != null)
 						fListener.browseButtonSelected(FormEntry.this);
@@ -212,21 +212,20 @@ public class FormEntry {
 
 	private void addListeners() {
 		fText.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				keyReleaseOccured(e);
 			}
 		});
-		fText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				editOccured(e);
-			}
-		});
+		fText.addModifyListener(e -> editOccured(e));
 		fText.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				if (fListener != null)
 					fListener.focusGained(FormEntry.this);
 			}
 
+			@Override
 			public void focusLost(FocusEvent e) {
 				if (fDirty)
 					commit();

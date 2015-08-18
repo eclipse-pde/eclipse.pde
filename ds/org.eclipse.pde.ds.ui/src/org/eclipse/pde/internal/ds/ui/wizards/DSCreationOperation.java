@@ -73,11 +73,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 		fImplementationClass = implementationClass;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
 		monitor.beginTask(Messages.DSCreationOperation_title, 3);
@@ -98,6 +94,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 
 		PDEModelUtility.modifyModel(new ModelModification(project) {
 
+			@Override
 			protected void modifyModel(IBaseModel model,
 					IProgressMonitor monitor) throws CoreException {
 
@@ -114,6 +111,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 
 		PDEModelUtility.modifyModel(new ModelModification(PDEProject
 				.getBuildProperties(project)) {
+			@Override
 			protected void modifyModel(IBaseModel model,
 					IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBuildModel))
@@ -200,8 +198,8 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 			IProjectDescription description = project.getDescription();
 			ICommand[] commands = description.getBuildSpec();
 
-			for (int i = 0; i < commands.length; ++i) {
-				if (commands[i].getBuilderName().equals(IConstants.ID_BUILDER)) {
+			for (ICommand command : commands) {
+				if (command.getBuilderName().equals(IConstants.ID_BUILDER)) {
 					return;
 				}
 			}
@@ -224,26 +222,24 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	 * 
 	 */
 	private void openFile() {
-		Display.getCurrent().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchWindow window = Activator.getActiveWorkbenchWindow();
-				if (window == null) {
-					return;
-				}
-				IWorkbenchPage page = window.getActivePage();
-				if ((page == null) || !fFile.exists()) {
-					return;
-				}
-				IWorkbenchPart focusPart = page.getActivePart();
-				if (focusPart instanceof ISetSelectionTarget) {
-					ISelection selection = new StructuredSelection(fFile);
-					((ISetSelectionTarget) focusPart).selectReveal(selection);
-				}
-				try {
-					IDE.openEditor(page, fFile);
-				} catch (PartInitException e) {
-					// Ignore
-				}
+		Display.getCurrent().asyncExec(() -> {
+			IWorkbenchWindow window = Activator.getActiveWorkbenchWindow();
+			if (window == null) {
+				return;
+			}
+			IWorkbenchPage page = window.getActivePage();
+			if ((page == null) || !fFile.exists()) {
+				return;
+			}
+			IWorkbenchPart focusPart = page.getActivePart();
+			if (focusPart instanceof ISetSelectionTarget) {
+				ISelection selection = new StructuredSelection(fFile);
+				((ISetSelectionTarget) focusPart).selectReveal(selection);
+			}
+			try {
+				IDE.openEditor(page, fFile);
+			} catch (PartInitException e) {
+				// Ignore
 			}
 		});
 	}

@@ -63,11 +63,11 @@ public class XMLErrorReporter extends DefaultHandler {
 	private DSMarkerFactory fMarkerFactory;
 	private org.w3c.dom.Document fXMLDocument;
 	private IDocument fTextDocument;
-	private Stack fElementStack;
+	private Stack<Element> fElementStack;
 	private Element fRootElement;
 	private Locator fLocator;
 	private int fHighestOffset;
-	private HashMap fOffsetTable;
+	private HashMap<Element, ElementData> fOffsetTable;
 	private FindReplaceDocumentAdapter fFindReplaceAdapter;
 
 	public XMLErrorReporter(IFile file) {
@@ -79,8 +79,8 @@ public class XMLErrorReporter extends DefaultHandler {
 			fTextDocument = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE).getDocument();
 			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, null);
 			fFindReplaceAdapter = new FindReplaceDocumentAdapter(fTextDocument);
-			fOffsetTable = new HashMap();
-			fElementStack = new Stack();
+			fOffsetTable = new HashMap<>();
+			fElementStack = new Stack<>();
 			removeFileMarkers();
 		} catch (CoreException e) {
 			// TODO log message
@@ -119,11 +119,13 @@ public class XMLErrorReporter extends DefaultHandler {
 				DSMarkerFactory.NO_RESOLUTION, DSMarkerFactory.CAT_OTHER);
 	}
 
+	@Override
 	public void error(SAXParseException exception) throws SAXException {
 		addMarker(exception, IMarker.SEVERITY_ERROR);
 		generateErrorElementHierarchy();
 	}
 
+	@Override
 	public void fatalError(SAXParseException exception) throws SAXException {
 		addMarker(exception, IMarker.SEVERITY_ERROR);
 		generateErrorElementHierarchy();
@@ -156,13 +158,12 @@ public class XMLErrorReporter extends DefaultHandler {
 				category);
 	}
 
+	@Override
 	public void warning(SAXParseException exception) throws SAXException {
 		addMarker(exception, IMarker.SEVERITY_WARNING);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#startDocument()
-	 */
+	@Override
 	public void startDocument() throws SAXException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -172,16 +173,12 @@ public class XMLErrorReporter extends DefaultHandler {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
-	 */
+	@Override
 	public void endDocument() throws SAXException {
 		fXMLDocument.appendChild(fRootElement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-	 */
+	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		Element element = fXMLDocument.createElement(qName);
 		for (int i = 0; i < attributes.getLength(); i++) {
@@ -191,7 +188,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		if (fRootElement == null)
 			fRootElement = element;
 		else
-			((Element) fElementStack.peek()).appendChild(element);
+			fElementStack.peek().appendChild(element);
 		fElementStack.push(element);
 		try {
 			if (fTextDocument != null)
@@ -200,24 +197,20 @@ public class XMLErrorReporter extends DefaultHandler {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		fElementStack.pop();
 	}
 
 	private void generateErrorElementHierarchy() {
 		while (!fElementStack.isEmpty()) {
-			ElementData data = (ElementData) fOffsetTable.get(fElementStack.pop());
+			ElementData data = fOffsetTable.get(fElementStack.pop());
 			if (data != null)
 				data.fErrorNode = true;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
-	 */
+	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
 		StringBuffer buff = new StringBuffer();
 		for (int i = 0; i < length; i++) {
@@ -227,12 +220,10 @@ public class XMLErrorReporter extends DefaultHandler {
 		if (fRootElement == null)
 			fXMLDocument.appendChild(text);
 		else
-			((Element) fElementStack.peek()).appendChild(text);
+			fElementStack.peek().appendChild(text);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
-	 */
+	@Override
 	public void setDocumentLocator(Locator locator) {
 		fLocator = locator;
 	}
@@ -244,7 +235,7 @@ public class XMLErrorReporter extends DefaultHandler {
 			col = fTextDocument.getLineLength(line);
 		String text = fTextDocument.get(fHighestOffset + 1, fTextDocument.getLineOffset(line) - fHighestOffset - 1);
 
-		ArrayList commentPositions = new ArrayList();
+		ArrayList<Position> commentPositions = new ArrayList<>();
 		for (int idx = 0; idx < text.length();) {
 			idx = text.indexOf("<!--", idx); //$NON-NLS-1$
 			if (idx == -1)
@@ -264,7 +255,7 @@ public class XMLErrorReporter extends DefaultHandler {
 				break;
 			boolean valid = true;
 			for (int i = 0; i < commentPositions.size(); i++) {
-				Position pos = (Position) commentPositions.get(i);
+				Position pos = commentPositions.get(i);
 				if (pos.includes(idx)) {
 					valid = false;
 					break;
@@ -315,7 +306,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	protected String getTextContent(Element element) {
-		ElementData data = (ElementData) fOffsetTable.get(element);
+		ElementData data = fOffsetTable.get(element);
 		try {
 			IRegion nameRegion = fFindReplaceAdapter.find(data.offset, "</" + element.getNodeName() + ">", true, true, false, false); //$NON-NLS-1$ //$NON-NLS-2$
 			int offset = data.offset + element.getNodeName().length() + 2;
@@ -327,7 +318,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	protected int getLine(Element element) {
-		ElementData data = (ElementData) fOffsetTable.get(element);
+		ElementData data = fOffsetTable.get(element);
 		try {
 			return (data == null) ? 1 : fTextDocument.getLineOfOffset(data.offset) + 1;
 		} catch (Exception e) {
@@ -336,7 +327,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	protected int getLine(Element element, String attName) {
-		ElementData data = (ElementData) fOffsetTable.get(element);
+		ElementData data = fOffsetTable.get(element);
 		try {
 			int offset = getAttributeOffset(attName, element.getAttribute(attName), data.offset);
 			if (offset != -1)
@@ -356,6 +347,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		return fRootElement;
 	}
 
+	@Override
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		int x = fTextDocument.get().indexOf("!DOCTYPE"); //$NON-NLS-1$
 		if (x > 0) {

@@ -22,20 +22,12 @@ public class DSFormOutlinePage extends FormOutlinePage  {
 		super(editor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
-	 */
+	@Override
 	public ILabelProvider createLabelProvider() {
 		return new DSLabelProvider();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getParentPageId(java.lang.Object)
-	 */
+	@Override
 	protected String getParentPageId(Object item) {
 		return DSOverviewPage.PAGE_ID;
 	}

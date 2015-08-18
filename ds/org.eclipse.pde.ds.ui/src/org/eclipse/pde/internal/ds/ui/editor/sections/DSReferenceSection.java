@@ -76,6 +76,7 @@ public class DSReferenceSection extends TableSection implements
 
 		private DSLabelProvider labelProvider = new DSLabelProvider();
 
+		@Override
 		public void update(ViewerCell cell) {
 			final Object element = cell.getElement();
 			IDSReference reference = (IDSReference) element;
@@ -104,6 +105,7 @@ public class DSReferenceSection extends TableSection implements
 			super.update(cell);
 		}
 
+		@Override
 		public void dispose() {
 			super.dispose();
 			labelProvider.dispose();
@@ -112,6 +114,7 @@ public class DSReferenceSection extends TableSection implements
 	}
 
 	class ContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IDSModel) {
 				IDSModel model = (IDSModel) inputElement;
@@ -123,11 +126,13 @@ public class DSReferenceSection extends TableSection implements
 			return new Object[0];
 		}
 
+		@Override
 		public void dispose() {
 			// do nothing
 
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// do nothing
 		}
@@ -144,6 +149,7 @@ public class DSReferenceSection extends TableSection implements
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setDescription(Messages.DSReferenceSection_description);
 		section.setExpanded(true);
@@ -177,18 +183,21 @@ public class DSReferenceSection extends TableSection implements
 		updateTitle();
 	}
 
+	@Override
 	public void dispose() {
 		IDSModel model = getDSModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
 	}
 
+	@Override
 	public void refresh() {
 		fReferencesTable.refresh();
 		updateButtons();
 		updateTitle();
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 		case 0:
@@ -235,8 +244,7 @@ public class DSReferenceSection extends TableSection implements
 	}
 
 	private void moveUp(Object[] array) {
-		for (int i = 0; i < array.length; i++) {
-			Object object = array[i];
+		for (Object object : array) {
 			if (object == null) {
 				continue;
 			} else if (object instanceof IDocumentElementNode) {
@@ -270,6 +278,7 @@ public class DSReferenceSection extends TableSection implements
 
 	private void makeActions() {
 		fAddAction = new Action(Messages.DSReferenceSection_add) {
+			@Override
 			public void run() {
 				handleAdd();
 			}
@@ -277,6 +286,7 @@ public class DSReferenceSection extends TableSection implements
 		fAddAction.setEnabled(isEditable());
 
 		fRemoveAction = new Action(Messages.DSReferenceSection_remove) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -284,6 +294,7 @@ public class DSReferenceSection extends TableSection implements
 		fRemoveAction.setEnabled(isEditable());
 
 		fEditAction = new Action(Messages.DSReferenceSection_edit) {
+			@Override
 			public void run() {
 				handleEdit();
 			}
@@ -308,10 +319,9 @@ public class DSReferenceSection extends TableSection implements
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fReferencesTable
-				.getSelection();
+		IStructuredSelection ssel = fReferencesTable.getStructuredSelection();
 		if (ssel.size() > 0) {
-			Iterator iter = ssel.iterator();
+			Iterator<?> iter = ssel.iterator();
 			while (iter.hasNext()) {
 				Object object = iter.next();
 				if (object instanceof IDSReference) {
@@ -337,8 +347,8 @@ public class DSReferenceSection extends TableSection implements
 			dialog.setTitle(Messages.DSReferenceDetails_selectType);
 			if (dialog.open() == Window.OK) {
 				Object[] result = dialog.getResult();
-				for (int i = 0; i < result.length; i++) {
-					IType type = (IType) result[i];
+				for (Object element : result) {
+					IType type = (IType) element;
 					String fullyQualifiedName = type.getFullyQualifiedName('$');
 					addReference(fullyQualifiedName);
 				}
@@ -364,16 +374,17 @@ public class DSReferenceSection extends TableSection implements
 		getDSModel().getDSComponent().addReference(reference);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			Object[] objects = e.getChangedObjects();
-			for (int i = 0; i < objects.length; i++) {
+			for (Object object : objects) {
 				Table table = fReferencesTable.getTable();
-				if (objects[i] instanceof IDSReference) {
+				if (object instanceof IDSReference) {
 					int index = table.getSelectionIndex();
-					fReferencesTable.remove(objects[i]);
+					fReferencesTable.remove(object);
 					if (canSelect()) {
 						table.setSelection(index < table.getItemCount() ? index
 								: table.getItemCount() - 1);
@@ -408,6 +419,7 @@ public class DSReferenceSection extends TableSection implements
 		return context == null ? null : (IDSModel) context.getModel();
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (!isEditable()) {
 			return false;
@@ -421,6 +433,7 @@ public class DSReferenceSection extends TableSection implements
 		return false;
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
@@ -433,6 +446,7 @@ public class DSReferenceSection extends TableSection implements
 						itemCount)));
 	}
 
+	@Override
 	public void doubleClick(DoubleClickEvent event) {
 		IDSReference reference = (IDSReference) ((IStructuredSelection) fReferencesTable
 				.getSelection()).getFirstElement();

@@ -55,18 +55,22 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		fSourcePage = sourcePage;
 	}
 
+	@Override
 	public void assistSessionEnded(ContentAssistEvent event) {
 		fRange = null;
 	}
 
+	@Override
 	public void assistSessionStarted(ContentAssistEvent event) {
 		fAssistSessionStarted = true;
 	}
 
+	@Override
 	public void selectionChanged(ICompletionProposal proposal,
 			boolean smartToggle) {
 	}
 
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
 			int offset) {
 		IDocument doc = viewer.getDocument();
@@ -334,7 +338,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			IDocumentElementNode node, int offset, IDocument doc,
 			String filter, String tag) {
 
-		ArrayList proposals = new ArrayList();
+		ArrayList<DSAttrCompletionProposal> proposals = new ArrayList<DSAttrCompletionProposal>();
 
 		if (!(node instanceof IDSObject)) {
 			return null;
@@ -344,14 +348,12 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		if (attributesList == null || attributesList.length == 0) {
 			return null;
 		} else {
-			for (int i = 0; i < attributesList.length; i++) {
-				String attribute = attributesList[i];
+			for (String attribute : attributesList) {
 				// Lists all attributes already in use
 				IDocumentAttributeNode[] nodeAttributes = node
 						.getNodeAttributes();
 				boolean EqualToAnyItem = false;
-				for (int j = 0; j < nodeAttributes.length; j++) {
-					IDocumentAttributeNode documentAttributeNode = nodeAttributes[j];
+				for (IDocumentAttributeNode documentAttributeNode : nodeAttributes) {
 					EqualToAnyItem |= attribute.equals(documentAttributeNode
 							.getAttributeName());
 
@@ -360,7 +362,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 				// CompletionProposal
 				if (EqualToAnyItem == false) {
 					DSAttrCompletionProposal dsAttrCompletionProposal = new DSAttrCompletionProposal(
-							attributesList[i], offset, 0);
+							attribute, offset, 0);
 					addFilteredProposal(offset, proposals,
 							dsAttrCompletionProposal, filter);
 				}
@@ -373,7 +375,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			ICompletionProposal proposalsArray[] = new ICompletionProposal[proposals
 					.size()];
 			for (int i = 0; i < proposals.size(); i++) {
-				proposalsArray[i] = (ICompletionProposal) proposals.get(i);
+				proposalsArray[i] = proposals.get(i);
 
 			}
 			return proposalsArray;
@@ -398,7 +400,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 	private ICompletionProposal[] computeRootNodeProposals(
 			IDocumentElementNode node, int offset, String filter) {
-		ArrayList proposals = new ArrayList();
+		ArrayList<DSCompletionProposal> proposals = new ArrayList<DSCompletionProposal>();
 		IDSModel model = (DSModel) fSourcePage.getInputContext().getModel();
 
 		IDSComponent component = model.getDSComponent();
@@ -428,13 +430,13 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		ICompletionProposal[] proposalsArray = new DSCompletionProposal[proposals
 				.size()];
 		for (int i = 0; i < proposalsArray.length; i++) {
-			proposalsArray[i] = (ICompletionProposal) proposals.get(i);
+			proposalsArray[i] = proposals.get(i);
 		}
 		return proposalsArray;
 
 	}
 
-	private void addFilteredProposal(int offset, ArrayList proposals,
+	private void addFilteredProposal(int offset, ArrayList<DSCompletionProposal> proposals,
 			DSCompletionProposal proposal, String filter) {
 		if (filter == null || filter.length() == 0) {
 			proposals.add(proposal);
@@ -445,7 +447,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		}
 	}
 
-	private void addFilteredProposal(int offset, ArrayList proposals,
+	private void addFilteredProposal(int offset, ArrayList<DSAttrCompletionProposal> proposals,
 			DSAttrCompletionProposal proposal, String filter) {
 		if (filter == null || filter.length() == 0) {
 			proposals.add(proposal);

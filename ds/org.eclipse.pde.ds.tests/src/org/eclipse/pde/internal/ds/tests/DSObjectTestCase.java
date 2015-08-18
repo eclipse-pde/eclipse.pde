@@ -58,7 +58,7 @@ public class DSObjectTestCase extends AbstractDSModelTestCase {
 		reference.setReferenceName("ReferenceName");
 		component.addReference(reference);
 		
-		List children = component.getChildNodesList();
+		List<?> children = component.getChildNodesList();
 		assertTrue(children.size() == 5);
 		assertEquals(component.getModel(), fModel);
 		

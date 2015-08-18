@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -74,6 +73,7 @@ public class DSPropertiesSection extends TableSection {
 	private static final int F_DOWN_FLAG = 1;
 
 	class ContentProvider extends DefaultTableProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IDSModel) {
 				IDSModel model = (IDSModel) inputElement;
@@ -100,8 +100,7 @@ public class DSPropertiesSection extends TableSection {
 					Object[] props = new Object[propertyLength
 							+ propertiesLength];
 					int index = 0;
-					for (int i = 0; i < childNodes.length; i++) {
-						IDocumentElementNode child = childNodes[i];
+					for (IDocumentElementNode child : childNodes) {
 						if (child instanceof IDSProperties
 								|| child instanceof IDSProperty) {
 							props[index] = child;
@@ -129,6 +128,7 @@ public class DSPropertiesSection extends TableSection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(Messages.DSPropertiesSection_title);
 		section.setDescription(Messages.DSPropertiesSection_description);
@@ -160,12 +160,14 @@ public class DSPropertiesSection extends TableSection {
 		section.setClient(container);
 	}
 
+	@Override
 	public void dispose() {
 		IDSModel model = getDSModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
 	}
 
+	@Override
 	public void refresh() {
 		fPropertiesTable.refresh();
 		updateButtons();
@@ -179,6 +181,7 @@ public class DSPropertiesSection extends TableSection {
 						itemCount)));
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 		case 0:
@@ -229,8 +232,7 @@ public class DSPropertiesSection extends TableSection {
 	}
 
 	private void moveUp(int newRelativeIndex, Object[] array) {
-		for (int i = 0; i < array.length; i++) {
-			Object object = array[i];
+		for (Object object : array) {
 			if (object == null) {
 				continue;
 			} else if (object instanceof IDocumentElementNode) {
@@ -284,6 +286,7 @@ public class DSPropertiesSection extends TableSection {
 	private void makeActions() {
 		fAddPropertiesAction = new Action(
 				Messages.DSPropertiesSection_addProperties) {
+			@Override
 			public void run() {
 				handleAddProperties();
 			}
@@ -292,6 +295,7 @@ public class DSPropertiesSection extends TableSection {
 
 		fAddPropertyAction = new Action(
 				Messages.DSPropertiesSection_addProperty) {
+			@Override
 			public void run() {
 				handleAddProperty();
 			}
@@ -299,6 +303,7 @@ public class DSPropertiesSection extends TableSection {
 		fAddPropertyAction.setEnabled(isEditable());
 
 		fEditAction = new Action(Messages.DSPropertiesSection_edit) {
+			@Override
 			public void run() {
 				handleEdit();
 			}
@@ -306,6 +311,7 @@ public class DSPropertiesSection extends TableSection {
 		fEditAction.setEnabled(isEditable());
 
 		fRemoveAction = new Action(Messages.DSPropertiesSection_remove) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -331,10 +337,9 @@ public class DSPropertiesSection extends TableSection {
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fPropertiesTable
-				.getSelection();
+		IStructuredSelection ssel = fPropertiesTable.getStructuredSelection();
 		if (ssel.size() > 0) {
-			Iterator iter = ssel.iterator();
+			Iterator<?> iter = ssel.iterator();
 			while (iter.hasNext()) {
 				Object object = iter.next();
 				if (object instanceof IDSProperties) {
@@ -360,6 +365,7 @@ public class DSPropertiesSection extends TableSection {
 				new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		dialog.setInput(project.getWorkspace());
 		dialog.addFilter(new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 				if (element instanceof IProject)
@@ -370,16 +376,14 @@ public class DSPropertiesSection extends TableSection {
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(Messages.DSPropertiesDetails_dialogTitle);
 		dialog.setMessage(Messages.DSPropertiesDetails_dialogMessage);
-		dialog.setValidator(new ISelectionStatusValidator() {
-			public IStatus validate(Object[] selection) {
-				if (selection != null && selection.length > 0
-						&& selection[0] instanceof IFile)
-					return new Status(IStatus.OK, Activator.PLUGIN_ID,
-							IStatus.OK, "", null); //$NON-NLS-1$
+		dialog.setValidator(selection -> {
+			if (selection != null && selection.length > 0
+					&& selection[0] instanceof IFile)
+				return new Status(IStatus.OK, Activator.PLUGIN_ID,
+						IStatus.OK, "", null); //$NON-NLS-1$
 
-				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-						IStatus.ERROR, "", null); //$NON-NLS-1$
-			}
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					IStatus.ERROR, "", null); //$NON-NLS-1$
 		});
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();
@@ -414,24 +418,25 @@ public class DSPropertiesSection extends TableSection {
 		return property;
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			Object[] objects = e.getChangedObjects();
-			for (int i = 0; i < objects.length; i++) {
+			for (Object object : objects) {
 				Table table = fPropertiesTable.getTable();
-				if (objects[i] instanceof IDSProperties) {
+				if (object instanceof IDSProperties) {
 					int index = table.getSelectionIndex();
-					fPropertiesTable.remove(objects[i]);
+					fPropertiesTable.remove(object);
 					if (canSelect()) {
 						table.setSelection(index < table.getItemCount() ? index
 								: table.getItemCount() - 1);
 					}
 				}
-				if (objects[i] instanceof IDSProperty) {
+				if (object instanceof IDSProperty) {
 					int index = table.getSelectionIndex();
-					fPropertiesTable.remove(objects[i]);
+					fPropertiesTable.remove(object);
 					if (canSelect()) {
 						table.setSelection(index < table.getItemCount() ? index
 								: table.getItemCount() - 1);
@@ -451,11 +456,9 @@ public class DSPropertiesSection extends TableSection {
 			fPropertiesTable.refresh();
 			updateButtons();
 		}
-		fPropertiesTable.getTable().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if (!fPropertiesTable.getTable().isDisposed())
-					updateTitle();
-			}
+		fPropertiesTable.getTable().getDisplay().asyncExec(() -> {
+			if (!fPropertiesTable.getTable().isDisposed())
+				updateTitle();
 		});
 	}
 
@@ -470,6 +473,7 @@ public class DSPropertiesSection extends TableSection {
 		return context == null ? null : (IDSModel) context.getModel();
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (!isEditable()) {
 			return false;
@@ -483,6 +487,7 @@ public class DSPropertiesSection extends TableSection {
 		return false;
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();

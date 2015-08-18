@@ -52,11 +52,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		super(file);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.builders.XMLErrorReporter#validateContent(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void validateContent(IProgressMonitor monitor) {
 
 		try {
@@ -98,7 +94,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	}
 
 	private void validateReferenceElements(IDSReference[] references) {
-		Hashtable referencedNames = new Hashtable();
+		Hashtable<String, String> referencedNames = new Hashtable<>();
 		for (int i = 0; i < references.length; i++) {
 			IDSReference reference = references[i];
 			Element element = (Element) getElements(reference).item(i);
@@ -151,7 +147,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		report(message, getLine(element), ERROR, DSMarkerFactory.CAT_OTHER);
 	}
 
-	private void validateReferenceElementNames(Hashtable referencedNames,
+	private void validateReferenceElementNames(Hashtable<String, String> referencedNames,
 			Element element) {
 		String name = element
 				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
@@ -183,8 +179,8 @@ public class DSErrorReporter extends XMLErrorReporter {
 				IDSConstants.VALUE_REFERENCE_POLICY_STATIC };
 
 		if (attribute != null && attribute.length() > 0) {
-			for (int i = 0; i < allowedValues.length; i++) {
-				if (allowedValues[i].equalsIgnoreCase(attribute)) {
+			for (String allowedValue : allowedValues) {
+				if (allowedValue.equalsIgnoreCase(attribute)) {
 					return;
 				}
 			}
@@ -217,8 +213,8 @@ public class DSErrorReporter extends XMLErrorReporter {
 				IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE };
 
 		if (cardinality != null) {
-			for (int i = 0; i < allowedValues.length; i++) {
-				if (allowedValues[i].equalsIgnoreCase(cardinality)) {
+			for (String allowedValue : allowedValues) {
+				if (allowedValue.equalsIgnoreCase(cardinality)) {
 					return;
 				}
 			}
@@ -319,25 +315,23 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 	}
 
-	private void validatePropertySpecificTypeValue(String type, String value,
-			Element element) {
+	@SuppressWarnings("rawtypes")
+	private void validatePropertySpecificTypeValue(String type, String value, Element element) {
 
 		if (type == null) { // if null, we assume string
 			type = IDSConstants.VALUE_PROPERTY_TYPE_STRING;
 		}
-		// Validate Double, Long, Float, Integer, Byte, Short and
-		// String
+		// Validate Double, Long, Float, Integer, Byte, Short and String
 		if (!type.equals(IDSConstants.VALUE_PROPERTY_TYPE_CHAR)
 				&& !type.equals(IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN)) {
 			try {
-				Class forName = Class.forName("java.lang." + type); //$NON-NLS-1$
+				Class<?> forName = Class.forName("java.lang." + type); //$NON-NLS-1$
+
 				Constructor[] constructors = forName.getConstructors();
-				for (int i = 0; i < constructors.length; i++) {
-					Constructor constructor = constructors[i];
+				for (Constructor constructor : constructors) {
 					Class[] parameterTypes = constructor.getParameterTypes();
 					if (parameterTypes.length == 1) {
-						if (parameterTypes[0].equals(Class
-								.forName("java.lang.String"))) { //$NON-NLS-1$
+						if (parameterTypes[0].equals(Class.forName("java.lang.String"))) { //$NON-NLS-1$
 							constructor.newInstance(new Object[] { value });
 
 						}
@@ -439,8 +433,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 				IDSConstants.VALUE_PROPERTY_TYPE_STRING };
 
 		if (attribute != null) {
-			for (int i = 0; i < allowedValues.length; i++) {
-				if (allowedValues[i].equalsIgnoreCase(attribute)) {
+			
+			for (String allowedValue : allowedValues) {
+				if (allowedValue.equalsIgnoreCase(attribute)) {
 					return;
 				}
 			}
@@ -464,31 +459,10 @@ public class DSErrorReporter extends XMLErrorReporter {
 				validateJavaElement(className,
 						IDSConstants.ELEMENT_IMPLEMENTATION,
 						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS, 0);
-
-				// validate Class Default Constructor
-				// validateClassDefaultConstructor(element, className);
-
 			}
 		}
 
 	}
-
-	// private void validateClassDefaultConstructor(Element element,
-	// String className) {
-	// try {
-	// Class.forName(className);
-	// } catch (ClassNotFoundException e) {
-	// reportDefaultConstructorNotDefined(element, className);
-	// }
-	// }
-	//
-	// private void reportDefaultConstructorNotDefined(Element element,
-	// String className) {
-	// String message = NLS.bind(
-	// Messages.DSErrorReporter_requiredDefaultConstructor,
-	// (new String[] { className }));
-	// report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
-	// }
 
 	private void validateJavaElement(String fullyQualifiedName,
 			String elementName, String attrName, int index) {
@@ -692,7 +666,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	}
 
 	private void validateProvideElement(IDSProvide[] providedServices) {
-		Hashtable providedInterfaces = new Hashtable();
+		Hashtable<String, String> providedInterfaces = new Hashtable<>();
 
 		for (int i = 0; i < providedServices.length; i++) {
 			IDSProvide provide = providedServices[i];
@@ -718,7 +692,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 	}
 
-	private void validateDuplicateInterface(Hashtable providedInterfaces,
+	private void validateDuplicateInterface(Hashtable<String, String> providedInterfaces,
 			IDSProvide provide, Element element) {
 		String interface1 = provide.getInterface();
 		if (providedInterfaces.get(interface1) != null) {

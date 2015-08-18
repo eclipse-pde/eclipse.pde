@@ -30,6 +30,7 @@ public class DSTextHover extends PDETextHover {
 		fSourcePage = sourcePage;
 	}
 
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		int offset = hoverRegion.getOffset();
 		IDocumentRange range = fSourcePage.getRangeElement(offset, true);

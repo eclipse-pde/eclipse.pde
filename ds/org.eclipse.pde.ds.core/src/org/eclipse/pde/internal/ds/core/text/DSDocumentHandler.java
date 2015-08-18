@@ -31,16 +31,12 @@ public class DSDocumentHandler extends NodeDocumentHandler {
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocument()
-	 */
+	@Override
 	protected IDocument getDocument() {
 		return fModel.getDocument();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.NodeDocumentHandler#getRootNode()
-	 */
+	@Override
 	protected IDocumentElementNode getRootNode() {
 		return (IDocumentElementNode) fModel.getRoot();
 	}

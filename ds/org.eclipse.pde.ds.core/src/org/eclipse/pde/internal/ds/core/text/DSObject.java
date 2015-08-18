@@ -45,43 +45,22 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 		super(model, tagName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.core.text.DocumentElementNode#getAttributeIndent()
-	 */
+	@Override
 	protected String getAttributeIndent() {
 		return " "; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.core.text.DocumentElementNode#getContentIndent()
-	 */
+	@Override
 	protected String getContentIndent() {
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#canBeParent()
-	 */
+	@Override
 	public abstract boolean canBeParent();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
-	 */
 	public abstract boolean canAddChild(int objectType);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getModel()
-	 */
+	@Override
 	public IDSModel getModel() {
 		final IModel sharedModel = getSharedModel();
 		if (sharedModel instanceof DSModel) {
@@ -90,11 +69,7 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getRoot()
-	 */
+	@Override
 	public IDSComponent getComponent() {
 		final IDSModel model = getModel();
 		if (model != null) {
@@ -103,18 +78,10 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
-	 */
+	@Override
 	public abstract String getName();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
-	 */
+	@Override
 	public abstract int getType();
 	
 }

@@ -25,6 +25,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 
 public class DSLabelProvider extends LabelProvider {
 
+	@Override
 	public String getText(Object obj) {
 
 		if (obj instanceof IDSObject) {
@@ -51,6 +52,7 @@ public class DSLabelProvider extends LabelProvider {
 		return obj.getName();
 	}
 
+	@Override
 	public Image getImage(Object obj) {
 		if (obj instanceof IDSObject) {
 			return getObjectImage((IDSObject) obj);

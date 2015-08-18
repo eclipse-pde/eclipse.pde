@@ -49,7 +49,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.forms.FormDialog;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -77,6 +76,7 @@ public class DSEditPropertyDialog extends FormDialog {
 
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm mform) {
 		mform.getForm().setText(Messages.DSEditPropertyDialog_dialog_title);
 
@@ -133,10 +133,12 @@ public class DSEditPropertyDialog extends FormDialog {
 
 	}
 
+	@Override
 	public boolean isHelpAvailable() {
 		return false;
 	}
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 		case 0:
@@ -246,14 +248,17 @@ public class DSEditPropertyDialog extends FormDialog {
 		// Attribute: Name
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(
 				this.fPropertiesSection) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// no op due to OK Button
 			}
 
+			@Override
 			public void textDirty(FormEntry entry) {
 				// no op due to OK Button
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fNameEntry.getValue();
 				value = handleLinkActivated(value, false);
@@ -261,6 +266,7 @@ public class DSEditPropertyDialog extends FormDialog {
 					fNameEntry.setValue(value);
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				doOpenSelectionDialog(fNameEntry);
 			}
@@ -271,10 +277,12 @@ public class DSEditPropertyDialog extends FormDialog {
 		// Attribute: Values
 		fValuesEntry.setFormEntryListener(new FormEntryAdapter(
 				this.fPropertiesSection) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// no op due to OK Button
 			}
 
+			@Override
 			public void textDirty(FormEntry entry) {
 				// no op due to OK Button
 			}
@@ -326,6 +334,7 @@ public class DSEditPropertyDialog extends FormDialog {
 		if (resource != null)
 			dialog.setInitialSelection(resource);
 		dialog.addFilter(new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 				if (element instanceof IProject)
@@ -336,17 +345,15 @@ public class DSEditPropertyDialog extends FormDialog {
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(Messages.DSEditPropertyDialog_dialog_title);
 		dialog.setMessage(Messages.DSEditPropertyDialog_dialogMessage);
-		dialog.setValidator(new ISelectionStatusValidator() {
-			public IStatus validate(Object[] selection) {
-				if (selection != null
-						&& selection.length > 0
-						&& (selection[0] instanceof IFile || selection[0] instanceof IContainer))
-					return new Status(IStatus.OK, Activator.PLUGIN_ID,
-							IStatus.OK, "", null); //$NON-NLS-1$
+		dialog.setValidator(selection -> {
+			if (selection != null
+					&& selection.length > 0
+					&& (selection[0] instanceof IFile || selection[0] instanceof IContainer))
+				return new Status(IStatus.OK, Activator.PLUGIN_ID,
+						IStatus.OK, "", null); //$NON-NLS-1$
 
-				return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-						IStatus.ERROR, "", null); //$NON-NLS-1$
-			}
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					IStatus.ERROR, "", null); //$NON-NLS-1$
 		});
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();

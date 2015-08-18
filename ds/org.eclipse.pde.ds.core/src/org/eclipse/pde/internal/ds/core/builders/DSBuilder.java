@@ -41,6 +41,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 			this.monitor = monitor;
 		}
 		
+		@Override
 		public boolean visit(IResource resource) {
 			if (resource instanceof IProject) {
 				// TODO only check PDE projects...
@@ -71,6 +72,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 			this.monitor = monitor;
 		}
 	
+		@Override
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 	
@@ -100,7 +102,8 @@ public class DSBuilder extends IncrementalProjectBuilder {
 	
 	}
 
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
+	@Override
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor)
 			throws CoreException {
 		IResourceDelta delta = null;
 		if (kind != FULL_BUILD)

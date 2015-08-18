@@ -33,69 +33,42 @@ public class DSImplementation extends DSObject implements IDSImplementation {
 		this.setClassName(IDSConstants.ELEMENT_IMPLEMENTATION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
-	 */
+	@Override
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return getClassName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_IMPLEMENTATION;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSImplementation#setClassName(java.lang.String)
-	 */
+	@Override
 	public void setClassName(String className) {
 		setXMLAttribute(ATTRIBUTE_IMPLEMENTATION_CLASS, className);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSImplementation#getClassName()
-	 */
+	@Override
 	public String getClassName() {
 		return getXMLAttributeValue(ATTRIBUTE_IMPLEMENTATION_CLASS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getClassName()
-	 */
+	@Override
 	public String[] getAttributesNames() {
 		return new String[] { IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS };
 	}
 
+	@Override
 	public boolean isLeafNode() {
 		return true;
 	}

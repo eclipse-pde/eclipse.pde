@@ -40,12 +40,7 @@ public class DSDocumentFactory extends DocumentNodeFactory implements
 		fModel = model;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String,
-	 *      org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
+	@Override
 	public IDocumentElementNode createDocumentNode(String name,
 			IDocumentElementNode parent) {
 
@@ -87,65 +82,37 @@ public class DSDocumentFactory extends DocumentNodeFactory implements
 		return super.createDocumentNode(name, parent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createProvide()
-	 */
+	@Override
 	public IDSProvide createProvide() {
 		return new DSProvide(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createProperty()
-	 */
+	@Override
 	public IDSProperty createProperty() {
 		return new DSProperty(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createReference()
-	 */
+	@Override
 	public IDSReference createReference() {
 		return new DSReference(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createService()
-	 */
+	@Override
 	public IDSService createService() {
 		return new DSService(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createProperties()
-	 */
+	@Override
 	public IDSProperties createProperties() {
 		return new DSProperties(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createImplementation()
-	 */
+	@Override
 	public IDSImplementation createImplementation() {
 		return new DSImplementation(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createComponent()
-	 */
+	@Override
 	public IDSComponent createComponent() {
 		return new DSComponent(fModel);
 	}

@@ -41,6 +41,7 @@ public class DSEditor extends MultiSourceEditor {
 		super();
 	}
 
+	@Override
 	protected void addEditorPages() {
 		try {
 			addPage(new DSOverviewPage(this));
@@ -53,29 +54,35 @@ public class DSEditor extends MultiSourceEditor {
 
 	}
 	
+	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		// TODO add help icon here maybe?
 	}
 
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new DSFormOutlinePage(this);
 	}
 
+	@Override
 	protected InputContextManager createInputContextManager() {
 		return new DSInputContextManager(this);
 		}
 
+	@Override
 	protected void createResourceContexts(InputContextManager contexts,
 			IFileEditorInput input) {
 		contexts.putContext(input, new DSInputContext(this, input, true));
 		contexts.monitorFile(input.getFile());
 	}
 
+	@Override
 	protected void createStorageContexts(InputContextManager contexts,
 			IStorageEditorInput input) {
 		contexts.putContext(input, new DSInputContext(this, input, true));
 	}
 
+	@Override
 	protected void createSystemFileContexts(InputContextManager contexts,
 			FileStoreEditorInput input) {
 		try {
@@ -94,8 +101,8 @@ public class DSEditor extends MultiSourceEditor {
 			IProjectDescription description = project.getDescription();
 			ICommand[] commands = description.getBuildSpec();
 
-			for (int i = 0; i < commands.length; ++i) {
-				if (commands[i].getBuilderName().equals(IConstants.ID_BUILDER)) {
+			for (ICommand command : commands) {
+				if (command.getBuilderName().equals(IConstants.ID_BUILDER)) {
 					return;
 				}
 			}
@@ -114,48 +121,52 @@ public class DSEditor extends MultiSourceEditor {
 		
 	}
 
+	@Override
 	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
 
+	@Override
 	protected String getEditorID() {
 		return IConstants.ID_EDITOR;
 	}
 
+	@Override
 	protected InputContext getInputContext(Object object) {
 		return fInputContextManager.findContext(DSInputContext.CONTEXT_ID);
 	}
 
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
+	@Override
 	public void monitoredFileAdded(IFile monitoredFile) {
 		// no op
 	}
 
+	@Override
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
-	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 	
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		IEditorInput input = getEditorInput();
 		if (input instanceof IFileEditorInput) {
 			IFileEditorInput fileInput = (IFileEditorInput) input;
-			addDSBuilder((IFile) fileInput.getFile());
+			addDSBuilder(fileInput.getFile());
 		}
 		super.doSave(monitor);
 	}
 
+	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor,
 			String title, String name, String contextId) {
 		return new DSSourcePage(editor, title, name);

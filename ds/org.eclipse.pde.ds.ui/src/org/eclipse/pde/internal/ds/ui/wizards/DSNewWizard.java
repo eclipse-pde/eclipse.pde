@@ -30,26 +30,19 @@ public class DSNewWizard extends Wizard implements INewWizard {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#addPages()
-	 */
+	@Override
 	public void addPages() {
 		 addPage(fMainPage);
 	}
 	
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		setWindowTitle(Messages.DSNewWizard_title);
 		setDialogSettings(Activator.getDefault().getDialogSettings());
 		fMainPage = new DSFileWizardPage(currentSelection);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#performFinish()
-	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			IDialogSettings settings = getDialogSettings();

@@ -35,6 +35,7 @@ public class DSSourceViewerConfiguration extends XMLConfiguration {
 		super(colorManager, page);
 	}
 
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (sourceViewer.isEditable() && fContentAssistant == null) {
 			fContentAssistProcessor = new DSContentAssistProcessor(fSourcePage);
@@ -54,12 +55,14 @@ public class DSSourceViewerConfiguration extends XMLConfiguration {
 		return fContentAssistant;
 	}
 
+	@Override
 	public void dispose() {
 		if (fContentAssistProcessor != null)
 			fContentAssistProcessor.dispose();
 		super.dispose();
 	}
 
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer,
 			String contentType) {
 		if (fTextHover == null && fSourcePage != null)

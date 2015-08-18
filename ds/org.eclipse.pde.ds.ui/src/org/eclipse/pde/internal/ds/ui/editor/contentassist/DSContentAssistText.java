@@ -135,11 +135,7 @@ public class DSContentAssistText {
 		return fStartOffset;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		return "Start Offset: " + fStartOffset + " Text: |" + fText + "|\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}

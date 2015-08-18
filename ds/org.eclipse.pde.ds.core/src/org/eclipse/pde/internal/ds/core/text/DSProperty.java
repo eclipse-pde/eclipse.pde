@@ -28,109 +28,74 @@ public class DSProperty extends DSObject implements IDSProperty {
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
-	 */
+	@Override
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return getPropertyName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_PROPERTY;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperty#getPropertyName()
-	 */
+	@Override
 	public String getPropertyName(){
 		return getXMLAttributeValue(ATTRIBUTE_PROPERTY_NAME);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperty#setPropertyName(java.lang.String)
-	 */
+	@Override
 	public void setPropertyName(String name){
 		setXMLAttribute(ATTRIBUTE_PROPERTY_NAME, name);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperty#getPropertyValue()
-	 */
+	@Override
 	public String getPropertyValue(){
 		return getXMLAttributeValue(ATTRIBUTE_PROPERTY_VALUE);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperty#setPropertyValue(java.lang.String)
-	 */
+	@Override
 	public void setPropertyValue(String value){
 		setXMLAttribute(ATTRIBUTE_PROPERTY_VALUE, value);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperty#getPropertyType()
-	 */
+	@Override
 	public String getPropertyType(){
 		return getXMLAttributeValue(ATTRIBUTE_PROPERTY_TYPE);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperty#setPropertyType(java.lang.String)
-	 */
+	@Override
 	public void setPropertyType(String type){
 		setXMLAttribute(ATTRIBUTE_PROPERTY_TYPE, type);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperty#getPropertyElemBody()
-	 */
+	@Override
 	public String getPropertyElemBody() {
 		return getXMLContent(); 
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperty#setPropertyElemBody(java.lang.String)
-	 */
+	@Override
 	public void setPropertyElemBody(String body){
 		setXMLContent(body);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
-	 */
+	@Override
 	public String[] getAttributesNames() {
 		return new String[] { IDSConstants.ATTRIBUTE_PROPERTY_NAME,
 				IDSConstants.ATTRIBUTE_PROPERTY_TYPE,
 				IDSConstants.ATTRIBUTE_PROPERTY_VALUE };
 	}
 
+	@Override
 	public boolean isLeafNode() {
 		return true;
 	}

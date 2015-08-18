@@ -72,6 +72,7 @@ public interface IDSObject extends IDocumentObject {
 	 * 
 	 * @return a String containing the XML Tag Name
 	 */
+	@Override
 	public abstract String getXMLTagName();
 	
 	

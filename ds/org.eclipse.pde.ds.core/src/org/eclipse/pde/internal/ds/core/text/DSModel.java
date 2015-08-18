@@ -35,9 +35,7 @@ public class DSModel extends XMLEditingModel implements IDSModel {
 		super(document, isReconciling);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.XMLEditingModel#createDocumentHandler(org.eclipse.pde.core.IModel, boolean)
-	 */
+	@Override
 	protected DefaultHandler createDocumentHandler(IModel model, boolean reconciling) {
 		if (fHandler == null) {
 			fHandler = new DSDocumentHandler(this, reconciling);
@@ -45,9 +43,7 @@ public class DSModel extends XMLEditingModel implements IDSModel {
 		return fHandler;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSModel#getFactory()
-	 */
+	@Override
 	public IDSDocumentFactory getFactory() {
 		if (fFactory == null) {
 			fFactory = new DSDocumentFactory(this);
@@ -55,9 +51,7 @@ public class DSModel extends XMLEditingModel implements IDSModel {
 		return fFactory;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSModel#getDSRoot()
-	 */
+	@Override
 	public IDSComponent getDSComponent() {
 		if (fComponent == null) {
 			fComponent = getFactory().createComponent();
@@ -65,9 +59,7 @@ public class DSModel extends XMLEditingModel implements IDSModel {
 		return fComponent;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.XMLEditingModel#getRoot()
-	 */
+	@Override
 	protected IWritable getRoot() {
 		return (IWritable) getDSComponent();
 	}

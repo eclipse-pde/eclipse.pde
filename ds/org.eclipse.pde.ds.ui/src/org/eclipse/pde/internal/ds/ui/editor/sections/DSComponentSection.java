@@ -71,6 +71,7 @@ public class DSComponentSection extends PDESection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
 		initializeAttributes();
@@ -131,6 +132,7 @@ public class DSComponentSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fClassEntry.commit();
 		fNameEntry.commit();
@@ -140,6 +142,7 @@ public class DSComponentSection extends PDESection {
 		super.commit(onSave);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		fComponent = fModel.getDSComponent();
 		if (fComponent != null)
@@ -154,11 +157,9 @@ public class DSComponentSection extends PDESection {
 			if (display.getThread() == Thread.currentThread())
 				updateUIFields();
 			else
-				display.asyncExec(new Runnable() {
-					public void run() {
-						if (!fNameEntry.getText().isDisposed())
-							updateUIFields();
-					}
+				display.asyncExec(() -> {
+					if (!fNameEntry.getText().isDisposed())
+						updateUIFields();
 				});
 		}
 	}
@@ -216,6 +217,7 @@ public class DSComponentSection extends PDESection {
 	public void setListeners() {
 		// Attribute: name
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fComponent == null) {
@@ -225,6 +227,7 @@ public class DSComponentSection extends PDESection {
 			}
 		});
 		fActivateEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fComponent == null) {
@@ -234,6 +237,7 @@ public class DSComponentSection extends PDESection {
 			}
 		});
 		fDeactivateEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fComponent == null) {
@@ -243,6 +247,7 @@ public class DSComponentSection extends PDESection {
 			}
 		});
 		fModifiedEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fComponent == null) {
@@ -257,6 +262,7 @@ public class DSComponentSection extends PDESection {
 		// Attribute: class
 		fClassEntry
 				.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+					@Override
 					public void textValueChanged(FormEntry entry) {
 						if (fImplementation == null) {
 							if (fComponent != null) {
@@ -273,6 +279,7 @@ public class DSComponentSection extends PDESection {
 						}
 					}
 
+					@Override
 					public void linkActivated(HyperlinkEvent e) {
 						String value = fClassEntry.getValue();
 						value = handleLinkActivated(value, false);
@@ -280,6 +287,7 @@ public class DSComponentSection extends PDESection {
 							fClassEntry.setValue(value);
 					}
 
+					@Override
 					public void browseButtonSelected(FormEntry entry) {
 						doOpenSelectionDialog(
 								fClassEntry);

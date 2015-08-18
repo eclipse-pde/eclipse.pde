@@ -38,10 +38,12 @@ public class DSOverviewPage extends PDEFormPage implements
 		super(editor, PAGE_ID, Messages.DSSimpPage_title);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		// no op
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();

@@ -23,11 +23,12 @@ import org.eclipse.pde.internal.ds.core.IDSObject;
 public class DSContentProvider implements IContentProvider,
 		ITreeContentProvider {
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IDSModel) {
 			return new Object[] { ((IDSModel) parentElement).getDSComponent() };
 		} else if (parentElement instanceof IDSObject) {
-			List list = ((IDSObject) parentElement).getChildNodesList();
+			List<?> list = ((IDSObject) parentElement).getChildNodesList();
 			// List is never null
 			if (list.size() > 0) {
 				return list.toArray();
@@ -36,6 +37,7 @@ public class DSContentProvider implements IContentProvider,
 		return new Object[0];
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IDSObject) {
 			return ((IDSObject) element).getParentNode();
@@ -43,18 +45,22 @@ public class DSContentProvider implements IContentProvider,
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return (getChildren(element).length > 0);
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	public void dispose() {
 
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 	}
