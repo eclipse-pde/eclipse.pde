@@ -124,7 +124,7 @@ public class DSSourcePage extends XMLSourcePage {
 
 
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public Object getAdapter(Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
 			return new DSHyperlinkDetector(this);
 		return super.getAdapter(adapter);
