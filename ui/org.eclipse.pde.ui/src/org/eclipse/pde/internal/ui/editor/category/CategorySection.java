@@ -746,7 +746,8 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 		for (int i = 0; i < features.length; i++) {
 			ISiteFeature bfeature = features[i];
-			if (bfeature.getId().equals(cfeature.getId()) && bfeature.getVersion().equals(cfeature.getVersion()))
+			if (bfeature.getId() != null && bfeature.getId().equals(cfeature.getId()) && bfeature.getVersion() != null
+					&& bfeature.getVersion().equals(cfeature.getVersion()))
 				return false;
 		}
 		return true;
