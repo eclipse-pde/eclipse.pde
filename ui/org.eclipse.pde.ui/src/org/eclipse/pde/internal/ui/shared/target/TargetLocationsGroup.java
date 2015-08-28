@@ -324,7 +324,7 @@ public class TargetLocationsGroup {
 			Object currentSelection = iterator.next();
 			if (currentSelection instanceof ITargetLocation) {
 				ITargetLocation location = (ITargetLocation) currentSelection;
-				ITargetLocationEditor editor = (ITargetLocationEditor) Platform.getAdapterManager().getAdapter(location, ITargetLocationEditor.class);
+				ITargetLocationEditor editor = Platform.getAdapterManager().getAdapter(location, ITargetLocationEditor.class);
 				if (editor != null) {
 					if (editor.canEdit(fTarget, location)) {
 						IWizard editWizard = editor.getEditWizard(fTarget, location);
@@ -510,7 +510,7 @@ public class TargetLocationsGroup {
 				canRemove = true;
 				if (!canEdit) {
 					ITargetLocation location = (ITargetLocation) currentSelection;
-					ITargetLocationEditor editor = (ITargetLocationEditor) Platform.getAdapterManager().getAdapter(location, ITargetLocationEditor.class);
+					ITargetLocationEditor editor = Platform.getAdapterManager().getAdapter(location, ITargetLocationEditor.class);
 					if (editor != null) {
 						canEdit = editor.canEdit(fTarget, location);
 					}
@@ -521,7 +521,7 @@ public class TargetLocationsGroup {
 				}
 				if (!canUpdate) {
 					ITargetLocation location = (ITargetLocation) currentSelection;
-					ITargetLocationUpdater updater = (ITargetLocationUpdater) Platform.getAdapterManager().getAdapter(location, ITargetLocationUpdater.class);
+					ITargetLocationUpdater updater = Platform.getAdapterManager().getAdapter(location, ITargetLocationUpdater.class);
 					if (updater != null) {
 						canUpdate = updater.canUpdate(fTarget, location);
 					}
@@ -539,7 +539,7 @@ public class TargetLocationsGroup {
 
 		}
 		fRemoveButton.setEnabled(canRemove);
-		fEditButton.setEnabled(canEdit);
+		fEditButton.setEnabled(canEdit && fTarget.isResolved());
 		fUpdateButton.setEnabled(canUpdate);
 
 		// TODO Some code to find the parent location of items in the tree
