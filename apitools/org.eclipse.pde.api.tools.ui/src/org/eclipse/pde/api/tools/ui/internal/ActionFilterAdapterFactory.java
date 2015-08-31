@@ -19,7 +19,6 @@ import org.eclipse.ui.IActionFilter;
  * API Tools UI adapter factory
  */
 class ActionFilterAdapterFactory implements IAdapterFactory {
-
 	/**
 	 * @see IAdapterFactory#getAdapter(Object, Class)
 	 */
