@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,6 +95,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateEclipseBundleShape();
 		validateEclipseGenericCapability();
 		validateEclipseGenericRequire();
+		validateServiceComponent();
 	}
 
 	private boolean validateBundleManifestVersion() {
@@ -404,6 +405,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		}
 
+		@SuppressWarnings("deprecation")
 		IHeader header = getHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if (header == null)
 			return;
@@ -1252,5 +1254,21 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				marker.setAttribute(attr, value);
 			} catch (CoreException e) {
 			}
+	}
+
+	/**
+	 * Verifies that if a Service-Component exists then a corresponding Bundle-ActivationPolicy is present.
+	 */
+	private void validateServiceComponent() {
+		IHeader header = getHeader(ICoreConstants.SERVICE_COMPONENT);
+		if (header == null) {
+			return;
+		}
+
+		if (getHeader(Constants.BUNDLE_ACTIVATIONPOLICY) != null) {
+			return;
+		}
+
+		report(PDECoreMessages.BundleErrorReporter_serviceComponentLazyStart, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_SERVICECOMPONENT_MISSING_LAZY, PDEMarkerFactory.CAT_OTHER);
 	}
 }
