@@ -53,7 +53,6 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	private Label lblWidth;
 	private Label lblHeight;
 	private Text txtReference;
-	private Button nextButton;
 	private Spinner spinMaxImages;
 
 	private List<Image> displayedImages = new ArrayList<>();
@@ -145,17 +144,12 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		spinMaxImages.setMaximum(999);
 		spinMaxImages.setMinimum(1);
 		spinMaxImages.setSelection(250);
-
-		SWTFactory.createHorizontalSpacer(pageComp, 3);
-
-		nextButton = SWTFactory.createPushButton(pageComp, PDEUIMessages.ImageBrowserView_ShowMore, null);
-		nextButton.addSelectionListener(new SelectionAdapter() {
+		spinMaxImages.addModifyListener(new ModifyListener() {
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
+			public void modifyText(ModifyEvent e) {
 				scanImages();
 			}
 		});
-		nextButton.setEnabled(false);
 
 		scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.V_SCROLL);
 		scrolledComposite.setBackground(scrolledComposite.getParent().getBackground());
@@ -222,16 +216,6 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 		mUIJob.addImage(element);
 		mImageCounter--;
-
-		if (mImageCounter <= 0) {
-			Display.getDefault().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					nextButton.setEnabled(true);
-				}
-			});
-		}
 	}
 
 	@Override
@@ -243,7 +227,6 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		if (repository != null) {
 			repository.cancel();
 		}
-		nextButton.setEnabled(false);
 
 		// reset UI components
 		mUIJob.reset();
@@ -427,7 +410,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				lblHeight.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().height)));
 
 				// update source provider
-				ISourceProviderService service = (ISourceProviderService) PlatformUI.getWorkbench().getService(ISourceProviderService.class);
+				ISourceProviderService service = PlatformUI.getWorkbench().getService(ISourceProviderService.class);
 				ISourceProvider provider = service.getSourceProvider(ActiveImageSourceProvider.ACTIVE_IMAGE);
 				if (provider instanceof ActiveImageSourceProvider)
 					((ActiveImageSourceProvider) provider).setImageData(((ImageElement) data));
