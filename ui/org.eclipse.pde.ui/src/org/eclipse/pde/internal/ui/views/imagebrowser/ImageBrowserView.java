@@ -59,6 +59,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private AbstractRepository repository;
 
+	private Text txtFilter;
+	private IFilter textPatternFilter;
+
 	public ImageBrowserView() {
 		// create default filters
 		final IFilter iconSize = new SizeFilter(16, SizeFilter.TYPE_EXACT, 16, SizeFilter.TYPE_EXACT);
@@ -77,6 +80,8 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		wizard = new AndFilter(new IFilter[] {wizardSize, wizardName});
 
 		mFilters.add(enabledIcons);
+		textPatternFilter = new StringFilter("*"); //$NON-NLS-1$
+		mFilters.add(textPatternFilter);
 	}
 
 	@Override
@@ -118,6 +123,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				mFilters.clear();
+				mFilters.add(textPatternFilter);
 				Combo source = (Combo) e.getSource();
 				switch (source.getSelectionIndex()) {
 					case 0 :
@@ -136,7 +142,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			}
 		});
 
-		Composite pageComp = SWTFactory.createComposite(topComp, 6, 1, SWT.NONE, 0, 0);
+		Composite pageComp = SWTFactory.createComposite(topComp, 8, 1, SWT.NONE, 0, 0);
 		((GridLayout) pageComp.getLayout()).marginLeft = 20;
 		pageComp.setLayoutData(new RowData());
 		SWTFactory.createLabel(pageComp, PDEUIMessages.ImageBrowserView_MaxImages, 1);
@@ -147,6 +153,32 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		spinMaxImages.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
+				scanImages();
+			}
+		});
+		SWTFactory.createHorizontalSpacer(pageComp, 3);
+
+		SWTFactory.createLabel(pageComp, PDEUIMessages.ImageBrowserView_FilterText, 1)
+				.setToolTipText(PDEUIMessages.ImageBrowserView_FilterTooltip);
+		txtFilter = SWTFactory.createText(pageComp, SWT.BORDER | SWT.SEARCH, 1);
+		((GridData) txtFilter.getLayoutData()).widthHint = 200;
+		txtFilter.setToolTipText(PDEUIMessages.ImageBrowserView_FilterTooltip);
+		txtFilter.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				String pattern = txtFilter.getText();
+				pattern = pattern.trim();
+				// we match begging and end, user does not have to type *debug*
+				String STAR = "*"; //$NON-NLS-1$
+				if (!pattern.startsWith(STAR)) {
+					pattern = STAR + pattern;
+				}
+				if (!pattern.endsWith(STAR)) {
+					pattern += STAR;
+				}
+				mFilters.remove(textPatternFilter);
+				textPatternFilter = new StringFilter(pattern);
+				mFilters.add(textPatternFilter);
 				scanImages();
 			}
 		});
@@ -209,7 +241,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	@Override
 	public void notifyImage(final ImageElement element) {
-		for (final IFilter filter : mFilters) {
+		// make a copy of filter to avoid concurrent modification exception since UI changes mFilters list
+		ArrayList<IFilter> filters = new ArrayList<>(mFilters);
+		for (final IFilter filter : filters) {
 			if (!filter.accept(element))
 				return;
 		}

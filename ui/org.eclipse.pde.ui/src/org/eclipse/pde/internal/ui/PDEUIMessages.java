@@ -406,6 +406,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImageBrowserView_FilterIcons;
 
+	public static String ImageBrowserView_FilterTooltip;
+
 	public static String ImageBrowserView_FilterWizards;
 
 	public static String ImageBrowserView_Height;
@@ -413,6 +415,8 @@ public class PDEUIMessages extends NLS {
 	public static String ImageBrowserView_MaxImages;
 
 	public static String ImageBrowserView_Path;
+
+	public static String ImageBrowserView_FilterText;
 
 	public static String ImageBrowserView_Pixels;
 
