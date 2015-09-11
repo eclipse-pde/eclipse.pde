@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.ds.tests;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 
 public class DSv10tov11TestCase extends AbstractDSModelTestCase {
-	
+
 	public void testAddDefaultComponent() {
 		StringBuffer buffer = new StringBuffer();
 		setXMLContents(buffer, LF);
@@ -22,11 +22,11 @@ public class DSv10tov11TestCase extends AbstractDSModelTestCase {
 
 		IDSComponent component = fModel.getDSComponent();
 		assertNotNull(component);
-		
+
 		assertEquals(component.getName(), COMPONENT_NAME);
 		assertEquals(component.getNamespace(), "http://www.osgi.org/xmlns/scr/v1.1.0");
 	}
-	
+
 	@Override
 	protected void setXMLContents(StringBuffer body, String newline) {
 		StringBuffer sb = new StringBuffer();

@@ -278,8 +278,8 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 					// acceptable values
 					// TODO: MP: CCP: Remove unnecessary reconnected Plugin attributes
 					// This may not be necessary.  The model object is discarded when
-					// the import object wrapping the plugin import object is converted 
-					// into a require bundle object					
+					// the import object wrapping the plugin import object is converted
+					// into a require bundle object
 					importObject.reconnect(model);
 					// Add the import object to the plugin
 					pluginBase.add(importObject.getImport());
@@ -541,7 +541,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			return;
 		}
 
-		// Model change may have come from a non UI thread such as the auto add dependencies operation. See bug 333533 
+		// Model change may have come from a non UI thread such as the auto add dependencies operation. See bug 333533
 		UIJob job = new UIJob("Update required bundles") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -762,7 +762,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		BundlePluginBase bundlePluginBase = (BundlePluginBase) getModel().getPluginBase();
 		// Validate move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			// Get the previous import of the target 
+			// Get the previous import of the target
 			IPluginImport previousImport = bundlePluginBase.getPreviousImport(targetPluginImport);
 			// Ensure the previous element is not the source
 			if (sourcePluginImport.equals(previousImport)) {
@@ -770,7 +770,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			}
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			// Get the next import of the target 
+			// Get the next import of the target
 			IPluginImport nextImport = bundlePluginBase.getNextImport(targetPluginImport);
 			// Ensure the next import is not the source
 			if (sourcePluginImport.equals(nextImport)) {
@@ -837,7 +837,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		// Store index so that the import can be inserted properly into
 		// the table viewer
 		setImportInsertIndex(targetIndex);
-		// Add source as sibling of target	
+		// Add source as sibling of target
 		try {
 			bundlePluginBase.add(sourcePluginImport, targetIndex);
 		} catch (CoreException e) {
@@ -848,7 +848,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void resetImportInsertIndex() {
 		fImportInsertIndex = -1;
@@ -866,7 +866,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void doDragRemove() {
 		// Get the bundle plug-in base

@@ -16,7 +16,7 @@ import org.eclipse.pde.core.IIdentifiable;
 /**
  * Classes that implement this interface model an extension point
  * element specified in the plug-in manifest.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -51,7 +51,7 @@ public interface IPluginExtensionPoint extends IPluginObject, IIdentifiable {
 	 * describes this extension point.
 	 * This method will throw a CoreException
 	 * if the model is not editable.
-	 * 
+	 *
 	 * @param schema the schema file name
 	 * @throws CoreException if the model is not editable
 	 */

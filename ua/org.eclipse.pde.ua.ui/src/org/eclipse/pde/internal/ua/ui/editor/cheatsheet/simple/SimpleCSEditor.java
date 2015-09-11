@@ -156,9 +156,9 @@ public class SimpleCSEditor extends CSAbstractEditor {
 	 */
 	public ISelection getSelection() {
 		// Override the parent getSelection because it doesn't work.
-		// The selection provider operates at the form level and does not 
+		// The selection provider operates at the form level and does not
 		// track selections made in the master tree view.
-		// The selection is required to synchronize the master tree view with 
+		// The selection is required to synchronize the master tree view with
 		// the outline view
 		IFormPage formPage = getActivePageInstance();
 		if ((formPage != null) && (formPage instanceof SimpleCSDefinitionPage)) {

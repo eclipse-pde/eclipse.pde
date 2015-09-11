@@ -175,7 +175,7 @@ IFormColors.TITLE));
 			fEnabledButton.setSelection(fComponent.getEnabled());
 			fImmediateButton.setSelection(fComponent.getImmediate());
 			enableOrDisableImmediate();
-			
+
 			// Attribute: Policy
 			if (fComponent.getConfigurationPolicy() != null)
 				fConfigurationPolicy.setText(fComponent
@@ -225,7 +225,7 @@ IFormColors.TITLE));
 			fComponent.setConfigurationPolicy(fConfigurationPolicy
 					.getSelection());
 		});
-		
+
 	}
 
 }

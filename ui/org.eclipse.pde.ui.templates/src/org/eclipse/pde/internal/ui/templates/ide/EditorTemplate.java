@@ -62,7 +62,7 @@ public class EditorTemplate extends BaseEditorTemplate {
 	}
 
 	private void createOptions() {
-		// first page	
+		// first page
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.EditorTemplate_packageName, (String) null, 0);
 		addOption(EDITOR_CLASS_NAME, PDETemplateMessages.EditorTemplate_editorClass, "XMLEditor", //$NON-NLS-1$
 				0);
@@ -94,7 +94,7 @@ public class EditorTemplate extends BaseEditorTemplate {
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
+		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));

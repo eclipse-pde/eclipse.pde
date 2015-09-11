@@ -42,7 +42,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * SimpleCSElementSection
- * 
+ *
  */
 public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster {
 
@@ -106,7 +106,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse
 	 * .ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
@@ -150,7 +150,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initializeTreeViewer() {
 		ISelection selection = fTreeViewer.getSelection();
@@ -199,7 +199,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#
 	 * isDragAndDropEnabled()
 	 */
@@ -209,7 +209,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove
 	 * (java.lang.Object[])
@@ -225,7 +225,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove
 	 * (java.lang.Object, java.lang.Object[], int)
@@ -443,7 +443,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove
 	 * (java.lang.Object, java.lang.Object[], int)
@@ -697,7 +697,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove
 	 * (java.lang.Object[])
@@ -739,7 +739,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createSubStepInfoDecoration() {
 		//
@@ -778,7 +778,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createTreeListeners() {
 		// Create listener for the outline view 'link with editor' toggle
@@ -796,7 +796,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected
 	 * (int)
@@ -826,7 +826,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse
 	 * .jface.viewers.IStructuredSelection)
@@ -839,7 +839,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void updateButtons() {
 		if (!fModel.isEditable()) {
@@ -946,7 +946,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleAddStepAction() {
 		// Get the current selection
@@ -971,7 +971,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleAddSubStepAction() {
 		// Get the current selection
@@ -987,7 +987,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleMoveStepAction(int positionFlag) {
 		ISimpleCSObject object = getCurrentSelection();
@@ -1008,7 +1008,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handlePreviewAction() {
 		// Get the editor
@@ -1028,7 +1028,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse
 	 * .pde.core.IModelChangedEvent)
@@ -1053,7 +1053,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
 	public void refresh() {
@@ -1183,7 +1183,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster#fireSelection()
 	 */
@@ -1193,7 +1193,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu
 	 * (org.eclipse.jface.action.IMenuManager)
@@ -1276,7 +1276,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang
 	 * .String)
@@ -1345,7 +1345,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */
 	public boolean setFormInput(Object object) {
@@ -1399,7 +1399,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java
 	 * .lang.Object, java.lang.Object[])
@@ -1440,7 +1440,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java
 	 * .lang.Object, java.lang.Object[])
@@ -1511,7 +1511,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#canCut(org.eclipse.jface
 	 * .viewers.ISelection)

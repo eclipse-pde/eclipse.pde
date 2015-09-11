@@ -19,9 +19,9 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 
 /*
- * This action is used to Open the Log File from the LogView if both org.eclipse.ui.ide and 
+ * This action is used to Open the Log File from the LogView if both org.eclipse.ui.ide and
  * org.eclipse.core.filesystem are available.  If both plugins are resolved, we will open
- * the log file through the IDE's file association preferences.  Otherwise, 
+ * the log file through the IDE's file association preferences.  Otherwise,
  * LogView.getOpenLogJob() is called to open the file.
  */
 public class OpenIDELogFileAction extends Action {

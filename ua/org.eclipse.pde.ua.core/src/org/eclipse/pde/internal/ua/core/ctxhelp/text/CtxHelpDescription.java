@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.core.text.IDocumentTextNode;
  * element for each context. A description element will contain a CDATA string
  * explaining the context that the user will see in dynamic help. Descriptions
  * are leaf objects.
- * 
+ *
  * @since 3.4
  * @see CtxHelpObject
  * @see CtxHelpModel
@@ -30,14 +30,14 @@ public class CtxHelpDescription extends CtxHelpObject {
 	public CtxHelpDescription(CtxHelpModel model) {
 		super(model, ELEMENT_DESCRIPTION);
 	}
-	
+
 	protected IDocumentTextNode createDocumentTextNode() {
 		return new CtxHelpDescriptionTextNode();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.text.toc.TocObject#canBeParent()
 	 */
 	public boolean canBeParent() {
@@ -46,7 +46,7 @@ public class CtxHelpDescription extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getType()
 	 */
@@ -56,7 +56,7 @@ public class CtxHelpDescription extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getName()
 	 */
@@ -75,7 +75,7 @@ public class CtxHelpDescription extends CtxHelpObject {
 	/**
 	 * Sets the XML content of this element to the given description string.
 	 * Passing <code>null</code> will set the content to be empty.
-	 * 
+	 *
 	 * @param description
 	 *            new content
 	 */
@@ -85,7 +85,7 @@ public class CtxHelpDescription extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddChild
 	 * (org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject)
@@ -96,7 +96,7 @@ public class CtxHelpDescription extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddSibling
 	 * (int)
@@ -107,14 +107,14 @@ public class CtxHelpDescription extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#
 	 * getTerminateIndent()
 	 */
 	protected String getTerminateIndent() {
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	public boolean isContentCollapsed() {
 		return true;
 	}

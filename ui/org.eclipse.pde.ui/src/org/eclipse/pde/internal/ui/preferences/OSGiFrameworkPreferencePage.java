@@ -37,13 +37,13 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Provides the preference page for managing the default OSGi framework to use.
- * 
+ *
  * @since 3.3
  */
 public class OSGiFrameworkPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	/**
-	 * Label provider for the table viewer. Annotates the default framework with bold text 
+	 * Label provider for the table viewer. Annotates the default framework with bold text
 	 */
 	class FrameworkLabelProvider extends LabelProvider implements IFontProvider {
 		private Font font = null;

@@ -37,9 +37,9 @@ public class DSAttrCompletionProposal extends TypeCompletionProposal implements
 	/**
 	 * Returns a String to be replaced by the Content Assist with default values
 	 * or with a repeated String if there is no default value.
-	 * 
+	 *
 	 * Example: enabled="true" and entry="entry"
-	 * 
+	 *
 	 * @param attribute
 	 *            the name of attribute
 	 * @return a String containing the replacementString

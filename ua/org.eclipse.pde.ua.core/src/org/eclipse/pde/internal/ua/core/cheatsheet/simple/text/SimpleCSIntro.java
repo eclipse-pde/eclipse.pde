@@ -32,7 +32,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSIntro#
 	 * getDescription()
 	 */
@@ -42,7 +42,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSIntro#
 	 * setDescription
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSDescription
@@ -55,7 +55,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
 	 * getContextId()
@@ -66,7 +66,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
 	 * getHref()
@@ -77,7 +77,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
 	 * setContextId(java.lang.String)
@@ -88,7 +88,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
 	 * setHref(java.lang.String)
@@ -99,7 +99,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
@@ -110,7 +110,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject
 	 * #getName ()
@@ -121,7 +121,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject
 	 * #getType ()

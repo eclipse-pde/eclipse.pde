@@ -149,7 +149,7 @@ public class PluginClassCodeGenerator {
 			writer.println("\t * @return the image descriptor"); //$NON-NLS-1$
 			writer.println("\t */"); //$NON-NLS-1$
 			writer.println("\tpublic static ImageDescriptor getImageDescriptor(String path) {"); //$NON-NLS-1$
-			writer.println("\t\treturn imageDescriptorFromPlugin(PLUGIN_ID, path);"); //$NON-NLS-1$ 
+			writer.println("\t\treturn imageDescriptorFromPlugin(PLUGIN_ID, path);"); //$NON-NLS-1$
 			writer.println("\t}"); //$NON-NLS-1$
 		}
 		writer.println("}"); //$NON-NLS-1$
@@ -187,7 +187,7 @@ public class PluginClassCodeGenerator {
 		writer.println("\t\t" + className + ".context = null;"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		writer.println("}"); //$NON-NLS-1$		
+		writer.println("}"); //$NON-NLS-1$
 	}
 
 	public IPluginReference[] getDependencies() {

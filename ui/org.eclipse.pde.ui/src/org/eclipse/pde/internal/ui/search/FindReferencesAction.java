@@ -18,12 +18,12 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.osgi.framework.Version;
 
 /**
- * A find references action to find references to a given object. The object should 
+ * A find references action to find references to a given object. The object should
  * be an instance of {@link IPlugin}, {@link IPluginExtensionPoint}, {@link IPluginImport}, or
  * {@link IPluginExtension}.  The pluginID will be used to qualify an extension point ID.  If
  * <code>null</code> is passed, the extension point object will be queried for the plug-in id.
  * If no id is found, the search scope will prefix the extension point ID with <code>*</code>
- * 
+ *
  **/
 public class FindReferencesAction extends BaseSearchAction {
 
@@ -31,12 +31,12 @@ public class FindReferencesAction extends BaseSearchAction {
 	private String fPluginID;
 
 	/**
-	 * Creates a new find references action to find references to the given object. The object should 
+	 * Creates a new find references action to find references to the given object. The object should
 	 * be an instance of {@link IPlugin}, {@link IPluginExtensionPoint}, {@link IPluginImport}, or
 	 * {@link IPluginExtension}.  The pluginID will be used to qualify an extension point ID.  If
 	 * <code>null</code> is passed, the extension point object will be queried for the plug-in id.
 	 * If no id is found, the search scope will prefix the extension point ID with <code>*</code>
-	 * 
+	 *
 	 * @param object the object to search for references to
 	 * @param pluginID plug-in id to prefix extension point id's with
 	 */

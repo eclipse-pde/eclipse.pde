@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	private String fName;
 
 	/**
-	 * 
+	 *
 	 */
 	public PluginObjectNode() {
 		super();
@@ -37,7 +37,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getModel()
 	 */
 	@Override
@@ -47,7 +47,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getPluginModel()
 	 */
 	@Override
@@ -57,7 +57,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	@Override
@@ -67,7 +67,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#isInTheModel()
 	 */
 	@Override
@@ -77,7 +77,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getTranslatedName()
 	 */
 	@Override
@@ -87,7 +87,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getParent()
 	 */
 	@Override
@@ -97,7 +97,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getPluginBase()
 	 */
 	@Override
@@ -107,7 +107,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getResourceString(java.lang.String)
 	 */
 	@Override
@@ -117,7 +117,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	@Override
@@ -127,7 +127,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#isValid()
 	 */
 	@Override
@@ -137,7 +137,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String,
 	 *      java.io.PrintWriter)
 	 */
@@ -147,7 +147,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	@Override
@@ -157,7 +157,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setInTheModel(boolean)
 	 */
 	@Override
@@ -171,7 +171,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setXMLAttribute(java.lang.String,
 	 *      java.lang.String)
 	 */

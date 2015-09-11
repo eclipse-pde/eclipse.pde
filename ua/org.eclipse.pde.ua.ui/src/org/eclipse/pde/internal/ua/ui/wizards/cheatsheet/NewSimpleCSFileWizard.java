@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.ua.ui.wizards.cheatsheet;
 public class NewSimpleCSFileWizard extends NewCSFileWizard {
 
 	/**
-	 * 
+	 *
 	 */
 	public NewSimpleCSFileWizard() {
 		super();

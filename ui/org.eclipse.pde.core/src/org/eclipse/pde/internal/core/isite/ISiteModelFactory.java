@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat Inc. - Support for <bundle...> in category.xml
@@ -75,14 +75,14 @@ public interface ISiteModelFactory {
 
 	/**
 	 *  Creates a new repository reference.
-	 *  
+	 *
 	 * @return a new repository reference.
 	 */
 	IRepositoryReference createRepositoryReference();
 
 	/**
 	 * Creates a new stats info.
-	 * 
+	 *
 	 * @return a new stats info
 	 */
 	IStatsInfo createStatsInfo();

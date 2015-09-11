@@ -36,7 +36,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSAction#getClazz
 	 * ()
@@ -47,7 +47,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSAction#getParam
 	 * (int)
@@ -65,7 +65,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSAction#getParams
 	 * ()
@@ -85,7 +85,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSAction#getPluginId
 	 * ()
@@ -96,7 +96,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSAction#setClazz
 	 * (java.lang.String)
@@ -107,7 +107,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSAction#setParam
 	 * (java.lang.String, int)
@@ -124,7 +124,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSAction#setPluginId
 	 * (java.lang.String)
@@ -135,7 +135,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
@@ -145,7 +145,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
@@ -157,7 +157,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()
@@ -168,7 +168,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isLeafNode()
 	 */

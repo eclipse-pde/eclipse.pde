@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -89,7 +89,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 						String newId = IdUtil.getValidId(newText);
 
 						header.setId(newId);
-						// at this point, neither the project or file will exist.  
+						// at this point, neither the project or file will exist.
 						// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
 						IProject newProject = ((IWorkspaceRoot) manifest.getProject().getParent()).getProject(newText);
 						// If the manifest is in a non-standard location the new project will keep that location, only the project will be changed

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ public class TracingUtils {
 
 	/**
 	 * Returns true if the specified {@link String} is a boolean value of 'true' or 'false'.
-	 * 
+	 *
 	 * @param value
 	 *            A {@link String} to check if it is the value 'true' or 'false'.
 	 * @return Returns true if the specified {@link String} is the value 'true' or 'false'; Otherwise false is returned.
@@ -36,7 +36,7 @@ public class TracingUtils {
 
 	/**
 	 * Convert a {@link TracingComponentDebugOption} to a {@link String} for persistence.
-	 * 
+	 *
 	 * @param debugOption
 	 *            The {@link TracingComponentDebugOption} to convert to a string representation.
 	 * @return A {@link String} representing the {@link TracingComponentDebugOption}.
@@ -55,7 +55,7 @@ public class TracingUtils {
 
 	/**
 	 * Convert a {@link String} representing the persisted preference into a {@link TracingComponentDebugOption}.
-	 * 
+	 *
 	 * @param debugOptionAsString
 	 *            The {@link String} representation of the persisted {@link TracingComponentDebugOption}.
 	 * @return A {@link TracingComponentDebugOption} with no parent set or <code>null</code> if debugOptionAsString is
@@ -77,7 +77,7 @@ public class TracingUtils {
 
 	/**
 	 * Convert a {@link String} representing the persisted preference into a {@link Map} object.
-	 * 
+	 *
 	 * @param debugOptions
 	 *            The input {@link String} containing many encoded key=value pairs.
 	 * @return A {@link Map} object containing the key=value pairs in the encoded debug options {@link String}
@@ -98,7 +98,7 @@ public class TracingUtils {
 
 	/**
 	 * Locates the .options file in the specified bundle and loads in the entries via {@link Properties} object.
-	 * 
+	 *
 	 * @param bundle
 	 *            The {@link Bundle} to access the debug options defined for it.
 	 * @return Returns a {@link Properties} object containing the various options from the specified bundles .options

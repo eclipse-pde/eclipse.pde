@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -92,7 +92,7 @@ public abstract class GeneralRenameIDWizardPage extends UserInputWizardPage {
 
 	/**
 	 * Intended to allow subclassing wizard pages validate the id based on custom criteria.
-	 * 
+	 *
 	 * @param id
 	 * @return null if id is valid, otherwise return corresponding error message
 	 */

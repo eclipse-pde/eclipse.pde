@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,8 +25,8 @@ public class ElementOccurenceChecker {
 	/**
 	 * @param sElement
 	 * @param element
-	 * @return A set of elements that are first-level children of 
-	 * <code>element</code>, that violate max occurence rules defined by 
+	 * @return A set of elements that are first-level children of
+	 * <code>element</code>, that violate max occurence rules defined by
 	 * <code>sElement</code>.
 	 */
 	public static HashSet<ElementOccurrenceResult> findMaxOccurenceViolations(ISchemaElement sElement, Element element) {
@@ -39,8 +39,8 @@ public class ElementOccurenceChecker {
 	/**
 	 * @param sElement
 	 * @param element
-	 * @return A set of elements that are first-level children of 
-	 * <code>element</code>, that violate min occurence rules defined by 
+	 * @return A set of elements that are first-level children of
+	 * <code>element</code>, that violate min occurence rules defined by
 	 * <code>sElement</code>.
 	 */
 	public static HashSet<ElementOccurrenceResult> findMinOccurenceViolations(ISchemaElement sElement, Element element) {
@@ -104,8 +104,8 @@ public class ElementOccurenceChecker {
 		// Compositor can be null only in cases where we had a schema complex
 		// type but that complex type was complex because it had attributes
 		// rather than element children
-		// All we care about is choices and sequences (Alls and groups not 
-		// supported)		
+		// All we care about is choices and sequences (Alls and groups not
+		// supported)
 		if (compositor == null) {
 			return;
 		} else if (compositor.getKind() == ISchemaCompositor.CHOICE) {
@@ -119,8 +119,8 @@ public class ElementOccurenceChecker {
 		// Compositor can be null only in cases where we had a schema complex
 		// type but that complex type was complex because it had attributes
 		// rather than element children
-		// All we care about is choices and sequences (Alls and groups not 
-		// supported)		
+		// All we care about is choices and sequences (Alls and groups not
+		// supported)
 		if (compositor == null) {
 			return;
 		} else if (compositor.getKind() == ISchemaCompositor.CHOICE) {
@@ -192,7 +192,7 @@ public class ElementOccurenceChecker {
 			// Update all child element occurrences of the choice compositor
 			// to the number of occurrences found
 			// Each choice occurrence counts as one occurrence for all child elements
-			// of that choice			
+			// of that choice
 			int childElementCount = countChoiceElementChildren(compositor, siblings);
 			updateChoiceElementChildren(compositor, siblings, childElementCount);
 		} else {
@@ -226,7 +226,7 @@ public class ElementOccurenceChecker {
 			// Update all child element occurrences of the choice compositor
 			// to the number of occurrences found
 			// Each choice occurrence counts as one occurrence for all child elements
-			// of that choice			
+			// of that choice
 			int childElementCount = countChoiceElementChildren(compositor, siblings);
 			updateChoiceElementChildren(compositor, siblings, childElementCount);
 		} else {
@@ -353,8 +353,8 @@ public class ElementOccurenceChecker {
 				String key = child.getNodeName();
 				if (key.equals(name)) {
 					// Normally we would return as soon as an matching element
-					// is found; however, we want to return the last 
-					// occurrence at the expense of performance in order to 
+					// is found; however, we want to return the last
+					// occurrence at the expense of performance in order to
 					// flag the last element exceeding allowed maximum
 					// occurrence
 					match = (Element) child;

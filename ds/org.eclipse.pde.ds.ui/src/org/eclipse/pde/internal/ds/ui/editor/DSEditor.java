@@ -53,7 +53,7 @@ public class DSEditor extends MultiSourceEditor {
 		addSourcePage(DSInputContext.CONTEXT_ID);
 
 	}
-	
+
 	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		// TODO add help icon here maybe?
@@ -118,7 +118,7 @@ public class DSEditor extends MultiSourceEditor {
 		} catch (CoreException e) {
 			Activator.logException(e, null, null);
 		}
-		
+
 	}
 
 	@Override
@@ -155,7 +155,7 @@ public class DSEditor extends MultiSourceEditor {
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
-	
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		IEditorInput input = getEditorInput();

@@ -71,7 +71,7 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 
 	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
-		//TODO implement 
+		//TODO implement
 	}
 
 	public String getDefaultFramework() {
@@ -130,7 +130,7 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 	 * or <code>null</code> if no element exists with that ID.
 	 * @param frameworkId
 	 * @return the {@link IConfigurationElement} for the framework with the given ID or <code>null</code>
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public IConfigurationElement getFramework(String frameworkId) {

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public interface ISplashInfo extends IProductObject {
 	void addProgressBar(boolean add, boolean blockNotification);
 
 	/**
-	 * 
+	 *
 	 * @param geo array of length 4 where geo[0] = x
 	 * 									  geo[1] = y
 	 * 									  geo[1] = width
@@ -40,7 +40,7 @@ public interface ISplashInfo extends IProductObject {
 	void addProgressMessage(boolean add, boolean blockNotification);
 
 	/**
-	 * 
+	 *
 	 * @param geo array of length 4 where geo[0] = x
 	 * 									  geo[1] = y
 	 * 									  geo[1] = width

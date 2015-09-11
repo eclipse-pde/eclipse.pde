@@ -252,7 +252,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void generateErrorElementHierarchy() {
 		while (!fDocumentNodeStack.isEmpty()) {

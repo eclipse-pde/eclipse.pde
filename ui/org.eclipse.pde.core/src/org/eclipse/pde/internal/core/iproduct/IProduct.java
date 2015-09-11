@@ -68,7 +68,7 @@ public interface IProduct extends IProductObject {
 	 * Adds the given properties to the list of properties known to this
 	 * product.  Only properties that do not exist in the product configuration
 	 * will be added.
-	 * 
+	 *
 	 * @param properties properties to add
 	 */
 	void addConfigurationProperties(IConfigurationProperty[] properties);
@@ -83,7 +83,7 @@ public interface IProduct extends IProductObject {
 	 * Removes the given properties from the list of properties known to this
 	 * product.  If the properties are not in the product's properties, this
 	 * method has no effect.
-	 * 
+	 *
 	 * @param properties properties to remove
 	 */
 	void removeConfigurationProperties(IConfigurationProperty[] properties);
@@ -140,7 +140,7 @@ public interface IProduct extends IProductObject {
 	void setLicenseInfo(ILicenseInfo info);
 
 	void setPreferencesInfo(IPreferencesInfo info);
-	
+
 	void setCSSInfo(ICSSInfo info);
 
 	void setUseFeatures(boolean use);

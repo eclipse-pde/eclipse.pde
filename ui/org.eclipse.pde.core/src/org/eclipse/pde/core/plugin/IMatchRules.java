@@ -15,7 +15,7 @@ package org.eclipse.pde.core.plugin;
  * for plug-in reference matching. These rules are used to
  * control when determining if two compared versions are
  * equivalent.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -70,7 +70,7 @@ public interface IMatchRules {
 	 */
 	String RULE_PREFIX = "prefix"; //$NON-NLS-1$
 	/**
-	 * Table of rule names that match rule values defined in this 
+	 * Table of rule names that match rule values defined in this
 	 * interface. It can be used directly against the rule values
 	 * used in plug-in models.
 	 */

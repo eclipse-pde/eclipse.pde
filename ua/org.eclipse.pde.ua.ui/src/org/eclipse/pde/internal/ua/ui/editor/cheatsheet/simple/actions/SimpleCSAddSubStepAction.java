@@ -33,7 +33,7 @@ public class SimpleCSAddSubStepAction extends Action {
 	private ISimpleCSSubItem fSubitem;
 
 	/**
-	 * 
+	 *
 	 */
 	public SimpleCSAddSubStepAction() {
 		setText(SimpleActionMessages.SimpleCSAddSubStepAction_actionText);

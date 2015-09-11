@@ -29,7 +29,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 	private static final String S_SYNC_PRODUCT = "syncProduct"; //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE = "exportSource"; //$NON-NLS-1$
-	private static final String S_EXPORT_SOURCE_FORMAT = "exportSourceFormat"; //$NON-NLS-1$	
+	private static final String S_EXPORT_SOURCE_FORMAT = "exportSourceFormat"; //$NON-NLS-1$
 	private static final String S_ALLOW_BINARY_CYCLES = "allowBinaryCycles"; //$NON-NLS-1$
 	private static final String S_MULTI_PLATFORM = "multiplatform"; //$NON-NLS-1$
 	private static final String S_EXPORT_METADATA = "p2metadata"; //$NON-NLS-1$

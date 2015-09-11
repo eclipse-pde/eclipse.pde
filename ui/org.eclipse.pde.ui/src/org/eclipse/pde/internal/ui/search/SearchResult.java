@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -44,7 +44,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	@Override
 	public String getLabel() {
 		int numMatches = getMatchCount();
-		return fQuery.getLabel() + " - " + numMatches + " " + (numMatches == 1 ? PDEUIMessages.SearchResult_match : PDEUIMessages.SearchResult_matches); //$NON-NLS-1$ //$NON-NLS-2$  
+		return fQuery.getLabel() + " - " + numMatches + " " + (numMatches == 1 ? PDEUIMessages.SearchResult_match : PDEUIMessages.SearchResult_matches); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

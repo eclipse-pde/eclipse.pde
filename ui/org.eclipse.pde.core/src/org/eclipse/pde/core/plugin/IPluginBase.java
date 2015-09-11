@@ -17,7 +17,7 @@ import org.eclipse.pde.core.IIdentifiable;
  * A model object that represents the content of a plug-in or
  * fragment manifest. This object contains data that is common
  * for both plug-ins and fragments.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -35,19 +35,19 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 
 	/**
 	 * A property that will be used to notify
-	 * that library order in a plug-in has changed. 
+	 * that library order in a plug-in has changed.
 	 */
 	String P_LIBRARY_ORDER = "library_order"; //$NON-NLS-1$
 
 	/**
 	 * A property that will be used to notify
-	 * that import order in a plug-in has changed. 
+	 * that import order in a plug-in has changed.
 	 */
 	String P_IMPORT_ORDER = "import_order"; //$NON-NLS-1$
 
 	/**
 	 * A property that will be used to notify
-	 * that 3.0 release compatibility flag has been changed. 
+	 * that 3.0 release compatibility flag has been changed.
 	 */
 	String P_SCHEMA_VERSION = "schema-version"; //$NON-NLS-1$
 

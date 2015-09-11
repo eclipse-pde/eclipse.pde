@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -97,7 +97,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 				if (!target.getModel().equals(getModel()))
 					return false;
 			} else {
-				// need to account for text model representing the same resource.  
+				// need to account for text model representing the same resource.
 				IResource res = getModel().getUnderlyingResource();
 				if (res == null) {
 					// model is external model

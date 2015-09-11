@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -65,7 +65,7 @@ public class VersionUtil {
 	 * Returns true if the given version number is an empty version as
 	 * defined by {@link Version}. Used in cases where it would be
 	 * inappropriate to parse the actual version number.
-	 * 
+	 *
 	 * @param version version string to check
 	 * @return true if empty version
 	 */

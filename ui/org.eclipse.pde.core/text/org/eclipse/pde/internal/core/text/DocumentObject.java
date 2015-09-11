@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -276,7 +276,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		// Validate index
 		if ((index < 0) || (index >= getChildCount()) || (clazz.isInstance(getChildAt(index)) == false)) {
 			// 0 <= index < child element count
-			// Cannot remove a node that is not the specified type		
+			// Cannot remove a node that is not the specified type
 			return null;
 		}
 		// Remove the node
@@ -397,7 +397,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
 		if ((position < 0) || (position >= lastIndex)) {
-			// Either the node was not found or the node was found but it is 
+			// Either the node was not found or the node was found but it is
 			// at the last index
 			return null;
 		}
@@ -415,7 +415,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	public IDocumentElementNode getPreviousSibling(IDocumentElementNode node, Class<?> clazz) {
 		int position = indexOf(node);
 		if ((position <= 0) || (position >= getChildCount())) {
-			// Either the item was not found or the item was found but it is 
+			// Either the item was not found or the item was found but it is
 			// at the first index
 			return null;
 		}
@@ -550,7 +550,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 			IDocumentElementNode clone = clone(node);
 			// Removing the node and moving it to a positive relative index alters
 			// the indexing for insertion; however, this pads the new relative
-			// index by 1, allowing it to be inserted one position after as 
+			// index by 1, allowing it to be inserted one position after as
 			// desired
 			// Add the node back at the specified index
 			addChildNode(clone, newIndex, fireEvent);
@@ -630,7 +630,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		}
 		boolean changed = super.setXMLContent(text);
 
-		// Fire an event 
+		// Fire an event
 		if (changed && shouldFireEvent()) {
 			if (node != null) {
 				firePropertyChanged(node, IDocumentTextNode.F_PROPERTY_CHANGE_TYPE_PCDATA, oldText, text);

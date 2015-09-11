@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 public class CompCSAddTaskAction extends CompCSAbstractAddAction {
 
 	/**
-	 * 
+	 *
 	 */
 	public CompCSAddTaskAction() {
 		setText(ActionsMessages.CompCSAddTaskAction_task);

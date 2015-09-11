@@ -26,10 +26,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
 /**
- * The launch configuration tab for JUnit Plug-in Tests. This tab enhances the 
- * {@link JUnitLaunchConfigurationTab} to allow for tests to (optionally) 
+ * The launch configuration tab for JUnit Plug-in Tests. This tab enhances the
+ * {@link JUnitLaunchConfigurationTab} to allow for tests to (optionally)
  * run on a non-UI thread.
- * 
+ *
  * <p>
  * This class may be instantiated but is not intended to be subclassed.
  * </p>

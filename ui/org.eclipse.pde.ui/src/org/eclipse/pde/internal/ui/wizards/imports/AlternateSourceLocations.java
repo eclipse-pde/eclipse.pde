@@ -44,7 +44,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 
 	/**
 	 * Constructs alternate source locations on the given plug-ins.
-	 * 
+	 *
 	 * @param plugins models to consider as source locations
 	 * @param rbs corresponding resolved bundles
 	 */
@@ -69,7 +69,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	 * Returns a list of source locations referencing root folders containing source.
 	 * These are old-style source plug-ins that contain a sub-folder for each plug-in
 	 * that source is provided for.
-	 * 
+	 *
 	 * @return collection of old-style source locations that have been contributed via
 	 * 	extension point
 	 */

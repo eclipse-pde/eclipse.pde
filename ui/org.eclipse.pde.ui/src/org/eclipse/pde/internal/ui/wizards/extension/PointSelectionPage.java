@@ -202,7 +202,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	}
 
 	public PointSelectionPage(IProject project, IPluginModelBase model, WizardCollectionElement element, WizardCollectionElement templates, NewExtensionWizard wizard) {
-		super("pointSelectionPage", PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); //$NON-NLS-1$ 
+		super("pointSelectionPage", PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); //$NON-NLS-1$
 		this.fModel = model;
 		this.fWizardCollection = element;
 		this.fTemplateCollection = templates;
@@ -453,7 +453,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			extension.setPoint(point);
 			fModel.getPluginBase().add(extension);
 
-			// Recursively auto-insert required child elements and attributes 
+			// Recursively auto-insert required child elements and attributes
 			// respecting multiplicity
 			ISchemaElement schemaElement = null;
 			// Get the extension's schema

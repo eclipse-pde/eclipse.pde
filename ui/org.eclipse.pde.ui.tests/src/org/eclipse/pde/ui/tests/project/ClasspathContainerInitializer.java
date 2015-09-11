@@ -17,7 +17,7 @@ import org.eclipse.jdt.core.*;
  * Dummy class path container.
  */
 public class ClasspathContainerInitializer extends org.eclipse.jdt.core.ClasspathContainerInitializer {
-	
+
 	public static final IPath PATH = new Path("org.eclipse.pde.ui.tests.classpath.container");
 
 	public ClasspathContainerInitializer() {
@@ -29,12 +29,12 @@ public class ClasspathContainerInitializer extends org.eclipse.jdt.core.Classpat
 	}
 
 	class ClasspathContainer implements IClasspathContainer {
-		
+
 		private IPath fPath;
-		
+
 		/**
 		 * Constructs a new container for the given path.
-		 * 
+		 *
 		 * @param path container path
 		 */
 		public ClasspathContainer(IPath path) {
@@ -72,7 +72,7 @@ public class ClasspathContainerInitializer extends org.eclipse.jdt.core.Classpat
 		public IPath getPath() {
 			return fPath;
 		}
-		
+
 	}
-	
+
 }

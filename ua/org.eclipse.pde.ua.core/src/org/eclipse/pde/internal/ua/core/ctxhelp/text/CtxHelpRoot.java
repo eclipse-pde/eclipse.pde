@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.ua.core.ctxhelp.text;
  * Represents the root "contexts" entry in a context help xml file. There may be
  * only one root node in the file and all other nodes must be inside the root.
  * The root may contain many context elements.
- * 
+ *
  * @since 3.4
  * @see CtxHelpObject
  * @see CtxHelpModel
@@ -31,7 +31,7 @@ public class CtxHelpRoot extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isRoot()
 	 */
@@ -41,7 +41,7 @@ public class CtxHelpRoot extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getType()
 	 */
@@ -51,7 +51,7 @@ public class CtxHelpRoot extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canBeParent()
 	 */
@@ -61,7 +61,7 @@ public class CtxHelpRoot extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getName()
 	 */
@@ -71,7 +71,7 @@ public class CtxHelpRoot extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddChild
 	 * (org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject)
@@ -82,7 +82,7 @@ public class CtxHelpRoot extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddSibling
 	 * (int)

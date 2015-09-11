@@ -265,7 +265,7 @@ public interface IHelpContextIds {
 	public static final String CUSTOMIZATION_PAGE = PREFIX + "customization_page"; //$NON-NLS-1$
 
 	public static final String TARGET_EDITOR = PREFIX + "target_editor"; //$NON-NLS-1$
-	public static final String TARGET_EDITOR_ENVIRONMENT_PAGE = PREFIX + "target_editor_environment_page"; //$NON-NLS-1$	
+	public static final String TARGET_EDITOR_ENVIRONMENT_PAGE = PREFIX + "target_editor_environment_page"; //$NON-NLS-1$
 	public static final String TARGET_EDITOR_DEFINITION_PAGE = PREFIX + "target_editor_definition_page"; //$NON-NLS-1$
 	public static final String TARGET_EDITOR_CONTENT_PAGE = PREFIX + "target_editor_content_page"; //$NON-NLS-1$
 

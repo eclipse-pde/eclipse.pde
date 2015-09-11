@@ -39,7 +39,7 @@ import org.osgi.framework.Version;
 
 /**
  * Test project creation API.
- * 
+ *
  * @since 3.6
  */
 public class ProjectCreationTests extends TestCase {
@@ -78,7 +78,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Provides a project for the test case.
-	 * 
+	 *
 	 * @param test test case
 	 * @return project which does not yet exist
 	 * @exception CoreException on failure
@@ -95,7 +95,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Minimal bundle project creation - set a symbolic name, and go.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testBundle() throws CoreException {
@@ -143,7 +143,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Tests that a header can be written with an empty value.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testEmptyHeader() throws CoreException {
@@ -195,7 +195,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Tests that an empty package import header can be tolerated (see bug 312291)
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testEmptyPackageImportHeader() throws CoreException {
@@ -223,7 +223,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Minimal fragment project creation - set a symbolic name and host, and go.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testFragment() throws CoreException {
@@ -271,7 +271,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Fragment project creation with source folder and host range.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testFragmentSrc() throws CoreException {
@@ -323,7 +323,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Two source folders mapped to the same jar.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testTwoSourceFoldersOneJar() throws CoreException {
@@ -382,7 +382,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Test two source folders to different jars
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testTwoSourceFoldersTwoJars() throws CoreException {
@@ -432,7 +432,7 @@ public class ProjectCreationTests extends TestCase {
 	}
 	/**
 	 * Set a symbolic name and singleton property, and go.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testSingleton() throws CoreException {
@@ -477,7 +477,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * A simple project with a single source folder, default output folder, and bundle classpath (.).
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testBundleSrc() throws CoreException {
@@ -538,7 +538,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Convert a bundle to a fragment
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testBundleToFrag() throws CoreException {
@@ -596,7 +596,7 @@ public class ProjectCreationTests extends TestCase {
 	/**
 	 * A project with a source folder, plugin.xml, activator, execution environment,
 	 * required bundles, and package import.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testPlugin() throws CoreException {
@@ -677,7 +677,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Modify a simple project - change class path, add activator and plugin.xml.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testModifyBundle() throws CoreException {
@@ -752,7 +752,7 @@ public class ProjectCreationTests extends TestCase {
 	/**
 	 * Modify a simple project to add/remove/clear some entries.
 	 * See bug 380444 where previous settings weren't being cleared
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testModifyRequiredBundles() throws CoreException {
@@ -834,7 +834,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Convert a fragment into a bundle
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testFragToBundle() throws CoreException {
@@ -892,7 +892,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Tests creating a project that simply wraps jars into a bundle.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testJarsAsBundle() throws CoreException, IOException {
@@ -957,7 +957,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Creates a file with some content at the given location.
-	 * 
+	 *
 	 * @param file
 	 * @throws CoreException
 	 */
@@ -978,7 +978,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Tests creating a project that simply wraps jars into a bundle.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testClassFolders() throws CoreException {
@@ -1043,7 +1043,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Test custom export wizard and launch shortcuts.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testExportWizardLaunchShortcuts() throws CoreException {
@@ -1093,7 +1093,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Targeting 3.1, should get result it Eclipse-AutoStart: true
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testLazyAutostart() throws CoreException {
@@ -1177,7 +1177,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Returns a structured header from a bundle model
-	 * 
+	 *
 	 * @param bundle the bundle
 	 * @param header header name/key
 	 * @return header or <code>null</code>
@@ -1193,7 +1193,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Targeting 3.1, eager bundle should omit Eclipse-AutoStart: header
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testEagerAutostart() throws CoreException {
@@ -1259,7 +1259,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Targeting 3.2, lazy bundle should have Eclipse-LazyStart: header
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testLazyEclipseLazyStart() throws CoreException {
@@ -1326,7 +1326,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Targeting 3.2, eager bundle should not have Eclipse-LazyStart: header
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testEagerEclipseLazyStart() throws CoreException {
@@ -1470,7 +1470,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Tests that package import/export headers don't get flattened when doing an unrelated edit.
-	 * 
+	 *
 	 * @throws CoreException
 	 * @throws IOException
 	 */
@@ -1509,7 +1509,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Changes a non-plug-in project into a a plug-in.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testNonBundleToBundle() throws CoreException {
@@ -1544,7 +1544,7 @@ public class ProjectCreationTests extends TestCase {
 	/**
 	 * Convert an existing Java project into a bundle project. Ensure it's build path
 	 * doesn't get toasted in the process.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testJavaToBundle() throws CoreException {
@@ -1609,7 +1609,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Tests creating a project that has a nested class file folders instead of a jar
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testClassFoldersNoJars() throws CoreException {
@@ -1675,7 +1675,7 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Tests that adding package exports incrementally works
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testExportUpdateSequence() throws CoreException {

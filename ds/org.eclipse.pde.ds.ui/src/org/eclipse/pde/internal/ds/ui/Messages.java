@@ -26,7 +26,7 @@ public class Messages extends NLS {
 	public static String DSComponentDetails_modifiedTooltip;
 	public static String DSComponentDetails_factoryEntry;
 	public static String DSComponentDetails_configurationPolicy;
-	
+
 	public static String DSCreationOperation_title;
 
 	public static String DSFileWizardPage_description;
@@ -40,9 +40,9 @@ public class Messages extends NLS {
 	public static String DSFileWizardPage_ComponentNeedsName;
 	public static String DSFileWizardPage_ExampleComponentName;
 	public static String DSFileWizardPage_selectType;
-	
+
 	public static String DSNewWizard_title;
-	
+
 	public static String DSImplementationDetails_classEntry;
 	public static String DSImplementationDetails_browse;
 
@@ -70,14 +70,14 @@ public class Messages extends NLS {
 	public static String DSReferenceDetails_browse;
 	public static String DSReferenceDetails_selectType;
 
-	
+
 	public static String DSSimpPage_title;
-	
+
 	public static String DSServicesPage_title;
 
 	public static String DSSection_title;
 	public static String DSSection_description;
-	
+
 	public static String DSOptionsSection_title;
 	public static String DSOptionsSection_description;
 
@@ -88,17 +88,17 @@ public class Messages extends NLS {
 	public static String DSReferenceSection_edit;
 	public static String DSReferenceSection_up;
 	public static String DSReferenceSection_down;
-	
+
 	public static String DSProvideSection_title;
 	public static String DSProvideSection_description;
 	public static String DSProvideSection_add;
 	public static String DSProvideSection_remove;
 	public static String DSProvideSection_edit;
-	
+
 	public static String DSEditReferenceDialog_dialog_title;
 
 	public static String DSEditProvideDialog_dialog_title;
-	
+
 	public static String DSPropertiesSection_title;
 	public static String DSPropertiesSection_description;
 	public static String DSPropertiesSection_addProperties;
@@ -109,18 +109,18 @@ public class Messages extends NLS {
 	public static String DSPropertiesSection_down;
 
 	public static String DSEditPropertiesDialog_dialog_title;
-	
+
 	public static String DSEditPropertyDialog_dialog_title;
 	public static String DSEditPropertyDialog_dialogMessage;
 	public static String DSEditPropertyDialog_valuesLabel;
-	
+
 	public static String DSServiceComponentSection_immediateButtonMessage;
 	public static String DSServiceComponentSection_enabledButtonMessage;
-	
+
 	public static String DSService_title;
 
-	
-	
+
+
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$
 

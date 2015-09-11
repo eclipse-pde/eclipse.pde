@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.ds.core;
 
 /**
  * Interface containing constants used for the declarative services editor.
- * 
+ *
  * @since 3.4
  */
 public interface IDSConstants {
@@ -29,7 +29,7 @@ public interface IDSConstants {
 	public static final String ELEMENT_SERVICE = "service"; //$NON-NLS-1$
 	public static final String ELEMENT_PROVIDE = "provide"; //$NON-NLS-1$
 	public static final String ELEMENT_REFERENCE = "reference"; //$NON-NLS-1$
-	
+
 	//Component Attributes
 	public static final String ATTRIBUTE_COMPONENT_NAME = "name"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_ENABLED = "enabled"; //$NON-NLS-1$
@@ -39,25 +39,25 @@ public interface IDSConstants {
 	public static final String ATTRIBUTE_COMPONENT_ACTIVATE = "activate"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_DEACTIVATE = "deactivate"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_MODIFIED = "modified"; //$NON-NLS-1$
-	
+
 	//Implementation Attributes
 	public static final String ATTRIBUTE_IMPLEMENTATION_CLASS = "class"; //$NON-NLS-1$
-	
+
 	//Property Attributes
 	public static final String ATTRIBUTE_PROPERTY_NAME = "name"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_PROPERTY_VALUE = "value"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_PROPERTY_TYPE = "type"; //$NON-NLS-1$
-	
-	
+
+
 	//Properties Attributes
 	public static final String ATTRIBUTE_PROPERTIES_ENTRY = "entry"; //$NON-NLS-1$
-	
+
 	//Service Attributes
 	public static final String ATTRIBUTE_SERVICE_FACTORY = "servicefactory"; //$NON-NLS-1$
-	
+
 	//Provide Attributes
 	public static final String ATTRIBUTE_PROVIDE_INTERFACE = "interface"; //$NON-NLS-1$
-	
+
 	//Reference Attributes
 	public static final String ATTRIBUTE_REFERENCE_NAME = "name"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_REFERENCE_INTERFACE = "interface"; //$NON-NLS-1$
@@ -66,8 +66,8 @@ public interface IDSConstants {
 	public static final String ATTRIBUTE_REFERENCE_TARGET= "target"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_REFERENCE_BIND= "bind"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_REFERENCE_UNBIND= "unbind"; //$NON-NLS-1$
-		
-	
+
+
 	//Types
 	public static final int TYPE_COMPONENT = 0;
 	public static final int TYPE_IMPLEMENTATION = 1;
@@ -94,12 +94,12 @@ public interface IDSConstants {
 	public static final String VALUE_REFERENCE_CARDINALITY_ZERO_N = "0..n"; //$NON-NLS-1$
 	public static final String VALUE_REFERENCE_CARDINALITY_ONE_ONE = "1..1"; //$NON-NLS-1$
 	public static final String VALUE_REFERENCE_CARDINALITY_ONE_N = "1..n"; //$NON-NLS-1$
-	
+
 	public static final String VALUE_TRUE = "true"; //$NON-NLS-1$
 	public static final String VALUE_FALSE = "false"; //$NON-NLS-1$
-	
+
 	public static final String VALUE_DEFAULT_TARGET = "(name=value)"; //$NON-NLS-1$
-	
+
 	public static final String VALUE_CONFIGURATION_POLICY_IGNORE = "ignore"; //$NON-NLS-1$
 	public static final String VALUE_CONFIGURATION_POLICY_OPTIONAL = "optional"; //$NON-NLS-1$
 	public static final String VALUE_CONFIGURATION_POLICY_REQUIRE = "require"; //$NON-NLS-1$

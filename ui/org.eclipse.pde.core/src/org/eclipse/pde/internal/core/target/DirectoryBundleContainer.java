@@ -22,13 +22,13 @@ import org.eclipse.pde.internal.core.util.ManifestUtils;
 
 /**
  * A directory of bundles.
- * 
+ *
  * @since 3.5
  */
 public class DirectoryBundleContainer extends AbstractBundleContainer {
 
 	/**
-	 * Constant describing the type of bundle container 
+	 * Constant describing the type of bundle container
 	 */
 	public static final String TYPE = "Directory"; //$NON-NLS-1$
 
@@ -40,7 +40,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Constructs a directory bundle container at the given location.
-	 * 
+	 *
 	 * @param path directory location in the local file system, may contain string substitution variables
 	 */
 	public DirectoryBundleContainer(String path) {
@@ -112,7 +112,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns the directory to search for bundles in.
-	 * 
+	 *
 	 * @return directory if unable to resolve variables in the path
 	 */
 	protected File getDirectory() throws CoreException {
@@ -150,7 +150,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns the directory to scan for bundles - a "plug-ins" sub directory if present.
-	 * 
+	 *
 	 * @param root the location the container specifies as a root directory
 	 * @return the given directory or its plug-ins sub directory if present
 	 */

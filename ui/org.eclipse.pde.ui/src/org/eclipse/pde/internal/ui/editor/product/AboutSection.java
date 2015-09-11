@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Peter Friese <peter.friese@gentleware.com> - bug 201956
@@ -99,7 +99,7 @@ public class AboutSection extends PDESection {
 		data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 2;
 		// Needed to align vertically with form entry field and allow space
-		// for a possible field decoration		
+		// for a possible field decoration
 		data.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		fTextEntry.getText().setLayoutData(data);
 		// Configure Label widget to be aligned to the top-left

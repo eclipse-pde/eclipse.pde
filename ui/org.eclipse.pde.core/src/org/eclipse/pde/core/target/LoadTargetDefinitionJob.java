@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.target.TargetPlatformService;
 
 /**
  * Sets the current target platform based on a target definition.
- * 
+ *
  * @since 3.8
  */
 public class LoadTargetDefinitionJob extends WorkspaceJob {
@@ -45,7 +45,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * the target platform is empty and all other settings are default.  This
 	 * method will cancel all existing LoadTargetDefinitionJob instances then
 	 * schedules the operation as a user job.
-	 * 
+	 *
 	 * @param target target definition or <code>null</code> if none
 	 */
 	public static void load(ITargetDefinition target) {
@@ -59,7 +59,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * method will cancel all existing LoadTargetDefinitionJob instances then
 	 * schedules the operation as a user job.  Adds the given listener to the
 	 * job that is started.
-	 * 
+	 *
 	 * @param target target definition or <code>null</code> if none
 	 * @param listener job change listener that will be added to the created job
 	 */
@@ -163,7 +163,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 	/**
 	 * Clears any existing target preferences that have been deprecated in 4.4 Luna
-	 * 
+	 *
 	 * @param pref preference manager
 	 * @param monitor progress monitor
 	 */

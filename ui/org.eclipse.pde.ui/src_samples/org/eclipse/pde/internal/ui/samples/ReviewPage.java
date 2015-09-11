@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -54,9 +54,9 @@ public class ReviewPage extends WizardPage {
 			setMessage(null);
 			IConfigurationElement[] desc = selection.getChildren("description"); //$NON-NLS-1$
 			if (desc.length == 1)
-				buf.append(NLS.bind(PDEUIMessages.ReviewPage_descContent, (new String[] {selection.getAttribute("name"), desc[0].getValue()}))); //$NON-NLS-1$ 
+				buf.append(NLS.bind(PDEUIMessages.ReviewPage_descContent, (new String[] {selection.getAttribute("name"), desc[0].getValue()}))); //$NON-NLS-1$
 			else
-				buf.append(NLS.bind(PDEUIMessages.ReviewPage_content, selection.getAttribute("name"))); //$NON-NLS-1$ 
+				buf.append(NLS.bind(PDEUIMessages.ReviewPage_content, selection.getAttribute("name"))); //$NON-NLS-1$
 		} else {
 			setMessage(PDEUIMessages.ReviewPage_noSampleFound, IMessageProvider.WARNING);
 		}

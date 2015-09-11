@@ -209,9 +209,9 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	 * Returns the bundles that export packages imported by the given bundle
 	 * via the Import-Package header.  Provided as a static utility method so
 	 * it can be reused in {@link BundlePluginBase}
-	 * 
+	 *
 	 * @param root the given bundle
-	 * 
+	 *
 	 * @return an array of bundles that export packages being imported by the given bundle
 	 */
 	public static BundleDescription[] getImportedBundles(BundleDescription root) {

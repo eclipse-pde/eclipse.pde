@@ -60,7 +60,7 @@ public class RegistryBrowser extends ViewPart {
 
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label"; //$NON-NLS-1$
 	public static final String SHOW_ADVANCED_MODE = "RegistryView.showAdvancedMode.label"; //$NON-NLS-1$
-	public static final String GROUP_BY = "RegistryView.groupBy"; //$NON-NLS-1$ 
+	public static final String GROUP_BY = "RegistryView.groupBy"; //$NON-NLS-1$
 	public static final String SHOW_DISABLED_MODE = "RegistryView.showDisabledMode.label"; //$NON-NLS-1$
 
 	public static final int BUNDLES = 0;
@@ -746,7 +746,7 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	/**
-	 * Internal api to set group_by value 
+	 * Internal api to set group_by value
 	 * @param newGroupBy
 	 * returns the old group_by value.
 	 */

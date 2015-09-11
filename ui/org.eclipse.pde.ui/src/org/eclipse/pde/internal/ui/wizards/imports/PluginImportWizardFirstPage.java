@@ -202,7 +202,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	/**
 	 * Updates enabled state of the radio buttons/controls used to select the source
 	 * of the import.
-	 *  
+	 *
 	 * @param source one of the source constants
 	 */
 	private void updateSourceGroup(int source) {
@@ -257,7 +257,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Returns the target platform service or <code>null</code> if none.
-	 * 
+	 *
 	 * @return target platform service or <code>null</code>
 	 */
 	private ITargetPlatformService getTargetPlatformService() {
@@ -427,7 +427,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	/**
 	 * Returns alternate source locations to use when importing, or <code>null</code>
 	 * if default locations are to be used.
-	 * 
+	 *
 	 * @return alternate source locations or <code>null</code>
 	 */
 	public SourceLocationManager getAlternateSourceLocations() {
@@ -462,7 +462,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Returns a constant indicating what the import is performed on.
-	 *  
+	 *
 	 * @return source of import
 	 */
 	private int getImportOrigin() {
@@ -515,7 +515,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Resolves the plug-ins at the given the base location. Uses plug-ins directory if present.
-	 * 
+	 *
 	 * @param location
 	 */
 	private void resolveArbitraryLocation(String location) {
@@ -536,7 +536,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Resolves the plug-in locations for a target definition.
-	 * 
+	 *
 	 * @param target target definition
 	 * @param type import operation type
 	 */
@@ -655,7 +655,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Returns whether the contributed pages are complete.
-	 * 
+	 *
 	 * @return whether the contributed pages are complete
 	 */
 	boolean arePagesComplete() {
@@ -671,7 +671,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Finishes contributed pages.
-	 * 
+	 *
 	 * @return whether finish was successful
 	 */
 	boolean finishPages() {
@@ -687,7 +687,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Returns a map of importers to their bundle import descriptions to process.
-	 * 
+	 *
 	 * @return map of bundle import descriptions to process, by importers
 	 */
 	Map<IBundleImporter, ScmUrlImportDescription[]> getImportDescriptions() {
@@ -709,7 +709,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Returns the next page to display or <code>null</code> if none.
-	 * 
+	 *
 	 * @param page current page
 	 * @return next page or <code>null</code>
 	 */
@@ -746,7 +746,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Returns the previous page to display or <code>null</code> if none.
-	 * 
+	 *
 	 * @param page current page
 	 * @return previous page or <code>null</code>
 	 */
@@ -797,7 +797,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	/**
 	 * Returns the selected target definition or <code>null</code>
 	 * if there are none.
-	 * 
+	 *
 	 * @return selected target definition or <code>null</code>
 	 */
 	private ITargetDefinition getTargetDefinition() {
@@ -826,7 +826,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Returns an object representing what will be imported.
-	 * 
+	 *
 	 * @return source of the import
 	 */
 	public Object getImportSource() {
@@ -842,7 +842,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Notifies the contributed bundle import pages of the bundles to import.
-	 * 
+	 *
 	 * @param models the models selected for import
 	 */
 	public void configureBundleImportPages(IPluginModelBase[] models) {

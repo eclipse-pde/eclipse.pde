@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brian de Alwis (MTI) - bug 429420
@@ -25,7 +25,7 @@ public interface ISchemaElement extends ISchemaObject, ISchemaRepeatable, ISchem
 	 * be accurate because XML schema is more powerful and
 	 * provides for grammar definitions that are not possible
 	 * with DTDs.
-	 * 
+	 *
 	 * param addLinks if true, the representation will contain
 	 * HTML tags for quick access to referenced elements.
 	 *

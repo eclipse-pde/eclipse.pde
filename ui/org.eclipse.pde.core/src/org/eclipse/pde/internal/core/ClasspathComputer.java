@@ -159,7 +159,7 @@ public class ClasspathComputer {
 		IPackageFragmentRoot root = JavaCore.create(project).getPackageFragmentRoot(jarFile);
 		if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
 			IClasspathEntry oldEntry = root.getRawClasspathEntry();
-			// If we have the same binary root but new or different source, we should recreate the entry 
+			// If we have the same binary root but new or different source, we should recreate the entry
 			if ((sourceAttachment == null && oldEntry.getSourceAttachmentPath() != null) || (sourceAttachment != null && sourceAttachment.equals(oldEntry.getSourceAttachmentPath()))) {
 				if (!result.contains(oldEntry)) {
 					result.add(oldEntry);
@@ -200,7 +200,7 @@ public class ClasspathComputer {
 	/**
 	 * Sets compiler compliance options on the given project to match the default compliance settings
 	 * for the specified execution environment. Overrides any existing settings.
-	 *  
+	 *
 	 * @param project project to set compiler compliance options for
 	 * @param eeId execution environment identifier or <code>null</code>
 	 */
@@ -268,7 +268,7 @@ public class ClasspathComputer {
 	/**
 	 * Puts the key/value pair into the map if the map can be overridden or the map doesn't
 	 * already contain the key. If the value is <code>null</code>, the existing value remains.
-	 * 
+	 *
 	 * @param map map to put the value in
 	 * @param key key for the value
 	 * @param value value to put in the map or <code>null</code>
@@ -284,7 +284,7 @@ public class ClasspathComputer {
 	 * Checks if the current value stored in the map is less severe than the given minimum value. If
 	 * the minimum value is higher, the map will be updated with the minimum. If the minimum value
 	 * is <code>null</code>, the existing value remains.
-	 * 
+	 *
 	 * @param map the map to check the value in
 	 * @param key the key to get the current value out of the map
 	 * @param minimumValue the minimum value allowed or <code>null</code>
@@ -311,11 +311,11 @@ public class ClasspathComputer {
 	 * Returns a new classpath container entry for the given execution environment.  If the given java project
 	 * has an existing JRE/EE classpath entry, the access rules, extra attributes and isExported settings of
 	 * the existing entry will be added to the new execution entry.
-	 *  
+	 *
 	 * @param javaProject project to check for existing classpath entries
 	 * @param ee id of the execution environment to create an entry for
 	 * @param path id of the container to create an entry for
-	 * 
+	 *
 	 * @return new classpath container entry
 	 * @throws CoreException if there is a problem accessing the classpath entries of the project
 	 */

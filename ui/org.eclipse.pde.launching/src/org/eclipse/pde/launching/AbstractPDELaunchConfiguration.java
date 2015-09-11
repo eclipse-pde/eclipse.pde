@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -89,7 +89,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	/**
 	 * Returns the VM runner for the given launch mode to use when launching the
 	 * given configuration.
-	 *  
+	 *
 	 * @param configuration launch configuration
 	 * @param mode launch node
 	 * @return VM runner to use when launching the given configuration in the given mode
@@ -104,7 +104,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * Assigns a default source locator to the given launch if a source locator
 	 * has not yet been assigned to it, and the associated launch configuration
 	 * does not specify a source locator.
-	 * 
+	 *
 	 * @param configuration
 	 *            configuration being launched
 	 * @exception CoreException
@@ -126,12 +126,12 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	/**
 	 * Returns the entries that should appear on boot classpath.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
-	 * @return the location of startup.jar and 
+	 * @return the location of startup.jar and
 	 * 		the bootstrap classpath specified by the given launch configuration
-	 *        
+	 *
 	 * @exception CoreException
 	 *                if unable to find startup.jar
 	 */
@@ -144,10 +144,10 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		return classpath;
 	}
 
-	/** 
+	/**
 	 * Returns an array of environment variables to be used when
 	 * launching the given configuration or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return the environment variables to be used when launching or <code>null</code>
 	 * @throws CoreException if unable to access associated attribute or if
@@ -160,7 +160,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	/**
 	 * Returns the working directory path specified by the given launch
 	 * configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the working directory path specified by the given launch
@@ -175,7 +175,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	/**
 	 * Returns the Map of VM-specific attributes specified by the given launch
 	 * configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the <code>Map</code> of VM-specific attributes
@@ -188,8 +188,8 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	/**
 	 * Returns the VM arguments specified by the given launch configuration, as
-	 * an array of strings. 
-	 * 
+	 * an array of strings.
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the VM arguments specified by the given launch configuration,
@@ -221,19 +221,19 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * This list is a combination of arguments computed by PDE based on attributes
 	 * specified in the given launch configuration, followed by the program arguments
 	 * that the entered directly into the launch configuration.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the program arguments necessary for launching
-	 * 
+	 *
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute or create the
-	 *                necessary configuration files      
+	 *                necessary configuration files
 	 */
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList<String> programArgs = new ArrayList<String>();
 
-		// add tracing, if turned on	
+		// add tracing, if turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug"); //$NON-NLS-1$
 			programArgs.add(LaunchArgumentsHelper.getTracingFileArgument(configuration, getConfigDir(configuration).toString() + IPath.SEPARATOR + ICoreConstants.OPTIONS_FILENAME));
@@ -274,16 +274,16 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	}
 
 	/**
-	 * Does sanity checking before launching.  The criteria whether the launch should 
+	 * Does sanity checking before launching.  The criteria whether the launch should
 	 * proceed or not is specific to the launch configuration type.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @param launch the launch object to contribute processes and debug targets to
 	 * @param monitor a progress monitor
-	 * 
+	 *
 	 * @throws CoreException exception thrown if launch fails or canceled or if unable to retrieve attributes
 	 * from the launch configuration
-	 * 				
+	 *
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
@@ -300,7 +300,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	/**
 	 * Returns the configuration area specified by the given launch
 	 * configuration.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the directory path specified by the given launch
@@ -323,9 +323,9 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	}
 
 	/**
-	 * Returns the fully-qualified name of the class to launch. 
-	 * 
-	 * @return the fully-qualified name of the class to launch.  Must not return <code>null</code>. 
+	 * Returns the fully-qualified name of the class to launch.
+	 *
+	 * @return the fully-qualified name of the class to launch.  Must not return <code>null</code>.
 	 * @since 3.3
 	 */
 	public String getMainClass() {
@@ -337,11 +337,11 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	/**
 	 * Adds a listener to the launch to be notified at interesting launch lifecycle
 	 * events such as when the launch terminates.
-	 * 
+	 *
 	 * @param launch
-	 * 			the launch 		
-	 * 
-	 * @since 3.3	
+	 * 			the launch
+	 *
+	 * @since 3.3
 	 */
 	protected void manageLaunch(ILaunch launch) {
 		PDELaunchingPlugin.getDefault().getLaunchListener().manage(launch);
@@ -349,14 +349,14 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	/**
 	 * Checks for old-style plugin.xml files that have become stale since the last launch.
-	 * For any stale plugin.xml files found, the corresponding MANIFEST.MF is deleted 
+	 * For any stale plugin.xml files found, the corresponding MANIFEST.MF is deleted
 	 * from the runtime configuration area so that it gets regenerated upon startup.
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @param monitor
 	 * 			a progress monitor
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected void synchronizeManifests(ILaunchConfiguration configuration, IProgressMonitor monitor) {
@@ -367,12 +367,12 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	/**
 	 * Checks if the Automated Management of Dependencies option is turned on.
 	 * If so, it makes aure all manifests are updated with the correct dependencies.
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @param monitor
 	 * 			a progress monitor
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected void validateProjectDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) {
@@ -381,7 +381,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	/**
 	 * By default, this method does nothing.  Clients should override, if appropriate.
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @param monitor
@@ -396,7 +396,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	/**
 	 * Validates inter-bundle dependencies automatically prior to launching
 	 * if that option is turned on.
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @param monitor

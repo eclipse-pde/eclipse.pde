@@ -64,7 +64,7 @@ public class ArgumentsSection extends SectionPart {
 
 	/**
 	 * Creates the UI for this section.
-	 * 
+	 *
 	 * @param section section the UI is being added to
 	 * @param toolkit form toolkit used to create the widgets
 	 */

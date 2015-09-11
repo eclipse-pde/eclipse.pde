@@ -31,7 +31,7 @@ public class NewCSFileWizard extends BasicNewFileResourceWizard implements INewW
 	protected CSFileWizardPage fMainPage;
 
 	/**
-	 * 
+	 *
 	 */
 	public NewCSFileWizard() {
 		super();

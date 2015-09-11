@@ -115,7 +115,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		commandSection.setLayoutData(data);
 
-		// Create container for command section		
+		// Create container for command section
 		Composite commandSectionClient = toolkit.createComposite(commandSection);
 		commandSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, columnSpan));
 
@@ -134,10 +134,10 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		fCommandCombo.add(F_NO_COMMAND);
 		fCommandCombo.setText(F_NO_COMMAND);
 		fCommandCombo.populate();
-		// Always insert new command keys obtained from other combo boxes in 
+		// Always insert new command keys obtained from other combo boxes in
 		// the position after the no command entry
 		fCommandCombo.setNewCommandKeyIndex(F_COMMAND_INSERTION_INDEX);
-		// Limit the combo box to the 11 most recent entries (includes no 
+		// Limit the combo box to the 11 most recent entries (includes no
 		// command entry)
 		fCommandCombo.setComboEntryLimit(11);
 
@@ -207,7 +207,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 				}
 				String selection = fCommandCombo.getSelection();
 				if (selection.equals(F_NO_COMMAND) == false) {
-					// Get the associated serialization stored as data against the 
+					// Get the associated serialization stored as data against the
 					// command name
 					String serialization = fCommandCombo.getValue(selection);
 					if (PDETextHelper.isDefined(serialization)) {
@@ -298,7 +298,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateUICommandOptional() {
 		// Attribute: required
@@ -335,7 +335,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void clearCommandUI() {
 		// Clear the command combo
@@ -345,7 +345,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateCommandEnablement() {
 		// Ensure data object is defined
@@ -358,7 +358,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 			ISimpleCSItem item = (ISimpleCSItem) fRun;
 			// Preserve cheat sheet validity
 			// Semantic Rule:  Cannot have a subitem and any of the following
-			// together:  perform-when, command, action			
+			// together:  perform-when, command, action
 			if (item.hasSubItems()) {
 				editable = false;
 				updateCommandInfoDecoration(true);
@@ -499,8 +499,8 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 					String keyString = (String) key;
 					// If present, remove the fully qualified ID from the
 					// paramater key
-					// i.e. "org.eclipse.ui.perspective" becomes just 
-					// "perspective" 
+					// i.e. "org.eclipse.ui.perspective" becomes just
+					// "perspective"
 					int dotIndex = keyString.lastIndexOf('.');
 					if ((dotIndex != -1) && (dotIndex != (keyString.length() - 1))) {
 						keyString = keyString.substring(dotIndex + 1);
@@ -538,7 +538,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateCommandInfoDecoration(boolean showDecoration) {
 		if (showDecoration) {

@@ -139,7 +139,7 @@ public class SchemaTransformer {
 		fWriter.println("<p class=\"note SchemaCopyright\">"); //$NON-NLS-1$
 		transformSection(null, IDocumentSection.COPYRIGHT);
 		fWriter.println("</p>"); //$NON-NLS-1$
-		fWriter.println("</BODY>"); //$NON-NLS-1$		
+		fWriter.println("</BODY>"); //$NON-NLS-1$
 	}
 
 	private void transformSection(String title, String sectionId) {
@@ -221,7 +221,7 @@ public class SchemaTransformer {
 								fWriter.print("&quot;"); //$NON-NLS-1$
 							}
 						} else {
-							fWriter.print("\""); //$NON-NLS-1$						
+							fWriter.print("\""); //$NON-NLS-1$
 						}
 						break;
 					default :

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * This template option can be used to collect string option from the user in
  * the template section wizard page.
- * 
+ *
  * @since 2.0
  */
 public class StringOption extends TemplateOption {
@@ -32,7 +32,7 @@ public class StringOption extends TemplateOption {
 
 	/**
 	 * The constructor.
-	 * 
+	 *
 	 * @param section
 	 *            the parent section
 	 * @param name
@@ -62,7 +62,7 @@ public class StringOption extends TemplateOption {
 	/**
 	 * A utility version of the <samp>getValue() </samp> method that converts
 	 * the current value into the String object.
-	 * 
+	 *
 	 * @return the string version of the current value.
 	 */
 	public String getText() {
@@ -74,7 +74,7 @@ public class StringOption extends TemplateOption {
 	/**
 	 * A utility version of the <samp>setValue </samp> method that accepts
 	 * String objects.
-	 * 
+	 *
 	 * @param newText
 	 *            the new text value of the option
 	 * @see #setValue(Object)
@@ -86,7 +86,7 @@ public class StringOption extends TemplateOption {
 	/**
 	 * Implements the superclass method by passing the string value of the new
 	 * value to the widget
-	 * 
+	 *
 	 * @param value
 	 *            the new option value
 	 */
@@ -103,7 +103,7 @@ public class StringOption extends TemplateOption {
 
 	/**
 	 * Creates the string option control.
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite of the string option widget
 	 * @param span
@@ -133,7 +133,7 @@ public class StringOption extends TemplateOption {
 
 	/**
 	 * A string option is empty if its text field contains no text.
-	 * 
+	 *
 	 * @return true if there is no text in the text field.
 	 */
 	@Override
@@ -144,7 +144,7 @@ public class StringOption extends TemplateOption {
 	/**
 	 * Implements the superclass method by passing the enabled state to the
 	 * option's widget.
-	 * 
+	 *
 	 * @param enabled
 	 */
 	@Override

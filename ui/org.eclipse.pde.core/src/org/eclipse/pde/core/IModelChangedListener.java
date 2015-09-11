@@ -15,7 +15,7 @@ package org.eclipse.pde.core;
  * changes should implement this interface
  * and add themselves as listeners to
  * the model they want to listen to.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
  */

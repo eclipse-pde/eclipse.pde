@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -72,7 +72,7 @@ public class DependencyLoopFinder {
 					continue;
 				if (!exploredPlugins.contains(id)) {
 					// is plugin in list of non loop yielding plugins
-					//Commenting linear lookup - was very slow 
+					//Commenting linear lookup - was very slow
 					//when called from here. We will use
 					//model manager instead because it
 					//has a hash table lookup that is much faster.

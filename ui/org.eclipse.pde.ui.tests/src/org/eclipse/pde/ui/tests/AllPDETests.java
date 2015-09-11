@@ -32,7 +32,7 @@ public class AllPDETests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.ui"); //$NON-NLS-1$
-				
+
 		suite.addTest(AllTargetTests.suite());
 		suite.addTest(AllNewProjectTests.suite());
 		suite.addTest(AllPreferenceTests.suite());

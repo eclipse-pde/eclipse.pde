@@ -340,7 +340,7 @@ public class Feature extends VersionableObject implements IFeature {
 	/**
 	 * Creates IFeatureImports based on IPluginImports. Ensures no duplicates in
 	 * preservedImports + newImports
-	 * 
+	 *
 	 * @param preservedImports
 	 *            out for valid existing imports
 	 * @param newImports
@@ -626,7 +626,7 @@ public class Feature extends VersionableObject implements IFeature {
 
 	/**
 	 * Sets the imageName.
-	 * 
+	 *
 	 * @param imageName
 	 *            The imageName to set
 	 */
@@ -828,7 +828,7 @@ public class Feature extends VersionableObject implements IFeature {
 
 	/**
 	 * Gets the imageName.
-	 * 
+	 *
 	 * @return Returns a String
 	 */
 	@Override

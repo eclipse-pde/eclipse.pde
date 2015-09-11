@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.PDECore;
  * Utility class that collects the metadata repositories that a target definition has access to.
  * This class was created specifically to support providing pde build with a metadata context when
  * exporting features so that the metadata would be reused rather than be generated again.
- * 
+ *
  * @since 3.6
  */
 public class TargetMetadataCollector {
@@ -34,7 +34,7 @@ public class TargetMetadataCollector {
 	 * plug-ins in the target.  The definition does not have to be resolved and this method will not
 	 * resolve it.  If <code>null</code> is passed as the definition, this method will use {@link ITargetPlatformService}
 	 * to get the active target definition.
-	 * 
+	 *
 	 * @param definition the target definition to load metadata repositories for or <code>null</code> to use the active target definition
 	 * @return a list of URIs that specify metadata repository locations, possibly empty
 	 * @throws CoreException if there is a problem working with the target definition

@@ -23,7 +23,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * OSGi console connected to the Host/Running Eclipse.
- * 
+ *
  * @since 3.6
  */
 public class OSGiConsole extends IOConsole {

@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
 
 /**
  * Document handler for declarative services xml files.
- * 
+ *
  * @since 3.4
  * @see DSModel
  * @see DSDocumentFactory

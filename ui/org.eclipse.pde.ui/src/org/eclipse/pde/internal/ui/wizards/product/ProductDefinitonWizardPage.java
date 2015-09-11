@@ -103,7 +103,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 
-		if (!productNameDefined()) { 
+		if (!productNameDefined()) {
 			label = new Label(group, SWT.NONE);
 			label.setText(PDEUIMessages.ProductDefinitonWizardPage_productName);
 

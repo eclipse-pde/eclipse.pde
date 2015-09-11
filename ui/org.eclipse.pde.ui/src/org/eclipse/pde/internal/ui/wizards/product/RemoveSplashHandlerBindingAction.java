@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -110,16 +110,16 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 			IPluginElement element = productBindingElements[i];
 			// Get the product ID attribute
 			IPluginAttribute productIDAttribute = element.getAttribute(F_ATTRIBUTE_PRODUCT_ID);
-			// Remove any product binding element that does not define a 
-			// product ID 
+			// Remove any product binding element that does not define a
+			// product ID
 			if ((productIDAttribute == null) || (PDETextHelper.isDefined(productIDAttribute.getValue()) == false)) {
 				extension.remove(element);
 				continue;
 			}
 			// Get the splash ID attribute
 			IPluginAttribute splashIDAttribute = element.getAttribute(F_ATTRIBUTE_SPLASH_ID);
-			// Remove any product binding element that does not define a 
-			// splash ID 
+			// Remove any product binding element that does not define a
+			// splash ID
 			if ((splashIDAttribute == null) || (PDETextHelper.isDefined(splashIDAttribute.getValue()) == false)) {
 				extension.remove(element);
 				continue;

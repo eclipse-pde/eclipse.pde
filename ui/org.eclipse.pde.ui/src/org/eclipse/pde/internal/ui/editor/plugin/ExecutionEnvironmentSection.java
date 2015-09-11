@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -517,7 +517,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		}
 		// Validate move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			// Get the previous element of the target 
+			// Get the previous element of the target
 			RequiredExecutionEnvironmentHeader header = getHeader();
 			// Ensure we have a header
 			if (header == null) {
@@ -531,7 +531,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 			}
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			// Get the next element of the target 
+			// Get the next element of the target
 			RequiredExecutionEnvironmentHeader header = getHeader();
 			// Ensure we have a header
 			if (header == null) {
@@ -597,7 +597,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 			if (index == -1) {
 				return;
 			}
-			// Add source as sibling of target (before)			
+			// Add source as sibling of target (before)
 			header.addExecutionEnvironment(sourceEEObject, index);
 			return;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
@@ -613,7 +613,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 			if (index == -1) {
 				return;
 			}
-			// Add source as sibling of target (before)			
+			// Add source as sibling of target (before)
 			header.addExecutionEnvironment(sourceEEObject, index + 1);
 			return;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {

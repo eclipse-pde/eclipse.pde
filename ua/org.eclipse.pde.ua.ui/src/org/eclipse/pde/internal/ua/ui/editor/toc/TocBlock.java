@@ -30,7 +30,7 @@ import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IManagedForm;
 
 /**
- * 
+ *
  */
 public class TocBlock extends PDEMasterDetailsBlock implements IModelChangedListener, IDetailsPageProvider {
 

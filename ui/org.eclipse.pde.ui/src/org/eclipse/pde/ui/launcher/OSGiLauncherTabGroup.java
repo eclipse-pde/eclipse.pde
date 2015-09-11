@@ -41,7 +41,7 @@ public class OSGiLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
 	 * more defaults on the launch configuration.
 	 * Refer to the <code>org.eclipse.pde.core.osgiFrameworks</code> extension point for more details
 	 * on OSGi frameworks.
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	@Override

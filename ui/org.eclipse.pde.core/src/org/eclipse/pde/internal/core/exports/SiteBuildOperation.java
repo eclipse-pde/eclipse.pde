@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.osgi.framework.Version;
 /**
  * Performs a site build operation that will build any features needed by the site and generate
  * p2 metadata for those features.
- * 
+ *
  * @see FeatureBasedExportOperation
  * @see FeatureExportOperation
  */
@@ -123,7 +123,7 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	/**
 	 * Finds the highest version from feature jars. ID and version components
 	 * are constant. Qualifier varies
-	 * 
+	 *
 	 * @param id
 	 * @param major
 	 * @param minor
@@ -143,7 +143,7 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 		Pattern pattern = PatternConstructor.createPattern(id + "_" //$NON-NLS-1$
 				+ major + "." //$NON-NLS-1$
 				+ minor + "." //$NON-NLS-1$
-				+ service + "*.jar", true); //$NON-NLS-1$ 
+				+ service + "*.jar", true); //$NON-NLS-1$
 		// finding the newest feature archive
 		String newestName = null;
 		long newestTime = 0;

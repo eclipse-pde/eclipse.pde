@@ -120,8 +120,8 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	}
 
 	/**
-	 * Returns the outline presenter control creator. The creator is a 
-	 * factory creating outline presenter controls for the given source viewer. 
+	 * Returns the outline presenter control creator. The creator is a
+	 * factory creating outline presenter controls for the given source viewer.
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @param commandId the ID of the command that opens this control

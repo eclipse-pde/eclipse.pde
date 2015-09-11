@@ -21,18 +21,18 @@ import org.eclipse.pde.internal.core.ifeature.*;
 
 /**
  * A container of the bundles contained in a feature.
- * 
+ *
  * @since 3.5
  */
 public class FeatureBundleContainer extends AbstractBundleContainer {
 
 	/**
-	 * Constant describing the type of bundle container 
+	 * Constant describing the type of bundle container
 	 */
 	public static final String TYPE = "Feature"; //$NON-NLS-1$
 
 	/**
-	 * Feature symbolic name 
+	 * Feature symbolic name
 	 */
 	private String fId;
 
@@ -50,7 +50,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	 * Constructs a new feature bundle container for the feature at the specified
 	 * location. Plug-ins are resolved in the plug-ins directory of the given home
 	 * directory. When version is unspecified, the most recent version is used.
-	 * 
+	 *
 	 * @param home root directory containing the features directory which
 	 *  may contain string substitution variables
 	 * @param name feature symbolic name
@@ -83,7 +83,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns the symbolic name of the feature this bundle container resolves from
-	 * 
+	 *
 	 * @return string feature id (symbolic name)
 	 */
 	public String getFeatureId() {
@@ -93,7 +93,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	/**
 	 * Returns the version of the feature this bundle container resolves from if
 	 * a version was specified.
-	 * 
+	 *
 	 * @return string feature version or <code>null</code>
 	 */
 	public String getFeatureVersion() {
@@ -102,7 +102,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns the home location with all variables resolved as a path.
-	 * 
+	 *
 	 * @return resolved home location
 	 * @throws CoreException
 	 */
@@ -196,7 +196,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns whether the given target environment setting matches that of a fragments.
-	 * 
+	 *
 	 * @param targetValue value in target definition
 	 * @param fragmentValue value in fragment
 	 * @param runningValue value of current running platform

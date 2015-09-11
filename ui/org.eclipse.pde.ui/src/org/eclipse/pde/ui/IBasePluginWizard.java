@@ -17,7 +17,7 @@ import org.eclipse.jface.wizard.IWizard;
  * are plugged into one of PDE extension points. This interface is not intended
  * to be implemented directly - clients implement other interfaces that
  * extend this interface.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @since 1.0
  */

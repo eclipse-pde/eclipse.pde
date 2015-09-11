@@ -144,7 +144,7 @@ public class PreferencesSection extends PDESection {
 		}
 		try {
 			if (preferenceCustomizationPath == null || preferenceCustomizationPath.length() == 0) {
-				// 3 - If we don't have a file path defined in the extension point, look for one in the defining plugin.						
+				// 3 - If we don't have a file path defined in the extension point, look for one in the defining plugin.
 				IResource resource = project.findMember(PREFS_CUSTOMIZATION_FILE);
 				boolean existing = resource != null && resource instanceof IFile;
 				if (existing) {

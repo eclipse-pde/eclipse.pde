@@ -26,7 +26,7 @@ import org.eclipse.team.ui.TeamUI;
 
 /**
  * Wizard to import plug-ins from a repository.
- * 
+ *
  * @since 3.6
  */
 @SuppressWarnings("restriction")
@@ -47,7 +47,7 @@ public class RepositoryImportWizard extends Wizard {
 
 	/**
 	 * Map of import delegates to import descriptions.
-	 * 
+	 *
 	 * @param importMap
 	 */
 	public RepositoryImportWizard(Map<?, ?> importMap) {

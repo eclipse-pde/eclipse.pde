@@ -196,7 +196,7 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateQuickOutlineMenuEntry() {
 		// Get the main action bar
@@ -209,8 +209,8 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 			return;
 		}
 		// Remove the previous version of the quick outline menu entry - if
-		// one exists 
-		// Prevent duplicate menu entries 
+		// one exists
+		// Prevent duplicate menu entries
 		// Prevent wrong quick outline menu from being brought up for the wrong
 		// page
 		navigateMenu.remove(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);

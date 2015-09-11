@@ -22,7 +22,7 @@ import org.eclipse.pde.core.plugin.IPluginReference;
  * </p>
  * @see IPluginReference
  * @since 3.4
- * 
+ *
  * @noextend This class is not intended to be sub-classed by clients.
  */
 public class PluginReference implements IPluginReference {
@@ -32,9 +32,9 @@ public class PluginReference implements IPluginReference {
 	private int match = IMatchRules.NONE;
 
 	/**
-	 * 
+	 *
 	 * Constructs a plug-in reference to be used in the PDE template framework
-	 * 
+	 *
 	 * @param id
 	 * 			the id of the plug-in
 	 * @param version
@@ -49,7 +49,7 @@ public class PluginReference implements IPluginReference {
 	}
 
 	/*
-	 * @see IPluginReference#equals(Object) 
+	 * @see IPluginReference#equals(Object)
 	 */
 	@Override
 	public boolean equals(Object object) {

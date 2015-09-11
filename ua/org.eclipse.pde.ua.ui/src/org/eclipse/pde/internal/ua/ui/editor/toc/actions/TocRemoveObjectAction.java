@@ -59,8 +59,8 @@ public class TocRemoveObjectAction extends Action {
 			if (fTocObjects[i] != null && fTocObjects[i].canBeRemoved()) {
 				TocObject parent = fTocObjects[i].getParent();
 				if (parent != null && parent.canBeParent()) {
-					// Determine the object to select after the deletion 
-					// takes place 
+					// Determine the object to select after the deletion
+					// takes place
 					determineNextSelection(parent, i);
 					// Remove the TOC object
 					((TocTopic) parent).removeChild(fTocObjects[i]);
@@ -72,7 +72,7 @@ public class TocRemoveObjectAction extends Action {
 	/**
 	 * Determine the next object that should be selected
 	 * after the designated object has been removed
-	 * 
+	 *
 	 * @param parent The parent of the deleted object
 	 */
 	private void determineNextSelection(TocObject parent, int index) {

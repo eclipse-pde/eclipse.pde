@@ -25,19 +25,19 @@ import org.osgi.util.tracker.ServiceTracker;
  * <pre>
  * 1) Headless tests (no UI, no workbench)
  * 	  Runs NonUIThreadTestApplication with no testable object
- * 
+ *
  * 2) e4 UI tests (e4 UI, no workbench)
  *    Runs NonUIThreadTestApplication with a testable object from e4 service
- *    
+ *
  * 3) UI tests run in the non UI thread (UI, workbench)
  *    Runs NonUIThreadTestApplication with a testable object from e4 service or PlatformUI
- *    
+ *
  * 4) UI tests run in the UI thread (UI, workbench)
  *    Runs UITestApplication with a testable object from e4 service or PlatformUI
- *  
+ *
  * 5) Headless tests with no application (no UI, no workbench, no application)
  *    Runs directly with no application
- *       
+ *
  * 6) Legacy UI test application (deprecated)
  *    Runs LegacyUITestApplication with an IPlatformRunnable
  * </pre>
@@ -46,7 +46,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class PDEJUnitRuntimePlugin implements BundleActivator {
 
 	/**
-	 * The testable object is accessed via service and a string name to avoid depending on UI code.  The 
+	 * The testable object is accessed via service and a string name to avoid depending on UI code.  The
 	 */
 	private static final String TESTABLE_OBJECT_SERVICE_NAME = "org.eclipse.ui.testing.TestableObject"; //$NON-NLS-1$
 
@@ -100,9 +100,9 @@ public class PDEJUnitRuntimePlugin implements BundleActivator {
 	 * application lifecycle.
 	 * <p>
 	 * It is recommended the testable object is obtained via service
-	 * over {@link Workbench#getWorkbenchTestable()} to avoid the 
+	 * over {@link Workbench#getWorkbenchTestable()} to avoid the
 	 * tests having a dependency on the Workbench.
-	 * </p> 
+	 * </p>
 	 * @return TestableObject provided via service or <code>null</code>
 	 */
 	public Object getTestableObject() {

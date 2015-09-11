@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * General functions useful to all widgets that create preference blocks
- * 
+ *
  * @since 3.8
  */
 public abstract class ConfigurationBlock {
@@ -37,7 +37,7 @@ public abstract class ConfigurationBlock {
 	private static final int HIGHLIGHT_FOCUS = SWT.COLOR_WIDGET_DARK_SHADOW;
 	private static final int HIGHLIGHT_MOUSE = SWT.COLOR_WIDGET_NORMAL_SHADOW;
 	private static final int HIGHLIGHT_NONE = SWT.NONE;
-	
+
 	protected void addHighlight(final Composite parent, final Label labelControl, final Combo comboBox) {
 		comboBox.addFocusListener(new FocusListener() {
 			@Override
@@ -49,7 +49,7 @@ public abstract class ConfigurationBlock {
 				highlight(parent, labelControl, comboBox, HIGHLIGHT_FOCUS);
 			}
 		});
-		
+
 		MouseTrackAdapter labelComboListener= new MouseTrackAdapter() {
 			@Override
 			public void mouseEnter(MouseEvent e) {
@@ -63,7 +63,7 @@ public abstract class ConfigurationBlock {
 		};
 		comboBox.addMouseTrackListener(labelComboListener);
 		labelControl.addMouseTrackListener(labelComboListener);
-		
+
 		class MouseMoveTrackListener extends MouseTrackAdapter implements MouseMoveListener, MouseListener {
 			@Override
 			public void mouseExit(MouseEvent e) {
@@ -101,7 +101,7 @@ public abstract class ConfigurationBlock {
 		parent.addMouseMoveListener(parentListener);
 		parent.addMouseTrackListener(parentListener);
 		parent.addMouseListener(parentListener);
-		
+
 		MouseAdapter labelClickListener= new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -110,11 +110,11 @@ public abstract class ConfigurationBlock {
 		};
 		labelControl.addMouseListener(labelClickListener);
 	}
-	
+
 	protected void highlight(final Composite parent, final Label labelControl, final Combo comboBox, final int color) {
-		
+
 		class HighlightPainter implements PaintListener {
-			
+
 			private int fColor= color;
 
 			@Override
@@ -124,22 +124,22 @@ public abstract class ConfigurationBlock {
 					labelControl.setData(null);
 					return;
 				}
-				
+
 				int GAP= 7;
 				int ARROW= 3;
 				Rectangle l= labelControl.getBounds();
 				Point c= comboBox.getLocation();
-				
+
 				e.gc.setForeground(e.display.getSystemColor(fColor));
 				int x2= c.x - GAP;
 				int y= l.y + l.height / 2 + 1;
-				
+
 				e.gc.drawLine(l.x + l.width + GAP, y, x2, y);
 				e.gc.drawLine(x2 - ARROW, y - ARROW, x2, y);
 				e.gc.drawLine(x2 - ARROW, y + ARROW, x2, y);
 			}
 		}
-		
+
 		Object data= labelControl.getData();
 		if (data == null) {
 			if (color != HIGHLIGHT_NONE) {
@@ -159,9 +159,9 @@ public abstract class ConfigurationBlock {
 				return;
 			}
 		}
-		
+
 		parent.redraw();
 		parent.update();
 	}
-	
+
 }

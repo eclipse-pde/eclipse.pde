@@ -17,10 +17,10 @@ import org.eclipse.pde.internal.ds.core.IDSProvide;
 public class DSProvide extends DSObject implements IDSProvide {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public DSProvide(DSModel model) {
 		super(model, ELEMENT_PROVIDE);
-		
+
 		int prov_count = model.getDSComponent().getService()
 				.getProvidedServices().length + 1;
 		this.setInterface(IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE
@@ -46,12 +46,12 @@ public class DSProvide extends DSObject implements IDSProvide {
 	public int getType() {
 		return TYPE_PROVIDE;
 	}
-	
+
 	@Override
 	public void setInterface(String interfaceName){
 		setXMLAttribute(ATTRIBUTE_PROVIDE_INTERFACE, interfaceName);
 	}
-	
+
 	@Override
 	public String getInterface(){
 		return getXMLAttributeValue(ATTRIBUTE_PROVIDE_INTERFACE);

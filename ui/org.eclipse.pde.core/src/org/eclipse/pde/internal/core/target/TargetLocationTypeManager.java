@@ -20,7 +20,7 @@ import org.eclipse.pde.core.target.ITargetLocationFactory;
 import org.eclipse.pde.internal.core.PDECore;
 
 /**
- * Keeps a track of the contributed Target Locations and provides helper functions to 
+ * Keeps a track of the contributed Target Locations and provides helper functions to
  * access them
  *
  */
@@ -55,7 +55,7 @@ public class TargetLocationTypeManager {
 	/**
 	 * Returns an instance of {@link ITargetLocationFactory} from an extension that provides
 	 * them for locations of the given type or <code>null</code> if no extension can be found.
-	 * 
+	 *
 	 * @param type string identifying the type of target location, see {@link ITargetLocation#getType()}
 	 * @return an instance of <code>ITargetLocationFactory</code> or <code>null</code>
 	 */

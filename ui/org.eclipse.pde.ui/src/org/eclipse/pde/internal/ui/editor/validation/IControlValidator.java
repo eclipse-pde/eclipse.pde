@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ public interface IControlValidator {
 	public void setEnabled(boolean enabled);
 
 	/**
-	 * Determine whether the validator is enabled / disabled 
+	 * Determine whether the validator is enabled / disabled
 	 */
 	public boolean getEnabled();
 
@@ -48,8 +48,8 @@ public interface IControlValidator {
 	public void reset();
 
 	/**
-	 * Controls whether the message handler automatically updates messages in 
-	 * the form. Setting the refresh to true, triggers an immediate update 
+	 * Controls whether the message handler automatically updates messages in
+	 * the form. Setting the refresh to true, triggers an immediate update
 	 * @param refresh
 	 */
 	public void setRefresh(boolean refresh);

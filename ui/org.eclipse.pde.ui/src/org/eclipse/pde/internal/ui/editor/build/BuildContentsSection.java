@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -241,10 +241,10 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 
 	/**
 	 * removes all child resources of the specified folder from build entries
-	 * 
+	 *
 	 * @param folder -
 	 *            current folder being modified in tree
-	 * 
+	 *
 	 * note: does not remove folder itself
 	 */
 	protected abstract void deleteFolderChildrenFromEntries(IFolder folder);

@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Fix for bug 376057 - Wildcard suport 
- *     for adding features in product configuration editor 
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Fix for bug 376057 - Wildcard suport
+ *     for adding features in product configuration editor
  *     Red Hat, Inc - 322352
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 449348
  *******************************************************************************/
@@ -77,7 +77,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param model
 		 * @return id of matched plugin or null if no match
 		 */

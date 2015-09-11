@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ public class PDELabelUtility {
 	/**
 	 * Get the field label text from the label widget created before the
 	 * control (assumption).  Use this method when the control's label is
-	 * variable or if the label's text is set elsewhere.  Note:  Hyperlink 
+	 * variable or if the label's text is set elsewhere.  Note:  Hyperlink
 	 * label text will not be detected.
 	 * @param control
 	 */
@@ -40,7 +40,7 @@ public class PDELabelUtility {
 			return null;
 		}
 		// Me = control
-		// Track the index of myself 
+		// Track the index of myself
 		int myIndex = -1;
 		// Linearly search controls for myself
 		for (int i = 0; i < controls.length; i++) {
@@ -89,7 +89,7 @@ public class PDELabelUtility {
 		if (set.size() > 0) {
 			// Limit on the number of auto-generated item numbers to check for
 			int limit = 100;
-			// Check the set for the numbers encountered and generate the 
+			// Check the set for the numbers encountered and generate the
 			// lowest number accordingly
 			if (set.contains(new Integer(0)) == false) {
 				// Use base
@@ -186,7 +186,7 @@ public class PDELabelUtility {
 	 * <p>Generates a name that does not conflict with any of the given names with one of two forms:
 	 * <ol><li>&quot;&lt;base&gt; (#)&quot;</li><li>&quot;&lt;base&gt;#&quot;</li></ol>
 	 * The number will be omitted if the base name alone is available.</p>
-	 * 
+	 *
 	 * @param names
 	 * 			the existing names that should not be conflicted
 	 * @param base
@@ -201,7 +201,7 @@ public class PDELabelUtility {
 		// Used to track auto-generated numbers used
 		HashSet<Integer> set = new HashSet<>();
 
-		// Linear search O(n).  
+		// Linear search O(n).
 		// Performance hit unnoticeable because number of items per cheatsheet
 		// should be minimal.
 		for (int i = 0; i < names.length; i++) {

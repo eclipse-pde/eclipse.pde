@@ -110,7 +110,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	private boolean fFirstCheck;
 
 	public PluginWorkingSet() {
-		super("page1", PDEUIMessages.PluginWorkingSet_title, PDEPluginImages.DESC_DEFCON_WIZ); //$NON-NLS-1$ 
+		super("page1", PDEUIMessages.PluginWorkingSet_title, PDEPluginImages.DESC_DEFCON_WIZ); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -227,7 +227,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initialize() {
 		if (fWorkingSet != null) {

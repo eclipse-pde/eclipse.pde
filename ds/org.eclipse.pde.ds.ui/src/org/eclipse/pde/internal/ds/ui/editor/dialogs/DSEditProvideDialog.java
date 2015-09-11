@@ -59,11 +59,11 @@ public class DSEditProvideDialog extends FormDialog {
 		fProvideSection = provideSection;
 
 	}
-	
+
 	@Override
 	protected void createFormContent(IManagedForm mform) {
 		mform.getForm().setText(Messages.DSEditProvideDialog_dialog_title);
-		
+
 		Composite container = mform.getForm().getBody();
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -75,7 +75,7 @@ public class DSEditProvideDialog extends FormDialog {
 				.createSectionClientGridLayout(
 				false, 3));
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		// Attribute: Interface
 		fInterfaceEntry = new FormEntry(composite, toolkit,
 				Messages.DSProvideDetails_interface,
@@ -143,7 +143,7 @@ public class DSEditProvideDialog extends FormDialog {
 			public void textValueChanged(FormEntry entry) {
 				// no op due to OK Button
 			}
-			
+
 			@Override
 			public void textDirty(FormEntry entry) {
 				// no op due to OK Button

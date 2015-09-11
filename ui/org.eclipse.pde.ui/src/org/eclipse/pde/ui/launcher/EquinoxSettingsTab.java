@@ -11,7 +11,7 @@
 package org.eclipse.pde.ui.launcher;
 
 /**
- * A launch configuration tab that displays and edits the VM install 
+ * A launch configuration tab that displays and edits the VM install
  * launch configuration attributes.
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed.

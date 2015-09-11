@@ -36,7 +36,7 @@ public class UpdateTargetJob extends Job {
 	private ITargetDefinition fTarget;
 
 	/**
-	 * Schedules a new update job that will update all target locations in the provided map.  A target's selected 
+	 * Schedules a new update job that will update all target locations in the provided map.  A target's selected
 	 * children can be added as a set to the values of the map so that only certain portions of the target
 	 * location get updated.
 	 * <p>
@@ -47,7 +47,7 @@ public class UpdateTargetJob extends Job {
 	 * indicating that no changes were made to the target.
 	 * </p>
 	 * @param target the target being updated
-	 * @param toUpdate maps {@link ITargetLocation}s to the {@link Set} of selected children items 
+	 * @param toUpdate maps {@link ITargetLocation}s to the {@link Set} of selected children items
 	 * that should be updated.  The sets may be empty, but not <code>null</code>
 	 * @param listener job change listener that will be added to the created job, can be <code>null</code>
 	 */

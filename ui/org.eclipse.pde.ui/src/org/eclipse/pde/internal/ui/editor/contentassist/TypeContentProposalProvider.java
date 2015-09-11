@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -59,8 +59,8 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		ArrayList<Object> currentContentProposals = null;
 		// Determine method to obtain proposals based on current field contents
 		if (position == 0) {
-			// If the document offset is at the 0 position (i.e. no input entered), 
-			// do not perform content assist.  The operation is too expensive 
+			// If the document offset is at the 0 position (i.e. no input entered),
+			// do not perform content assist.  The operation is too expensive
 			// because all classes and interfaces (depending on the specified scope)
 			// will need to be resolved as proposals
 //			currentContentProposals = null;
@@ -68,7 +68,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 			// Generate new proposals if the content assist session was just
 			// started
 			// Or generate new proposals if the current contents of the field
-			// is less than the initial contents of the field used to 
+			// is less than the initial contents of the field used to
 			// generate the original proposals; thus, widening the search
 			// scope.  This can occur when the user types backspace
 			// Or generate new proposals if the current contents ends with a

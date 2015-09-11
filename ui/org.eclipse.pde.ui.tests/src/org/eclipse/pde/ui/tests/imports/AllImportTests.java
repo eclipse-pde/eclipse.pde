@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,11 +20,11 @@ public class AllImportTests {
 		suite.addTest(ImportWithLinksTestCase.suite());
 		suite.addTest(ImportAsBinaryTestCase.suite());
 		suite.addTest(ImportAsSourceTestCase.suite());
-		
+
 		// Temporarily disabled until git migration is complete and we have access to a stable cvs repo (bug 355873)
 //		suite.addTest(ImportFromRepoTestCase.suite());
 //		suite.addTest(BundleImporterTests.suite());
-		
+
 		suite.addTest(ImportFeatureProjectsTestCase.suite());
 		return suite;
 	}

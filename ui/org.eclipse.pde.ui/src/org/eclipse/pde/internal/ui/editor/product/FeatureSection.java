@@ -119,7 +119,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		section.setClient(container);
 
 		section.setText(PDEUIMessages.Product_FeatureSection_title);
-		section.setDescription(PDEUIMessages.Product_FeatureSection_desc); //		
+		section.setDescription(PDEUIMessages.Product_FeatureSection_desc); //
 
 		getModel().addModelChangedListener(this);
 		createSectionToolbar(section, toolkit);
@@ -447,7 +447,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		// This section can get disposed if the configuration is changed from
 		// plugins to features or vice versa.  Subsequently, the configuration
 		// page is removed and readded.  In this circumstance, abort the
-		// refresh		
+		// refresh
 		if (fFeatureTable.getTable().isDisposed()) {
 			return;
 		}

@@ -176,10 +176,10 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	/**
 	 * Returns a boolean value indicating whether the launch configuration is a good match for
 	 * the application or product to launch.
-	 * 
-	 * @param configuration 
+	 *
+	 * @param configuration
 	 * 			the launch configuration being evaluated
-	 * 
+	 *
 	 * @return <code>true</coded> if the launch configuration is suitable for the application
 	 * or product to launch with, <code>false</code> otherwise.
 	 */
@@ -211,7 +211,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 * Once an application is chosen, the plug-in is searched to see if there is a product
 	 * bound to this application.  If a product is found, the product is launched instead, since
 	 * a product provides a richer branded experience.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override
@@ -263,7 +263,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 
 	/**
 	 * Returns the Eclipse application configuration type ID as declared in the plugin.xml
-	 * 
+	 *
 	 * @return the Eclipse application configuration type ID
 	 */
 	@Override

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,8 +18,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Action for launching the workbench using the 
- * shortcut. This action is suitable for referencing from 
+ * Action for launching the workbench using the
+ * shortcut. This action is suitable for referencing from
  * welcome and cheat sheet files.
  */
 public class RunWorkbenchAction extends Action {

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getKind()
 	 */
 	@Override
@@ -38,7 +38,7 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getAdded()
 	 */
 	@Override
@@ -48,7 +48,7 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getRemoved()
 	 */
 	@Override
@@ -58,7 +58,7 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getChanged()
 	 */
 	@Override

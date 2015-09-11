@@ -29,7 +29,7 @@ import org.osgi.framework.ServiceReference;
 /**
  * Tests for target definitions.  The tested targets will be created in the metadata.
  * @see WorkspaceTargetDefinitionTests
- * 
+ *
  * @since 3.5
  */
 public class LocalTargetDefinitionTests extends AbstractTargetTest {
@@ -43,7 +43,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Returns the target platform service or <code>null</code> if none
-	 * 
+	 *
 	 * @return target platform service
 	 */
 	@Override
@@ -58,7 +58,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	/**
 	 * Retrieves all bundles (source and code) in the given target definition
 	 * returning them as a set of URLs.
-	 * 
+	 *
 	 * @param target target definition
 	 * @return all bundle URLs
 	 */
@@ -77,7 +77,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	/**
 	 * Tests that resetting the target platform should work OK (i.e. is equivalent to the
 	 * models in the default target platform).
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testResetTargetPlatform() throws Exception {
@@ -111,7 +111,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * Tests that a target definition equivalent to the default target platform
 	 * contains the same bundles as the default target platform (this is an
 	 * explicit location with no target weaving).
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testDefaultTargetPlatform() throws Exception {
@@ -136,7 +136,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition based on the default target platform
 	 * restricted to a subset of bundles contains the right set.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testRestrictedDefaultTargetPlatform() throws Exception {
@@ -163,7 +163,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition based on the default target platform
 	 * restricted to a subset of bundle versions contains the right set.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testVersionRestrictedDefaultTargetPlatform() throws Exception {
@@ -211,7 +211,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * Tests that a target definition based on the default target platform
 	 * restricted to a subset of bundles contains the right set. In this case
 	 * empty, since the versions specified are bogus.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testMissingVersionRestrictedDefaultTargetPlatform() throws Exception {
@@ -239,7 +239,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * contains the same bundles as the default target platform (this is an
 	 * explicit location with no target weaving), when created with a variable
 	 * referencing ${eclipse_home}
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEclipseHomeTargetPlatform() throws Exception {
@@ -266,7 +266,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * contains the same bundles as the default target platform (this is an
 	 * explicit location with no target weaving), when created with a variable
 	 * referencing ${eclipse_home}.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEclipseHomeTargetPlatformAndConfigurationArea() throws Exception {
@@ -294,7 +294,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * platform's configuration location (which will do target weaving). This
 	 * is really only tested when run as a JUnit plug-in test suite from
 	 * within Eclipse.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testWovenTargetPlatform() throws Exception {
@@ -317,7 +317,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that a bundle directory container is equivalent to scanning locations.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testDirectoryBundleContainer() throws Exception {
@@ -339,7 +339,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	/**
 	 * Tests that a bundle directory container is equivalent to scanning locations
 	 * when it uses a variable to specify its location.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testVariableDirectoryBundleContainer() throws Exception {
@@ -360,7 +360,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests reading a 3.0.2 install with a mix of classic and OSGi plug-ins.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testClassicPlugins() throws Exception {
@@ -387,7 +387,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests identification of source bundles in a 3.0.2 install.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testClassicSourcePlugins() throws Exception {
@@ -423,7 +423,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	/**
 	 * Tests reading a 3.0 style plug-in that has a MANIFEST file that is not a bundle
 	 * manifest.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testClassicPluginsWithNonBundleManifest() throws Exception {
@@ -493,7 +493,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	/**
 	 * Returns the location of the JDT feature in the running host as
 	 * a path in the local file system.
-	 * 
+	 *
 	 * @return path to JDT feature
 	 */
 	protected IPath getJdtFeatureLocation() {
@@ -558,7 +558,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests a JDT feature bundle container contains the appropriate bundles for a specific OS.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testMacOSFeatureBundleContainer() throws Exception {
@@ -612,7 +612,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition based on the JDT feature
 	 * restricted to a subset of bundles contains the right set.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testRestrictedFeatureBundleContainer() throws Exception {
@@ -677,7 +677,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests setting the target platform to the stored JDT feature test data
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSetTargetPlatformToJdtFeature() throws Exception {
@@ -749,7 +749,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	/**
 	 * Reads a target definition file from the tests/targets/target-files location
 	 * with the given name. Note that ".target" will be appended.
-	 * 
+	 *
 	 * @param name
 	 * @return target definition
 	 * @throws Exception
@@ -766,7 +766,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * A directory of bundles should not have VM arguments.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testArgumentsPluginsDirectory() throws Exception {
@@ -777,7 +777,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * A directory that points to an installation should have VM arguments.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testArgumentsInstallDirectory() throws Exception {
@@ -789,7 +789,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * A feature container should not have VM arguments.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testArgumentsFeatureContainer() throws Exception {
@@ -799,7 +799,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * A profile container should have VM arguments.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testArgumentsProfileContainer() throws Exception {
@@ -811,7 +811,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests the ability to add arguments to a target platform and have them show up on new configs
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testArguments() throws Exception {
@@ -844,7 +844,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that a single (lower) version of a bundle can be included in the target platform.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testLowerVersionOfBundle() throws Exception {
@@ -853,7 +853,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that a single (higher) version of a bundle can be included in the target platform.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testHigherVersionOfBundle() throws Exception {
@@ -862,7 +862,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests all versions of a bundle can be excluded.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoVersionsOfBundle() throws Exception {
@@ -871,7 +871,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests all versions of a bundle can be included.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAllVersionsOfBundle() throws Exception {
@@ -880,7 +880,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests all versions of a bundle can be included.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAllVersionsOfBundleExplicit() throws Exception {

@@ -54,7 +54,7 @@ public class FormEntry {
 
 	/**
 	 * The default constructor. Call 'createControl' to make it.
-	 * 
+	 *
 	 */
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText,
 			int style) {
@@ -63,7 +63,7 @@ public class FormEntry {
 
 	/**
 	 * This constructor create all the controls right away.
-	 * 
+	 *
 	 * @param parent
 	 * @param toolkit
 	 * @param labelText
@@ -89,7 +89,7 @@ public class FormEntry {
 
 	/**
 	 * Create all the controls in the provided parent.
-	 * 
+	 *
 	 * @param parent
 	 * @param toolkit
 	 * @param labelText
@@ -197,7 +197,7 @@ public class FormEntry {
 
 	/**
 	 * Attaches the listener for the entry.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void setFormEntryListener(IFormEntryListener listener) {
@@ -236,7 +236,7 @@ public class FormEntry {
 	/**
 	 * If dirty, commits the text in the widget to the value and notifies
 	 * the listener. This call clears the 'dirty' flag.
-	 * 
+	 *
 	 */
 	public void commit() {
 		if (fDirty) {
@@ -264,7 +264,7 @@ public class FormEntry {
 
 	/**
 	 * Returns the text control.
-	 * 
+	 *
 	 * @return
 	 */
 	public Text getText() {
@@ -277,7 +277,7 @@ public class FormEntry {
 
 	/**
 	 * Returns the browse button control.
-	 * 
+	 *
 	 * @return
 	 */
 	public Button getButton() {
@@ -287,7 +287,7 @@ public class FormEntry {
 	/**
 	 * Returns the current entry value. If the entry is dirty and was not
 	 * commited, the value may be different from the text in the widget.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getValue() {
@@ -296,7 +296,7 @@ public class FormEntry {
 
 	/**
 	 * Returns true if the text has been modified.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isDirty() {
@@ -321,7 +321,7 @@ public class FormEntry {
 
 	/**
 	 * Sets the value of this entry.
-	 * 
+	 *
 	 * @param value
 	 */
 	public void setValue(String value) {
@@ -333,7 +333,7 @@ public class FormEntry {
 	/**
 	 * Sets the value of this entry with the possibility to turn the
 	 * notification off.
-	 * 
+	 *
 	 * @param value
 	 * @param blockNotification
 	 */
@@ -356,7 +356,7 @@ public class FormEntry {
 	 * If GridData was used, set the width hint. If TableWrapData was used
 	 * set the max width. If no layout data was specified, this method does
 	 * nothing.
-	 * 
+	 *
 	 * @param width
 	 */
 	public void setTextWidthHint(int width) {

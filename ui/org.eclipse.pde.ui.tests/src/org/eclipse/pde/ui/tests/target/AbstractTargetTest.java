@@ -31,7 +31,7 @@ public abstract class AbstractTargetTest extends TestCase {
 
 	/**
 	 * Returns the target platform service or <code>null</code> if none
-	 * 
+	 *
 	 * @return target platform service
 	 */
 	protected ITargetPlatformService getTargetService() {
@@ -45,7 +45,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	/**
 	 * Extracts bundles a through e and returns a path to the root directory containing
 	 * the plug-ins.
-	 * 
+	 *
 	 * @return path to the plug-ins directory
 	 * @throws Exception
 	 */
@@ -64,7 +64,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * Extracts the same plugins as {@link #extractAbcdePlugins()}, but puts them
 	 * in a linked folder setup (linked/eclipse/plugins).  Returns the location
 	 * of the plugins directory.
-	 * 
+	 *
 	 * @return path to the plug-ins directory
 	 * @throws Exception
 	 */
@@ -82,7 +82,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	/**
 	 * Extracts the classic plug-ins archive, if not already done, and returns a path to the
 	 * root directory containing the plug-ins.
-	 * 
+	 *
 	 * @return path to the plug-ins directory
 	 * @throws Exception
 	 */
@@ -100,7 +100,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	/**
 	 * Extracts the modified jdt features archive, if not already done, and returns a path to the
 	 * root directory containing the features and plug-ins
-	 * 
+	 *
 	 * @return path to the root directory
 	 * @throws Exception
 	 */
@@ -125,7 +125,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	/**
 	 * Extracts the multiple versions plug-ins archive, if not already done, and returns a path to the
 	 * root directory containing the plug-ins.
-	 * 
+	 *
 	 * @return path to the directory containing the bundles
 	 * @throws Exception
 	 */
@@ -142,7 +142,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	/**
 	 * Extracts the classic plug-ins archive, if not already done, and returns a path to the
 	 * root directory containing the plug-ins.
-	 * 
+	 *
 	 * @return path to the plug-ins directory
 	 * @throws Exception
 	 */
@@ -159,7 +159,7 @@ public abstract class AbstractTargetTest extends TestCase {
 
 	/**
 	 * Unzips the given archive to the specified location.
-	 * 
+	 *
 	 * @param location path in the local file system
 	 * @param archivePath path to archive relative to the test plug-in
 	 * @throws IOException
@@ -192,7 +192,7 @@ public abstract class AbstractTargetTest extends TestCase {
 
 	/**
 	 * Recursively deletes the directory and files within.
-	 * 
+	 *
 	 * @param dir directory to delete
 	 */
 	protected void delete(File dir) {
@@ -222,7 +222,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * Returns a new target definition from the target service.  This method is
 	 * overridden by {@link WorkspaceTargetDefinitionTests} to use a workspace
 	 * target definition
-	 * 
+	 *
 	 * @return a new target definition
 	 */
 	protected ITargetDefinition getNewTarget() {
@@ -233,7 +233,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * Returns a default target platform that takes target weaving into account
 	 * if in a second instance of Eclipse. This allows the target platform to be
 	 * reset after changing it in a test.
-	 * 
+	 *
 	 * @return default settings for target platform
 	 */
 	protected ITargetDefinition getDefaultTargetPlatorm() {
@@ -247,7 +247,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	/**
 	 * Synchronously sets the target platform based on the given definition. This method should
 	 * be called inside of a try/finally block that will always call {@link #resetTargetPlatform()}
-	 * 
+	 *
 	 * @param target target definition or <code>null</code>
 	 * @throws CoreException
 	 */
@@ -269,7 +269,7 @@ public abstract class AbstractTargetTest extends TestCase {
 
 	/**
 	 * Collects all bundle symbolic names into a set.
-	 * 
+	 *
 	 * @param infos bundles
 	 * @return bundle symbolic names
 	 */
@@ -286,7 +286,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	/**
 	 * Retrieves all bundles (source and code) in the given target definition
 	 * returning them as a list of BundleInfos.
-	 * 
+	 *
 	 * @param target target definition
 	 * @return all BundleInfos
 	 */
@@ -304,7 +304,7 @@ public abstract class AbstractTargetTest extends TestCase {
 
 	/**
 	 * Returns a list of bundles included in the given container.
-	 * 
+	 *
 	 * @param container bundle container
 	 * @return included bundles
 	 * @throws Exception

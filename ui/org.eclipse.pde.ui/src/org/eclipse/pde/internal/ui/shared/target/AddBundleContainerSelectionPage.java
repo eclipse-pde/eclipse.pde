@@ -35,7 +35,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Wizard page for selecting the type of bundle container to be added to a target
- * 
+ *
  * @see AddBundleContainerWizard
  * @see ITargetLocation
  */

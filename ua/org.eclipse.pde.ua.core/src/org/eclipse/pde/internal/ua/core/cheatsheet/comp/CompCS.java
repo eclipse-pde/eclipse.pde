@@ -28,7 +28,7 @@ import org.w3c.dom.Text;
 
 /**
  * CompCS
- * 
+ *
  */
 public class CompCS extends CompCSObject implements ICompCS {
 
@@ -37,7 +37,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	private ICompCSTaskObject fFieldTaskObject;
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -51,7 +51,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getChildren()
 	 */
@@ -66,7 +66,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
 	 */
 	public String getName() {
@@ -75,7 +75,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
 	 */
 	public int getType() {
@@ -84,7 +84,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
 	 * (org.w3c.dom.Element)
@@ -97,7 +97,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
 	 * (org.w3c.dom.Element)
@@ -119,7 +119,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
 	 */
 	public void reset() {
@@ -129,7 +129,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#write(java
 	 * .lang.String, java.io.PrintWriter)
@@ -148,7 +148,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
 	 * (java.lang.StringBuffer)
@@ -166,7 +166,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
 	 * (java.lang.String, java.io.PrintWriter)
@@ -181,7 +181,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#getFieldName()
 	 */
@@ -191,7 +191,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#getFieldTaskObject
 	 * ()
@@ -202,7 +202,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#setFieldName(java
 	 * .lang.String)
@@ -217,7 +217,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#setFieldTaskObject
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
@@ -232,7 +232,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getElement()
 	 */
@@ -242,7 +242,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
 	 * org.w3c.dom.Text)

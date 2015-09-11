@@ -47,7 +47,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 
 	/**
-	 * @throws SAXException  
+	 * @throws SAXException
 	 */
 	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
@@ -158,10 +158,10 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			Node parent = element.getParentNode();
 			parentSchema = schema.findElement(parent.getNodeName());
 		} else if (isTopLevel == false) {
-			// This is an "extension" element; but, not a top level one.  
+			// This is an "extension" element; but, not a top level one.
 			// It is nested within another "extension" element somewhere
 			// e.g. "extension" element is a child element of another element
-			// that is not a "plugin" elment 
+			// that is not a "plugin" elment
 			// element
 			// Report illegal element
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
@@ -186,7 +186,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			if (attr != null && attr.getKind() == IMetaAttribute.JAVA) {
 				if (attr.isDeprecated())
 					reportDeprecatedAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$
-				validateJavaAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$				
+				validateJavaAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$
 			}
 		} else {
 			if (schemaElement != null) {

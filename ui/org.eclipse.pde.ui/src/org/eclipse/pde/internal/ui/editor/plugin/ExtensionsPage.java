@@ -51,7 +51,7 @@ public class ExtensionsPage extends PDEFormPage {
 			detailsPart.setPageLimit(10);
 			// register static page for the extensions
 			detailsPart.registerPage(IPluginExtension.class, new ExtensionDetails(fSection));
-			// Register a static page for the extension elements that contain 
+			// Register a static page for the extension elements that contain
 			// only body text (no child elements or attributes)
 			// (e.g. schema simple type)
 			fBodyTextDetails = new ExtensionElementBodyTextDetails(fSection);
@@ -68,10 +68,10 @@ public class ExtensionsPage extends PDEFormPage {
 				ISchemaElement element = ExtensionsSection.getSchemaElement((IPluginElement) object);
 				// Extension point schema exists
 				if (element != null) {
-					// Use the body text page if the element has no child 
+					// Use the body text page if the element has no child
 					// elements or attributes
 					if (element.getType() instanceof ISchemaSimpleType) {
-						// Set the schema element (to provide hover text 
+						// Set the schema element (to provide hover text
 						// content)
 						fBodyTextDetails.setSchemaElement(element);
 						return ExtensionElementBodyTextDetails.class;
@@ -81,11 +81,11 @@ public class ExtensionsPage extends PDEFormPage {
 				// No Extension point schema
 				// no element - construct one
 				IPluginElement pelement = (IPluginElement) object;
-				// Use the body text page if the element has no child 
+				// Use the body text page if the element has no child
 				// elements or attributes
 				if ((pelement.getAttributeCount() == 0) && (pelement.getChildCount() == 0)) {
-					// Unset the previous schema element (no hover text 
-					// content)					
+					// Unset the previous schema element (no hover text
+					// content)
 					fBodyTextDetails.setSchemaElement(null);
 					return ExtensionElementBodyTextDetails.class;
 				}

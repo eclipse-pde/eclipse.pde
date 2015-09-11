@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.ICSConstants;
 
 /**
  * ICompCSConstants
- * 
+ *
  */
 public interface ICompCSConstants extends ICSConstants {
 
@@ -30,21 +30,21 @@ public interface ICompCSConstants extends ICSConstants {
 
 	public static final String ELEMENT_INTRO = "intro"; //$NON-NLS-1$
 
-	public static final String ELEMENT_ONCOMPLETION = "onCompletion"; //$NON-NLS-1$	
+	public static final String ELEMENT_ONCOMPLETION = "onCompletion"; //$NON-NLS-1$
 
-	public static final String ELEMENT_DEPENDENCY = "dependsOn"; //$NON-NLS-1$	
+	public static final String ELEMENT_DEPENDENCY = "dependsOn"; //$NON-NLS-1$
 
-	public static final String ELEMENT_PARAM = "param"; //$NON-NLS-1$	
+	public static final String ELEMENT_PARAM = "param"; //$NON-NLS-1$
 
 	// Attributes
 
-	public static final String ATTRIBUTE_KIND = "kind"; //$NON-NLS-1$		
+	public static final String ATTRIBUTE_KIND = "kind"; //$NON-NLS-1$
 
 	public static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 
-	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$		
+	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
-	public static final String ATTRIBUTE_SKIP = "skip"; //$NON-NLS-1$		
+	public static final String ATTRIBUTE_SKIP = "skip"; //$NON-NLS-1$
 
 	public static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
 

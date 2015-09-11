@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
  * The TocLink object represents a link to another TOC. Links in TOCs are much
  * like import or include directives, in the sense that they bring all the
  * contents of the linked TOC into the TOC that has this link.
- * 
+ *
  * TOC links cannot have any content within them, so they are leaf objects.
  */
 public class TocLink extends TocObject {
@@ -27,7 +27,7 @@ public class TocLink extends TocObject {
 
 	/**
 	 * Constructs a link with the given model and parent.
-	 * 
+	 *
 	 * @param model
 	 *            The model associated with the new link.
 	 * @param parent
@@ -39,7 +39,7 @@ public class TocLink extends TocObject {
 
 	/**
 	 * Constructs a link with the given model, parent and file.
-	 * 
+	 *
 	 * @param model
 	 *            The model associated with the new link.
 	 * @param parent
@@ -70,7 +70,7 @@ public class TocLink extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.text.toc.TocObject#canBeParent()
 	 */
 	public boolean canBeParent() {
@@ -79,7 +79,7 @@ public class TocLink extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getType()
 	 */
 	public int getType() {
@@ -88,7 +88,7 @@ public class TocLink extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getName()
 	 */
 	public String getName() {
@@ -108,7 +108,7 @@ public class TocLink extends TocObject {
 
 	/**
 	 * Change the value of the link path and signal a model change if needed.
-	 * 
+	 *
 	 * @param id
 	 *            The new path to associate with the link
 	 */

@@ -57,9 +57,9 @@ public class TocHTMLWizardPage extends WizardNewFileCreationPage {
 
 		if(!HelpEditorUtil.hasValidPageExtension(new Path(fLastFilename)))
 		{	String message = NLS.bind(
-				TocWizardMessages.TocHTMLWizardPage_errorMessage2, 
+				TocWizardMessages.TocHTMLWizardPage_errorMessage2,
 				HelpEditorUtil.getPageExtensionList());
-		
+
 			setErrorMessage(message);
 			return false;
 		}

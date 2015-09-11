@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.PDECore;
 
 /**
  * A handle to a target stored in the workspace as a <code>.target</code> file.
- * 
+ *
  * @since 3.5
  */
 public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
@@ -37,7 +37,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 
 	/**
 	 * Returns a handle for the given URI.
-	 * 
+	 *
 	 * @param uri URI
 	 * @return target handle
 	 */
@@ -50,7 +50,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 
 	/**
 	 * Constructs a handle to a target in the given file.
-	 * 
+	 *
 	 * @param file underlying file - may or may not exist
 	 */
 	public WorkspaceFileTargetHandle(IFile file) {
@@ -149,7 +149,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 
 	/**
 	 * Returns the target file.
-	 * 
+	 *
 	 * @return target file
 	 */
 	public IFile getTargetFile() {

@@ -4,10 +4,10 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ralf Ebert - Bug 307076 : JUnit Plug-in test runner exception "No Classloader found for plug-in ..." is confusing 
+ *     Ralf Ebert - Bug 307076 : JUnit Plug-in test runner exception "No Classloader found for plug-in ..." is confusing
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
@@ -47,7 +47,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		}
 	}
 
-	/** 
+	/**
 	 * The main entry point. Supported arguments in addition
 	 * to the ones supported by RemoteTestRunner:
 	 * <pre>

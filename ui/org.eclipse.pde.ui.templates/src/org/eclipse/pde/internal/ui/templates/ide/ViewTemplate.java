@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473694
@@ -49,7 +49,7 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 
 	private void createOptions() {
-		// first page	
+		// first page
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.ViewTemplate_packageName, (String) null, 0);
 		addOption("className", PDETemplateMessages.ViewTemplate_className, "SampleView", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("viewName", PDETemplateMessages.ViewTemplate_name, PDETemplateMessages.ViewTemplate_defaultName, 0); //$NON-NLS-1$
@@ -74,7 +74,7 @@ public class ViewTemplate extends PDETemplateSection {
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
+		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
 		initializeFields(model.getPluginBase().getId());
 	}

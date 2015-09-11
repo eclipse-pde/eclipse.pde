@@ -21,7 +21,7 @@ import org.eclipse.pde.core.IBundleClasspathResolver;
  * Manager for client contributed IBundleClasspathResolvers. Collects the resolvers from the <code>
  * org.eclipse.pde.core.bundleClasspathResolvers</code> extension point.  Classpath resolvers
  * can then be asked to provide additional bundle classpath and source lookup entries for a project.
- * 
+ *
  * @see IBundleClasspathResolver
  */
 public class ClasspathContainerResolverManager {
@@ -32,7 +32,7 @@ public class ClasspathContainerResolverManager {
 
 	/**
 	 * Returns all classpath resolvers contributed via extension point that support the given project's nature.
-	 * 
+	 *
 	 * @param project project to check nature of
 	 * @return all classpath resolvers that support the nature, possibly empty
 	 */

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -42,9 +42,9 @@ public class OrganizeManifestsAction extends AbstractHandler {
 	/**
 	 * Runs the organize manifest operation for projects in the provided selection.
 	 * Public to allow editors to call this action
-	 * 
+	 *
 	 * TODO This could be done better using the ICommandService
-	 * 
+	 *
 	 * @param selection selection to run organize manifest operation on
 	 */
 	public void runOrganizeManfestsAction(ISelection selection) {

@@ -31,7 +31,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page for creating a profile (installation) bundle container.
- * 
+ *
  * @see AddBundleContainerWizard
  * @see AddBundleContainerSelectionPage
  * @see ITargetLocation

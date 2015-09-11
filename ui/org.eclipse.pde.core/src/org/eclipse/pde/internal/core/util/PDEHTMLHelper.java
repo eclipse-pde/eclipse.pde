@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -62,7 +62,7 @@ public class PDEHTMLHelper {
 				// Present the resolved character for writing
 				curr = entity.charAt(0);
 			} else if (processingEntity) {
-				// Collect predefined character entity name character by 
+				// Collect predefined character entity name character by
 				// character
 				entityBuffer.append(curr);
 				continue;

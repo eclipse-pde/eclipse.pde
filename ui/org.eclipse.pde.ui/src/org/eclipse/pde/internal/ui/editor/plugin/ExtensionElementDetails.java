@@ -114,7 +114,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		}
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-		// Dynamically add focus listeners to all the section client's 
+		// Dynamically add focus listeners to all the section client's
 		// children in order to track the last focus control
 		getPage().addLastFocusListeners(client);
 

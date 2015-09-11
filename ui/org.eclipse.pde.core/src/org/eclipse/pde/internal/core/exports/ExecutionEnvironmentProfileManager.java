@@ -47,9 +47,9 @@ public class ExecutionEnvironmentProfileManager {
 
 	/**
 	 * Returns absolute paths in the local file systems of directories and jars containing
-	 * OSGi profile property files for custom execution environments, or <code>null</code> 
+	 * OSGi profile property files for custom execution environments, or <code>null</code>
 	 * if none. This is in addition to the standard profiles known by <code>org.eclipse.osgi</code>.
-	 * 
+	 *
 	 * @return locations (directories and jars) containing custom execution environment
 	 * profile files, or <code>null</code> if none
 	 */

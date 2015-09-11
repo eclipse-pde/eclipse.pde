@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	}
 
 	protected void reportMissingRequiredAttribute(Element element, String attName, int severity) {
-		String message = NLS.bind(PDECoreMessages.Builders_Manifest_missingRequired, (new String[] {attName, element.getNodeName()})); //			
+		String message = NLS.bind(PDECoreMessages.Builders_Manifest_missingRequired, (new String[] {attName, element.getNodeName()})); //
 		report(message, getLine(element), severity, PDEMarkerFactory.CAT_FATAL);
 	}
 
@@ -119,7 +119,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	 * Checks whether the given attribute value is a valid bundle ID.  If it is not valid, a marker
 	 * is created on the element and <code>false</code> is returned. If valid, <code>true</code> is
 	 * returned.
-	 * 
+	 *
 	 * @param element element to add the marker to if invalid
 	 * @param attr the attribute to check the value of
 	 * @return whether the given attribute value is a valid bundle ID.

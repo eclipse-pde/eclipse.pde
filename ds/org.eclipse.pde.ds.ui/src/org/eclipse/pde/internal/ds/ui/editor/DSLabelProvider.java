@@ -78,12 +78,12 @@ public class DSLabelProvider extends LabelProvider {
 		} else if (obj.getType() == IDSConstants.TYPE_REFERENCE) {
 			IDSReference reference = (IDSReference) obj;
 			int flags = 0;
-			
+
 			if (reference == null || reference.getReferencePolicy() == null
 					|| reference.getReferenceCardinality() == null)
 				return SharedImages
-						.getImage(SharedImages.DESC_REFERENCE, flags); 
-				
+						.getImage(SharedImages.DESC_REFERENCE, flags);
+
 			if (reference.getReferencePolicy().equals(
 					IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC)) {
 				flags |= SharedImages.F_DYNAMIC;

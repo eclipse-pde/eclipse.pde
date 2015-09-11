@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 
 	// The plugin attribute interface requires this class to extend PluginObjectNode
 	// However, by doing that this class also extends the document
-	// element node class - which is wrong when implementing 
+	// element node class - which is wrong when implementing
 	// the document attribute node interface
 	// To work around this issue, we use an adaptor.
 	private DocumentAttributeNode fAttribute;
@@ -32,7 +32,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	private String fValue;
 
 	/**
-	 * 
+	 *
 	 */
 	public PluginAttribute() {
 		super();
@@ -191,7 +191,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	@Override
 	public void reconnect(IDocumentElementNode parent) {
 		// Inconsistency in model
-		// A document attribute node should not extend plugin object because plugin object extends 
+		// A document attribute node should not extend plugin object because plugin object extends
 		// document element node
 		super.reconnect(parent, getModel());
 		fAttribute.reconnect(parent);

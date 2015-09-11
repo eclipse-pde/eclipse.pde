@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Fabio Mancinelli <fm@fabiomancinelli.org> - bug 201304
@@ -94,7 +94,7 @@ public abstract class ErrorReporter {
 
 	/**
 	 * Return a new marker with the provided attributes.  May return <code>null</code> if no marker should be created because of severity settings.
-	 * 
+	 *
 	 * @param message
 	 * @param line
 	 * @param severity

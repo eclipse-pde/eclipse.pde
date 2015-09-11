@@ -14,7 +14,7 @@ package org.eclipse.pde.core.build;
  * This model factory should be used to
  * create new instances of plugin.jars model
  * objects.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */

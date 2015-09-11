@@ -28,7 +28,7 @@ public final class SharedImages {
 
 	/* Event Details */
 	public static final String DESC_PREV_EVENT = PATH_EVENTS + "event_prev.gif"; //$NON-NLS-1$
-	public static final String DESC_NEXT_EVENT = PATH_EVENTS + "event_next.gif"; //$NON-NLS-1$	
+	public static final String DESC_NEXT_EVENT = PATH_EVENTS + "event_next.gif"; //$NON-NLS-1$
 
 	public static final String DESC_CLEAR = PATH_LCL + "clear.gif"; //$NON-NLS-1$
 	public static final String DESC_CLEAR_DISABLED = PATH_LCL_DISABLED + "clear.gif"; //$NON-NLS-1$

@@ -18,7 +18,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 
 /**
  * Implementors of this interface can contribute additional {@link IClasspathEntry}
- * to a plug-in project as the classpath is computed. The contributor is consulted 
+ * to a plug-in project as the classpath is computed. The contributor is consulted
  * when the initial classpath for a plug-in project is calculated as well as whenever
  * a new bundle dependency is created.
  * <p>
@@ -28,7 +28,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
  * The added classpath entries are only stored as long as the project classpath is and will
  * not be considered during plug-in or feature export.
  * </p>
- * 
+ *
  * @since 3.9
  */
 public interface IClasspathContributor {
@@ -38,7 +38,7 @@ public interface IClasspathContributor {
 	 * first computed.  The provided {@link BundleDescription} describes the plug-in
 	 * project that the classpath is being computed for.  Additional PDE model information
 	 * can be obtained using {@link PluginRegistry#findModel(BundleDescription)}.
-	 * 
+	 *
 	 * @param project the bundle descriptor for the plug-in project having its classpath computed
 	 * @return additional classpath entries to add to the project, possibly empty, must not be <code>null</code>
 	 */
@@ -50,7 +50,7 @@ public interface IClasspathContributor {
 	 * is provided for both the plug-in that the classpath is being calculated for and
 	 * the dependency being added.  The dependency may be a project in the workspace or an
 	 * external bundle from the target platform.
-	 * 
+	 *
 	 * @param project the bundle descriptor for the plug-in project having its classpath computed
 	 * @param addedDependency the bundle descriptor for the bundle being added to the classpath as a dependency
 	 * @return additional classpath entries to add to the project, possibly empty, must not be <code>null</code>

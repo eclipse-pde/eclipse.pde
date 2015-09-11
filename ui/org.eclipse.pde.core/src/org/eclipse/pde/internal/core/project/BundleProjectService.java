@@ -34,7 +34,7 @@ import org.osgi.framework.Version;
 
 /**
  * Factory class for creating bundle project descriptions and associated artifacts.
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 3.6
  */
@@ -54,7 +54,7 @@ public final class BundleProjectService implements IBundleProjectService {
 
 	/**
 	 * Returns the bundle project service.
-	 * 
+	 *
 	 * @return bundle project service
 	 */
 	public static synchronized IBundleProjectService getDefault() {
@@ -75,7 +75,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * If the project does not exist, the description can be used to create
 	 * a new bundle project. If the project does exist, the description can be used to
 	 * modify a project.
-	 *  
+	 *
 	 * @param project project
 	 * @return bundle description for the associated project
 	 * @exception CoreException if unable to create a description on an existing project
@@ -87,7 +87,7 @@ public final class BundleProjectService implements IBundleProjectService {
 
 	/**
 	 * Creates and returns a new host description.
-	 * 
+	 *
 	 * @param name symbolic name of the host
 	 * @param range version constraint or <code>null</code>
 	 * @return host description
@@ -99,7 +99,7 @@ public final class BundleProjectService implements IBundleProjectService {
 
 	/**
 	 * Creates and returns a new package import description.
-	 * 
+	 *
 	 * @param name fully qualified name of imported package
 	 * @param range version constraint or <code>null</code>
 	 * @param optional whether the import is optional
@@ -112,11 +112,11 @@ public final class BundleProjectService implements IBundleProjectService {
 
 	/**
 	 * Constructs a new package export description.
-	 * 
+	 *
 	 * @param name fully qualified package name
 	 * @param version version or <code>null</code>
 	 * @param api whether the package is considered API
-	 * @param friends symbolic names of bundles that are friends, or <code>null</code>; when 
+	 * @param friends symbolic names of bundles that are friends, or <code>null</code>; when
 	 *  friends are specified the package will not be API
 	 * @return package export description
 	 */
@@ -127,7 +127,7 @@ public final class BundleProjectService implements IBundleProjectService {
 
 	/**
 	 * Creates and returns a new required bundle description.
-	 * 
+	 *
 	 * @param name symbolic name of required bundle
 	 * @param range version constraint or <code>null</code>
 	 * @param optional whether the required bundle is optional
@@ -166,7 +166,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * <p>
 	 * The bundle root is the folder containing the <code>META-INF/</code> folder. When the bundle
 	 * root location is modified, existing bundle artifacts at the old root are not moved or modified.
-	 * When creating a new bundle project {@link IBundleProjectDescription#setBundleRoot(IPath)} can 
+	 * When creating a new bundle project {@link IBundleProjectDescription#setBundleRoot(IPath)} can
 	 * be used to specify an initial bundle root location. To modify the bundle root location of an
 	 * existing project, this method must be used.
 	 * </p>
@@ -193,7 +193,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * Adds 'BUNDLE_IMPORTER' property to each description that maps to the importer that
 	 * created each description.
 	 * Adds 'PLUGIN' property that maps to the original plug-in model.
-	 * 
+	 *
 	 * @param models plug-in models
 	 * @return import instructions
 	 * @exception CoreException if unable to read manifest
@@ -242,7 +242,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * Parses a bunlde's manifest into a dictionary and returns the map
 	 * or <code>null</code> if none. The bundle may be in a jar
 	 * or in a directory at the specified location.
-	 * 
+	 *
 	 * @param bundleLocation root location of the bundle
 	 * @return bundle manifest dictionary or <code>null</code>
 	 * @throws CoreException if manifest has invalid syntax or is missing

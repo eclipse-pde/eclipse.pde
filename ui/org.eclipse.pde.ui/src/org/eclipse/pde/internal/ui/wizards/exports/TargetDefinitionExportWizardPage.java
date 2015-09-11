@@ -45,7 +45,7 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 	private static final String SETTINGS_LOCATION_2 = "location2"; //$NON-NLS-1$
 
 	/**
-	 * Dialog settings key for the third most recent location 
+	 * Dialog settings key for the third most recent location
 	 */
 	private static final String SETTINGS_LOCATION_3 = "location3"; //$NON-NLS-1$
 

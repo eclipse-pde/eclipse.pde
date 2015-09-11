@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Provides labels for resolved bundles, bundle information objects, and bundle containers.
- * 
+ *
  * @since 3.5
  */
 public class StyledBundleLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
@@ -41,7 +41,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 
 	/**
 	 * Creates a label provider.
-	 * 
+	 *
 	 * @param showVersion whether version information should be shown in labels
 	 * @param appendResolvedVariables whether locations with variables should be shown
 	 *  with variables resolved, in addition to unresolved
@@ -157,7 +157,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 
 	/**
 	 * Generates a styled string for a bundle information object.
-	 * 
+	 *
 	 * @param styledString string to append to
 	 * @param info element to append
 	 */
@@ -186,7 +186,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 
 	/**
 	 * Appends the container location to the string.
-	 * 
+	 *
 	 * @param styledString label to append to
 	 * @param container container to append
 	 * @param resolved whether to resolve the location
@@ -202,7 +202,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 
 	/**
 	 * Appends a label describing the number of bundles included (ex. 5 of 10 plug-ins).
-	 * 
+	 *
 	 * @param styledString label to append to
 	 * @param container bundle container to check for inclusions
 	 */
@@ -219,8 +219,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 
 	/**
 	 * Returns an image for the given object or <code>null</code> if none.
-	 * 
-	 * @param element 
+	 *
+	 * @param element
 	 * @return image or <code>null</code>
 	 */
 	@Override

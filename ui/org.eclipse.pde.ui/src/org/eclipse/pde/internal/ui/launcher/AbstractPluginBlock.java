@@ -208,7 +208,7 @@ public abstract class AbstractPluginBlock {
 			} else if (source == fSelectAllButton || source == fDeselectButton || source == fWorkingSetButton || source == fAddRequiredButton || source == fDefaultsButton) {
 				// These are all the controls that may affect the filtering.  For example, the filter
 				// is enabled only to show selected bundles, and the user invokes "select all", we need
-				// to update the filter.  
+				// to update the filter.
 				filterAffectingControl(e);
 			} else if (source == fValidateButton) {
 				handleValidate();
@@ -367,15 +367,15 @@ public abstract class AbstractPluginBlock {
 
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				// Since a check on the root of a CheckBoxTreeViewer selects all its children 
+				// Since a check on the root of a CheckBoxTreeViewer selects all its children
 				// (hidden or not), we need to ensure that all items are shown
 				// if this happens.  Since it not clear what the best behaviour is here
 				// this just "un-selects" the filter button.
 
 				if (!event.getChecked())
 					return; // just return if the check state goes to false
-				// It is not clear if this is the best approach, but it 
-				// is hard to tell without user feedback.  
+				// It is not clear if this is the best approach, but it
+				// is hard to tell without user feedback.
 				TreeItem[] items = fPluginTreeViewer.getTree().getItems();
 				for (int i = 0; i < items.length; i++) {
 					if (event.getElement() == items[i].getData()) {
@@ -537,9 +537,9 @@ public abstract class AbstractPluginBlock {
 	}
 
 	/**
-	 * The view filter for the tree view.  Currently this filter only 
+	 * The view filter for the tree view.  Currently this filter only
 	 * filters unchecked items if the fFilterButton is selected.
-	 * 
+	 *
 	 * @author Ian Bull
 	 *
 	 */
@@ -759,7 +759,7 @@ public abstract class AbstractPluginBlock {
 	/**
 	 * Initializes the contents of this block from the given config.  The table's input
 	 * will only be initialized if the boolean parameter is set to true.
-	 * 
+	 *
 	 * @param config launch configuration to init from or <code>null</code>
 	 * @param enableTable whether to set the input on the table
 	 * @throws CoreException
@@ -1002,11 +1002,11 @@ public abstract class AbstractPluginBlock {
 	protected abstract LaunchValidationOperation createValidationOperation();
 
 	/**
-	 * called before the TreeView is refreshed. This allows any subclasses to cache 
-	 * any information in the view and redisplay after the refresh.  This is used by the 
+	 * called before the TreeView is refreshed. This allows any subclasses to cache
+	 * any information in the view and redisplay after the refresh.  This is used by the
 	 * OSGiBundleBlock to cache the values of the default launch and auto launch columns
 	 * in the table tree.
-	 * 
+	 *
 	 * @param treeView The tree view that will be refreshed.
 	 */
 	protected void refreshTreeView(CheckboxTreeViewer treeView) {

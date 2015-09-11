@@ -27,13 +27,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * A launch configuration tab that displays and edits the VM install 
+ * A launch configuration tab that displays and edits the VM install
  * launch configuration attributes.
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed.
  * </p>
  * @since 3.3
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class OSGiSettingsTab extends AbstractLauncherTab {

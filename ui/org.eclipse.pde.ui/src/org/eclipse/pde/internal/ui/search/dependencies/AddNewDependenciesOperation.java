@@ -256,7 +256,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 								ignorePkgs.add(pkgName);
 								newDeps.put(exported[i], pluginId);
 								if (useRequireBundle) {
-									// since using require-bundle, rest of packages will be available when bundle is added.  
+									// since using require-bundle, rest of packages will be available when bundle is added.
 									for (; i < exported.length; i++)
 										ignorePkgs.add(exported[i].getName());
 								}

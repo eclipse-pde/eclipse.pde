@@ -19,13 +19,13 @@ public class DSProperty extends DSObject implements IDSProperty {
 	private static final long serialVersionUID = 1L;
 	public DSProperty(DSModel model) {
 		super(model, ELEMENT_PROPERTY);
-		
+
 		// set Default Values
 		this.setPropertyType(IDSConstants.VALUE_PROPERTY_TYPE_STRING);
 		int property_count = model.getDSComponent().getPropertyElements().length + 1;
 		this.setPropertyName(IDSConstants.ELEMENT_PROPERTY + property_count);
 		this.setPropertyValue(IDSConstants.ATTRIBUTE_PROPERTY_VALUE);
-		
+
 	}
 
 	@Override
@@ -47,42 +47,42 @@ public class DSProperty extends DSObject implements IDSProperty {
 	public int getType() {
 		return TYPE_PROPERTY;
 	}
-	
+
 	@Override
 	public String getPropertyName(){
 		return getXMLAttributeValue(ATTRIBUTE_PROPERTY_NAME);
 	}
-	
+
 	@Override
 	public void setPropertyName(String name){
 		setXMLAttribute(ATTRIBUTE_PROPERTY_NAME, name);
 	}
-	
+
 	@Override
 	public String getPropertyValue(){
 		return getXMLAttributeValue(ATTRIBUTE_PROPERTY_VALUE);
 	}
-	
+
 	@Override
 	public void setPropertyValue(String value){
 		setXMLAttribute(ATTRIBUTE_PROPERTY_VALUE, value);
 	}
-	
+
 	@Override
 	public String getPropertyType(){
 		return getXMLAttributeValue(ATTRIBUTE_PROPERTY_TYPE);
 	}
-	
+
 	@Override
 	public void setPropertyType(String type){
 		setXMLAttribute(ATTRIBUTE_PROPERTY_TYPE, type);
 	}
-	
+
 	@Override
 	public String getPropertyElemBody() {
-		return getXMLContent(); 
+		return getXMLContent();
 	}
-	
+
 	@Override
 	public void setPropertyElemBody(String body){
 		setXMLContent(body);
@@ -99,5 +99,5 @@ public class DSProperty extends DSObject implements IDSProperty {
 	public boolean isLeafNode() {
 		return true;
 	}
-	
+
 }

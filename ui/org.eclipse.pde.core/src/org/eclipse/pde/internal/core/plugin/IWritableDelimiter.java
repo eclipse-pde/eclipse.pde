@@ -24,7 +24,7 @@ public interface IWritableDelimiter {
 	 * text representation of multiple model objects selected.
 	 * This is applicable when serializing multiple objects for copy, cut and
 	 * paste operations.
-	 * 
+	 *
 	 * @param writer the print writer
 	 */
 	public void writeDelimeter(PrintWriter writer);

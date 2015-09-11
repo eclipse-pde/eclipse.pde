@@ -51,7 +51,7 @@ import org.osgi.framework.Constants;
 /**
  * Register Context Help Operation, registers a context help xml file in the
  * plugin.xml. Must be run in the UI thread.
- * 
+ *
  * @since 3.4
  * @see RegisterCtxHelpOperation
  * @see CtxHelpEditor
@@ -79,7 +79,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core
 	 * .runtime.IProgressMonitor)

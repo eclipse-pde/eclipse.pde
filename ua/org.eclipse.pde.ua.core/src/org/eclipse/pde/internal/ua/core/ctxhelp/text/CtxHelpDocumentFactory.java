@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ua.core.ctxhelp.ICtxHelpConstants;
 /**
  * Handles the creation of document nodes representing the types of elements
  * that can exist in a context help xml file.
- * 
+ *
  * @since 3.4
  * @see CtxHelpObject
  * @see CtxHelpModel
@@ -34,7 +34,7 @@ public class CtxHelpDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode
 	 * (java.lang.String,

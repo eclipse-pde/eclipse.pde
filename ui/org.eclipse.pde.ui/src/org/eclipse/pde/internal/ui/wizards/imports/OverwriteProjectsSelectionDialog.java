@@ -30,10 +30,10 @@ import org.eclipse.ui.ide.IDE;
 import org.osgi.framework.Version;
 
 /**
- * This dialog expects a list of plug-in projects. It displays a filtered list to help 
+ * This dialog expects a list of plug-in projects. It displays a filtered list to help
  * select the projects to be deleted during the import process.
  * The returned results are the list of projects that shall be deleted.
- * 
+ *
  * @see PluginImportWizardDetailedPage
  * @see PluginImportOperation
  * @since 3.6

@@ -29,7 +29,7 @@ public class SimpleCSDocumentTextNode extends DocumentTextNode {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public SimpleCSDocumentTextNode() {
 		super();
@@ -37,7 +37,7 @@ public class SimpleCSDocumentTextNode extends DocumentTextNode {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.DocumentTextNode#write()
 	 */
 	public String write() {

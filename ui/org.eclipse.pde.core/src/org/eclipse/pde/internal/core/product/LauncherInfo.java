@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -181,13 +181,13 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	private void writeMac(String indent, PrintWriter writer) {
 		String icon = fIcons.get(MACOSX_ICON);
 		if (icon != null && icon.length() > 0)
-			writer.println(indent + "<macosx icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			writer.println(indent + "<macosx icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void writeLinux(String indent, PrintWriter writer) {
 		String icon = fIcons.get(LINUX_ICON);
 		if (icon != null && icon.length() > 0)
-			writer.println(indent + "<linux icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			writer.println(indent + "<linux icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

@@ -35,7 +35,7 @@ import org.eclipse.ui.texteditor.StatusLineContributionItem;
 /**
  * Contributes a status control displaying information on the current target platform,
  * similar to HeapStatus.
- * 
+ *
  * @since 4.4 Luna
  */
 public class TargetStatus {
@@ -44,7 +44,7 @@ public class TargetStatus {
 	private static StatusLineContributionItem targetStatus;
 
 	/**
-	 * The status line contribution that displays the current target platform. Uses the 
+	 * The status line contribution that displays the current target platform. Uses the
 	 * text editor's contribution item to keep the same look and feel.
 	 */
 	private static class TargetStatusLineContributionItem extends StatusLineContributionItem {

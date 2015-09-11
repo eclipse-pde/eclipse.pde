@@ -231,7 +231,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	private IWorkbenchPart fPartCallersTree;
 
 	/**
-	 * 
+	 *
 	 */
 	public DependenciesView() {
 		super();
@@ -416,7 +416,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void findLoops() {
 		fLoops = NO_LOOPS;

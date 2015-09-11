@@ -32,7 +32,7 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 	/**
 	 * Adds the specified child entry to the listing of children.
 	 * If the specified child is <code>null</code>, no work is done
-	 * 
+	 *
 	 * @param child
 	 */
 	public void addChild(AbstractEntry child) {
@@ -58,7 +58,7 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 
 	/**
 	 * @return the size of the child array
-	 * 
+	 *
 	 * TODO rename to getChildCount(), or something more meaningful
 	 */
 	public int size() {
@@ -96,7 +96,7 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 
 	/**
 	 * removes all of the children specified in the given listing
-	 * 
+	 *
 	 * @param list the list of children to remove
 	 */
 	public void removeChildren(List list) {
@@ -112,7 +112,7 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 
 	/**
 	 * Writes this entry information into the given {@link PrintWriter}
-	 * 
+	 *
 	 * @param writer
 	 */
 	public abstract void write(PrintWriter writer);

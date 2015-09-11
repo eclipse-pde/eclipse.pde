@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -346,7 +346,7 @@ public abstract class InputContext {
 			// entered source editing mode; in this mode,
 			// this context's document will be edited directly
 			// in the source editor. All changes in the model
-			// are caused by reconciliation and should not be 
+			// are caused by reconciliation and should not be
 			// fired to the world.
 			flushModel(fDocumentProvider.getDocument(fEditorInput));
 			fMustSynchronize = true;
@@ -436,7 +436,7 @@ public abstract class InputContext {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void deinitializeDocumentProvider() {
 		IAnnotationModel amodel = fDocumentProvider.getAnnotationModel(fEditorInput);
@@ -503,7 +503,7 @@ public abstract class InputContext {
 			monitor.setCanceled(true);
 			throw new Exception(PDEUIMessages.InputContext_errorMessageLocationNotSet);
 		}
-		// Resolve the new file location	
+		// Resolve the new file location
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IFile newFile = workspace.getRoot().getFile(path);
 		// Create the new editor input
@@ -536,7 +536,7 @@ public abstract class InputContext {
 				// Save the old editor input content to the new editor input
 				// location
 				fDocumentProvider.saveDocument(monitor,
-				// New editor input location 
+				// New editor input location
 						newInput,
 						// Old editor input content
 						fDocumentProvider.getDocument(fEditorInput), true);

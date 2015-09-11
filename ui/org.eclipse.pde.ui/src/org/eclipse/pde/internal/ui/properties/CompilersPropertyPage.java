@@ -36,7 +36,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	private HashMap<?, ?> fPageData = null;
 
 	/**
-	 * The control block 
+	 * The control block
 	 */
 	private PDECompilersConfigurationBlock fBlock = null;
 

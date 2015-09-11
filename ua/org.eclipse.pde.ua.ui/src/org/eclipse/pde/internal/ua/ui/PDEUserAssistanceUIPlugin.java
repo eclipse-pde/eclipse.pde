@@ -36,7 +36,7 @@ public class PDEUserAssistanceUIPlugin extends AbstractUIPlugin {
 	private static PDEUserAssistanceUIPlugin plugin;
 
 	private PDEUserAssistanceLabelProvider fLabelProvider;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -69,7 +69,7 @@ public class PDEUserAssistanceUIPlugin extends AbstractUIPlugin {
 	public static PDEUserAssistanceUIPlugin getDefault() {
 		return plugin;
 	}
-	
+
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window != null) {
@@ -81,7 +81,7 @@ public class PDEUserAssistanceUIPlugin extends AbstractUIPlugin {
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
-	
+
 	public static void logException(Throwable e, final String title,
 			String message) {
 		if (e instanceof InvocationTargetException) {
@@ -108,15 +108,15 @@ public class PDEUserAssistanceUIPlugin extends AbstractUIPlugin {
 			}
 		});
 	}
-	
+
 	public static void logException(Throwable e) {
 		logException(e, null, null);
 	}
-	
+
 	public static IWorkbenchPage getActivePage() {
 		return getActiveWorkbenchWindow().getActivePage();
 	}
-	
+
 	public PDEUserAssistanceLabelProvider getLabelProvider() {
 		if (fLabelProvider == null)
 			fLabelProvider = new PDEUserAssistanceLabelProvider();

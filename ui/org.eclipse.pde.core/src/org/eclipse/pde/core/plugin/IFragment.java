@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * A model object that represents the content of the fragment.xml
  * file.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -38,14 +38,14 @@ public interface IFragment extends IPluginBase {
 
 	/**
 	 * Returns the id of the fragment host.
-	 * 
+	 *
 	 * @return the host id
 	 */
 	String getPluginId();
 
 	/**
 	 * Returns the version of the fragment host.
-	 * 
+	 *
 	 * @return the host version
 	 */
 	String getPluginVersion();
@@ -53,7 +53,7 @@ public interface IFragment extends IPluginBase {
 	/**
 	 * Returns an optional version match rule as defined in
 	 * IMatchRule interface.
-	 * 
+	 *
 	 * @return the match rule
 	 */
 	int getRule();

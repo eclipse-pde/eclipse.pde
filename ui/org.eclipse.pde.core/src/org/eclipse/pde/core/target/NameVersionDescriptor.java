@@ -15,7 +15,7 @@ import org.eclipse.equinox.frameworkadmin.BundleInfo;
 
 /**
  * Describes something with a name and version.
- * 
+ *
  * @since 3.8
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -32,10 +32,10 @@ public class NameVersionDescriptor {
 	/**
 	 * Constructs a descriptor with a type of 'plugin'
 	 * <p>
-	 * If the passed string version is equal to {@link BundleInfo#EMPTY_VERSION}, 
+	 * If the passed string version is equal to {@link BundleInfo#EMPTY_VERSION},
 	 * the version will be replaced with <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param id name identifier
 	 * @param version version identifier, can be <code>null</code>
 	 */
@@ -54,10 +54,10 @@ public class NameVersionDescriptor {
 	/**
 	 * Constructs a descriptor of the given type
 	 * <p>
-	 * If the passed string version is equal to {@link BundleInfo#EMPTY_VERSION}, 
+	 * If the passed string version is equal to {@link BundleInfo#EMPTY_VERSION},
 	 * the version will be replaced with <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param id name identifier
 	 * @param version version identifier, can be <code>null</code>
 	 * @param type type of object this descriptor represents, should be one of the TYPE constants defined in this file
@@ -129,7 +129,7 @@ public class NameVersionDescriptor {
 
 	/**
 	 * Creates a descriptor from a portable string.
-	 * 
+	 *
 	 * @param portable generated from {@link #toPortableString()}
 	 * @return descriptor
 	 */
@@ -149,7 +149,7 @@ public class NameVersionDescriptor {
 
 	/**
 	 * Returns a portable form for this descriptor.
-	 * 
+	 *
 	 * @return portable form
 	 */
 	public String toPortableString() {

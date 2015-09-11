@@ -23,8 +23,8 @@ import org.eclipse.pde.internal.core.util.ManifestUtils;
 
 /**
  * A bundle container representing an installed profile.
- * 
- * @since 3.5 
+ *
+ * @since 3.5
  */
 public class ProfileBundleContainer extends AbstractBundleContainer {
 
@@ -40,7 +40,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	private static final String VAR_USER_HOME = "@user.home"; //$NON-NLS-1$
 
 	/**
-	 * Constant describing the type of bundle container 
+	 * Constant describing the type of bundle container
 	 */
 	public static final String TYPE = "Profile"; //$NON-NLS-1$
 
@@ -57,7 +57,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Creates a new bundle container for the profile at the specified location.
-	 * 
+	 *
 	 * @param home path in local file system, may contain string variables
 	 * @param configurationLocation alternate configuration location or <code>null</code> for default,
 	 *  may contain string variables
@@ -88,7 +88,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns the configuration area for this container if one was specified during creation.
-	 * 
+	 *
 	 * @return string path to configuration location or <code>null</code>
 	 */
 	public String getConfigurationLocation() {
@@ -175,10 +175,10 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	/**
 	 * Resolves installed bundles based on update manager's platform XML or scans the plugins directory if
 	 * no platform.xml is available
-	 * 
+	 *
 	 * TODO When we are willing to drop support for platform.xml (pre Eclipse 3.4) we should
 	 * replace this method with a simple directory scan like {@link DirectoryBundleContainer}
-	 * 
+	 *
 	 * @param definition
 	 * @param home
 	 * @param monitor
@@ -216,7 +216,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns the home location with all variables resolved as a path.
-	 * 
+	 *
 	 * @return resolved home location
 	 * @throws CoreException
 	 */
@@ -227,7 +227,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	/**
 	 * Returns a URL to the configuration area associated with this profile or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return configuration area URL or <code>null</code>
 	 * @throws CoreException if unable to generate a URL or the user specified location does not exist
 	 */
@@ -285,7 +285,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 * Note that when self hosting, the returned profile location will not have all running plug-ins installed unless the launch has generated
 	 * a complete profile.
 	 * </p>
-	 * 
+	 *
 	 * @return the profile file or <code>null</code>
 	 */
 	public File getProfileFileLocation() throws CoreException {
@@ -368,7 +368,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Replaces a variable in config.ini
-	 * @param props properties containing entries from the 
+	 * @param props properties containing entries from the
 	 * @param source the string to replace the var in
 	 * @param var the variable to replace
 	 * @param prop the property to lookup for a replacement value

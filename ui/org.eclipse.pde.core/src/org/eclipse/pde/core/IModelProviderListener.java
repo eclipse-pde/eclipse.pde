@@ -15,7 +15,7 @@ package org.eclipse.pde.core;
  * model provider listeners. They will be notified about events such as models
  * being added or removed. These changes are typically caused by the changes in
  * the workspace when models are built on top of workspace resources.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
  */
@@ -23,7 +23,7 @@ public interface IModelProviderListener {
 	/**
 	 * Notifies the listener that models have been changed in the model
 	 * provider.
-	 * 
+	 *
 	 * @param event
 	 *            the event that specifies the type of change
 	 */

@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated, but it is not intended to be subclassed by clients.
  * </p>
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ConfigurationTab extends AbstractLauncherTab implements IPDELauncherConstants {
@@ -43,7 +43,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 
 	/**
 	 * Constructor.  Equivalent to ConfigurationTab(false).
-	 * 
+	 *
 	 * @see #ConfigurationTab(boolean)
 	 */
 	public ConfigurationTab() {
@@ -52,7 +52,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param isJUnitConfig  a flag to indicate if the tab is to be used with a Plug-in JUnit launch configuration.
 	 */
 	public ConfigurationTab(boolean isJUnitConfig) {
@@ -124,7 +124,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	/**
 	 * Validates the page and flags an error if the configuration area
 	 * location or the configuration template location does not exist.
-	 * 
+	 *
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
 	@Override

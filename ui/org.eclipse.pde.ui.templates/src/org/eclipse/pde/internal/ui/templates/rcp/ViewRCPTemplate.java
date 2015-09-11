@@ -40,7 +40,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	}
 
 	private void createOptions() {
-		addOption(KEY_WINDOW_TITLE, PDETemplateMessages.ViewRCPTemplate_windowTitle, "RCP Application", 0); //$NON-NLS-1$ 
+		addOption(KEY_WINDOW_TITLE, PDETemplateMessages.ViewRCPTemplate_windowTitle, "RCP Application", 0); //$NON-NLS-1$
 
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.ViewRCPTemplate_packageName, (String) null, 0);
 
@@ -59,7 +59,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
+		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));

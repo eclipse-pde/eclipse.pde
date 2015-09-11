@@ -39,7 +39,7 @@ import org.eclipse.swt.graphics.Point;
 import org.osgi.framework.Constants;
 
 /**
- * A factory class used to create resolutions for JDT problem markers which involve modifying a project's MANIFEST.MF (or possibly plugin.xml) 
+ * A factory class used to create resolutions for JDT problem markers which involve modifying a project's MANIFEST.MF (or possibly plugin.xml)
  * @since 3.4
  */
 public class JavaResolutionFactory {
@@ -54,7 +54,7 @@ public class JavaResolutionFactory {
 	public static final int TYPE_CLASSPATH_FIX = 0x02;
 
 	/**
-	 * This class represents a Change which will be applied to a Manifest file.  This change is meant to be 
+	 * This class represents a Change which will be applied to a Manifest file.  This change is meant to be
 	 * used to create an IJavaCompletionProposal or ClasspathFixProposal.
 	 */
 	private static abstract class AbstractManifestChange extends Change {
@@ -306,7 +306,7 @@ public class JavaResolutionFactory {
 	}
 
 	/**
-	 * Creates and returns a proposal which create a Require-Bundle entry in the MANIFEST.MF (or corresponding plugin.xml) for the supplier 
+	 * Creates and returns a proposal which create a Require-Bundle entry in the MANIFEST.MF (or corresponding plugin.xml) for the supplier
 	 * of desc.  The object will be of the type specified by the type argument.
 	 * @param project the project to be updated
 	 * @param desc an ExportPackageDescription from the bundle that is to be added as a Require-Bundle dependency
@@ -322,7 +322,7 @@ public class JavaResolutionFactory {
 	}
 
 	/**
-	 * Creates and returns a proposal which create an Import-Package entry in the MANIFEST.MF for the package represented by 
+	 * Creates and returns a proposal which create an Import-Package entry in the MANIFEST.MF for the package represented by
 	 * desc.  The object will be of the type specified by the type argument.
 	 * @param project the project to be updated
 	 * @param desc an ExportPackageDescription which represents the package to be added
@@ -340,7 +340,7 @@ public class JavaResolutionFactory {
 	}
 
 	/**
-	 * Creates and returns a proposal which create an Export-Package entry in the MANIFEST.MF for the package represented by 
+	 * Creates and returns a proposal which create an Export-Package entry in the MANIFEST.MF for the package represented by
 	 * pkg.  The object will be of the type specified by the type argument.
 	 * @param project the project to be updated
 	 * @param pkg an IPackageFragment which represents the package to be added
@@ -363,7 +363,7 @@ public class JavaResolutionFactory {
 		return null;
 	}
 
-	// Methods to wrap a AbstractMethodChange into a consumable format	
+	// Methods to wrap a AbstractMethodChange into a consumable format
 
 	/**
 	 * Creates and returns a ClasspathFixProposal for the given AbstractManifestChange

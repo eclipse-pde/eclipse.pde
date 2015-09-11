@@ -280,7 +280,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 
 	/**
 	 * Returns the path that this entries tokens are relative to, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return relative root path, or <code>null</code>
 	 */
 	IPath getRootPath() {
@@ -302,7 +302,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 
 	/**
 	 * Makes the token a bundle root relative path
-	 * 
+	 *
 	 * @param token token
 	 * @param root bundle root path
 	 * @return bundle relative token
@@ -316,7 +316,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 
 	/**
 	 * Makes the token a project relative path
-	 * 
+	 *
 	 * @param token token
 	 * @param root bundle root path
 	 * @return project relative token

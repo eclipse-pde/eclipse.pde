@@ -43,7 +43,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.XMLEditingModel#createDocumentHandler
 	 * (org.eclipse.pde.core.IModel, boolean)
@@ -59,7 +59,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#
 	 * createNLResourceHelper()
 	 */
@@ -70,7 +70,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModel#getFactory
 	 * ()
@@ -81,7 +81,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModel#getSimpleCS
 	 * ()
@@ -97,7 +97,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.XMLEditingModel#getRoot()
 	 */
 	protected IWritable getRoot() {

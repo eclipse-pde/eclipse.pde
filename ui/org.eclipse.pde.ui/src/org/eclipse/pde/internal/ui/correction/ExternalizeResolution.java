@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -89,7 +89,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 
 	private void addLocalization(IPluginModelBase model, String localizationValue) {
 		// should always be IBundlePluginModelBase.  Only time wasn't was when we only passed in plugin.xml to ModelModification contructor.
-		// Now that we pass in both the Manifest and plugin.xml if we are externalizing the a plugin.xml string (see run(IMarker)), 
+		// Now that we pass in both the Manifest and plugin.xml if we are externalizing the a plugin.xml string (see run(IMarker)),
 		// model should always be IBundlePluginModelBase
 		if (model instanceof IBundlePluginModelBase) {
 			IBundle bundle = ((IBundlePluginModelBase) model).getBundleModel().getBundle();

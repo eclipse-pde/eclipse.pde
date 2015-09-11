@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 181878
@@ -49,7 +49,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	private ISiteFeature[] fSiteFeatures;
 
 	/**
-	 * 
+	 *
 	 * @param siteFeatures
 	 *            selected feature or null
 	 */
@@ -120,7 +120,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param siteFeature
 	 * @return IFeatureModel or null
 	 */

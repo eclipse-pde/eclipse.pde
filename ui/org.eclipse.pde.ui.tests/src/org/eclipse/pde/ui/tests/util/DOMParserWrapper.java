@@ -29,7 +29,7 @@ public class DOMParserWrapper {
 	protected boolean isdisposed;
 
 	/**
-	 * 
+	 *
 	 */
 	public DOMParserWrapper() throws ParserConfigurationException, FactoryConfigurationError {
 		fParser = PDEXMLHelper.Instance().getDefaultDOMParser();
@@ -55,7 +55,7 @@ public class DOMParserWrapper {
 	// NOTE:  If other parser method calls are required, the corresponding
 	// wrapper method needs to be added here
 
-	// Explicit disposal	
+	// Explicit disposal
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();

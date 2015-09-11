@@ -257,7 +257,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_HORIZONTAL_DISABLED = create(PATH_LCL_DISABLED, "th_horizontal.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_VERTICAL_DISABLED = create(PATH_LCL_DISABLED, "th_vertical.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLLAPSE_ALL_DISABLED = create(PATH_LCL_DISABLED, "collapseall.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOGGLE_EXPAND_STATE_DISABLED = create(PATH_LCL_DISABLED, "toggle_expand_state.png"); //$NON-NLS-1$	
+	public static final ImageDescriptor DESC_TOGGLE_EXPAND_STATE_DISABLED = create(PATH_LCL_DISABLED, "toggle_expand_state.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_LINK_WITH_EDITOR_DISABLED = create(PATH_LCL_DISABLED, "synced.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CALLEES_DISABLED = create(PATH_LCL_DISABLED, "ch_callees.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CALLERS_DISABLED = create(PATH_LCL_DISABLED, "ch_callers.png"); //$NON-NLS-1$

@@ -39,27 +39,27 @@ public interface ISimpleCSObject extends IDocumentObject, ISimpleCSConstants {
 	void parse(Element element);
 
 	/**
-	 * 
+	 *
 	 */
 	public void reset();
 
 	/**
 	 * To avoid using instanceof all over the place
-	 * 
+	 *
 	 * @return
 	 */
 	public int getType();
 
 	/**
 	 * For the label provider
-	 * 
+	 *
 	 * @return
 	 */
 	public String getName();
 
 	/**
 	 * For the content provider
-	 * 
+	 *
 	 * @return A empty / non-empty list - never null
 	 */
 	public List getChildren();

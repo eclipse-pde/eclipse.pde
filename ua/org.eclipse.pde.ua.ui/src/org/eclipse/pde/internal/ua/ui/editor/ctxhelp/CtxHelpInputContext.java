@@ -36,7 +36,7 @@ import org.eclipse.ui.IURIEditorInput;
  */
 public class CtxHelpInputContext extends XMLInputContext {
 
-	public static final String CONTEXT_ID = "ctxhelp-context"; //$NON-NLS-1$	
+	public static final String CONTEXT_ID = "ctxhelp-context"; //$NON-NLS-1$
 
 	public CtxHelpInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);

@@ -78,7 +78,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	private CompCSConclusionTextListener fConclusionListener;
 
 	/**
-	 * 
+	 *
 	 */
 	public CompCSEnclosingTextDetails(int type, ICSMaster section) {
 		super(section, CompCSInputContext.CONTEXT_ID);
@@ -124,7 +124,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void defineTaskObjectLabelName(int type) {
 		if (type == ICompCSConstants.TYPE_TASK) {
@@ -165,7 +165,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		// Bind widgets
 		getToolkit().paintBordersFor(sectionClient);
 		fEnclosingTextSection.setClient(sectionClient);
-		// Mark as a details part to enable cut, copy, paste, etc.		
+		// Mark as a details part to enable cut, copy, paste, etc.
 		markDetailsPart(fEnclosingTextSection);
 	}
 
@@ -187,7 +187,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIIntroductionTab() {
 		CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
@@ -196,7 +196,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIConclusionTab() {
 		CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
@@ -216,7 +216,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIIntroductionViewer() {
 		// Create composite
@@ -254,7 +254,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIConclusionViewer() {
 		// Create composite
@@ -301,7 +301,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListenersIntroductionViewer() {
 		fIntroductionViewer.createUIListeners();
@@ -310,7 +310,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListenersConclusionViewer() {
 		fConclusionViewer.createUIListeners();
@@ -319,7 +319,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListenersTabFolder() {
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
@@ -330,7 +330,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateTabFolder() {
 

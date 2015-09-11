@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -67,7 +67,7 @@ public class SourceLocationManager implements ICoreConstants {
 	 * that location for the file specified by the filePath argument.  An unencoded URL to this location
 	 * will be returned or <code>null</code> if the file could not be found.  Note that the
 	 * URL may specify a file that is inside of a jar file.
-	 * 
+	 *
 	 * @param pluginBase plugin that needs the source file
 	 * @param filePath relative path to where the needed file is inside the source location
 	 * @return URL to the file, possibly inside of a jar file or <code>null</code>
@@ -134,14 +134,14 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	/**
-	 * Searches bundle manifest source locations for the one that provides source 
+	 * Searches bundle manifest source locations for the one that provides source
 	 * for the given plugin.  Gets all source roots for the source bundle by parsing
 	 * the manifest file.  If the source bundle provides source for multiple plugins,
 	 * the roots specified for all of them (duplicates removed).  If the source bundle
 	 * only provides source for a single plugin/version, this method will return the
-	 * same result as #findSourceRoots(IPluginModelBase).  If the given plugin does not have 
+	 * same result as #findSourceRoots(IPluginModelBase).  If the given plugin does not have
 	 * a known source location with a bundle manifest entry an empty Set will be returned.
-	 * 
+	 *
 	 * @param plugin plugin to lookup source for
 	 * @return set of String paths that are source roots for the bundle, possibly empty
 	 */
@@ -154,10 +154,10 @@ public class SourceLocationManager implements ICoreConstants {
 
 	/**
 	 * Searches bundle manifest source locations for the one that provides source
-	 * for the given plugin.  Gets the source roots (String paths) for the plugin 
-	 * by parsing the source bundle's manifest.  If the given plugin does not have 
+	 * for the given plugin.  Gets the source roots (String paths) for the plugin
+	 * by parsing the source bundle's manifest.  If the given plugin does not have
 	 * a known source location with a bundle manifest entry an empty Set will be returned.
-	 * 
+	 *
 	 * @param plugin plugin to lookup source for
 	 * @return set of String paths that are source roots for the plugin, possibly empty
 	 */
@@ -179,7 +179,7 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * While there is no UI to access this feature, we still support additional
 	 * source locations being provided via preference.
-	 * 
+	 *
 	 * @return array of source locations that have been specified by the user
 	 */
 	@SuppressWarnings("deprecation")
@@ -228,8 +228,8 @@ public class SourceLocationManager implements ICoreConstants {
 
 	/**
 	 * Generates the relative path where source is expected to be stored in a source location.
-	 * Combines the plugin id and plugin version to create a directory name and then appends 
-	 * the given source file path.  The result will typically be of the form 
+	 * Combines the plugin id and plugin version to create a directory name and then appends
+	 * the given source file path.  The result will typically be of the form
 	 * PluginID_PluginVersion/src.zip.
 	 * @param pluginBase the plugin that source is being looked up for
 	 * @param sourceFilePath the path to append that specifies the source file location
@@ -272,7 +272,7 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	/**
-	 * Searches through all known source locations added via extension points, appending 
+	 * Searches through all known source locations added via extension points, appending
 	 * the relative path and checking if that file exists.
 	 * @param relativePath location of source file within the source location
 	 * @return path to the source file or <code>null</code> if one could not be found or if the file does not exist

@@ -54,7 +54,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * CompCSMasterTreeSection
- * 
+ *
  */
 public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
@@ -112,7 +112,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse
 	 * .ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
@@ -148,7 +148,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createTreeListeners() {
 		// Create listener for the outline view 'link with editor' toggle
@@ -165,7 +165,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initializeTreeViewer() {
 
@@ -238,7 +238,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected
 	 * (int)
@@ -268,7 +268,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse
 	 * .jface.viewers.IStructuredSelection)
@@ -279,7 +279,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster
 	 * #updateButtons()
@@ -330,7 +330,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleAddTaskAction() {
 
@@ -357,7 +357,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleAddGroupAction() {
 
@@ -377,7 +377,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleMoveTaskObjectAction(int positionFlag) {
 
@@ -400,7 +400,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handlePreviewAction() {
 		// Get the editor input
@@ -447,7 +447,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse
 	 * .pde.core.IModelChangedEvent)
@@ -596,7 +596,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster#fireSelection()
 	 */
@@ -606,7 +606,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu
 	 * (org.eclipse.jface.action.IMenuManager)
@@ -672,7 +672,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang
 	 * .String)
@@ -734,7 +734,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */
 	public boolean setFormInput(Object object) {

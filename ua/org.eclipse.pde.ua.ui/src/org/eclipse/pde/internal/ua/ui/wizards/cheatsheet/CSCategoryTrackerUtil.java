@@ -32,13 +32,13 @@ public class CSCategoryTrackerUtil {
 	private HashMap fCategoryTypeMap;
 
 	/**
-	 * 
+	 *
 	 */
 	public CSCategoryTrackerUtil() {
 
 		// Look-up hashmap
 		// Keys are category ids
-		// Values are category names		
+		// Values are category names
 		fCategoryIDMap = new HashMap();
 
 		// Reverse look-up hashmap

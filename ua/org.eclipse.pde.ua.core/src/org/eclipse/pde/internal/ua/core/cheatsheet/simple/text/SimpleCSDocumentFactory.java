@@ -45,7 +45,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.DocumentNodeFactory#createDocumentTextNode
 	 * (java.lang.String,
@@ -62,7 +62,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode
 	 * (java.lang.String,
@@ -281,7 +281,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCS()
@@ -292,7 +292,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSAction
@@ -304,7 +304,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSCommand
@@ -316,7 +316,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSConditionalSubItem
@@ -329,7 +329,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSDescription
@@ -341,7 +341,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSIntro
@@ -353,7 +353,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSItem
@@ -365,7 +365,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSOnCompletion
@@ -378,7 +378,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSPerformWhen
@@ -390,7 +390,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSRepeatedSubItem
@@ -403,7 +403,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSSubItem

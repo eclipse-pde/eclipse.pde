@@ -35,7 +35,7 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	private TocTreeSection fSection;
 
 	/**
-	 * Constant describing the position of the cursor relative 
+	 * Constant describing the position of the cursor relative
 	 * to the target object.  This means the mouse is positioned
 	 * slightly after the target, but not after its children if it is
 	 * expanded.
@@ -126,9 +126,9 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	 * Set the Drag and Drop mode depending on the dragged items and event
 	 * details. Files can only be copied, not linked or moved.
 	 * Model data objects can have any operation occur.
-	 * 
+	 *
 	 * All other objects cannot be dropped.
-	 * 
+	 *
 	 * @param event The drop event to change.
 	 */
 	private void setDNDMode(DropTargetEvent event) {
@@ -151,9 +151,9 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	/**
 	 * Ensure that, if files are being dropped, they have valid
 	 * file extensions for the TOC Editor (HTML pages and XML documents).
-	 * 
+	 *
 	 * Invalidate the drop if this condition is not met.
-	 * 
+	 *
 	 * @param event The drop event containing the transfer.
 	 */
 	private void validateFileDrop(DropTargetEvent event) {
@@ -197,7 +197,7 @@ public class TocDropAdapter extends ViewerDropAdapter {
 
 	/* (non-Javadoc)
 	 * Override the behaviour of ViewerDropAdapter#dragLeave(org.eclipse.swt.dnd.DropTargetEvent)
-	 * 
+	 *
 	 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragLeave(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	public void dragLeave(DropTargetEvent event) { //NO-OP
@@ -205,7 +205,7 @@ public class TocDropAdapter extends ViewerDropAdapter {
 
 	/* (non-Javadoc)
 	 * Override the behaviour of ViewerDropAdapter#dropAccept(org.eclipse.swt.dnd.DropTargetEvent)
-	 * 
+	 *
 	 * @see org.eclipse.swt.dnd.DropTargetAdapter#dropAccept(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	public void dropAccept(DropTargetEvent event) { //NO-OP

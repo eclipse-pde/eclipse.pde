@@ -16,10 +16,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 
 public class DSMarkerFactory {
-	
+
 	public static final String MARKER_ID = "org.eclipse.pde.ds.core.problem"; //$NON-NLS-1$
 	public static final int NO_RESOLUTION = -1;
-	
+
 	public static final String CAT_OTHER = ""; //$NON-NLS-1$
 
 	/**
@@ -38,5 +38,5 @@ public class DSMarkerFactory {
 		marker.setAttribute("categoryId", category); //$NON-NLS-1$
 		return marker;
 	}
-	
+
 }

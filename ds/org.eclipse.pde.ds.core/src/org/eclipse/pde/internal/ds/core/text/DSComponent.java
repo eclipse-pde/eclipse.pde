@@ -27,9 +27,9 @@ import org.eclipse.pde.internal.ds.core.IDSService;
  * Represents the root "component" entry in a DS xml file. There may be only one
  * root node in the file and all other nodes must be inside the root. The
  * structure of component XML grammar is:
- * 
+ *
  * <component> ::= <implementation> <properties> * <service> ? <reference> *
- * 
+ *
  * @since 3.4
  * @see DSObject
  * @see DSModel

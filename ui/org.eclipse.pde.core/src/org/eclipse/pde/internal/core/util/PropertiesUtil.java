@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ public class PropertiesUtil {
 
 	public static String createWritableName(String source) {
 		if (source.indexOf(' ') >= 0) {
-			// has blanks 
+			// has blanks
 			StringBuffer writableName = new StringBuffer();
 			for (int i = 0; i < source.length(); i++) {
 				char c = source.charAt(i);
@@ -36,7 +36,7 @@ public class PropertiesUtil {
 	}
 
 	public static String createEscapedValue(String value) {
-		// if required, escape property values as \\uXXXX		
+		// if required, escape property values as \\uXXXX
 StringBuffer buf = new StringBuffer(value.length() * 2);
 		// assume expansion by less than factor of 2
 		for (int i = 0; i < value.length(); i++) {

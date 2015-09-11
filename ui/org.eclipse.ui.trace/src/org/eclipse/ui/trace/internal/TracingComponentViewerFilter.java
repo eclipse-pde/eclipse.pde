@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -44,7 +44,7 @@ public class TracingComponentViewerFilter extends PatternFilter {
 	}
 
 	/*
-	 * Force the array of {@link TracingComponentDebugOption} and their children to be visible. 
+	 * Force the array of {@link TracingComponentDebugOption} and their children to be visible.
 	 */
 	private void forceVisibleDebugOptions(final TracingComponentDebugOption[] options) {
 
@@ -58,7 +58,7 @@ public class TracingComponentViewerFilter extends PatternFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.dialogs.PatternFilter#isElementVisible(org.eclipse.jface.viewers.Viewer, java.lang.Object)
 	 */
 	@Override

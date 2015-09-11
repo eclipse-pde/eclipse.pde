@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 274368 
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 274368
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
@@ -109,7 +109,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	}
 
 	/**
-	 * Provides an opportunity for subclasses to add additional options 
+	 * Provides an opportunity for subclasses to add additional options
 	 * to the composite.
 	 * @param comp
 	 */
@@ -319,7 +319,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	 * Provides the destination tab the ability to disable the JAR shape
 	 * and metadata generation options when the export will be installed
 	 * into the current running platform.
-	 * 
+	 *
 	 * @param enabled whether to enable or disable the controls
 	 */
 	protected void setEnabledForInstall(boolean enabled) {

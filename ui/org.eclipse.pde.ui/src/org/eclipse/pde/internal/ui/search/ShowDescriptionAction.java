@@ -137,7 +137,7 @@ public class ShowDescriptionAction extends Action {
 
 	/**
 	 * @return the temporary working directory
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	private File getTempWorkingDir() throws IOException {
@@ -180,7 +180,7 @@ public class ShowDescriptionAction extends Action {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void linkPreviewFileToSchemaFile() {
 		// Ensure the preview file is defined

@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931   
- *     Rapicorp Corporation - ongoing enhancements  
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931
+ *     Rapicorp Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -232,7 +232,7 @@ public class Product extends ProductObject implements IProduct {
 		}
 
 		writer.println();
-		writer.println(indent + "   <plugins>"); //$NON-NLS-1$  
+		writer.println(indent + "   <plugins>"); //$NON-NLS-1$
 		Iterator<IProductObject> iter = fPlugins.values().iterator();
 		while (iter.hasNext()) {
 			IProductPlugin plugin = (IProductPlugin) iter.next();
@@ -254,7 +254,7 @@ public class Product extends ProductObject implements IProduct {
 		writer.println();
 
 		if (fConfigurationProperties.size() > 0 || fPluginConfigurations.size() > 0) {
-			writer.println(indent + "   <configurations>"); //$NON-NLS-1$  
+			writer.println(indent + "   <configurations>"); //$NON-NLS-1$
 			iter = fPluginConfigurations.values().iterator();
 			while (iter.hasNext()) {
 				IPluginConfiguration configuration = (IPluginConfiguration) iter.next();
@@ -270,7 +270,7 @@ public class Product extends ProductObject implements IProduct {
 
 		if (fRepositories.size() > 0) {
 			writer.println();
-			writer.println(indent + "   <repositories>"); //$NON-NLS-1$  
+			writer.println(indent + "   <repositories>"); //$NON-NLS-1$
 			Iterator<IProductObject> iterator = fRepositories.iterator();
 			while (iterator.hasNext()) {
 				IRepositoryInfo repo = (IRepositoryInfo) iterator.next();

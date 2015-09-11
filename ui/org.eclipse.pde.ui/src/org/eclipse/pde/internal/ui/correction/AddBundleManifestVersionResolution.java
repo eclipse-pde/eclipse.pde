@@ -19,7 +19,7 @@ import org.osgi.framework.Constants;
  * version to 2 to support OSGi R4 headers.
  */
 public class AddBundleManifestVersionResolution extends AbstractManifestMarkerResolution {
-	
+
 	public AddBundleManifestVersionResolution() {
 		super(AbstractPDEMarkerResolution.CREATE_TYPE);
 	}

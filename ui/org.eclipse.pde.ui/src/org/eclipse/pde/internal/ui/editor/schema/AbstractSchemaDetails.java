@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -138,7 +138,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		gd.widthHint = 60;
 		gd.horizontalSpan = 3;
 		gd.horizontalIndent = 1;
-		/* 
+		/*
 		 * Needed to align vertically with form entry field and allow space
 		 * for a possible field decoration
 		 * commented out for now since fields are already grossly misaligned (see bug 196879)

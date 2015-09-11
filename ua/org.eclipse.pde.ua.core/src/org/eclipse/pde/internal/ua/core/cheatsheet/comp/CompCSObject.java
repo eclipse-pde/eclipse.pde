@@ -50,12 +50,12 @@ public abstract class CompCSObject extends PlatformObject implements
 		DEFAULT_TAG_EXCEPTIONS.add("p"); //$NON-NLS-1$
 		DEFAULT_TAG_EXCEPTIONS.add("/p"); //$NON-NLS-1$
 		DEFAULT_TAG_EXCEPTIONS.add("li"); //$NON-NLS-1$
-		DEFAULT_TAG_EXCEPTIONS.add("/li"); //$NON-NLS-1$		
+		DEFAULT_TAG_EXCEPTIONS.add("/li"); //$NON-NLS-1$
 		DEFAULT_TAG_EXCEPTIONS.add("a"); //$NON-NLS-1$
-		DEFAULT_TAG_EXCEPTIONS.add("/a"); //$NON-NLS-1$	
+		DEFAULT_TAG_EXCEPTIONS.add("/a"); //$NON-NLS-1$
 		DEFAULT_TAG_EXCEPTIONS.add("span"); //$NON-NLS-1$
-		DEFAULT_TAG_EXCEPTIONS.add("/span"); //$NON-NLS-1$			
-		DEFAULT_TAG_EXCEPTIONS.add("img"); //$NON-NLS-1$	
+		DEFAULT_TAG_EXCEPTIONS.add("/span"); //$NON-NLS-1$
+		DEFAULT_TAG_EXCEPTIONS.add("img"); //$NON-NLS-1$
 
 		DEFAULT_SUBSTITUTE_CHARS.put(new Character('&'), "&amp;"); //$NON-NLS-1$
 		DEFAULT_SUBSTITUTE_CHARS.put(new Character('<'), "&lt;"); //$NON-NLS-1$
@@ -75,7 +75,7 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getChildren
 	 * ()
@@ -84,7 +84,7 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getCompCS()
 	 */
@@ -94,7 +94,7 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getModel()
 	 */
@@ -104,7 +104,7 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getName()
 	 */
@@ -112,7 +112,7 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getParent()
 	 */
@@ -122,7 +122,7 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getType()
 	 */
@@ -130,7 +130,7 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#parse(org
 	 * .w3c.dom.Element)
@@ -144,14 +144,14 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#reset()
 	 */
 	public abstract void reset();
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#setModel
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel)
@@ -162,7 +162,7 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String,
 	 * java.io.PrintWriter)
 	 */
@@ -297,7 +297,7 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/**
 	 * Writes child elements or child content
-	 * 
+	 *
 	 * @param indent
 	 * @param writer
 	 */
@@ -305,7 +305,7 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getElement()
 	 */

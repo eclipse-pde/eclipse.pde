@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     SAP - ongoing enhancements
@@ -94,7 +94,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/** A {@link Button} for 'Standard output stream:' */
 	protected Button standardOutputStreamButton;
-	
+
 	/**
 	 * Constructor for {@link TracingPreferencePage}
 	 */
@@ -146,7 +146,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/**
 	 * A utility method to dispose a widget.
-	 * 
+	 *
 	 * @param widget
 	 *            The widget to dispose
 	 */
@@ -186,7 +186,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/**
 	 * Add a section for a check button to be displayed like "[] Enable Tracing"
-	 * 
+	 *
 	 * @param parent
 	 *            The parent composite
 	 */
@@ -226,7 +226,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/**
 	 * Create a viewer for the list of debug options that are traceable in the product.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent composite
 	 */
@@ -282,7 +282,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 	/**
 	 * Create a section for displaying the tracing file options (i.e. maximum size of each file, number of historical
 	 * files, etc).
-	 * 
+	 *
 	 * @param parent
 	 *            The parent composite
 	 */
@@ -352,7 +352,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		tracingFileMaxCountLabel = new Label(detailsComp, SWT.NONE);
 		tracingFileMaxCountLabel.setText(Messages.tracingFileMaxCountLabel);
 
-		// put horizontal indentation 
+		// put horizontal indentation
 		GridData gridData = new GridData();
 		gridData.horizontalIndent = 20;
 		tracingFileMaxCountLabel.setLayoutData(gridData);
@@ -422,7 +422,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 	 * called after all the UI elements have been constructed.
 	 */
 	protected void setUIValuesFromPreferences() {
-		// If in debug mode, tracing defaults to disabled 
+		// If in debug mode, tracing defaults to disabled
 		if (!DebugOptionsHandler.isLaunchInDebugMode()) {
 			// acquire the preferences service
 			boolean tracingEnabled = PreferenceHandler.isTracingEnabled();
@@ -456,7 +456,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/**
 	 * Retrieve the input
-	 * 
+	 *
 	 * @param ev
 	 * @return input
 	 */
@@ -475,7 +475,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/**
 	 * Verify that the user input is a valid int field
-	 * 
+	 *
 	 * @param input
 	 *            The user supplied input
 	 * @param errorMessage
@@ -506,7 +506,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/**
 	 * This method is used to react to the enablement button ('Enable Tracing') state changing.
-	 * 
+	 *
 	 * @param updateModel
 	 *            Should the model be modified for this call? or should only the enablement state of the UI widgets be
 	 *            modified?
@@ -685,7 +685,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 		return result;
 	}
- 
+
 	/**
 	 * Save the property page preferences.
 	 */
@@ -737,7 +737,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/**
 	 * The {@link TreeViewer} for the tracing page
-	 * 
+	 *
 	 * @return The {@link TreeViewer} for the tracing page
 	 */
 	private TreeViewer getViewer() {
@@ -746,7 +746,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/**
 	 * Accessor for the {@link Tree} of the {@link CheckboxTreeViewer}
-	 * 
+	 *
 	 * @return The {@link Tree} of the {@link CheckboxTreeViewer}
 	 */
 	private Tree getViewerTree() {

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -134,7 +134,7 @@ public class PDETextHelper {
 				processed = processTagExceptions(currentChar, substituteChars, tagExceptions, buffer, scanLimit, text, index);
 			}
 			// If the character was not part of a tag exception and we are
-			// processing substitution characters, check to see if this 
+			// processing substitution characters, check to see if this
 			// character needs to be translated and process it accordingly if
 			// it is
 			if ((processed == false) && (processSubstituteChars == true)) {
@@ -180,7 +180,7 @@ public class PDETextHelper {
 				if (futureChar == '>') {
 					// An ending bracket was found
 					// This is indeed a element tag
-					// Determine if the element tag we found is a valid 
+					// Determine if the element tag we found is a valid
 					// tag exception
 					String futureBuffer = parsedText.toString();
 					if (isValidTagException(tagExceptions, futureBuffer)) {
@@ -253,7 +253,7 @@ public class PDETextHelper {
 			if (inQuote && !onQuote) {
 				processed = processSubstituteChars(currentChar, substituteChars, buffer);
 			}
-			// If the character did not require translation, just append it 
+			// If the character did not require translation, just append it
 			// as-is
 			if (processed == false) {
 				buffer.append(currentChar);
@@ -297,7 +297,7 @@ public class PDETextHelper {
 		// Sample buffer format:
 		// NO '<'
 		// tagName att1="value" att2="value"
-		// NO '>'		
+		// NO '>'
 		StringBuffer tagName = new StringBuffer();
 		// The tag name is every non-whitespace character in the buffer until
 		// a whitespace character is encountered

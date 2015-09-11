@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     David Carver - STAR - bug 212355
@@ -30,7 +30,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 
 	private final static String APP_INFO_ELEM_OLD = "appInfo"; //$NON-NLS-1$
 
-	private final static String NAME_ATTR = "name"; //$NON-NLS-1$	
+	private final static String NAME_ATTR = "name"; //$NON-NLS-1$
 
 	private StringBuffer fDescription;
 
@@ -41,7 +41,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 	private boolean fAppInfoElemFlag;
 
 	/**
-	 * 
+	 *
 	 */
 	public SchemaAnnotationHandler() {
 		super();

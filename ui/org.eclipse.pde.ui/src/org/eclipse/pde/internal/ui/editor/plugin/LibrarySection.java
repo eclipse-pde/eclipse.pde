@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -264,8 +264,8 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 			manager.add(fRenameAction);
 			manager.add(fRemoveAction);
 		}
-		// Copy, cut, and paste operations not supported for plug-ins that do 
-		// not have a MANIFEST.MF (not a Bundle)		
+		// Copy, cut, and paste operations not supported for plug-ins that do
+		// not have a MANIFEST.MF (not a Bundle)
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, isBundle());
 	}
 
@@ -749,7 +749,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		BundlePluginBase bundlePluginBase = (BundlePluginBase) getModel().getPluginBase();
 		// Validate move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			// Get the previous element of the target 
+			// Get the previous element of the target
 			IPluginLibrary previousLibrary = bundlePluginBase.getPreviousLibrary(targetPluginLibrary);
 			// Ensure the previous element is not the source
 			if (sourcePluginLibrary.equals(previousLibrary)) {
@@ -757,7 +757,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 			}
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			// Get the next element of the target 
+			// Get the next element of the target
 			IPluginLibrary nextLibrary = bundlePluginBase.getNextLibrary(targetPluginLibrary);
 			// Ensure the next element is not the source
 			if (sourcePluginLibrary.equals(nextLibrary)) {
@@ -848,14 +848,14 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
 			targetIndex++;
 		}
-		// Ensure the plugin library is concrete  
+		// Ensure the plugin library is concrete
 		if ((sourcePluginLibrary instanceof PluginLibrary) == false) {
 			return;
 		}
 		// Adjust all the source object transient field values to
 		// acceptable values
 		((PluginLibrary) sourcePluginLibrary).reconnect(model, bundlePluginBase);
-		// Add source as sibling of target		
+		// Add source as sibling of target
 		try {
 			bundlePluginBase.add(sourcePluginLibrary, targetIndex);
 		} catch (CoreException e) {
@@ -864,7 +864,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void doDragRemove() {
 		// Get the bundle plug-in base

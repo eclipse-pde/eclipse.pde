@@ -14,14 +14,14 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * A handle to a target definition.
- * 
+ *
  * @since 3.8
  */
 public interface ITargetHandle {
 
 	/**
 	 * Returns the target definition this handle references.
-	 * 
+	 *
 	 * @return target definition
 	 * @throws CoreException if the underlying target definition does not exist
 	 */
@@ -29,7 +29,7 @@ public interface ITargetHandle {
 
 	/**
 	 * Returns a memento for this handle.
-	 * 
+	 *
 	 * @return a memento for this handle
 	 * @exception CoreException if unable to generate a memento
 	 */
@@ -37,7 +37,7 @@ public interface ITargetHandle {
 
 	/**
 	 * Returns whether or not the underlying target definition exists.
-	 * 
+	 *
 	 * @return whether or not the underlying target definition exists
 	 */
 	public boolean exists();

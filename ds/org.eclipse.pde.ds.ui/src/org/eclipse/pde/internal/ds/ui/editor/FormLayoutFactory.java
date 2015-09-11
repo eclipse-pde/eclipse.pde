@@ -19,7 +19,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 /**
  * FormLayoutFactory
- * 
+ *
  */
 public class FormLayoutFactory {
 
@@ -97,7 +97,7 @@ public class FormLayoutFactory {
 	public static final int MASTER_DETAILS_MARGIN_WIDTH = 0;
 
 	/**
-	 * 
+	 *
 	 */
 	private FormLayoutFactory() {
 		// NO-OP
@@ -105,7 +105,7 @@ public class FormLayoutFactory {
 
 	/**
 	 * For form bodies.
-	 * 
+	 *
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
 	 * @return
@@ -134,7 +134,7 @@ public class FormLayoutFactory {
 	/**
 	 * For miscellaneous grouping composites. For sections (as a whole - header
 	 * plus client).
-	 * 
+	 *
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
 	 * @return
@@ -162,7 +162,7 @@ public class FormLayoutFactory {
 
 	/**
 	 * For form bodies.
-	 * 
+	 *
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
 	 * @return
@@ -187,7 +187,7 @@ public class FormLayoutFactory {
 
 	/**
 	 * For composites used to group sections in left and right panes.
-	 * 
+	 *
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
 	 * @return
@@ -212,7 +212,7 @@ public class FormLayoutFactory {
 
 	/**
 	 * For composites used to group sections in left and right panes.
-	 * 
+	 *
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
 	 * @return
@@ -241,7 +241,7 @@ public class FormLayoutFactory {
 	/**
 	 * For miscellaneous grouping composites. For sections (as a whole - header
 	 * plus client).
-	 * 
+	 *
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
 	 * @return
@@ -266,7 +266,7 @@ public class FormLayoutFactory {
 
 	/**
 	 * For master sections belonging to a master details block.
-	 * 
+	 *
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
 	 * @return
@@ -308,7 +308,7 @@ public class FormLayoutFactory {
 
 	/**
 	 * For details sections belonging to a master details block.
-	 * 
+	 *
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
 	 * @return
@@ -350,7 +350,7 @@ public class FormLayoutFactory {
 
 	/**
 	 * For composites set as section clients. For composites containg form text.
-	 * 
+	 *
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
 	 * @return
@@ -378,7 +378,7 @@ public class FormLayoutFactory {
 
 	/**
 	 * For composites set as section clients. For composites containg form text.
-	 * 
+	 *
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
 	 * @return
@@ -403,9 +403,9 @@ public class FormLayoutFactory {
 
 	/**
 	 * Debug method.
-	 * 
+	 *
 	 * MAGENTA = 11 CYAN = 13 GREEN = 5
-	 * 
+	 *
 	 * @param container
 	 * @param color
 	 */

@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.ua.core.toc;
 /**
  * ITocConstants This interface contains all of the constants relevant to the
  * TOC editor
- * 
+ *
  * @since 3.4
  */
 public interface ITocConstants {
@@ -33,11 +33,11 @@ public interface ITocConstants {
 
 	public static final String ATTRIBUTE_LINK_TO = "link_to"; //$NON-NLS-1$
 
-	public static final String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$		
+	public static final String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$
 
 	public static final String ATTRIBUTE_TOPIC = ELEMENT_TOPIC;
 
-	public static final String ATTRIBUTE_HREF = "href"; //$NON-NLS-1$		
+	public static final String ATTRIBUTE_HREF = "href"; //$NON-NLS-1$
 
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 

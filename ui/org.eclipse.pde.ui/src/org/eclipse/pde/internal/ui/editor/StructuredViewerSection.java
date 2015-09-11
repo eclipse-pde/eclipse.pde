@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -156,7 +156,7 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 	 * <ul><li>if this is the only item, return -1 (meaning select the parent)</li>
 	 * <li>if this is the last item, return the index of the predecessor</li>
 	 * <li>otherwise, return the index of the successor</li></p>
-	 * 
+	 *
 	 * @param thisIndex
 	 * 			the item's index
 	 * @param length

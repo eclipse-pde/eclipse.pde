@@ -23,13 +23,13 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Tests that the builder for build.properties files generates the correct problems and quickfixes.
- * 
+ *
  * @since 3.6
  * @see AbstractBuildValidationTest
  *
  */
 public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
-	
+
 	public static Test suite() {
 		return new TestSuite(BuildPropertiesValidationTest.class);
 	}
@@ -91,7 +91,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			fail("Could not build the project '" + project.getName() + "'");
 		}
 	}
-	
+
 	public void testSimpleProject() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.8");
 		setPreferences(project, CompilerFlags.ERROR);
@@ -105,7 +105,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			fail("Could not build the project '" + project.getName() + "'");
 		}
 	}
-	
+
 	//Bug 292763
 	public void testSrcExcludeQuickFix() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.9");
@@ -120,7 +120,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			fail("Could not build the project '" + project.getName() + "'");
 		}
 	}
-	
+
 	// Bug 323774
 	public void testOsgiInf() throws Exception {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.10");

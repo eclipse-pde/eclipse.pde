@@ -38,7 +38,7 @@ public class GetNonExternalizedStringsAction extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		/* 
+		/*
 		 * Pass <code>fExternalizeSelectedPluginsOnly</code> to the operation to indicate
 		 * that only the plug-ins passed in the selection are to be externalized and such that
 		 * only those are displayed on the change table in the ExternalizeStringsWizard.
@@ -51,7 +51,7 @@ public class GetNonExternalizedStringsAction extends AbstractHandler {
 	 * Executes this action, opening the externalize strings wizard and performing the proper operations.
 	 * Added to allow the editors and internationalize wizard to open the externalize wizard in case some
 	 * strings have not been externalized beforehand.
-	 * 
+	 *
 	 * @param selection The selection to run the action on
 	 */
 	public void runGetNonExternalizedStringsAction(ISelection selection) {
@@ -75,7 +75,7 @@ public class GetNonExternalizedStringsAction extends AbstractHandler {
 				} catch (final InterruptedException irex) {
 				}
 			} else {
-				/* 
+				/*
 				 * Azure: When the InternationalizeAction invokes the ExternalizeStringsAction,
 				 * <code>fSkipMessageDialog</code> is set to true in order for no intermediate
 				 * message to appear if all selected plug-ins were already externalized.

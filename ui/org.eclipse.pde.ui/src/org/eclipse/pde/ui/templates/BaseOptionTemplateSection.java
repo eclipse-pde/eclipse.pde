@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - bug 208531
@@ -29,7 +29,7 @@ import org.eclipse.pde.ui.IFieldData;
  * <samp>OptionTemplateWizardPage </samp>. The later is capable of creating UI
  * based on the list of options it was given, thus simplifying new template
  * section creation.
- * 
+ *
  * @since 2.0
  */
 
@@ -38,7 +38,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 
 	/**
 	 * Adds a boolean option with a provided name, label and initial value.
-	 * 
+	 *
 	 * @param name
 	 *            the unique name of the option (can be used as a variable in
 	 *            conditional code emitting and variable substitution)
@@ -58,7 +58,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 
 	/**
 	 * Adds a string option with a provided name, label and initial value.
-	 * 
+	 *
 	 * @param name
 	 *            the unique name of the option (can be used as a variable in
 	 *            conditional code emitting and variable substitution)
@@ -79,7 +79,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	/**
 	 * Adds a choice option with a provided name, label, list of choices and the
 	 * initial value (choice).
-	 * 
+	 *
 	 * @param name
 	 *            the unique name of the option (can be used as a variable in
 	 *            conditional code emitting and variable substitution)
@@ -124,7 +124,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 
 	/**
 	 * Adds a blank field with a default height to provide spacing.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            a zero-based index of a page where this option should appear
 	 * @return the newly created option
@@ -137,9 +137,9 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 
 	/**
 	 * Adds a blank field with a specific height to provide spacing.
-	 * 
+	 *
 	 * @param height
-	 *            specifies the height of the blank field in pixels            
+	 *            specifies the height of the blank field in pixels
 	 * @param pageIndex
 	 *            a zero-based index of a page where this option should appear
 	 * @return the newly created option
@@ -153,7 +153,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	/**
 	 * Initializes the option with a given unique name with the provided value.
 	 * The value will be set only if the option has not yet been initialized.
-	 * 
+	 *
 	 * @param name
 	 *            option unique name
 	 * @param value
@@ -172,7 +172,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * Returns a string value of the option with a given name. The option with
 	 * that name must exist and must be registered as a string option to begin
 	 * with.
-	 * 
+	 *
 	 * @param name
 	 *            the unique name of the option
 	 * @return the string value of the option with a given name or <samp>null
@@ -201,7 +201,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * Returns a boolean value of the option with a given name. The option with
 	 * that name must exist and must be registered as a boolean option to begin
 	 * with.
-	 * 
+	 *
 	 * @param key
 	 *            the unique name of the option
 	 * @return the boolean value of the option with a given name or <samp>null
@@ -220,7 +220,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * depends on the option type, but the end-result should always be the same -
 	 * users should not be able to modify values of disabled options. This
 	 * method has no effect if the option with a given name is not found.
-	 * 
+	 *
 	 * @param name
 	 *            the unique name of the option
 	 * @param enabled
@@ -235,7 +235,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	/**
 	 * Returns the value of the option with a given name. The actual type of the
 	 * returned object depends on the option type.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the option
 	 * @return the current value of the option with a specified name or
@@ -261,7 +261,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * instead during template execution. The same method will also be called
 	 * when the template is created within the context of the plug-in manifest
 	 * editor, because plug-in model already exists at that time.
-	 * 
+	 *
 	 * @return <code>true</code> if this template depends on the data set in
 	 *         the parent wizard, <code>false</code> otherwise.
 	 */
@@ -278,7 +278,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * <p>
 	 * The method is called before the actual plug-in has been built.
 	 * </p>
-	 * 
+	 *
 	 * @param data
 	 *            plug-in data as defined in the common plug-in project wizard
 	 *            pages
@@ -297,7 +297,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * part of new extension creation (inside the manifest editor). Either way,
 	 * the plug-in properties in the model have been fully set and the model can
 	 * be used to initialize options that cannot be initialized independently.
-	 * 
+	 *
 	 * @param model
 	 *            the model of the plug-in manifest file.
 	 */
@@ -309,7 +309,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * value have been changed by the user. The subclass can elect to validate
 	 * the option on its own, or to also check validity of other options in
 	 * relation to the new value of this one.
-	 * 
+	 *
 	 * @param changed
 	 *            the option whose value has been changed by the user
 	 */
@@ -318,7 +318,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	/**
 	 * Expands variable substitution to include all string options defined in
 	 * this template.
-	 * 
+	 *
 	 * @see AbstractTemplateSection#getReplacementString(String, String)
 	 */
 	@Override
@@ -343,7 +343,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 
 	/**
 	 * Registers the provided option and sets the initial value.
-	 * 
+	 *
 	 * @param option
 	 *            the option to register
 	 * @param value

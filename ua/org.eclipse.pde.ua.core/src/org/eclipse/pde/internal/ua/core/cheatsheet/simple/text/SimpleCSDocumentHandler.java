@@ -30,7 +30,7 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocument()
 	 */
 	protected IDocument getDocument() {
@@ -39,7 +39,7 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.NodeDocumentHandler#getRootNode()
 	 */
 	protected IDocumentElementNode getRootNode() {

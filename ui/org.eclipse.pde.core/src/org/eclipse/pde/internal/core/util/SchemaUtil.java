@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class SchemaUtil {
 	 * should be independantly closed using {@link JarURLConnection#getJarFile()}.close()
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=326263
 	 * </p>
-	 * 
+	 *
 	 * @param url URL to open connection to
 	 * @return the url connection
 	 * @throws MalformedURLException if the url is null

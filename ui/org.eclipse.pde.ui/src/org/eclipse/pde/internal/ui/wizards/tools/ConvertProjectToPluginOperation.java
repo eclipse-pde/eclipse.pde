@@ -55,7 +55,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 	/**
 	 * Workspace operation to convert the specified project into a plug-in
 	 * project.
-	 * 
+	 *
 	 * @param theProjectsToConvert The project to be converted.
 	 * @param enableApiAnalysis Whether to set up API Tooling analysis on the projects
 	 */
@@ -66,7 +66,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 
 	/**
 	 * Convert a normal java project into a plug-in project.
-	 * 
+	 *
 	 * @param monitor
 	 *            Progress monitor
 	 */

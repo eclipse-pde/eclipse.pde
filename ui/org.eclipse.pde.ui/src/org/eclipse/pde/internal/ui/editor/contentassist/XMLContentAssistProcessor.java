@@ -420,7 +420,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				ISchemaElement sElement = XMLUtil.getSchemaElement(node, ((IPluginExtension) obj).getPoint());
 				if ((sElement != null) && (sElement.getType() instanceof ISchemaComplexType)) {
 					// We have a schema complex type.  Either the element has attributes
-					// or the element has children.					
+					// or the element has children.
 					// Generate the list of element proposals
 					TreeSet<?> elementSet = XMLElementProposalComputer.computeElementProposal(sElement, node);
 					// Filter the list of element proposals
@@ -663,12 +663,12 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (fAllExtPoints != null) {
 			return fAllExtPoints;
 		}
-		// Get the plugin model base 
+		// Get the plugin model base
 		IPluginModelBase model = getPluginModelBase();
-		// Note: All plug-in extension points are cached except the 
-		// extension points defined by the plugin.xml we are currently 
+		// Note: All plug-in extension points are cached except the
+		// extension points defined by the plugin.xml we are currently
 		// editing. This means if a plug-in in the workspace defines a new
-		// extension point and the plugin.xml editor is still open, the 
+		// extension point and the plugin.xml editor is still open, the
 		// new extension point will not show up as a proposal because it is
 		// using a cached list of extension points.
 		// External extensions points are all extension points not defined by
@@ -696,7 +696,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 		// Process each plugin
 		for (int i = 0; i < plugins.length; i++) {
-			// Make sure this plugin is not the one we are currently 
+			// Make sure this plugin is not the one we are currently
 			// editing which defines internal extension points.
 			// We don't want to cache internal extension points because the
 			// workspace can change.
@@ -719,7 +719,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	/**
 	 * Handles edge case.
 	 * External extension points are cached.
-	 * As a result, these types persist over each other depending on what 
+	 * As a result, these types persist over each other depending on what
 	 * context content assist is invoked first:
 	 * F_EXTENSION_ATTRIBUTE_POINT_VALUE
 	 * F_EXTENSION_POINT_AND_VALUE
@@ -734,7 +734,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		VirtualSchemaObject vObject = (VirtualSchemaObject) fExternalExtPoints.get(0);
 		// If the first proposals type is the same as the new type, then we
 		// do not have to do the update.  That is because all the proposals
-		// have the same type. 
+		// have the same type.
 		if (vObject.getVType() == newVType) {
 			return;
 		}

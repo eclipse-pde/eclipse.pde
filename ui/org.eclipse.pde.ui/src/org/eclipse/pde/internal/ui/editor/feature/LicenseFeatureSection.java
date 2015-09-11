@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -41,7 +41,7 @@ import org.eclipse.ui.forms.widgets.*;
  * Provides the UI for the License Agreement section of the Information page in the Feature Editor.
  * There are two radio buttons which allow the user to choose between setting a license in text
  * or to point at a feature which specifies the licensing.
- * 
+ *
  * @since 3.7
  * @see InfoSection
  * @see FeatureEditor

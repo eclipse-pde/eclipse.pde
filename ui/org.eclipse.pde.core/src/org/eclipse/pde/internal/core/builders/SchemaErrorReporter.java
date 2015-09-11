@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Simon Muschel <smuschel@gmx.de> - bug 215743
@@ -285,7 +285,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 							report(NLS.bind(PDECoreMessages.Builders_Schema_includeNotValid, schemaLocation), getLine(element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_OTHER);
 					}
 				} catch (MalformedURLException e) {
-					// this should not happen since fSchema's URL is valid 
+					// this should not happen since fSchema's URL is valid
 				}
 			}
 		}

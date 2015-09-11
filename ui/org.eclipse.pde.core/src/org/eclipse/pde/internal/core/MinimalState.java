@@ -108,7 +108,7 @@ public class MinimalState {
 
 		BundleDescription desc = addBundle(manifest, bundleLocation, bundleId);
 		if (desc != null && manifest != null && "true".equals(manifest.get(ICoreConstants.ECLIPSE_SYSTEM_BUNDLE))) { //$NON-NLS-1$
-			// if this is the system bundle then 
+			// if this is the system bundle then
 			// indicate that the javaProfile has changed since the new system
 			// bundle may not contain profiles for all EE's in the list
 			fEEListChanged = true;
@@ -129,7 +129,7 @@ public class MinimalState {
 
 	/**
 	 * Resolves the state incrementally based on the given bundle names.
-	 *  
+	 *
 	 * @param symbolicNames
 	 * @return state delta
 	 */

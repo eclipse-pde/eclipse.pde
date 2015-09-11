@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     Christian Pontesegger - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public class TargetPlatformRepository extends AbstractRepository {
 	 * Creates a new target platform repository.  If useCurrent is <code>true</code>
 	 * the current target platform set on the preference page.  If <code>false</code>
 	 * a default target definition (the running application) will be used.
-	 * 
+	 *
 	 * @param target whom to notify upon found images
 	 * @param useCurrent whether to use the current target platform or the default target (running application)
 	 */

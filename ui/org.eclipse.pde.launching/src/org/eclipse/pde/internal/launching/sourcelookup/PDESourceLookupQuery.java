@@ -66,7 +66,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		if (fElement instanceof IJavaStackFrame) {
 			IJavaStackFrame stackFrame = (IJavaStackFrame) fElement;
 			declaringType = stackFrame.getReferenceType();
-			// under JSR 45 source path from the stack frame is more precise than anything derived from the type: 
+			// under JSR 45 source path from the stack frame is more precise than anything derived from the type:
 			sourcePath = stackFrame.getSourcePath();
 		} else if (fElement instanceof IJavaObject) {
 			IJavaType javaType = ((IJavaObject) fElement).getJavaType();
@@ -122,7 +122,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 
 	/**
 	 * Finds a source element in a 3.4 OSGi runtime.
-	 * 
+	 *
 	 * @param object Bundle class loader object
 	 * @param typeName fully qualified name of the source type being searched for
 	 * @return source element
@@ -144,9 +144,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	/**
 	 * Finds source in a 3.5 runtime. In 3.5, the OSGi runtime provides hooks to properly
 	 * lookup source in fragments that replace/prepend jars in their host.
-	 * 
+	 *
 	 * @param object Bundle class loader object
-	 * @param typeName fully qualified name of the source type being searched for 
+	 * @param typeName fully qualified name of the source type being searched for
 	 * @return source element
 	 * @throws CoreException
 	 */
@@ -181,7 +181,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	/**
 	 * Search a bundle's class path entries for source for the type of given name.
 	 * This is used for 3.5 and greater.
-	 * 
+	 *
 	 * @param entriesOwner
 	 * @param typeName
 	 * @return source object or <code>null</code>
@@ -234,10 +234,10 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 
 	/**
 	 * Looks up source in the source containers associated with the bundle at the given location.
-	 * Searches associated fragments if source is not found in that location only if 
-	 * <code>chechFragments</code> is <code>true</code> (which should only be done when < 3.5, 
+	 * Searches associated fragments if source is not found in that location only if
+	 * <code>chechFragments</code> is <code>true</code> (which should only be done when < 3.5,
 	 * as this is just a guess in random order).
-	 * 
+	 *
 	 * @param location location of bundle jar / class file folder
 	 * @param id symbolic name of bundle or fragment
 	 * @param typeName qualified name of source
@@ -287,7 +287,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	 * Generates and returns a source file path based on a qualified type name.
 	 * For example, when <code>java.lang.String</code> is provided,
 	 * the returned source name is <code>java/lang/String.java</code>.
-	 * 
+	 *
 	 * @param qualifiedTypeName fully qualified type name that may contain inner types
 	 *  denoted with <code>$</code> character
 	 * @return a source file path corresponding to the type name

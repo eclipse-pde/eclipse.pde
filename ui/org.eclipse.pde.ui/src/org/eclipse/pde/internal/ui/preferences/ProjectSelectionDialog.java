@@ -34,7 +34,7 @@ import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 /**
  * A dialog for selecting a project to configure project specific settings for
- * 
+ *
  * @since 1.0.0
  */
 public class ProjectSelectionDialog extends SelectionStatusDialog {

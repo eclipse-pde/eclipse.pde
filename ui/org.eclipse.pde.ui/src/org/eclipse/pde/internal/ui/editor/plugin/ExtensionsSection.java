@@ -90,7 +90,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	/**
 	 * <code>label, name, class, id, commandId, property, activityId, attribute, value</code>
 	 * <br>
-	 * While adding elements to the array at the end is possible without concern, changing 
+	 * While adding elements to the array at the end is possible without concern, changing
 	 * previous elements requires to refactor occurrences with indexed access to the array.
 	 */
 	// TODO common label properties might be configured through preferences
@@ -611,7 +611,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	/**
 	 * Adds another value to filter text and a preceding separator character if necessary.
 	 * Empty values as well as <code>true</code> and <code>false</code> are omitted.
-	 * 
+	 *
 	 * @param attributeValue Value to be trimmed and added to the filter text
 	 * @param clearFilterText When <code>true</code> the filter text is replaced with the attribute value, appended otherwise.
 	 */
@@ -689,7 +689,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		if (editorWizards == null)
 			return;
 		if (editorWizards.size() == 1) {
-			// open the wizard directly			
+			// open the wizard directly
 			handleEdit((IConfigurationElement) editorWizards.get(0), selection);
 		} else {
 			IProject project = getPage().getPDEEditor().getCommonProject();
@@ -1043,7 +1043,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			}
 			if (labelAtt != null && labelAtt.getValue() != null) {
 				fullName = stripShortcuts(labelAtt.getValue());
-				if (labelAtt.getName().equals(COMMON_LABEL_ATTRIBUTES[3])) { // remove package from handler class 
+				if (labelAtt.getName().equals(COMMON_LABEL_ATTRIBUTES[3])) { // remove package from handler class
 					fullName = fullName.substring(fullName.lastIndexOf('.') + 1, fullName.length());
 				}
 			}
@@ -1074,10 +1074,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	/**
-	 * Temporarily bypasses default {@link FormFilteredTree#getRefreshJobDelay()} for several actions to immediately start tree 
+	 * Temporarily bypasses default {@link FormFilteredTree#getRefreshJobDelay()} for several actions to immediately start tree
 	 * filtering. Only the next job to call <code>getRefreshJobDelay()</code> will be affected and reset this value.
-	 * 
-	 * @param bypassFilterDelay <code>true</code> bypasses the refresh job delay by overriding it with <code>0</code> 
+	 *
+	 * @param bypassFilterDelay <code>true</code> bypasses the refresh job delay by overriding it with <code>0</code>
 	 */
 	public void setBypassFilterDelay(boolean bypassFilterDelay) {
 		fBypassFilterDelay = bypassFilterDelay;
@@ -1118,7 +1118,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		// Note: Multi-select in is enabled and this function can support 
+		// Note: Multi-select in is enabled and this function can support
 		// multiple source object but it needs to be investigated
 		// Rule:  Element source objects are always pasted as children of the
 		// target object (if allowable)
@@ -1146,16 +1146,16 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		if (allElements == false) {
 			return false;
 		}
-		// Ensure the target object can have children 
+		// Ensure the target object can have children
 		if ((targetObject instanceof IPluginParent) == false) {
 			return false;
 		} else if ((targetObject instanceof IDocumentElementNode) == false) {
 			return false;
 		}
-		// Retrieve the schema corresponding to the target object		
+		// Retrieve the schema corresponding to the target object
 		IPluginParent targetParent = (IPluginParent) targetObject;
 		ISchema schema = getSchema(targetParent);
-		// If there is no schema, then a source object can be pasted as a 
+		// If there is no schema, then a source object can be pasted as a
 		// child of any target object
 		if (schema == null) {
 			return true;
@@ -1172,7 +1172,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			// Something is seriously wrong, we are a plugin parent
 			return false;
 		}
-		// We have a schema complex type.  Either the target object has 
+		// We have a schema complex type.  Either the target object has
 		// attributes or the element has children.
 		// Generate the list of element proposals
 		TreeSet<?> elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, (IDocumentElementNode) targetObject);
@@ -1194,21 +1194,21 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		// Performance optimisation
 		// HashSet of schema elements is not comparable for the source
 		// objects (schema elements are transient)
-		// Create a new HashSet with element names for comparison		
+		// Create a new HashSet with element names for comparison
 		HashSet<String> targetElementNameSet = new HashSet<>();
 		Iterator<?> iterator = targetElementSet.iterator();
 		while (iterator.hasNext()) {
 			targetElementNameSet.add(((ISchemaElement) iterator.next()).getName());
 		}
-		// Paste will be enabled only if all source objects can be pasted 
+		// Paste will be enabled only if all source objects can be pasted
 		// as children into the target element
 		// Limitation:  Multiplicity checks will be compromised because we
-		// are pasting multiple elements as a single transaction.  The 
+		// are pasting multiple elements as a single transaction.  The
 		// multiplicity check is computed on the current static state of the
 		// target object with the assumption one new element will be added.
 		// Obviously, adding more than one element can invalidate the check
 		// due to choice, sequence multiplicity constraints.  Even if source
-		// elements that are pasted violate multiplicity constraints the 
+		// elements that are pasted violate multiplicity constraints the
 		// extensions builder will flag them with errors
 		for (int i = 0; i < sourceElements.length; i++) {
 			String sourceTagName = sourceElements[i].getName();
@@ -1232,7 +1232,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		while (iterator.hasNext()) {
 			// Get the proposal element tag name
 			String targetTagName = ((ISchemaElement) iterator.next()).getName();
-			// Only a source element that is found within the set of element 
+			// Only a source element that is found within the set of element
 			// proposals can be pasted
 			if (sourceTagName.equals(targetTagName)) {
 				canPaste = true;
@@ -1263,8 +1263,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// By default, fragment.xml does not exist until the first extension
-		// or extension point is created.  
-		// Ensure the file exists before pasting because the model will be 
+		// or extension point is created.
+		// Ensure the file exists before pasting because the model will be
 		// null and the paste will fail if it does not exist
 		((ManifestEditor) getPage().getEditor()).ensurePluginContextPresence();
 		// Note:  Multi-select in tree viewer is disabled; but, this function
@@ -1403,7 +1403,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	/**
 	 * Since filtering potentially hides children of extensions, removing them when they still have children is intransparent.
 	 * Needs to be called only when the tree is filtered.
-	 *  
+	 *
 	 * @param selection selection to be tested
 	 * @return whether removing the selected elements is enabled
 	 */
@@ -1441,7 +1441,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 						aboutToRunPassed = true;
 					}
 
-					/* 
+					/*
 					 * Restores selection after tree refresh and expands tree up to matching leafs only
 					 */
 					@Override
@@ -1725,14 +1725,14 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	 */
 	private boolean validateDropMoveSchema(IPluginParent targetPluginObject, IPluginParent sourcePluginObject) {
 		IDocumentElementNode targetPluginNode = (IDocumentElementNode) targetPluginObject;
-		// If the target is the source's parent, then the move is always 
+		// If the target is the source's parent, then the move is always
 		// valid.  No need to check the schema.  Order does not matter
 		if (targetPluginObject.equals(sourcePluginObject.getParent())) {
 			return true;
 		}
-		// Retrieve the schema corresponding to the target object		
+		// Retrieve the schema corresponding to the target object
 		ISchema schema = getSchema(targetPluginObject);
-		// If there is no schema, then a source object can be pasted as a 
+		// If there is no schema, then a source object can be pasted as a
 		// child of any target object
 		if (schema == null) {
 			return true;
@@ -1749,7 +1749,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			// Something is seriously wrong, we are a plug-in parent
 			return false;
 		}
-		// We have a schema complex type.  Either the target object has 
+		// We have a schema complex type.  Either the target object has
 		// attributes or the element has children.
 		// Generate the list of element proposals
 		TreeSet<?> elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, targetPluginNode);
@@ -1758,7 +1758,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		while (iterator.hasNext()) {
 			// Get the proposal element tag name
 			String targetTagName = ((ISchemaElement) iterator.next()).getName();
-			// Only a source element that is found within the set of element 
+			// Only a source element that is found within the set of element
 			// proposals can be pasted
 			String sourceNodeTagName = ((IDocumentElementNode) sourcePluginObject).getXMLTagName();
 			if (sourceNodeTagName.equals(targetTagName)) {
@@ -1821,7 +1821,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			// Flush the text edit operations associated with the move operation
 			// to the source page
 			// Move involves add new cloned object x and remove of original object
-			// x 
+			// x
 			// Without flushing, multiple move operations up and down cause the
 			// text edit operations to get completely screwed up (e.g. mark-up
 			// in wrong position or getting lost)

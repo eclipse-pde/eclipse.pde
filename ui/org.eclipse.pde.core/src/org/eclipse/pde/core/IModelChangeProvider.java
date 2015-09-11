@@ -15,7 +15,7 @@ package org.eclipse.pde.core;
  * about model changes. Interested parties should implement
  * <samp>IModelChangedListener </samp> and add as listeners to be able to
  * receive change notification.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
@@ -24,7 +24,7 @@ public interface IModelChangeProvider {
 	/**
 	 * Adds the listener to the list of listeners that will be notified on model
 	 * changes.
-	 * 
+	 *
 	 * @param listener
 	 *            a model change listener to be added
 	 */
@@ -32,7 +32,7 @@ public interface IModelChangeProvider {
 
 	/**
 	 * Delivers change event to all the registered listeners.
-	 * 
+	 *
 	 * @param event
 	 *            a change event that will be passed to all the listeners
 	 */
@@ -41,7 +41,7 @@ public interface IModelChangeProvider {
 	/**
 	 * Notifies listeners that a property of a model object changed. This is a
 	 * utility method that will create a model event and fire it.
-	 * 
+	 *
 	 * @param object
 	 *            an affected model object
 	 * @param property
@@ -55,7 +55,7 @@ public interface IModelChangeProvider {
 
 	/**
 	 * Takes the listener off the list of registered change listeners.
-	 * 
+	 *
 	 * @param listener
 	 *            a model change listener to be removed
 	 */

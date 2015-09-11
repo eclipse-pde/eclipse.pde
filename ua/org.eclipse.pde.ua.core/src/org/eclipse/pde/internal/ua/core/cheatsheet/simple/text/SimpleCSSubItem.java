@@ -32,7 +32,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#getLabel
 	 * ()
@@ -43,7 +43,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#getSkip
 	 * ()
@@ -54,7 +54,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#getWhen
 	 * ()
@@ -65,7 +65,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#setLabel
 	 * (java.lang.String)
@@ -76,7 +76,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#setSkip
 	 * (boolean)
@@ -87,7 +87,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#setWhen
 	 * (java.lang.String)
@@ -98,7 +98,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRun#getExecutable
 	 * ()
@@ -109,7 +109,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRun#setExecutable
 	 * (
@@ -123,7 +123,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
@@ -136,7 +136,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
@@ -147,7 +147,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()

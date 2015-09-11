@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 
 	/**
 	 * Creates an empty label and hence a space in the tab
-	 * 
+	 *
 	 * @param parent the parent of the label
 	 * @param span the span of the label
 	 * @deprecated
@@ -44,7 +44,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 
 	/**
 	 * Returns whether the tab contains valid entries
-	 * 
+	 *
 	 * @return <code>true</code> if the tab is valid, <code>false</code> otherwise
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -63,7 +63,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 
 	/**
 	 * Validates the page and updates the buttons and message of the launch configuration dialog.
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
 	@Override

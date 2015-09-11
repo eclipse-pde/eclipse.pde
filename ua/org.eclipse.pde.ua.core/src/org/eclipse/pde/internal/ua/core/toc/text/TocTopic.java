@@ -20,13 +20,13 @@ import org.eclipse.core.runtime.IPath;
  */
 public class TocTopic extends TocObject {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructs a topic with the given model and parent.
-	 * 
+	 *
 	 * @param model
 	 *            The model associated with the new topic.
 	 * @param parent
@@ -38,7 +38,7 @@ public class TocTopic extends TocObject {
 
 	/**
 	 * Constructs a subclass of a topic with the given model and parent.
-	 * 
+	 *
 	 * @param model
 	 *            The model associated with the new topic.
 	 * @param parent
@@ -50,7 +50,7 @@ public class TocTopic extends TocObject {
 
 	/**
 	 * Constructs a topic with the given model, parent and file.
-	 * 
+	 *
 	 * @param model
 	 *            The model associated with the new link.
 	 * @param parent
@@ -81,7 +81,7 @@ public class TocTopic extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#canBeParent()
 	 */
 	public boolean canBeParent() {
@@ -90,7 +90,7 @@ public class TocTopic extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getName()
 	 */
 	public String getName() {
@@ -99,7 +99,7 @@ public class TocTopic extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.text.toc.TocObject#getPath()
 	 */
 	public String getPath() {
@@ -108,7 +108,7 @@ public class TocTopic extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getType()
 	 */
 	public int getType() {
@@ -117,7 +117,7 @@ public class TocTopic extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.toc.TocObject#isFirstChildObject(org.eclipse
 	 * .pde.internal.ua.core.toc.TocObject)
@@ -128,7 +128,7 @@ public class TocTopic extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.toc.TocObject#isLastChildObject(org.eclipse
 	 * .pde.internal.ua.core.toc.TocObject)
@@ -139,7 +139,7 @@ public class TocTopic extends TocObject {
 
 	/**
 	 * Add a TocObject child to this topic and signal the model if necessary.
-	 * 
+	 *
 	 * @param child
 	 *            The child to add to the TocObject
 	 */
@@ -150,7 +150,7 @@ public class TocTopic extends TocObject {
 	/**
 	 * Add a TocObject child to this topic beside a specified sibling and signal
 	 * the model if necessary.
-	 * 
+	 *
 	 * @param child
 	 *            The child to add to the TocObject
 	 * @param sibling
@@ -170,7 +170,7 @@ public class TocTopic extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.toc.TocObject#moveChild(org.eclipse.pde
 	 * .internal.core.toc.TocObject, int)
@@ -182,7 +182,7 @@ public class TocTopic extends TocObject {
 	/**
 	 * Remove a TocObject child from this topic and signal the model if
 	 * necessary.
-	 * 
+	 *
 	 * @param child
 	 *            The child to add to the TocObject
 	 */
@@ -199,7 +199,7 @@ public class TocTopic extends TocObject {
 
 	/**
 	 * Change the value of the label field and signal a model change if needed.
-	 * 
+	 *
 	 * @param name
 	 *            The new label for the topic
 	 */
@@ -217,7 +217,7 @@ public class TocTopic extends TocObject {
 
 	/**
 	 * Change the value of the link field and signal a model change if needed.
-	 * 
+	 *
 	 * @param value
 	 *            The new page location to be linked by this topic
 	 */

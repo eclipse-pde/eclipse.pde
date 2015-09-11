@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.PDECore;
 
 /**
  * A handle to a target stored in a remote file (outside workspace) and accessed using its URI.
- * 
+ *
  * @since 3.5
  */
 public class ExternalFileTargetHandle extends AbstractTargetHandle {
@@ -34,7 +34,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 
 	/**
 	 * Returns a handle for the given URI.
-	 * 
+	 *
 	 * @param uri URI
 	 * @return target handle
 	 */

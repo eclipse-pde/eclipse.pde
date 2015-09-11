@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,13 +21,13 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 /**
  * This class adds some conventions to the class it is based on. For example, it
  * expects to find the template content in the following location:
- * 
+ *
  * <pre>
- * 
+ *
  *     [install location]/[templateDirectory]/[sectionId]
- *  
+ *
  * </pre>
- * 
+ *
  * where <code>templateDirectory</code> is expected to be 'templates_3.0' (to
  * distinguish from template designed for earlier Eclipse versions), and
  * <code>sectionId</code> is the unique identifier as reported by the template
@@ -35,8 +35,8 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * <p>
  * It also assumes that all wizard pages associated with this template will be
  * based on <code>OptionTemplateWizardPage</code>.
- * 
- * 
+ *
+ *
  * @since 2.0
  */
 public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
@@ -61,7 +61,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * Returns the unique name of this section. This name will be used to
 	 * construct name and description lookup keys, as well as the template file
 	 * location in the contributing plug-in.
-	 * 
+	 *
 	 * @return the unique section Id
 	 * @see #getLabel()
 	 * @see #getDescription()
@@ -72,7 +72,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	/**
 	 * Returns the directory where all the templates are located in the
 	 * contributing plug-in.
-	 * 
+	 *
 	 * @return "templates_[schemaVersion]" for code since Eclipse 3.0, or
 	 *         "templates" for pre-3.0 code.
 	 */
@@ -85,7 +85,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 
 	/**
 	 * Returns the install URL of the plug-in that contributes this template.
-	 * 
+	 *
 	 * @return the install URL of the contributing plug-in
 	 */
 	protected abstract URL getInstallURL();
@@ -95,7 +95,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * following path:
 	 * <p>
 	 * [install location]/[templateDirectory]/[sectionId]
-	 * 
+	 *
 	 * @return the URL of the location where files to be emitted by this
 	 *         template are located.
 	 */
@@ -114,8 +114,8 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	/**
 	 * Returns the wizard page at the specified index. Pages must be created
 	 * prior to calling this method.
-	 * 
-	 * @param pageIndex the index to get the page for 
+	 *
+	 * @param pageIndex the index to get the page for
 	 * @return the wizard page at the specified index or <samp>null </samp> if
 	 *         invalid index.
 	 * @see #createPage(int)
@@ -133,7 +133,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * be called before setPageCount(int). The page will be created with all the
 	 * options registered for that page index. Therefore, make all the calls to
 	 * addOption() before calling this method.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            a zero-based index of the page relative to this template. For
 	 *            example, if a template needs to have two pages, you have to
@@ -156,7 +156,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * be called before setPageCount(int). The page will be created with all the
 	 * options registered for that page index. Therefore, make all the calls to
 	 * addOption() before calling this method.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            a zero-based index of the page relative to this template. For
 	 *            example, if a template need to have two pages, you have to
@@ -180,7 +180,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 
 	/**
 	 * Returns a number of pages that this template contributes to the wizard.
-	 * 
+	 *
 	 * @return the number of pages
 	 * @see #setPageCount(int)
 	 */
@@ -194,7 +194,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * called prior to adding pages and options in order to initialize the
 	 * template. Once the method has been called, you can call methods that
 	 * accept page index in the range [0..count-1].
-	 * 
+	 *
 	 * @param count
 	 *            number of pages that this template will contribute to the
 	 *            template wizard
@@ -208,7 +208,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 
 	/**
 	 * Returns options that belong to the page with the given index.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            0-based index of the template page
 	 * @return @see #setPageCount(int)
@@ -223,7 +223,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 
 	/**
 	 * Returns options that are added to the provided wizard page.
-	 * 
+	 *
 	 * @param page
 	 *            wizard page that hosts required options
 	 * @return array of options added to the provided wizard page
@@ -240,7 +240,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 
 	/**
 	 * Returns the zero-based index of a page that hosts the the given option.
-	 * 
+	 *
 	 * @param option
 	 *            template option for which a page index is being requested
 	 * @return zero-based index of a page that hosts the option or -1 if none of
@@ -260,7 +260,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * obtained by creating a lookup key using the following rule:
 	 * "template.[section-id].name". This key is used to locate the label in the
 	 * plugin.properties file of the plug-in that contributed this template.
-	 * 
+	 *
 	 * @return the translated label of this template
 	 */
 	@Override
@@ -275,7 +275,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * rule: "template.[section-id].desc". This key is used to locate the label
 	 * in the plugin.properties file of the plug-in that contributed this
 	 * template.
-	 * 
+	 *
 	 * @return the translated description of this template
 	 */
 	@Override
@@ -289,7 +289,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * option is required and is currently not set. The flagging is done by
 	 * setting the page incomplete and setting the error message that uses
 	 * option's message label.
-	 * 
+	 *
 	 * @param option
 	 *            the option that is required and currently not set
 	 */
@@ -335,7 +335,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 
 	/**
 	 * Validate options given a template option
-	 * 
+	 *
 	 * @param source the template option to validate
 	 */
 	@Override

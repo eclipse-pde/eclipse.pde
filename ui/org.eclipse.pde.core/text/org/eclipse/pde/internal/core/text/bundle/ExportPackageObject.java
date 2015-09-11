@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - Bug 208967
@@ -186,7 +186,7 @@ public class ExportPackageObject extends PackageObject {
 
 	/**
 	 * Format the specified directive of the Export-Package manifest header.
-	 * 
+	 *
 	 * @param directiveName
 	 *            The name of the directive, e.g. x-friends or uses
 	 * @param sb
@@ -289,7 +289,7 @@ public class ExportPackageObject extends PackageObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#write(java.lang.String,
 	 *      java.io.PrintWriter)
 	 */
@@ -311,7 +311,7 @@ public class ExportPackageObject extends PackageObject {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void reconnectFriends() {
 		// Get all the friends

@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 
 /**
- * Content provider for the tree section of the context help editor.  Gets the children of 
+ * Content provider for the tree section of the context help editor.  Gets the children of
  * each element.
  * @since 3.4
  * @see CtxHelpTreeSection

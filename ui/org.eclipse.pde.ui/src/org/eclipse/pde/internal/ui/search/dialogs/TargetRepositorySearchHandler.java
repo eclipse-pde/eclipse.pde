@@ -1,4 +1,4 @@
-/******************************************************************************* 
+/*******************************************************************************
 * Copyright (c) 2010, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
@@ -30,7 +30,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * Command handler that pops up an IU selection dialog, the result of which is added to the active
  *  target.
- *  
+ *
  *  @since 3.6
  */
 public class TargetRepositorySearchHandler extends AbstractHandler {
@@ -71,7 +71,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler {
 
 	/**
 	 * Creates a new IUBundleContainer, adds it to the active target, then reloads the active target.
-	 * 
+	 *
 	 * @param units new installable units to include in the container
 	 * @param repositories list of repositories the container can use as a context or <code>null</code> to use all available repos
 	 */

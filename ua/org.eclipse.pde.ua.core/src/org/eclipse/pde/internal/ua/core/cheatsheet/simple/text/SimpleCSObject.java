@@ -38,7 +38,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
@@ -48,7 +48,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getModel
 	 * ()
@@ -59,7 +59,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getName
 	 * ()
@@ -68,7 +68,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getParent
 	 * ()
@@ -79,7 +79,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getSimpleCS
 	 * ()
@@ -90,7 +90,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getType
 	 * ()
@@ -99,7 +99,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#parse
 	 * (org.w3c.dom.Element)
@@ -112,7 +112,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#setModel
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModel)
@@ -123,7 +123,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter
 	 * (java.io.PrintWriter)
@@ -136,7 +136,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#
 	 * createDocumentTextNode()
 	 */

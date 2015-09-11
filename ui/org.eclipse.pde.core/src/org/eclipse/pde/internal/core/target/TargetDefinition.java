@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Target definition implementation.
- * 
+ *
  * @since 3.5
  */
 public class TargetDefinition implements ITargetDefinition {
@@ -81,7 +81,7 @@ public class TargetDefinition implements ITargetDefinition {
 	private int fSequenceNumber = -1;
 
 	/**
-	 * Constructs a target definition based on the given handle. 
+	 * Constructs a target definition based on the given handle.
 	 */
 	TargetDefinition(ITargetHandle handle) {
 		fHandle = handle;
@@ -246,7 +246,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 	/**
 	 * Clears the any models that are cached for the given container location.
-	 * 
+	 *
 	 * @param location location to clear cache for or <code>null</code> to clear all cached models
 	 */
 	public void flushCaches(String location) {
@@ -422,7 +422,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Gathers and returns all or included bundles in this target or <code>null</code> if
 	 * not resolved.
-	 * 
+	 *
 	 * @param allBundles whether to consider all bundles, or just those included/optional
 	 * @return bundles or <code>null</code>
 	 */
@@ -544,7 +544,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @param collection bundles to resolve against match criteria
 	 * @param included bundles to include or <code>null</code> if no restrictions
 	 * @param handleMissingBundles whether to create {@link InvalidTargetBundle}s for missing includes
-	 * 
+	 *
 	 * @return list of IResolvedBundle bundles that match this container's restrictions
 	 */
 	static List<TargetBundle> getMatchingBundles(TargetBundle[] collection, NameVersionDescriptor[] included, boolean handleMissingBundles) {
@@ -582,12 +582,12 @@ public class TargetDefinition implements ITargetDefinition {
 	 * keys of symbolic names and values are lists of {@link TargetBundle}'s available
 	 * that match the names.
 	 * <p>
-	 * If handleMissingBundles is <code>true</code>, a {@link InvalidTargetBundle} will be created and 
+	 * If handleMissingBundles is <code>true</code>, a {@link InvalidTargetBundle} will be created and
 	 * returned if the give info does not match up with a map entry. The returned bundle will have
 	 * a status giving more details on what is missing. If handleMissingBundles is <code>false</code>,
 	 * <code>null</code> will be returned.
 	 * </p>
-	 * 
+	 *
 	 * @param bundleMap available bundles to resolve against
 	 * @param info name and version to match against
 	 * @param handleMissingBundles whether to return an {@link InvalidTargetBundle} for a info that does not match with a map entry or <code>null</code>
@@ -659,7 +659,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 	/**
 	 * Build contents from the given stream.
-	 * 
+	 *
 	 * @param stream input stream
 	 * @throws CoreException if an error occurs
 	 */
@@ -689,7 +689,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 	/**
 	 * Persists contents to the given stream.
-	 * 
+	 *
 	 * @param stream output stream
 	 * @throws CoreException if an error occurs
 	 */
@@ -710,7 +710,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Throws a core exception with the given message and underlying exception (possibly
 	 * <code>null</code>).
-	 * 
+	 *
 	 * @param message message
 	 * @param e underlying cause of the exception or <code>null</code>
 	 * @throws CoreException
@@ -756,7 +756,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 	/**
 	 * Returns whether the content of this definition is equal to the content of the specified definition.
-	 * 
+	 *
 	 * @param definition
 	 * @return whether the content of this definition is equal to the content of the specified definition
 	 */
@@ -779,7 +779,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Returns whether the content of this definition is equivalent to the content of the
 	 * specified definition (excluding name/description).
-	 * 
+	 *
 	 * @param definition
 	 * @return whether the content of this definition is equivalent to the content of the
 	 * specified definition
@@ -814,7 +814,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 	/**
 	 * Returns whether the arrays have equal contents or are both <code>null</code>.
-	 * 
+	 *
 	 * @param objects1
 	 * @param objects2
 	 * @return whether the arrays have equal contents or are both <code>null</code>
@@ -902,12 +902,12 @@ public class TargetDefinition implements ITargetDefinition {
 	 * the locationPath is <code>null</code> the default target platform location
 	 * will be used.  The locationPath string may container string variables which
 	 * will be resolved.  This target definition may cache the feature models for
-	 * faster retrieval. 
-	 * 
+	 * faster retrieval.
+	 *
 	 * TODO When to clear the cache
-	 * 
+	 *
 	 * @param locationPath string path to the directory containing features.  May container string variables or be <code>null</code>
-	 * @return list of feature models found in the location, possible empty 
+	 * @return list of feature models found in the location, possible empty
 	 * @param monitor progress monitor
 	 * @throws CoreException if there is a problem substituting a string variable
 	 */
@@ -973,7 +973,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 	/**
 	 * Returns the set of IResolvedBundle available in this target that are not part of any features, will return a cached copy if available
-	 * 
+	 *
 	 * @see #getAllFeatures()
 	 * @return set of resolved bundles available in this target that don't belong to any features, possibly empty
 	 */
@@ -1007,10 +1007,10 @@ public class TargetDefinition implements ITargetDefinition {
 
 	/**
 	 * Convenience method to return the set of {@link TargetFeature}s that are included in this
-	 * target as well as any other included plug-ins as {@link TargetBundle}s (that are not part 
-	 * of the features). Also returns any bundles with error statuses.  Will return <code>null</code> 
+	 * target as well as any other included plug-ins as {@link TargetBundle}s (that are not part
+	 * of the features). Also returns any bundles with error statuses.  Will return <code>null</code>
 	 * if this target has not been resolved.
-	 * 
+	 *
 	 * @see #getAllFeatures()
 	 * @see #getOtherBundles()
 	 * @return set of {@link TargetFeature}s and {@link TargetBundle}s or <code>null</code>
@@ -1068,9 +1068,9 @@ public class TargetDefinition implements ITargetDefinition {
 
 	/**
 	 * Returns the current sequence number of this target.  Sequence numbers change
-	 * whenever something in the target that affects the set of features and bundles that 
+	 * whenever something in the target that affects the set of features and bundles that
 	 * would be resolved.
-	 * 
+	 *
 	 * @return the current sequence number
 	 */
 	public int getSequenceNumber() {
@@ -1087,7 +1087,7 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/**
-	 * Convenience method to set the sequence number to a specific 
+	 * Convenience method to set the sequence number to a specific
 	 * value. Used when loading a target from a persisted file.
 	 * @param value value to set the sequence number to
 	 */

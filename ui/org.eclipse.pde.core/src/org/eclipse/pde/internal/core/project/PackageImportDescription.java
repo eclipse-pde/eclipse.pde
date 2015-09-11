@@ -15,14 +15,14 @@ import org.eclipse.pde.core.project.IPackageImportDescription;
 
 /**
  * Describes a package import
- * 
+ *
  * @since 3.6
  */
 public class PackageImportDescription extends RequirementSpecification implements IPackageImportDescription {
 
 	/**
 	 * Constructs a package import.
-	 * 
+	 *
 	 * @param name
 	 * @param range
 	 * @param optional

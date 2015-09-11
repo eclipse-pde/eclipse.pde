@@ -15,14 +15,14 @@ import org.eclipse.pde.core.project.IRequiredBundleDescription;
 
 /**
  * Describes a required bundle.
- * 
+ *
  * @since 3.6
  */
 public class RequiredBundleDescription extends RequirementSpecification implements IRequiredBundleDescription {
 
 	/**
 	 * Constructs a required bundle description.
-	 * 
+	 *
 	 * @param name
 	 * @param range
 	 * @param reexport

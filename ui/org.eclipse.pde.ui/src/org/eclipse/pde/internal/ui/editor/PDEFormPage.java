@@ -117,7 +117,7 @@ public abstract class PDEFormPage extends FormPage {
 	/**
 	 * Return a help context id to have the help button at the top right of the form page open
 	 * the dynamic help for the page.
-	 * 
+	 *
 	 * @return a help context id or <code>null</code>
 	 */
 	protected String getHelpResource() {
@@ -272,9 +272,9 @@ public abstract class PDEFormPage extends FormPage {
 
 	/**
 	 * Programatically and recursively add focus listeners to the specified
-	 * composite and its children that track the last control to have focus 
+	 * composite and its children that track the last control to have focus
 	 * before a page change or the editor lost focus
-	 * 
+	 *
 	 * @param composite
 	 */
 	public void addLastFocusListeners(Composite composite) {
@@ -285,7 +285,7 @@ public abstract class PDEFormPage extends FormPage {
 			// Note that the controls listed below represent all the controls
 			// currently in use by all form pages in PDE.  In the future,
 			// more controls will have to be added.
-			// Could not add super class categories of controls because it 
+			// Could not add super class categories of controls because it
 			// would include things like tool bars that we don't want to track
 			// focus for.
 			if ((control instanceof Text) || (control instanceof Button) || (control instanceof Combo) || (control instanceof CCombo) || (control instanceof Tree) || (control instanceof Table) || (control instanceof Spinner) || (control instanceof Link) || (control instanceof List) || (control instanceof TabFolder) || (control instanceof CTabFolder) || (control instanceof Hyperlink) || (control instanceof FilteredTree)) {
@@ -299,12 +299,12 @@ public abstract class PDEFormPage extends FormPage {
 	}
 
 	/**
-	 * Add a focus listener to the specified control that tracks the last 
+	 * Add a focus listener to the specified control that tracks the last
 	 * control to have focus on this page.
 	 * When focus is gained by this control, it registers itself as the last
 	 * control to have focus.  The last control to have focus is stored in order
 	 * to be restored after a page change or editor loses focus.
-	 * 
+	 *
 	 * @param control
 	 */
 	private void addLastFocusListener(final Control control) {
@@ -337,11 +337,11 @@ public abstract class PDEFormPage extends FormPage {
 			}
 		} else {
 			// No focus control set
-			// Fallback on managed form selection mechanism by setting the 
+			// Fallback on managed form selection mechanism by setting the
 			// focus on this page itself.
 			// The managed form will set focus on the first managed part.
 			// Most likely this will turn out to be a section.
-			// In order for this to work properly, we must override the 
+			// In order for this to work properly, we must override the
 			// sections setFocus() method and set focus on a child control
 			// (preferrably first) that can practically take focus.
 			setFocus();
@@ -431,10 +431,10 @@ public abstract class PDEFormPage extends FormPage {
 	}
 
 	/**
-	 * Used to align the section client / decriptions of two section headers 
+	 * Used to align the section client / decriptions of two section headers
 	 * horizontally adjacent to each other.  The misalignment is caused by one
 	 * section header containing toolbar icons and the other not.
-	 * 
+	 *
 	 * @param masterSection
 	 * @param detailsSection
 	 */

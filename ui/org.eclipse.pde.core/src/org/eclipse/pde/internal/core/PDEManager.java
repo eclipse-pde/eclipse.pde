@@ -55,7 +55,7 @@ public class PDEManager {
 		BundleDescription desc = model.getBundleDescription();
 
 		if (desc == null && model.getUnderlyingResource() != null) {
-			// the model may be an editor model. 
+			// the model may be an editor model.
 			// editor models don't carry a bundle description
 			// get the core model counterpart.
 			IProject project = model.getUnderlyingResource().getProject();
@@ -96,7 +96,7 @@ public class PDEManager {
 	/**
 	 * Returns the bundle localization file specified by the manifest header or the default location.  The
 	 * file may not exist.
-	 * 
+	 *
 	 * @param model the plug-in to lookup the localization for
 	 * @return the bundle localization file location or the default location
 	 */

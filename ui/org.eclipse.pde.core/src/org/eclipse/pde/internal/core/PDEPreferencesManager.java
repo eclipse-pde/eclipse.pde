@@ -38,7 +38,7 @@ public final class PDEPreferencesManager {
 	 * Register the given listener for notification of preference changes.
 	 * Calling this method multiple times with the same listener has no effect. The
 	 * given listener argument must not be <code>null</code>.
-	 * 
+	 *
 	 * @param listener the preference change listener to register
 	 * @see #removePreferenceChangeListener(IEclipsePreferences.IPreferenceChangeListener)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener
@@ -48,16 +48,16 @@ public final class PDEPreferencesManager {
 	}
 
 	/**
-	 * Returns the <code>boolean</code> value  associated with the specified <code>key</code> 
-	 * in the instance scope. 
-	 * 
+	 * Returns the <code>boolean</code> value  associated with the specified <code>key</code>
+	 * in the instance scope.
+	 *
 	 * <p>
 	 * Returns the value specified in the default scope if there is no value associated with the
 	 * <code>key</code> in the instance scope, the backing store is inaccessible, or if the associated
-	 * value is something other than "true" or "false", ignoring case. Use {@link #setValue(String, boolean)} 
+	 * value is something other than "true" or "false", ignoring case. Use {@link #setValue(String, boolean)}
 	 * to set the value of this preference key.
 	 * </p>
-	 * 
+	 *
 	 * @param key <code>key</code> whose associated value is to be returned as a
 	 *        <code>boolean</code>.
 	 * @return the <code>boolean</code> value associated with <code>key</code>, or
@@ -72,16 +72,16 @@ public final class PDEPreferencesManager {
 	}
 
 	/**
-	 * Returns the <code>boolean</code> value associated with the specified <code>key</code> 
-	 * in the default scope. 
-	 * 
+	 * Returns the <code>boolean</code> value associated with the specified <code>key</code>
+	 * in the default scope.
+	 *
 	 * <p>
 	 * Returns <code>false</code> if there is no value associated with the
 	 * <code>key</code> in the default scope, the backing store is inaccessible, or if the associated
-	 * value is something other than "true" or "false", ignoring case. Use {@link #setDefault(String, boolean)} 
+	 * value is something other than "true" or "false", ignoring case. Use {@link #setDefault(String, boolean)}
 	 * to set the default value of this preference key.
 	 * </p>
-	 * 
+	 *
 	 * @param key <code>key</code> whose associated value is to be returned as a
 	 *        <code>boolean</code>.
 	 * @return the <code>boolean</code> value associated with <code>key</code>, or
@@ -94,16 +94,16 @@ public final class PDEPreferencesManager {
 	}
 
 	/**
-	 * Returns the <code>int</code> value associated with the specified <code>key</code> 
-	 * in the default scope. 
-	 * 
+	 * Returns the <code>int</code> value associated with the specified <code>key</code>
+	 * in the default scope.
+	 *
 	 * <p>
 	 * Returns <code>0</code> if there is no value associated with the
 	 * <code>key</code> in the default scope, the backing store is inaccessible, or if the associated
-	 * value is something that can not be parsed as an integer value. Use {@link #setDefault(String, int)} 
+	 * value is something that can not be parsed as an integer value. Use {@link #setDefault(String, int)}
 	 * to set the default value of this preference key.
 	 * </p>
-	 * 
+	 *
 	 * @param key <code>key</code> whose associated value is to be returned as a
 	 *        <code>int</code>.
 	 * @return the <code>int</code> value associated with <code>key</code>, or
@@ -116,16 +116,16 @@ public final class PDEPreferencesManager {
 	}
 
 	/**
-	 * Returns the value associated with the specified <code>key</code> 
-	 * in the default scope. 
-	 * 
+	 * Returns the value associated with the specified <code>key</code>
+	 * in the default scope.
+	 *
 	 * <p>
 	 * Returns empty string <code>""</code> if there is no value associated with the
 	 * <code>key</code> in the default scope, the backing store is inaccessible, or if the associated
-	 * value is something that can not be parsed as an integer value. Use {@link #setDefault(String, String)} 
+	 * value is something that can not be parsed as an integer value. Use {@link #setDefault(String, String)}
 	 * to set the default value of this preference key.
 	 * </p>
-	 * 
+	 *
 	 * @param key <code>key</code> whose associated value is to be returned.
 	 * @return the value associated with <code>key</code>, or
 	 *         empty string <code>""</code> if the associated value does not exist in default scope.
@@ -136,16 +136,16 @@ public final class PDEPreferencesManager {
 	}
 
 	/**
-	 * Returns the <code>int</code> value associated with the specified <code>key</code> 
-	 * in the instance scope. 
-	 * 
+	 * Returns the <code>int</code> value associated with the specified <code>key</code>
+	 * in the instance scope.
+	 *
 	 * <p>
 	 * Returns the value specified in the default scope if there is no value associated with the
 	 * <code>key</code> in the instance scope, the backing store is inaccessible, or if the associated
-	 * value is something that can not be parsed as an integer value. Use {@link #setValue(String, int)} 
+	 * value is something that can not be parsed as an integer value. Use {@link #setValue(String, int)}
 	 * to set the value of this preference key.
 	 * </p>
-	 * 
+	 *
 	 * @param key key whose associated value is to be returned as an <code>int</code>.
 	 * @return the <code>int</code> value associated with <code>key</code>, or
 	 *         <code>0</code> if the associated value does not exist in either scope or cannot
@@ -159,14 +159,14 @@ public final class PDEPreferencesManager {
 	}
 
 	/**
-	 * Returns the value associated with the specified <code>key</code> in the instance scope. 
-	 * 
+	 * Returns the value associated with the specified <code>key</code> in the instance scope.
+	 *
 	 * <p>
 	 * Returns the value specified in the default scope if there is no value associated with the
-	 * <code>key</code> in the instance scope, the backing store is inaccessible. Use {@link #setValue(String, String)} 
+	 * <code>key</code> in the instance scope, the backing store is inaccessible. Use {@link #setValue(String, String)}
 	 * to set the value of this preference key.
 	 * </p>
-	 * 
+	 *
 	 * @param key key whose associated value is to be returned.
 	 * @return the value associated with <code>key</code>, or
 	 *         <code>null</code> if the associated value does not exist in either scope.
@@ -182,7 +182,7 @@ public final class PDEPreferencesManager {
 	 * De-register the given listener from receiving notification of preference changes
 	 * Calling this method multiple times with the same listener has no
 	 * effect. The given listener argument must not be <code>null</code>.
-	 * 
+	 *
 	 * @param listener the preference change listener to remove
 	 * @see #addPreferenceChangeListener(IEclipsePreferences.IPreferenceChangeListener)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener
@@ -205,7 +205,7 @@ public final class PDEPreferencesManager {
 	/**
 	 * Associates the specified <code>boolean</code> value with the specified key in the default scope.
 	 * This method is intended for use in conjunction with the {@link #getDefaultBoolean(String)} method.
-	 * 
+	 *
 	 * @param key <code>key</code> with which the string form of value is to be associated.
 	 * @param value <code>value</code> to be associated with <code>key</code>.
 	 * @see #getDefaultBoolean(String)
@@ -218,7 +218,7 @@ public final class PDEPreferencesManager {
 	/**
 	 * Associates the specified <code>int</code> value with the specified key in the default scope.
 	 * This method is intended for use in conjunction with the {@link #getDefaultInt(String)} method.
-	 * 
+	 *
 	 * @param key <code>key</code> with which the string form of value is to be associated.
 	 * @param value <code>value</code> to be associated with <code>key</code>.
 	 * @see #getDefaultInt(String)
@@ -231,7 +231,7 @@ public final class PDEPreferencesManager {
 	/**
 	 * Associates the specified <code>String</code> value with the specified key in the default scope.
 	 * This method is intended for use in conjunction with the {@link #getDefaultString(String)} method.
-	 * 
+	 *
 	 * @param key <code>key</code> with which the string form of value is to be associated.
 	 * @param value <code>value</code> to be associated with <code>key</code>.
 	 * @see #getDefaultString(String)
@@ -242,7 +242,7 @@ public final class PDEPreferencesManager {
 	}
 
 	/**
-	 * Sets the current value of the preference with the given name back to its default value. 
+	 * Sets the current value of the preference with the given name back to its default value.
 	 * The given name must not be <code>null</code>.
 	 *
 	 * @param key the name of the preference
@@ -254,7 +254,7 @@ public final class PDEPreferencesManager {
 	/**
 	 * Associates the specified <code>boolean</code> value with the specified key in the instance scope.
 	 * This method is intended for use in conjunction with the {@link #getBoolean(String)} method.
-	 * 
+	 *
 	 * @param key <code>key</code> with which the <code>boolean</code> value is to be associated.
 	 * @param value <code>value</code> to be associated with <code>key</code>.
 	 * @see #getBoolean(String)
@@ -268,7 +268,7 @@ public final class PDEPreferencesManager {
 	/**
 	 * Associates the specified <code>int</code> value with the specified key in the instance scope.
 	 * This method is intended for use in conjunction with the {@link #getInt(String)} method.
-	 * 
+	 *
 	 * @param key <code>key</code> with which the <code>int</code> value is to be associated.
 	 * @param value <code>value</code> to be associated with <code>key</code>.
 	 * @see #getInt(String)
@@ -282,7 +282,7 @@ public final class PDEPreferencesManager {
 	/**
 	 * Associates the specified <code>String</code> value with the specified key in the instance scope.
 	 * This method is intended for use in conjunction with the {@link #getString(String)} method.
-	 * 
+	 *
 	 * @param key <code>key</code> with which the <code>String</code> value is to be associated.
 	 * @param value <code>value</code> to be associated with <code>key</code>.
 	 * @see #getString(String)
@@ -298,7 +298,7 @@ public final class PDEPreferencesManager {
 	 * or removes the preference if the value is equal to the value in the default scope.
 	 * <p>
 	 * This method is intended for use in conjunction with the {@link #getBoolean(String)} method.
-	 * 
+	 *
 	 * @param key <code>key</code> with which the <code>boolean</code> value is to be associated
 	 * @param value <code>value</code> to be associated with <code>key</code>
 	 * @see #getBoolean(String)
@@ -318,7 +318,7 @@ public final class PDEPreferencesManager {
 	 * or removes the preference if the value is equal to the value in the default scope.
 	 * <p>
 	 * This method is intended for use in conjunction with the {@link #getInt(String)} method.
-	 * 
+	 *
 	 * @param key <code>key</code> with which the <code>int</code> value is to be associated
 	 * @param value <code>value</code> to be associated with <code>key</code>
 	 * @see #getInt(String)
@@ -338,7 +338,7 @@ public final class PDEPreferencesManager {
 	 * or removes the preference if the value is equal to the value in the default scope.
 	 * <p>
 	 * This method is intended for use in conjunction with the {@link #getString(String)} method.
-	 * 
+	 *
 	 * @param key <code>key</code> with which the <code>String</code> value is to be associated
 	 * @param value <code>value</code> to be associated with <code>key</code>
 	 * @see #getString(String)
@@ -356,7 +356,7 @@ public final class PDEPreferencesManager {
 	/**
 	 * Forces any changes in the contents of the instance node and its descendants to
 	 * the persistent store.
-	 * 
+	 *
 	 * @throws BackingStoreException if this operation cannot be completed due
 	 *         to a failure in the backing store, or inability to communicate
 	 *         with it.

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -512,7 +512,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			// Check the file for the key
 			return super.getPropertyEditorPageKey(input);
 		}
-		// Get the persistent editor page key from the project 
+		// Get the persistent editor page key from the project
 		try {
 			return project.getPersistentProperty(IPDEUIConstants.PROPERTY_MANIFEST_EDITOR_PAGE_KEY);
 		} catch (CoreException e) {

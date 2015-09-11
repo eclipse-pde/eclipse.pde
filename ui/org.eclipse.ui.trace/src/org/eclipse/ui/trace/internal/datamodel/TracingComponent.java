@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ public class TracingComponent extends AbstractTracingNode {
 
 	/**
 	 * Constructor for a new {@link TracingComponent}
-	 * 
+	 *
 	 * @param element
 	 *            A non-null configuration element
 	 */
@@ -171,7 +171,7 @@ public class TracingComponent extends AbstractTracingNode {
 
 	/**
 	 * Add a set of bundles that match the specified name to the list of bundles.
-	 * 
+	 *
 	 * @param name
 	 *            A name of a bundle to add. It could be a regular expression.
 	 */
@@ -207,7 +207,7 @@ public class TracingComponent extends AbstractTracingNode {
 
 	/**
 	 * Add the bundles found in the specified {@link IConfigurationElement} instance to this {@link TracingComponent}.
-	 * 
+	 *
 	 * @param element
 	 *            A non-null {@link IConfigurationElement} instance of the 'tracingComponent'
 	 */
@@ -226,7 +226,7 @@ public class TracingComponent extends AbstractTracingNode {
 
 	/**
 	 * Add a set of bundles that match the specified name to the list of bundles.
-	 * 
+	 *
 	 * @param name
 	 *            A name of a bundle to add. It could be a regular expression.
 	 * @param isConsumed
@@ -241,7 +241,7 @@ public class TracingComponent extends AbstractTracingNode {
 
 	/**
 	 * Removes a specific bundle from from the list of bundles
-	 * 
+	 *
 	 * @param bundle
 	 *            A {@link Bundle} to remove from the set of bundles belonging to this {@link TracingComponent}
 	 */
@@ -253,7 +253,7 @@ public class TracingComponent extends AbstractTracingNode {
 
 	/**
 	 * A {@link TracingComponent} is consumed if it contributes no bundles.
-	 * 
+	 *
 	 * @return Returns true if this {@link TracingComponent} contains no bundles; Otherwise, false is returned.
 	 */
 	public boolean isConsumed() {
@@ -262,7 +262,7 @@ public class TracingComponent extends AbstractTracingNode {
 
 	/**
 	 * Accessor for the id value for this {@link TracingComponent}
-	 * 
+	 *
 	 * @return The id value for this {@link TracingComponent}
 	 */
 	public String getId() {
@@ -272,7 +272,7 @@ public class TracingComponent extends AbstractTracingNode {
 	/**
 	 * Accessor for an array of the {@link Bundle} objects for which this {@link TracingComponent} provides tracing
 	 * options.
-	 * 
+	 *
 	 * @return A {@link Bundle} array
 	 */
 	public Bundle[] getBundles() {

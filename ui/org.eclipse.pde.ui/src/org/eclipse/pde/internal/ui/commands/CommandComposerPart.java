@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,12 +37,12 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * <li>setPresetCommand(ParameterizedCommand)</li>
  * <li>setSnapshotContext(IEvaluationContext) - optional</li>
  * </ul>
- * 
+ *
  * should all be called before creating the actual control:
- * 
+ *
  * Scrolled form = CommandComposerPart#createForm(Composite)
  * CommandComposerPart#createPartControl(form)
- * 
+ *
  */
 public class CommandComposerPart implements ISelectionChangedListener {
 
@@ -82,7 +82,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	/**
 	 * Set a snapshot context to be used by the command details section of this
 	 * part.
-	 * 
+	 *
 	 * @param context
 	 *            the context to use. May be <code>null</code>.
 	 * @since 3.3

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     David Carver - STAR - bug 213255
@@ -614,7 +614,7 @@ public class Schema extends PlatformObject implements ISchema {
 		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
 		if (aname == null)
 			return null;
-		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$	
+		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$
 		int minOccurs = getMinOccurs(elementNode);
 		int maxOccurs = getMaxOccurs(elementNode);
 
@@ -921,7 +921,7 @@ public class Schema extends PlatformObject implements ISchema {
 	 * Sets a list of additional schema relative or absolute paths to search when
 	 * trying to find an included schema.  Must be set before {@link #load()} is
 	 * called.
-	 * 
+	 *
 	 * @param searchPath the list of paths to search for included schema or <code>null</code> for no additional paths
 	 */
 	public void setSearchPath(List<IPath> searchPath) {

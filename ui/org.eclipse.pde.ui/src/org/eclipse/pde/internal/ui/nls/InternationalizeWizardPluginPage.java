@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
- * The first page of the InternationalizeWizard. This page allows the user to 
+ * The first page of the InternationalizeWizard. This page allows the user to
  * select the desired plug-ins for internationalization. These could be plug-ins
  * in the user's workspace or external ones.
  */

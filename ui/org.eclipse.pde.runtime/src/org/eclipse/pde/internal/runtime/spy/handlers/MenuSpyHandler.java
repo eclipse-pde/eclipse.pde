@@ -87,7 +87,7 @@ public class MenuSpyHandler extends AbstractHandler implements Listener {
 
 		if (event.type == SWT.Selection) {
 			Shell shell = event.display.getActiveShell();
-			if (shell == null) { // see bug 434317 
+			if (shell == null) { // see bug 434317
 				if (event.widget instanceof Menu) {
 					shell = ((Menu) event.widget).getShell();
 				} else if (event.widget instanceof MenuItem) {

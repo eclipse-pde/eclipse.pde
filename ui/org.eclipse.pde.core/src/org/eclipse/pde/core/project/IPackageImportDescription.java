@@ -15,7 +15,7 @@ import org.eclipse.osgi.service.resolver.VersionRange;
 /**
  * Describes a package import. Instances of this class can be created
  * via {@link IBundleProjectService#newPackageImport(String, VersionRange, boolean)}.
- * 
+ *
  * @since 3.6
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -24,7 +24,7 @@ public interface IPackageImportDescription {
 
 	/**
 	 * Returns the fully qualified name of the imported package.
-	 * 
+	 *
 	 * @return fully qualified name of the imported package
 	 */
 	public String getName();
@@ -32,14 +32,14 @@ public interface IPackageImportDescription {
 	/**
 	 * Returns the version constraint of the imported package or <code>null</code>
 	 * if unspecified.
-	 * 
+	 *
 	 * @return version constraint or <code>null</code>
 	 */
 	public VersionRange getVersionRange();
 
 	/**
 	 * Returns whether the package import is optional.
-	 * 
+	 *
 	 * @return whether optional
 	 */
 	public boolean isOptional();

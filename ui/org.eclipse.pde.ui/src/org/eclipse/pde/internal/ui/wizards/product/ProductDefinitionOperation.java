@@ -81,7 +81,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 
 	protected String createTargetPackage() {
 		// Package name addition to create a location for containing
-		// any classes required by the splash handlers. 
+		// any classes required by the splash handlers.
 		String packageName = getFormattedPackageName(fPluginId);
 		// Unqualifed
 		if (packageName.length() == 0) {
@@ -347,8 +347,8 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		if (value != null && value.length() > 0) {
 			element = parent.getModel().getFactory().createElement(parent);
 			element.setName("property"); //$NON-NLS-1$
-			element.setAttribute("name", name); //$NON-NLS-1$ 
-			element.setAttribute("value", value); //$NON-NLS-1$ 
+			element.setAttribute("name", name); //$NON-NLS-1$
+			element.setAttribute("value", value); //$NON-NLS-1$
 		}
 		return element;
 	}
@@ -458,7 +458,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, getShell());
 		if (status.getSeverity() != IStatus.OK)
-			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$ 
+			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$
 
 		ModelModification mod = new ModelModification(file) {
 			@Override

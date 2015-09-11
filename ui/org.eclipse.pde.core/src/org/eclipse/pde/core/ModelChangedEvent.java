@@ -12,7 +12,7 @@ package org.eclipse.pde.core;
 
 /**
  * @see IModelChangedEvent
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  * @since 2.0
@@ -26,7 +26,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 
 	/**
 	 * The constructor of the event.
-	 * 
+	 *
 	 * @param provider
 	 *            the change provider
 	 * @param type
@@ -45,7 +45,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 
 	/**
 	 * A costructor that should be used for changes of object properties.
-	 * 
+	 *
 	 * @param provider
 	 *            the event provider
 	 * @param object

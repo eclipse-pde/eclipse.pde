@@ -8,7 +8,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 240737
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931     
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 

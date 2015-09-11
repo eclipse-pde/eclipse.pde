@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.team.core.RepositoryProvider;
 
 public abstract class WorkspaceModelManager extends AbstractModelManager implements IResourceChangeListener, IResourceDeltaVisitor {
 
-	public static boolean isPluginProject(IProject project) {	
+	public static boolean isPluginProject(IProject project) {
 		if (project == null)
 			return false;
 		if (project.isOpen())
@@ -107,7 +107,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	@Override
@@ -160,7 +160,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 					case IResource.FOLDER :
 						return isInterestingFolder((IFolder) resource);
 					case IResource.FILE :
-						// do not process 
+						// do not process
 						if (isContentChange(delta)) {
 							handleFileDelta(delta);
 							return false;

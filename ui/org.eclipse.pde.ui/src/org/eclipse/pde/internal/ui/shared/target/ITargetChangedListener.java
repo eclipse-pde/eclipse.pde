@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
  * Listener for UI components that modify the contents of target definitions.
  * Whenever the contents of the target changes the listener will be called so
  * the target can be resolved and the UI updated.
- * 
+ *
  * @see TargetLocationsGroup
  * @see TargetContentsGroup
  * @see TargetDefinitionContentPage

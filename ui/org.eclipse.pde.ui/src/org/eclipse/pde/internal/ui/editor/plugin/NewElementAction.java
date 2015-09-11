@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brian de Alwis (MTI) - bug 429420
@@ -53,7 +53,7 @@ public class NewElementAction extends Action {
 			newElement.setName(getElementName());
 			((PluginElementNode) newElement).setParentNode((IDocumentElementNode) parent);
 
-			// If there is an associated schema, recursively auto-insert 
+			// If there is an associated schema, recursively auto-insert
 			// required child elements and attributes respecting multiplicity
 			if (elementInfo != null) {
 				XMLInsertionComputer.computeInsertion(elementInfo, newElement);

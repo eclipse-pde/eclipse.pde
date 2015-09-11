@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ public class PluginPathFinder {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
-	 * 
+	 *
 	 * @param platformHome
 	 * @param linkFile
 	 * @param features false for plugins, true for features
@@ -62,7 +62,7 @@ public class PluginPathFinder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param platformHome
 	 * @param features false for plugin sites, true for feature sites
 	 * @return array of ".../plugins" or ".../features" Files
@@ -75,7 +75,7 @@ public class PluginPathFinder {
 		if (file.exists())
 			sites.add(file);
 
-		File[] linkFiles = new File(platformHome + IPath.SEPARATOR + "links").listFiles(); //$NON-NLS-1$	
+		File[] linkFiles = new File(platformHome + IPath.SEPARATOR + "links").listFiles(); //$NON-NLS-1$
 		if (linkFiles != null) {
 			for (int i = 0; i < linkFiles.length; i++) {
 				String path = getSitePath(platformHome, linkFiles[i], features);
@@ -102,9 +102,9 @@ public class PluginPathFinder {
 	 * Should not be called in PDE. It should only be used to confirm test results match the
 	 * old way of doing things (before ITargetPlatformService).
 	 * </p>
-	 * 
+	 *
 	 * @param platformHome the target platform location
-	 * @param installedOnly whether to check for a bundles.info or another configuration file to 
+	 * @param installedOnly whether to check for a bundles.info or another configuration file to
 	 * 		determine what bundles are installed rather than what bundles simply exist in the plugins folder
 	 * @return list of URL plug-in locations
 	 */
@@ -154,9 +154,9 @@ public class PluginPathFinder {
 	}
 
 	/**
-	 * Returns a list of file URLs for plug-ins or features found in a platform.xml file or in the default 
+	 * Returns a list of file URLs for plug-ins or features found in a platform.xml file or in the default
 	 * directory ("plugins"/"features") if no platform.xml is available.
-	 * 
+	 *
 	 * @param platformHome base location for the installation, used to search for platform.xml
 	 * @param findFeatures if <code>true</code> will return paths to features, otherwise will return paths to plug-ins.
 	 * @return a list of URL paths to plug-ins or features.  Possibly empty if the platform.xml had no entries or the default directory had no valid files
@@ -217,7 +217,7 @@ public class PluginPathFinder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param config
 	 * @param features true for features false for plugins
 	 * @return URLs for features or plugins on the site

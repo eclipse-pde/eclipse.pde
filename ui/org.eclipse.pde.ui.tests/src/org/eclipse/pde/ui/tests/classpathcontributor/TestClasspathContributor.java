@@ -25,7 +25,7 @@ import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
  *
  */
 public class TestClasspathContributor implements IClasspathContributor {
-	
+
 	public static List entries;
 	public static List entries2;
 	static {

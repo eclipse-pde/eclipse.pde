@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,10 +33,10 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Launches the application in the specified mode, or does nothing if the user canceled
 	 * the launch when offered to select one of several available launch configurations.
-	 * 
-	 * @param mode 
+	 *
+	 * @param mode
 	 * 			mode of launch (run, debug or profile)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.ILaunchManager
 	 */
 	protected void launch(String mode) {
@@ -56,9 +56,9 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	 * one will be launched</li>
 	 * </ul>
 	 * </p>
-	 * @param mode 
+	 * @param mode
 	 * 			mode of launch (run, debug or profile)
-	 * 
+	 *
 	 * @return a launch configuration to run or <code>null</code> if launch is canceled
 	 */
 	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
@@ -77,7 +77,7 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Returns a list of existing launch configurations that are suitable to launch to selected
 	 * application or framework.
-	 * 
+	 *
 	 * @return an array of launch configurations
 	 */
 	private ILaunchConfiguration[] getLaunchConfigurations() {
@@ -98,10 +98,10 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Display to the user a list of matching existing launch configurations and return the user's selection.
-	 * 
-	 * @param configs  
+	 *
+	 * @param configs
 	 * 			an array of matching existing launch configurations
-	 * @param mode 
+	 * @param mode
 	 * 			mode of launch
 	 * @return
 	 * 			the launch configuration selected by the user or <code>null</code> if Cancel was pressed
@@ -124,8 +124,8 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Create, initialize and return a new launch configuration of the given type
-	 * 
-	 * @return a new, properly-initialized launch configuration 
+	 *
+	 * @return a new, properly-initialized launch configuration
 	 */
 	private ILaunchConfiguration createNewConfiguration() {
 		try {
@@ -145,7 +145,7 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Returns the name assigned to the new launch configuration
-	 * 
+	 *
 	 * @return a name for the new launch configuration
 	 */
 	protected String getName(ILaunchConfigurationType type) {
@@ -155,10 +155,10 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Initialize launch attributes on the new launch configuration.
 	 * Must be overridden by subclasses.
-	 * 
-	 * @param wc 
+	 *
+	 * @param wc
 	 * 			the launch configuration working copy to be initialize
-	 * 
+	 *
 	 * @see IPDELauncherConstants
 	 */
 	protected abstract void initializeConfiguration(ILaunchConfigurationWorkingCopy wc);
@@ -166,20 +166,20 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Returns the launch configuration type name.
 	 * Must be overridden by subclasses
-	 * 
+	 *
 	 * @return the launch configuration type name
 	 */
 	protected abstract String getLaunchConfigurationTypeName();
 
 	/**
 	 * Determines whether a given launch configuration is a good match given the current application or framework
-	 * being launched.  This method must be overridden by subclasses.  Its purpose is to add criteria on 
+	 * being launched.  This method must be overridden by subclasses.  Its purpose is to add criteria on
 	 * what makes a good match or not.
-	 * 
-	 * @param configuration 
+	 *
+	 * @param configuration
 	 * 			the launch configuration being evaluated
 	 * @return
-	 * 		<code>true</code> if the launch configuration is a good match for the application or 
+	 * 		<code>true</code> if the launch configuration is a good match for the application or
 	 * 		framework being launched, <code>false</code> otherwise.
 	 */
 	protected abstract boolean isGoodMatch(ILaunchConfiguration configuration);

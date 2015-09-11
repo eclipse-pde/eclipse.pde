@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
  * Wizard to edit a target definition, creates a working copy to edit.  Any changes are
- * not saved by this wizard and must be done by the client.  The edited target 
+ * not saved by this wizard and must be done by the client.  The edited target
  * can be accessed using {@link #getTargetDefinition()}
  */
 public class EditTargetDefinitionWizard extends Wizard {
@@ -32,9 +32,9 @@ public class EditTargetDefinitionWizard extends Wizard {
 
 	/**
 	 * Constructs a wizard to edit the given definition.
-	 * 
+	 *
 	 * @param definition target definition being edited
-	 * @param createWorkingCopy if true, a copy of the definition will be created to edit, if false the definition will be edited directly 
+	 * @param createWorkingCopy if true, a copy of the definition will be created to edit, if false the definition will be edited directly
 	 */
 	public EditTargetDefinitionWizard(ITargetDefinition definition, boolean createWorkingCopy) {
 		setTargetDefinition(definition, createWorkingCopy);
@@ -43,7 +43,7 @@ public class EditTargetDefinitionWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		// Do nothing, edited target is available 
+		// Do nothing, edited target is available
 		return true;
 
 	}
@@ -56,7 +56,7 @@ public class EditTargetDefinitionWizard extends Wizard {
 	/**
 	 * Sets the target definition to be edited. Will delegate to pages to
 	 * refresh controls if already created.
-	 * 
+	 *
 	 * @param definition target definition
 	 * @param createWorkingCopy if true, a copy of the definition will be created to edit, if false the definition will be edited directly
 	 */
@@ -90,7 +90,7 @@ public class EditTargetDefinitionWizard extends Wizard {
 
 	/**
 	 * Returns the target definition being edited
-	 * 
+	 *
 	 * @return target definition
 	 */
 	public ITargetDefinition getTargetDefinition() {

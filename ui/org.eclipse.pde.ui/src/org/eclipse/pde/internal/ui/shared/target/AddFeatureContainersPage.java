@@ -32,7 +32,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page for creating one or more feature bundle containers.
- * 
+ *
  * @see AddBundleContainerWizard
  * @see AddBundleContainerSelectionPage
  * @see ITargetLocation
@@ -231,7 +231,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 
 	/**
 	 * Loads the features in a directory
-	 * 
+	 *
 	 * @param result list to put generated IFeatureModel objects into
 	 * @param path location to search for features
 	 * @return multi-status containing any problems that occurred
@@ -259,7 +259,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 
 	/**
 	 * Creates a IFeatureModel representing the feature in the given directory and adds it
-	 * to the result list.  
+	 * to the result list.
 	 * @param dir direcotry where the feature resides
 	 * @param manifest manifest file of the feature
 	 * @param result list to add the result to

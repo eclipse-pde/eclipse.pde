@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Defines the Page to get the location where the new target file has to be created
- * 
+ *
  * @since 3.5
  */
 public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
@@ -45,7 +45,7 @@ public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
 
 	/**
 	 * The list of filenames that are not allowed
-	 * 
+	 *
 	 * @param fFilterList <code>Collection</code> of filenames as <code>IPath</code>
 	 */
 	protected void setFilter(Collection<?> filterFileList) {

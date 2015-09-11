@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -271,7 +271,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 
 	private void handleConvert() {
 		try {
-			// remove listeners of Info section before we convert.  If we don't 
+			// remove listeners of Info section before we convert.  If we don't
 			// we may get a model changed event while disposing the page.  Bug 156414
 			fInfoSection.removeListeners();
 			PDEFormEditor editor = getPDEEditor();
@@ -312,7 +312,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			}
 		}
 	}
-	
+
 	private void handleCommandException() {
 		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_ErrorOccurred, PDEUIMessages.OverviewPage_InstallNewSoftwareCouldNotBeOpened);
 	}

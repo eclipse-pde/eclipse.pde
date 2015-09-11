@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -58,7 +58,7 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		fOutlineSelectionHandler = handler;
 		// Initialize the other fields
 		initialize();
-		// Create all controls early to preserve the life cycle of the original 
+		// Create all controls early to preserve the life cycle of the original
 		// implementation.
 		create();
 	}
@@ -116,10 +116,10 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		// NOTE: Instructions to implement for PDE form pages:
 		// Need to call PDEFormEditor.getFormOutline()
 		// Specify PDE form editor as input
-		// Need to adjust commandId="org.eclipse.pde.ui.quickOutline" 
+		// Need to adjust commandId="org.eclipse.pde.ui.quickOutline"
 		// scope:  contextId="org.eclipse.ui.textEditorScope"
 		// SEE org.eclipse.ui.contexts.window
-		// TODO: MP: QO: LOW: Implement bi-directional support between form and source page for manifest		
+		// TODO: MP: QO: LOW: Implement bi-directional support between form and source page for manifest
 
 		int style = SWT.H_SCROLL | SWT.V_SCROLL;
 		// Create the tree
@@ -141,7 +141,7 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		fTreeViewer.setLabelProvider(fTreeLabelProvider);
 		// Create the outline sorter (to be set on the sort action)
 		fTreeViewerComparator = fOutlineContentCreator.createOutlineComparator();
-		// Set the comparator to null (sort action will be disabled initially 
+		// Set the comparator to null (sort action will be disabled initially
 		// because of this)
 		// Create the default outline sorter (Most like this will just return
 		// null to indicate sorting disabled
@@ -283,7 +283,7 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		 * computed in Window#getInitialLocation, which will center it in the parent shell / main
 		 * monitor, which is wrong for two reasons:
 		 * - we want to center over the editor / subject control, not the parent shell
-		 * - the center is computed via the initalSize, which may be also wrong since the size may 
+		 * - the center is computed via the initalSize, which may be also wrong since the size may
 		 *   have been updated since via min/max sizing of AbstractInformationControlManager.
 		 * In that case, override the location with the one computed by the manager. Note that
 		 * the call to constrainShellSize in PopupDialog.open will still ensure that the shell is
@@ -353,7 +353,7 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 	private void createUIWidgetFilterText(Composite parent) {
 		// Create the widget
 		fFilterText = new Text(parent, SWT.NONE);
-		// Set the font 
+		// Set the font
 		GC gc = new GC(parent);
 		gc.setFont(parent.getFont());
 		FontMetrics fontMetrics = gc.getFontMetrics();

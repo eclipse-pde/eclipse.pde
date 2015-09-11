@@ -45,7 +45,7 @@ public class PDEPerfTesterUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void reset() {
 		fDuration = 0;
@@ -57,7 +57,7 @@ public class PDEPerfTesterUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void start() {
 		fIteration++;
@@ -65,7 +65,7 @@ public class PDEPerfTesterUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void stop() {
 		fEnd = System.currentTimeMillis();
@@ -73,7 +73,7 @@ public class PDEPerfTesterUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void calculateDuration() {
 		fDuration = (fEnd - fStart);

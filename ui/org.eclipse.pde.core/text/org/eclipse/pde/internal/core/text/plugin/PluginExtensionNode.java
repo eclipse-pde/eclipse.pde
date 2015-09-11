@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -160,7 +160,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 		super.reconnect(parent, model);
 		// Transient Field:  Schema
 		// Not necessary to reconnect schema.
-		// getSchema will retrieve the schema on demand if it is null		
+		// getSchema will retrieve the schema on demand if it is null
 		fSchema = null;
 	}
 

@@ -36,7 +36,7 @@ import org.eclipse.ui.IURIEditorInput;
  */
 public class DSInputContext extends XMLInputContext {
 
-	public static final String CONTEXT_ID = "ds-context"; //$NON-NLS-1$	
+	public static final String CONTEXT_ID = "ds-context"; //$NON-NLS-1$
 
 	/**
 	 * @param editor
@@ -51,7 +51,7 @@ public class DSInputContext extends XMLInputContext {
 	@Override
 	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 		// no op
-		
+
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class DSInputContext extends XMLInputContext {
 			} else {
 				model.setCharset(getDefaultCharset());
 			}
-			
+
 			model.load();
 			return model;
 		}

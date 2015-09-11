@@ -62,8 +62,8 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * Returns the list of bundles in the osgi.bundles property of the 
-	 * platform config ini, or a set of default bundles if the property 
+	 * Returns the list of bundles in the osgi.bundles property of the
+	 * platform config ini, or a set of default bundles if the property
 	 * could not be found.
 	 * @return string list of bundles
 	 */
@@ -79,7 +79,7 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * @return the default list of bundles to use in the osgi.bundles property 
+	 * @return the default list of bundles to use in the osgi.bundles property
 	 */
 	public static String getDefaultBundleList() {
 		StringBuffer buffer = new StringBuffer();
@@ -138,7 +138,7 @@ public class TargetPlatformHelper {
 				if (underscoreIndex >= 0) {
 					id = id.substring(0, underscoreIndex);
 				}
-				// If a relative path is used with a non .jar extension and does not have a version, we have no way of recognizing what the symbolic name is (bug 355890) 
+				// If a relative path is used with a non .jar extension and does not have a version, we have no way of recognizing what the symbolic name is (bug 355890)
 				if (id.endsWith(JAR_EXTENSION)) {
 					id = id.substring(0, id.length() - 4);
 				}
@@ -210,10 +210,10 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * Utility method to check if the workspace active target platform 
+	 * Utility method to check if the workspace active target platform
 	 * contains unresolved p2 repositories
 	 *
-	 * @return unresolved repository based  workspace active target platform  
+	 * @return unresolved repository based  workspace active target platform
 	 * or <code>null</code> if no repository based target or if such target is resolved.
 	 * @throws CoreException if there is a problem accessing the workspace target definition
 	 */
@@ -352,7 +352,7 @@ public class TargetPlatformHelper {
 	/**
 	 * Returns the version of Eclipse the target platform is pointing to or {@link ICoreConstants#TARGET_VERSION_LATEST}
 	 * if the target platform does not contain <code>org.eclipse.osgi</code>.
-	 * 
+	 *
 	 * @return the target version of Eclipse or the latest version PDE knows about.
 	 */
 	public static String getTargetVersionString() {
@@ -390,7 +390,7 @@ public class TargetPlatformHelper {
 	/**
 	 * Returns the version of Eclipse the target platform is pointing to or {@link ICoreConstants#TARGET_VERSION_LATEST}
 	 * if the target platform does not contain <code>org.eclipse.osgi</code>.
-	 * 
+	 *
 	 * @return the target version of Eclipse or the latest version PDE knows about.
 	 */
 	public static double getTargetVersion() {
@@ -465,9 +465,9 @@ public class TargetPlatformHelper {
 
 	/**
 	 * Utility method to get the workspace active target platform and ensure it
-	 * has been resolved.  This is potentially a long running operation. If a 
+	 * has been resolved.  This is potentially a long running operation. If a
 	 * monitor is provided, progress is reported to it.
-	 * 
+	 *
 	 * @param monitor optional progress monitor to report progress to
 	 * @return a resolved target definition or <code>null</code> if the resolution was cancelled
 	 * @throws CoreException if there is a problem accessing the workspace target definition
@@ -567,7 +567,7 @@ public class TargetPlatformHelper {
 	/**
 	 * Reads and returns the VM arguments specified in the running platform's .ini file,
 	 * or am empty string if none.
-	 *  
+	 *
 	 * @return VM arguments specified in the running platform's .ini file
 	 */
 	public static String getIniVMArgs() {

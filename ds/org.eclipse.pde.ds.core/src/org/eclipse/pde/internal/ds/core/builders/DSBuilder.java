@@ -40,7 +40,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		public ResourceVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;
 		}
-		
+
 		@Override
 		public boolean visit(IResource resource) {
 			if (resource instanceof IProject) {
@@ -67,15 +67,15 @@ public class DSBuilder extends IncrementalProjectBuilder {
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
-	
+
 		public DeltaVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;
 		}
-	
+
 		@Override
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
-	
+
 			if (resource instanceof IProject) {
 				// TODO only check PDE projects...
 				IProject project = (IProject) resource;
@@ -99,7 +99,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 			}
 			return true;
 		}
-	
+
 	}
 
 	@Override
@@ -137,12 +137,12 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		String message = NLS.bind(Messages.DSBuilder_verifying, file
 				.getFullPath().toString());
 		monitor.subTask(message);
-		
+
 		DSErrorReporter reporter = new DSErrorReporter(file);
 		DefaultSAXParser.parse(file, reporter);
 		reporter.validateContent(monitor);
 		monitor.subTask(Messages.DSBuilder_updating);
 		monitor.done();
 	}
-	
+
 }

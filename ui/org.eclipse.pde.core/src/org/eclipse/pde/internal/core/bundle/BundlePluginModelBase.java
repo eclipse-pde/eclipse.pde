@@ -41,7 +41,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#getBundleModel()
 	 */
 	@Override
@@ -56,7 +56,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#getExtensionsModel()
 	 */
 	@Override
@@ -97,7 +97,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#setBundleModel(org.eclipse.pde.internal.core.ibundle.IBundleModel)
 	 */
 	@Override
@@ -112,7 +112,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#setExtensionsModel(org.eclipse.pde.core.plugin.IExtensionsModel)
 	 */
 	@Override
@@ -164,7 +164,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase(boolean)
 	 */
 	@Override
@@ -185,7 +185,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginFactory()
 	 */
 	@Override
@@ -195,7 +195,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getFactory()
 	 */
 	@Override
@@ -207,7 +207,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getInstallLocation()
 	 */
 	@Override
@@ -242,7 +242,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#isEditable()
 	 */
 	@Override
@@ -256,7 +256,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
 	@Override
@@ -266,7 +266,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#isValid()
 	 */
 	@Override
@@ -276,7 +276,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#load()
 	 */
 	@Override
@@ -285,7 +285,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
 	@Override
@@ -294,7 +294,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
 	@Override
@@ -315,7 +315,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
 	 */
 	@Override
@@ -378,7 +378,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
 	 */
 	@Override
@@ -388,7 +388,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
 	 */
 	@Override
@@ -398,7 +398,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IEditable#isDirty()
 	 */
 	@Override
@@ -412,7 +412,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
 	 */
 	@Override
@@ -422,7 +422,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
 	 */
 	@Override

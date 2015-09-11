@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ public class TracingCollections {
 
 	/**
 	 * Accessor for the singleton instance of the {@link TracingCollections}
-	 * 
+	 *
 	 * @return Return the single instance of the {@link TracingCollections}
 	 */
 	public static TracingCollections getInstance() {
@@ -49,7 +49,7 @@ public class TracingCollections {
 
 	/**
 	 * Accessor for the modified options model
-	 * 
+	 *
 	 * @return Return the <code>ModifiedDebugOptions</code> model
 	 */
 	public ModifiedDebugOptions getModifiedDebugOptions() {
@@ -58,7 +58,7 @@ public class TracingCollections {
 
 	/**
 	 * Store a {@link TracingComponentDebugOption} element if it has not already been stored.
-	 * 
+	 *
 	 * @param newDebugOption
 	 *            The {@link TracingComponentDebugOption} to add to the collection.
 	 */
@@ -79,7 +79,7 @@ public class TracingCollections {
 
 	/**
 	 * Access the list of debug options that contain the specified option-path value.
-	 * 
+	 *
 	 * @param optionPath
 	 *            The name of the option-path.
 	 * @return An array of stored {@link TracingComponentDebugOption} elements that contain the option-path value.
@@ -98,7 +98,7 @@ public class TracingCollections {
 	/**
 	 * Access a {@link TracingComponent} from the internal collection. If a {@link TracingComponent} does not exist based on
 	 * the content in the {@link IConfigurationElement} then a new {@link TracingComponent} will be created and stored.
-	 * 
+	 *
 	 * @param element
 	 *            The {@link IConfigurationElement} for a 'tracingComponent' extension.
 	 * @return Returns a {@link TracingComponent} object based on the information in the specified
@@ -134,7 +134,7 @@ public class TracingCollections {
 	 * path and the value of the {@link Properties} is the debug option value. If the debug options for a specific
 	 * {@link Bundle} have not been accessed then it will attempt to read in all of the entries defined in the .options
 	 * file for this bundle.
-	 * 
+	 *
 	 * @param bundle
 	 *            The {@link Bundle} to access the debug options defined for it.
 	 * @return A {@link Properties} of debug options where the key of the {@link Properties} is the debug option path
@@ -156,7 +156,7 @@ public class TracingCollections {
 
 	/**
 	 * Set the consumed state of the specified {@link Bundle}.
-	 * 
+	 *
 	 * @param bundle
 	 *            The {@link Bundle} to set the consumed state on.
 	 * @param consumed
@@ -170,7 +170,7 @@ public class TracingCollections {
 
 	/**
 	 * Accessor to find out if a specific bundle has been consumed by a tracing component.
-	 * 
+	 *
 	 * @param bundle
 	 *            The {@link Bundle} to check.
 	 * @return Returns true if this bundle has been previous consumed by another tracing component. Otherwise, false is
@@ -189,7 +189,7 @@ public class TracingCollections {
 
 	/**
 	 * Store that the specified {@link Bundle} has been added to the specified {@link TracingComponent}.
-	 * 
+	 *
 	 * @param component
 	 *            The {@link TracingComponent} that includes the specified {@link Bundle}.
 	 * @param bundle
@@ -208,7 +208,7 @@ public class TracingCollections {
 
 	/**
 	 * Accessor for an array of {@link TracingComponent} objects that contain the specified {@link Bundle}.
-	 * 
+	 *
 	 * @param bundle
 	 *            The {@link Bundle} used to locate the {@link TracingComponent} that include it.
 	 * @return An array of {@link TracingComponent} objects that contain the specified {@link Bundle}.

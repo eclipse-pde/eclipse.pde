@@ -27,13 +27,13 @@ import org.eclipse.pde.ui.templates.ITemplateSection;
  * Utility class for project related operations
  */
 public class ProjectUtils {
-	
+
 	/**
 	 * Used to create projects
 	 */
 	static class TestProjectProvider implements IProjectProvider {
 		private String fProjectName;
-		
+
 		TestProjectProvider(String projectName) {
 			fProjectName = projectName;
 		}
@@ -60,9 +60,9 @@ public class ProjectUtils {
 		public String getProjectName() {
 			return fProjectName;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Fake wizard
 	 */
@@ -72,7 +72,7 @@ public class ProjectUtils {
 		 * @see org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard#addAdditionalPages()
 		 */
 		@Override
-		protected void addAdditionalPages() {			
+		protected void addAdditionalPages() {
 		}
 
 		/* (non-Javadoc)
@@ -82,24 +82,24 @@ public class ProjectUtils {
 		public ITemplateSection[] getTemplateSections() {
 			return new ITemplateSection[0];
 		}
-		
+
 	}
-	
+
 	/**
 	 * Constant representing the name of the output directory for a project.
 	 * Value is: <code>bin</code>
 	 */
 	public static final String BIN_FOLDER = "bin";
-	
+
 	/**
 	 * Constant representing the name of the source directory for a project.
 	 * Value is: <code>src</code>
 	 */
 	public static final String SRC_FOLDER = "src";
-	
+
 	/**
 	 * Create a plugin project with the given name and execution environment.
-	 * 
+	 *
 	 * @param projectName
 	 * @param env environment for build path or <code>null</code> if default system JRE
 	 * @return a new plugin project
@@ -133,6 +133,6 @@ public class ProjectUtils {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		return JavaCore.create(project);
 	}
-	
+
 
 }

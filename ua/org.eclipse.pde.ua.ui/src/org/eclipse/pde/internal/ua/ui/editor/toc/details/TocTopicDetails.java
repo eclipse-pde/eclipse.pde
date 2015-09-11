@@ -107,7 +107,7 @@ public class TocTopicDetails extends TocAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createNameEntryListeners() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -123,7 +123,7 @@ public class TocTopicDetails extends TocAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createPageEntryListeners() {
 		fPageEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -148,10 +148,10 @@ public class TocTopicDetails extends TocAbstractDetails {
 
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(TocDetailsMessages.TocTopicDetails_dialogTitle);  
-		dialog.setMessage(TocDetailsMessages.TocTopicDetails_dialogMessage);  
+		dialog.setTitle(TocDetailsMessages.TocTopicDetails_dialogTitle);
+		dialog.setMessage(TocDetailsMessages.TocTopicDetails_dialogMessage);
 		dialog.addFilter(new HelpEditorFilter());
-		
+
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
 
 		if (dialog.open() == Window.OK) {

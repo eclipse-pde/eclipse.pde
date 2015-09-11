@@ -35,7 +35,7 @@ public class SimpleCSAddStepAction extends Action {
 	private ISimpleCSIntro fIntro;
 
 	/**
-	 * 
+	 *
 	 */
 	public SimpleCSAddStepAction() {
 		setText(SimpleActionMessages.SimpleCSAddStepAction_actionText);

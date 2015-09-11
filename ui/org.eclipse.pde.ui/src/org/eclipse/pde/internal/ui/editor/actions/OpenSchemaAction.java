@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.pde.internal.ui.editor.schema.SchemaEditor;
 
 /**
  * OpenSchemaAction
- * 
+ *
  */
 public class OpenSchemaAction extends Action {
 
@@ -39,7 +39,7 @@ public class OpenSchemaAction extends Action {
 	private String fFullPointID;
 
 	/**
-	 * 
+	 *
 	 */
 	public OpenSchemaAction() {
 		fSchema = null;
@@ -49,7 +49,7 @@ public class OpenSchemaAction extends Action {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initialize() {
 		setImageDescriptor(PDEPluginImages.DESC_SCHEMA_OBJ);

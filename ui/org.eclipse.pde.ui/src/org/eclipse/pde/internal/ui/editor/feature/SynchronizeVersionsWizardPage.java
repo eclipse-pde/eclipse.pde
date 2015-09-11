@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
@@ -133,7 +133,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 
 	/**
 	 * Forces a version into plugin/fragment .xml
-	 * 
+	 *
 	 * @param targetVersion
 	 * @param modelBase
 	 * @throws CoreException

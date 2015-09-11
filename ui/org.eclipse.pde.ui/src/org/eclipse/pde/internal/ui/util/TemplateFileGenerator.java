@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -47,7 +47,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 
 	/**
 	 * The key for the simple class name of a bundle activator (value="activator")
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String KEY_ACTIVATOR_SIMPLE = "activator"; //$NON-NLS-1$
@@ -65,7 +65,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 * The key for the package name that will be created by this teamplate
 	 * (value="packageName").
 	 */
-	public static final String KEY_PACKAGE_NAME = "packageName"; //$NON-NLS-1$	
+	public static final String KEY_PACKAGE_NAME = "packageName"; //$NON-NLS-1$
 
 	private IProject fProject;
 
@@ -97,7 +97,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 * implementation uses template location as a root of the file templates.
 	 * {@link #generateFiles(IProgressMonitor monitor, URL locationUrl)} on how
 	 * the location gets processed.
-	 * 
+	 *
 	 * @param monitor
 	 *            progress monitor to use to indicate generation progress
 	 */
@@ -145,7 +145,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 * folder with the conditional generation and variable replacement for
 	 * files. Variable replacement also includes file names.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @since 3.3
 	 * @param monitor
 	 *            progress monitor to use to indicate generation progress
@@ -351,7 +351,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 * Tests if the folder found in the template location should be created in
 	 * the target project. Subclasses may use this method to conditionally block
 	 * the creation of entire directories (subject to user choices).
-	 * 
+	 *
 	 * @param sourceFolder
 	 *            the folder that is tested
 	 * @return <code>true</code> if the provided folder should be created in
@@ -375,7 +375,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 * Tests if the file found in the template location should be created in the
 	 * target project. Subclasses may use this method to conditionally block
 	 * creation of the file (subject to user choices).
-	 * 
+	 *
 	 * @param sourceFile
 	 *            the file found in the template location that needs to be
 	 *            created.
@@ -426,7 +426,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 * implementation looks for source folders in the classpath of the target
 	 * folders and picks the first one encountered. Subclasses may override this
 	 * behavior.
-	 * 
+	 *
 	 * @param monitor
 	 *            progress monitor to use
 	 * @return source folder that will be used to generate Java files or
@@ -512,7 +512,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 * The default implementation of this method provides values of the
 	 * following keys: <samp>pluginClass </samp>, <samp>pluginId </samp> and
 	 * <samp>pluginName </samp>.
-	 * 
+	 *
 	 * @see ITemplateSection#getReplacementString(String,String)
 	 */
 	public String getReplacementString(String fileName, String key) {

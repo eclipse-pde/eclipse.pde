@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,21 +20,21 @@ public interface TracingNode {
 
 	/**
 	 * Accessor to the label for this tree node
-	 * 
+	 *
 	 * @return Returns the label for this tree node.
 	 */
 	public String getLabel();
 
 	/**
 	 * Accessor for an array of {@link TracingNode} child nodes for this tree node.
-	 * 
+	 *
 	 * @return Returns an array of {@link TracingNode} child nodes for this tree node.
 	 */
 	public TracingNode[] getChildren();
 
 	/**
 	 * Accessor for the parent object of this tree node.
-	 * 
+	 *
 	 * @return Returns the parent {@link TracingNode} for this tree node or <code>null</code> if this tree node is the
 	 *         root of the tree.
 	 */
@@ -42,7 +42,7 @@ public interface TracingNode {
 
 	/**
 	 * Setter for the label for this tree node
-	 * 
+	 *
 	 * @param newLabel
 	 *            The new text for this tree node to display
 	 */
@@ -50,7 +50,7 @@ public interface TracingNode {
 
 	/**
 	 * Setter for the parent node of this tree node
-	 * 
+	 *
 	 * @param newParent
 	 *            The new parent {@link TracingNode} for this tree node.
 	 */
@@ -58,7 +58,7 @@ public interface TracingNode {
 
 	/**
 	 * Add a new {@link TracingNode} child node to this tree node.
-	 * 
+	 *
 	 * @param newNode
 	 *            The new {@link TracingNode} node to add as a child to this tree node.
 	 */
@@ -66,14 +66,14 @@ public interface TracingNode {
 
 	/**
 	 * Does this tree node have any child nodes?
-	 * 
+	 *
 	 * @return Returns <code>true</code> if this tree node has child nodes; Otherwise, <code>false</code> is returned.
 	 */
 	public boolean hasChildren();
 
 	/**
 	 * Is the tracing value for this node enabled in the {@link DebugOptions}
-	 * 
+	 *
 	 * @return Returns true if this tracing value is set in the {@link DebugOptions}; Otherwise, false is returned.
 	 */
 	public boolean isEnabled();

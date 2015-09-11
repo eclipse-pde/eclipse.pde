@@ -33,7 +33,7 @@ public class CtxHelpDescriptionTextNode extends DocumentTextNode {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.DocumentTextNode#write()
 	 */
 	public String write() {

@@ -15,14 +15,14 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param taskObject
 	 */
 	public void addFieldTaskObject(ICompCSTaskObject taskObject);
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param index
 	 * @param taskObject
 	 */
@@ -30,7 +30,7 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param taskObject
 	 * @return
 	 */
@@ -38,7 +38,7 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param taskObject
 	 * @param newRelativeIndex
 	 */
@@ -47,7 +47,7 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param index
 	 * @return
 	 */
@@ -55,14 +55,14 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @return
 	 */
 	public ICompCSTaskObject[] getFieldTaskObjects();
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param subitem
 	 * @return
 	 */
@@ -70,7 +70,7 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param taskObject
 	 * @return
 	 */
@@ -78,7 +78,7 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param taskObjectm
 	 * @return
 	 */
@@ -86,21 +86,21 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @return
 	 */
 	public int getFieldTaskObjectCount();
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean hasFieldTaskObjects();
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param taskObject
 	 * @return
 	 */
@@ -108,7 +108,7 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param taskObject
 	 * @return
 	 */

@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class SimpleDetailsMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.details.messages"; //$NON-NLS-1$
-	
+
 	public static String SimpleCSCommandDetails_attrCommand;
 	public static String SimpleCSCommandDetails_attrOptional;
 	public static String SimpleCSCommandDetails_attrParameters;

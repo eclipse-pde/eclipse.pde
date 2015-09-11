@@ -181,7 +181,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	/**
 	 * Clears the configuration area if the area exists and that option is selected.
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @param monitor

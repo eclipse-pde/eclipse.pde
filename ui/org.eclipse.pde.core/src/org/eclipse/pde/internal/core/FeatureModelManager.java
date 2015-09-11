@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -158,7 +158,7 @@ public class FeatureModelManager {
 
 	/**
 	 * Finds active model with a given id and version
-	 * 
+	 *
 	 * @param id
 	 * @param version version number to find, newest version is returned for empty version.
 	 * @return one IFeature model or null
@@ -184,7 +184,7 @@ public class FeatureModelManager {
 	 * Finds active model with the given id and version. If feature is not
 	 * found, but a feature with qualifier set to qualifier exists it will be
 	 * returned.
-	 * 
+	 *
 	 * @param id
 	 * @param version
 	 * @return IFeatureModel or null
@@ -208,7 +208,7 @@ public class FeatureModelManager {
 
 	/**
 	 * Finds active models with a given id
-	 * 
+	 *
 	 * @param id
 	 * @return IFeature model[]
 	 */

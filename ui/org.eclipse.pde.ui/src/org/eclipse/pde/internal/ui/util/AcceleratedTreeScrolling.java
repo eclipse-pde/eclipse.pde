@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     Sascha Becher <s.becher@qualitype.de> - bug 360894
  *******************************************************************************/
@@ -26,7 +26,7 @@ public class AcceleratedTreeScrolling implements MouseWheelListener {
 
 	/**
 	 *  Accelerated mouse wheel scrolling during which the MOD1 (Ctrl) key modifier has been pressed
-	 *  
+	 *
 	 * @param tree tree to scroll
 	 * @param skipLines lines to scroll
 	 */

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,7 +38,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	/**
 	 * Creates a new schema include describing an included schema at the given location. An optional
 	 * search path may be provided to assist in finding the included schema.
-	 * 
+	 *
 	 * @param parent parent object, should be the schema containing this include
 	 * @param location the string location from the schema xml
 	 * @param abbreviated whether the schema is following the abbreviated syntax

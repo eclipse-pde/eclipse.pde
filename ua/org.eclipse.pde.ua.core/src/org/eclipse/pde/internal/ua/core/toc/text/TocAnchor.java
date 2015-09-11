@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.ua.core.toc.text;
  * anchor with ID "PDE" and TOC B has the "PDE" ID in its link_to attribute,
  * then the contents of TOC B will replace the anchor specified by TOC A at
  * runtime.
- * 
+ *
  * TOC anchors cannot have any content within them, so they are leaf objects.
  */
 public class TocAnchor extends TocObject {
@@ -26,7 +26,7 @@ public class TocAnchor extends TocObject {
 
 	/**
 	 * Constructs an anchor with the given model and parent.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent TocObject of the new anchor.
 	 */
@@ -36,7 +36,7 @@ public class TocAnchor extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.text.toc.TocObject#canBeParent()
 	 */
 	public boolean canBeParent() {
@@ -45,7 +45,7 @@ public class TocAnchor extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getType()
 	 */
 	public int getType() {
@@ -54,7 +54,7 @@ public class TocAnchor extends TocObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getName()
 	 */
 	public String getName() {
@@ -76,7 +76,7 @@ public class TocAnchor extends TocObject {
 
 	/**
 	 * Change the value of the anchor ID and signal a model change if needed.
-	 * 
+	 *
 	 * @param id
 	 *            The new ID to associate with the anchor
 	 */

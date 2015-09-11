@@ -23,7 +23,7 @@ public class TargetPlatformHelperTests extends TestCase {
 	public static Test suite() {
 		return new TestSuite(TargetPlatformHelperTests.class);
 	}
-	
+
 	public void testStripPathInformation(){
 		String[] bundleStrings = new String[]{
 				"org.eclipse.osgi0",
@@ -39,9 +39,9 @@ public class TargetPlatformHelperTests extends TestCase {
 				"platform" + File.separatorChar + ":file" + File.separatorChar + ":C" + File.separatorChar + ":/Eclipse/eclipse-SDK-N20080312-2000-win32/eclipse/plugins/org.eclipse.osgi10_0.1.0.N20080312-2000.jar@1" + File.separatorChar + ":start",
 				"reference" + File.separatorChar + ":file" + File.separatorChar + ":C" + File.separatorChar + ":/Eclipse/eclipse-SDK-N20080312-2000-win32/eclipse/plugins/org.eclipse.osgi11_0.1.0.N20080312-2000.jar@1" + File.separatorChar + ":start",
 		};
-		
+
 		for (int i = 0; i < bundleStrings.length; i++) {
-			if (i <= 7){ 
+			if (i <= 7){
 				assertEquals("Bundle path was not stripped properly", "org.eclipse.osgi" + i, TargetPlatformHelper.stripPathInformation(bundleStrings[i]));
 			} else {
 				assertEquals("Bundle path was not stripped properly", "org.eclipse.osgi" + i + "@1:start", TargetPlatformHelper.stripPathInformation(bundleStrings[i]));
@@ -50,5 +50,5 @@ public class TargetPlatformHelperTests extends TestCase {
 
 	}
 
-	
+
 }

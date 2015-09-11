@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gamil.com> - bug 205361
@@ -32,7 +32,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 	private static String PROJECT_NAME_1 = "Foo";
 	private static String PROJECT_NAME_2 = "Bar";
-	
+
 	private final static String API_TOOLS_NATURE = "org.eclipse.pde.api.tools.apiAnalysisNature";
 
 	public static Test suite() {
@@ -41,7 +41,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 	/**
 	 * Test the conversion of a single simple project.
-	 * 
+	 *
 	 * @throws Exception
 	 *             If there's a problem.
 	 */
@@ -64,7 +64,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 	/**
 	 * Test the conversion of a couple of simple projects.
-	 * 
+	 *
 	 * @throws Exception
 	 *             If there's a problem.
 	 */
@@ -93,10 +93,10 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 			assertTrue(PDEProject.getBuildProperties(project).exists());
 		}
 	}
-	
+
 	/**
 	 * Test the conversion of a project can add the api tools nature correctly
-	 * 
+	 *
 	 * @throws Exception
 	 *             If there's a problem.
 	 */
@@ -128,7 +128,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 	/**
 	 * Convert projects to a plugin projects
-	 * 
+	 *
 	 * @param projects
 	 *            The projects to convert
 	 * @param enableApiTools whether to enable the api tools nature on the projects
@@ -149,7 +149,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 	/**
 	 * Create a simple project of the specified name
-	 * 
+	 *
 	 * @param name
 	 *            The name of the project to be created
 	 * @return The project instance created

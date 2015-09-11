@@ -37,7 +37,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 
 	public static final int NUM_COLUMNS = 2;
 
-	public final static String F_PAGE_NAME = "register-toc"; //$NON-NLS-1$	
+	public final static String F_PAGE_NAME = "register-toc"; //$NON-NLS-1$
 
 	public final static String F_TOC_ELEMENT_TOC = "toc"; //$NON-NLS-1$
 
@@ -62,7 +62,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initialize() {
 
@@ -80,7 +80,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initializePluginModel() {
 		IPluginModelBase base = PluginRegistry.findModel(getPluginProject());
@@ -94,7 +94,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateUI() {
 
@@ -144,7 +144,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 
 		// Check for the generated ID for this TOC
 		// If a TOC exists with the generated ID already, read its
-		// description and populate the description text accordingly		
+		// description and populate the description text accordingly
 		if ((fileAttribute != null) && PDETextHelper.isDefined(fileAttribute.getValue()) && generatedID.equals(fileAttribute.getValue())) {
 			// Matching TOC extension found
 			// Process children if any
@@ -230,7 +230,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIListeners() {
 		// Create listeners for the primary check box
@@ -238,7 +238,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIListenersPrimaryChkBox() {
 		fPrimaryChkBox.addSelectionListener(new SelectionAdapter() {
@@ -249,7 +249,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void validateUI() {
 		setPageComplete(true);

@@ -121,7 +121,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 
 	/**
 	 * Returns whether menu should be updated or not. Menu should be updated
-	 * if either number of actions or any of actions has been changed. 
+	 * if either number of actions or any of actions has been changed.
 	 * @return true if menu should be updated, false otherwise
 	 */
 	private boolean menuUpdateNeeded(Menu menu) {
@@ -178,7 +178,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 
 	/**
 	 * Builds menu of ImportLogAction actions from log files provided by LogFilesManager.
-	 * 
+	 *
 	 * @see IMenuCreator#getMenu(Control)
 	 */
 	private void createMenuItems(Menu menu) {

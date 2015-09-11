@@ -15,7 +15,7 @@ import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
 
 public class DSPropertiesTestCase extends AbstractDSModelTestCase {
-	
+
 	public void testAddPropertiesComponent() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<properties entry=\"");
@@ -26,19 +26,19 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 
 		IDSComponent component = fModel.getDSComponent();
 		assertNotNull(component);
-		
+
 		IDSProperties[] propertiesElements = component.getPropertiesElements();
 		assertTrue(propertiesElements.length==1);
-		
+
 		IDSProperties properties = propertiesElements[0];
 		String entry = properties.getEntry();
 		assertTrue(entry.equals("OSGI-INF/vendor.properties"));
-		
+
 		assertEquals(entry, properties.getName());
 	}
-	
+
 	/**
-	 * Tests a  component with multiple properties 
+	 * Tests a  component with multiple properties
 	 */
 	public void testMultipleProperties() {
 		StringBuffer buffer = new StringBuffer();
@@ -69,7 +69,7 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 		IDSProperties[] propertiesElements = component.getPropertiesElements();
 
 		assertTrue(propertiesElements.length == 4);
-		
+
 		for (int i = 0; i < 4; i++) {
 			IDSProperties properties = propertiesElements[i];
 
@@ -80,7 +80,7 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 	}
 
 	/**
-	 * Tests a properties component default values 
+	 * Tests a properties component default values
 	 */
 	public void testDefaultValuesService() {
 		StringBuffer buffer = new StringBuffer();
@@ -93,16 +93,16 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 
 		IDSComponent component = fModel.getDSComponent();
 		assertNotNull(component);
-		
+
 		IDSProperties[] propertiesElements = component.getPropertiesElements();
 		assertTrue(propertiesElements.length==1);
-		
+
 		IDSProperties properties = propertiesElements[0];
 		assertTrue(properties.getEntry() == null);
 	}
-	
 
-	
+
+
 	/**
 	 * Tests to add a properties by DSDocumentFactory
 	 */
@@ -110,24 +110,24 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 		StringBuffer buffer = new StringBuffer();
 		setXMLContents(buffer , LF);
 		load();
-		
+
 		IDSDocumentFactory factory = fModel.getFactory();
 		IDSProperties Properties = factory.createProperties();
 		String entry = "OSGI-INF/vendor.propertiesFactory";
 		Properties.setEntry(entry);
-		
+
 		IDSComponent component = fModel.getDSComponent();
 		component.addPropertiesElement(Properties);
-		
+
 		String content = component.toString();
-		
+
 		assertTrue(content.indexOf("entry=\""+entry+"\"") != -1);
-		
+
 		IDSProperties[] PropertiesElements = component.getPropertiesElements();
 		IDSProperties Properties0 = PropertiesElements[0];
 		assertNotNull(Properties0);
 		assertTrue(Properties0.getEntry().equals(entry));
-		
+
 	}
 
 }

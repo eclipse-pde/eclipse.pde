@@ -29,7 +29,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	private String fVersion;
 
 	/**
-	 * Used to cache the fragment attribute value internally in order to not lose it in case the current 
+	 * Used to cache the fragment attribute value internally in order to not lose it in case the current
 	 * plugin/fragment is not in the target platform anymore (see bug 264462)
 	 */
 	private boolean fFragment;

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,15 +23,15 @@ import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
- * This wizard should be used as a base class for 
- * wizards that provide new plug-in templates. 
+ * This wizard should be used as a base class for
+ * wizards that provide new plug-in templates.
  * These wizards are loaded during new plug-in or fragment
  * creation and are used to provide initial
  * content (Java classes, directory structure and
  * extensions).
  * <p>
  * This plug-in will be passed on to the templates to generate additional
- * content. After all templates have executed, 
+ * content. After all templates have executed,
  * the wizard will use the collected list of required
  * plug-ins to set up Java buildpath so that all the
  * generated Java classes can be resolved during the build.

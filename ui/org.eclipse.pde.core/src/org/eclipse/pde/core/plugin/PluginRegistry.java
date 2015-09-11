@@ -31,9 +31,9 @@ import org.osgi.framework.Version;
  * This class provides static methods only; it is not intended to be
  * instantiated or subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.3
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -52,7 +52,7 @@ public class PluginRegistry {
 
 		/**
 		 * Returns whether the given model is accepted by this filter.
-		 * 
+		 *
 		 * @param model plug-in model
 		 * @return whether accepted by this filter
 		 */
@@ -64,9 +64,9 @@ public class PluginRegistry {
 
 	/**
 	 * Returns a model entry containing all workspace and target plug-ins by the given ID
-	 * 
+	 *
 	 * @param id the plug-in ID
-	 * 
+	 *
 	 * @return a model entry containing all workspace and target plug-ins by the given ID
 	 */
 	public static ModelEntry findEntry(String id) {
@@ -86,10 +86,10 @@ public class PluginRegistry {
 	 * the plug-in with the highest version is returned.
 	 * </p>
 	 * <p>
-	 * In the case of a tie among more than one suitable plug-in that have the same version, 
+	 * In the case of a tie among more than one suitable plug-in that have the same version,
 	 * one of those plug-ins is randomly returned.
 	 * </p>
-	 * 
+	 *
 	 * @param id the plug-in ID
 	 * @return the plug-in model for the best match plug-in with the given ID
 	 */
@@ -101,7 +101,7 @@ public class PluginRegistry {
 	 * Returns the plug-in model corresponding to the given project, or <code>null</code>
 	 * if the project does not represent a plug-in project or if it contains a manifest file
 	 * that is malformed or missing vital information.
-	 * 
+	 *
 	 * @param project the project
 	 * @return a plug-in model corresponding to the project or <code>null</code> if the project
 	 * 			is not a plug-in project
@@ -112,9 +112,9 @@ public class PluginRegistry {
 
 	/**
 	 * Returns a plug-in model associated with the given bundle description
-	 * 
+	 *
 	 * @param desc the bundle description
-	 * 
+	 *
 	 * @return a plug-in model associated with the given bundle description or <code>null</code>
 	 * 			if none exists
 	 */
@@ -132,7 +132,7 @@ public class PluginRegistry {
 	 * <p>
 	 * Equivalent to <code>getActiveModels(true)</code>
 	 * </p>
-	 * 
+	 *
 	 * @return   all plug-ins and fragments in the workspace as well as all plug-ins and fragments that are
 	 * 			checked on the Target Platform preference page.
 	 */
@@ -153,7 +153,7 @@ public class PluginRegistry {
 	 * </p>
 	 * @param includeFragments  a boolean indicating if fragments are desired in the returned
 	 *							result
-	 * @return all plug-ins and (possibly) fragments in the workspace as well as all plug-ins and 
+	 * @return all plug-ins and (possibly) fragments in the workspace as well as all plug-ins and
 	 * (possibly) fragments that are checked on the Target Platform preference page.
 	 */
 	public static IPluginModelBase[] getActiveModels(boolean includeFragments) {
@@ -161,7 +161,7 @@ public class PluginRegistry {
 	}
 
 	/**
-	 * Returns all plug-ins and fragments in the workspace as well as all target plug-ins and fragments, regardless 
+	 * Returns all plug-ins and fragments in the workspace as well as all target plug-ins and fragments, regardless
 	 * whether or not they are checked or not on the Target Platform preference page.
 	 * <p>
 	 * If a workspace plug-in/fragment has the same ID as a target plug-in, the target counterpart
@@ -170,8 +170,8 @@ public class PluginRegistry {
 	 * <p>
 	 * Equivalent to <code>getAllModels(true)</code>
 	 * </p>
-	 * 
-	 * @return   all plug-ins and fragments in the workspace as well as all target plug-ins and fragments, regardless 
+	 *
+	 * @return   all plug-ins and fragments in the workspace as well as all target plug-ins and fragments, regardless
 	 * whether or not they are checked on the Target Platform preference page.
 	 */
 	public static IPluginModelBase[] getAllModels() {
@@ -179,7 +179,7 @@ public class PluginRegistry {
 	}
 
 	/**
-	 * Returns all plug-ins and (possibly) fragments in the workspace as well as all plug-ins 
+	 * Returns all plug-ins and (possibly) fragments in the workspace as well as all plug-ins
 	 * and (possibly) fragments, regardless whether or not they are
 	 * checked on the Target Platform preference page.
 	 * <p>
@@ -192,7 +192,7 @@ public class PluginRegistry {
 	 * </p>
 	 * @param includeFragments  a boolean indicating if fragments are desired in the returned
 	 *							result
-	 * @return ll plug-ins and (possibly) fragments in the workspace as well as all plug-ins 
+	 * @return ll plug-ins and (possibly) fragments in the workspace as well as all plug-ins
 	 * and (possibly) fragments, regardless whether or not they are
 	 * checked on the Target Platform preference page.
 	 */
@@ -202,7 +202,7 @@ public class PluginRegistry {
 
 	/**
 	 * Returns all plug-in models in the workspace
-	 * 
+	 *
 	 * @return all plug-in models in the workspace
 	 */
 	public static IPluginModelBase[] getWorkspaceModels() {
@@ -211,7 +211,7 @@ public class PluginRegistry {
 
 	/**
 	 * Return the model manager that keeps track of plug-ins in the target platform
-	 * 
+	 *
 	 * @return  the model manager that keeps track of plug-ins in the target platform
 	 */
 	public static IPluginModelBase[] getExternalModels() {
@@ -220,7 +220,7 @@ public class PluginRegistry {
 
 	/**
 	 * Returns whether the given model matches the given id, version, and match rule.
-	 * 
+	 *
 	 * @param base match candidate
 	 * @param id id to match
 	 * @param version version to match or <code>null</code>
@@ -253,17 +253,17 @@ public class PluginRegistry {
 	 * the plug-in with the highest version is returned.
 	 * </p>
 	 * <p>
-	 * In the case of a tie among more than one suitable plug-in that have the same version, 
+	 * In the case of a tie among more than one suitable plug-in that have the same version,
 	 * one of those plug-ins is randomly returned.
 	 * </p>
-	 * 
+	 *
 	 * @param id symbolic name of a plug-in to find
 	 * @param version minimum version, or <code>null</code> to only match on symbolic name
 	 * @param match one of {@link IMatchRules#COMPATIBLE}, {@link IMatchRules#EQUIVALENT},
 	 *  {@link IMatchRules#GREATER_OR_EQUAL}, {@link IMatchRules#PERFECT}, or {@link IMatchRules#NONE}
 	 *  when a version is unspecified
-	 * @param filter a plug-in filter or <code>null</code> 
-	 * 
+	 * @param filter a plug-in filter or <code>null</code>
+	 *
 	 * @return a matching model or <code>null</code>
 	 * @since 3.6
 	 */
@@ -286,8 +286,8 @@ public class PluginRegistry {
 	 * @param match one of {@link IMatchRules#COMPATIBLE}, {@link IMatchRules#EQUIVALENT},
 	 *  {@link IMatchRules#GREATER_OR_EQUAL}, {@link IMatchRules#PERFECT}, or {@link IMatchRules#NONE}
 	 *  when a version is unspecified
-	 * @param filter a plug-in filter or <code>null</code> 
-	 * 
+	 * @param filter a plug-in filter or <code>null</code>
+	 *
 	 * @return a matching models, possibly an empty collection
 	 * @since 3.6
 	 */
@@ -315,13 +315,13 @@ public class PluginRegistry {
 	 * the plug-in with the highest version is returned.
 	 * </p>
 	 * <p>
-	 * In the case of a tie among more than one suitable plug-in that have the same version, 
+	 * In the case of a tie among more than one suitable plug-in that have the same version,
 	 * one of those plug-ins is randomly returned.
 	 * </p>
 	 * @param id symbolic name of plug-in to find
 	 * @param range acceptable version range to match, or <code>null</code> for any range
 	 * @param filter a plug-in filter or <code>null</code>
-	 * 
+	 *
 	 * @return a matching model or <code>null</code>
 	 * @since 3.6
 	 */
@@ -331,7 +331,7 @@ public class PluginRegistry {
 
 	/**
 	 * Returns the plug-in with the highest version, or <code>null</code> if empty.
-	 * 
+	 *
 	 * @param models models
 	 * @return plug-in with the highest version or <code>null</code>
 	 */
@@ -374,7 +374,7 @@ public class PluginRegistry {
 	 * @param id symbolic name of plug-ins to find
 	 * @param range acceptable version range to match, or <code>null</code> for any range
 	 * @param filter a plug-in filter or <code>null</code>
-	 * 
+	 *
 	 * @return a matching models, possibly empty
 	 * @since 3.6
 	 */
@@ -397,7 +397,7 @@ public class PluginRegistry {
 	/**
 	 * Creates and returns a model associated with the <code>build.properties</code> of a bundle
 	 * in the workspace or <code>null</code> if none.
-	 * 
+	 *
 	 * @param model plug-in model base
 	 * @return a build model initialized from the plug-in's <code>build.properties</code> or
 	 *  <code>null</code> if none. Returns <code>null</code> for external plug-in models (i.e.

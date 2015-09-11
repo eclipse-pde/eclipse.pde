@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -81,7 +81,7 @@ public class ManifestStructureCreator extends StructureCreator {
 		int lineStart = 0;
 		int[] args = new int[2];
 		args[0] = 0; // here we return the line number
-		args[1] = 0; // and here the offset of the first character of the line 
+		args[1] = 0; // and here the offset of the first character of the line
 
 		try {
 			String id = "Manifest"; //$NON-NLS-1$

@@ -59,7 +59,7 @@ public class DSOverviewPage extends PDEFormPage implements
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormGridLayout(true, 4));
-		
+
 		Composite topLeft = toolkit.createComposite(body);
 		topLeft.setLayout(GridLayoutFactory.fillDefaults().create());
 		topLeft.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
@@ -69,7 +69,7 @@ public class DSOverviewPage extends PDEFormPage implements
 		topRight.setLayout(GridLayoutFactory.fillDefaults().create());
 		topRight.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
 				.span(2, 1).create());
-		
+
 		Composite bottom = toolkit.createComposite(body);
 		bottom.setLayout(new GridLayout());
 		bottom.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)

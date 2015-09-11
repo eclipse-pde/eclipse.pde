@@ -42,7 +42,7 @@ public class LaunchPluginValidator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param configuration launchConfiguration to get the attribute value
 	 * @param attribute launch configuration attribute to containing plug-in information
 	 * @return a TreeSet containing IPluginModelBase objects which are represented by the value of the attribute

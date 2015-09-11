@@ -24,7 +24,7 @@ import org.w3c.dom.*;
 /**
  * Handles reading of target definition files that were created before the new target platform
  * story (3.4 and earlier).
- * 
+ *
  * @see TargetDefinitionPersistenceHelper
  */
 public class TargetPersistence34Helper {
@@ -67,7 +67,7 @@ public class TargetPersistence34Helper {
 	     <location path="D:\targets\equinox\eclipse"/>
 	  </extraLocations>
 	</content>
-	
+
 	<implicitDependencies>
 	  <plugin id="javax.servlet"/>
 	  <plugin id="com.jcraft.jsch"/>
@@ -75,7 +75,7 @@ public class TargetPersistence34Helper {
 	  <plugin id="javax.servlet.jsp"/>
 	  <plugin id="ie.wombat.jbdiff.test"/>
 	</implicitDependencies>
-	
+
 	</target>
 
 	 */
@@ -217,7 +217,7 @@ public class TargetPersistence34Helper {
 
 	/**
 	 * Parses old content section.
-	 * 
+	 *
 	 * @param content element containing the content section
 	 * @param primaryContainer the primary location defined in the xml file, restrictions are based off this container
 	 * @param useAll whether all bundles in the locations should be considered vs. only those specified

@@ -65,7 +65,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	private Shell fShell;
 
 	/**
-	 * 
+	 *
 	 */
 	public RegisterCSOperation(IRegisterCSData registerCSData, Shell shell) {
 		fRegisterCSData = registerCSData;
@@ -110,7 +110,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		public IPluginElement fCSElement;
 
 		/**
-		 * 
+		 *
 		 */
 		public FindCSExtensionResult() {
 			fCSExtension = null;
@@ -140,7 +140,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
 
 		// Validate the operation
-		// Note: This is not accurate, we are validating the plugin.xml file 
+		// Note: This is not accurate, we are validating the plugin.xml file
 		// but not the manifest.mf file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
@@ -166,7 +166,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			return;
 		}
 		IPluginModelBase modelBase = (IPluginModelBase) model;
-		// Find an existing cheat sheet extension 
+		// Find an existing cheat sheet extension
 		FindCSExtensionResult result = findCSExtensionResult(modelBase);
 		// Check search results and act accordingly
 		if (result.foundCSExtension() && result.foundExactCSElement()) {
@@ -182,7 +182,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			}
 		} else if (result.foundCSExtension()) {
 			// No exact match to an existing cheat sheet element found within
-			// the existing cheat sheet extension.  Update the 
+			// the existing cheat sheet extension.  Update the
 			// existing extension by adding a new cheat sheet element
 			// to it
 			modifyExistingExtension(result.fCSExtension, monitor);
@@ -240,7 +240,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// Leave contentFile attribute the same
 		// Leave composite attribute the same
 		// Element: description
-		// Update an existing description if one is found; otherwise, 
+		// Update an existing description if one is found; otherwise,
 		// Create a new description
 		IPluginElement descriptionElement = findExistingDescription(csElement);
 		if (descriptionElement == null) {
@@ -253,7 +253,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			// Modify the existing description element
 			boolean modified = modifyExistingDescription(descriptionElement);
 			if (modified == false) {
-				// New description is not defined, remove the existing 
+				// New description is not defined, remove the existing
 				// description element
 				csElement.remove(descriptionElement);
 			}
@@ -306,9 +306,9 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		IPluginExtension[] extensions = findCheatSheetExtensions(model);
 		// Process all cheat sheet extensions
 		// Extension search results
-		// (1) An existing extension containing a cheatsheet element with the 
+		// (1) An existing extension containing a cheatsheet element with the
 		//     exact cheat sheet ID
-		// (2) An existing extension (last one found) containing 0 or more 
+		// (2) An existing extension (last one found) containing 0 or more
 		//     cheatsheet or category elements
 		// (3) No existing extension
 		for (int i = 0; i < extensions.length; i++) {
@@ -418,7 +418,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 		IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 		IBundle bundle = modelBase.getBundleModel().getBundle();
-		// Get the heading specifying the singleton declaration 
+		// Get the heading specifying the singleton declaration
 		IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		if (header instanceof BundleSymbolicNameHeader) {
 			BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader) header;
@@ -465,7 +465,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		if (entry.contains(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) == false) {
 			entry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 		}
-		// There does not seem to be any support in PDEModelUtility or the 
+		// There does not seem to be any support in PDEModelUtility or the
 		// ModelModification framework to save build.properties modifications
 		// As a result, explicitly do that here
 		if (build instanceof BuildObject) {
@@ -497,7 +497,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// Point
 		extension.setPoint(F_CS_EXTENSION_POINT_ID);
 		// NO id
-		// NO name 
+		// NO name
 
 		createExtensionChildren(extension);
 
@@ -589,8 +589,8 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	 * @throws CoreException
 	 */
 	private IPluginElement createElementDescription(IPluginElement parentElement) throws CoreException {
-		// Define the description element only if description text was 
-		// specified 
+		// Define the description element only if description text was
+		// specified
 		String descriptionText = fRegisterCSData.getDataDescription();
 		if (PDETextHelper.isDefinedAfterTrim(descriptionText) == false) {
 			return null;

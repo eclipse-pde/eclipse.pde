@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com>
+ *     Rafael Oliveira Nï¿½brega <rafael.oliveira@gmail.com>
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
@@ -33,7 +33,7 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 
 		String className = implementation.getClassName();
 		assertTrue(className.equals("org.example.ds.SampleCommandProvider1"));
-		
+
 		assertEquals(implementation.getName(), className);
 	}
 

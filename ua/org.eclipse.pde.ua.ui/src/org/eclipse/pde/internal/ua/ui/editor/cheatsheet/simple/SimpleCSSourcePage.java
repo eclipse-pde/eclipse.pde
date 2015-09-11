@@ -161,7 +161,7 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 		// Get the form editor contributor
 		SimpleCSEditorContributor contributor = (SimpleCSEditorContributor) editor.getContributor();
 		// Get the model
-		// TODO: MP: SimpleCS:  Preview does not show unsaved changes made to source page, 
+		// TODO: MP: SimpleCS:  Preview does not show unsaved changes made to source page,
 		// check if fixed after implementing text edit operations
 		ISimpleCSModel model = (ISimpleCSModel) editor.getAggregateModel();
 		// Get the preview action

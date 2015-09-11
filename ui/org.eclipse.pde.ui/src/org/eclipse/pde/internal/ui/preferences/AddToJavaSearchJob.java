@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * Adds/Removes the target bundles to/from Java search
- * 
+ *
  * @since 3.6
  */
 public class AddToJavaSearchJob extends WorkspaceJob {
@@ -39,7 +39,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 
 	/**
 	 * Adds/Removes the target bundles to/from Java search
-	 * 
+	 *
 	 * @param target	The target definition whose bundles are to be added/removed.
 	 */
 	public static void synchWithTarget(ITargetDefinition target) {
@@ -59,7 +59,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 
 	/**
 	 * Adds or removes a set of bundles from Java search
-	 * 
+	 *
 	 * @param bundles	bundles that are to be added/removed.
 	 * @param add		<code>true</code> to add, <code>false></code> to remove
 	 */
@@ -72,7 +72,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 	/**
 	 * Updates the contents of the java search scope setting its contents to the
 	 * contents of the given target definition.
-	 * 
+	 *
 	 * @param target target to update search scope with
 	 */
 	private AddToJavaSearchJob(ITargetDefinition target) {
@@ -87,7 +87,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 	 * Adds them to the scope if add to <code>true</code> otherwise they are removed.
 	 * Calling this method with bundles being null and add being <code>false</code>
 	 * will clear the java search scope.
-	 * 
+	 *
 	 * @param bundles set of bundles to add or remove
 	 * @param add whether to add or remove the bundles
 	 */

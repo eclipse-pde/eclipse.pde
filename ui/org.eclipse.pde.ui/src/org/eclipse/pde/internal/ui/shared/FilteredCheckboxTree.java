@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,10 +21,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
- * A FilteredCheckboxTree implementation to be used internally in PDE UI code.  This tree stores 
- * all the tree elements internally, and keeps the check state in sync.  This way, even if an 
+ * A FilteredCheckboxTree implementation to be used internally in PDE UI code.  This tree stores
+ * all the tree elements internally, and keeps the check state in sync.  This way, even if an
  * element is filtered, the caller can get and set the checked state.
- * 
+ *
  * @since 3.6
  */
 public class FilteredCheckboxTree extends FilteredTree {
@@ -36,7 +36,7 @@ public class FilteredCheckboxTree extends FilteredTree {
 
 	/**
 	 * Constructor that creates a tree with preset style bits and a CachedContainerCheckedTreeViewer for the tree.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @param toolkit optional toolkit to create UI elements with, required if the tree is being created in a form editor
 	 */
@@ -46,7 +46,7 @@ public class FilteredCheckboxTree extends FilteredTree {
 
 	/**
 	 * Constructor that creates a tree with preset style bits and a CachedContainerCheckedTreeViewer for the tree.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @param toolkit optional toolkit to create UI elements with, required if the tree is being created in a form editor
 	 */
@@ -56,7 +56,7 @@ public class FilteredCheckboxTree extends FilteredTree {
 
 	/**
 	 * Constructor that creates a tree with preset style bits and a CachedContainerCheckedTreeViewer for the tree.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @param toolkit optional toolkit to create UI elements with, required if the tree is being created in a form editor
 	 * @param filter pattern filter to use in the filter control

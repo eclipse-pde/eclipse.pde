@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.PDECore;
 
 /**
  * A handle to a target stored with workspace metadata.
- * 
+ *
  * @since 3.5
  */
 public class LocalTargetHandle extends AbstractTargetHandle {
@@ -50,7 +50,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 
 	/**
 	 * Returns the next unique ID for target handle.
-	 * 
+	 *
 	 * @return time stamp ID
 	 */
 	static synchronized long nextTimeStamp() {
@@ -64,7 +64,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 
 	/**
 	 * Reconstructs a handle from the specified URI.
-	 * 
+	 *
 	 * @param uri URI
 	 * @return handle to a target in local metadata
 	 * @exception CoreException if unable to restore
@@ -94,7 +94,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 
 	/**
 	 * Reconstructs a handle.
-	 * 
+	 *
 	 * @param stamp time stamp
 	 */
 	private LocalTargetHandle(long stamp) {
@@ -136,7 +136,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 
 	/**
 	 * Returns the local file associated with this target definition.
-	 * 
+	 *
 	 * @return target file
 	 */
 	private File getFile() {

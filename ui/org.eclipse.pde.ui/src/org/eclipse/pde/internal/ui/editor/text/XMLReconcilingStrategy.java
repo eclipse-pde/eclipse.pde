@@ -141,7 +141,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 				String docContentType = docPartitioner.getContentType(position.getOffset());
 				String pdeXMLContentType = pdeXMLPartitioner.getContentType(position.getOffset());
 				if ((!XMLStringPartitionScanner.XML_STRING.equalsIgnoreCase(docContentType) && !XMLStringPartitionScanner.CUSTOM_TAG.equalsIgnoreCase(docContentType)) // delete the annotation if the marked position was not selected by XML_STRING document partitioner
-						|| (XMLStringPartitionScanner.CUSTOM_TAG.equalsIgnoreCase(docContentType)) && XMLPartitionScanner.XML_TAG.equalsIgnoreCase(pdeXMLContentType)) { // also delete the annotations that are positioned at special XML Tags 
+						|| (XMLStringPartitionScanner.CUSTOM_TAG.equalsIgnoreCase(docContentType)) && XMLPartitionScanner.XML_TAG.equalsIgnoreCase(pdeXMLContentType)) { // also delete the annotations that are positioned at special XML Tags
 					model.removeAnnotation(spellingAnnotation);
 				}
 			}

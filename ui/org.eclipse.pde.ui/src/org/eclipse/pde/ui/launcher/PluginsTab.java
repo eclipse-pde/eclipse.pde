@@ -31,7 +31,7 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated. This class is not intended to be subclassed by clients.
  * </p>
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class PluginsTab extends AbstractLauncherTab {
@@ -69,7 +69,7 @@ public class PluginsTab extends AbstractLauncherTab {
 
 	/**
 	 * Constructor. Equivalent to PluginsTab(true).
-	 * 
+	 *
 	 * @see #PluginsTab(boolean)
 	 *
 	 */
@@ -81,8 +81,8 @@ public class PluginsTab extends AbstractLauncherTab {
 
 	/**
 	 * Constructor
-	 * 
-	 * @param showFeatures  a flag indicating if the tab should present the feature-based 
+	 *
+	 * @param showFeatures  a flag indicating if the tab should present the feature-based
 	 * self-hosting option.
 	 * @deprecated As of 3.6 the feature-based workspace launch option is no longer available, so there is no need to set this flag
 	 */
@@ -208,7 +208,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	/**
 	 * Validates the tab.  If the feature option is chosen, and the workspace is not correctly set up,
 	 * the error message is set.
-	 * 
+	 *
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
 	@Override

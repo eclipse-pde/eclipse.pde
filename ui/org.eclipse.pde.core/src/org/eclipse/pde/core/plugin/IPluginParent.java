@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Classes that implement this interface are
  * capable of containing other plug-in objects.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -63,7 +63,7 @@ public interface IPluginParent extends IPluginObject {
 	int getIndexOf(IPluginObject child);
 
 	/**
-	 * Swaps the position of of the provided siblings 
+	 * Swaps the position of of the provided siblings
 	 * in the parent.
 	 * @param child1 the first child
 	 * @param child2 the second child

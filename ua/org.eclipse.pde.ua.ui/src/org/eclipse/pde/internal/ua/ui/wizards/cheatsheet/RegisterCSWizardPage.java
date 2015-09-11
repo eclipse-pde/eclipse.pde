@@ -40,7 +40,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public abstract class RegisterCSWizardPage extends WizardPage implements IRegisterCSData {
 
-	public final static String F_PAGE_NAME = "register-cs"; //$NON-NLS-1$	
+	public final static String F_PAGE_NAME = "register-cs"; //$NON-NLS-1$
 
 	public final static String F_CS_ELEMENT_CATEGORY = "category"; //$NON-NLS-1$
 
@@ -81,7 +81,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initialize() {
 
@@ -106,7 +106,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initializePluginModel() {
 		IPluginModelBase base = PluginRegistry.findModel(getPluginProject());
@@ -345,7 +345,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIListeners() {
 		// Create listeners for the category button
@@ -357,7 +357,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIListenersCategoryButton() {
 		fCategoryButton.addSelectionListener(new SelectionAdapter() {
@@ -368,7 +368,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIListenersCategoryCombo() {
 		fCategoryCombo.addModifyListener(new ModifyListener() {
@@ -379,7 +379,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIListenersDescriptionText() {
 		fDescriptionText.addModifyListener(new ModifyListener() {
@@ -390,7 +390,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleWidgetSelectedCategoryButton() {
 		// Create a dialog allowing the user to input the category name
@@ -414,7 +414,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateUI() {
 
@@ -537,7 +537,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 
 		// Check for the generated ID for this cheat sheet
 		// If a cheat sheet exists with the generated ID already, read its
-		// description and populate the description text accordingly		
+		// description and populate the description text accordingly
 		if ((idAttribute != null) && PDETextHelper.isDefined(idAttribute.getValue()) && generatedID.equals(idAttribute.getValue())) {
 			// Matching cheat sheet extension found
 			// Process children if any
@@ -564,7 +564,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void validateUI() {
 		setPageComplete(true);
@@ -596,7 +596,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		long uniqueID = hash(fCheatSheetModel.getUnderlyingResource().getFullPath().toPortableString());
 		// Qualify with the project name
 		// Append the hash code to make the name unique and allow cheat sheets
-		// with the same name (but different directories) be registered 
+		// with the same name (but different directories) be registered
 		// individually
 		String result = fPluginProject.getName() + '.' + F_CS_ELEMENT_CHEATSHEET + uniqueID;
 		return result;
@@ -609,7 +609,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		// Generate the hash code using the category name
 		long uniqueID = hash(name);
 		// Qualify with the project name
-		// Append the hash code to make the name unique 
+		// Append the hash code to make the name unique
 		String result = fPluginProject.getName() + '.' + F_CS_ELEMENT_CATEGORY + uniqueID;
 		return result;
 	}

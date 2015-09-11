@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -140,7 +140,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	 * bundle that matches the name and version it returns.  If there is a bundle with the
 	 * correct name but no matching version, the highest version available will be returned.
 	 * If no match could be found this method returns <code>null</code>
-	 * 
+	 *
 	 * @param id id of the bundle to find
 	 * @param version version of the bundle to find, may be <code>null</code>
 	 * @return the best matching bundle or <code>null</code>

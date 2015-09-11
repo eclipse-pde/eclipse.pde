@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     Sascha Becher <s.becher@qualitype.de> - bug 360894
  *******************************************************************************/
@@ -25,10 +25,10 @@ import org.eclipse.ui.dialogs.PatternFilter;
  * default filtering behaviour of the tree while providing the ability to
  * highlight related items such as commands along with their command images,
  * handlers, menu entries and activities.
- * 
+ *
  * @see org.eclipse.ui.dialogs.FilteredTree
  * @since 3.8
- * 
+ *
  */
 public class ExtensionsPatternFilter extends PatternFilter {
 
@@ -44,12 +44,12 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	protected final Set<Object> fFoundAnyElementsCache = new HashSet<>();
 
 	/**
-	 * Check if the leaf element is a match with the filter text. The default behavior 
+	 * Check if the leaf element is a match with the filter text. The default behavior
 	 * checks that the element name or extension point is a match employing wildcards.
 	 * An implicit wild card is added at the end always (default behaviour).
-	 * 
+	 *
 	 * Subclasses should override this method.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer that contains the element
 	 * @param element
@@ -157,10 +157,10 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	/**
 	 * While the plugin model offers resource bundle localization, some plugins may skip this and use fix text for display.
-	 * Wildcard enabled search of the PatternFilter should be available in this case. Only a list of attributes that 
+	 * Wildcard enabled search of the PatternFilter should be available in this case. Only a list of attributes that
 	 * are expected to contain resource bundles are evaluated as long as the value doesn't contain a point. On some elements
 	 * for example a name attribute can contain an id. Those are skipped though.
-	 * 
+	 *
 	 * @param attributeValue
 	 * @param attributeName
 	 * @param searchPattern
@@ -189,7 +189,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	 * Splits attributes on occurrence of /<br>
 	 * If <code>quoted</code> is set to <code>true</code> parameter <code>text</code> is returned as the only
 	 * element in the array, thus skipping the splitting.
-	 * 
+	 *
 	 * @param text text to split
 	 * @param quoted decides whether splitting actually occurs
 	 * @return split array containing the splitted attributes or one element containing the value of parameter <code>text</code>
@@ -273,13 +273,13 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	/**
 	 * Splits a string at the occurrences of <code>/</code>. Any quoted parts of the <code>filterText</code>
 	 * are not to be splitted but remain as a whole along with the quotation.
-	 *   
+	 *
 	 * @param filterText text to split
 	 * @return split array
 	 */
 	protected String[] splitWithQuoting(String filterText) {
 		// remove multiple separators
-		String text = filterText.replaceAll("/{1,}", "/"); //$NON-NLS-1$//$NON-NLS-2$ 
+		String text = filterText.replaceAll("/{1,}", "/"); //$NON-NLS-1$//$NON-NLS-2$
 		boolean containsQuoting = text.indexOf('\"') != -1;
 		if (containsQuoting) {
 			// remove multiple quotes
@@ -295,7 +295,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	/**
 	 * Enables the filter to temporarily display arbitrary elements
-	 * 
+	 *
 	 * @param element
 	 */
 	public boolean addElement(Object element) {
@@ -304,7 +304,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	/**
 	 * Removes elements from the filter
-	 * 
+	 *
 	 * @param element
 	 */
 	public boolean removeElement(Object element) {
@@ -312,9 +312,9 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	}
 
 	/*
-	 * The pattern string for which this filter should select 
+	 * The pattern string for which this filter should select
 	 * elements in the viewer.
-	 * 
+	 *
 	 * @see org.eclipse.ui.dialogs.PatternFilter#setPattern(java.lang.String)
 	 */
 	@Override
@@ -328,7 +328,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	}
 
 	/**
-	 * @return the whole filter text (unsplit) 
+	 * @return the whole filter text (unsplit)
 	 */
 	public String getPattern() {
 		return fSearchPattern;

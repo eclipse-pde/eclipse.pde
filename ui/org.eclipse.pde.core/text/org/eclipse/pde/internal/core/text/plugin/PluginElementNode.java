@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -126,7 +126,7 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 		if (getAttributeCount() > 0 || children.length > 0 || text.length() > 0)
 			buffer.append(getIndent());
 
-		buffer.append("</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$	
+		buffer.append("</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		return buffer.toString();
 	}
 
@@ -196,7 +196,7 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 		super.reconnect(parent, model);
 		// Transient Field:  Element Info
 		// Not necessary to reconnect schema.
-		// getElementInfo will retrieve the schema on demand if it is null	
+		// getElementInfo will retrieve the schema on demand if it is null
 		elementInfo = null;
 	}
 

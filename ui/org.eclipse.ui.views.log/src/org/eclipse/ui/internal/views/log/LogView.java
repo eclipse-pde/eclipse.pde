@@ -58,9 +58,9 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final String P_LOG_INFO = "info"; //$NON-NLS-1$
 	public static final String P_LOG_OK = "ok"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Maximum tail size of the log file in Mega Bytes (1024 * 1024 Bytes) considers the last XYZ MB of the log file to create log entries.
-	 * This value should be increased if the size of the sub elements of the last (most recent) log entry in the log file exceeds the maximum tail size. 
+	 * This value should be increased if the size of the sub elements of the last (most recent) log entry in the log file exceeds the maximum tail size.
 	 **/
 	public static final String P_LOG_MAX_TAIL_SIZE = "maxLogTailSize"; //$NON-NLS-1$
 	public static final String P_LOG_LIMIT = "limit"; //$NON-NLS-1$

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sonatype, Inc. - ongoing development
@@ -49,11 +49,11 @@ public class RuntimeInstallJob extends Job {
 	private ProvisioningUI ui;
 
 	/**
-	 * Creates a new job that will install exported plug-ins.  For a 
+	 * Creates a new job that will install exported plug-ins.  For a
 	 * successful install, specific option in the feature export info
-	 * object need to be set before the export operation see 
+	 * object need to be set before the export operation see
 	 * {@link #modifyInfoForInstall(FeatureExportInfo)}
-	 * 
+	 *
 	 * @param jobName the name to use for this job
 	 * @param info the info object describing what is being exported
 	 */
@@ -69,7 +69,7 @@ public class RuntimeInstallJob extends Job {
 	 * Sets the export options required to make the export installable.
 	 * This method should be called before the export operation takes
 	 * place.
-	 * 
+	 *
 	 * @param info the feature info object that will be modified
 	 */
 	public static void modifyInfoForInstall(FeatureExportInfo info) {
@@ -134,7 +134,7 @@ public class RuntimeInstallJob extends Job {
 
 				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.iterator().next();
 
-				// Find out if the profile already has that iu installed												
+				// Find out if the profile already has that iu installed
 				queryMatches = profile.query(QueryUtil.createIUQuery(id), new SubProgressMonitor(monitor, 0));
 				if (queryMatches.isEmpty()) {
 					// Just install the new iu into the profile
@@ -175,7 +175,7 @@ public class RuntimeInstallJob extends Job {
 	/**
 	 * Creates an installable unit patch that will change the version of
 	 * existing requirements with the given version.
-	 * 
+	 *
 	 * @param existingIU an existing plug-in that this patch will replace, used to generate lifecycle
 	 * @param newVersion the new version to require
 	 * @param profile the profile we are installing in

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -69,10 +69,10 @@ public class ProjectNamesPage extends WizardPage {
 			}
 			// create entries
 			if (projects.length == 1) {
-				createEntry(PDEUIMessages.ProjectNamesPage_projectName, projects[0].getAttribute("name")); //$NON-NLS-1$ 
+				createEntry(PDEUIMessages.ProjectNamesPage_projectName, projects[0].getAttribute("name")); //$NON-NLS-1$
 			} else {
 				for (int i = 0; i < projects.length; i++) {
-					String label = NLS.bind(PDEUIMessages.ProjectNamesPage_multiProjectName, "" + (i + 1)); //$NON-NLS-1$ 
+					String label = NLS.bind(PDEUIMessages.ProjectNamesPage_multiProjectName, "" + (i + 1)); //$NON-NLS-1$
 					createEntry(label, projects[i].getAttribute("name")); //$NON-NLS-1$
 				}
 			}

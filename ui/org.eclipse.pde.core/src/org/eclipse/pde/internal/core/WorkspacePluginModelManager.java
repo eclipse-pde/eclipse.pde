@@ -49,7 +49,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	/**
 	 * Creates a plug-in model based on the project structure.
 	 * <p>
-	 * A bundle model is created if the project has a MANIFEST.MF file and optionally 
+	 * A bundle model is created if the project has a MANIFEST.MF file and optionally
 	 * a plugin.xml/fragment.xml file.
 	 * </p>
 	 * <p>
@@ -273,7 +273,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * <li>If the file has been modified, reload the model, reset the resource bundle
 	 * if the localization has changed and fire a notification that the model has changed</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param file the manifest file that was modified
 	 * @param delta the resource delta
 	 */
@@ -333,9 +333,9 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * Returns a plug-in model associated with the given project, or <code>null</code>
 	 * if the project is not a plug-in project or the manifest file is missing vital data
 	 * such as a symbolic name or version
-	 * 
+	 *
 	 * @param project the given project
-	 * 
+	 *
 	 * @return a plug-in model associated with the given project or <code>null</code>
 	 * if no such valid model exists
 	 */
@@ -345,7 +345,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
 	/**
 	 * Returns a list of all workspace plug-in models
-	 * 
+	 *
 	 * @return an array of workspace plug-in models
 	 */
 	protected IPluginModelBase[] getPluginModels() {
@@ -367,7 +367,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	}
 
 	/**
-	 * Removes listeners that the model manager attached on others, 
+	 * Removes listeners that the model manager attached on others,
 	 * as well as listeners attached on the model manager
 	 */
 	@Override
@@ -383,10 +383,10 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * Returns true if the folder being visited is of interest to PDE.
 	 * In this case, PDE is only interested in META-INF folders at the root of a plug-in project
 	 * We are also interested in schema folders
-	 * 
+	 *
 	 * @return <code>true</code> if the folder (and its children) is of interest to PDE;
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 */
 	@Override
 	protected boolean isInterestingFolder(IFolder folder) {
@@ -407,7 +407,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	/**
 	 * This method is called when workspace models are read and initialized
 	 * from the cache.  No need to read the workspace plug-ins from scratch.
-	 * 
+	 *
 	 * @param models  the workspace plug-in models
 	 */
 	protected void setModels(IPluginModelBase[] models) {
@@ -429,7 +429,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	/**
 	 * Return URLs to projects in the workspace that have a manifest file (MANIFEST.MF
 	 * or plugin.xml)
-	 * 
+	 *
 	 * @return an array of URLs to workspace plug-ins
 	 */
 	protected URL[] getPluginPaths() {

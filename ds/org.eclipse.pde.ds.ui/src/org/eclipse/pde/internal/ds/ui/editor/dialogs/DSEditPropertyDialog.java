@@ -168,7 +168,7 @@ public class DSEditPropertyDialog extends FormDialog {
 		fValuesEntry.commit();
 		StringTokenizer lines = new StringTokenizer(fValuesEntry.getValue(),
 				"\n"); //$NON-NLS-1$
-			
+
 		if (lines.countTokens() == 1) {
 			if (!(fValuesEntry.getValue().equals("") && fProperty.getPropertyValue() == null)) //$NON-NLS-1$
 				handleUniqueValue();
@@ -206,7 +206,7 @@ public class DSEditPropertyDialog extends FormDialog {
 				&& !fProperty.getPropertyValue().equals(EMPTY)) {
 			fProperty.setPropertyValue(EMPTY);
 		}
-		
+
 	}
 
 	public void updateFields() {
@@ -241,7 +241,7 @@ public class DSEditPropertyDialog extends FormDialog {
 		if (fProperty.getPropertyType() != null)
 			fTypeCombo.setText(fProperty.getPropertyType());
 
-		
+
 	}
 
 	public void setEntryListeners() {

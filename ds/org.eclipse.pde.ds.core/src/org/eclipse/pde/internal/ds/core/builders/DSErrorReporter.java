@@ -371,7 +371,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	/**
 	 * Validates if a property elements defines a single value and multiple
 	 * values at the same time.
-	 * 
+	 *
 	 * @param element
 	 * @param property
 	 */
@@ -433,7 +433,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				IDSConstants.VALUE_PROPERTY_TYPE_STRING };
 
 		if (attribute != null) {
-			
+
 			for (String allowedValue : allowedValues) {
 				if (allowedValue.equalsIgnoreCase(attribute)) {
 					return;
@@ -486,7 +486,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param elementConstant
 	 *            element name
 	 * @param attributeConstant

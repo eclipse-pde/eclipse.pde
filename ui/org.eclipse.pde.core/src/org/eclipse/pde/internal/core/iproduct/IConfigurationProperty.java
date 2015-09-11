@@ -14,9 +14,9 @@ package org.eclipse.pde.internal.core.iproduct;
 /**
  * Properties that are added to the config.ini.  Properties consist of a string name and
  * string value.
- * 
+ *
  * @see IProduct
- * 
+ *
  * @since 3.7
  */
 public interface IConfigurationProperty extends IProductObject {
@@ -32,7 +32,7 @@ public interface IConfigurationProperty extends IProductObject {
 
 	/**
 	 * Sets the name of this property
-	 * 
+	 *
 	 * @param name new name for the property
 	 */
 	void setName(String name);
@@ -44,28 +44,28 @@ public interface IConfigurationProperty extends IProductObject {
 
 	/**
 	 * Sets the value of this property
-	 * 
+	 *
 	 * @param value new value for the property
 	 */
 	void setValue(String value);
 
 	/**
-	 * @return The platform os for which for this property applies, or null if it 
+	 * @return The platform os for which for this property applies, or null if it
 	 * applies to all platforms
 	 */
 	String getOs();
 
 	/**
 	 * Sets the os to which this property applies
-	 * 
-	 * @param os the platform string describing the os to which this property 
+	 *
+	 * @param os the platform string describing the os to which this property
 	 * applies, or null if it applies to all platforms
 	 */
 
 	void setOs(String os);
 
 	/**
-	 * @return The platform architecture for which this property applies, or null 
+	 * @return The platform architecture for which this property applies, or null
 	 * if it applies to all architectures
 	 */
 
@@ -73,8 +73,8 @@ public interface IConfigurationProperty extends IProductObject {
 
 	/**
 	 * Sets the platform to which this property applies
-	 * 
-	 * @param arch the platform string describing the arch to which this property 
+	 *
+	 * @param arch the platform string describing the arch to which this property
 	 * applies, or null if it applies to all architectures
 	 */
 	void setArch(String arch);

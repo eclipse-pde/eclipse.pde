@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import java.util.Date;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * This class is a collection of utility functions for creating and using temporary working directories. 
+ * This class is a collection of utility functions for creating and using temporary working directories.
  */
 public class Utilities {
 
@@ -26,7 +26,7 @@ public class Utilities {
 	 * Returns a new working directory (in temporary space). Ensures
 	 * the directory exists. Any directory levels that had to be created
 	 * are marked for deletion on exit.
-	 * 
+	 *
 	 * @return working directory
 	 * @exception IOException
 	 * @since 2.0
@@ -39,7 +39,7 @@ public class Utilities {
 			if (!dirRoot.endsWith(File.separator))
 				dirRoot += File.separator;
 
-			// on Unix/Linux, the temp dir is shared by many users, so we need to ensure 
+			// on Unix/Linux, the temp dir is shared by many users, so we need to ensure
 			// that the top working directory is different for each user
 			if (!Platform.getOS().equals("win32")) { //$NON-NLS-1$
 				String home = System.getProperty("user.home"); //$NON-NLS-1$
@@ -63,9 +63,9 @@ public class Utilities {
 	 * This method is called when platform is shutting down.
 	 * It is not intended to be called at any other time under
 	 * normal circumstances. A side-effect of calling this method
-	 * is that the contents of the temporary directory managed 
-	 * by this class are deleted. 
-	 * 
+	 * is that the contents of the temporary directory managed
+	 * by this class are deleted.
+	 *
 	 * @since 2.0
 	 */
 	public static void shutdown() {

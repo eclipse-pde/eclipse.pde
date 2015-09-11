@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public class Bundle implements IBundle {
 	 * Loads the given map as the set of headers this model represents. Any previously set
 	 * headers will be cleared.  The provided map must be string header keys to string
 	 * values.
-	 * 
+	 *
 	 * @param headers the headers to load in this model
 	 */
 	public void load(Map<?, ?> headers) {

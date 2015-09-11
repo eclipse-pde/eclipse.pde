@@ -56,7 +56,7 @@ public class ManifestUtils {
 	public static final int STATUS_CODE_NOT_A_BUNDLE_MANIFEST = 204;
 
 	/**
-	 * Utility method to parse a bundle's manifest into a dictionary. The bundle may be in 
+	 * Utility method to parse a bundle's manifest into a dictionary. The bundle may be in
 	 * a directory or an archive at the specified location.  If the manifest does not contain
 	 * the necessary entries, the plugin.xml and fragment.xml will be checked for an old style
 	 * plug-in.  If the plugin.xml cannot be converted because the {@link PluginConverter}
@@ -69,11 +69,11 @@ public class ManifestUtils {
 	 * This method is called by org.eclipse.pde.api.tools.internal.model.BundleComponent.getManifest()
 	 * when OSGi is not running to load manifest information for a bundle.
 	 * </p><p>
-	 * TODO This method may be removed in favour of one that caches manifest contents. Currently caching is not 
+	 * TODO This method may be removed in favour of one that caches manifest contents. Currently caching is not
 	 * worthwhile as calling <code>ManifestElement.parseManifest()</code> takes trivial time (under 1ms) on repeat
 	 * calls to the same file.
 	 * </p>
-	 * 
+	 *
 	 * @param bundleLocation root location of the bundle, may be a archive file or directory
 	 * @return map of bundle manifest properties
 	 * @throws CoreException if manifest has invalid syntax, is missing or there is a problem converting as old style plug-in
@@ -152,16 +152,16 @@ public class ManifestUtils {
 
 	/**
 	 * Uses the OSGi PluginConverter to generate a manifest for the given project. Will
-	 * attempt to refresh the project when complete. If the plugin.xml cannot be 
-	 * converted because the {@link PluginConverter} service is not available, the 
+	 * attempt to refresh the project when complete. If the plugin.xml cannot be
+	 * converted because the {@link PluginConverter} service is not available, the
 	 * thrown core exception will have a status code of
 	 * {@link #STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE} to allow special processing.
-	 * 
+	 *
 	 * @param project the project to convert
 	 * @param targetVersion the runtime version the converted manifest is targeted for
-	 * @param devProperties a dictionary of development time classpath properties. 
-	 * 			The dictionary contains a mapping from plugin id to development time 
-	 * 			classpath. A value of null indicates that the default development time 
+	 * @param devProperties a dictionary of development time classpath properties.
+	 * 			The dictionary contains a mapping from plugin id to development time
+	 * 			classpath. A value of null indicates that the default development time
 	 * 			classpath properties will be used.
 	 * @throws CoreException if there is a problem converting the manifest or the compatibility fragment hosting the converter service is not available
 	 */
@@ -204,7 +204,7 @@ public class ManifestUtils {
 		List<IPackageFragmentRoot> pkgFragRoots = new LinkedList<IPackageFragmentRoot>();
 		for (int j = 0; j < libs.length; j++) {
 			String lib = libs[j];
-			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=230469  			
+			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=230469
 			IPackageFragmentRoot root = null;
 			if (!lib.equals(".")) { //$NON-NLS-1$
 				try {
@@ -241,7 +241,7 @@ public class ManifestUtils {
 	/**
 	 * Writes out a manifest file to the given stream.  Orders the manifest in an expected
 	 * order.  Will flush the output, but will not close the stream.
-	 * 
+	 *
 	 * @param manifestToWrite manifest headers to write to the stream
 	 * @param out stream to write output to
 	 * @throws IOException if there is a problem with the stream
@@ -285,11 +285,11 @@ public class ManifestUtils {
 	/**
 	 * Parses an old style plug-in's (or fragment's) XML definition file into a dictionary.
 	 * The provided file may be an zip archive or directory.  The existence of a plugin.xml
-	 * or fragment.xml is not checked in this method. If the plugin.xml cannot be converted 
-	 * because the {@link PluginConverter} service is not available, the thrown core 
-	 * exception will have a status code of {@link #STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE} 
+	 * or fragment.xml is not checked in this method. If the plugin.xml cannot be converted
+	 * because the {@link PluginConverter} service is not available, the thrown core
+	 * exception will have a status code of {@link #STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE}
 	 * to allow special processing.
-	 * 
+	 *
 	 * @param pluginLocation location of the bundle (archive file or directory)
 	 * @return bundle manifest dictionary or <code>null</code> if none
 	 * @throws CoreException if manifest has invalid syntax

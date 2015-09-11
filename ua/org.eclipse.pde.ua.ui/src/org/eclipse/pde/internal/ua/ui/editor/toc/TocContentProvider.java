@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 public class TocContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
 	/**
-	 * 
+	 *
 	 */
 	public TocContentProvider() {
 		// NO-OP

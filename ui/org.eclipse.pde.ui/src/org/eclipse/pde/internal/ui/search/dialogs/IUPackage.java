@@ -1,4 +1,4 @@
-/******************************************************************************* 
+/*******************************************************************************
 * Copyright (c) 2010 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
@@ -16,7 +16,7 @@ import org.eclipse.equinox.p2.metadata.Version;
 /**
  * Wrapper containing a java package and the installable unit that represents it in the
  * p2 metadata.
- * 
+ *
  * @since 3.6
  */
 public class IUPackage {
@@ -27,7 +27,7 @@ public class IUPackage {
 
 	/**
 	 * Creates a new wrapper
-	 * 
+	 *
 	 * @param packageName name of the package, must not be <code>null</code>
 	 * @param version version of the package, must not be <code>null</code>
 	 * @param iu installable unit associated with this package, must not be <code>null</code>

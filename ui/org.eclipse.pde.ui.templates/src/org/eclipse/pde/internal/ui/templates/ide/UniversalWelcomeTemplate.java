@@ -27,7 +27,7 @@ import org.eclipse.pde.ui.templates.PluginReference;
 /**
  * Creates a template for contributing to the Universal Welcome
  * intro. Requires Eclipse version 3.2.
- * 
+ *
  *  @since 3.2
  */
 

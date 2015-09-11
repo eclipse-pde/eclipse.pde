@@ -42,7 +42,7 @@ public class UpdatesSection extends TableSection {
 	private class RepositoryDialog extends StatusDialog {
 		private Text fLocation;
 		private IRepositoryInfo fEdit;
-		
+
 		public RepositoryDialog(Shell shell, IRepositoryInfo repo) {
 			super(shell);
 			fEdit = repo;
@@ -240,7 +240,7 @@ public class UpdatesSection extends TableSection {
 			}
 
 		});
-		
+
 
 
 		fRepositoryTable.setLabelProvider(new LabelProvider());
@@ -398,7 +398,7 @@ public class UpdatesSection extends TableSection {
 		tablePart.setButtonEnabled(2, enabled);
 		tablePart.setButtonEnabled(3, isEditable() && getProduct().getRepositories().length > 0);
 	}
-	
+
 	private void clearEditors() {
 		Control oldEditor = fEnabledColumnEditor.getEditor();
 		if (oldEditor != null && !oldEditor.isDisposed())
@@ -421,7 +421,7 @@ public class UpdatesSection extends TableSection {
 			}
 		});
 	}
-	
+
 	private void showControls() {
 		// Clean up any previous editor control
 		clearEditors();

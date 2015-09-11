@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 
 	protected int fRuns;
 
-	protected static final String F_FILENAME = "/tests/performance/schema/navigatorContent.exsd"; //$NON-NLS-1$	
+	protected static final String F_FILENAME = "/tests/performance/schema/navigatorContent.exsd"; //$NON-NLS-1$
 
 	protected static File fXSDFile;
 
@@ -46,7 +46,7 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void setUpIterations() {
 		fTestIterations = 5;

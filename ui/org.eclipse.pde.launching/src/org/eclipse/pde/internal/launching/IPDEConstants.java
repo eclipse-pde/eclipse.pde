@@ -31,7 +31,7 @@ public interface IPDEConstants {
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether the workspace log for an Eclipse application should be cleared
 	 * prior to launching.
-	 * 
+	 *
 	 * TODO, move to IPDELauncherConstants in 3.4
 	 */
 	String DOCLEARLOG = "clearwslog"; //$NON-NLS-1$

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -71,7 +71,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getBundle()
 	 */
 	public IBundle getBundle() {
@@ -98,7 +98,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getExtensionsRoot()
 	 */
 	public IExtensions getExtensionsRoot() {
@@ -111,7 +111,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	@Override
@@ -145,7 +145,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/**
 	 * Removes the specified library from the given 'Bundle-Classpath' header.
-	 * 
+	 *
 	 * @param library library to remove
 	 * @param header header to update
 	 */
@@ -186,7 +186,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	@Override
@@ -206,7 +206,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	@Override
@@ -266,7 +266,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	@Override
@@ -298,7 +298,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getLibraries()
 	 */
 	@Override
@@ -329,7 +329,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getImports()
 	 */
 	@Override
@@ -383,7 +383,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getProviderName()
 	 */
 	@Override
@@ -394,7 +394,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setProviderName(java.lang.String)
 	 */
 	@Override
@@ -414,7 +414,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getVersion()
 	 */
 	@Override
@@ -429,7 +429,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setVersion(java.lang.String)
 	 */
 	@Override
@@ -449,7 +449,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginLibrary,
 	 *      org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
@@ -481,7 +481,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	@Override
@@ -499,7 +499,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
 	 */
 	@Override
@@ -522,7 +522,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IExtensions#getExtensionPoints()
 	 */
 	@Override
@@ -535,7 +535,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IExtensions#getExtensions()
 	 */
 	@Override
@@ -556,7 +556,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	@Override
@@ -573,7 +573,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
 	 */
 	@Override
@@ -613,7 +613,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IExtensions#swap(org.eclipse.pde.core.plugin.IPluginExtension,
 	 *      org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
@@ -647,7 +647,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
 	@Override
@@ -655,7 +655,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		return getValue(Constants.BUNDLE_SYMBOLICNAME, true);
 	}
 
-	// The key should be a manifest header key, and parse should be true if it needs to be parsed by ManifestElement.parseHeader() 
+	// The key should be a manifest header key, and parse should be true if it needs to be parsed by ManifestElement.parseHeader()
 	protected String getValue(String key, boolean parse) {
 		IBundle bundle = getBundle();
 		if (bundle == null)
@@ -674,7 +674,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
 	@Override
@@ -694,7 +694,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getPluginModel()
 	 */
 	@Override
@@ -704,7 +704,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	@Override
@@ -714,7 +714,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	@Override
@@ -734,7 +734,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#isInTheModel()
 	 */
 	@Override
@@ -744,7 +744,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getTranslatedName()
 	 */
 	@Override
@@ -754,7 +754,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getParent()
 	 */
 	@Override
@@ -764,7 +764,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getPluginBase()
 	 */
 	@Override
@@ -774,7 +774,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#isValid()
 	 */
 	@Override
@@ -785,7 +785,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String,
 	 *      java.io.PrintWriter)
 	 */

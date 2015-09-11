@@ -33,7 +33,7 @@ import org.osgi.framework.Constants;
 
 /**
  * Utilities to read and write p2 files
- * 
+ *
  * @since 3.4
  */
 public class P2Utils {
@@ -56,7 +56,7 @@ public class P2Utils {
 	 * bundles found will also be added to the returned list.  If bundle URLs found
 	 * in the bundles.info are relative, they will be appended to platformHome to
 	 * make them absolute.
-	 * 
+	 *
 	 * @param platformHome absolute path in the local file system to an installation
 	 * @param configurationArea url location of the configuration directory to search for bundles.info and source.info
 	 * @return URLs of all bundles in the installation or <code>null</code> if not able
@@ -93,7 +93,7 @@ public class P2Utils {
 	 * home and configuration area, or <code>null</code> if none.
 	 * The "bundles.info" file is assumed to be at a fixed location relative to the
 	 * configuration area URL.
-	 * 
+	 *
 	 * @param platformHome absolute path in the local file system to an installation
 	 * @param configurationArea url location of the configuration directory to search
 	 *  for bundles.info
@@ -126,7 +126,7 @@ public class P2Utils {
 	 * Returns source bundles defined by the 'source.info' file in the
 	 * specified location, or <code>null</code> if none. The "source.info" file
 	 * is assumed to be at a fixed location relative to the configuration area URL.
-	 * 
+	 *
 	 * @param platformHome absolute path in the local file system to an installation
 	 * @param configurationArea url location of the configuration directory to search for bundles.info and source.info
 	 * @return all source bundles in the installation or <code>null</code> if not able
@@ -156,7 +156,7 @@ public class P2Utils {
 
 	/**
 	 * Copies URLs from the given bundle info objects into the specified array starting at the given index.
-	 * 
+	 *
 	 * @param dest array to copy URLs into
 	 * @param start index to start copying into
 	 * @param infos associated bundle infos
@@ -171,11 +171,11 @@ public class P2Utils {
 	/**
 	 * Returns a list of {@link BundleInfo} for each bundle entry or <code>null</code> if there
 	 * is a problem reading the file.
-	 * 
+	 *
 	 * @param fileURL the URL of the file to read
 	 * @param home the path describing the base location of the platform install
 	 * @return list containing URL locations or <code>null</code>
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private static BundleInfo[] getBundlesFromFile(URL fileURL, File home) throws IOException {
 		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) PDECore.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
@@ -193,12 +193,12 @@ public class P2Utils {
 	/**
 	 * Creates a bundles.info file in the given directory containing the name,
 	 * version, location, start level and expected state of the bundles in the
-	 * launch.  Will also create a source.info containing all of the 
-	 * source bundles in the launch. The map of bundles must be of the form 
-	 * IModelPluginBase to a String ("StartLevel:AutoStart").  Returns the 
-	 * URL location of the bundle.info or <code>null</code> if there was a 
+	 * launch.  Will also create a source.info containing all of the
+	 * source bundles in the launch. The map of bundles must be of the form
+	 * IModelPluginBase to a String ("StartLevel:AutoStart").  Returns the
+	 * URL location of the bundle.info or <code>null</code> if there was a
 	 * problem creating it.
-	 * 
+	 *
 	 * @param bundles map containing all bundles to write to the bundles.info, maps IPluginModelBase to String ("StartLevel:AutoStart")
 	 * @param defaultStartLevel start level to use when "default" is the start level
 	 * @param defaultAutoStart auto start setting to use when "default" is the auto start setting
@@ -313,7 +313,7 @@ public class P2Utils {
 	/**
 	 * Returns whether a profile with the given ID exists in a profile registry
 	 * stored in the give p2 data area.
-	 * 
+	 *
 	 * @param profileID id of the profile to check
 	 * @param p2DataArea data area where the profile registry is
 	 * @return whether the profile exists
@@ -341,11 +341,11 @@ public class P2Utils {
 	 * Generates a profile containing metadata for all of the bundles in the provided collection.
 	 * The profile will have the given profile ID and will be persisted in the profile registry
 	 * directory inside the given p2 data area.
-	 * 
+	 *
 	 * @param profileID the ID to be used when creating the profile, if a profile with the same name exists, it will be overwritten
 	 * @param p2DataArea the directory which contains p2 data including the profile registry, if the directory path doesn't exist it will be created
 	 * @param bundles the collection of IPluginModelBase objects representing bundles to create metadata for and add to the profile
-	 * 
+	 *
 	 * @throws CoreException if the profile cannot be generated
 	 */
 	public static void createProfile(String profileID, File p2DataArea, Collection<?> bundles) throws CoreException {
@@ -429,7 +429,7 @@ public class P2Utils {
 
 	/**
 	 * Creates an installable unit from a bundle description
-	 * 
+	 *
 	 * @param bd bundle description to create metadata for
 	 * @return an installable unit
 	 */

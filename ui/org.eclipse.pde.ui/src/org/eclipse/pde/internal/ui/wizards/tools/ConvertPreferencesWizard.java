@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.ui.*;
 
 /**
  * A wizard that can be used to convert preferences specified in an Eclipse Preferences File (.epf)
- * to a format used in a plugin_customization.ini file. 
+ * to a format used in a plugin_customization.ini file.
  *
  * @since 4.5
  */
@@ -37,18 +37,18 @@ public class ConvertPreferencesWizard extends Wizard {
 	private boolean fOverwrite;
 
 	/**
-	 * Create a wizard to convert preferences specified in an Eclipse Preferences File (.epf) 
+	 * Create a wizard to convert preferences specified in an Eclipse Preferences File (.epf)
 	 * to a format used in a plugin_customization.ini file.
-	 * 
+	 *
 	 *  @param pluginCustomizationFilePath a String describing a fully qualified workspace path
 	 *  to the plugin customization file that will receive the converted values. If the value does not
 	 *  describe an existing file or is <code>null</code>, the wizard will open in an error state.
-	 *  
+	 *
 	 *  @param preferencesFilePath a String describing the fully qualified file system path to the Eclipse
 	 *  Preferences File (.epf) whose values will be converted for use in the plugin customization
 	 *  file. If the value does not describe an existing file or is <code>null</code>, the wizard will
 	 *  open in an error state.
-	 *  
+	 *
 	 *  @param overwrite a boolean indicating whether the converted values should overwrite all
 	 *  values in the plugin customization file or be merged with the existing values in the
 	 *  plugin customization file.
@@ -166,7 +166,7 @@ public class ConvertPreferencesWizard extends Wizard {
 								while (keys.hasMoreElements()) {
 									Object key = keys.nextElement();
 									Object value = properties.get(key);
-									out.append(key + "=" + value); //$NON-NLS-1$ 
+									out.append(key + "=" + value); //$NON-NLS-1$
 									out.append('\n');
 								}
 								// now write the (possibly merged) values from the string builder to the file

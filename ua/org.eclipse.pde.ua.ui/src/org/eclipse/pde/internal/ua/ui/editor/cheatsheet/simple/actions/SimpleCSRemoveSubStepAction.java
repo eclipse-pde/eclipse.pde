@@ -31,7 +31,7 @@ public class SimpleCSRemoveSubStepAction extends Action {
 	private ISimpleCSObject fObjectToSelect;
 
 	/**
-	 * 
+	 *
 	 */
 	public SimpleCSRemoveSubStepAction() {
 		// TODO: MP: LOW: SimpleCS:  Add tool-tip / image ?
@@ -54,26 +54,26 @@ public class SimpleCSRemoveSubStepAction extends Action {
 	 */
 	public void run() {
 		if (fSubItem != null) {
-			// Determine parent type and remove accordingly 
+			// Determine parent type and remove accordingly
 			ISimpleCSObject parent = fSubItem.getParent();
 			if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				// Parent is an item
 				ISimpleCSItem item = (ISimpleCSItem) parent;
-				// Determine the item to select after the deletion takes place 
+				// Determine the item to select after the deletion takes place
 				determineItemToSelect(item);
 				// Remove the subitem
 				item.removeSubItem(fSubItem);
 			} else if ((parent.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) && (fSubItem.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
 				// Parent is a repeated subitem
 				ISimpleCSRepeatedSubItem subitem = (ISimpleCSRepeatedSubItem) parent;
-				// Determine the item to select after the deletion takes place 
+				// Determine the item to select after the deletion takes place
 				determineItemToSelect(subitem);
 				// Remove the subitem
 				subitem.setSubItem(null);
 			} else if ((parent.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) && (fSubItem.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
 				// Parent is a conditional subitem
 				ISimpleCSConditionalSubItem subitem = (ISimpleCSConditionalSubItem) parent;
-				// Determine the item to select after the deletion takes place 
+				// Determine the item to select after the deletion takes place
 				determineItemToSelect(subitem);
 				// Remove the subitem
 				subitem.removeSubItem((ISimpleCSSubItem) fSubItem);

@@ -31,7 +31,7 @@ public class TocDocumentHandler extends NodeDocumentHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocument()
 	 */
 	protected IDocument getDocument() {
@@ -40,7 +40,7 @@ public class TocDocumentHandler extends NodeDocumentHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.NodeDocumentHandler#getRootNode()
 	 */
 	protected IDocumentElementNode getRootNode() {
@@ -64,7 +64,7 @@ public class TocDocumentHandler extends NodeDocumentHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.DocumentHandler#error(org.xml.sax.SAXParseException)
 	 */
@@ -76,7 +76,7 @@ public class TocDocumentHandler extends NodeDocumentHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.DocumentHandler#fatalError(org.xml.sax.SAXParseException)
 	 */

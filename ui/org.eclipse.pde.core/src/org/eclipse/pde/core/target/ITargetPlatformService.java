@@ -18,9 +18,9 @@ import org.eclipse.pde.internal.core.target.IUBundleContainer;
 
 /**
  * A service to manage target platform definitions available to the workspace.
- * 
+ *
  * @since 3.8
- * @noimplement This interface is not intended to be implemented by clients. 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITargetPlatformService {
 
@@ -42,7 +42,7 @@ public interface ITargetPlatformService {
 
 	/**
 	 * Returns handles to all target definitions known in the workspace.
-	 * 
+	 *
 	 * @return handles to all target definitions known in the workspace
 	 */
 	public ITargetHandle[] getTargets(IProgressMonitor monitor);
@@ -52,8 +52,8 @@ public interface ITargetPlatformService {
 	 * The target definition may or may not exist. If the file does not exist
 	 * then this is a new target definition which becomes one of the known
 	 * workspace target definitions when it is saved.
-	 * 
-	 * @param file target definition file that may or may not exist 
+	 *
+	 * @param file target definition file that may or may not exist
 	 * @return target handle
 	 */
 	public ITargetHandle getTarget(IFile file);
@@ -63,8 +63,8 @@ public interface ITargetPlatformService {
 	 * The target definition may or may not exist. If the {@link URI} is valid
 	 * then this is a new target definition which becomes one of the known
 	 * external target definitions.
-	 * 
-	 * @param uri target definition {@link URI} that may or may not exist 
+	 *
+	 * @param uri target definition {@link URI} that may or may not exist
 	 * @return target handle
 	 */
 	public ITargetHandle getTarget(URI uri);
@@ -72,7 +72,7 @@ public interface ITargetPlatformService {
 	/**
 	 * Returns a new target definition to be stored with local metadata. The target
 	 * becomes one of the known workspace target definitions when it is saved.
-	 * 
+	 *
 	 * @return new empty target definition
 	 */
 	public ITargetDefinition newTarget();
@@ -92,7 +92,7 @@ public interface ITargetPlatformService {
 
 	/**
 	 * Deletes the target definition associated with the given handle.
-	 * 
+	 *
 	 * @param handle target handle
 	 * @throws CoreException if the associated target does not exist or deletion fails
 	 */
@@ -101,7 +101,7 @@ public interface ITargetPlatformService {
 	/**
 	 * Creates and returns a target handle from the given memento. The memento must
 	 * have been generated from {@link ITargetHandle#getMemento()}.
-	 * 
+	 *
 	 * @param memento a target handle memento
 	 * @return target handle
 	 * @throws CoreException if the target handle format is invalid
@@ -111,7 +111,7 @@ public interface ITargetPlatformService {
 	/**
 	 * Creates and returns a target location that contains all bundles in the
 	 * specified directory which may contain string substitution variables.
-	 * 
+	 *
 	 * @param path absolute path in the local file system, may contain string variables
 	 * @return target location
 	 */
@@ -120,9 +120,9 @@ public interface ITargetPlatformService {
 	/**
 	 * Creates and returns a target location that contains all bundles installed in
 	 * a profile at the specified location with the specified configuration area. If
-	 * a configuration area is not specified the default location is used. The specified 
+	 * a configuration area is not specified the default location is used. The specified
 	 * home location and configuration location may contain string substitution variables.
-	 * 
+	 *
 	 * @param home absolute path in the local file system to the root of an installed profile
 	 * 	which may contain string substitution variables
 	 * @param configurationLocation absolute path in the local file system to the
@@ -136,11 +136,11 @@ public interface ITargetPlatformService {
 	 * Creates and returns a target location that contains all bundles contained in
 	 * the specified installable units (IU's) in the given repositories. If repositories are
 	 * not specified default repositories are searched (based on user preferences).
-	 * 
+	 *
 	 * @param units installable units
 	 * @param repositories URI's describing repository locations or <code>null</code> to use
 	 * 	default repositories
-	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE} 
+	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE}
 	 * @return target location
 	 */
 	public ITargetLocation newIULocation(IInstallableUnit[] units, URI[] repositories, int resolutionFlags);
@@ -149,7 +149,7 @@ public interface ITargetPlatformService {
 	 * Creates and returns a target location that contains all bundles contained in
 	 * the specified installable units (IU's) in the given repositories. If repositories are
 	 * not specified default repositories are searched (based on user preferences).
-	 * 
+	 *
 	 * @param unitIds installable unit identifiers
 	 * @param versions version identifiers
 	 * @param repositories URI's describing repository locations or <code>null</code> to use
@@ -163,7 +163,7 @@ public interface ITargetPlatformService {
 	 * Creates and returns a target location that contains all bundles referenced by
 	 * the feature at the specified location. The location is the directory that defines
 	 * the feature.
-	 * 
+	 *
 	 * @param home installation location containing a features directory which may contain
 	 *  string substitution variables
 	 * @param featureId feature symbolic name
@@ -175,7 +175,7 @@ public interface ITargetPlatformService {
 	/**
 	 * Returns a handle to the target definition that corresponds to the active target platform
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @return handle to workspace target platform or <code>null</code> if none
 	 * @exception CoreException if an error occurs generating the handle
 	 */
@@ -188,13 +188,13 @@ public interface ITargetPlatformService {
 	 * been created before. Will throw a {@link CoreException} if the backing target file
 	 * does not exist or if there is a problem reading it.
 	 * <p>
-	 * The returned target definition may have been resolved previously, but this is not 
+	 * The returned target definition may have been resolved previously, but this is not
 	 * guaranteed. It is recommended clients use this method over {@link #getWorkspaceTargetHandle()}.
 	 * </p>
-	 * 
+	 *
 	 * @return a target definition corresponding to the active target platform
 	 * @throws CoreException if an error occurs loading the workspace target definition
-	 * 
+	 *
 	 * @since 3.10 Added in the Luna 4.4 release
 	 */
 	public ITargetDefinition getWorkspaceTargetDefinition() throws CoreException;
@@ -203,7 +203,7 @@ public interface ITargetPlatformService {
 	 * Returns a status describing whether the given target definition is synchronized with
 	 * workspace's target platform state. It is possible that bundles could have been added/removed
 	 * from the underlying target location storage making the current target platform state out of
-	 * synch with the contents of the a definition. The given target definition must already be 
+	 * synch with the contents of the a definition. The given target definition must already be
 	 * resolved or this method will return <code>null</code>.
 	 * <p>
 	 * An <code>OK</code> status is returned when in synch. A multi-status is returned
@@ -223,17 +223,17 @@ public interface ITargetPlatformService {
 
 	/**
 	 * Copies all attributes from one target definition to another.
-	 * 
-	 * @param from attributes are copied from this definition 
+	 *
+	 * @param from attributes are copied from this definition
 	 * @param to attributes are copied to this definition
 	 * @throws CoreException in copy fails
 	 */
 	public void copyTargetDefinition(ITargetDefinition from, ITargetDefinition to) throws CoreException;
 
 	/**
-	 * Sets the content of the given target definition based on the target file supplied 
+	 * Sets the content of the given target definition based on the target file supplied
 	 * by an <code>org.eclipse.pde.core.targets</code> extension with the specified identifier.
-	 *  
+	 *
 	 * @param definition target definition to load
 	 * @param targetExtensionId identifier of a targets extension
 	 * @throws CoreException if the extension is not found or an error occurs reading the target
@@ -245,7 +245,7 @@ public interface ITargetPlatformService {
 	 * Returns a new target definition with default settings. The default target contains all plug-ins
 	 * and features from the running host.  It uses an explicit configuration area if not equal to the
 	 * default location.
-	 * 
+	 *
 	 * @return a new target definition with default settings
 	 */
 	public ITargetDefinition newDefaultTarget();

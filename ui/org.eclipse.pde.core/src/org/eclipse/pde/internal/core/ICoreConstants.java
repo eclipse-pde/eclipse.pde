@@ -27,7 +27,7 @@ public interface ICoreConstants {
 
 	// Target Platform
 	/**
-	 * Preference key that stores the string path to the root location of the 
+	 * Preference key that stores the string path to the root location of the
 	 * target platform.  Should be accessed through {@link TargetPlatform#getLocation()}.
 	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
 	 */
@@ -69,7 +69,7 @@ public interface ICoreConstants {
 	@Deprecated
 	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$
 	/**
-	 * @since 3.6 - Bug 282708: [target] issues with two versions of the same bundle 
+	 * @since 3.6 - Bug 282708: [target] issues with two versions of the same bundle
 	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
 	 */
 	@Deprecated
@@ -119,7 +119,7 @@ public interface ICoreConstants {
 	/**
 	 * List of feature ids and versions that are available in the target platform.  Features
 	 * are comma separated, with each entry taking the form of [id]@[version]
-	 * 
+	 *
 	 * @since 3.6
 	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
 	 */
@@ -161,7 +161,7 @@ public interface ICoreConstants {
 	String ARCH_EXTRA = "org.eclipse.pde.arch.extra"; //$NON-NLS-1$
 
 	/** Constant for the string <code>extension</code> */
-	public final static String EXTENSION_NAME = "extension"; //$NON-NLS-1$	
+	public final static String EXTENSION_NAME = "extension"; //$NON-NLS-1$
 
 	/** Constant for the string <code>plugin.xml</code> */
 	public final static String PLUGIN_FILENAME_DESCRIPTOR = "plugin.xml"; //$NON-NLS-1$
@@ -216,7 +216,7 @@ public interface ICoreConstants {
 	 * can be used to process PDE files that have changed structure between releases.
 	 * </p><p>
 	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
-	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the
 	 * new version.
 	 * </p>
 	 */
@@ -231,7 +231,7 @@ public interface ICoreConstants {
 	 * can be used to process PDE files that have changed structure between releases.
 	 * </p><p>
 	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
-	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the
 	 * new version.
 	 * </p>
 	 */
@@ -246,7 +246,7 @@ public interface ICoreConstants {
 	 * can be used to process PDE files that have changed structure between releases.
 	 * </p><p>
 	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
-	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the
 	 * new version.
 	 * </p>
 	 */
@@ -261,7 +261,7 @@ public interface ICoreConstants {
 	 * can be used to process PDE files that have changed structure between releases.
 	 * </p><p>
 	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
-	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the
 	 * new version.
 	 * </p>
 	 */
@@ -276,7 +276,7 @@ public interface ICoreConstants {
 	 * can be used to process PDE files that have changed structure between releases.
 	 * </p><p>
 	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
-	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the
 	 * new version.
 	 * </p>
 	 */
@@ -291,7 +291,7 @@ public interface ICoreConstants {
 	 * can be used to process PDE files that have changed structure between releases.
 	 * </p><p>
 	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
-	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the
 	 * new version.
 	 * </p>
 	 */
@@ -306,7 +306,7 @@ public interface ICoreConstants {
 	 * can be used to process PDE files that have changed structure between releases.
 	 * </p><p>
 	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
-	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the
 	 * new version.
 	 * </p>
 	 */
@@ -321,18 +321,18 @@ public interface ICoreConstants {
 	 * can be used to process PDE files that have changed structure between releases.
 	 * </p><p>
 	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
-	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the
 	 * new version.
 	 * </p>
 	 */
 	public final static String TARGET38 = "3.8"; //$NON-NLS-1$
 
 	/**
-	 * The highest version of of Eclipse that PDE recognizes as having a special file structure. The value of 
+	 * The highest version of of Eclipse that PDE recognizes as having a special file structure. The value of
 	 * this constant may change between releases.
 	 * <p>
 	 * Currently the latest version is {@link #TARGET38}.  If a new version constant is added to PDE, this
-	 * constant must be updated to the latest version.  Also, {@link TargetPlatformHelper#getTargetVersionString()} 
+	 * constant must be updated to the latest version.  Also, {@link TargetPlatformHelper#getTargetVersionString()}
 	 * must be updated to return the new version.
 	 * </p><p>
 	 * If the set of target versions available when creating a project changes, NewLibraryPluginCreationPage,
@@ -361,15 +361,15 @@ public interface ICoreConstants {
 	 * Configures launch shortcuts visible in the manifest editor for a project.
 	 * Value is a comma separated list of <code>org.eclipse.pde.ui.launchShortcuts</code>
 	 * extension identifiers.
-	 * 
-	 * @since 3.6 
+	 *
+	 * @since 3.6
 	 */
 	public static final String MANIFEST_LAUNCH_SHORTCUTS = "manifest.launchShortcuts"; //$NON-NLS-1$
 
 	/**
 	 * Configures the export wizard used in the manifest editor for a project.
 	 * Value is an <code>org.eclipse.ui.exportWizards</code> extension identifier.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String MANIFEST_EXPORT_WIZARD = "manifest.exportWizard"; //$NON-NLS-1$
@@ -395,7 +395,7 @@ public interface ICoreConstants {
 	 */
 	public final static String ECLIPSE_AUTOSTART = "Eclipse-AutoStart"; //$NON-NLS-1$
 	/**
-	 * The 'Eclipse-LazyStart=true' header replaced the 'Eclipse-AutoStart' header 
+	 * The 'Eclipse-LazyStart=true' header replaced the 'Eclipse-AutoStart' header
 	 * with a better name in 3.2. And since 3.4 (OSGi R4.1), the 'Bundle-ActivationPolicy: lazy'
 	 * replaces all of these.
 	 */
@@ -476,5 +476,5 @@ public interface ICoreConstants {
 	 * Constant representing the value for UTF-8 encoding.
 	 * Value is: <code>UTF-8</code>
 	 */
-	public static final String UTF_8 = "UTF-8"; //$NON-NLS-1$ 
+	public static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 }

@@ -451,7 +451,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	/**
 	 * Validates the Eclipse-BundleShape header
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private void validateEclipseBundleShape() {

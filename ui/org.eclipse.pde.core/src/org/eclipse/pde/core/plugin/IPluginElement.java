@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Classes that implement this interface model the
  * XML elements found in the plug-in model.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -91,7 +91,7 @@ public interface IPluginElement extends IPluginParent {
 	 * the model is not editable.
 	 *
 	 * @param name the name of the attribute
-	 * @param value the value to be set 
+	 * @param value the value to be set
 	 * @throws CoreException if the model is not editable
 	 */
 	void setAttribute(String name, String value) throws CoreException;

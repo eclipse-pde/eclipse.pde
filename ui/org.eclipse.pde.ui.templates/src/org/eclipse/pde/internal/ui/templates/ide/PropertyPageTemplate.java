@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 234376
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473694
- *     
+ *
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
@@ -80,7 +80,7 @@ public class PropertyPageTemplate extends PDETemplateSection {
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
+		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));

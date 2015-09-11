@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -82,7 +82,7 @@ public class DependencyExtentSearchResult extends SearchResult {
 	@Override
 	public String getLabel() {
 		int count = getMatchCount();
-		return fQuery.getLabel() + " - " + count + " " + (count == 1 ? PDEUIMessages.DependencyExtentSearchResult_dependency : PDEUIMessages.DependencyExtentSearchResult_dependencies); //$NON-NLS-1$ //$NON-NLS-2$  
+		return fQuery.getLabel() + " - " + count + " " + (count == 1 ? PDEUIMessages.DependencyExtentSearchResult_dependency : PDEUIMessages.DependencyExtentSearchResult_dependencies); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public class SimpleCSDescription extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSDescription
 	 * #getContent()
@@ -42,7 +42,7 @@ public class SimpleCSDescription extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSDescription
 	 * #setContent(java.lang.String)
@@ -53,7 +53,7 @@ public class SimpleCSDescription extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
@@ -63,7 +63,7 @@ public class SimpleCSDescription extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
@@ -74,7 +74,7 @@ public class SimpleCSDescription extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()
@@ -85,7 +85,7 @@ public class SimpleCSDescription extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#
 	 * isContentCollapsed()
 	 */

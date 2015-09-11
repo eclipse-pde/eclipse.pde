@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class XMLInsertionComputer {
 	public static void computeInsertion(ISchemaElement sElement, IPluginParent pElement) {
 		HashSet<String> visited = new HashSet<>();
 		if ((sElement == null) || (pElement == null)) {
-			// If there is no corresponding schema information or plug-in 
+			// If there is no corresponding schema information or plug-in
 			// model, then there is nothing to augment
 			return;
 		}
@@ -57,11 +57,11 @@ public class XMLInsertionComputer {
 	/**
 	 * Edge Case:
 	 * Extension element has a sequence compositor containing one child element
-	 * whose min occurs is 0. 
+	 * whose min occurs is 0.
 	 * This is an extension point schema bug. However, to mask this bug and make
 	 * life easier for the user, interpret the child element min occurs as 1;
 	 * since, it makes no sense for an extension not to have any child elements
-	 * In essence, we auto-generate the child element when none should have 
+	 * In essence, we auto-generate the child element when none should have
 	 * been.
 	 * See Bug # 162379 for details.
 	 * @param sElement
@@ -77,7 +77,7 @@ public class XMLInsertionComputer {
 		computeInsertionAllAttributes(pElement, sElement);
 		// Get the extension compositor
 		ISchemaCompositor compositor = ((ISchemaComplexType) sElement.getType()).getCompositor();
-		// We know that there is only one child that is an element with a 
+		// We know that there is only one child that is an element with a
 		// min occurs of 0
 		ISchemaElement childSchemaElement = (ISchemaElement) compositor.getChildren()[0];
 		// Process the element as if the min occurs was 1
@@ -87,7 +87,7 @@ public class XMLInsertionComputer {
 		visited.add(childSchemaElement.getName());
 		// Revert back to the normal process
 		computeInsertionType(childSchemaElement, childElement, visited);
-		// Add the new child element to the parent after its own child 
+		// Add the new child element to the parent after its own child
 		// elements and attributes have been recursively added
 		pElement.add(childElement);
 	}
@@ -124,7 +124,7 @@ public class XMLInsertionComputer {
 	protected static void computeInsertionType(ISchemaElement sElement, IPluginParent pElement, HashSet<String> visited) throws CoreException {
 
 		if ((sElement == null) || (pElement == null)) {
-			// If there is no corresponding schema information or plug-in 
+			// If there is no corresponding schema information or plug-in
 			// model, then there is nothing to augment
 			return;
 		} else if (sElement.getType() instanceof ISchemaSimpleType) {
@@ -198,7 +198,7 @@ public class XMLInsertionComputer {
 			} else {
 				childElement.setText(PDEUIMessages.XMLCompletionProposal_ErrorCycle);
 			}
-			// Add the new child element to the parent after its own child 
+			// Add the new child element to the parent after its own child
 			// elements and attributes have been recursively added
 			pElement.add(childElement);
 		}
@@ -270,11 +270,11 @@ public class XMLInsertionComputer {
 		} else if (restriction != null) {
 			// STRING &&
 			// RESTRICTION
-			// Check for enumeration restrictions, if there is one, 
+			// Check for enumeration restrictions, if there is one,
 			// just pick the first enumerated value
 			value = restriction.getChildren()[0].toString();
 		} else if ((attribute instanceof SchemaAttribute) && ((SchemaAttribute) attribute).isTranslatable()) {
-			// STRING &&		
+			// STRING &&
 			// TRANSLATABLE
 			value = attribute.getName();
 		} else if (project != null) {
@@ -293,7 +293,7 @@ public class XMLInsertionComputer {
 				if (attribute.getParent() instanceof ISchemaElement) {
 					ISchemaElement sElement = (ISchemaElement) attribute.getParent();
 					if (sElement instanceof ISchemaRootElement) {
-						// The parent element is either a extension or an 
+						// The parent element is either a extension or an
 						// extension-point
 						// Do not auto-generate attribute values for those
 						// elements

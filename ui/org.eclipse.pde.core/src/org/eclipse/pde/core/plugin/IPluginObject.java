@@ -16,7 +16,7 @@ import org.eclipse.pde.core.IWritable;
 
 /**
  * A base interface for all the objects in the plug-in model.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -50,8 +50,8 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * It is useful to ignore modification events of objects
 	 * that have not yet being added to the model or if they
 	 * have been removed.
-	 * 
-	 * @return whether this object is currently part of a model 
+	 *
+	 * @return whether this object is currently part of a model
 	 */
 	boolean isInTheModel();
 
@@ -60,8 +60,8 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * It is useful to ignore modification events of objects
 	 * that have not yet being added to the model or if they
 	 * have been removed.
-	 * 
-	 * @param inModel whether the object is currently part of a model 
+	 *
+	 * @param inModel whether the object is currently part of a model
 	 */
 	void setInTheModel(boolean inModel);
 

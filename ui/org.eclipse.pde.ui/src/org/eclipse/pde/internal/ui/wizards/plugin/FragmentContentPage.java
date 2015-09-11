@@ -191,7 +191,7 @@ public class FragmentContentPage extends ContentPage {
 		fEEChoice = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		// Gather EEs 
+		// Gather EEs
 		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
 		TreeSet<String> availableEEs = new TreeSet<>();
 		for (int i = 0; i < exeEnvs.length; i++) {
@@ -199,7 +199,7 @@ public class FragmentContentPage extends ContentPage {
 		}
 		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
 
-		// Set data 
+		// Set data
 		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size() - 1]));
 		fEEChoice.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -228,7 +228,7 @@ public class FragmentContentPage extends ContentPage {
 			@Override
 			public void handleEvent(Event event) {
 				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
-						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$ 
+						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$
 			}
 		});
 	}

@@ -210,9 +210,9 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	}
 
 	/**
-	 * Clears the workspace prior to launching if the workspace exists and the option to 
+	 * Clears the workspace prior to launching if the workspace exists and the option to
 	 * clear it is turned on.  Also clears the configuration area if that option is chosen.
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @param monitor

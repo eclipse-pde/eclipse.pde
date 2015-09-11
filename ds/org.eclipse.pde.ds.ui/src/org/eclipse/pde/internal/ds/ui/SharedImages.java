@@ -33,7 +33,7 @@ public final class SharedImages {
 	public static final String DESC_IMPLEMENTATION = PATH_OBJ + "class_obj.png"; //$NON-NLS-1$
 	public static final String DESC_PROPERTY = PATH_OBJ + "property_obj.png"; //$NON-NLS-1$
 	public static final String DESC_PROPERTIES = PATH_OBJ
-			+ "properties_obj.png"; //$NON-NLS-1$	
+			+ "properties_obj.png"; //$NON-NLS-1$
 	public static final String DESC_PROVIDE = PATH_OBJ + "int_obj.png"; //$NON-NLS-1$
 	public static final String DESC_REFERENCE = PATH_OBJ + "reference_obj.png"; //$NON-NLS-1$
 	public static final String DESC_REFERENCE_ONE_N = PATH_OBJ

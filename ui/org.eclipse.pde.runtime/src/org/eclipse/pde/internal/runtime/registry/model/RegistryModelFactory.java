@@ -21,7 +21,7 @@ package org.eclipse.pde.internal.runtime.registry.model;
 public class RegistryModelFactory {
 
 	/**
-	 * 
+	 *
 	 * @param uri
 	 * @return never returns null
 	 */

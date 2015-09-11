@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.ui.*;
 
 public class PersistablePluginObject extends PlatformObject implements IPersistableElement, IElementFactory {
 
-	public static final String FACTORY_ID = "org.eclipse.pde.ui.elementFactory"; //$NON-NLS-1$	
+	public static final String FACTORY_ID = "org.eclipse.pde.ui.elementFactory"; //$NON-NLS-1$
 	public static final String KEY = "org.eclipse.pde.workingSetKey"; //$NON-NLS-1$
 	private static PluginContainmentAdapter fgContainmentAdapter;
 

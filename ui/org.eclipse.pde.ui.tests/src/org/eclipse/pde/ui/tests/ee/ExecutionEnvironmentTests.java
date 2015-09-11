@@ -33,11 +33,11 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 
 	public static Test suite() {
 		return new TestSuite(ExecutionEnvironmentTests.class);
-	}	
+	}
 
 	/**
 	 * Deletes the specified project.
-	 * 
+	 *
 	 * @param name
 	 * @throws CoreException
 	 */
@@ -64,25 +64,25 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 				wasInterrupted = true;
 			}
 		} while (wasInterrupted);
-	}		
+	}
 
 	/**
 	 * Validates that the project's option is as expected
-	 * 
+	 *
 	 * @param optionName
 	 * @param expectedValue
 	 */
 	protected void validateOption(IJavaProject project, String optionName, String expectedValue) {
 		String option = project.getOption(optionName, true);
 		assertEquals("Wrong value for option " + optionName, expectedValue, option);
-	}	
+	}
 
 	/**
 	 * Validates the JRE class path container is as expected.
-	 * 
+	 *
 	 * @param project
 	 * @param conatinerPath
-	 * @throws JavaModelException 
+	 * @throws JavaModelException
 	 */
 	protected void validateSystemLibrary(IJavaProject project, IPath conatinerPath) throws JavaModelException {
 		IClasspathEntry[] classpath = project.getRawClasspath();
@@ -101,7 +101,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 
 	/**
 	 * Validates the target level of a generated class file.
-	 * 
+	 *
 	 * @param classfile location of class file in local file system
 	 * @param major expected major class file version
 	 */
@@ -114,10 +114,10 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 * Creates a plug-in project with a custom execution environment. Validates that
 	 * compiler compliance settings and build path are correct and that class files
 	 * are generated with correct target level.
-	 * 
-	 * TODO The VM this is run on must be included in the compatible JREs for the custom 
+	 *
+	 * TODO The VM this is run on must be included in the compatible JREs for the custom
 	 * environment. See {@link EnvironmentAnalyzerDelegate#analyze(org.eclipse.jdt.launching.IVMInstall, IProgressMonitor)}
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testCustomEnvironment() throws Exception {
@@ -149,7 +149,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 * Creates a plug-in project with a J2SE-1.4 execution environment. Validates that
 	 * compiler compliance settings and build path are correct and that class files
 	 * are generated with correct target level.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testJava4Environment() throws Exception {
@@ -174,12 +174,12 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 		} finally {
 			deleteProject("j2se14.plug");
 		}
-	}	
+	}
 
 	/**
 	 * Creates a plug-in project without an execution environment. Validates that
 	 * compiler compliance settings and build path reflect default workspace settings.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoEnvironment() throws Exception {
@@ -198,14 +198,14 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 		} finally {
 			deleteProject("no.env");
 		}
-	}	
+	}
 
 	/**
 	 * Creates a plug-in project with a J2SE-1.4 execution environment. Validates that
 	 * compiler compliance settings and build path are correct. Modifies the compliance
 	 * options and then updates the class path again. Ensures that the enum and assert
 	 * identifier options get overwritten with minimum 'warning' severity.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testMinimumComplianceOverwrite() throws Exception {
@@ -251,7 +251,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 * compiler compliance settings and build path are correct. Modifies the compliance
 	 * options and then updates the class path again. Ensures that the enum and assert
 	 * identifier options do not overwrite existing 'error' severity.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testMinimumComplianceNoOverwrite() throws Exception {
@@ -290,5 +290,5 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 		} finally {
 			deleteProject("j2se14.error");
 		}
-	}	
+	}
 }

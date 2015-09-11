@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Objects that implement this interface represent references
  * to required plug-ins.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */

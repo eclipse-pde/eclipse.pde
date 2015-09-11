@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 262564     
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 262564
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -31,7 +31,7 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.*;
 
 /**
- * 
+ *
  */
 public class FeatureInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "feature-context"; //$NON-NLS-1$

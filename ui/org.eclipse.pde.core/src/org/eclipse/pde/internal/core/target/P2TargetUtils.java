@@ -65,7 +65,7 @@ public class P2TargetUtils {
 	 * Path to the local directory where install folders are created for p2 profile
 	 * based targets.
 	 */
-	static final IPath INSTALL_FOLDERS = PDECore.getDefault().getStateLocation().append(".install_folders"); //$NON-NLS-1$	
+	static final IPath INSTALL_FOLDERS = PDECore.getDefault().getStateLocation().append(".install_folders"); //$NON-NLS-1$
 
 	/**
 	 * Prefix for all profiles ID's associated with target definitions
@@ -88,17 +88,17 @@ public class P2TargetUtils {
 	 * Profile property that keeps track of provisioning mode for the target
 	 * (all environments/true versus false).
 	 */
-	static final String PROP_ALL_ENVIRONMENTS = PDECore.PLUGIN_ID + ".all_environments"; //$NON-NLS-1$	
+	static final String PROP_ALL_ENVIRONMENTS = PDECore.PLUGIN_ID + ".all_environments"; //$NON-NLS-1$
 
 	/**
 	 * Profile property that keeps track of the target sequence number
 	 */
-	static final String PROP_SEQUENCE_NUMBER = PDECore.PLUGIN_ID + ".sequence"; //$NON-NLS-1$	
+	static final String PROP_SEQUENCE_NUMBER = PDECore.PLUGIN_ID + ".sequence"; //$NON-NLS-1$
 
 	/**
 	 * Profile property that tracks whether or not source to be auto-included
 	 */
-	static final String PROP_AUTO_INCLUDE_SOURCE = PDECore.PLUGIN_ID + ".autoIncludeSource"; //$NON-NLS-1$	
+	static final String PROP_AUTO_INCLUDE_SOURCE = PDECore.PLUGIN_ID + ".autoIncludeSource"; //$NON-NLS-1$
 
 	/**
 	 * Profile property that tracks whether or not the configuration phase should be executed when installing
@@ -110,7 +110,7 @@ public class P2TargetUtils {
 	 */
 	private static Map<ITargetDefinition, P2TargetUtils> synchronizers = new HashMap<ITargetDefinition, P2TargetUtils>();
 
-	/** 
+	/**
 	 * The profile to be synchronized
 	 */
 	private IProfile fProfile;
@@ -127,7 +127,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Whether this container should download and include environment (platform) specific units for all
-	 * available platforms (vs only the current target definition's environment settings).  Only supported 
+	 * available platforms (vs only the current target definition's environment settings).  Only supported
 	 * by the slicer so {@link IUBundleContainer#INCLUDE_REQUIRED} must be turned off for this setting to be used.
 	 * <p>
 	 * <code>false</code> by default
@@ -180,7 +180,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Recursively deletes folder and files.
-	 * 
+	 *
 	 * @param folder
 	 */
 	private static void delete(File folder) {
@@ -198,7 +198,7 @@ public class P2TargetUtils {
 	/**
 	 * Deletes the profile associated with this target handle, if any. Returns
 	 * <code>true</code> if a profile existed and was deleted, otherwise <code>false</code>.
-	 * 
+	 *
 	 * @throws CoreException if unable to delete the profile
 	 */
 	public static void deleteProfile(ITargetHandle handle) throws CoreException {
@@ -246,7 +246,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Generates the environment properties string for this target definition's p2 profile.
-	 * 
+	 *
 	 * @return environment properties
 	 */
 	private String generateEnvironmentProperties(ITargetDefinition target) {
@@ -277,7 +277,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Generates the NL property for this target definition's p2 profile.
-	 * 
+	 *
 	 * @return NL profile property
 	 */
 	private String generateNLProperty(ITargetDefinition target) {
@@ -328,7 +328,7 @@ public class P2TargetUtils {
 	/**
 	 * Returns the global p2 provisioning agent.  This is useful when looking to inherit or use
 	 * some settings from the global p2 world.
-	 * 
+	 *
 	 * @return the global p2 provisioning agent
 	 * @throws CoreException
 	 */
@@ -341,7 +341,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns the provisioning agent location service.
-	 * 
+	 *
 	 * @return provisioning agent location service
 	 * @throws CoreException if none
 	 */
@@ -354,7 +354,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns the provisioning engine service.
-	 * 
+	 *
 	 * @return provisioning engine
 	 * @throws CoreException if none
 	 */
@@ -368,7 +368,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns the local bundle pool (repository) where bundles are stored
-	 * 
+	 *
 	 * @return local file artifact repository
 	 * @throws CoreException
 	 */
@@ -379,7 +379,7 @@ public class P2TargetUtils {
 			if (manager.contains(uri))
 				return (IFileArtifactRepository) manager.loadRepository(uri, null);
 		} catch (CoreException e) {
-			// could not load or there wasn't one, fall through to create 
+			// could not load or there wasn't one, fall through to create
 		}
 		String repoName = "PDE Target Bundle Pool"; //$NON-NLS-1$
 		IArtifactRepository result = manager.createRepository(uri, repoName, IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
@@ -388,7 +388,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns the provisioning engine service.
-	 * 
+	 *
 	 * @return provisioning engine
 	 * @throws CoreException if none
 	 */
@@ -402,7 +402,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns the p2 garbage collector
-	 * 
+	 *
 	 * @return p2 garbage collector
 	 * @throws CoreException if none
 	 */
@@ -416,7 +416,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns the provisioning planner.
-	 * 
+	 *
 	 * @return provisioning planner
 	 * @throws CoreException if none
 	 */
@@ -430,7 +430,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns the preferences service.
-	 * 
+	 *
 	 * @return preferences service or null if none
 	 */
 	public static IPreferencesService getPreferences() {
@@ -439,7 +439,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns whether the contents of the profile matches the expected contents of the target definition
-	 * 
+	 *
 	 * @return whether or not the profile and target definitions match
 	 * @throws CoreException in unable to retrieve profile
 	 */
@@ -526,7 +526,7 @@ public class P2TargetUtils {
 			return false;
 		}
 
-		// Phew! seems like the profile checks out.  
+		// Phew! seems like the profile checks out.
 		return true;
 	}
 
@@ -553,7 +553,7 @@ public class P2TargetUtils {
 	 * error explaining what problems exist.  When <code>false</code> the resolve operation will use the slicer
 	 * to determine what units to include.  Any required units that are not available in the repositories will
 	 * be ignored.
-	 *  
+	 *
 	 * @return whether all required units must be available to resolve this container
 	 */
 	public boolean getIncludeAllRequired() {
@@ -567,7 +567,7 @@ public class P2TargetUtils {
 	 * is turned off ({@link #getIncludeAllRequired()}).
 	 * <p>
 	 * There is only one profile per target and this setting can only be set for the
-	 * entire target definition.  
+	 * entire target definition.
 	 * </p>
 	 * @param value whether environment specific units should be included
 	 */
@@ -580,7 +580,7 @@ public class P2TargetUtils {
 	 * be included in this container when it is resolved.  This feature is not supported
 	 * by the planner so will only have an effect if the include all required setting
 	 * is turned off ({@link #getIncludeAllRequired()}).
-	 * 
+	 *
 	 * @return whether environment specific units should be included
 	 */
 	public boolean getIncludeAllEnvironments() {
@@ -590,7 +590,7 @@ public class P2TargetUtils {
 	/**
 	 * Set whether or not the source bundles corresponding to any binary bundles should
 	 * be automatically included in the target.
-	 * 
+	 *
 	 * @param value whether or not to include source
 	 */
 	public void setIncludeSource(boolean value) {
@@ -598,9 +598,9 @@ public class P2TargetUtils {
 	}
 
 	/**
-	 * Returns whether or not source bundles corresponding to selected binary bundles 
+	 * Returns whether or not source bundles corresponding to selected binary bundles
 	 * are automatically included in the target.
-	 * 
+	 *
 	 * @return whether or not source is included automatically
 	 */
 	public boolean getIncludeSource() {
@@ -609,7 +609,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Set whether or not the configuration phase should be executed when installing the IUs
-	 * 
+	 *
 	 * @param value whether or not to execute configuration phase
 	 */
 	public void setIncludeConfigurePhase(boolean value) {
@@ -618,7 +618,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns whether or not the configuration phase should be executed when installing the IUs
-	 * 
+	 *
 	 * @return whether or not to execute configuration phase
 	 */
 	public boolean getIncludeConfigurePhase() {
@@ -640,7 +640,7 @@ public class P2TargetUtils {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Return whether or not the given target's matching profile  is in sync
 	 * @param target the target to check
@@ -670,13 +670,13 @@ public class P2TargetUtils {
 
 	/**
 	 * Get the synchronizer to use for the given target.  If there is already one on a
-	 * container in the target, use that one.  Otherwise, create a new one.  Either way, 
+	 * container in the target, use that one.  Otherwise, create a new one.  Either way,
 	 * ensure that all other IU containers in the target are using the same synchronizer.
 	 * <p>
-	 * The synchronizer is an instance of {@link P2TargetUtils} that has access to the 
+	 * The synchronizer is an instance of {@link P2TargetUtils} that has access to the
 	 * profile and other p2 bits for the target.
 	 * </p>
-	 * 
+	 *
 	 * @param target the target for which we are getting the synchronizer
 	 * @return the discovered or created synchronizer
 	 */
@@ -693,7 +693,7 @@ public class P2TargetUtils {
 	/**
 	 * Return the set of IUs in all IU containers associated with this synchronizer.
 	 * This is a helper method so we don't have to expose the profile itself.
-	 * 
+	 *
 	 * @param target the target definition to query
 	 * @param monitor the progress monitor to use
 	 * @return the set of associated IUs
@@ -708,17 +708,17 @@ public class P2TargetUtils {
 	}
 
 	/**
-	 * Synchronize the profile and the target definition managed by this synchronizer.  On return the profile will 
-	 * be resolved and correctly match the given target.  The IUBundleContainers associated with 
-	 * the target will be notified of any changes in the underlying p2 profile and given an 
+	 * Synchronize the profile and the target definition managed by this synchronizer.  On return the profile will
+	 * be resolved and correctly match the given target.  The IUBundleContainers associated with
+	 * the target will be notified of any changes in the underlying p2 profile and given an
 	 * opportunity to update themselves accordingly.
-	 * 
+	 *
 	 * NOTE: this is a potentially *very* heavyweight operation.
-	 * 
+	 *
 	 * NOTE: this method is synchronized as it is effectively a "test and set" caching method. Two
 	 * threads getting the profile at the same time should not execute concurrently or the profiles
 	 * will get out of sync.
-	 * 
+	 *
 	 * @throws CoreException if there was a problem synchronizing
 	 */
 	public synchronized void synchronize(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
@@ -734,7 +734,7 @@ public class P2TargetUtils {
 			return;
 		}
 
-		// Either no profile was found or it was stale.  Delete the current profile and recreate.  
+		// Either no profile was found or it was stale.  Delete the current profile and recreate.
 		// This keeps the internal agent data clean and does not cost us much.
 		deleteProfile(target.getHandle());
 		createProfile(target);
@@ -749,12 +749,12 @@ public class P2TargetUtils {
 				resolveWithPlanner(target, progress.newChild(60));
 			else
 				resolveWithSlicer(target, progress.newChild(60));
-	
+
 			// If we are updating a profile then delete the old snapshot on success.
 			notify(target, progress.newChild(15));
 		} catch (CoreException e) {
 			// There was at least one problem getting the contents, delete the profile so we don't cache in a bad state, Bug 439034
-			// TODO ALL we really want to delete is the sequence property, so that checkProfile will compare settings and contents 
+			// TODO ALL we really want to delete is the sequence property, so that checkProfile will compare settings and contents
 			deleteProfile(target.getHandle());
 			throw e;
 		}
@@ -802,7 +802,7 @@ public class P2TargetUtils {
 	/**
 	 * Returns the profile identifier for this target handle. There is one profile
 	 * per target definition.
-	 * 
+	 *
 	 * @return profile identifier
 	 * @throws CoreException in unable to generate identifier
 	 */
@@ -823,7 +823,7 @@ public class P2TargetUtils {
 	/**
 	 * Returns the profile identifier for this target handle. There is one profile
 	 * per target definition.
-	 * 
+	 *
 	 * @return definition the target to lookup
 	 */
 	public static String getProfileId(ITargetDefinition definition) {
@@ -837,9 +837,9 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns the profile registry or <code>null</code>
-	 * 
+	 *
 	 * @return profile registry or <code>null</code>
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public static IProfileRegistry getProfileRegistry() throws CoreException {
 		IProfileRegistry result = (IProfileRegistry) getAgent().getService(IProfileRegistry.SERVICE_NAME);
@@ -852,7 +852,7 @@ public class P2TargetUtils {
 	/**
 	 * Returns the mode used to provision this target - slice versus plan or <code>null</code> if
 	 * this target has no software sites.
-	 * 
+	 *
 	 * @return provisioning mode or <code>null</code>
 	 */
 	private String getProvisionMode(ITargetDefinition target) {
@@ -861,7 +861,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Returns the metadata repository manager.
-	 * 
+	 *
 	 * @return metadata repository manager
 	 * @throws CoreException if none
 	 */
@@ -875,7 +875,7 @@ public class P2TargetUtils {
 
 	/**
 	 * Return a queryable on the metadata defined in the given repo locations
-	 * 
+	 *
 	 * @param repos the repos to lookup
 	 * @param monitor the progress monitor
 	 * @return the set of metadata repositories found
@@ -914,7 +914,7 @@ public class P2TargetUtils {
 	 * Used to resolve the contents of this container if the user is including all required software.  The p2 planner is used
 	 * to determine the complete set of IUs required to run the selected software.  If all requirements are met, the bundles
 	 * are downloaded from the repository into the bundle pool and added to the target definition.
-	 * 
+	 *
 	 * @param monitor for reporting progress
 	 * @throws CoreException if there is a problem with the requirements or there is a problem downloading
 	 */
@@ -930,7 +930,7 @@ public class P2TargetUtils {
 		// create the provisioning plan
 		IPlanner planner = getPlanner();
 		IProfileChangeRequest request = planner.createChangeRequest(fProfile);
-		// first remove everything that was explicitly installed.  Then add it back.  This has the net effect of 
+		// first remove everything that was explicitly installed.  Then add it back.  This has the net effect of
 		// removing everything that is no longer needed.
 		computeRemovals(fProfile, request, getIncludeSource());
 		request.addAll(Arrays.asList(units));
@@ -975,7 +975,7 @@ public class P2TargetUtils {
 			throw new CoreException(result);
 		}
 
-		// Now that we have a plan with all the binary and explicit bundles, do a second pass and add 
+		// Now that we have a plan with all the binary and explicit bundles, do a second pass and add
 		// in all the source.
 		try {
 			planInSourceBundles(fProfile, context, subMonitor.newChild(60));
@@ -1012,9 +1012,9 @@ public class P2TargetUtils {
 		return new PhaseSet(phases.toArray(new Phase[phases.size()]));
 	}
 
-	/** 
+	/**
 	 * Update the given change request to remove anything that was explicitly installed
-	 * including the internal source IU.  
+	 * including the internal source IU.
 	 */
 	private void computeRemovals(IProfile profile, IProfileChangeRequest request, boolean includeSource) {
 		// if include source is off then ensure that the source IU is removed.
@@ -1081,7 +1081,7 @@ public class P2TargetUtils {
 	}
 
 	// Create and return an IU that has optional and greedy requirements on all source bundles
-	// related to bundle IUs in the given queryable. 
+	// related to bundle IUs in the given queryable.
 	private IInstallableUnit createSourceIU(IQueryable<IInstallableUnit> queryable, Version iuVersion) {
 		// compute the set of source bundles we could possibly need for the bundles in the profile
 		IRequirement bundleRequirement = MetadataFactory.createRequirement("org.eclipse.equinox.p2.eclipse.type", "bundle", null, null, false, false, false); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1121,9 +1121,9 @@ public class P2TargetUtils {
 
 	/**
 	 * Used to resolve the contents of this container when the user has chosen to manage the dependencies in the target
-	 * themselves.  The selected IUs and any required software that can be found will be retrieved from the repositories 
+	 * themselves.  The selected IUs and any required software that can be found will be retrieved from the repositories
 	 * and added to the target.  Any missing required software will be ignored.
-	 * 
+	 *
 	 * @param monitor for reporting progress
 	 * @throws CoreException if there is a problem interacting with the repositories
 	 */
@@ -1204,7 +1204,7 @@ public class P2TargetUtils {
 	/**
 	 * Sets up a slice operation to download the set of installable units that are both required
 	 * by the provided root IUs and available in the repositories specified in the metadata.
-	 * 
+	 *
 	 * @param units The set of root IUs to search for dependencies of in the repositories
 	 * @param allMetadata metadata describing the repositories where the slicer can search
 	 * @param definition the target definition this operation is being executed for
@@ -1253,7 +1253,7 @@ public class P2TargetUtils {
 	/**
 	 * Returns the artifact repositories to consider when getting artifacts.  Returns a default set of
 	 * repositories if current repository settings are <code>null</code>).
-	 *  
+	 *
 	 * @return URI's of repositories to use when getting artifacts
 	 * @exception CoreException
 	 */
@@ -1286,15 +1286,15 @@ public class P2TargetUtils {
 	 * return whether or not to use local artifact repositories when provisioning the target
 	 */
 	private boolean useAdditionalLocalArtifacts() {
-		// XXX consider using a preference here or another strategy if users are able to spec 
+		// XXX consider using a preference here or another strategy if users are able to spec
 		// what local repos are to be considered.
 		return true;
 	}
 
-	/** 
-	 * Add the artifact repos from the PDE target bundle pools from all known repos.  For example, the list 
+	/**
+	 * Add the artifact repos from the PDE target bundle pools from all known repos.  For example, the list
 	 * of "recent workspaces" maintained by the IDE is a good source.
-	 * 
+	 *
 	 * @param additionalRepos the set to which additional repos are added.
 	 */
 	private void findWorkspaceRepos(Set<URI> additionalRepos) {
@@ -1313,11 +1313,11 @@ public class P2TargetUtils {
 		}
 	}
 
-	/** 
+	/**
 	 * Look through the current p2 profile (_SELF_) and add the artifact repos that make up its
-	 * bundle pool, dropins location, ...  This helps in the cases that you are targeting stuff that 
+	 * bundle pool, dropins location, ...  This helps in the cases that you are targeting stuff that
 	 * makes up your current IDE.
-	 * 
+	 *
 	 * @param additionalRepos the set to which additional repos are added.
 	 */
 	private void findProfileRepos(Set<URI> additionalRepos) {
@@ -1344,16 +1344,16 @@ public class P2TargetUtils {
 				}
 			}
 		} catch (CoreException e) {
-			// if there is a problem, move on.  Could log something here 
+			// if there is a problem, move on.  Could log something here
 			return;
 		}
 	}
 
 	/**
 	 * Returns the IU's for the given target related to the given containers
-	 * 
+	 *
 	 * @param definition the definition to filter with
-	 * @param monitor 
+	 * @param monitor
 	 * @return the discovered IUs
 	 * @exception CoreException if unable to retrieve IU's
 	 */
@@ -1383,7 +1383,7 @@ public class P2TargetUtils {
 	/**
 	 * Returns the repositories to consider when resolving IU's (will return default set of
 	 * repositories if current repository settings are <code>null</code>).
-	 *  
+	 *
 	 * @return URI's of repositories to use when resolving bundles
 	 * @exception CoreException
 	 */

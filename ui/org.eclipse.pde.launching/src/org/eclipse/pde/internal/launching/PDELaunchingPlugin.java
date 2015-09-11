@@ -40,7 +40,7 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 
 	/**
 	 * The shared text file document provider.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private OSGiFrameworkManager fOSGiFrameworkManager;
@@ -104,7 +104,7 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 	 * Add the launch configuration listener if the debug plugin is started.
 	 * Otherwise, setup a bundle listener to install the listener when the debug
 	 * plugin loads.
-	 * 
+	 *
 	 * @param context
 	 *            bundle context needed to get current bundles
 	 */
@@ -161,7 +161,7 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 	 * Utility class that creates and controls a the PDE launch configuration
 	 * listener. This is done in a separate class to avoid loading the debug
 	 * plugin.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private class DebugPluginUtil {

@@ -29,7 +29,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * containing the list of plug-ins (workspace and external) prior to running the
  * wizard. An instance of this class must be created before creating an
  * InternationlizeWizard instance.
- * 
+ *
  * @author Team Azure
  *
  */
@@ -41,7 +41,7 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 	private boolean fCanceled;
 
 	/**
-	 * 
+	 *
 	 * @param selection represents the preselected plug-in projects in the workbench
 	 */
 	public InternationalizeOperation(ISelection selection) {
@@ -79,7 +79,7 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return whether or not the operation was cancelled
 	 */
 	public boolean wasCanceled() {
@@ -87,7 +87,7 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param project
 	 * @return whether or not the project was preselected
 	 */
@@ -96,7 +96,7 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the InternationalizeModelTable containing the plug-ins
 	 */
 	public InternationalizeModelTable getPluginTable() {

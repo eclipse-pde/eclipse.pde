@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -57,7 +57,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 public abstract class PDEFormEditor extends FormEditor implements IInputContextListener, IGotoMarker, ISearchEditorAccess {
 	/**
 	 * Updates the OutlinePage selection.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public class PDEFormEditorChangeListener implements ISelectionChangedListener {
@@ -67,7 +67,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		 * provider. If the selection provider is a post selection provider,
 		 * post selection changed events are the preferred choice, otherwise
 		 * normal selection changed events are requested.
-		 * 
+		 *
 		 * @param selectionProvider
 		 */
 		public void install(ISelectionProvider selectionProvider) {
@@ -97,7 +97,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		/**
 		 * Removes this selection changed listener from the given selection
 		 * provider.
-		 * 
+		 *
 		 * @param selectionProviderstyle
 		 */
 		public void uninstall(ISelectionProvider selectionProvider) {
@@ -119,7 +119,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	/**
 	 * The editor selection changed listener.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private PDEFormEditorChangeListener fEditorSelectionChangedListener;
@@ -180,7 +180,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	/**
 	 * Tests whether this editor has a context with a provided id. The test can
 	 * be used to check whether to add certain pages.
-	 * 
+	 *
 	 * @param contextId
 	 * @return <code>true</code> if provided context is present,
 	 *         <code>false</code> otherwise.
@@ -347,11 +347,11 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void doRevert() {
 		IFormPage formPage = getActivePageInstance();
-		// If the active page is a form page, commit all of its dirty field 
+		// If the active page is a form page, commit all of its dirty field
 		// values to the model
 		if ((formPage != null) && (formPage instanceof PDEFormPage)) {
 			formPage.getManagedForm().commit(true);
@@ -367,8 +367,8 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		if (reverted == false) {
 			reverted = doRevertFormPage();
 		}
-		// If the revert operation was performed disable the revert action and 
-		// fire the dirty event 
+		// If the revert operation was performed disable the revert action and
+		// fire the dirty event
 		if (reverted) {
 			editorDirtyStateChanged();
 		}
@@ -434,7 +434,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 
 	public String getContextIDForSaveAs() {
-		// Sub-classes must override this method and the isSaveAsAllowed 
+		// Sub-classes must override this method and the isSaveAsAllowed
 		// method to perform save as operations
 		return null;
 	}
@@ -442,7 +442,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	@Override
 	public void doSaveAs() {
 		try {
-			// Get the context for which the save as operation should be 
+			// Get the context for which the save as operation should be
 			// performed
 			String contextID = getContextIDForSaveAs();
 			// Perform the same as operation
@@ -474,7 +474,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void storeDefaultPage() {
 		IEditorInput input = getEditorInput();
@@ -506,7 +506,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected String getDialogEditorPageKey() {
 		// Use one global setting for all files belonging to a given editor
@@ -708,7 +708,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 
 	/**
-	 * 
+	 *
 	 * @return outline page or null
 	 */
 	protected ISortableContentOutlinePage getFormOutline() {

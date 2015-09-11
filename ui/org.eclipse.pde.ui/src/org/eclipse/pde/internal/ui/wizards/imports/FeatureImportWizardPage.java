@@ -47,7 +47,7 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * Wizard page used when importing features.  Allows the user to choose a location (Default or a folder) to load features from
  * then select one or more features to import into the workspace.
- * 
+ *
  * @see FeatureImportWizard
  */
 public class FeatureImportWizardPage extends WizardPage {
@@ -224,10 +224,10 @@ public class FeatureImportWizardPage extends WizardPage {
 
 	/**
 	 * Called whenever the location or another aspect of the container has changed
-	 * in the UI.  Will schedule a UIJob to verify and resolve the container 
+	 * in the UI.  Will schedule a UIJob to verify and resolve the container
 	 * reporting any problems to the user.  If a previous job is running or sleeping
 	 * it will be cancelled.
-	 * 
+	 *
 	 * @param delay a delay to add to the job scheduling
 	 */
 	protected void locationChanged(long delay) {

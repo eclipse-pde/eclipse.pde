@@ -138,7 +138,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	}
 
 	private class BundleLabelProvider extends LabelProvider {
-		// TODO: MP: QO: LOW: Move to PDELabelProvider  
+		// TODO: MP: QO: LOW: Move to PDELabelProvider
 		@Override
 		public String getText(Object obj) {
 			if (obj instanceof PackageObject) {
@@ -176,7 +176,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			label.append(version);
 			// If the last character does not have a range indicator,
 			// add a default one.  This can happen when there is only one
-			// value specified for either min or max			
+			// value specified for either min or max
 			char lastChar = version.charAt(version.length() - 1);
 			if ((lastChar != ')') && (lastChar != ']')) {
 				label.append(')');
@@ -226,7 +226,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void resetCurrentHighlightRangeOffset() {
 		fCurrentHighlightRangeOffset = F_NOT_SET;
@@ -243,7 +243,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void resetTargetOutlineSelection() {
 		fTargetOutlineSelection = null;
@@ -285,7 +285,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 				// specified
 				if (searchChildren && (node instanceof CompositeManifestHeader)) {
 					IDocumentRange child_node = getRangeElementChild(model, offset, (CompositeManifestHeader) node);
-					// If the child node is specified return it; otherwise, we 
+					// If the child node is specified return it; otherwise, we
 					// will default to the parent node
 					if (child_node != null) {
 						return child_node;
@@ -563,7 +563,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		}
 		if (range[0] == -1) { // if un-set offset use header range
 			range[0] = header.getOffset();
-			// Only select the length of the header name; otherwise, the 
+			// Only select the length of the header name; otherwise, the
 			// header value will be included in the selection
 			range[1] = header.getName().length();
 		}
@@ -607,7 +607,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		if (object instanceof IDocumentKey) {
 			setHighlightRange((IDocumentKey) object);
 			setCurrentHighlightRangeOffset(((IDocumentKey) object).getOffset());
-			// We don't set the selected range because it will cause the 
+			// We don't set the selected range because it will cause the
 			// manifest header and all its value to be selected
 			return;
 		}
@@ -666,16 +666,16 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	protected void synchronizeOutlinePage(int offset) {
 		// Prevent cyclical firing of events between source page and outline
 		// view
-		// If the previous offset is the same as the current offset, then 
+		// If the previous offset is the same as the current offset, then
 		// the selection does not need to be updated in the outline view
 		int previous_offset = getCurrentHighlightRangeOffset();
 		if (previous_offset == offset) {
 			return;
 		}
-		// Find the range header (parent) or element (children) within range of 
+		// Find the range header (parent) or element (children) within range of
 		// the text selection offset
 		IDocumentRange rangeElement = getRangeElement(offset, true);
-		// Set the highlight range 
+		// Set the highlight range
 		updateHighlightRange(rangeElement);
 		// Set the outline view selection
 		updateOutlinePageSelection(getTargetOutlineSelection());

@@ -69,8 +69,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	/**
 	 * Function used to modify Manifest just before it is written out (after all project artifacts have been created.
-	 * 
-	 * @throws CoreException  
+	 *
+	 * @throws CoreException
 	 */
 	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase bundle) throws CoreException {
 		// if libraries are exported, compute export package (173393)
@@ -135,10 +135,10 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	/**
-	 * @throws CoreException  
-	 * @throws JavaModelException 
-	 * @throws InvocationTargetException 
-	 * @throws InterruptedException 
+	 * @throws CoreException
+	 * @throws JavaModelException
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
 	 */
 	protected void createContents(IProgressMonitor monitor, IProject project) throws CoreException, JavaModelException, InvocationTargetException, InterruptedException {
 	}
@@ -448,7 +448,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	/**
 	 * Attempts to select the given file in the active workbench part and open the file
 	 * in its default editor.  Uses asyncExec to join with the UI thread.
-	 * 
+	 *
 	 * @param file file to open the editor on
 	 */
 	private void openFile(final IFile file) {
@@ -500,7 +500,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	 * @param values a {@link Set} containing packages names as {@link String}s
 	 * @param version a {@link String} representing the version to set on the package, <code>null</code> allowed.
 	 * @return a {@link String} representing the given packages, with the exported version set correctly.<br>
-	 * If there's only one package and version is not null, package is exported with that version number. 
+	 * If there's only one package and version is not null, package is exported with that version number.
 	 */
 	protected String getCommaValuesFromPackagesSet(Set<String> values, String version) {
 		StringBuffer buffer = new StringBuffer();

@@ -14,15 +14,15 @@ import org.eclipse.core.runtime.*;
 
 /**
  * Describes a location in a target that provides bundles and features. Abstracts
- * the storage and provisioning of bundles. May contain a combination of 
+ * the storage and provisioning of bundles. May contain a combination of
  * executable and source bundles.
  * <p>
  * Clients are allowed to provide their own implementations. For the target definition
- * to be persisted correctly, clients must provide a factory through the 
+ * to be persisted correctly, clients must provide a factory through the
  * <code>org.eclipse.pde.core.targetLocations</code> extension point.
  * </p><p>
- * It is recommended that implementors override {@link Object#equals(Object)} to return 
- * <code>true</code> if the content of two containers are equal.  This allows PDE 
+ * It is recommended that implementors override {@link Object#equals(Object)} to return
+ * <code>true</code> if the content of two containers are equal.  This allows PDE
  * to determine if two different target definitions have equivalent content.
  * </p><p>
  * To display an implementation in the PDE UI, clients may do the following:
@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.*;
  * to run an update job on the location when the update button is pressed on the target definition
  * wizard and editor.
  * </p>
- * 
+ *
  * @since 3.8
  */
 public interface ITargetLocation extends IAdaptable {
@@ -54,13 +54,13 @@ public interface ITargetLocation extends IAdaptable {
 	 * target. Returns a status describing the resolution.
 	 * <p>
 	 * If resolution is successful an OK status is returned. If a problem
-	 * occurs while resolving a non-OK status will be returned. If the 
+	 * occurs while resolving a non-OK status will be returned. If the
 	 * progress monitor is cancelled a CANCEL status will be returned. The
 	 * returned status can be accessed later using {@link #getStatus()}.
 	 * </p><p>
 	 * This location will be considered resolved even if a problem occurs
 	 * while resolving. See {@link #isResolved()}
-	 * 
+	 *
 	 * @param definition target being resolved for
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return resolution status
@@ -71,18 +71,18 @@ public interface ITargetLocation extends IAdaptable {
 	 * Returns whether this location has resolved all of its contents. If there
 	 * was a problem during the resolution the location will still be considered
 	 * resolved, see {@link #getStatus()}.
-	 * 
+	 *
 	 * @see #resolve(ITargetDefinition, IProgressMonitor)
 	 * @return whether this location has resolved all of its contents
 	 */
 	public boolean isResolved();
 
 	/**
-	 * Returns the status of the last bundle resolution or <code>null</code> if 
-	 * this location has not been resolved. If there was a problem during the 
+	 * Returns the status of the last bundle resolution or <code>null</code> if
+	 * this location has not been resolved. If there was a problem during the
 	 * resolution, the status returned by {@link #resolve(ITargetDefinition, IProgressMonitor)}
 	 * will be returned.
-	 * 	 
+	 *
 	 * @return resolution status or <code>null</code>
 	 */
 	public IStatus getStatus();
@@ -91,7 +91,7 @@ public interface ITargetLocation extends IAdaptable {
 	 * Returns a string that identifies the implementation of this target location.
 	 * For target definitions to be persisted correctly, this must match the type
 	 * in a contributed <code>org.eclipse.pde.core.targetLocations</code> extension.
-	 * 
+	 *
 	 * @return string identifier for the type of target location.
 	 */
 	public String getType();
@@ -102,7 +102,7 @@ public interface ITargetLocation extends IAdaptable {
 	 * The current target platform framework requires a local file location but this
 	 * requirement may be removed in the future.  This method should not be referenced.
 	 * </p>
-	 * 
+	 *
 	 * @param resolve whether to resolve variables in the path
 	 * @return home location
 	 * @exception CoreException if unable to resolve the location
@@ -136,18 +136,18 @@ public interface ITargetLocation extends IAdaptable {
 
 	/**
 	 * Returns VM Arguments that are specified in the bundle location or <code>null</code> if none.
-	 * 
+	 *
 	 * @return list of VM Arguments or <code>null</code> if none available
 	 */
 	public String[] getVMArguments();
 
 	/**
-	 * Returns a serialized XML string that stores information about this location so it can 
+	 * Returns a serialized XML string that stores information about this location so it can
 	 * be restored later using a {@link ITargetLocationFactory}.  May return <code>null</code>
 	 * to have this location ignored when saving a target definition.
 	 * <p>
 	 * The returned xml must contain a single root element named <code>location</code>. The root
-	 * element may have attributes set and children.  The xml should not be prefixed by a XML 
+	 * element may have attributes set and children.  The xml should not be prefixed by a XML
 	 * declaration such as <code>&lt?xml version="1.0" encoding="UTF-8"?&gt</code>.
 	 * </p>
 	 * @return an XML string storing all location information or <code>null</code>

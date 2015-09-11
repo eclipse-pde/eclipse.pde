@@ -102,7 +102,7 @@ public class HelloWorldCmdTemplate extends PDETemplateSection {
 		IPluginElement category = factory.createElement(commandsExtension);
 		category.setName("category"); //$NON-NLS-1$
 		String categoryId = plugin.getId() + ".commands.category"; //$NON-NLS-1$
-		category.setAttribute("id", categoryId); //$NON-NLS-1$ 
+		category.setAttribute("id", categoryId); //$NON-NLS-1$
 		category.setAttribute("name", PDETemplateMessages.HelloWorldCmdTemplate_sampleCategory); //$NON-NLS-1$
 		commandsExtension.add(category);
 

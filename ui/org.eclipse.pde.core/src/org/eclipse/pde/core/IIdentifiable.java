@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
  * Classes implement this interface if
  * their instances need to be uniquely identified
  * using an id.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
@@ -40,7 +40,7 @@ public interface IIdentifiable {
 	 * object is not editable.
 	 *
 	 * @param id a new id of this object
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	void setId(String id) throws CoreException;
 }

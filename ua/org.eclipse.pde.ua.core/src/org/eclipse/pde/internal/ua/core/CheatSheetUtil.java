@@ -23,7 +23,7 @@ public class CheatSheetUtil {
 	/**
 	 * Recursively finds and accumulates all element's text and element children
 	 * into a String in raw XML form
-	 * 
+	 *
 	 * @param element
 	 * @return
 	 */
@@ -88,7 +88,7 @@ public class CheatSheetUtil {
 	/**
 	 * Aggregates all attributes from the given element, formats then into the
 	 * proper key="value" XML format and returns them as one String
-	 * 
+	 *
 	 * @param element
 	 * @return The formatted String or null if the element has no attributes
 	 */

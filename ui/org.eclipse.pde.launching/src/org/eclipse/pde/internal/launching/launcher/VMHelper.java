@@ -27,10 +27,10 @@ import org.eclipse.pde.launching.EquinoxLaunchConfiguration;
 public class VMHelper {
 
 	/**
-	 * Returns the id of an execution environment that is both bound to a JRE and valid for the minimum 
-	 * BREE supplied by every bundle that will be launched in the given launch configuration or 
+	 * Returns the id of an execution environment that is both bound to a JRE and valid for the minimum
+	 * BREE supplied by every bundle that will be launched in the given launch configuration or
 	 * <code>null</code> if no valid/bound execution environment could be found.
-	 * 
+	 *
 	 * @param configuration the launch configuration to test the bundle's BREEs of
 	 * @return string id of a valid execution environment with a bound JRE or <code>null</code>
 	 * @throws CoreException if there is a problem reading the bundles from the launch configuration
@@ -50,7 +50,7 @@ public class VMHelper {
 			}
 		}
 
-		// Iterate through all launch models 
+		// Iterate through all launch models
 		boolean isOSGiLaunch = configuration instanceof EquinoxLaunchConfiguration; // TODO Test this
 		IPluginModelBase[] plugins = BundleLauncherHelper.getMergedBundles(configuration, isOSGiLaunch);
 		for (int i = 0; i < plugins.length; i++) {
@@ -120,7 +120,7 @@ public class VMHelper {
 	/**
 	 * Get the default VMInstall name using the available info in the config,
 	 * using the JavaProject if available.
-	 * 
+	 *
 	 * @param configuration
 	 *            Launch configuration to check
 	 * @return name of the VMInstall
@@ -145,7 +145,7 @@ public class VMHelper {
 	 * Returns the vm install to launch this configuration with based on launch configuration settings or throws
 	 * a CoreException if no valid vm install is found.  If the launch configuration has no JRE attributes set,
 	 * a default setting will be used (but not saved in the launch configuration).
-	 * 
+	 *
 	 * @param configuration the configuration to get a vm install for
 	 * @return a vm install from {@link JavaRuntime}
 	 * @throws CoreException if a vm install could not be found for the settings in the configuration

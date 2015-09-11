@@ -78,7 +78,7 @@ public class LogEntryTest extends TestCase {
 
 	public void testInvalidEntry() {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=271733
-		
+
 		try {
 			LogEntry entry = new LogEntry();
 			entry.processEntry("!ENTRY org.eclipse.core.contenttype 4 0");
@@ -86,7 +86,7 @@ public class LogEntryTest extends TestCase {
 		} catch (ParseException e) {
 			// good
 		}
-		
+
 		try {
 			LogEntry entry = new LogEntry();
 			entry.processEntry("!ENTRY org.eclipse.ui 4 0");
@@ -94,7 +94,7 @@ public class LogEntryTest extends TestCase {
 		} catch (ParseException e) {
 			// good
 		}
-		
+
 		try {
 			LogEntry entry = new LogEntry();
 			entry.processEntry("!ENTRY org.eclipse.ui 4 0");

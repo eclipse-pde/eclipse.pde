@@ -30,7 +30,7 @@ public class PDEState extends MinimalState {
 
 	/**
 	 * Creates a new PDE State containing bundles from the given URLs.
-	 * 
+	 *
 	 * @param target urls of target bundles
 	 * @param addResolver whether to add a resolver to the state
 	 * @param removeDuplicates whether to remove duplicate conflicting bundles from the state
@@ -83,7 +83,7 @@ public class PDEState extends MinimalState {
 	 * When creating a target state, having duplicates of certain bundles including core runtime cause problems when launching.  The
 	 * {@link LoadTargetDefinitionJob} removes duplicates for us, but on restart the state is created from preferences.  This method
 	 * search the state for bundles with the same ID/Version.  Where multiple bundles are found, all but one are removed from the state.
-	 * 
+	 *
 	 * @param state state to search for duplicates in
 	 */
 	private void removeDuplicatesFromState(State state) {

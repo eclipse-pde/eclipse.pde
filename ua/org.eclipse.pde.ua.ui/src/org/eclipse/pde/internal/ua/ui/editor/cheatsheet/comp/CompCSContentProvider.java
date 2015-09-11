@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
 
 /**
  * CompCSContentProvider
- * 
+ *
  */
 public class CompCSContentProvider implements ITreeContentProvider {
 
@@ -30,7 +30,7 @@ public class CompCSContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.
 	 * Object)
@@ -50,7 +50,7 @@ public class CompCSContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object
 	 * )
@@ -64,7 +64,7 @@ public class CompCSContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.
 	 * Object)
@@ -75,7 +75,7 @@ public class CompCSContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java
 	 * .lang.Object)

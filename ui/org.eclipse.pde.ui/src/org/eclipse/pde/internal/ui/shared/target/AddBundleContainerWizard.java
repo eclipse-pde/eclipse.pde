@@ -18,7 +18,7 @@ import org.eclipse.jface.wizard.Wizard;
 /**
  * Wizard for adding a bundle container to a target.  Provides a selection page
  * where the user can choose the type of container to create.
- * 
+ *
  * @see TargetLocationsGroup
  * @see ITargetLocation
  */

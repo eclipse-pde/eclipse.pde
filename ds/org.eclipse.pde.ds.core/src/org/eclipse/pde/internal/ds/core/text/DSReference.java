@@ -20,12 +20,12 @@ public class DSReference extends DSObject implements IDSReference {
 
 	public DSReference(DSModel model) {
 		super(model, ELEMENT_REFERENCE);
-		
+
 		// set default values
 		this
 				.setReferenceCardinality(IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE);
 		this.setReferencePolicy(IDSConstants.VALUE_REFERENCE_POLICY_STATIC);
-		
+
 		// set generic values
 		int ref_count = model.getDSComponent().getReferences().length + 1;
 		this
@@ -38,7 +38,7 @@ public class DSReference extends DSObject implements IDSReference {
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean canBeParent() {
 		return false;
@@ -58,71 +58,71 @@ public class DSReference extends DSObject implements IDSReference {
 	public void setReferenceName(String name){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_NAME, name);
 	}
-	
+
 	@Override
 	public String getReferenceName(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_NAME);
 	}
-	
+
 	@Override
 	public void setReferenceInterface(String interfaceName){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_INTERFACE, interfaceName);
 	}
-	
+
 	@Override
 	public String getReferenceInterface(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_INTERFACE);
 	}
-	
+
 	@Override
 	public void setReferenceCardinality(String cardinality){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_CARDINALITY, cardinality);
 	}
-	
+
 	@Override
 	public String getReferenceCardinality(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_CARDINALITY);
 	}
-	
-	
+
+
 	@Override
 	public void setReferencePolicy(String policy){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_POLICY, policy);
 	}
-	
+
 	@Override
 	public String getReferencePolicy(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_POLICY);
 	}
-	
-	
+
+
 	@Override
 	public void setReferenceTarget(String target){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_TARGET, target);
 	}
-	
+
 	@Override
 	public String getReferenceTarget(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_TARGET);
 	}
-	
-	
+
+
 	@Override
 	public void setReferenceBind(String bind){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_BIND, bind);
 	}
-	
+
 	@Override
 	public String getReferenceBind(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_BIND);
 	}
-	
-	
+
+
 	@Override
 	public void setReferenceUnbind(String unbind){
 		setXMLAttribute(ATTRIBUTE_REFERENCE_UNBIND, unbind);
 	}
-	
+
 	@Override
 	public String getReferenceUnbind(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_UNBIND);

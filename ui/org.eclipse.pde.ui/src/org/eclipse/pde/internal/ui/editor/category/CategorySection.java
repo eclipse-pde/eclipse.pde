@@ -1,4 +1,4 @@
-/******************************************************************************* 
+/*******************************************************************************
 * Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
@@ -192,7 +192,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				 * relative to its target. The position is determined to
 				 * be before, after, or on the item, based on some
 				 * threshold value.
-				 * 
+				 *
 				 * @param event
 				 *            the event
 				 * @return one of the <code>LOCATION_* </code>
@@ -679,7 +679,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	 * Finds a feature with the same id and version as a site feature. If
 	 * feature is not found, but feature with a M.m.s.qualifier exists it will
 	 * be returned.
-	 * 
+	 *
 	 * @param siteFeature
 	 * @return IFeature or null
 	 */
@@ -812,7 +812,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	}
 
 	/**
-	 * 
+	 *
 	 * @param candidates
 	 *            Array of IFeatureModel
 	 * @param monitor
@@ -855,7 +855,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	}
 
 	/**
-	 * 
+	 *
 	 * @param candidates
 	 *            Array of IPluginModelBase
 	 * @param monitor

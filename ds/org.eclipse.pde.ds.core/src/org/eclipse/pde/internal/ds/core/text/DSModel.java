@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738 
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
@@ -22,7 +22,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Model describing the elements of a declarative services xml file.
- * 
+ *
  * @since 3.4
  */
 public class DSModel extends XMLEditingModel implements IDSModel {

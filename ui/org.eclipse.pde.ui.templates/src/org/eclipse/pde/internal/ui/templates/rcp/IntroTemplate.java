@@ -80,7 +80,7 @@ public class IntroTemplate extends PDETemplateSection {
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
+		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId) + ".intro"); //$NON-NLS-1$
@@ -152,7 +152,7 @@ public class IntroTemplate extends PDETemplateSection {
 		configurationElement.setName("config"); //$NON-NLS-1$
 		configurationElement.setAttribute("id", plugin.getId() + '.' //$NON-NLS-1$
 				+ "configId"); //$NON-NLS-1$
-		configurationElement.setAttribute("introId", introID);//$NON-NLS-1$            
+		configurationElement.setAttribute("introId", introID);//$NON-NLS-1$
 		configurationElement.setAttribute("content", "introContent.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		IPluginElement presentationElement = factory.createElement(configurationElement);
 		presentationElement.setName("presentation"); //$NON-NLS-1$
@@ -194,7 +194,7 @@ public class IntroTemplate extends PDETemplateSection {
 
 		IPluginElement element = model.getFactory().createElement(extension);
 		element.setName("product"); //$NON-NLS-1$
-		element.setAttribute("name", getStringOption(KEY_PRODUCT_NAME)); //$NON-NLS-1$		
+		element.setAttribute("name", getStringOption(KEY_PRODUCT_NAME)); //$NON-NLS-1$
 		element.setAttribute("application", plugin.getId() + "." + VALUE_APPLICATION_ID); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement property = model.getFactory().createElement(element);

@@ -30,7 +30,7 @@ public abstract class XMLUtil {
 	 * Scans up the node's parents till it reaches
 	 * a IPluginExtension or IPluginExtensionPoint (or null)
 	 * and returns the result.
-	 * 
+	 *
 	 * @param node
 	 * @return the IPluginExtension or IPluginExtensionPoint that contains <code>node</code>
 	 */
@@ -154,7 +154,7 @@ public abstract class XMLUtil {
 	 * Creates a default package name based on the name of the project.  If the project name is
 	 * not a valid java identifier, this method will return the given class name converted to lower
 	 * case.
-	 * 
+	 *
 	 * @param project the project to generate the package name from
 	 * @param className class name to use as package name if project name fails
 	 */

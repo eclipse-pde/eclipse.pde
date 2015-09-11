@@ -44,7 +44,7 @@ public class E4ApplicationNewWizard extends NewPluginTemplateWizard {
 
 	@Override
 	public boolean performFinish(IProject project, IPluginModelBase model, IProgressMonitor monitor) {
-		// Must do like ancestor 
+		// Must do like ancestor
 		boolean result = super.performFinish(project, model, monitor);
 
 		// but must then remove the "org.eclipse.ui" dependency which has been generated !
@@ -74,7 +74,7 @@ public class E4ApplicationNewWizard extends NewPluginTemplateWizard {
 				// Remove the org.eclipse.core.runtime without any version
 				pb.remove(runtime);
 
-				// And must re-add it with correct version 
+				// And must re-add it with correct version
 				PluginReference pr = new PluginReference(ORG_ECLIPSE_CORE_RUNTIME, runtimeVersion, IMatchRules.GREATER_OR_EQUAL);
 				IPluginImport iimport = model.getPluginFactory().createImport();
 				iimport.setId(pr.getId());
@@ -114,7 +114,7 @@ public class E4ApplicationNewWizard extends NewPluginTemplateWizard {
 		}
 	}
 
-	/** The template must generate an E4 compliant plugin */ 
+	/** The template must generate an E4 compliant plugin */
 	private void setE4Plugin(boolean e4Mode) {
 		IFieldData data = getData();
 		if (data instanceof PluginFieldData) {

@@ -205,7 +205,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 
 		String pointID = fSchemaObject.getName();
 		String indent = getIndent(document, fOffset);
-		// Add extension mark-up to the buffer right up until the point 
+		// Add extension mark-up to the buffer right up until the point
 		// attribute value
 		documentInsertBuffer.append('<');
 		documentInsertBuffer.append("extension"); //$NON-NLS-1$

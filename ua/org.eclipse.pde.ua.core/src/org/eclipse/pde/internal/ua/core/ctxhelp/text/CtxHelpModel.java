@@ -23,7 +23,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Model describing the elements of a context help xml file.
- * 
+ *
  * @since 3.4
  * @see CtxHelpRoot
  * @see CtxHelpDocumentFactory
@@ -43,7 +43,7 @@ public class CtxHelpModel extends XMLEditingModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.XMLEditingModel#createDocumentHandler
 	 * (org.eclipse.pde.core.IModel, boolean)
@@ -57,7 +57,7 @@ public class CtxHelpModel extends XMLEditingModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#
 	 * createNLResourceHelper()
 	 */
@@ -68,7 +68,7 @@ public class CtxHelpModel extends XMLEditingModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ITocModel#getFactory()
 	 */
@@ -81,7 +81,7 @@ public class CtxHelpModel extends XMLEditingModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ITocModel#getToc()
 	 */
 	public CtxHelpRoot getCtxHelpRoot() {
@@ -93,7 +93,7 @@ public class CtxHelpModel extends XMLEditingModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.XMLEditingModel#getRoot()
 	 */
 	protected IWritable getRoot() {

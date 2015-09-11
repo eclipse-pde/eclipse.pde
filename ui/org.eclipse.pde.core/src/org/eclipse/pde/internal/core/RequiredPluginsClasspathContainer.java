@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -172,7 +172,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 	/**
-	 * Return the list of {@link IClasspathContributor}s provided by the 
+	 * Return the list of {@link IClasspathContributor}s provided by the
 	 * <code>org.eclipse.pde.core.pluginClasspathContributors</code> extension point.
 	 * @return list of classpath contributors from the extension point
 	 */
@@ -381,7 +381,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				}
 				if (path.segmentCount() >= 3 && "..".equals(path.segment(0))) { //$NON-NLS-1$
 					path = path.removeFirstSegments(1);
-					path = Path.fromPortableString("platform:/plugin/").append(path); //$NON-NLS-1$ 
+					path = Path.fromPortableString("platform:/plugin/").append(path); //$NON-NLS-1$
 				} else {
 					continue;
 				}

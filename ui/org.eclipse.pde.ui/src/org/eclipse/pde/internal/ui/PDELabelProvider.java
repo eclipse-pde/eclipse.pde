@@ -596,7 +596,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			if (schema != null) {
 				ISchemaElement schemaElement = schema.findElement(obj.getName());
 				// Only label an element if either the element is deprecated or it actually specifies a deprecated attribute;
-				// We don't want to mislabel non-deprecated elements with no deprecated attributes.  
+				// We don't want to mislabel non-deprecated elements with no deprecated attributes.
 				if (schemaElement != null && (schemaElement.isDeprecated() || hasDeprecatedAttributes(obj, schemaElement)))
 					flags |= F_WARNING;
 			}
@@ -843,25 +843,25 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	/*
-	 * Returns a String containing the unicode to properly display the version ranging when running bidi. 
+	 * Returns a String containing the unicode to properly display the version ranging when running bidi.
 	 */
 	public static String formatVersion(String versionRange) {
 		boolean isBasicVersion = versionRange == null || versionRange.length() == 0 || Character.isDigit(versionRange.charAt(0));
 		if (isBasicVersion) {
 			if (BidiUtil.isBidiPlatform())
 				// The versionRange is a single version.  Since parenthesis is neutral, it direction is determined by leading and following character.
-				// Since leading character is Arabic and following character is Latin, the parenthesis will take default (proper) direction.  
+				// Since leading character is Arabic and following character is Latin, the parenthesis will take default (proper) direction.
 				// Must have the following character be the Latin character to ensure version is formatted as Latin (LTR)
 				return "\u200f(\u200e" + versionRange + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			return "(" + versionRange + ')'; //$NON-NLS-1$
 		} else if (isRTL() && BidiUtil.isBidiPlatform()) {
 			// when running RTL and formatting a versionRange, we need to break up the String to make sure it is properly formatted.
-			// A version should always be formatted LTR (start with \u202d, ends with \u202c) since it is composed of Latin characters.  
+			// A version should always be formatted LTR (start with \u202d, ends with \u202c) since it is composed of Latin characters.
 			// With specifying this format, if the qualifier has a Latin character, it will not be formatted correctly.
 			int index = versionRange.indexOf(',');
 			if (index > 0) {
-				// begin with zero length Arabic character so version appears on left (correct) side of id.  
-				// Then add RTL strong encoding so parentheses and comma have RTL formatting. 
+				// begin with zero length Arabic character so version appears on left (correct) side of id.
+				// Then add RTL strong encoding so parentheses and comma have RTL formatting.
 				StringBuffer buffer = new StringBuffer("\u200f\u202e"); //$NON-NLS-1$
 				// begin with leading separator (either parenthesis or bracket)
 				buffer.append(versionRange.charAt(0));

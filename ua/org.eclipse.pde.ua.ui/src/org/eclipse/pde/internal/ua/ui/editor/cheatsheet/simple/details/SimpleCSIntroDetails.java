@@ -93,7 +93,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 	public void initialize(IManagedForm form) {
 		super.initialize(form);
 		// Unfortunately this has to be explicitly called for sub detail
-		// sections through its main section parent; since, it never is 
+		// sections through its main section parent; since, it never is
 		// registered directly.
 		// Initialize managed form for help section
 		fHelpSection.initialize(form);
@@ -150,7 +150,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fContentViewer = new PDESourceViewer(getPage());
 		fContentViewer.createUI(parent, 90, 60);
 		// Needed to align vertically with form entry field and allow space
-		// for a possible field decoration			
+		// for a possible field decoration
 		((GridData) fContentViewer.getViewer().getTextWidget().getLayoutData()).horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 	}
 
@@ -171,7 +171,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIListenersContentViewer() {
 		fContentViewer.createUIListeners();

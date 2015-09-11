@@ -52,7 +52,7 @@ public class StringHelperTestCase extends TestCase {
 		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
 		assertEquals("ab  c   \\r\\n    ", s2);
 
-		// two lines, second line with leading spaces 
+		// two lines, second line with leading spaces
 		s1 = "abc   " + newLine + "  d  ef";
 		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
 		assertEquals("abc   \\r\\n  \\" + newLine + "d  ef", s2);

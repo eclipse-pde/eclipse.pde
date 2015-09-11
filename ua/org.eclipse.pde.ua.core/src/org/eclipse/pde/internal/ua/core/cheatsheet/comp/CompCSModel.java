@@ -35,12 +35,12 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 	private ICompCS fCompCS;
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 *
 	 */
 	public CompCSModel() {
 		// NO-OP
@@ -48,7 +48,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
 	 */
 	protected void updateTimeStamp() {
@@ -57,7 +57,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel#getCompCS()
 	 */
@@ -70,7 +70,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel#getFactory()
 	 */
@@ -83,7 +83,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
 	public boolean isInSync() {
@@ -92,7 +92,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#load()
 	 */
 	public void load() throws CoreException {
@@ -101,7 +101,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
 	public void load(InputStream source, boolean outOfSync)
@@ -132,7 +132,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
 	public void reload(InputStream source, boolean outOfSync)
@@ -146,7 +146,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IBaseModel#isEditable()
 	 */
 	public boolean isEditable() {

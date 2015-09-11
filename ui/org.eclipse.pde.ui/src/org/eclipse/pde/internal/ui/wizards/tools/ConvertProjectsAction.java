@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 	public void run(IAction action) {
 		IProject[] unconverted = getUnconvertedProjects();
 		if (unconverted.length == 0) {
-			MessageDialog.openInformation(this.getDisplay().getActiveShell(), PDEUIMessages.ConvertProjectsAction_find, PDEUIMessages.ConvertProjectsAction_none); // 
+			MessageDialog.openInformation(this.getDisplay().getActiveShell(), PDEUIMessages.ConvertProjectsAction_find, PDEUIMessages.ConvertProjectsAction_none); //
 			return;
 		}
 

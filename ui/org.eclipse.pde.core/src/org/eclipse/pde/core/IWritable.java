@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 /**
  * Classes that implement this interface can participate in saving the model to
  * the ASCII output stream using the provided writer.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
@@ -26,7 +26,7 @@ public interface IWritable {
 	 * The writable should use the provided indent to write the stream starting
 	 * from the specified column number. Indent string should be written to the
 	 * writer after every new line.
-	 * 
+	 *
 	 * @param indent
 	 *            a string that should be added after each new line to maintain
 	 *            desired horizontal alignment

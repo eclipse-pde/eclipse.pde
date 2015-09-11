@@ -40,7 +40,7 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 		testSuite.addTest(new ImportFromRepoTestCase("testImportOrgEclipseRcp"));
 		return testSuite;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -70,20 +70,20 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 			throw e;
 		}
 	}
-	
+
 	@Override
 	protected int getType() {
 		return TYPE;
 	}
-	
+
 	public void testImportOrgEclipsePdeUaUi(){
 		doSingleImport("org.eclipse.pde.ua.ui", true);
 	}
-	
+
 	public void testImportOrgEclipseRcp(){
 		doSingleImport("org.eclipse.rcp", false);
 	}
-	
+
 	@Override
 	protected void runOperation(IPluginModelBase[] models, int type) {
 		PluginImportOperation job = new PluginImportOperation(models, type, false);
@@ -129,7 +129,7 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * A test authenticator that provide defaults for all methods.
 	 */

@@ -15,14 +15,14 @@ public interface ISimpleCSRun extends ISimpleCSObject {
 
 	/**
 	 * Elements: action, command, perform-when
-	 * 
+	 *
 	 * @return
 	 */
 	public ISimpleCSRunContainerObject getExecutable();
 
 	/**
 	 * Elements: action, command, perform-when
-	 * 
+	 *
 	 * @param executable
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable);

@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ua.core.ctxhelp;
 
 /**
  * Interface containing constants used for the context help editor.
- * 
+ *
  * @since 3.4
  */
 public interface ICtxHelpConstants {
@@ -33,15 +33,15 @@ public interface ICtxHelpConstants {
 
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
-	public static final String ATTRIBUTE_TITLE = "title"; //$NON-NLS-1$	
+	public static final String ATTRIBUTE_TITLE = "title"; //$NON-NLS-1$
 
-	public static final String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$		
+	public static final String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$
 
 	public static final String ATTRIBUTE_HREF = "href"; //$NON-NLS-1$
 
-	public static final String ATTRIBUTE_SERIAL = "serialization"; //$NON-NLS-1$	
+	public static final String ATTRIBUTE_SERIAL = "serialization"; //$NON-NLS-1$
 
-	public static final String ATTRIBUTE_FILTER = "filter"; //$NON-NLS-1$	
+	public static final String ATTRIBUTE_FILTER = "filter"; //$NON-NLS-1$
 
 	// Types
 

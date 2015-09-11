@@ -39,7 +39,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * TocPage
- * 
+ *
  */
 public class TocPage extends PDEFormPage implements IModelChangedListener {
 	public static final String PAGE_ID = "tocPage"; //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.
 	 * eclipse.ui.forms.IManagedForm)
@@ -111,7 +111,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
 	 */
 	public void dispose() {
@@ -125,7 +125,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde
 	 * .core.IModelChangedEvent)
@@ -221,7 +221,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {

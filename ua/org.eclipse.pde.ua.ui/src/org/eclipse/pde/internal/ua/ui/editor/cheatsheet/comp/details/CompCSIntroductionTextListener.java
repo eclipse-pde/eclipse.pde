@@ -29,7 +29,7 @@ public class CompCSIntroductionTextListener implements IDocumentListener {
 	private boolean fBlockEvents;
 
 	/**
-	 * 
+	 *
 	 */
 	public CompCSIntroductionTextListener() {
 		fDataTaskObject = null;

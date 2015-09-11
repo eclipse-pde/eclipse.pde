@@ -13,7 +13,7 @@ package org.eclipse.pde.core.plugin;
 /**
  * This factory should be used to create
  * instances of the plug-in model objects.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */

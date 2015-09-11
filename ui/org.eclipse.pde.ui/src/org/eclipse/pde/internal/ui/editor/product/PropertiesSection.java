@@ -35,11 +35,11 @@ import org.eclipse.ui.forms.widgets.Section;
 /**
  * Displays a list of product properties set in the product configuration.  The properties
  * can be added, edited and removed.
- * 
+ *
  * @see IConfigurationProperty
  * @see ConfigurationPage
  * @see ProductEditor
- * 
+ *
  * @since 3.7
  */
 public class PropertiesSection extends TableSection {
@@ -101,7 +101,7 @@ public class PropertiesSection extends TableSection {
 		private Combo fArch;
 		private IConfigurationProperty fEdit;
 		private Set<String> fExistingNames;
-		
+
 		private String[] COMBO_OSLABELS = new String[] {PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_SOLARIS, Platform.OS_WIN32};
 		private String[] COMBO_ARCHLABELS = new String[] {PDEUIMessages.PropertiesSection_All, Platform.ARCH_X86, Platform.ARCH_X86_64, Platform.ARCH_PPC, Platform.ARCH_IA64, Platform.ARCH_IA64_32, Platform.ARCH_PA_RISC, Platform.ARCH_SPARC};
 

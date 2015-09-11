@@ -16,7 +16,7 @@ import org.eclipse.pde.core.IModelChangeProvider;
 
 /**
  * ICompCSModel
- * 
+ *
  */
 public interface ICompCSModel extends IModelChangeProvider, IModel {
 

@@ -60,7 +60,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 	/**
 	 * Updates the OutlinePage selection and this editor's range indicator.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class PDESourcePageChangedListener implements ISelectionChangedListener {
@@ -70,7 +70,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		 * provider. If the selection provider is a post selection provider,
 		 * post selection changed events are the preferred choice, otherwise
 		 * normal selection changed events are requested.
-		 * 
+		 *
 		 * @param selectionProvider
 		 */
 		public void install(ISelectionProvider selectionProvider) {
@@ -95,7 +95,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		/**
 		 * Removes this selection changed listener from the given selection
 		 * provider.
-		 * 
+		 *
 		 * @param selectionProviderstyle
 		 */
 		public void uninstall(ISelectionProvider selectionProvider) {
@@ -113,7 +113,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 	/**
 	 * The editor selection changed listener.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private PDESourcePageChangedListener fEditorSelectionChangedListener;
@@ -370,7 +370,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createQuickOutlineAction() {
 		// Quick Outline Action
@@ -406,7 +406,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	/*
-	 * Locate an IDocumentRange, subclasses that want to 
+	 * Locate an IDocumentRange, subclasses that want to
 	 * highlight text components based on site selection
 	 * should override this method.
 	 */
@@ -486,7 +486,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * @param rangeElement
 	 */
 	protected void updateOutlinePageSelection(Object rangeElement) {
-		// Set selection in source outline page if the 'Link with Editor' 
+		// Set selection in source outline page if the 'Link with Editor'
 		// feature is on
 		if (PDEPlugin.getDefault().getPreferenceStore().getBoolean("ToggleLinkWithEditorAction.isChecked")) { //$NON-NLS-1$
 			// Ensure we have a source outline page
@@ -494,8 +494,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 				return;
 			}
 			SourceOutlinePage outlinePage = (SourceOutlinePage) fOutlinePage;
-			// Temporarily remove the listener to prevent a selection event being fired 
-			// back at this page			
+			// Temporarily remove the listener to prevent a selection event being fired
+			// back at this page
 			outlinePage.removeAllSelectionChangedListeners();
 			if (rangeElement != null) {
 				outlinePage.setSelection(new StructuredSelection(rangeElement));
@@ -542,9 +542,9 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	/**
-	 * Synchronize the outline page to show a relevant element given the 
+	 * Synchronize the outline page to show a relevant element given the
 	 * current offset.
-	 * 
+	 *
 	 * @param offset The current offset within the source page
 	 */
 	protected void synchronizeOutlinePage(int offset) {
@@ -555,7 +555,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 	/**
 	 * Synchronize the outline page to show the specified element
-	 * @param rangeElement The element to show in the outline page 
+	 * @param rangeElement The element to show in the outline page
 	 */
 	private void synchronizeOutlinePage(IDocumentRange rangeElement) {
 		updateHighlightRange(rangeElement);
@@ -628,7 +628,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/**
 	 * Override the getAdapter function to return a list of targets
 	 * for the "Show In >" action in the context menu.
-	 *  
+	 *
 	 * @param adapter
 	 * @return A list of targets (IShowInTargetList) for the "Show In >"
 	 * submenu if the appropriate adapter is passed in and the editor
@@ -645,7 +645,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 	/**
 	 * Returns the <code>IShowInTargetList</code> for this view.
-	 * @return the <code>IShowInTargetList</code> 
+	 * @return the <code>IShowInTargetList</code>
 	 */
 	protected IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {

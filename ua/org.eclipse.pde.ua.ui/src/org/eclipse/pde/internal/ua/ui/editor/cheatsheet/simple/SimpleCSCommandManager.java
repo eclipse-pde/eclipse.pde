@@ -33,7 +33,7 @@ public class SimpleCSCommandManager {
 	private boolean fBlockEvents;
 
 	/**
-	 * 
+	 *
 	 */
 	private SimpleCSCommandManager() {
 		fCommandMap = Collections.synchronizedMap(new HashMap());
@@ -68,7 +68,7 @@ public class SimpleCSCommandManager {
 	/**
 	 * @param key
 	 * @param value
-	 * @return 
+	 * @return
 	 */
 	public synchronized boolean put(String key, String value) {
 		// Do not add the key-value pair if it is already in the map

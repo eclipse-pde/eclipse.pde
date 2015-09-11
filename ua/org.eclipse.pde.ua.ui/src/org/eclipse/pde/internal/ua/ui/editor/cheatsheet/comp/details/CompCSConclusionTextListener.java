@@ -30,7 +30,7 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 	private boolean fBlockEvents;
 
 	/**
-	 * 
+	 *
 	 */
 	public CompCSConclusionTextListener() {
 		fDataTaskObject = null;

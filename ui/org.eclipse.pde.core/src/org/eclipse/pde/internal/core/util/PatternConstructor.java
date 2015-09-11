@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ public class PatternConstructor {
 
 	/*
 	 * Converts user string to regular expres '*' and '?' to regEx variables.
-	 * 
+	 *
 	 */
 	private static String asRegEx(String pattern, boolean group) {
 		// Replace \ with \\, * with .* and ? with .
@@ -43,7 +43,7 @@ public class PatternConstructor {
 	/**
 	 * Creates a regular expression pattern from the pattern string (which is
 	 * our old 'StringMatcher' format).
-	 * 
+	 *
 	 * @param pattern
 	 *            The search pattern
 	 * @param isCaseSensitive

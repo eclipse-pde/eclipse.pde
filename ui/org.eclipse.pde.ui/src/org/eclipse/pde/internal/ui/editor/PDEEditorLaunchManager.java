@@ -43,7 +43,7 @@ public class PDEEditorLaunchManager {
 
 	/**
 	 * Marks the launcher with the given launcher id as being recently launched
-	 * 
+	 *
 	 * @param id launcher id, 'id' attribute of the PDE launch shortcut extension
 	 */
 	public void setRecentLaunch(String id) {
@@ -69,10 +69,10 @@ public class PDEEditorLaunchManager {
 	}
 
 	/**
-	 * Returns an ordered list of String launcher ids taken from PDE launch 
+	 * Returns an ordered list of String launcher ids taken from PDE launch
 	 * shortcut extensions.  The most recently launched entry is at
 	 * index 0.
-	 * 
+	 *
 	 * @return ordered list of launcher IDs, possibly empty
 	 */
 	public List<String> getRecentLaunches() {

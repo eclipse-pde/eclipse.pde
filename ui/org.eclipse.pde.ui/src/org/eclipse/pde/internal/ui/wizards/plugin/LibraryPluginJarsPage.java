@@ -143,7 +143,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 			}
 		});
 		// should not sort, bug 98401
-		//fTableViewer.setSorter(new ViewerSorter()); 
+		//fTableViewer.setSorter(new ViewerSorter());
 		data = new GridData(GridData.FILL_BOTH);
 		fTableViewer.getControl().setLayoutData(data);
 		fTableViewer.setInput(fJarPaths);

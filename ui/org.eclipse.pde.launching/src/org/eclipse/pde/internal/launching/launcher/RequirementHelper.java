@@ -20,8 +20,8 @@ import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 
 /**
- * Centralizes code for validating the contents of a launch and finding missing requirements. 
- * 
+ * Centralizes code for validating the contents of a launch and finding missing requirements.
+ *
  * @since 3.6
  * @see EclipsePluginValidationOperation
  */
@@ -31,7 +31,7 @@ public class RequirementHelper {
 	 * Returns a list of string plug-in ids that are required to launch the product, application
 	 * or application to test that the given launch configuration specifies.  Which attributes are
 	 * checked will depend on whether a product, an application or a junit application is being launched.
-	 * 
+	 *
 	 * @param config launch configuration to get attributes from
 	 * @param plugins list of plugin models to look for product extensions in
 	 * @return list of string plug-in IDs that are required by the config's application/product settings

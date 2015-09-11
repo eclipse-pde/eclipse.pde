@@ -181,7 +181,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		try {
 			String filter = entry.getValue();
 			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
-			SelectionDialog dialog = JavaUI.createTypeDialog(PDEPlugin.getActiveWorkbenchShell(), PlatformUI.getWorkbench().getProgressService(), SearchEngine.createWorkspaceScope(), scopeType, false, filter); 
+			SelectionDialog dialog = JavaUI.createTypeDialog(PDEPlugin.getActiveWorkbenchShell(), PlatformUI.getWorkbench().getProgressService(), SearchEngine.createWorkspaceScope(), scopeType, false, filter);
 			dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle);
 			if (dialog.open() == Window.OK) {
 				IType type = (IType) dialog.getResult()[0];

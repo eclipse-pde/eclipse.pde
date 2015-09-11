@@ -29,7 +29,7 @@ public class BundleLauncherHelper {
 	/**
 	 * When creating a mapping of bundles to their start levels, update configurator is set
 	 * to auto start at level three.  However, if at launch time we are launching with both
-	 * simple configurator and update configurator, we change the start level as they 
+	 * simple configurator and update configurator, we change the start level as they
 	 * shouldn't be started together.
 	 */
 	public static final String DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL_TEXT = "3"; //$NON-NLS-1$
@@ -186,8 +186,8 @@ public class BundleLauncherHelper {
 					if (model.getPluginBase().getVersion().equalsIgnoreCase(existing.getPluginBase().getVersion()) || (isSingleton(model) && isSingleton(existing))) {
 						if (workspaceModels == null)
 							workspaceModels = Arrays.asList(PluginRegistry.getWorkspaceModels());
-						if (!workspaceModels.contains(existing)) { //if existing model is external 							
-							pluginMap.put(id, model); // launch the workspace model 
+						if (!workspaceModels.contains(existing)) { //if existing model is external
+							pluginMap.put(id, model); // launch the workspace model
 							continue;
 						}
 					}
@@ -211,7 +211,7 @@ public class BundleLauncherHelper {
 	}
 
 	/**
-	 * Finds the best candidate model from the <code>resolution</code> location. If the model is not found there, 
+	 * Finds the best candidate model from the <code>resolution</code> location. If the model is not found there,
 	 * alternate location is explored before returning <code>null</code>.
 	 * @param modelEntry
 	 * @param version
@@ -244,7 +244,7 @@ public class BundleLauncherHelper {
 	 * <code>null</code> if no enabled models were in the provided list.  The best match will
 	 * be an exact version match if one is found.  Otherwise a model that is resolved in the
 	 * OSGi state with the highest version is returned.
-	 * 
+	 *
 	 * @param models list of candidate models to choose from
 	 * @param version the bundle version to find a match for
 	 * @return best candidate model from the list of models or <code>null</code> if no there were no acceptable models in the list
@@ -357,7 +357,7 @@ public class BundleLauncherHelper {
 		String modelName = description.getSymbolicName();
 
 		if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
-			return "1"; //$NON-NLS-1$ 
+			return "1"; //$NON-NLS-1$
 		} else if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
 			return "1"; //$NON-NLS-1$
 		} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
@@ -381,7 +381,7 @@ public class BundleLauncherHelper {
 		String modelName = description.getSymbolicName();
 
 		if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
-			return "true"; //$NON-NLS-1$ 
+			return "true"; //$NON-NLS-1$
 		} else if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
 			return "true"; //$NON-NLS-1$
 		} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
@@ -586,14 +586,14 @@ public class BundleLauncherHelper {
 	}
 
 	/**
-	 * Returns a map of IPluginModelBase to their associated String resolution setting. Reads the 
+	 * Returns a map of IPluginModelBase to their associated String resolution setting. Reads the
 	 * additional plug-ins attribute of the given launch config and returns a map of plug-in models
 	 * to their resolution.  The attribute stores the id, version, enablement and resolution of each plug-in.
 	 * The models to be returned are determined by trying to find a model with a matching name, matching version
 	 * (or highest) in the resolution location (falling back on other locations if the chosen option is unavailable).
 	 * The includeDisabled option allows the returned list to contain only plug-ins that are enabled (checked) in
 	 * the config.
-	 * 
+	 *
 	 * @param config launch config to read attribute from
 	 * @param onlyEnabled whether all plug-ins in the attribute should be returned or just the ones marked as enabled/checked
 	 * @return map of IPluginModelBase to String resolution setting

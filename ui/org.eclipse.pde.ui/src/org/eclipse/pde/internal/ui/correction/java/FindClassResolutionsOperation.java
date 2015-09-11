@@ -35,9 +35,9 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 	AbstractClassResolutionCollector fCollector = null;
 
 	/**
-	 * This class is meant to be sub-classed for use with FindClassResolutionsOperation.  The subclass is responsible for creating 
+	 * This class is meant to be sub-classed for use with FindClassResolutionsOperation.  The subclass is responsible for creating
 	 * corresponding proposals with the help of JavaResolutionFactory.
-	 * 
+	 *
 	 * @see JavaResolutionFactory
 	 */
 	public static abstract class AbstractClassResolutionCollector {
@@ -84,12 +84,12 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 	}
 
 	/**
-	 * This class is used to try to find resolutions to unresolved java classes.  When either an Import-Package or Require-Bundle might 
+	 * This class is used to try to find resolutions to unresolved java classes.  When either an Import-Package or Require-Bundle might
 	 * resolve a class, the ExportPackageDescription which contains the package/bundle will be passed to the AbstractClassResoltuionCollector.
 	 * The collector is then responsible for creating an corresponding resolutions with the help of JavaResolutionFactory.
 	 * @param project the project which contains the unresolved class
 	 * @param className	the name of the class which is unresolved
-	 * @param collector a subclass of AbstractClassResolutionCollector to collect/handle possible resolutions 
+	 * @param collector a subclass of AbstractClassResolutionCollector to collect/handle possible resolutions
 	 */
 	public FindClassResolutionsOperation(IProject project, String className, AbstractClassResolutionCollector collector) {
 		fProject = project;
@@ -176,11 +176,11 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 
 	/**
 	 * Finds all exported packages containing the simple type aTypeName. The packages
-	 * will be filtered from the given packages which are already imported, and all 
+	 * will be filtered from the given packages which are already imported, and all
 	 * system packages.
-	 * 
+	 *
 	 * If no exported package is left, packagesToExport will be filled with those
-	 * packages that would have been returned, if they were exported.  
+	 * packages that would have been returned, if they were exported.
 	 * @param aTypeName the simple type to search for
 	 * @param importPkgs the packages which are already imported
 	 * @param packagesToExport return parameter that will be filled with packages to export
@@ -316,7 +316,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 	/**
 	 * Returns the set of String bundle names that are in the project's list of required
 	 * bundles.
-	 * 
+	 *
 	 * @return set of required bundle names, possibly empty
 	 */
 	private Set<String> getCurrentBundleNames() {

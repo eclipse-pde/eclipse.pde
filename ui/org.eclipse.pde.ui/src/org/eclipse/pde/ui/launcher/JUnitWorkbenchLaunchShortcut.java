@@ -44,7 +44,7 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 		String configName = configuration.getName();
 
 		if (TargetPlatformHelper.usesNewApplicationModel())
-			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$ 
+			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
 			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
 		configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(configName, true));

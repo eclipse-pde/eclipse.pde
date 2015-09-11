@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -134,7 +134,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("				xmlFile.load(\"site.xml\");"); //$NON-NLS-1$
 		writer.println("				stylesheet.load(\"" + fWebLocation + "/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("			} else {"); //$NON-NLS-1$
-		writer.println("				alert(\"" + PDEUIMessages.SiteHTML_loadError + "\");"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		writer.println("				alert(\"" + PDEUIMessages.SiteHTML_loadError + "\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("			}"); //$NON-NLS-1$
 		writer.println("			xmlFile.addEventListener(\"load\", transform, false);"); //$NON-NLS-1$
 		writer.println("			stylesheet.addEventListener(\"load\", transform, false);"); //$NON-NLS-1$

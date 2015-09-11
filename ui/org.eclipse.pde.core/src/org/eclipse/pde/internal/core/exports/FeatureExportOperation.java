@@ -286,7 +286,7 @@ public class FeatureExportOperation extends Job {
 				runScript(getPackagerScriptName(featureID, configs[i][0], configs[i][1], configs[i][2], featureLocation), null, properties, new SubProgressMonitor(monitor, 2));
 			}
 			properties.put("destination.temp.folder", fBuildTempLocation + "/pde.logs"); //$NON-NLS-1$ //$NON-NLS-2$
-			runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$				
+			runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
 		} finally {
 			monitor.done();
 		}
@@ -384,7 +384,7 @@ public class FeatureExportOperation extends Job {
 
 	/**
 	 * Execute the script at the given location.
-	 * 
+	 *
 	 * @param location the script to run
 	 * @param targets the targets in the script to run, use <code>null</code> to run all
 	 * @param properties map of user properties
@@ -470,7 +470,7 @@ public class FeatureExportOperation extends Job {
 					fAntBuildProperties.put(id, BuildUtilities.getBootClasspath(id));
 			}
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
-			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$ 
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "false"); //$NON-NLS-1$
 
 			IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
@@ -513,11 +513,11 @@ public class FeatureExportOperation extends Job {
 	}
 
 	/**
-	 * Returns a list of URI metadata repository locations that contain metadata for some 
+	 * Returns a list of URI metadata repository locations that contain metadata for some
 	 * or all of the target platform.  The repositories may not contain metadata for all
 	 * plugins in the target.  This method returns <code>null</code> if the target does not
 	 * have any repositories.
-	 * 
+	 *
 	 * @return list of URI representing metadata repositories or <code>null</code>
 	 */
 	protected URI[] getMetadataContextFromTargetPlatform() {
@@ -542,7 +542,7 @@ public class FeatureExportOperation extends Job {
 	/**
 	* Adds the necessary properties to invoke the p2 metadata generator.  This method will
 	* be called when creating the ant build properties map.
-	* 
+	*
 	* @param map the map to add generator properties to
 	*/
 	protected void setP2MetaDataProperties(Map<String, String> map) {
@@ -733,7 +733,7 @@ public class FeatureExportOperation extends Job {
 			Dictionary<String, String> properties = dictionaries[i];
 			properties.put("osgi.os", os); //$NON-NLS-1$
 			properties.put("osgi.ws", ws); //$NON-NLS-1$
-			properties.put("osgi.arch", arch); //$NON-NLS-1$			
+			properties.put("osgi.arch", arch); //$NON-NLS-1$
 		}
 		fStateCopy.resolve(false);
 		return fStateCopy;
@@ -876,7 +876,7 @@ public class FeatureExportOperation extends Job {
 
 	/**
 	 * This method recurses on the feature list and creates feature.xml and build.properties.
-	 * 
+	 *
 	 * @param featureID
 	 * @param featureLocation
 	 * @param featuresExported
@@ -944,7 +944,7 @@ public class FeatureExportOperation extends Job {
 			if (!file.exists() || !file.isDirectory())
 				file.mkdirs();
 
-			save(new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR), prop, "Marker File"); //$NON-NLS-1$ 
+			save(new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR), prop, "Marker File"); //$NON-NLS-1$
 			XMLPrintHandler.writeFile(doc, new File(file, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR));
 		} catch (DOMException e1) {
 		} catch (FactoryConfigurationError e1) {
@@ -1014,8 +1014,8 @@ public class FeatureExportOperation extends Job {
 						if (bundle != null) {
 							Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
 							plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
-							plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
-							plugin.setAttribute("unpack", "false"); //$NON-NLS-1$ //$NON-NLS-2$ 
+							plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$
+							plugin.setAttribute("unpack", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 							root.appendChild(plugin);
 							BundleDescription[] fragments = bundle.getFragments();
 							for (int i = 0; i < configurations.length; i++) {
@@ -1023,7 +1023,7 @@ public class FeatureExportOperation extends Job {
 								if (launcherFragment != null) {
 									Element fragment = doc.createElement("plugin"); //$NON-NLS-1$
 									fragment.setAttribute("id", launcherFragment.getSymbolicName()); //$NON-NLS-1$
-									fragment.setAttribute("version", launcherFragment.getVersion().toString()); //$NON-NLS-1$ 
+									fragment.setAttribute("version", launcherFragment.getVersion().toString()); //$NON-NLS-1$
 									fragment.setAttribute("fragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 									setFilterAttributes(fragment, configurations[i]);
 									root.appendChild(fragment);
@@ -1075,7 +1075,7 @@ public class FeatureExportOperation extends Job {
 						if (shouldAddPlugin(bundle, environment)) {
 							Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
 							plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
-							plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+							plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$
 							setFilterAttributes(plugin, currentConfig);
 							setAdditionalAttributes(plugin, bundle);
 							root.appendChild(plugin);
@@ -1084,7 +1084,7 @@ public class FeatureExportOperation extends Job {
 								if (workspacePlugins.contains(PluginRegistry.findModel(bundle))) { // Is it a workspace plugin?
 									plugin = doc.createElement("plugin"); //$NON-NLS-1$
 									plugin.setAttribute("id", bundle.getSymbolicName() + ".source"); //$NON-NLS-1$ //$NON-NLS-2$
-									plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+									plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$
 									setFilterAttributes(plugin, currentConfig);
 									setAdditionalAttributes(plugin, bundle);
 									root.appendChild(plugin);
@@ -1095,7 +1095,7 @@ public class FeatureExportOperation extends Job {
 										bundle = model.getBundleDescription();
 										plugin = doc.createElement("plugin"); //$NON-NLS-1$
 										plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
-										plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+										plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$
 										setFilterAttributes(plugin, currentConfig);
 										setAdditionalAttributes(plugin, bundle);
 										root.appendChild(plugin);

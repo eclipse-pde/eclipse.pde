@@ -45,7 +45,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * SimpleCSHelpDetailsSection
- * 
+ *
  */
 public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 
@@ -87,7 +87,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData
 	 * (java.lang.Object)
@@ -99,7 +99,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails
 	 * #createDetails(org.eclipse.swt.widgets.Composite)
@@ -173,7 +173,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails
 	 * #hookListeners()
@@ -308,7 +308,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails
 	 * #updateFields()
@@ -352,7 +352,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
 	public void commit(boolean onSave) {

@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
  * The class that implements this interface represents a
  * reference to the library that is defined in the plug-in
  * manifest.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -87,7 +87,7 @@ public interface IPluginLibrary extends IPluginObject {
 
 	/**
 	 * Returns the type of this library.  Will be one of {@link #CODE} or {@link #RESOURCE}.
-	 * 
+	 *
 	 * @return The type of this library
 	 */
 	String getType();
@@ -104,8 +104,8 @@ public interface IPluginLibrary extends IPluginObject {
 	void setContentFilters(String[] filters) throws CoreException;
 
 	/**
-	 * Export a particular package in a library. 
-	 * This method may throw a CoreException if 
+	 * Export a particular package in a library.
+	 * This method may throw a CoreException if
 	 * the model is not editable.
 	 *
 	 * @param filter a package name
@@ -114,8 +114,8 @@ public interface IPluginLibrary extends IPluginObject {
 	void addContentFilter(String filter) throws CoreException;
 
 	/**
-	 * Remove a package from the export list. 
-	 * This method may throw a CoreException if 
+	 * Remove a package from the export list.
+	 * This method may throw a CoreException if
 	 * the model is not editable.
 	 *
 	 * @param filter a package name
@@ -125,7 +125,7 @@ public interface IPluginLibrary extends IPluginObject {
 
 	/**
 	 * Sets the optional package prefixes for this library.
-	 * This method may throw a CoreException if the model is not 
+	 * This method may throw a CoreException if the model is not
 	 * editable.
 	 *
 	 * @param packages an array of package prefixes
@@ -138,15 +138,15 @@ public interface IPluginLibrary extends IPluginObject {
 	 * visible to other plug-ins. This method
 	 * may throw a CoreException if the model is
 	 * not editable.
-	 * 
+	 *
 	 * @param value whether the types in the library should be exported
-	 * @throws CoreException if the model is not editable 
+	 * @throws CoreException if the model is not editable
 	 */
 	void setExported(boolean value) throws CoreException;
 
 	/**
 	 * Sets the library type. Must be either {@link #CODE} or {@link #RESOURCE}.
-	 * 
+	 *
 	 * @param type The library type
 	 * @throws CoreException if the model is not editable.
 	 */

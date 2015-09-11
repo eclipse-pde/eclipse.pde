@@ -17,7 +17,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 
 /**
- * Initializes launch configuration attributes for newly-created OSGi Framework 
+ * Initializes launch configuration attributes for newly-created OSGi Framework
  * launch configurations
  * <p>
  * Clients may instantiate or subclass this class
@@ -34,7 +34,7 @@ public class OSGiLaunchConfigurationInitializer {
 
 	/**
 	 * Initializes some attributes on a newly-created launch configuration
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 */
@@ -46,7 +46,7 @@ public class OSGiLaunchConfigurationInitializer {
 
 	/**
 	 * Sets the source provider ID
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 */
@@ -56,7 +56,7 @@ public class OSGiLaunchConfigurationInitializer {
 
 	/**
 	 * Initializes the start level and auto-start attributes
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 */
@@ -67,7 +67,7 @@ public class OSGiLaunchConfigurationInitializer {
 
 	/**
 	 * Initializes the checked/unchecked state of bundles
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 */
@@ -94,7 +94,7 @@ public class OSGiLaunchConfigurationInitializer {
 
 	/**
 	 * Returns the bundle's start level
-	 * 
+	 *
 	 * @param bundleID
 	 * 			the bundle ID
 	 * @return the start level for the given bundle or the string <code>default</code>

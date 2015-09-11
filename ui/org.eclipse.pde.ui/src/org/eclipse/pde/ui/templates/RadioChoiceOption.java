@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * Implementation of the AbstractTemplateOption that allows users to choose a value from
  * the fixed set of options using radio buttons.
- * 
+ *
  * @since 3.2
  */
 public class RadioChoiceOption extends AbstractChoiceOption {
@@ -31,7 +31,7 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 	/**
 	 * Constructor for RadioChoiceOption.
 	 * Number of choices must be 2, otherwise an assertion will fail.
-	 * 
+	 *
 	 * @param section
 	 *            the parent section.
 	 * @param name

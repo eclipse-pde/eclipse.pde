@@ -19,7 +19,7 @@ public interface ILogFileProvider {
 
 	/**
 	 * Returns a Map of java.io.File log files indexed by String names.
-	 * 
+	 *
 	 * @return Map of java.io.File log files index by String names.
 	 * @since 3.4
 	 */

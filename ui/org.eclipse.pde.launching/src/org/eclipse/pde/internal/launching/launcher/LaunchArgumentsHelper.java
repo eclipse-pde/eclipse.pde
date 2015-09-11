@@ -37,9 +37,9 @@ public class LaunchArgumentsHelper {
 	/**
 	 * Returns the location that will be used as the workspace when launching or
 	 * an empty string if the user has specified the <code>-data &#64none</code>
-	 * argument for no workspace.  Will replace variables, so this method should 
+	 * argument for no workspace.  Will replace variables, so this method should
 	 * only be called when variable substitution (may prompt the user) is appropriate.
-	 * 
+	 *
 	 * @param configuration the launch configuration to get the workspace value for
 	 * @return workspace location path as a string or an empty if no workspace will be used
 	 * @throws CoreException if there is a problem with the configuration
@@ -119,7 +119,7 @@ public class LaunchArgumentsHelper {
 
 	/**
 	 * Fetches the VM Arguments from the current Target Platform
-	 *  
+	 *
 	 * @return	VM Arguments from the current Target Platform or empty string if none found
 	 */
 	public static String getInitialVMArguments() {
@@ -233,9 +233,9 @@ public class LaunchArgumentsHelper {
 	 * Returns the path to the equinox launcher jar.  If the launcher is available
 	 * in the workspace, the packageName will be used to determine the expected output
 	 * location.
-	 * 
+	 *
 	 * @param packageName name of the launcher package, typically {@link IPDEBuildConstants#BUNDLE_EQUINOX_LAUNCHER}
-	 * @return the path to the equinox launcher jar or <code>null</code> 
+	 * @return the path to the equinox launcher jar or <code>null</code>
 	 * @throws CoreException
 	 */
 	private static String getEquinoxStartupPath(String packageName) throws CoreException {
@@ -346,8 +346,8 @@ public class LaunchArgumentsHelper {
 		}
 		File startupJar = new Path(TargetPlatform.getLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
 
-		// if something goes wrong with the preferences, fall back on the startup.jar 
-		// in the running eclipse.  
+		// if something goes wrong with the preferences, fall back on the startup.jar
+		// in the running eclipse.
 		if (!startupJar.exists())
 			startupJar = new Path(TargetPlatform.getDefaultLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
 

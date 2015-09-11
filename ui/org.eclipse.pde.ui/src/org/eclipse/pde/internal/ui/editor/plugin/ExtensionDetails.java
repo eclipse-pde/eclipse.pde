@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -233,7 +233,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		} else {
 			labelControl.setText(label + ':');
 		}
-		// Force the label's parent composite to relayout because 
+		// Force the label's parent composite to relayout because
 		// clippage can occur when updating the text
 		labelControl.getParent().layout();
 	}

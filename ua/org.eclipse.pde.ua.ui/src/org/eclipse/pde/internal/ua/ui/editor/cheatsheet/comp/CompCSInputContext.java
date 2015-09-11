@@ -34,11 +34,11 @@ import org.eclipse.ui.IStorageEditorInput;
 
 /**
  * CompCSInputContext
- * 
+ *
  */
 public class CompCSInputContext extends UTF8InputContext {
 
-	public static final String CONTEXT_ID = "compcs-context"; //$NON-NLS-1$	
+	public static final String CONTEXT_ID = "compcs-context"; //$NON-NLS-1$
 
 	/**
 	 * @param editor
@@ -53,7 +53,7 @@ public class CompCSInputContext extends UTF8InputContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.context.InputContext#addTextEditOperation
 	 * (java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
@@ -64,7 +64,7 @@ public class CompCSInputContext extends UTF8InputContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.context.InputContext#createModel(org
 	 * .eclipse.ui.IEditorInput)
@@ -94,7 +94,7 @@ public class CompCSInputContext extends UTF8InputContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getId()
 	 */
 	public String getId() {
@@ -103,7 +103,7 @@ public class CompCSInputContext extends UTF8InputContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.context.InputContext#getPartitionName
 	 * ()
@@ -114,7 +114,7 @@ public class CompCSInputContext extends UTF8InputContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.context.InputContext#flushModel(org
 	 * .eclipse.jface.text.IDocument)

@@ -17,8 +17,8 @@ import org.eclipse.pde.core.target.ITargetLocation;
 
 /**
  * Contributed target locations that want to support updating in the target wizard and editor must adapt
- * their {@link ITargetLocation} to this interface. 
- * 
+ * their {@link ITargetLocation} to this interface.
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.7
  */
@@ -27,7 +27,7 @@ public interface ITargetLocationUpdater {
 	/**
 	 * Status code that can be set on an OK status returned by {@link #update(ITargetDefinition, ITargetLocation, IProgressMonitor)}
 	 * <p>
-	 * If this status code is set, the target will not resolve the target after the update completes. 
+	 * If this status code is set, the target will not resolve the target after the update completes.
 	 * </p>
 	 */
 	public static final int STATUS_CODE_NO_CHANGE = 101;
@@ -35,7 +35,7 @@ public interface ITargetLocationUpdater {
 	/**
 	 * Returns whether this updater can update the given target location. This method will be called
 	 * when a selection is made to determine if the update button should be enabled.
-	 * 
+	 *
 	 * @param target the target definition being edited
 	 * @param targetLocation the target location to update
 	 * @return whether this update can update the given target location
@@ -49,7 +49,7 @@ public interface ITargetLocationUpdater {
 	 * <p>
 	 * This method may be called from a non-UI thread.  A progress monitor is provided.
 	 * </p>
-	 * 
+	 *
 	 * @param target the target definition being edited
 	 * @param targetLocation the target location to update
 	 * @param monitor progress monitor

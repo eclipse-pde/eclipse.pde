@@ -18,10 +18,10 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.target.ITargetLocationWizard;
 
 /**
- * Wizard for selecting Installable Units. 
- * 
- * Contributed to provide UI for <code>IUBundleContainer</code> target location through extension to 
- * org.eclipse.pde.ui.targetProvisioner 
+ * Wizard for selecting Installable Units.
+ *
+ * Contributed to provide UI for <code>IUBundleContainer</code> target location through extension to
+ * org.eclipse.pde.ui.targetProvisioner
  *
  */
 public class InstallableUnitWizard extends Wizard implements ITargetLocationWizard {

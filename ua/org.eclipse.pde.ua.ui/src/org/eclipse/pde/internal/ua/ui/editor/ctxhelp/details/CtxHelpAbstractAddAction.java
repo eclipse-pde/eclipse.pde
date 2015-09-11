@@ -28,7 +28,7 @@ public abstract class CtxHelpAbstractAddAction extends Action {
 	/**
 	 * Set the parent object that this action will add
 	 * objects to.
-	 * 
+	 *
 	 * @param parent The new parent object for this action
 	 */
 	public void setParentObject(CtxHelpObject parent) {
@@ -38,7 +38,7 @@ public abstract class CtxHelpAbstractAddAction extends Action {
 	/**
 	 * Set the target object that this action will add
 	 * objects after.
-	 * 
+	 *
 	 * @param target The new target object for this action
 	 */
 	public void setTargetObject(CtxHelpObject target) {
@@ -69,7 +69,7 @@ public abstract class CtxHelpAbstractAddAction extends Action {
 	/**
 	 * Add the child to the parent object. If a target object is specified,
 	 * add the child as a sibling after that object.
-	 * 
+	 *
 	 * @param child The object to add to the parent
 	 */
 	protected void addChild(CtxHelpObject child) {

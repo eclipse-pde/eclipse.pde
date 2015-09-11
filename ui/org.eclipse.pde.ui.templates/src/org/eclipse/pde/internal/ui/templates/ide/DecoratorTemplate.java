@@ -162,7 +162,7 @@ public class DecoratorTemplate extends PDETemplateSection {
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
+		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
@@ -172,7 +172,7 @@ public class DecoratorTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		// This method creates the extension point structure through the use
 		// of IPluginElement objects. The element attributes are set based on
-		// user input from the wizard page as well as values required for the 
+		// user input from the wizard page as well as values required for the
 		// operation of the extension point.
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
@@ -186,12 +186,12 @@ public class DecoratorTemplate extends PDETemplateSection {
 
 		if (!readOnlyOption.isSelected()) {
 			decoratorElement.setAttribute("id", plugin.getId() + "." + getSectionId()); //$NON-NLS-1$ //$NON-NLS-2$
-			decoratorElement.setAttribute("label", PDETemplateMessages.DecoratorTemplate_resourceLabel); //$NON-NLS-1$		
+			decoratorElement.setAttribute("label", PDETemplateMessages.DecoratorTemplate_resourceLabel); //$NON-NLS-1$
 			decoratorElement.setAttribute("icon", "icons/sample_decorator.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 			decoratorElement.setAttribute("location", getValue(DECORATOR_ICON_PLACEMENT).toString()); //$NON-NLS-1$
 		} else {
 			decoratorElement.setAttribute("id", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(DECORATOR_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
-			decoratorElement.setAttribute("label", PDETemplateMessages.DecoratorTemplate_readOnlyLabel); //$NON-NLS-1$		
+			decoratorElement.setAttribute("label", PDETemplateMessages.DecoratorTemplate_readOnlyLabel); //$NON-NLS-1$
 			decoratorElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(DECORATOR_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
@@ -243,7 +243,7 @@ public class DecoratorTemplate extends PDETemplateSection {
 	@Override
 	protected String getFormattedPackageName(String id) {
 		// Package name addition to create a location for containing
-		// any classes required by the decorator. 
+		// any classes required by the decorator.
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)
 			return packageName + ".decorators"; //$NON-NLS-1$
@@ -257,12 +257,12 @@ public class DecoratorTemplate extends PDETemplateSection {
 
 	/**
 	 * Returns a 2-D String array based on a comma seperated
-	 * string of choices. 
-	 * 
+	 * string of choices.
+	 *
 	 * @param iconLocations
 	 * 				comma seperated string of icon placement options
 	 * @return the 2-D array of choices
-	 * 				
+	 *
 	 */
 	protected String[][] fromCommaSeparated(String iconLocations) {
 		StringTokenizer tokens = new StringTokenizer(iconLocations, ","); //$NON-NLS-1$

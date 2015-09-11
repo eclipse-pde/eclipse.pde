@@ -61,7 +61,7 @@ public class CtxHelpRemoveAction extends Action {
 	/**
 	 * Determine the next object that should be selected
 	 * after the designated object has been removed
-	 * 
+	 *
 	 * @param parent The parent of the deleted object
 	 */
 	private void determineNextSelection(CtxHelpObject parent, int index) {

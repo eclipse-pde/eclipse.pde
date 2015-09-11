@@ -76,12 +76,12 @@ public class DSReferenceTestCase extends AbstractDSModelTestCase {
 
 		String defautCardinality = "1..1";
 		String defaultPolicy = "static";
-		
+
 		assertEquals(reference0.getReferenceCardinality(), defautCardinality);
-		
+
 		assertEquals(reference0.getReferencePolicy(), defaultPolicy);
 
-		
+
 	}
 
 }

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Content assist text is any contiguous segment of text that can be 
+ * Content assist text is any contiguous segment of text that can be
  * construed as the beginning of a element document node prior to invoking
  * content assist at the end of it.
  */
@@ -72,15 +72,15 @@ public class XMLContentAssistText {
 					// Accumulate the contiguous segment of content assist
 					// text
 					buffer.append(currentChar);
-					// Track the start offset of the contiguous segment of 
+					// Track the start offset of the contiguous segment of
 					// content assist text
 					lastCATextOffset = i;
 				}
 			} else if (Character.isWhitespace(currentChar)) {
-				// We found whitespace. This represents the contiguous text 
+				// We found whitespace. This represents the contiguous text
 				// boundary.  Do not write anything else to the buffer.
 				// Continue scanning backwards to make sure we find a right
-				// angle bracket to validate what we have in the buffer is 
+				// angle bracket to validate what we have in the buffer is
 				// indeed valid content assist text
 				writeCAText = false;
 			} else if (currentChar == '>') {
@@ -104,7 +104,7 @@ public class XMLContentAssistText {
 	 * Determines whether a character is a valid XML element name character
 	 * @param c A character
 	 * @return True if the character is valid content assist text; Otherwise,
-	 * returns false. 
+	 * returns false.
 	 */
 	private static boolean isContentAssistText(char c) {
 		if ((Character.isLetterOrDigit(c)) || (c == '.') || (c == '-') || (c == '_') || (c == ':')) {

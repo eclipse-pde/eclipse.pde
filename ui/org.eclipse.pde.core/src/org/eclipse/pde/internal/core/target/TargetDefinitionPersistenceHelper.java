@@ -32,7 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Provides static methods that will serialize and deserialize xml representing a target definition
- * 
+ *
  * @see ITargetDefinition
  */
 public class TargetDefinitionPersistenceHelper {
@@ -89,8 +89,8 @@ public class TargetDefinitionPersistenceHelper {
 	 * @throws CoreException
 	 * @throws ParserConfigurationException
 	 * @throws TransformerException
-	 * @throws IOException 
-	 * @throws SAXException 
+	 * @throws IOException
+	 * @throws SAXException
 	 */
 	public static void persistXML(ITargetDefinition definition, OutputStream output) throws CoreException, ParserConfigurationException, TransformerException, IOException, SAXException {
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
@@ -216,13 +216,13 @@ public class TargetDefinitionPersistenceHelper {
 
 	/**
 	 * Parses an xml document from the input stream and deserializes it into a target definition.
-	 * 
+	 *
 	 * @param definition definition to be filled with the result of deserialization
 	 * @param input stream to get xml input from
 	 * @throws CoreException
-	 * @throws ParserConfigurationException 
-	 * @throws IOException 
-	 * @throws SAXException 
+	 * @throws ParserConfigurationException
+	 * @throws IOException
+	 * @throws SAXException
 	 */
 	public static void initFromXML(ITargetDefinition definition, InputStream input) throws CoreException, ParserConfigurationException, SAXException, IOException {
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -266,7 +266,7 @@ public class TargetDefinitionPersistenceHelper {
 		} else if (version.compareTo(ICoreConstants.TARGET34) <= 0) {
 			TargetPersistence34Helper.initFromDoc(definition, root);
 		} else {
-			// Version doesn't match any known file structure, default to latest 
+			// Version doesn't match any known file structure, default to latest
 			String name = root.getAttribute(TargetDefinitionPersistenceHelper.ATTR_NAME);
 			PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, MessageFormat.format(Messages.TargetDefinitionPersistenceHelper_2, new Object[] {version, name})));
 			TargetPersistence38Helper.initFromDoc(definition, root);

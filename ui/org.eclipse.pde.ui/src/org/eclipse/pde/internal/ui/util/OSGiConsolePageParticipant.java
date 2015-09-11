@@ -17,7 +17,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * Page participant extension for an OSGi console. Contributes a close action.
- * 
+ *
  * @since 3.6
  */
 public class OSGiConsolePageParticipant implements IConsolePageParticipant {

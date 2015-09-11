@@ -40,7 +40,7 @@ public interface ISchemaRootElement extends ISchemaElement {
 	public boolean isInternal();
 
 	/**
-	 * 
+	 *
 	 * @param value
 	 */
 	public void setInternal(boolean value);

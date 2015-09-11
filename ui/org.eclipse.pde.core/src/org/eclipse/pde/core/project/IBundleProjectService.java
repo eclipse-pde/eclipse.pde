@@ -27,7 +27,7 @@ import org.osgi.framework.Version;
  * ServiceReference ref = context.getServiceReference(IBundleContextService.class.getName());
  * IBundleContextService service = (IBundleContextService)context.getService(ref);
  * ...
- * context.ungetService(ref); 
+ * context.ungetService(ref);
  * </pre>
  * </p>
  * @since 3.6
@@ -41,7 +41,7 @@ public interface IBundleProjectService {
 	 * If the project does not exist, the description can be used to create
 	 * a new bundle project. If the project does exist, the description can be used to
 	 * modify a project.
-	 *  
+	 *
 	 * @param project project
 	 * @return bundle description for the associated project
 	 * @exception CoreException if unable to create a description on an existing project
@@ -50,7 +50,7 @@ public interface IBundleProjectService {
 
 	/**
 	 * Creates and returns a new host description.
-	 * 
+	 *
 	 * @param name symbolic name of the host
 	 * @param range version constraint or <code>null</code>
 	 * @return host description
@@ -59,7 +59,7 @@ public interface IBundleProjectService {
 
 	/**
 	 * Creates and returns a new package import description.
-	 * 
+	 *
 	 * @param name fully qualified name of imported package
 	 * @param range version constraint or <code>null</code>
 	 * @param optional whether the import is optional
@@ -69,11 +69,11 @@ public interface IBundleProjectService {
 
 	/**
 	 * Constructs a new package export description.
-	 * 
+	 *
 	 * @param name fully qualified package name
 	 * @param version version or <code>null</code>
 	 * @param api whether the package is considered API
-	 * @param friends symbolic names of bundles that are friends, or <code>null</code>; when 
+	 * @param friends symbolic names of bundles that are friends, or <code>null</code>; when
 	 *  friends are specified the package will not be API
 	 * @return package export description
 	 */
@@ -81,7 +81,7 @@ public interface IBundleProjectService {
 
 	/**
 	 * Creates and returns a new required bundle description.
-	 * 
+	 *
 	 * @param name symbolic name of required bundle
 	 * @param range version constraint or <code>null</code>
 	 * @param optional whether the required bundle is optional
@@ -115,7 +115,7 @@ public interface IBundleProjectService {
 	 * <p>
 	 * The bundle root is the folder containing the <code>META-INF/</code> folder. When the bundle
 	 * root location is modified, existing bundle artifacts at the old root are not moved or modified.
-	 * When creating a new bundle project {@link IBundleProjectDescription#setBundleRoot(IPath)} can 
+	 * When creating a new bundle project {@link IBundleProjectDescription#setBundleRoot(IPath)} can
 	 * be used to specify an initial bundle root location. To modify the bundle root location of an
 	 * existing project, this method must be used.
 	 * </p>

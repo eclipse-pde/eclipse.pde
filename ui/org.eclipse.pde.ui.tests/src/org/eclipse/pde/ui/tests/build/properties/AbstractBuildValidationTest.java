@@ -35,9 +35,9 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Abstract test case for tests that check the build.properties builder and its associated quick fixes.
- * 
+ *
  * Extracts the necessary build.properties testing files and deletes them on tear-down.
- * 
+ *
  * @since 3.6
  * @see BuildPropertiesValidationTest
  */
@@ -83,7 +83,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 
 	/**
 	 * Runs the quick fix and verifies that the marker is now gone.
-	 * 
+	 *
 	 * @param buildProperty		build.properties file (on which markers will looked for)
 	 * @param expectedValues	properties file from which expected values will be read
 	 * @throws CoreException
@@ -208,7 +208,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 
 	/**
 	 * Unzips the given archive to the specified location.
-	 * 
+	 *
 	 * @param location path in the local file system
 	 * @param archivePath path to archive relative to the test plug-in
 	 * @throws IOException
@@ -264,7 +264,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 
 	/**
 	 * Set the project specific preferences on build.properties
-	 * 
+	 *
 	 * @param project	project for which the preferences are to be set
 	 * @param severity	severity level
 	 * @throws BackingStoreException
@@ -285,7 +285,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 
 	/**
 	 * Sets the given project specific preferences
-	 * 
+	 *
 	 * @param project	project for which the preference are to be set
 	 * @param pref		the preference
 	 * @param value		the value

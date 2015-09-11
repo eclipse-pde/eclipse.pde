@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * Target definition wizard used to create a new target definition from
- * the new target platform preference page. 
+ * the new target platform preference page.
  */
 public class NewTargetDefinitionWizard2 extends Wizard {
 
@@ -51,7 +51,7 @@ public class NewTargetDefinitionWizard2 extends Wizard {
 
 	/**
 	 * Returns the target definition created by this wizard.
-	 * 
+	 *
 	 * @return target definition or <code>null</code> if none
 	 */
 	public ITargetDefinition getTargetDefinition() {
@@ -60,7 +60,7 @@ public class NewTargetDefinitionWizard2 extends Wizard {
 
 	/**
 	 * Sets the target being edited.
-	 * 
+	 *
 	 * @param definition target
 	 */
 	public void setTargetDefinition(ITargetDefinition definition) {

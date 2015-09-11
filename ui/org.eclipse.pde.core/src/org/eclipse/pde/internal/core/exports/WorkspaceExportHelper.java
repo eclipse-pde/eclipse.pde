@@ -35,10 +35,10 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 
 /**
  * Helper class for the various export operation classes, making it easier to export using workspace
- * compiled files rather than having PDE Build compile everything on its own.  Provides access to 
+ * compiled files rather than having PDE Build compile everything on its own.  Provides access to
  * methods in debug that determine what projects need to be built before the operation as well as
- * checking for errors. 
- * 
+ * checking for errors.
+ *
  * @see FeatureExportOperation
  * @see PluginExportOperation
  */
@@ -51,15 +51,15 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	 */
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		// This class is not intended to be launched. 
+		// This class is not intended to be launched.
 	}
 
 	/**
 	 * Builds the workspace projects that are being exported or are required plug-ins
 	 * of the exported items.  Uses the incremental builder.
-	 * 
+	 *
 	 * @param exportedItems The plugins or features being exported
-	 * @param monitor a progress monitor or <code>null</code> if progress reporting is not desired 
+	 * @param monitor a progress monitor or <code>null</code> if progress reporting is not desired
 	 * @throws CoreException
 	 */
 	public void buildBeforeExport(Object[] exportedItems, IProgressMonitor monitor) throws CoreException {
@@ -73,7 +73,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	 * Checks the workspace projects that are being exported or are required plug-ins
 	 * of the exported items for build errors.  A project will be reported as having an
 	 * error if it has a marker with a severity of error and is of Java model or PDE type.
-	 * 
+	 *
 	 * @param exportedItems the plugins or features being exported
 	 * @return set of IProjects containing errors
 	 * @throws CoreException
@@ -101,7 +101,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	/**
 	 * Returns a map containing information associating libraries to the output locations the
 	 * workspace compiles them to.  Uses information in the build.properties and the classpath.
-	 * The map will be of the following form: 
+	 * The map will be of the following form:
 	 * String symbolic name > lib output map
 	 * The lib output map will be of the following form:
 	 * String lib name > Set of IPath output folders

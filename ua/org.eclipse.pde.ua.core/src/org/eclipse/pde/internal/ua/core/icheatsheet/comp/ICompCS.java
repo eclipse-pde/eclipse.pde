@@ -15,28 +15,28 @@ public interface ICompCS extends ICompCSObject {
 
 	/**
 	 * Attribute: name
-	 * 
+	 *
 	 * @param name
 	 */
 	public void setFieldName(String name);
 
 	/**
 	 * Attribute: name
-	 * 
+	 *
 	 * @return
 	 */
 	public String getFieldName();
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @param taskObject
 	 */
 	public void setFieldTaskObject(ICompCSTaskObject taskObject);
 
 	/**
 	 * Elements: taskGroup, task
-	 * 
+	 *
 	 * @return
 	 */
 	public ICompCSTaskObject getFieldTaskObject();

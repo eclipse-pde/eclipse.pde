@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public interface IFeatureURLElement extends IFeatureObject {
 	 */
 	public static final int UPDATE_SITE = 0;
 	/**
-	 * Indicates that the site is a Web site. 
+	 * Indicates that the site is a Web site.
 	 */
 	public static final int WEB_SITE = 1;
 	/**
@@ -44,7 +44,7 @@ public interface IFeatureURLElement extends IFeatureObject {
 	public static final String P_URL = "url"; //$NON-NLS-1$
 	/**
 	 * This property name will be used to notify
-	 * about changes in the 'siteType' field. 
+	 * about changes in the 'siteType' field.
 	 */
 	public static final String P_SITE_TYPE = "siteType"; //$NON-NLS-1$
 
@@ -71,7 +71,7 @@ public interface IFeatureURLElement extends IFeatureObject {
 	 * This method will throw a CoreException
 	 * if the model is not editable.
 	 *
-	 * @param url the new URL 
+	 * @param url the new URL
 	 */
 	public void setURL(URL url) throws CoreException;
 

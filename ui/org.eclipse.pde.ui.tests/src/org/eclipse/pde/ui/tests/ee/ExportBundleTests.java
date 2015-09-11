@@ -37,11 +37,11 @@ public class ExportBundleTests extends PDETestCase {
 
 	public static Test suite() {
 		return new TestSuite(ExportBundleTests.class);
-	}	
+	}
 
 	/**
 	 * Deletes the specified project.
-	 * 
+	 *
 	 * @param name
 	 * @throws CoreException
 	 */
@@ -54,7 +54,7 @@ public class ExportBundleTests extends PDETestCase {
 
 	/**
 	 * Deletes the specified folder.
-	 * 
+	 *
 	 * @param dir the file to delete
 	 */
 	protected void deleteFolder(File dir) {
@@ -76,7 +76,7 @@ public class ExportBundleTests extends PDETestCase {
 
 	/**
 	 * Validates the target level of a generated class file.
-	 * 
+	 *
 	 * @param zipFileName location of archive file
 	 * @param zipEntryName path to class file in archive
 	 * @param major expected major class file version
@@ -84,12 +84,12 @@ public class ExportBundleTests extends PDETestCase {
 	protected void validateTargetLevel(String zipFileName, String zipEntryName, int major) {
 		IClassFileReader reader = ToolFactory.createDefaultClassFileReader(zipFileName, zipEntryName, IClassFileReader.ALL);
 		assertEquals("Wrong major version", major, reader.getMajorVersion());
-	}	
+	}
 
 	/**
 	 * Exports a plug-in project with a custom execution environment and validates class file
 	 * target level.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testExportCustomEnvironment() throws Exception {
@@ -141,7 +141,7 @@ public class ExportBundleTests extends PDETestCase {
 	/**
 	 * Exports a plug-in project with a J2SE-1.4 execution environment and validates class file
 	 * target level.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testExport14Environment() throws Exception {

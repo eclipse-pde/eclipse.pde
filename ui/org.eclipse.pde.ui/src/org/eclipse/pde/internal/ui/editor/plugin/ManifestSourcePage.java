@@ -267,7 +267,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		// At this point the source page is fully initialized including the 
+		// At this point the source page is fully initialized including the
 		// underlying text viewer
 		fDetector.setTextEditor(this);
 	}

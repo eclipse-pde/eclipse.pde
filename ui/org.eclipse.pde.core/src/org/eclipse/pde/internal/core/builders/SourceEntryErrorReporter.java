@@ -79,7 +79,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		/**
 		 * Constructs a source folder with the given project relative path.
-		 * 
+		 *
 		 * @param path source folder path
 		 * @param outputFolder associated output folder
 		 */
@@ -104,7 +104,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		/**
 		 * Creates an output folder with the given relative path (relative to the project).
-		 * 
+		 *
 		 * @param path project relative path
 		 */
 		public OutputFolder(IPath path) {
@@ -113,7 +113,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		/**
 		 * Creates an output folder with the given relative path (relative to the project).
-		 * 
+		 *
 		 * @param path project relative path
 		 * @param isLibrary whether this output folder is a binary location that has no corresponding
 		 *  source folder
@@ -149,7 +149,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		/**
 		 * Constructs an encoding entry for the given resource.
-		 * 
+		 *
 		 * @param resource resource
 		 * @param encoding the encoding identifier
 		 */
@@ -160,7 +160,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		/**
 		 * Returns the explicit encoding for this entry.
-		 * 
+		 *
 		 * @return explicit encoding
 		 */
 		public String getEncoding() {
@@ -169,8 +169,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		/**
 		 * Returns the resource this encoding is associated with.
-		 * 
-		 * @return associated resource 
+		 *
+		 * @return associated resource
 		 */
 		public IResource getResource() {
 			return fResource;
@@ -206,7 +206,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		/**
 		 * Returns the generated value of this entry for the build.properties file.
-		 * 
+		 *
 		 * @return value to enter into build.properties
 		 */
 		String getValue() {
@@ -274,7 +274,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	/**
 	 * Maps library name to default encoding for that library (or not present if there is no
-	 * explicit default encoding specified). 
+	 * explicit default encoding specified).
 	 */
 	Map<String, String> fDefaultLibraryEncodings = new HashMap<String, String>();
 
@@ -412,7 +412,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 			if (sourceFolders.size() == 0) {
 				if (!outputFolder.isLibrary()) {
-					// report error - invalid output folder				
+					// report error - invalid output folder
 					for (Iterator<String> libNameiterator = outputFolderLibs.iterator(); libNameiterator.hasNext();) {
 						String libName = libNameiterator.next();
 						IResource folderEntry = fProject.findMember(outputPath);
@@ -727,7 +727,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 	/**
 	 * Returns any explicit encoding set on the given container or one of its parents
 	 * up to and including its project.
-	 * 
+	 *
 	 * @param container container
 	 * @return any explicit encoding or <code>null</code> if none
 	 * @throws CoreException

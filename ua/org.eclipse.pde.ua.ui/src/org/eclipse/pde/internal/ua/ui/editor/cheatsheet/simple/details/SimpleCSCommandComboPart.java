@@ -35,7 +35,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 	private int fComboEntryLimit;
 
 	/**
-	 * 
+	 *
 	 */
 	public SimpleCSCommandComboPart() {
 		super();
@@ -63,7 +63,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		super.createControl(parent, toolkit, style);
 		// Connect to the global command manager
 		SimpleCSCommandManager.Instance().addCommandKeyListener(this);
-		// Register to be notified when the combo is diposed in order to 
+		// Register to be notified when the combo is diposed in order to
 		// disconnect from the global command manager
 		addDisposeListener(this);
 	}
@@ -102,10 +102,10 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void removeLeastRecentEntry() {
-		// The least recent entry is the last non-selected entry in the 
+		// The least recent entry is the last non-selected entry in the
 		// reciever's list
 		int entryCount = getItemCount();
 		// Nothing to do if there is one entry or no entries
@@ -118,8 +118,8 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		// Important:  The entry may be selected for another model object;
 		// since, the details page is static.  As a result, removing the last
 		// entry for this model object may remove a selected entry for another
-		// model object.  In that case, the entry is re-inserted into the 
-		// reciever when the other model object is selected again 
+		// model object.  In that case, the entry is re-inserted into the
+		// reciever when the other model object is selected again
 		if (lastEntry != getSelectionIndex()) {
 			remove(lastEntry);
 			return;
@@ -144,7 +144,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 	}
 
 	/**
-	 * Specify the index to insert the new command key into the combo box 
+	 * Specify the index to insert the new command key into the combo box
 	 * reciever.  Applicable to new command keys obtained via new command key
 	 * events (Source: other combo boxes).
 	 * @param newCommandKeyIndex
@@ -169,7 +169,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void populate() {
 		// Populate the combo with all the values found in the command manager

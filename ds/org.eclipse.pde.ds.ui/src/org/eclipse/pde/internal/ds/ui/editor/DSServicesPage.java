@@ -57,7 +57,7 @@ public class DSServicesPage extends PDEFormPage implements
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessVerticalSpace = true;
 		body.setLayoutData(data);
-		
+
 		// Sections
 		managedForm.addPart(new DSReferenceSection(this, body));
 		managedForm.addPart(new DSProvideSection(this, body));

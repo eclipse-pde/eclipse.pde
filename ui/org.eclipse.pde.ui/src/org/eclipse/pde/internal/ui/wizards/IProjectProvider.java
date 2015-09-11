@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ public interface IProjectProvider {
 	/**
 	 * Returns the new plug-in project handle. This method will cause project
 	 * creation if not created already.
-	 * 
+	 *
 	 * @return the handle of the new plug-in project
 	 */
 	IProject getProject();
@@ -33,7 +33,7 @@ public interface IProjectProvider {
 	/**
 	 * Returns the name of the plug-in project that will be created. This method
 	 * can be called at any time without forcing the project resource creation.
-	 * 
+	 *
 	 * @return new project name
 	 */
 	String getProjectName();
@@ -42,7 +42,7 @@ public interface IProjectProvider {
 	 * Returns an absolute path of the new plug-in project that will be created.
 	 * This method can be called at any time without forcing the project
 	 * resource creation.
-	 * 
+	 *
 	 * @return absolute project location path
 	 */
 	IPath getLocationPath();

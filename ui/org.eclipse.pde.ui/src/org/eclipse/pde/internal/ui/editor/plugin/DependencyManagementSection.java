@@ -517,14 +517,14 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		HashSet<String> secondaryDepSet = null;
-		// Only String objects representing non-duplicate secondary 
+		// Only String objects representing non-duplicate secondary
 		// dependencies can be pasted
 		for (int i = 0; i < sourceObjects.length; i++) {
 			// Only String objects are allowed
 			if ((sourceObjects[i] instanceof String) == false) {
 				return false;
 			}
-			// Get the current secondary dependencies and store them to 
+			// Get the current secondary dependencies and store them to
 			// assist in searching
 			if (secondaryDepSet == null) {
 				secondaryDepSet = createSecondaryDepSet();
@@ -728,7 +728,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		}
 		// Validate move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			// Get the previous plugin of the target 
+			// Get the previous plugin of the target
 			String previousPlugin = entry.getPreviousToken(targetPlugin);
 			// Ensure the previous token is not the source
 			if (sourcePlugin.equals(previousPlugin)) {
@@ -736,7 +736,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			}
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			// Get the next plugin of the target 
+			// Get the next plugin of the target
 			String nextPlugin = entry.getNextToken(targetPlugin);
 			// Ensure the next plugin is not the source
 			if (sourcePlugin.equals(nextPlugin)) {
@@ -833,12 +833,12 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
 			targetIndex++;
 		}
-		// Add source as sibling of target		
+		// Add source as sibling of target
 		entry.addToken(sourcePlugin, targetIndex);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void doDragRemove() {
 		// Get the secondary dependencies build entry

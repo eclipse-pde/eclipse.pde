@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class ModifiedDebugOptions {
 	/**
 	 * Accessor for an array of the {@link TracingComponentDebugOption} items that were selected to be added on the
 	 * tracing preference page.
-	 * 
+	 *
 	 * @return An array of the {@link TracingComponentDebugOption} items that were selected to be added on the tracing
 	 *         preference page
 	 */
@@ -40,7 +40,7 @@ public class ModifiedDebugOptions {
 	/**
 	 * Accessor for an array of the {@link TracingComponentDebugOption} items that were selected to be removed on the
 	 * tracing preference page.
-	 * 
+	 *
 	 * @return An array of the {@link TracingComponentDebugOption} items that were selected to be removed on the tracing
 	 *         preference page
 	 */
@@ -50,7 +50,7 @@ public class ModifiedDebugOptions {
 
 	/**
 	 * Adds a new {@link TracingComponentDebugOption} to the list of debug options to add
-	 * 
+	 *
 	 * @param option
 	 *            The {@link TracingComponentDebugOption} option to add
 	 */
@@ -68,7 +68,7 @@ public class ModifiedDebugOptions {
 
 	/**
 	 * Adds a new {@link TracingComponentDebugOption} to the list of debug options to remove
-	 * 
+	 *
 	 * @param option
 	 *            The {@link TracingComponentDebugOption} option to add
 	 */

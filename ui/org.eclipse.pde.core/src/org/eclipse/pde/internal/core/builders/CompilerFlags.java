@@ -19,8 +19,8 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Class used to handle compiler related preferences. 
- * 
+ * Class used to handle compiler related preferences.
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CompilerFlags {
@@ -33,7 +33,7 @@ public class CompilerFlags {
 	public static final int IGNORE = 2;
 
 	/**
-	 * categories of flags 
+	 * categories of flags
 	 */
 	public static final int PLUGIN_FLAGS = 0;
 	public static final int SCHEMA_FLAGS = 1;
@@ -72,14 +72,14 @@ public class CompilerFlags {
 	public static final String P_MISSING_VERSION_REQ_BUNDLE = "compilers.p.missing-version-require-bundle"; //$NON-NLS-1$
 
 	/**
-	 * schema preferences 
+	 * schema preferences
 	 */
 	public static final String S_CREATE_DOCS = "compilers.s.create-docs"; //$NON-NLS-1$
 	public static final String S_DOC_FOLDER = "compilers.s.doc-folder"; //$NON-NLS-1$
 	public static final String S_OPEN_TAGS = "compilers.s.open-tags"; //$NON-NLS-1$
 
 	/**
-	 * feature preferences 
+	 * feature preferences
 	 */
 	public static final String F_UNRESOLVED_PLUGINS = "compilers.f.unresolved-plugins"; //$NON-NLS-1$
 	public static final String F_UNRESOLVED_FEATURES = "compilers.f.unresolved-features"; //$NON-NLS-1$

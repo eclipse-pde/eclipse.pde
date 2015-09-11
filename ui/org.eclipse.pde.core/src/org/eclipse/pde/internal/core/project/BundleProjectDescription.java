@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -68,9 +68,9 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 
 	/**
 	 * Constructs a bundle description for the specified project.
-	 * 
+	 *
 	 * @param project project that may or may not exist
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public BundleProjectDescription(IProject project) throws CoreException {
 		fProject = project;
@@ -81,7 +81,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 
 	/**
 	 * Returns the bundle project service.
-	 * 
+	 *
 	 * @return bundle project service
 	 */
 	IBundleProjectService getBundleProjectService() {
@@ -94,7 +94,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/**
 	 * Returns the build model for the given project or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param project project
 	 * @return build model or <code>null</code>
 	 */
@@ -110,7 +110,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 
 	/**
 	 * Returns the header value from the Map of ManifestElement's or <code>null</code> if none.
-	 * 
+	 *
 	 * @param headers map of ManifestElement's
 	 * @param key header name
 	 * @return header value or <code>null</code>
@@ -127,7 +127,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 
 	/**
 	 * Parses the specified header.
-	 * 
+	 *
 	 * @param headers
 	 * @param key
 	 * @return elements or <code>null</code> if none
@@ -151,7 +151,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 
 	/**
 	 * Initialize settings from the given project.
-	 * 
+	 *
 	 * @param project project
 	 * @exception CoreException if unable to initialize
 	 */
@@ -344,7 +344,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 
 	/**
 	 * Returns bundle classpath specifications associated with the specified library or <code>null</code>.
-	 * 
+	 *
 	 * @param project associated project
 	 * @param build build properties object or <code>null</code>
 	 * @param libraryName name of library classpath is for
@@ -372,7 +372,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/**
 	 * Creates and returns a bundle claspath specifications for the given source.<library> build
 	 * entry
-	 * 
+	 *
 	 * @param project
 	 * @param entry
 	 * @param binary whether a binary folder (<code>true</code>) or source folder (<code>false</code>)
@@ -423,7 +423,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 
 	/**
 	 * Create and return a version range from the given string or <code>null</code>.
-	 * 
+	 *
 	 * @param version version range string or <code>null</code>
 	 * @return version range or <code>null</code>
 	 */
@@ -436,7 +436,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 
 	/**
 	 * Creates and returns a version from the given string or <code>null</code>.
-	 * 
+	 *
 	 * @param version version string or <code>null</code>
 	 * @return version or <code>null</code>
 	 */
@@ -919,7 +919,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/**
 	 * Returns any extra headers that have been specified. A map of header names to header
 	 * values.
-	 * 
+	 *
 	 * @return a map of header names to header values, possible empty
 	 */
 	Map<String, String> getExtraHeaders() {

@@ -27,7 +27,7 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 	public BundleLocalizationTestCase() {
 		super(Constants.BUNDLE_LOCALIZATION);
 	}
-	
+
 	public void testGetLocalizationDefault() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");

@@ -29,7 +29,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * getConfirm()
 	 */
@@ -39,7 +39,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * getRequired()
 	 */
@@ -49,7 +49,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * getTranslate()
 	 */
@@ -59,7 +59,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#getWhen
 	 * ()
@@ -70,7 +70,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * setConfirm(boolean)
 	 */
@@ -80,7 +80,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * setRequired(boolean)
 	 */
@@ -90,7 +90,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * setTranslate(java.lang.String)
 	 */
@@ -100,7 +100,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#setWhen
 	 * (java.lang.String)

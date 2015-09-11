@@ -34,7 +34,7 @@ public class ExternalFeatureModelManager {
 	/**
 	 * Creates a feature model for the feature based on the given feature XML
 	 * file.
-	 * 
+	 *
 	 * @param manifest feature XML file in the local file system
 	 * @return {@link ExternalFeatureModel} containing information loaded from the xml
 	 * @throws CoreException if there is a problem reading the feature xml
@@ -97,7 +97,7 @@ public class ExternalFeatureModelManager {
 	/**
 	 * Returns a list of feature models from the target platform or an empty
 	 * array if there is a problem.
-	 * 
+	 *
 	 * @return list of external feature models, possibly empty
 	 */
 	private IFeatureModel[] getExternalModels() {

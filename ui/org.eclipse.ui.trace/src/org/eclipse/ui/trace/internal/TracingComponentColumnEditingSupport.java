@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     SAP - ongoing enhancements
@@ -26,7 +26,7 @@ public class TracingComponentColumnEditingSupport extends EditingSupport {
 
 	/**
 	 * Construct a new {@link TracingComponentColumnEditingSupport} for the specified index.
-	 * 
+	 *
 	 * @param viewer
 	 *            The viewer to add this editing support
 	 * @param index

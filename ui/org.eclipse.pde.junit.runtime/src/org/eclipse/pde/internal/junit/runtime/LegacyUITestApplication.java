@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -70,7 +70,7 @@ public class LegacyUITestApplication implements IPlatformRunnable, ITestHarness 
 	 * If the PDE JUnit launcher did not set this argument, then return
 	 * the name of the default application.
 	 * In 3.0, the default is the "org.eclipse.ui.ide.worbench" application.
-	 * 
+	 *
 	 */
 	private String getApplicationToRun(String[] args) {
 		IProduct product = Platform.getProduct();

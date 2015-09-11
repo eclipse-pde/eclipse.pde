@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Display;
  * This class is not intended to be subclassed by clients.
  * </p>
  * @since 3.3
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
@@ -43,7 +43,7 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 	 * The tab group delegates to all tabs in the group.
 	 * Prior to the delegation, it migrates all pre-3.2 launch configurations
 	 * to make them 3.2-compliant.
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
@@ -68,11 +68,11 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 
 	/**
 	 * Checks if the launch configuration is 3.2-compliant and migrates it if it's not.
-	 * 
-	 * @param wc 
+	 *
+	 * @param wc
 	 * 			the launch configuration to be migrated if it's not 3.2-compliant
 	 * @throws CoreException
-	 * 			a CoreException is thrown if there was an error retrieving launch 
+	 * 			a CoreException is thrown if there was an error retrieving launch
 	 * 			configuration attributes
 	 */
 	private void checkBackwardCompatibility(ILaunchConfigurationWorkingCopy wc) throws CoreException {
@@ -107,18 +107,18 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 
 	/**
 	 * Delegates to all tabs to set defaults.
-	 * It then sets program and VM arguments based on values on the 
+	 * It then sets program and VM arguments based on values on the
 	 * <b>Plug-in Development > Target Platform > Launching Arguments</b> preference page.
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
 		if (TargetPlatformHelper.usesNewApplicationModel())
-			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$ 
+			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
-			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$ 
+			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
 
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
 

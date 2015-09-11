@@ -46,7 +46,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Returns the metadata repository at the specified location.
-	 * 
+	 *
 	 * @param uri location
 	 * @return metadata repository at the specified location
 	 * @throws Exception
@@ -60,7 +60,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Returns a URI for the the specified test plug-in relative path.
-	 * 
+	 *
 	 * @param relativePath test plug-in relative path
 	 * @return URI
 	 * @throws Exception
@@ -73,7 +73,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Returns an installable unit from the given repository with the specified identifier.
-	 * 
+	 *
 	 * @param id unit identifier
 	 * @param repository repository
 	 * @return installable unit
@@ -129,7 +129,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests all bundles are resolved for a feature and its required feature
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testResolveRequiredFeatures() throws Exception {
@@ -139,7 +139,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests all bundles are resolved for a single feature
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testResolveSingleFeature() throws Exception {
@@ -149,7 +149,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests all bundles are resolved for a bundle and its required bundles
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testResolveRequiredBundles() throws Exception {
@@ -159,7 +159,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests a bundle is resolved (no required bundles)
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testResolveSingleBundle() throws Exception {
@@ -169,7 +169,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that contents should be equal.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testContentEqualNonNull() throws Exception {
@@ -180,7 +180,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that contents should be equal.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testContentNotEqualNonNull() throws Exception {
@@ -191,7 +191,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that contents should be equal.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testContentEqualNull() throws Exception {
@@ -203,7 +203,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that contents should not be equal.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testContentNotEqualNull() throws Exception {
@@ -216,7 +216,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	/**
 	 * Creates an IU bundle container with the specified IU's, resolves the
 	 * contents and ensures that the specified bundles are present.
-	 * 
+	 *
 	 * @param unitIds identifiers of IU's to add to the container
 	 * @param bundleIds symbolic names of bundles that should be present after resolution
 	 * @throws Exception
@@ -246,7 +246,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	/**
 	 * Creates an IU bundle container with the specified IU's, persists and
 	 * restores them.
-	 * 
+	 *
 	 * @param unitIds identifiers of IU's to add to the container
 	 * @param bundleIds ids of resolved bundles expected
 	 * @throws Exception
@@ -280,7 +280,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	/**
 	 * Tests that the external model manager can restore external bundles from the bundle pool
 	 * properly. See bug 320583.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testExternalModelManagerPreferences() throws Exception {
@@ -320,7 +320,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Creates an IU bundle container with the specified IUs from the test repository.
-	 * 
+	 *
 	 * @param unitIds identifiers of IU's to add to the container
 	 * @return bundle container
 	 * @throws Exception
@@ -342,7 +342,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Creates and returns an new IU bundle container with the specified IU's and repositories.
-	 * 
+	 *
 	 * @param units IU's
 	 * @param repositories locations of repositories
 	 * @param flags location flags
@@ -356,7 +356,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition with IU containers can be serialized to xml, then deserialized without
 	 * any loss of data.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testPersistIUDefinition() throws Exception {
@@ -367,7 +367,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition with IU containers can be serialized to xml, then deserialized without
 	 * any loss of data.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testPersistMultipleIUDefinition() throws Exception {
@@ -377,7 +377,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Incrementally adding IUs to a target.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAddIUs() throws Exception {
@@ -411,7 +411,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Incrementally removing IUs from a target.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testRemoveIUs() throws Exception {
@@ -445,7 +445,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests overlapping IU containers.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testOverlappingIUContainers() throws Exception {

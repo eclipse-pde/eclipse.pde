@@ -33,7 +33,7 @@ import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
  * Common function for template sections. It is recommended to subclass this
  * class rather than implementing ITemplateSection directly when providing
  * extension templates.
- * 
+ *
  * @since 2.0
  */
 
@@ -55,7 +55,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 
 	/**
 	 * The key for the simple class name of a bundle activator (value="activator")
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String KEY_ACTIVATOR_SIMPLE = "activator"; //$NON-NLS-1$
@@ -81,7 +81,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * The default implementation of this method provides values of the
 	 * following keys: <samp>pluginClass </samp>, <samp>pluginId </samp> and
 	 * <samp>pluginName </samp>.
-	 * 
+	 *
 	 * @see ITemplateSection#getReplacementString(String,String)
 	 */
 	@Override
@@ -155,7 +155,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	/**
 	 * Returns the translated version of the resource string represented by the
 	 * provided key.
-	 * 
+	 *
 	 * @param key
 	 *            the key of the required resource string
 	 * @return the translated version of the required resource string
@@ -177,7 +177,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * the best match of <samp>plugin.properties </samp> file for the current
 	 * locale (in case of fragments, the file is <samp>fragment.properties
 	 * </samp>).
-	 * 
+	 *
 	 * @return resource bundle for plug-in properties file or <samp>null </samp>
 	 *         if not found.
 	 */
@@ -189,7 +189,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 
 	/**
 	 * Tests if wizard pages for this template section have been added.
-	 * 
+	 *
 	 * @return <code>true</code> if wizard pages for this section have been
 	 *         added, <code>false</code> otherwise.
 	 */
@@ -201,7 +201,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	/**
 	 * Marks that pages have been added to the wizard by this template. Call
 	 * this method in 'addPages'.
-	 * 
+	 *
 	 * @see #addPages(Wizard)
 	 */
 	protected void markPagesAdded() {
@@ -211,7 +211,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	/**
 	 * The default implementation of the interface method. The returned value is
 	 * 1.
-	 * 
+	 *
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
 	@Override
@@ -230,7 +230,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * implementation looks for source folders in the classpath of the target
 	 * folders and picks the first one encountered. Subclasses may override this
 	 * behaviour.
-	 * 
+	 *
 	 * @param monitor
 	 *            progress monitor to use
 	 * @return source folder that will be used to generate Java files or
@@ -263,7 +263,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * implementation uses template location as a root of the file templates.
 	 * {@link #generateFiles(IProgressMonitor monitor, URL locationUrl)} on how
 	 * the location gets processed.
-	 * 
+	 *
 	 * @param monitor
 	 *            progress monitor to use to indicate generation progress
 	 */
@@ -285,7 +285,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * folder with the conditional generation and variable replacement for
 	 * files. Variable replacement also includes file names.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @since 3.3
 	 * @param monitor
 	 *            progress monitor to use to indicate generation progress
@@ -348,7 +348,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * Tests if the folder found in the template location should be created in
 	 * the target project. Subclasses may use this method to conditionally block
 	 * the creation of entire directories (subject to user choices).
-	 * 
+	 *
 	 * @param sourceFolder
 	 *            the folder that is tested
 	 * @return <code>true</code> if the provided folder should be created in
@@ -363,7 +363,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * Tests if the file found in the template location should be created in the
 	 * target project. Subclasses may use this method to conditionally block
 	 * creation of the file (subject to user choices).
-	 * 
+	 *
 	 * @param sourceFile
 	 *            the file found in the template location that needs to be
 	 *            created.
@@ -378,7 +378,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	/**
 	 * Subclass must implement this method to add the required entries in the
 	 * plug-in model.
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to be used
 	 */
@@ -388,7 +388,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * The default implementation of the interface method. It will generate
 	 * required files found in the template location and then call
 	 * <samp>updateModel </samp> to add the required manifest entires.
-	 * 
+	 *
 	 * @see ITemplateSection#execute(IProject, IPluginModelBase,
 	 *      IProgressMonitor)
 	 */
@@ -403,7 +403,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	/**
 	 * A utility method to create an extension object for the plug-in model from
 	 * the provided extension point id.
-	 * 
+	 *
 	 * @param pointId
 	 *            the identifier of the target extension point
 	 * @param reuse
@@ -719,9 +719,9 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * <dd><samp>setManifestHeader(Constants.BUNDLE_LOCALIZATION,
 	 * &quot;plugin&quot;)</samp></dd>
 	 * </dl>
-	 * 
+	 *
 	 * @see org.osgi.framework.Constants
-	 * 
+	 *
 	 * @param name
 	 *            The name of the header to set
 	 * @param value
@@ -743,7 +743,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * <samp>null</samp>. It's expected that this method will only be called by
 	 * sub-classes during execution of the template (i.e. during the sub-class's
 	 * <samp>updateModel(...)</samp> method).
-	 * 
+	 *
 	 * @param name
 	 *            The name of the header to fetch
 	 * @return The value of the manifest header, if available, otherwise
@@ -766,11 +766,11 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * headers. This method will return <samp>false</samp> if the plug-in
 	 * doesn't have a manifest (e.g. it's a v3.0 plug-in) or if the method is
 	 * called before the model has been set on the template.
-	 * 
+	 *
 	 * It's expected that this method will only be called by sub-classes during
 	 * execution of the template (i.e. during the sub-class's
 	 * <samp>updateModel(...)</samp> method).
-	 * 
+	 *
 	 * @return <sampl>true</samp> if the plug-in has a manifest, <samp>false</samp>
 	 *         otherwise
 	 * @since 3.4
@@ -785,7 +785,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 
 	/**
 	 * Try to get hold of the underlying bundle for the model, if applicable.
-	 * 
+	 *
 	 * @return The bundle instance, or null if not a bundle or if the model
 	 *         isn't available.
 	 */

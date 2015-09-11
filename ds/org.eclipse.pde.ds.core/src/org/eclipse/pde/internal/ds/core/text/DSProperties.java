@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 
 /**
  * Represents a set of properties from a bundle entry
- * 
+ *
  * @since 3.4
  * @see DSObject
  * @see DSComponent
@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 public class DSProperties extends DSObject implements IDSProperties {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public DSProperties(DSModel model) {
 		super(model, ELEMENT_PROPERTIES);
 		int number = model.getDSComponent().getPropertiesElements().length + 1;
@@ -53,12 +53,12 @@ public class DSProperties extends DSObject implements IDSProperties {
 	public int getType() {
 		return TYPE_PROPERTIES;
 	}
-	
+
 	@Override
 	public void setEntry(String entry){
 		setXMLAttribute(ATTRIBUTE_PROPERTIES_ENTRY, entry);
 	}
-	
+
 	@Override
 	public String getEntry(){
 		return getXMLAttributeValue(ATTRIBUTE_PROPERTIES_ENTRY);

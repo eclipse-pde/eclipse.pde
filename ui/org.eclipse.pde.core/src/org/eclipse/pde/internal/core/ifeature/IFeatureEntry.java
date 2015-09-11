@@ -46,7 +46,7 @@ public interface IFeatureEntry extends IFeatureObject, IIdentifiable {
 	public String getArch();
 
 	/**
-	 * Returns an LDAP filter that must be satisfied for this entry 
+	 * Returns an LDAP filter that must be satisfied for this entry
 	 */
 	public String getFilter();
 

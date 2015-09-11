@@ -27,9 +27,9 @@ public class PDELogFileProvider implements ILogFileProvider {
 
 	/**
 	 * Returns most recent log files for all PDE Launch Configurations.
-	 * 
+	 *
 	 * @see ILogFileProvider#getLogSources()
-	 * @since 3.4 
+	 * @since 3.4
 	 */
 	@Override
 	public Map<String, String> getLogSources() {

@@ -99,7 +99,7 @@ public abstract class DependenciesViewPage extends Page {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public DependenciesViewPage(DependenciesView view, IContentProvider contentProvider) {
 		this.fView = view;
@@ -409,7 +409,7 @@ public abstract class DependenciesViewPage extends Page {
 			// update filter actions before updating filters because the filters depend on the state of the filter actions
 			// update filter actions - both filter actions are specific to each Page instance
 			if (fView.isShowingCallers()) {
-				// deactive show optional on Callers view.  
+				// deactive show optional on Callers view.
 				fHideOptionalFilterAction.setChecked(true);
 				fHideOptionalFilterAction.setEnabled(false);
 			} else {
@@ -445,7 +445,7 @@ public abstract class DependenciesViewPage extends Page {
 				((DependenciesViewPageContentProvider) fContentProvider).attachModelListener();
 				fViewer.refresh();
 			} else
-				// when page is deactivated, we need to remove model listener from content manager.  Otherwise model changes will be sent to all 
+				// when page is deactivated, we need to remove model listener from content manager.  Otherwise model changes will be sent to all
 				// DependenciesViewPageContentProvider (including inactive ones).  This will cause problems with the content provider's logic!!
 				((DependenciesViewPageContentProvider) fContentProvider).removeModelListener();
 		}

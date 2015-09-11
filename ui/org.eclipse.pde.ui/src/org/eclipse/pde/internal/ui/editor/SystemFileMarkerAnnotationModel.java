@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 
 /**
- * A marker annotation model whose underlying source of markers is 
+ * A marker annotation model whose underlying source of markers is
  * a resource in the workspace.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.

@@ -34,7 +34,7 @@ public class DSNewWizard extends Wizard implements INewWizard {
 	public void addPages() {
 		 addPage(fMainPage);
 	}
-	
+
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		setWindowTitle(Messages.DSNewWizard_title);

@@ -36,7 +36,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	TreeViewer viewer;
 
 	/**
-	 * This list is redundant; but, required because we can't access 
+	 * This list is redundant; but, required because we can't access
 	 * org.eclipse.ui.views.contentoutline.ContentOutlinePage.selectionChangedListeners
 	 * from our parent
 	 */
@@ -52,7 +52,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		fListenerList = new ArrayList<>();
 	}
 
-	/**  
+	/**
 	 * Creates the control for this outline page.
 	 */
 	@Override
@@ -86,7 +86,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 					return;
 				control.setRedraw(false);
 				// Temporarily remove all selection listeners from the tree
-				// viewer.  This is required because the refresh fires a 
+				// viewer.  This is required because the refresh fires a
 				// selection event back to the source page (observered in
 				// the bundle source page) when typing
 				removeAllSelectionChangedListeners();

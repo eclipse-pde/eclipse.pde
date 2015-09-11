@@ -22,7 +22,7 @@ public class LogFilesManager {
 
 	/**
 	 * Adds log file provider.
-	 * Has no effect if an identical provider is already registered. 
+	 * Has no effect if an identical provider is already registered.
 	 */
 	public static void addLogFileProvider(ILogFileProvider provider) {
 		if (!logFileProviders.contains(provider)) {

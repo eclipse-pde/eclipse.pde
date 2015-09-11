@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 
 /**
- * A settable IStatus. 
+ * A settable IStatus.
  * Can be an error, warning, info or ok. For error, info and warning states,
  * a message describes the problem.
  */

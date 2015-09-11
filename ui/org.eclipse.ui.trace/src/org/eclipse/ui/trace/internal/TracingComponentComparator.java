@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ public class TracingComponentComparator extends ViewerComparator {
 
 	/**
 	 * Either the first or second object are null - so compare them to ensure they are put in the right order.
-	 * 
+	 *
 	 * @param object1
 	 *            The first object to compare
 	 * @param object2

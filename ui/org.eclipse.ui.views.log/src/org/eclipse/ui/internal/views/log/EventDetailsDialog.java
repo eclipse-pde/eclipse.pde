@@ -90,7 +90,7 @@ public class EventDetailsDialog extends TrayDialog {
 	private DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 
 	/**
-	 * 
+	 *
 	 * @param parentShell shell in which dialog is displayed
 	 * @param selection entry initially selected and to be displayed
 	 * @param provider viewer
@@ -173,7 +173,7 @@ public class EventDetailsDialog extends TrayDialog {
 			} else {
 				a = 100; // Details section needs about 100
 				c = 100; // Text area gets 100
-				b = height - a - c; // Stack trace should take up majority of room 
+				b = height - a - c; // Stack trace should take up majority of room
 			}
 			sashWeights = new int[] {a, b, c};
 		}
@@ -195,7 +195,7 @@ public class EventDetailsDialog extends TrayDialog {
 	public void create() {
 		super.create();
 
-		// dialog location 
+		// dialog location
 		if (dialogLocation != null)
 			getShell().setLocation(dialogLocation);
 
@@ -721,7 +721,7 @@ public class EventDetailsDialog extends TrayDialog {
 	/**
 	 * Loads filters from preferences.
 	 * @return filters from preferences or empty array
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private String[] getFilters() {
@@ -748,7 +748,7 @@ public class EventDetailsDialog extends TrayDialog {
 	 * Filters stack trace.
 	 * Every stack trace line is compared against all patterns.
 	 * If line contains any of pattern strings, it's excluded from output.
-	 * 
+	 *
 	 * @returns filtered stack trace
 	 * @since 3.4
 	 */
@@ -790,7 +790,7 @@ public class EventDetailsDialog extends TrayDialog {
 	/**
 	 * Returns the dialog settings object used to share state
 	 * between several event detail dialogs.
-	 * 
+	 *
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {

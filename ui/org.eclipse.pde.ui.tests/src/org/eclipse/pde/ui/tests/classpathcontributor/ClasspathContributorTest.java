@@ -25,22 +25,22 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 
 /**
- * Tests {@link IClasspathContributor} API to add additional classpath 
+ * Tests {@link IClasspathContributor} API to add additional classpath
  * entries during project classpath computation. Requires {@link TestClasspathContributor}
  * to be installed as an extension.
  */
 public class ClasspathContributorTest extends TestCase {
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for plugin classpath contributor API");
 		suite.addTestSuite(ClasspathContributorTest.class);
 		return suite;
 	}
-	
+
 	private static final IProgressMonitor monitor = new NullProgressMonitor();
 	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	private IProject project;
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -56,7 +56,7 @@ public class ClasspathContributorTest extends TestCase {
 	protected void tearDown() throws Exception {
 		project.delete(true, true, monitor);
 	}
-	
+
 	public void testAdditionalClasspathEntries() throws Exception {
 		List expected = new ArrayList(TestClasspathContributor.entries);
 		expected.addAll(TestClasspathContributor.entries2);
@@ -74,8 +74,8 @@ public class ClasspathContributorTest extends TestCase {
 	}
 
 	/**
-	 * Imports a project into the test workspace 
-	 * 
+	 * Imports a project into the test workspace
+	 *
 	 * @param workspace workspace to import into
 	 * @return the created project
 	 * @throws IOException
@@ -86,7 +86,7 @@ public class ClasspathContributorTest extends TestCase {
 
 		URL srcURL = PDETestsPlugin.getBundleContext().getBundle ().getEntry("tests/projects/" + ClasspathResolverTest.bundleName);
 		File srcBasedir = new File(FileLocator.toFileURL(srcURL).getFile());
-		
+
 		File dstBasedir = new File(rootFile, ClasspathResolverTest.bundleName);
 		copyFile(srcBasedir, dstBasedir, ".project");
 		copyFile(srcBasedir, dstBasedir, ".classpath");

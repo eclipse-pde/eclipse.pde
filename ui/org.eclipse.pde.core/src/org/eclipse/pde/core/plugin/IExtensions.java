@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
  * responsible for extensions and extension points. If
  * the plug-in contains OSGi manifest file, plugin.xml is
  * reduced to extensions and extension points only.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.0
@@ -42,7 +42,7 @@ public interface IExtensions extends IPluginObject {
 	/**
 	 * Adds a new extension point to this object.
 	 * This method will throw a CoreException if the model is not editable.
-	 * 
+	 *
 	 * @param extensionPoint the extension point
 	 * @throws CoreException if the model is not editable
 	 */

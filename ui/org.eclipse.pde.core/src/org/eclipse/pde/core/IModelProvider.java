@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IFile;
  * Model providers are responsible for listening to the workspace, updating
  * models whose underlying resources have been updated, and removing them from
  * the table when those resources have been deleted.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
@@ -33,7 +33,7 @@ public interface IModelProvider {
 	/**
 	 * Registers a listener that will be notified about changes in the managed
 	 * models.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener that will be registered
 	 */
@@ -41,7 +41,7 @@ public interface IModelProvider {
 
 	/**
 	 * Returns the model for the provided file resource.
-	 * 
+	 *
 	 * @param file
 	 *            the file resource we need the model for
 	 * @return the object that represents a structured representation of the
@@ -51,7 +51,7 @@ public interface IModelProvider {
 
 	/**
 	 * Deregisters a listener from notification.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to be deregistered
 	 */

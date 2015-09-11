@@ -45,11 +45,11 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	}
 
 	private void createOptions() {
-		addOption(KEY_WINDOW_TITLE, PDETemplateMessages.HelloRCPTemplate_windowTitle, "Hello RCP", 0); //$NON-NLS-1$ 
+		addOption(KEY_WINDOW_TITLE, PDETemplateMessages.HelloRCPTemplate_windowTitle, "Hello RCP", 0); //$NON-NLS-1$
 
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.MailTemplate_packageName, (String) null, 0);
 
-		addOption(KEY_APPLICATION_CLASS, PDETemplateMessages.HelloRCPTemplate_appClass, "Application", 0); //$NON-NLS-1$ 
+		addOption(KEY_APPLICATION_CLASS, PDETemplateMessages.HelloRCPTemplate_appClass, "Application", 0); //$NON-NLS-1$
 
 		createBrandingOptions();
 	}
@@ -122,7 +122,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 
 		IPluginElement element = model.getFactory().createElement(extension);
 		element.setName("product"); //$NON-NLS-1$
-		element.setAttribute("name", getStringOption(KEY_WINDOW_TITLE)); //$NON-NLS-1$  
+		element.setAttribute("name", getStringOption(KEY_WINDOW_TITLE)); //$NON-NLS-1$
 		element.setAttribute("application", plugin.getId() + "." + VALUE_APPLICATION_ID); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement property = model.getFactory().createElement(element);

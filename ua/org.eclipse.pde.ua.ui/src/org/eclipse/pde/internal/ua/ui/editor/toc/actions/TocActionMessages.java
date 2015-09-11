@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class TocActionMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ua.ui.editor.toc.actions.messages"; //$NON-NLS-1$
-	
+
 	public static String TocAddAnchorAction_anchor;
 	public static String TocAddLinkAction_link;
 	public static String TocAddTopicAction_topic;

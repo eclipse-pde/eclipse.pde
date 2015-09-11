@@ -54,7 +54,7 @@ import org.eclipse.ui.keys.IBindingService;
 /**
  * Tree section for the context help editor. Displays the structure of the xml
  * file and adds actions allowing manipulation of the structure.
- * 
+ *
  * @since 3.4
  * @see CtxHelpEditor
  */
@@ -106,7 +106,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/**
 	 * Action that allows a linked file to be opened in the editor
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	class OpenLinkAction extends Action {
@@ -139,7 +139,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse
 	 * .ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
@@ -217,7 +217,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	/**
 	 * Adds a link (with hand cursor) for tree 'Collapse All' action, which
 	 * collapses the tree down to the second level
-	 * 
+	 *
 	 * @param section
 	 *            The section that the toolbar will belong to
 	 * @param toolkit
@@ -241,7 +241,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/**
 	 * Create the tree widget that will contain the structure
-	 * 
+	 *
 	 * @param container
 	 *            The container of the tree widget
 	 * @param toolkit
@@ -264,7 +264,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.TreeSection#createTreeViewer(org.eclipse
 	 * .swt.widgets.Composite, int)
@@ -298,7 +298,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */
 	public boolean setFormInput(Object object) {
@@ -341,7 +341,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse
 	 * .jface.viewers.IStructuredSelection)
@@ -423,7 +423,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu
 	 * (org.eclipse.jface.action.IMenuManager)
@@ -483,7 +483,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	/**
 	 * Creates and a new submenu in the given menu manager and adds actions to
 	 * allow a linked file to be opened in various views.
-	 * 
+	 *
 	 * @param manager
 	 *            menu manager to add the submenu to
 	 */
@@ -512,7 +512,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	 * Updates the add context action if the action should be available for the
 	 * selection. Updates enablement, parent object and target object. Returns
 	 * true if the action should be available to the selection.
-	 * 
+	 *
 	 * @param selectedObject
 	 *            selected object
 	 * @return true if the action should be available for the current selection,
@@ -546,7 +546,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	 * Updates the add topic action if the action should be available for the
 	 * selection. Updates enablement, parent object and target object. Returns
 	 * true if the action should be available to the selection.
-	 * 
+	 *
 	 * @param selectedObject
 	 *            selected object
 	 * @return true if the action should be available for the current selection,
@@ -574,7 +574,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	 * Updates the add topic action if the action should be available for the
 	 * selection. Updates enablement, parent object and target object. Returns
 	 * true if the action should be available to the selection.
-	 * 
+	 *
 	 * @param selectedObject
 	 *            selected object
 	 * @return true if the action should be available for the current selection,
@@ -603,7 +603,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	 * Updates the remove action if the action should be available for the
 	 * selection. Updates enablement, parent object and target object. Returns
 	 * true if the action should be available to the selection.
-	 * 
+	 *
 	 * @param selectedObject
 	 *            selected object
 	 * @return true if the action should be available for the current selection,
@@ -621,7 +621,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	/**
 	 * Returns a list of objects that is the subset of objects in the selection
 	 * that can be removed.
-	 * 
+	 *
 	 * @param selection
 	 *            the selection
 	 * @return list of {@link CtxHelpObject}s that can be removed, possibly
@@ -641,7 +641,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang
 	 * .String)
@@ -666,7 +666,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java
 	 * .lang.Object, java.lang.Object[])
@@ -678,7 +678,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java
 	 * .lang.Object, java.lang.Object[])
@@ -689,7 +689,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.TreeSection#handleDoubleClick(org.
 	 * eclipse.jface.viewers.IStructuredSelection)
@@ -705,7 +705,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/**
 	 * Opens the file that is linked in the given topic.
-	 * 
+	 *
 	 * @param topic
 	 *            the topic containing a link to a file
 	 */
@@ -745,7 +745,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected
 	 * (int)
@@ -783,7 +783,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/**
 	 * Move an object within the structure.
-	 * 
+	 *
 	 * @param positionFlag
 	 *            The direction that the object will move, either F_UP_FLAG or
 	 *            F_DOWN_FLAG
@@ -807,7 +807,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {
@@ -818,7 +818,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#
 	 * isDragAndDropEnabled()
 	 */
@@ -828,7 +828,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#
 	 * getSupportedDNDOperations()
 	 */
@@ -838,7 +838,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropCopy
 	 * (java.lang.Object, java.lang.Object[], int)
@@ -879,7 +879,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove
 	 * (java.lang.Object, java.lang.Object[], int)
@@ -891,7 +891,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropCopy
 	 * (java.lang.Object, java.lang.Object[], int)
@@ -952,7 +952,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove
 	 * (java.lang.Object, java.lang.Object[], int)
@@ -965,7 +965,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragCopy
 	 * (java.lang.Object[])
@@ -977,7 +977,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove
 	 * (java.lang.Object[])
@@ -995,7 +995,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove
 	 * (java.lang.Object[])
@@ -1008,7 +1008,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse
 	 * .pde.core.IModelChangedEvent)
@@ -1032,7 +1032,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/**
 	 * Handles the swap event
-	 * 
+	 *
 	 * @param event
 	 *            the swap event
 	 */
@@ -1047,7 +1047,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/**
 	 * The model is stale, refresh the UI
-	 * 
+	 *
 	 * @param event
 	 *            The world-change event
 	 */
@@ -1057,7 +1057,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/**
 	 * Handle insertions in the model
-	 * 
+	 *
 	 * @param event
 	 *            the insertion event
 	 */
@@ -1081,7 +1081,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/**
 	 * Handle removals in the model
-	 * 
+	 *
 	 * @param event
 	 *            the removal event
 	 */
@@ -1107,7 +1107,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	/**
 	 * Handle an update to an object's properties
-	 * 
+	 *
 	 * @param event
 	 *            the update event
 	 */

@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.launching;
 
 /**
  * Listing of constants used in PDE preferences for launching.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILaunchingPreferenceConstants {

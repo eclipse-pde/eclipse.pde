@@ -66,7 +66,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	/**
 	 * The singleton preference manager instance
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private static PDEPreferencesManager fPreferenceManager;
@@ -78,7 +78,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	/**
 	 * Returns the singleton instance of if the {@link PDEPreferencesManager} for this bundle
 	 * @return the preference manager for this bundle
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public synchronized PDEPreferencesManager getPreferencesManager() {
@@ -234,7 +234,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	 * Returns the singleton instance of the classpath container resolver manager used to dynamically
 	 * resolve a project's classpath. Clients may contribute a {@link IBundleClasspathResolver} to the
 	 * manager through the <code>org.eclipse.pde.core.bundleClasspathResolvers</code> extension.
-	 * 
+	 *
 	 * @return singleton instance of the classpath container resolver manager
 	 */
 	public synchronized ClasspathContainerResolverManager getClasspathContainerResolverManager() {
@@ -362,7 +362,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	/**
 	 * Returns a service with the specified name or <code>null</code> if none.
-	 * 
+	 *
 	 * @param serviceName name of service
 	 * @return service object or <code>null</code> if none
 	 */

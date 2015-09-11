@@ -76,14 +76,14 @@ public class NewCategoryNameDialog extends TrayDialog {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListeners() {
-		// NO-OP	
+		// NO-OP
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateUI() {
 		// NO-OP

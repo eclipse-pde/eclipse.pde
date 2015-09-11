@@ -207,7 +207,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 	/**
 	 * Returns completion proposal with permitted values for Reference`s policy
 	 * attribute
-	 * 
+	 *
 	 * @param attrValueLength
 	 * @param startOffset
 	 * @return ICompletionProposal array with completion proposals

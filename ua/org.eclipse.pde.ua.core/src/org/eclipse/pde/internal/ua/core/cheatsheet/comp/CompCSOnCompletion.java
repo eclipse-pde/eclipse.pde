@@ -19,7 +19,7 @@ public class CompCSOnCompletion extends CompCSDataObject implements
 		ICompCSOnCompletion {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -34,7 +34,7 @@ public class CompCSOnCompletion extends CompCSDataObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSDataObject#getElement
 	 * ()
@@ -45,7 +45,7 @@ public class CompCSOnCompletion extends CompCSDataObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSDataObject#getType()
 	 */

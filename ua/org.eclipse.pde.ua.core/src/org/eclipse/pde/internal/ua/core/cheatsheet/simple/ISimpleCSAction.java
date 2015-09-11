@@ -15,49 +15,49 @@ public interface ISimpleCSAction extends ISimpleCSRunObject {
 
 	/**
 	 * Attribute: class
-	 * 
+	 *
 	 * @return
 	 */
 	public String getClazz();
 
 	/**
 	 * Attribute: class
-	 * 
+	 *
 	 * @param clazz
 	 */
 	public void setClazz(String clazz);
 
 	/**
 	 * Attribute: pluginId
-	 * 
+	 *
 	 * @return
 	 */
 	public String getPluginId();
 
 	/**
 	 * Attribute: pluginId
-	 * 
+	 *
 	 * @param pluginId
 	 */
 	public void setPluginId(String pluginId);
 
 	/**
 	 * Attributes: param1, param2, ..., param9
-	 * 
+	 *
 	 * @return
 	 */
 	public String[] getParams();
 
 	/**
 	 * Attributes: param1, param2, ..., param9
-	 * 
+	 *
 	 * @return
 	 */
 	public String getParam(int index);
 
 	/**
 	 * Attributes: param1, param2, ..., param9
-	 * 
+	 *
 	 * @param param
 	 * @param index
 	 */

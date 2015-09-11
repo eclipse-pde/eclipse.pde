@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.target.Messages;
 
 /**
  * Describes a single feature in a target definition.
- * 
+ *
  * @since 3.8
  */
 public class TargetFeature {
@@ -29,10 +29,10 @@ public class TargetFeature {
 	private IFeatureModel featureModel;
 
 	/**
-	 * Constructs a target feature for a feature on the local filesystem. The 
+	 * Constructs a target feature for a feature on the local filesystem. The
 	 * file may point at the feature.xml or a folder containing the feature.xml.
 	 * The feature.xml will be read to collect the information about the feature.
-	 * 
+	 *
 	 * @param featureLocation the location of the feature (feature.xml or directory containing it)
 	 * @throws CoreException if there is a problem opening the feature.xml
 	 */
@@ -42,7 +42,7 @@ public class TargetFeature {
 
 	/**
 	 * Returns the id of this feature or <code>null</code> if no id is set.
-	 * 
+	 *
 	 * @return id or <code>null</code>
 	 */
 	public String getId() {
@@ -53,7 +53,7 @@ public class TargetFeature {
 
 	/**
 	 * Returns the version of this feature or <code>null</code> if no version is set.
-	 * 
+	 *
 	 * @return version or <code>null</code>
 	 */
 	public String getVersion() {
@@ -63,9 +63,9 @@ public class TargetFeature {
 	}
 
 	/**
-	 * Returns the string path to the directory containing the feature.xml or 
+	 * Returns the string path to the directory containing the feature.xml or
 	 * <code>null</code> if no install location is known.
-	 * 
+	 *
 	 * @return install location path or <code>null</code>
 	 */
 	public String getLocation() {
@@ -75,9 +75,9 @@ public class TargetFeature {
 	}
 
 	/**
-	 * Returns a list of name version descriptor that describes the set of 
+	 * Returns a list of name version descriptor that describes the set of
 	 * plug-ins that this feature includes.
-	 * 
+	 *
 	 * @return a list of name version descriptors, possibly empty
 	 */
 	public NameVersionDescriptor[] getPlugins() {
@@ -92,7 +92,7 @@ public class TargetFeature {
 	/**
 	 * Returns a list of name version descriptors that describe the set of features
 	 * that this feature depends on as imports or included features.
-	 * 
+	 *
 	 * @return a list of name version descriptors, possibly empty
 	 */
 	public NameVersionDescriptor[] getDependentFeatures() {
@@ -113,7 +113,7 @@ public class TargetFeature {
 
 	/**
 	 * Initializes the content of this target feature by reading the feature.xml
-	 * 
+	 *
 	 * @param file feature.xml or directory containing it
 	 */
 	private void initialize(File file) throws CoreException {

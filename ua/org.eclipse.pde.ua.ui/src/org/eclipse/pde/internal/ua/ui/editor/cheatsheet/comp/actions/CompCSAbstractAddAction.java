@@ -25,7 +25,7 @@ public abstract class CompCSAbstractAddAction extends Action {
 	protected ICompCSObject fParentObject;
 
 	/**
-	 * 
+	 *
 	 */
 	public CompCSAbstractAddAction() {
 		// NO-OP

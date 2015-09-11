@@ -53,7 +53,7 @@ public class LauncherUtils {
 	 * before launching. The provided workspace should already have any variables replaced.
 	 * This method will not check if no workspace is being used (<code>-data &#64;none</code>
 	 * added as a program argument). The caller should check for this possibility.
-	 * 
+	 *
 	 * @param configuration launch configuration used to lookup workspace clear settings
 	 * @param workspace the absolute workspace location to be checked with all variables replaced or the empty string for no workspace
 	 * @param monitor progress monitor
@@ -64,7 +64,7 @@ public class LauncherUtils {
 
 		// If the workspace is not defined, there is no workspace to clear
 		// Unless the user has added the -data program arugment themselves,
-		// the workspace chooser dialog will be brought up.  
+		// the workspace chooser dialog will be brought up.
 		if (workspace == null || workspace.length() == 0) {
 			if (monitor != null) {
 				monitor.done();
@@ -391,7 +391,7 @@ public class LauncherUtils {
 	/**
 	 * Updates the stores launch mode.  This should be called on any PDE Eclipse launch.  The launch mode
 	 * is passed to the status handler so it can open the correct launch configuration dialog
-	 * 
+	 *
 	 * @param launchMode last known launch mode, see {@link ILaunch#getLaunchMode()}
 	 */
 	public static void setLastLaunchMode(String launchMode) {

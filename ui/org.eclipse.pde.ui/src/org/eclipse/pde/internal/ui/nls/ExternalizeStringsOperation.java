@@ -101,7 +101,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 
-				// Get model & set includes entry...				
+				// Get model & set includes entry...
 				if (model instanceof IBuildModel) {
 					IBuildModel buildModel = (IBuildModel) model;
 					IBuildEntry binIncludes = buildModel.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);

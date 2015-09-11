@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class PluginInputContextManager extends InputContextManager {
 	private BundlePluginModelBase bmodel;
 
 	/**
-	 * 
+	 *
 	 */
 	public PluginInputContextManager(PDEFormEditor editor) {
 		super(editor);
@@ -119,7 +119,7 @@ public class PluginInputContextManager extends InputContextManager {
 		if (source instanceof IModelChangeProviderExtension && target instanceof IModelChangeProviderExtension) {
 			IModelChangeProviderExtension smodel = (IModelChangeProviderExtension) source;
 			IModelChangeProviderExtension tmodel = (IModelChangeProviderExtension) target;
-			// first fire one last event to all the listeners to 
+			// first fire one last event to all the listeners to
 			// refresh
 			smodel.fireModelChanged(new ModelChangedEvent(smodel, IModelChangedEvent.WORLD_CHANGED, null, null));
 			// now pass the listener to the target model

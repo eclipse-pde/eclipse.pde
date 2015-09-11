@@ -17,7 +17,7 @@ import org.eclipse.pde.core.IIdentifiable;
  * Objects that implement this interface represent references of
  * plug-ins. Plug-ins are referenced using their identifiers,
  * and optionally versions and match rules.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */

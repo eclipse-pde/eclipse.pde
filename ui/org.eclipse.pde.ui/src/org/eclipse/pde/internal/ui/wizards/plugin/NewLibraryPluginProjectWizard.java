@@ -67,7 +67,7 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 
 	@Override
 	public void addPages() {
-		fJarsPage = new LibraryPluginJarsPage("jars", fPluginData, fInitialJarPaths); //$NON-NLS-1$ 
+		fJarsPage = new LibraryPluginJarsPage("jars", fPluginData, fInitialJarPaths); //$NON-NLS-1$
 		fMainPage = new NewLibraryPluginCreationPage("main", fPluginData, getSelection()); //$NON-NLS-1$
 		fUpdatePage = new NewLibraryPluginCreationUpdateRefPage(fPluginData, fInitialJarPaths, fInitialSelection);
 		String pname = getDefaultValue(DEF_PROJECT_NAME);

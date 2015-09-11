@@ -33,7 +33,7 @@ public class DSContentAssistText {
 
 	/**
 	 * Parses document for content assist text.
-	 * 
+	 *
 	 * @param offset
 	 *            The document offset to start scanning backward from
 	 * @param document
@@ -107,7 +107,7 @@ public class DSContentAssistText {
 
 	/**
 	 * Determines whether a character is a valid XML element name character
-	 * 
+	 *
 	 * @param c
 	 *            A character
 	 * @return True if the character is valid content assist text; Otherwise,

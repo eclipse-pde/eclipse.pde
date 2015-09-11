@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * This is a simple info dialog capable to display list of given plugins. The list should 
- * contain elements recognizable by {@link PDELabelProvider}. 
+ * This is a simple info dialog capable to display list of given plugins. The list should
+ * contain elements recognizable by {@link PDELabelProvider}.
  */
 public class PluginImportFinishDialog extends TitleAreaDialog {
 

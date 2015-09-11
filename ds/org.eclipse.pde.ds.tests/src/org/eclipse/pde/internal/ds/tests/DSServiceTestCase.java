@@ -55,19 +55,19 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		String interface1 = provide.getInterface();
 
 		assertTrue(interface1.equals("java.lang.Runnable"));
-		
+
 		service.setServiceFactory(false);
-		
+
 		String string = fModel.getDSComponent().toString();
 		assertTrue(string.indexOf("servicefactory=\"false\"") != -1);
-		
+
 		assertTrue(service.getServiceFactory() == false);
-		
+
 		assertEquals(service.getName(), IDSConstants.ELEMENT_SERVICE);
 	}
 
 	/**
-	 * Tests a service component with multiple Childs 
+	 * Tests a service component with multiple Childs
 	 */
 	public void testMultipleProvideService() {
 		StringBuffer buffer = new StringBuffer();
@@ -123,7 +123,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 	}
 
 	/**
-	 * Tests a service component default values 
+	 * Tests a service component default values
 	 */
 	public void testDefaultValuesService() {
 		StringBuffer buffer = new StringBuffer();
@@ -145,7 +145,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		IDSService service = (IDSService) child;
 		assertTrue(service.getServiceFactory() == false);
 	}
-	
+
 	/**
 	 * Test to remove a provided service element from a service element.
 	 */
@@ -163,23 +163,23 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		load();
 
 		IDSComponent component = fModel.getDSComponent();
-		
+
 		IDSService service = component.getService();
 		assertNotNull(service);
-		
+
 		IDSProvide[] providedServices = service.getProvidedServices();
 		assertTrue(providedServices.length==1);
-		
+
 		//Removing Provided Service
 		service.removeProvidedService(providedServices[0]);
-		
+
 		service = component.getService();
 		assertNotNull(service);
-		
+
 		assertTrue(service.getProvidedServices().length == 0);
 
 	}
-	
+
 	/**
 	 * Tests to add a service by DSDocumentFactory
 	 */
@@ -187,22 +187,22 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		StringBuffer buffer = new StringBuffer();
 		setXMLContents(buffer , LF);
 		load();
-		
+
 		IDSDocumentFactory factory = fModel.getFactory();
 		IDSService service = factory.createService();
 		service.setServiceFactory(true);
-		
+
 		IDSComponent component = fModel.getDSComponent();
 		component.setService(service);
-		
+
 		String content = component.toString();
-		
+
 		assertTrue(content.indexOf("servicefactory=\"true\"") != -1);
-		
+
 		IDSService service0 = component.getService();
 		assertNotNull(service0);
 		assertTrue(service0.getServiceFactory());
-		
+
 	}
 
 }

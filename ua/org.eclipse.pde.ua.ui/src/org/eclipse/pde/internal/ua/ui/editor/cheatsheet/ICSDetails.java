@@ -24,12 +24,12 @@ public interface ICSDetails {
 	public void createDetails(Composite parent);
 
 	/**
-	 * 
+	 *
 	 */
 	public void updateFields();
 
 	/**
-	 * 
+	 *
 	 */
 	public void hookListeners();
 

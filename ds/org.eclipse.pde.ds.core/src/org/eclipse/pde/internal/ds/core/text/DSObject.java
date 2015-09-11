@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.ds.core.IDSObject;
 /**
  * All modeled objects of a declarative services xml file must extend from this
  * abstract class.
- * 
+ *
  * @since 3.4
  * @see DSModel
  * @see DSDocumentFactory
@@ -35,7 +35,7 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 
 	/**
 	 * Constructs the DSObject and initializes its attributes.
-	 * 
+	 *
 	 * @param model
 	 *            The model to associate with this DSObject
 	 * @param tagName
@@ -83,5 +83,5 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 
 	@Override
 	public abstract int getType();
-	
+
 }

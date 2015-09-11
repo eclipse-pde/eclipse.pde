@@ -320,11 +320,11 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			IDocument doc = getDocumentProvider().getDocument(getInput());
 			// Traverse backwards in the document starting at the attribute
 			// offset
-			// Goal: Delete all whitespace preceding the attribute name 
-			// including spaces, tabs and newlines 
-			// We want the next attribute (if defined) to be in the same 
+			// Goal: Delete all whitespace preceding the attribute name
+			// including spaces, tabs and newlines
+			// We want the next attribute (if defined) to be in the same
 			// position as the deleted one and properly indented.  Otherwise,
-			// we want the open angle bracket to be adjacent to the start 
+			// we want the open angle bracket to be adjacent to the start
 			// element tag name or adjacent to the previous attribute (if
 			// defined) before the deleted one
 			// e.g.   _____\n________att1="value1"
@@ -342,7 +342,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 					// Decrement offset by one
 					offset = offset - 1;
 				} else {
-					// Non-whitespace character encountered, do not mark it 
+					// Non-whitespace character encountered, do not mark it
 					// for deletion and we are done
 					break;
 				}

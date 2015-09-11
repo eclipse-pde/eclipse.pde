@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -52,11 +52,11 @@ public class ExternalModelManager extends AbstractModelManager {
 
 /**
  * When an external model is added to the classpath its libraries as defined by the bundle-classpath
- * header also need to be added to the classpath for the JDT compiler.  This is handled by the 
+ * header also need to be added to the classpath for the JDT compiler.  This is handled by the
  * {@link PDEClasspathContainer}.  However, because the classpath does not support nested jars, we
  * must extract any libraries from within a jarred bundle.  This class manages the set of libraries
  * that we have extracted and deletes them when the list of external models changes.
- * 
+ *
  * @see PDEClasspathContainer#addExternalPlugin(IPluginModelBase, org.eclipse.pde.internal.core.PDEClasspathContainer.Rule[], ArrayList)
  * @since 3.7
  */
@@ -68,7 +68,7 @@ class ExternalLibraryCache {
 	 * was extracted from.
 	 * <p>
 	 * [workspace]/.metadata/.plugins/org.eclipse.pde.core/.external_libraries/[plugin_name]_[plugin_version]/[library_name].jar
-	 * </p> 
+	 * </p>
 	 */
 	private static final String LIB_CACHE_DIR = ".external_libraries"; //$NON-NLS-1$
 
@@ -119,10 +119,10 @@ class ExternalLibraryCache {
 	}
 
 	/**
-	 * Deletes all the cached JARs of libraries which are currently not contained 
+	 * Deletes all the cached JARs of libraries which are currently not contained
 	 * or enabled in the target platform. Will ignore any errors when trying to
 	 * delete a directory.
-	 * 
+	 *
 	 * @param targetModels The current contents of the target platform.
 	 */
 	public void cleanExtractedLibraries(IPluginModelBase[] targetModels) {
@@ -161,9 +161,9 @@ class ExternalLibraryCache {
 
 	/**
 	 * Returns the name of the library cache directory for the given bundle.
-	 * 
-	 * @param desc Bundle descriptor. 
-	 * 
+	 *
+	 * @param desc Bundle descriptor.
+	 *
 	 * @return <code>[bundle ID]_[bundle version]</code>
 	 */
 	private String getBundleLibsCacheDirName(BundleDescription desc) {
@@ -172,7 +172,7 @@ class ExternalLibraryCache {
 
 	/**
 	 * Extracts a library from a jarred plug-in to the specified directory.
-	 * 
+	 *
 	 * @param fJarFile jar file to extract from
 	 * @param libName name of the library to extract
 	 * @param fTargetFile file location to extract the library to

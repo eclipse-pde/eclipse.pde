@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 
 	/**
 	 * Accessor for the preference store for this bundle
-	 * 
+	 *
 	 * @return The {@link IEclipsePreferences} preference node at the instance scope for this bundle or null if it does
 	 *         not exist.
 	 */
@@ -40,7 +40,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	/**
 	 * Access the current persisted {@link TracingConstants#PREFERENCE_ENTRIES_IDENTIFIER} entry in the preferences as
 	 * {@link Map}.
-	 * 
+	 *
 	 * @return A {@link Map} containing the currently persisted {@link TracingConstants#PREFERENCE_ENTRIES_IDENTIFIER}
 	 *         preferences.
 	 */
@@ -67,7 +67,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 		prefValues.put(TracingConstants.PREFERENCE_MAX_FILE_COUNT_IDENTIFIER, Integer.toString(10));
 		// see org.eclipse.osgi.framework.debug.EclipseDebugTrace#DEFAULT_TRACE_FILE_SIZE
 		prefValues.put(TracingConstants.PREFERENCE_MAX_FILE_SIZE_IDENTIFIER, Integer.toString(1000));
-		prefValues.put(TracingConstants.PREFERENCE_OUTPUT_STANDARD_STREAM, Boolean.toString(false));		
+		prefValues.put(TracingConstants.PREFERENCE_OUTPUT_STANDARD_STREAM, Boolean.toString(false));
 		// no trace entries
 		prefValues.put(TracingConstants.PREFERENCE_ENTRIES_IDENTIFIER, TracingConstants.EMPTY_STRING);
 		savePreferences(prefValues);
@@ -75,7 +75,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 
 	/**
 	 * Flush the preference store to disk.
-	 * 
+	 *
 	 * @param entries
 	 *            A {@link Map} of entries to persist to the preferences. The key of the {@link Map} is the key of the
 	 *            preference and the value of the {@link Map} is the value for this key in the preferences.
@@ -99,7 +99,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 
 	/**
 	 * Is tracing enabled in the preferences store
-	 * 
+	 *
 	 * @return <code>true</code> if tracing is enabled in the preferences; Otherwise, <code>false</code> is returned.
 	 */
 	public static boolean isTracingEnabled() {
@@ -111,7 +111,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 
 	/**
 	 * Accessor for the maximum file count in the preference store
-	 * 
+	 *
 	 * @return The maximum file count in the preference store or the value 10 if it's not defined.
 	 */
 	public static int getMaxFileCount() {
@@ -123,7 +123,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 
 	/**
 	 * Accessor for the maximum file size in the preference store
-	 * 
+	 *
 	 * @return The maximum file size in the preference store or the value 1000 if it's not defined.
 	 */
 	public static int getMaxFileSize() {
@@ -135,7 +135,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 
 	/**
 	 * Accessor for the file path in the preference store
-	 * 
+	 *
 	 * @return The file path in the preference store or the default value if it's not defined.
 	 */
 	public static String getFilePath() {
@@ -147,7 +147,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 
 	/**
 	 * Accessor for the output to standard output stream selection in the preference store
-	 * 
+	 *
 	 * @return The output to standard output stream selection in the preference store or the default value if it's not defined.
 	 */
 	public static String getOutputToStandardStream() {

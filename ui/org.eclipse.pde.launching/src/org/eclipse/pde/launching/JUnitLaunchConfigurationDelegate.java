@@ -145,7 +145,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// see PluginPathFinder.getPluginPaths()
 		IPluginModelBase base = findPlugin(PDECore.PLUGIN_ID);
 		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) < 0) //$NON-NLS-1$
-			programArgs.add("-pdelaunch"); //$NON-NLS-1$				
+			programArgs.add("-pdelaunch"); //$NON-NLS-1$
 
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
@@ -185,9 +185,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	/**
 	 * Returns the application to launch plug-in tests with
-	 * 
+	 *
 	 * @since 3.5
-	 * 
+	 *
 	 * @param configuration
 	 * @return the application
 	 */
@@ -218,8 +218,8 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			if (desc != null) {
 				Version version = desc.getVersion();
 				int major = version.getMajor();
-				// launch legacy UI app only if we are launching a target that does 
-				// not use the new application model and we are launching with a 
+				// launch legacy UI app only if we are launching a target that does
+				// not use the new application model and we are launching with a
 				// org.eclipse.pde.junit.runtime whose version is >= 3.3
 				if (major >= 3 && version.getMinor() >= 3 && !TargetPlatformHelper.usesNewApplicationModel()) {
 					application = IPDEConstants.LEGACY_UI_TEST_APPLICATION;
@@ -268,7 +268,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	/**
 	 * Returns the result of concatenating the given argument to the
 	 * specified vmArgs.
-	 * 
+	 *
 	 * @param vmArgs existing VM arguments
 	 * @param arg argument to concatenate
 	 * @return result of concatenation
@@ -322,7 +322,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	/**
 	 * Returns the location of the configuration area
-	 * 
+	 *
 	 * @param configuration
 	 * 				the launch configuration
 	 * @return a directory where the configuration area is located
@@ -346,9 +346,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	/**
 	 * Adds a listener to the launch to be notified at interesting launch lifecycle
 	 * events such as when the launch terminates.
-	 * 
+	 *
 	 * @param launch
-	 * 			the launch 			
+	 * 			the launch
 	 */
 	protected void manageLaunch(ILaunch launch) {
 		PDELaunchingPlugin.getDefault().getLaunchListener().manage(launch);
@@ -398,9 +398,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	/**
 	 * Checks for old-style plugin.xml files that have become stale since the last launch.
-	 * For any stale plugin.xml files found, the corresponding MANIFEST.MF is deleted 
+	 * For any stale plugin.xml files found, the corresponding MANIFEST.MF is deleted
 	 * from the runtime configuration area so that it gets regenerated upon startup.
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @param monitor
@@ -412,9 +412,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	}
 
 	/**
-	 * Clears the workspace prior to launching if the workspace exists and the option to 
+	 * Clears the workspace prior to launching if the workspace exists and the option to
 	 * clear it is turned on.  Also clears the configuration area if that option is chosen.
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @param monitor
@@ -450,7 +450,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	/**
 	 * Checks if the Automated Management of Dependencies option is turned on.
 	 * If so, it makes aure all manifests are updated with the correct dependencies.
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @param monitor
@@ -463,7 +463,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	/**
 	 * Validates inter-bundle dependencies automatically prior to launching
 	 * if that option is turned on.
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @param monitor

@@ -36,12 +36,12 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 	private boolean fEditable;
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 *
 	 */
 	public CompCSWorkspaceModel(IFile file, boolean editable) {
 		fFile = file;
@@ -50,7 +50,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IEditableModel#save()
 	 */
 	public void save() {
@@ -90,7 +90,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IEditable#isDirty()
 	 */
 	public boolean isDirty() {
@@ -99,7 +99,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
 	 */
 	public void save(PrintWriter writer) {
@@ -111,7 +111,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
 	 */
 	public void setDirty(boolean dirty) {
@@ -120,7 +120,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.AbstractModel#fireModelChanged(org.eclipse
 	 * .pde.core.IModelChangedEvent)
@@ -132,7 +132,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSModel#isEditable()
 	 */
@@ -149,7 +149,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.AbstractModel#getUnderlyingResource()
 	 */
 	public IResource getUnderlyingResource() {
@@ -158,7 +158,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSModel#isInSync()
 	 */
 	public boolean isInSync() {
@@ -171,7 +171,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSModel#load()
 	 */
 	public void load() throws CoreException {
@@ -197,7 +197,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.IWorkspaceModel#reload()
 	 */
 	public void reload() {

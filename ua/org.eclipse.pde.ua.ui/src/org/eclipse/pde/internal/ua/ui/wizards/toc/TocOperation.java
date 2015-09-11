@@ -59,7 +59,7 @@ public class TocOperation extends WorkspaceModifyOperation {
 		// Bind the created topic to this TOC
 		model.getToc().addChild(topic);
 
-		// Set the initial TOC name 
+		// Set the initial TOC name
 		model.getToc().setFieldLabel(fTocName);
 	}
 

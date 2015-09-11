@@ -24,7 +24,7 @@ public class ExtensionsFilterUtil {
 	 */
 	// TODO related attributes might be configured through preferences
 	public static final String[] RELATED_ATTRIBUTES = {"id", //$NON-NLS-1$
-			"class", "commandId", "pattern", "locationURI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+			"class", "commandId", "pattern", "locationURI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"defaultHandler", "variable", "property", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			"contentTypeId", "path", "plugin", "perspective", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"targetID"}; //$NON-NLS-1$
@@ -112,9 +112,9 @@ public class ExtensionsFilterUtil {
 	}
 
 	/**
-	 * Get unique plugin element name. This will work only with 
+	 * Get unique plugin element name. This will work only with
 	 * editable plugin models, otherwise <code>null</code> is returned.
-	 * 
+	 *
 	 * @param pluginElement the element to get the unique name from
 	 * @return extensionpoint name concatenated with the element name
 	 */
@@ -131,10 +131,10 @@ public class ExtensionsFilterUtil {
 	}
 
 	/**
-	 * Obtains common attributes from selected plugin element to filter tree for; 
+	 * Obtains common attributes from selected plugin element to filter tree for;
 	 * attribute values are concatenated with a slash and set as filter text
-	 * 
-	 * @param selection selected items to filter for related plugin elements 
+	 *
+	 * @param selection selected items to filter for related plugin elements
 	 */
 	public static String getFilterRelatedPattern(IStructuredSelection selection) {
 		Iterator<?> it = selection.iterator();

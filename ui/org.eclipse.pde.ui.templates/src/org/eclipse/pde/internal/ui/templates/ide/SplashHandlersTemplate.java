@@ -56,14 +56,14 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	private TemplateOption fFieldSplash;
 
 	/**
-	 * 
+	 *
 	 */
 	public SplashHandlersTemplate() {
 		initialize();
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initialize() {
 		// Default field values
@@ -93,7 +93,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	@Override
 	protected String getFormattedPackageName(String id) {
 		// Package name addition to create a location for containing
-		// any classes required by the splash handlers. 
+		// any classes required by the splash handlers.
 		String packageName = super.getFormattedPackageName(id);
 		// Unqualifed
 		if (packageName.length() == 0) {
@@ -106,7 +106,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	@Override
 	public String[] getNewFiles() {
 		// Note:  This does not even get called for non-project templates
-		// As a result, listed files are not added to the binary build 
+		// As a result, listed files are not added to the binary build
 		// section
 		if (isSplashFieldSelected()) {
 			return new String[] {F_SPLASH_SCREEN_FILE};
@@ -154,7 +154,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateUIFieldClass() {
 		// Update the class name depending on the splash screen type
@@ -168,7 +168,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUI() {
 		// Field:  template
@@ -184,14 +184,14 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIFieldSplash() {
 		fFieldSplash = addOption(F_FIELD_SPLASH, PDETemplateMessages.SplashHandlersTemplate_fieldAddSplash, false, F_PAGE_INDEX);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIFieldClass() {
 		fFieldClass = (StringOption) addOption(F_FIELD_CLASS, PDETemplateMessages.SplashHandlersTemplate_fieldClassName, ISplashHandlerConstants.F_SPLASH_SCREEN_CLASSES[0], F_PAGE_INDEX);
@@ -199,21 +199,21 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIFieldPackage() {
 		fFieldPackage = addOption(KEY_PACKAGE_NAME, PDETemplateMessages.SplashHandlersTemplate_fieldJavaPackage, null, F_PAGE_INDEX);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIFieldTemplate() {
 		fFieldTemplate = addOption(F_FIELD_TEMPLATE, PDETemplateMessages.SplashHandlersTemplate_fieldSplashScreenType, ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES, ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES[0][0], F_PAGE_INDEX);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIFieldProductID() {
 
@@ -266,7 +266,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 
 	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
-		// Create the action to update the model with the associated 
+		// Create the action to update the model with the associated
 		// splash handler extensions, extension points, elements and attributes
 		UpdateSplashHandlerAction action = new UpdateSplashHandlerAction();
 		// Configure the acation

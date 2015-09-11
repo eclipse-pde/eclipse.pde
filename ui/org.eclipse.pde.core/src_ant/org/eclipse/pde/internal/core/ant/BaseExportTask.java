@@ -24,8 +24,8 @@ public abstract class BaseExportTask extends Task {
 	protected boolean fUseJarFormat;
 	protected boolean fExportSource;
 	/**
-	 * Whether to create a source bundle if creating source.  By default the UI 
-	 * and this task should create a source bundle if {@link #fExportSource} is 
+	 * Whether to create a source bundle if creating source.  By default the UI
+	 * and this task should create a source bundle if {@link #fExportSource} is
 	 * <code>true</code>
 	 */
 	protected boolean fExportSourceBundle = true;
@@ -73,7 +73,7 @@ public abstract class BaseExportTask extends Task {
 	 * Whether to include source when exporting the bundle.  By default the source will
 	 * be exported as a separate source bundle, but source can be embedded in the binary
 	 * output by setting <code>exportSourceBundle=false</code> in the task.
-	 * 
+	 *
 	 * @see #setExportSourceBundle(String)
 	 * @param doExportSource whether to include source in the export
 	 */
@@ -85,7 +85,7 @@ public abstract class BaseExportTask extends Task {
 	 * Whether a separate source bundle should be created when exporting source.  This
 	 * is <code>true</code> by default.  If <code>false</code> the source will be embedded
 	 * inside the binary output.
-	 * 
+	 *
 	 * @see #setExportSource(String)
 	 * @param doExportSourceBundle whether to create a source bundle when exporting source
 	 */

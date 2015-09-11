@@ -2889,7 +2889,7 @@ public class PDEUIMessages extends NLS {
 	public static String UpdateTargetJob_UpdateJobName;
 
 	public static String CustomizationPage_title;
-	
+
 	public static String PreferencesSection_title;
 	public static String PreferencesSection_description;
 	public static String PreferencesSection_generate_overwrite;

@@ -77,7 +77,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	}
 
 	private void createPluginIdEntry(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
-		fPluginIdEntry = new FormEntry(parent, toolkit, PDEUIMessages.GeneralInfoSection_pluginId, PDEUIMessages.GeneralInfoSection_browse, // 
+		fPluginIdEntry = new FormEntry(parent, toolkit, PDEUIMessages.GeneralInfoSection_pluginId, PDEUIMessages.GeneralInfoSection_browse, //
 				isEditable());
 		fPluginIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			@Override

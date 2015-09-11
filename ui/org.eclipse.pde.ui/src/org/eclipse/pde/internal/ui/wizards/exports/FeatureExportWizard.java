@@ -88,7 +88,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 			info.useJarFormat = true;
 			info.exportMetadata = true;
 			if (info.qualifier == null) {
-				// Set the date explicitly since the time can change before the install job runs 
+				// Set the date explicitly since the time can change before the install job runs
 				info.qualifier = QualifierReplacer.getDateQualifier();
 			}
 		}

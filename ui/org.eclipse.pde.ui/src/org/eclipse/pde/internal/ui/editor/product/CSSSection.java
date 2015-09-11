@@ -147,7 +147,7 @@ public class CSSSection extends PDESection {
 		ProductEditor editor = (ProductEditor) getPage().getEditor();
 		try {
 			IProgressService service = PlatformUI.getWorkbench().getProgressService();
-			// ensure the newly created CSS file is in the build.properties of the defining plug-in. 
+			// ensure the newly created CSS file is in the build.properties of the defining plug-in.
 			IPluginModelBase model = PluginRegistry.findModel(getProduct().getDefiningPluginId());
 			if (model == null) {
 				MessageDialog.openError(getSection().getShell(), PDEUIMessages.CSSSection_errorNoDefiningPluginTitle, PDEUIMessages.CSSSection_errorNoDefiningPlugin);
@@ -177,7 +177,7 @@ public class CSSSection extends PDESection {
 		} catch (InvocationTargetException e) {
 			MessageDialog.openError(editor.getSite().getShell(), "Synchronize", e.getTargetException().getMessage()); //$NON-NLS-1$
 		} catch (CoreException e) {
-			PDEPlugin.logException(e, "Synchronize", null); //$NON-NLS-1$		
+			PDEPlugin.logException(e, "Synchronize", null); //$NON-NLS-1$
 		}
 	}
 

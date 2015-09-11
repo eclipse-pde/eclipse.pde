@@ -40,7 +40,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * A configuration block for setting PDE compiler preferences
- * 
+ *
  * @since 3.4
  */
 public class PDECompilersConfigurationBlock extends ConfigurationBlock {
@@ -238,7 +238,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private IScopeContext[] fLookupOrder = null;
 
 	/**
-	 * The project this block is working on settings for. Only applies in the 
+	 * The project this block is working on settings for. Only applies in the
 	 * case of project specific settings
 	 */
 	private IProject fProject = null;
@@ -249,12 +249,12 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private IWorkingCopyManager fManager = null;
 
 	/**
-	 * The main composite for the configuration block, used for enabling/disabling the block 
+	 * The main composite for the configuration block, used for enabling/disabling the block
 	 */
 	private Composite fMainComp = null;
 
 	/**
-	 * Stored old fProject specific settings. 
+	 * Stored old fProject specific settings.
 	 */
 	private IdentityHashMap<Key, String> fOldProjectSettings = null;
 
@@ -285,12 +285,12 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private HashSet<String> fBuilders = new HashSet<>(4);
 
 	/**
-	 * The parent this block has been added to 
+	 * The parent this block has been added to
 	 */
 	private Composite fParent = null;
 
 	/**
-	 * Default selection listener for combo and check controls 
+	 * Default selection listener for combo and check controls
 	 */
 	private SelectionListener selectionlistener = new SelectionAdapter() {
 		@Override
@@ -353,8 +353,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 				fOldProjectSettings.put(fgAllKeys[i], fgAllKeys[i].getStoredValue(fLookupOrder, false, fManager));
 			}
 		}
-		//make it load so we have access to the pde preferences initialized via pde core preferences 
-		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=273017 
+		//make it load so we have access to the pde preferences initialized via pde core preferences
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=273017
 		PDECore.getDefault().getPreferencesManager();
 	}
 
@@ -459,7 +459,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates the control in the parent control
-	 * 
+	 *
 	 * @param parent the parent control
 	 */
 	public Control createControl(Composite parent) {
@@ -720,7 +720,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	}
 
 	/**
-	 * Handles one of the expandable composites being expanded 
+	 * Handles one of the expandable composites being expanded
 	 */
 	private void handleExpand(ScrolledComposite composite) {
 		if (composite == null) {
@@ -855,7 +855,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	}
 
 	/**
-	 * Adds the associated builder for the tab this control lives on. Lookups are done using 
+	 * Adds the associated builder for the tab this control lives on. Lookups are done using
 	 * hash codes for constant time containment checks
 	 * @param control
 	 */

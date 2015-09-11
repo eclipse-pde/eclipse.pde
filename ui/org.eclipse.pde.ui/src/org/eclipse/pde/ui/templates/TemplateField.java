@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
  * section, there is no 1/1 mapping between the field and the substitution value
  * that can be used in the template files. In general, a subclass of this class
  * can generate any SWT control in the provided composite.
- * 
+ *
  * @since 2.0
  */
 public abstract class TemplateField {
@@ -30,7 +30,7 @@ public abstract class TemplateField {
 
 	/**
 	 * The constructor for the field.
-	 * 
+	 *
 	 * @param section
 	 *            the section that owns this field
 	 * @param label
@@ -43,7 +43,7 @@ public abstract class TemplateField {
 
 	/**
 	 * Returns the field label.
-	 * 
+	 *
 	 * @return field label
 	 */
 	public String getLabel() {
@@ -52,7 +52,7 @@ public abstract class TemplateField {
 
 	/**
 	 * Changes the label of this field.
-	 * 
+	 *
 	 * @param label
 	 *            the new label of this field.
 	 */
@@ -62,7 +62,7 @@ public abstract class TemplateField {
 
 	/**
 	 * Returns the template section that owns this option field.
-	 * 
+	 *
 	 * @return parent template section
 	 */
 	public BaseOptionTemplateSection getSection() {
@@ -71,7 +71,7 @@ public abstract class TemplateField {
 
 	/**
 	 * Factory method that creates the label in the provided parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite to create the label in
 	 * @param span
@@ -87,7 +87,7 @@ public abstract class TemplateField {
 	/**
 	 * Subclasses must implement this method to create the control of the
 	 * template field.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite the control should be created in
 	 * @param span

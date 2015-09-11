@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -249,16 +249,16 @@ public class ImportPackageSection extends TableSection {
 
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		// Only non-duplicate import packages can be pasted 
+		// Only non-duplicate import packages can be pasted
 		for (int i = 0; i < sourceObjects.length; i++) {
 			// Only import package objects are allowed
 			if ((sourceObjects[i] instanceof ImportPackageObject) == false) {
 				return false;
 			}
 			// Note:  Should check if the package fragment represented by the
-			// import package object exists 
+			// import package object exists
 			// (like in org.eclipse.pde.internal.ui.editor.plugin.ImportPackageSection.setElements(ConditionalListSelectionDialog))
-			// However, the operation is too performance intensive as it 
+			// However, the operation is too performance intensive as it
 			// requires searching all workspace and target plug-in
 
 			// If the import package header is not defined, no import packages
@@ -266,7 +266,7 @@ public class ImportPackageSection extends TableSection {
 			if (fHeader == null) {
 				continue;
 			}
-			// Only import package objects that have not already been 
+			// Only import package objects that have not already been
 			// specified are allowed (no duplicates)
 			ImportPackageObject importPackageObject = (ImportPackageObject) sourceObjects[i];
 			if (fHeader.hasPackage(importPackageObject.getName())) {
@@ -565,8 +565,8 @@ public class ImportPackageSection extends TableSection {
 	 * Returns whether the provided plug-in model is a fragment that cannot export
 	 * its packages to other bundles (<code>hasExtensibleAPI</code> is not set).  Will
 	 * return false if the model does not represent a fragment.
-	 * 
-	 * @param fragment the model to test 
+	 *
+	 * @param fragment the model to test
 	 * @return <code>true</code> if the model is a fragment that cannot export packages
 	 */
 	private boolean isFragmentThatCannotExportPackages(IPluginModelBase fragment) {
@@ -602,7 +602,7 @@ public class ImportPackageSection extends TableSection {
 			return;
 		}
 
-		// Model change may have come from a non UI thread such as the auto add dependencies operation. See bug 333533 
+		// Model change may have come from a non UI thread such as the auto add dependencies operation. See bug 333533
 		UIJob job = new UIJob("Update package imports") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {

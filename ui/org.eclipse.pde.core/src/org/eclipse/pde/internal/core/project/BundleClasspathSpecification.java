@@ -26,7 +26,7 @@ public class BundleClasspathSpecification implements IBundleClasspathEntry {
 	/**
 	 * Constructs a relationship. Must specify one of <code>sourceFolder</code> or
 	 * <code>binaryFolder</code>.
-	 * 
+	 *
 	 * @param sourceFolder source folder or <code>null</code>
 	 * @param binaryFolder binary folder or <code>null</code>
 	 * @param entry entry on the Bundle-Classpath header

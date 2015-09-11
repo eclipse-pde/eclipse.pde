@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Philipp Kursawe <phil.kursawe@gmail.com> - bug 272654
@@ -40,7 +40,7 @@ public class FormEntry {
 
 	/**
 	 * The default constructor. Call 'createControl' to make it.
-	 *  
+	 *
 	 */
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText, int style) {
 		createControl(parent, toolkit, labelText, style, null, false, 0, 0);
@@ -48,7 +48,7 @@ public class FormEntry {
 
 	/**
 	 * This constructor create all the controls right away.
-	 * 
+	 *
 	 * @param parent
 	 * @param toolkit
 	 * @param labelText
@@ -69,7 +69,7 @@ public class FormEntry {
 
 	/**
 	 * Create all the controls in the provided parent.
-	 * 
+	 *
 	 * @param parent
 	 * @param toolkit
 	 * @param labelText
@@ -172,7 +172,7 @@ public class FormEntry {
 
 	/**
 	 * Attaches the listener for the entry.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void setFormEntryListener(IFormEntryListener listener) {
@@ -217,7 +217,7 @@ public class FormEntry {
 	/**
 	 * If dirty, commits the text in the widget to the value and notifies the
 	 * listener. This call clears the 'dirty' flag.
-	 *  
+	 *
 	 */
 	public void commit() {
 		if (fDirty) {
@@ -245,7 +245,7 @@ public class FormEntry {
 
 	/**
 	 * Returns the text control.
-	 * 
+	 *
 	 */
 	public Text getText() {
 		return fText;
@@ -265,7 +265,7 @@ public class FormEntry {
 	/**
 	 * Returns the current entry value. If the entry is dirty and was not
 	 * commited, the value may be different from the text in the widget.
-	 * 
+	 *
 	 */
 	public String getValue() {
 		return fValue.trim();
@@ -273,7 +273,7 @@ public class FormEntry {
 
 	/**
 	 * Returns true if the text has been modified.
-	 * 
+	 *
 	 */
 	public boolean isDirty() {
 		return fDirty;
@@ -295,7 +295,7 @@ public class FormEntry {
 
 	/**
 	 * Sets the value of this entry.
-	 * 
+	 *
 	 * @param value
 	 */
 	public void setValue(String value) {
@@ -307,7 +307,7 @@ public class FormEntry {
 	/**
 	 * Sets the value of this entry with the possibility to turn the
 	 * notification off.
-	 * 
+	 *
 	 * @param value
 	 * @param blockNotification
 	 */

@@ -22,7 +22,7 @@ public interface IVersionable extends IIdentifiable {
 
 	/**
 	 * Returns a version of this object.
-	 * 
+	 *
 	 * @return the version of this object
 	 */
 	public String getVersion();
@@ -30,7 +30,7 @@ public interface IVersionable extends IIdentifiable {
 	/**
 	 * Sets the version of this IVersonable to the provided value. This method
 	 * will throw CoreException if object is not editable.
-	 * 
+	 *
 	 * @param version
 	 *            a new version of this object
 	 */

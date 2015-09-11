@@ -94,14 +94,14 @@ public class LaunchConfigurationHelper {
 	/**
 	 * Writes out the config.ini and other configuration files based on the bundles being launched.  This includes
 	 * writing out bundles.info if the simple configurator is being used or platform.xml if update configurator
-	 * is being used. 
-	 * 
+	 * is being used.
+	 *
 	 * @param configuration launch configuration
 	 * @param productID id of the product being launched, may be <code>null</code>
 	 * @param bundles map of bundle id to plug-in model, these are the bundles being launched
 	 * @param bundlesWithStartLevels map of plug-in model to a string containing start level information
 	 * @param configurationDirectory config directory where the created files will be placed
-	 * @return a properties object containing the properties written out to config.ini 
+	 * @return a properties object containing the properties written out to config.ini
 	 * @throws CoreException
 	 */
 	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map<String, IPluginModelBase> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels, File configurationDirectory) throws CoreException {

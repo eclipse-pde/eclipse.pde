@@ -34,7 +34,7 @@ import org.eclipse.pde.core.plugin.IPluginReference;
  * defined in this interface. This version of the method passes all the context
  * required for the content generation and is called AFTER the project and vital
  * plug-in files have been already created.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.0
  */
@@ -42,7 +42,7 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	/**
 	 * Initializes the wizard with the data collected from the parent wizard
 	 * pages. The data can be used to customize the generated content.
-	 * 
+	 *
 	 * @param data
 	 *            all the information collected in the parent wizard that can be
 	 *            used in configuring the generated content
@@ -55,7 +55,7 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	 * must report it by returning a reference to that plug-in. This information
 	 * will be used to compose a correct list of plug-in dependencies so that
 	 * the plug-in compiles without errors in the first build after creation.
-	 * 
+	 *
 	 * @param schemaVersion
 	 *            version of the plug-in manifest, or <samp>null </samp> if
 	 *            older manifest (prior to 3.0) has been created. Depending on
@@ -73,7 +73,7 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	 * variable as-is, it is legal to use all wild cards also legal in
 	 * <code>build.properties</code>,
 	 * such as "*.png".
-	 * 
+	 *
 	 * @return an array of new file and folder names
 	 */
 	String[] getNewFiles();
@@ -85,7 +85,7 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	 * addition, this method provides progress monitor so that the execution of
 	 * the content wizard can be reported as a part of the overall new project
 	 * creation operation.
-	 * 
+	 *
 	 * @param project
 	 *            the newly created plug-in project handle
 	 * @param model

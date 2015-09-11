@@ -89,7 +89,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Cleans all PDE problem markers from schema files in the given container.
-	 * 
+	 *
 	 * @param container
 	 * @param monitor progress monitor
 	 * @throws CoreException

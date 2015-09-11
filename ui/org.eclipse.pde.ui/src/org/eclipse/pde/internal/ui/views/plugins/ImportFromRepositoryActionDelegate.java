@@ -19,7 +19,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * Action delegate to import a selected object if it represents a plug-in with a
  * Eclipse-SourceReferences header that can be processed by Team.
- * 
+ *
  * @see ImportActionGroup
  */
 public class ImportFromRepositoryActionDelegate extends AbstractHandler {

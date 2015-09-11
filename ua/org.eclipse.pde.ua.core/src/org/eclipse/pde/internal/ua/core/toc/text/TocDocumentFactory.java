@@ -30,7 +30,7 @@ public class TocDocumentFactory extends DocumentNodeFactory implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode
 	 * (java.lang.String,

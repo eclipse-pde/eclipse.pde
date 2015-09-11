@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -67,8 +67,8 @@ public class BundleManifestSourceLocationManager {
 
 	/**
 	 * Returns whether this manager has a source bundle location for the given
-	 * plugin name and version.  
-	 * 
+	 * plugin name and version.
+	 *
 	 * @param pluginName name of the plugin to search for
 	 * @param pluginVersion version of the plugin to search for
 	 * @return whether this manager has a source location for the the given plugin
@@ -79,12 +79,12 @@ public class BundleManifestSourceLocationManager {
 
 	/**
 	 * Returns the source roots associated with a specific plugin name and version.
-	 * The manager will look for a source location for the given plugin name/version, 
-	 * if one is found, it's manifest entry will be parsed and the source roots for 
-	 * the plugin will be returned (duplicates removed). If there are no roots 
-	 * specified for a plugin/version, ".", representing the root of the archive will 
+	 * The manager will look for a source location for the given plugin name/version,
+	 * if one is found, it's manifest entry will be parsed and the source roots for
+	 * the plugin will be returned (duplicates removed). If there are no roots
+	 * specified for a plugin/version, ".", representing the root of the archive will
 	 * be used as a default.
-	 * 
+	 *
 	 * @param pluginName name of the plugin to search for
 	 * @param pluginVersion version of the plugin to search for
 	 * @return set of String paths representing the source roots for the given plugin in the source bundle, possibly empty
@@ -121,12 +121,12 @@ public class BundleManifestSourceLocationManager {
 	/**
 	 * Returns all of the source roots specified in the source bundle providing
 	 * source for the given plugin name and version.
-	 * The manager will look for a source location for the given plugin name and 
-	 * version.  If one is found, it's manifest entry will be parsed and all of 
+	 * The manager will look for a source location for the given plugin name and
+	 * version.  If one is found, it's manifest entry will be parsed and all of
 	 * the source roots found in it will be returned (duplicates removed). If there
 	 * are no roots specified for a plugin/version, ".", representing the root of the
 	 * archive will be used as a default.
-	 * 
+	 *
 	 * @param pluginName name of the plugin to search for
 	 * @param pluginVersion version of the plugin to search for
 	 * @return set of String paths representing the source roots in the associated source bundle, possibly empty
@@ -145,7 +145,7 @@ public class BundleManifestSourceLocationManager {
 
 	/**
 	 * Returns an array containing ManifestElements for the SourceBundle header of the source bundle for the
-	 * name and version specified.  If no source bundle was found or the header was incorrectly formatted, 
+	 * name and version specified.  If no source bundle was found or the header was incorrectly formatted,
 	 * null will be returned.
 	 */
 	private ManifestElement[] getSourceEntries(String pluginName, Version pluginVersion) {
@@ -166,7 +166,7 @@ public class BundleManifestSourceLocationManager {
 	}
 
 	/**
-	 * Parses and adds the values of rootEntryDirective to the pluginSourceRoots set.  
+	 * Parses and adds the values of rootEntryDirective to the pluginSourceRoots set.
 	 * @param rootEntryDirective - value of the "roots" directive of a SourceBundle header.
 	 * @param pluginSourceRoots - set of pluginSourceRoots
 	 */

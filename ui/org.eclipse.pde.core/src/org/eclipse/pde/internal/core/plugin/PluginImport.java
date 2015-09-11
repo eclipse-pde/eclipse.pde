@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -222,11 +222,11 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		// This is a round-about way to do this; but, leveraging existing
-		// functionality is key.  The fact we have to do this suggests a model 
-		// limitation. 
-		// Emulating the behaviour of the text edit operations.  
+		// functionality is key.  The fact we have to do this suggests a model
+		// limitation.
+		// Emulating the behaviour of the text edit operations.
 		// RequireBundleObjects are created from PluginImport objects and have
-		// access to the MANIFEST.MF write mechanism 
+		// access to the MANIFEST.MF write mechanism
 
 		// Get the model
 		IPluginModelBase modelBase = getPluginModel();
@@ -262,7 +262,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 			return;
 		}
 		ManifestHeader header = (ManifestHeader) manifestHeader;
-		// Create the new temporary require bundle object (used only for 
+		// Create the new temporary require bundle object (used only for
 		// writing)
 		RequireBundleObject element = new RequireBundleObject(header, fID);
 		// Get the manifest version for backwards compatibility

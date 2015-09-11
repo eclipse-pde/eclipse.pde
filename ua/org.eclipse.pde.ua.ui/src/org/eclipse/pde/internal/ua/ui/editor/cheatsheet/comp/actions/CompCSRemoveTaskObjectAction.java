@@ -27,7 +27,7 @@ public class CompCSRemoveTaskObjectAction extends Action {
 	private ICompCSObject fObjectToSelect;
 
 	/**
-	 * 
+	 *
 	 */
 	public CompCSRemoveTaskObjectAction() {
 		setText(ActionsMessages.CompCSRemoveTaskObjectAction_delete);
@@ -51,8 +51,8 @@ public class CompCSRemoveTaskObjectAction extends Action {
 			if (parent.getType() == ICompCSConstants.TYPE_TASKGROUP) {
 				// Parent is a group
 				ICompCSTaskGroup group = (ICompCSTaskGroup) parent;
-				// Determine the object to select after the deletion 
-				// takes place 
+				// Determine the object to select after the deletion
+				// takes place
 				determineItemToSelect(group);
 				// Remove the subitem
 				group.removeFieldTaskObject(fTaskObject);

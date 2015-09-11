@@ -166,7 +166,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 			pplugin.setId(model.getPluginBase().getId());
 			pplugins[i] = pplugin;
 
-			// create plug-in configuration model 
+			// create plug-in configuration model
 			String sl = plugins.get(model);
 			if (!model.isFragmentModel() && !sl.equals("default:default")) { //$NON-NLS-1$
 				IPluginConfiguration configuration = factory.createPluginConfiguration();

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public class TracingComponentLabelProvider extends LabelProvider {
 
 	/**
 	 * Access the label text for the specified element at the specified column index in the tree viewer
-	 * 
+	 *
 	 * @param columnIndex
 	 *            The column index. One of either {@link TracingConstants#LABEL_COLUMN_INDEX} or
 	 *            {@link TracingConstants#VALUE_COLUMN_INDEX}

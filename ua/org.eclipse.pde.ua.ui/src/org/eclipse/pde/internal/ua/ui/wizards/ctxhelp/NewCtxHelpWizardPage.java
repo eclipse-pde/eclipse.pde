@@ -19,7 +19,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page to create a new context help xml file.
- * 
+ *
  * @since 3.4
  * @see NewCtxHelpWizard
  */

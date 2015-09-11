@@ -38,7 +38,7 @@ public class SimpleCSCreationOperation extends BaseCSCreationOperation {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void createContent() throws CoreException {
 		SimpleCSModel model = new SimpleCSModel(CoreUtility.getTextDocument(fFile.getContents()), false);

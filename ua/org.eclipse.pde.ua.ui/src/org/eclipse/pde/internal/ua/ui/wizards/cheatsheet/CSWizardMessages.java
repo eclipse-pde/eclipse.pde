@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class CSWizardMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ua.ui.wizards.cheatsheet.messages"; //$NON-NLS-1$
-	
+
 	public static String BaseCSCreationOperation_task;
 	public static String CompCSCreationOperation_conclusion;
 	public static String CompCSCreationOperation_group;

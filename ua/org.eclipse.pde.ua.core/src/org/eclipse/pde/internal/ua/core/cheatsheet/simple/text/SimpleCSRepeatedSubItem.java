@@ -32,7 +32,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRepeatedSubItem
 	 * #getSubItem()
@@ -43,7 +43,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRepeatedSubItem
 	 * #getValues()
@@ -54,7 +54,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRepeatedSubItem
 	 * #
@@ -67,7 +67,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRepeatedSubItem
 	 * #setValues(java.lang.String)
@@ -78,7 +78,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
@@ -91,7 +91,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
@@ -103,7 +103,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()

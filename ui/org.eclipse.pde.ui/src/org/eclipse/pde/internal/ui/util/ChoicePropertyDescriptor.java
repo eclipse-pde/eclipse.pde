@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public class ChoicePropertyDescriptor extends PropertyDescriptor {
 	/**
 	 * Creates an property descriptor with the given id, display name, and list
 	 * of value labels to display in the combo box cell editor.
-	 * 
+	 *
 	 * @param id the id of the property
 	 * @param displayName the name to display for the property
 	 * @param valuesArray the list of possible values to display in the combo box
@@ -37,7 +37,7 @@ public class ChoicePropertyDescriptor extends PropertyDescriptor {
 	}
 
 	/**
-	 * The <code>ComboBoxPropertyDescriptor</code> implementation of this 
+	 * The <code>ComboBoxPropertyDescriptor</code> implementation of this
 	 * <code>IPropertyDescriptor</code> method creates and returns a new
 	 * <code>ComboBoxCellEditor</code>.
 	 * <p>

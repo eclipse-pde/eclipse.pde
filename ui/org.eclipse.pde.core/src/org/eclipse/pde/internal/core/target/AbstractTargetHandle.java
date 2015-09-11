@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Common implementation of target handles.
- * 
+ *
  * @since 3.5
  */
 public abstract class AbstractTargetHandle implements ITargetHandle {
@@ -38,7 +38,7 @@ public abstract class AbstractTargetHandle implements ITargetHandle {
 
 	/**
 	 * Returns an input stream of the target definition's contents.
-	 * 
+	 *
 	 * @return stream of content
 	 * @throws CoreException if an error occurs
 	 */
@@ -46,14 +46,14 @@ public abstract class AbstractTargetHandle implements ITargetHandle {
 
 	/**
 	 * Deletes the underlying target definition.
-	 * 
+	 *
 	 * @throws CoreException if unable to delete
 	 */
 	abstract void delete() throws CoreException;
 
 	/**
 	 * Saves the definition to underlying storage.
-	 * 
+	 *
 	 * @param definition target to save
 	 * @throws CoreException on failure
 	 */

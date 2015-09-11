@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class CtxWizardMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ua.ui.wizards.ctxhelp.messages"; //$NON-NLS-1$
-	
+
 	public static String NewCtxHelpOperation_context;
 	public static String NewCtxHelpOperation_topic;
 	public static String NewCtxHelpWizard_title;

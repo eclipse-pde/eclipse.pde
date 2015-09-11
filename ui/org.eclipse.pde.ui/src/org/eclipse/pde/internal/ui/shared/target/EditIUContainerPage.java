@@ -46,7 +46,7 @@ import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * Wizard page allowing users to select which IUs they would like to download
- * 
+ *
  * @see EditBundleContainerWizard
  * @see AddBundleContainerWizard
  */
@@ -76,7 +76,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private IUBundleContainer fEditContainer;
 
 	/**
-	 * Used to provide special attributes/filtering to the available iu group 
+	 * Used to provide special attributes/filtering to the available iu group
 	 */
 	private IUViewQueryContext fQueryContext;
 

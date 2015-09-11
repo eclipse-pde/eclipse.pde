@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -128,11 +128,11 @@ public class ControlValidationUtility {
 		// Check the compiler flag and translate it into a message type
 		int unresImpMessageType = AbstractControlValidator.getMessageType(project, CompilerFlags.P_UNRESOLVED_IMPORTS);
 		// If the message type is none, no validation is required
-		// Same as IGNORE		
+		// Same as IGNORE
 		if (unresImpMessageType == IMessageProvider.NONE) {
 			return true;
 		}
-		// Check to see if the host plugin is defined, enabled and not a 
+		// Check to see if the host plugin is defined, enabled and not a
 		// fragment itself
 		IPluginModelBase hostModel = PluginRegistry.findModel(value);
 		if ((hostModel == null) || (hostModel instanceof IFragmentModel) || (hostModel.isEnabled() == false)) {

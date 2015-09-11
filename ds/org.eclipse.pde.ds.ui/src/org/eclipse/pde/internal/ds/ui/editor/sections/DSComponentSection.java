@@ -107,7 +107,7 @@ public class DSComponentSection extends PDESection {
 				Messages.DSComponentDetails_deactivateEntry, SWT.NONE);
 		fDeactivateEntry.getLabel().setToolTipText(
 				Messages.DSComponentDetails_deactivateTooltip);
-		
+
 		// Attribute: modified
 		fModifiedEntry = new FormEntry(client, toolkit,
 				Messages.DSComponentDetails_modifiedEntry, SWT.NONE);

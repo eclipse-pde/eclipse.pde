@@ -24,7 +24,7 @@ import org.osgi.framework.BundleException;
 
 /**
  * Common function for bundle containers.
- * 
+ *
  * @since 3.5
  */
 public abstract class AbstractBundleContainer extends PlatformObject implements ITargetLocation {
@@ -45,17 +45,17 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	protected IStatus fResolutionStatus;
 
 	/**
-	 * The Java VM Arguments specified by this bundle container 
+	 * The Java VM Arguments specified by this bundle container
 	 */
 	private String[] fVMArgs;
 
 	/**
 	 * Resolves any string substitution variables in the given text returning
 	 * the result.
-	 * 
+	 *
 	 * @param text text to resolve
 	 * @return result of the resolution
-	 * @throws CoreException if unable to resolve 
+	 * @throws CoreException if unable to resolve
 	 */
 	protected String resolveVariables(String text) throws CoreException {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -123,7 +123,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
   protected int getResolveFeaturesWork() {
     return 50;
   }
-  
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetLocation#getStatus()
 	 */
@@ -162,7 +162,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 * <p>
 	 * Subclasses must implement this method.
 	 * </p><p>
-	 * <code>beginTask()</code> and <code>done()</code> will be called on the given monitor by the caller. 
+	 * <code>beginTask()</code> and <code>done()</code> will be called on the given monitor by the caller.
 	 * </p>
 	 * @param definition target context
 	 * @param monitor progress monitor
@@ -177,7 +177,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 * <p>
 	 * Subclasses must implement this method.
 	 * </p><p>
-	 * <code>beginTask()</code> and <code>done()</code> will be called on the given monitor by the caller. 
+	 * <code>beginTask()</code> and <code>done()</code> will be called on the given monitor by the caller.
 	 * </p>
 	 * @param definition target context
 	 * @param monitor progress monitor
@@ -190,7 +190,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 * Returns a string that identifies the type of bundle container.  This type is persisted to xml
 	 * so that the correct bundle container is created when deserializing the xml.  This type is also
 	 * used to alter how the containers are presented to the user in the UI.
-	 * 
+	 *
 	 * @return string identifier for the type of bundle container.
 	 */
 	@Override
@@ -265,9 +265,9 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	}
 
 	/**
-	 * Associate this bundle container with the given target.  This allows for the container and 
-	 * the target to share configuration information etc.  
-	 * 
+	 * Associate this bundle container with the given target.  This allows for the container and
+	 * the target to share configuration information etc.
+	 *
 	 * @param target the target to which this container is being added.
 	 */
 	protected void associateWithTarget(ITargetDefinition target) {

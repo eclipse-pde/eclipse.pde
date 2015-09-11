@@ -251,7 +251,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 			StyledString sb = new StyledString(bundle.getSymbolicName());
 			String version = bundle.getVersion();
 			if (version != null) {
-				sb.append(" (", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$ 
+				sb.append(" (", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 				sb.append(version, StyledString.DECORATIONS_STYLER);
 				sb.append(")", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			}

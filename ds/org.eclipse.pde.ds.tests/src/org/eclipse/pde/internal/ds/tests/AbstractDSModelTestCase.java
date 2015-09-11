@@ -27,9 +27,9 @@ public abstract class AbstractDSModelTestCase extends TestCase {
 	protected static final String LF = "\n"; //$NON-NLS-1$
 	protected static final String CR = "\r"; //$NON-NLS-1$
 	protected static final String CRLF = CR + LF;
-	
+
 	public static final String COMPONENT_NAME = "sample"; //$NON-NLS-1$
-	
+
 	protected Document fDocument;
 	protected DSModel fModel;
 	protected IModelTextChangeListener fListener;
@@ -60,7 +60,7 @@ public abstract class AbstractDSModelTestCase extends TestCase {
 			fail("model cannot be loaded");
 		}
 	}
-	
+
 	protected void setXMLContents(StringBuffer body, String newline) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

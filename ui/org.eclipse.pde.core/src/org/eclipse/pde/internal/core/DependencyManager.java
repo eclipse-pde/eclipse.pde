@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,17 +22,17 @@ import org.osgi.framework.Constants;
 /**
  * Utility class to return bundle id collections for a variety of dependency
  * scenarios
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DependencyManager {
 
-	/** 
+	/**
 	 * Returns a {@link Set} of bundle ids for the dependents of the given
 	 * {@link IPluginModelBase}. The set includes the id of the given model base
-	 * as well as all computed implicit / optional dependencies. 
-	 * 
+	 * as well as all computed implicit / optional dependencies.
+	 *
 	 * @param model the {@link IPluginModelBase} to compute dependencies for
 	 * @param excludeFragments a collection of <b>fragment</b> bundle symbolic names to exclude from the dependency resolution
 	 *  or <code>null</code> if none
@@ -42,11 +42,11 @@ public class DependencyManager {
 		return getDependencies(new Object[] {model}, getImplicitDependencies(), TargetPlatformHelper.getState(), false, true, toSet(excludeFragments));
 	}
 
-	/** 
+	/**
 	 * Returns a {@link Set} of bundle ids for the dependents of the given
 	 * {@link IPluginModelBase}s. The set includes the ids of the given model bases
 	 * as well as all computed implicit / optional dependencies.
-	 * 
+	 *
 	 * @param models the array of {@link IPluginModelBase}s to compute dependencies for
 	 * @param excludeFragments a collection of <b>fragment</b> bundle symbolic names to exclude from the dependency resolution
 	 *  or <code>null</code> if none
@@ -56,12 +56,12 @@ public class DependencyManager {
 		return getDependencies(models, getImplicitDependencies(), TargetPlatformHelper.getState(), false, true, toSet(excludeFragments));
 	}
 
-	/** 
+	/**
 	 * Returns a {@link Set} of bundle ids for the dependents of the given
-	 * objects from the given {@link State}. 
+	 * objects from the given {@link State}.
 	 * The set does not include the ids of the given objects
 	 * and only includes the given set of implicit dependencies.
-	 * 
+	 *
 	 * @param selected the group of objects to compute dependencies for. Any items
 	 * in this array that are not {@link IPluginModelBase}s are ignored.
 	 * @param implicit the array of additional implicit dependencies to add to the {@link Set}
@@ -74,11 +74,11 @@ public class DependencyManager {
 		return getDependencies(selected, implicit, state, true, true, toSet(excludeFragments));
 	}
 
-	/** 
+	/**
 	 * Returns a {@link Set} of bundle ids for the dependents of the given
 	 * objects. The set does not include the ids of the given objects
 	 * but does include the computed set of implicit dependencies.
-	 * 
+	 *
 	 * @param selected selected the group of objects to compute dependencies for. Any items
 	 * in this array that are not {@link IPluginModelBase}s are ignored.
 	 * @param includeOptional if optional bundle ids should be included
@@ -91,7 +91,7 @@ public class DependencyManager {
 	}
 
 	/**
-	 * Returns the array as a set or <code>null</code> 
+	 * Returns the array as a set or <code>null</code>
 	 * @param array array or <code>null</code>
 	 * @return set
 	 */
@@ -105,11 +105,11 @@ public class DependencyManager {
 		return set;
 	}
 
-	/** 
+	/**
 	 * Returns a {@link Set} of bundle ids for the dependents of the given
-	 * objects from the given {@link State}. 
+	 * objects from the given {@link State}.
 	 * The set additionally only includes the given set of implicit dependencies.
-	 * 
+	 *
 	 * @param selected selected the group of objects to compute dependencies for. Any items
 	 * in this array that are not {@link IPluginModelBase}s are ignored.
 	 * @param implicit the array of additional implicit dependencies to add to the {@link Set}
@@ -158,7 +158,7 @@ public class DependencyManager {
 
 	/**
 	 * Computes the set of implicit dependencies from the {@link PDEPreferencesManager}
-	 * @return a set if bundle ids 
+	 * @return a set if bundle ids
 	 */
 	private static String[] getImplicitDependencies() {
 		try {
@@ -180,7 +180,7 @@ public class DependencyManager {
 	}
 
 	/**
-	 * Recursively adds the given {@link BundleDescription} and its dependents to the given 
+	 * Recursively adds the given {@link BundleDescription} and its dependents to the given
 	 * {@link Set}
 	 * @param desc the {@link BundleDescription} to compute dependencies for
 	 * @param set the {@link Set} to collect results in

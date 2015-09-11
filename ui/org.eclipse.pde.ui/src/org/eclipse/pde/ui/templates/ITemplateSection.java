@@ -30,7 +30,7 @@ import org.eclipse.pde.core.plugin.IPluginReference;
  * project wizard. When used as part of the new plug-in project wizard, it may
  * appear alongside other templates and therefore should not do anything that
  * prevents it.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
  */
@@ -43,14 +43,14 @@ public interface ITemplateSection {
 	 * to treat the URL as a root directory and iterate using standard Java I/O
 	 * classes. If template files are stored in a ZIP or JAR archive, the name
 	 * of the archive must be part of the URL.
-	 * 
+	 *
 	 * @return a template location URL
 	 */
 	public URL getTemplateLocation();
 
 	/**
 	 * Returns a presentable label the section.
-	 * 
+	 *
 	 * @return a template label
 	 */
 	public String getLabel();
@@ -59,7 +59,7 @@ public interface ITemplateSection {
 	 * Returns a description of the section. The description should explain what
 	 * extension will be used, what classes will be generated and how to test
 	 * that the generated code works properly.
-	 * 
+	 *
 	 * @return a template description
 	 */
 	public String getDescription();
@@ -70,7 +70,7 @@ public interface ITemplateSection {
 	 * this method to obtain the replacement. If replacement is provided, it is
 	 * substituted for the token (including the '$' characters). Otherwise, it
 	 * is transfered as-is.
-	 * 
+	 *
 	 * @param fileName
 	 *            the name of the file in which the key was found. You can use
 	 *            it to return different values for different files.
@@ -85,7 +85,7 @@ public interface ITemplateSection {
 	 * Adds template-related pages to the wizard. A typical section
 	 * implementation contributes one page, but complex sections may span
 	 * several pages.
-	 * 
+	 *
 	 * @param wizard
 	 *            the host wizard to add pages into
 	 */
@@ -93,8 +93,8 @@ public interface ITemplateSection {
 
 	/**
 	 * Returns a wizard page at the provided index.
-	 * 
-	 * @param pageIndex the index to get the page for 
+	 *
+	 * @param pageIndex the index to get the page for
 	 * @return wizard page index.
 	 */
 	public WizardPage getPage(int pageIndex);
@@ -108,7 +108,7 @@ public interface ITemplateSection {
 	/**
 	 * Tests whether this template have had a chance to create its pages. This
 	 * method returns true after 'addPages' has been called.
-	 * 
+	 *
 	 * @return <samp>true </samp> if wizard pages have been created by this
 	 *         template.
 	 */
@@ -119,7 +119,7 @@ public interface ITemplateSection {
 	 * Returns the number of work units that this template will consume during
 	 * the execution. This number is used to calculate the total number of work
 	 * units when initializing the progress indicator.
-	 * 
+	 *
 	 * @return the number of work units
 	 */
 	public int getNumberOfWorkUnits();
@@ -130,19 +130,19 @@ public interface ITemplateSection {
 	 * plug-ins. By providing this list, a template enables the template wizard
 	 * to create the correct Java build path so that these classes and
 	 * interfaces are correctly resolved.
-	 * 
+	 *
 	 * @param schemaVersion
 	 *            version of the target manifest, or <samp>null </samp> if older
 	 *            manifest (prior to 3.0) will be created. Depending on the
 	 *            manifest version, the list of dependencies may vary.
-	 *            
+	 *
 	 * @return an array of template dependencies
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion);
 
 	/**
 	 * Returns identifier of the extension point used in this section.
-	 * 
+	 *
 	 * @return extension point id if this section contributes into an extension
 	 *         point or <samp>null </samp> if not applicable.
 	 */
@@ -151,7 +151,7 @@ public interface ITemplateSection {
 	/**
 	 * Executes the template. As part of the execution, template may generate
 	 * resources under the provided project, and/or modify the plug-in model.
-	 * 
+	 *
 	 * @param project
 	 *            the workspace project that contains the plug-in
 	 * @param model
@@ -171,13 +171,13 @@ public interface ITemplateSection {
 	 * and other syntax rules applicable to this variable can be used in this
 	 * method. For example:
 	 * <p>
-	 * 
+	 *
 	 * <pre>
 	 * return new String[]{&quot;/icons/*.png&quot;};
 	 * </pre>
-	 * 
+	 *
 	 * </p>
-	 * 
+	 *
 	 * @return an array of strings that fully describe the files and folders
 	 *         created by this template section as required by <code>
 	 *         bin.includes</code> variable in <code>build.properties</code>

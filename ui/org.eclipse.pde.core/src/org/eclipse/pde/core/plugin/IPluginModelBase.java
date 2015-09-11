@@ -37,14 +37,14 @@ import org.eclipse.pde.core.build.IBuildModel;
  * The model is capable of notifying listeners
  * about changes. An attempt to change a read-only
  * model will result in a CoreException.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangeProvider {
 	/**
 	 * Creates and return a top-level plugin model object
-	 *  
+	 *
 	 * @return a top-level model object representing a plug-in or a fragment.
 	 */
 	IPluginBase createPluginBase();
@@ -56,7 +56,7 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * This method always returns <code>null</code>
 	 * </p>
 	 * @return <code>null</code>
-	 * @deprecated This method has always returned <code>null</code>. 
+	 * @deprecated This method has always returned <code>null</code>.
 	 *   Since 3.7, use {@link PluginRegistry#createBuildModel(IPluginModelBase)} instead.
 	 */
 	@Deprecated
@@ -65,17 +65,17 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	/**
 	 * Returns a top-level model object. Equivalent to
 	 * calling <pre>getPluginBase(true)</pre>.
-	 * 
+	 *
 	 * @return a top-level model object representing a plug-in or a fragment.
 	 */
 	IPluginBase getPluginBase();
 
 	/**
 	 * Returns a top-level model object.
-	 * 
+	 *
 	 * @param createIfMissing if true, root model object will
 	 * be created if not defined.
-	 * 
+	 *
 	 * @return a top-level model object
 	 */
 	IPluginBase getPluginBase(boolean createIfMissing);
@@ -89,7 +89,7 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 
 	/**
 	 * Tests if this model is for the plug-in fragment.
-	 * 
+	 *
 	 * @return <code>true</code> if the model is for the fragment,
 	 * <code>false</code> otherwise.
 	 */
@@ -113,10 +113,10 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * Returns an unencoded URL for the plug-in install location.
 	 * The location described where to look for the translation
 	 * property files.
-	 * 
-	 * @return the URL location of the plug-in where translation 
+	 *
+	 * @return the URL location of the plug-in where translation
 	 * property files can be found
-	 * 
+	 *
 	 * @deprecated The URL returned is not encoded.  If the file
 	 * path contains special characters such as <code>#</code>
 	 * this URL cannot be used for opening streams. Instead use
@@ -129,12 +129,12 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 
 	/**
 	 * Returns the bundle description of the plug-in
-	 * in case the plug-in uses the new OSGi bundle layout. 
-	 * 
+	 * in case the plug-in uses the new OSGi bundle layout.
+	 *
 	 * @return bundle description if this is an OSGi plug-in,
 	 * or <code>null</code> if the plug-in is in a classic
 	 * format.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	BundleDescription getBundleDescription();
@@ -143,10 +143,10 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * Associates the bundle description of the plug-in
 	 * with this model in case the plug-in uses the new
 	 * OSGi bundle layout.
-	 * 
+	 *
 	 * @param description bundle description to associate
 	 * with this model
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	void setBundleDescription(BundleDescription description);

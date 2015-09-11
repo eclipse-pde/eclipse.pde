@@ -278,7 +278,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	/**
 	 * Given a list of source library entries, returns the list of library names.
-	 * 
+	 *
 	 * @param sourceEntries list of IBuildEntry source entries
 	 * @return list of library names
 	 */
@@ -293,14 +293,14 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 
 	/**
-	 * Matches the javacSource, javacTarget, javacWarnings, javacErrors and jre.compilation.prile entries in build.properties with the 
+	 * Matches the javacSource, javacTarget, javacWarnings, javacErrors and jre.compilation.prile entries in build.properties with the
 	 * project specific Java Compiler properties and reports the errors found.
-	 * 
+	 *
 	 * @param javacSourceEntry
 	 * @param javacTargetEntry
 	 * @param jreCompilationProfileEntry
 	 * @param javacWarningsEntries
-	 * @param javacErrorsEntries 
+	 * @param javacErrorsEntries
 	 * @param libraryNames list of library names (javacWarnings/javacErrors require an entry for each source library)
 	 */
 	private void validateExecutionEnvironment(IBuildEntry javacSourceEntry, IBuildEntry javacTargetEntry, IBuildEntry jreCompilationProfileEntry, ArrayList<IBuildEntry> javacWarningsEntries, ArrayList<IBuildEntry> javacErrorsEntries, List<String> libraryNames) {
@@ -416,11 +416,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 
 	/**
-	 * Matches the javacWarnings and javacErrors entries in build.properties with the 
+	 * Matches the javacWarnings and javacErrors entries in build.properties with the
 	 * project specific Java compliance properties and reports the errors found.  Since java
 	 * compiler settings are set on a per project basis, any special javacWarnings/javacErrors
 	 * must be set for each library.
-	 * 
+	 *
 	 * @param complianceLevel the compliance level to check settings against, used to get default values
 	 * @param javacWarningsEntries list of build entries with the java compiler warnings prefix javacWarnings.
 	 * @param javacErrorsEntries list of build entries with the java compiler errors prefix javacErrors.
@@ -993,7 +993,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	/**
 	 * Checks that if the project has java compiler settings that build.properties contains a use project settings
 	 * entry so that the compiler picks up the settings using the .pref file.
-	 * 
+	 *
 	 * @param useJavaProjectSettings a build entry for using the project's compiler warning preferences file
 	 */
 	private void validateJavaCompilerSettings(IBuildEntry useJavaProjectSettings) {
@@ -1063,7 +1063,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	/**
 	 * Joins the given tokens into a single string with a comma separator.  If either of
 	 * the tokens are null or of length 0, the other string will be returned
-	 * 
+	 *
 	 * @param token1 first string
 	 * @param token2 second string
 	 * @return concatenated string
@@ -1147,7 +1147,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (valueIndex == 0 || valueIndex == entry.length())
 				return buildEntryLineNumber;
 
-			// remove the entry name			
+			// remove the entry name
 			entry = entry.substring(valueIndex);
 
 			int entryTokenOffset = entry.indexOf(tokenString);

@@ -43,7 +43,7 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	/**
 	 * Returns a reference to a schema element defined in this schema or
 	 * <samp>null</samp> if not found.
-	 * 
+	 *
 	 * @param name
 	 *            name of the element to find
 	 */
@@ -56,7 +56,7 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	 * element. Therefore, it will always return the same result even if there
 	 * could be only one element of a certain type in the document and it
 	 * already exists.
-	 * 
+	 *
 	 * @param element
 	 *            the parent element that is used for the calculation
 	 * @return an array of elements that can appear as children of the provided
@@ -66,14 +66,14 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 
 	/**
 	 * Returns an array of document sections that are defined in this schema.
-	 * 
+	 *
 	 * @return an array of sections in this schema
 	 */
 	IDocumentSection[] getDocumentSections();
 
 	/**
 	 * Returns a number of elements with global scope defined in this schema.
-	 * 
+	 *
 	 * @return number of global elements
 	 */
 	public int getElementCount();
@@ -81,7 +81,7 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	/**
 	 * Returns a total number of elements after the included schemas have been
 	 * resolved and their elements added to the list.
-	 * 
+	 *
 	 * @return the total number of elements including external schemas
 	 */
 	public int getResolvedElementCount();
@@ -89,7 +89,7 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	/**
 	 * Returns an array of elements with the global scope defined in this
 	 * schema.
-	 * 
+	 *
 	 * @return an array of global elements
 	 */
 	public ISchemaElement[] getElements();
@@ -97,7 +97,7 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	/**
 	 * Returns an array of element names with the global scope defined in this
 	 * schema.
-	 * 
+	 *
 	 * @return an array of global elements
 	 */
 	public String[] getElementNames();
@@ -105,14 +105,14 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	/**
 	 * Returns an array of elements with the global scope defined in this schema
 	 * and all the included schemas.
-	 * 
+	 *
 	 * @return an expanded array of global elements
 	 */
 	public ISchemaElement[] getResolvedElements();
 
 	/**
 	 * Returns an Id of the extension point that is defined in this schema.
-	 * 
+	 *
 	 * @return extension point Id of this schema
 	 */
 	public String getQualifiedPointId();
@@ -130,14 +130,14 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	 * responsible for loading and disposing schema objects and could be
 	 * implemented in various ways, depending on whether the schema is defined
 	 * inside the workspace or is referenced externally.
-	 * 
+	 *
 	 * @return schema descriptor that holds this schema
 	 */
 	public ISchemaDescriptor getSchemaDescriptor();
 
 	/**
 	 * Returns a URL that defines this schema's location.
-	 * 
+	 *
 	 * @return a URL that points to this schema's location.
 	 */
 	public URL getURL();
@@ -146,7 +146,7 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	 * Returns a list of elements that correspond to the <samp>include</samp>
 	 * statements in the schema file. Included schemas are incorporated into the
 	 * model and references can be made to elements in the included files.
-	 * 
+	 *
 	 * @return an array of included schema elements or a zero-size array if
 	 *         none.
 	 */
@@ -163,14 +163,14 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	 * Returns whether the root schema element (the <extension> element)
 	 * has been marked internal, making this schema internal.
 	 * @return true if this schema is internal
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public boolean isInternal();
 
 	/**
 	 * Returns replacement schema in case this one is deprecated.
-	 * @return the replacement schema 
+	 * @return the replacement schema
 	 */
 	public String getDeprecatedSuggestion();
 

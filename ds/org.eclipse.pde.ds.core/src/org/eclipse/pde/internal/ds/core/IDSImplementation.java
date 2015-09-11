@@ -13,17 +13,17 @@ package org.eclipse.pde.internal.ds.core;
 
 /**
  * Represents the component implementation class
- * 
+ *
  * @since 3.4
  * @see IDSComponent
  * @see IDSObject
- * 
+ *
  */
 public interface IDSImplementation extends IDSObject {
 
 	/**
 	 * Sets the java fully qualified name of the implementation class.
-	 * 
+	 *
 	 * @param className
 	 *            new java fully qualified name
 	 */
@@ -31,7 +31,7 @@ public interface IDSImplementation extends IDSObject {
 
 	/**
 	 * Returns the java fully qualified name of the implementation class.
-	 * 
+	 *
 	 * @return String containing the java fully qualified name
 	 */
 	public String getClassName();

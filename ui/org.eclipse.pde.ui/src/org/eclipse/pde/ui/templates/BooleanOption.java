@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
  * This implementation of the TemplateOption can be used to represent options
  * that are boolean choices. Option provides the appropriate visual presentation
  * that allows users to set the boolean value of the option.
- * 
+ *
  * @since 2.0
  */
 public class BooleanOption extends TemplateOption {
@@ -29,7 +29,7 @@ public class BooleanOption extends TemplateOption {
 
 	/**
 	 * The constructor of the option.
-	 * 
+	 *
 	 * @param section
 	 *            the parent section
 	 * @param name
@@ -43,7 +43,7 @@ public class BooleanOption extends TemplateOption {
 
 	/**
 	 * Returns the current state of the option.
-	 * 
+	 *
 	 * @return true of the option is selected, false otherwise.
 	 */
 	public boolean isSelected() {
@@ -52,7 +52,7 @@ public class BooleanOption extends TemplateOption {
 
 	/**
 	 * Changes the current state of the option to the provided state.
-	 * 
+	 *
 	 * @param selected
 	 *            the new state of the option
 	 */
@@ -63,7 +63,7 @@ public class BooleanOption extends TemplateOption {
 	/**
 	 * Implementation of the superclass method that updates the option's widget
 	 * with the new value.
-	 * 
+	 *
 	 * @param value
 	 *            the new option value
 	 */
@@ -77,7 +77,7 @@ public class BooleanOption extends TemplateOption {
 	/**
 	 * Creates the boolean option control. Option reserves the right to modify
 	 * the actual widget used as long as the user can modify its boolean state.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite of the option widget
 	 * @param span
@@ -104,7 +104,7 @@ public class BooleanOption extends TemplateOption {
 	/**
 	 * Implementatin of the superclass method that updates the option widget
 	 * with the new enabled state.
-	 * 
+	 *
 	 * @param enabled
 	 *            the new enabled state.
 	 */

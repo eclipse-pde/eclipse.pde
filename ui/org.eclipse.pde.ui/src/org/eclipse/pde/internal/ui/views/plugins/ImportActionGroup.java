@@ -110,7 +110,7 @@ public class ImportActionGroup extends ActionGroup {
 
 	/**
 	 * Return a map of {@link IBundleImporter} > Array of {@link ScmUrlImportDescription} to be imported.
-	 * 
+	 *
 	 * @param shell shell to open message dialogs on, if required
 	 * @param models candidate models
 	 * @return  map of importer to import descriptions

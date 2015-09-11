@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -281,7 +281,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 		if (fManifestElements != null) {
 			elementCount = fManifestElements.size();
 		}
-		// 0 <= index <= size()				
+		// 0 <= index <= size()
 		if (fSort == true) {
 			return;
 		} else if (index < 0) {
@@ -294,7 +294,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 		element.setHeader(this);
 		// Add the element to the list
 		if (fManifestElements == null) {
-			// Initialize the element list if not defined 
+			// Initialize the element list if not defined
 			fManifestElements = new ArrayList<Object>(1);
 			// Add the element to the end of the list
 			fManifestElements.add(element);
@@ -318,7 +318,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 			// Elements are sorted. Position is irrelevant
 			return -1;
 		} else if (fManifestElements == null) {
-			// No elements 
+			// No elements
 			return -1;
 		}
 		return fManifestElements.indexOf(targetElement);

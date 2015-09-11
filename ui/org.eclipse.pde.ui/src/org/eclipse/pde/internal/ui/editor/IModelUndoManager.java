@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.pde.core.IModelChangeProvider;
  * operation stack whose size can be controlled.
  * <p>The part that uses the undo manager is responsible
  * for supplying Undo and Redo action objects for
- * the purpose of controlling their availability. 
+ * the purpose of controlling their availability.
  * Undo manager should keep track of its current
  * operation stack pointer and adjust Undo/Redo action
  * availability by calling 'setEnabled' on the
@@ -77,7 +77,7 @@ public interface IModelUndoManager {
 	/**
 	 * Reapplies the next operation in the undo stack and sets
 	 * the stack pointer to that operation.
-	 * 
+	 *
 	 */
 	public void redo();
 
@@ -89,18 +89,18 @@ public interface IModelUndoManager {
 
 	/**
 	 * Temporarily suspends undo manager.
-	 * @param ignore if true, model changes reported by the 
+	 * @param ignore if true, model changes reported by the
 	 * model change provider will be ignore until this
 	 * property is set to <samp>false</samp> again.
 	 */
 	public void setIgnoreChanges(boolean ignore);
 
 	/**
-	 * Connects the undo manager with the undo and redo actions 
+	 * Connects the undo manager with the undo and redo actions
 	 * in the workbench part using the manager. The manager
 	 * uses these objects to enable or disable the actions
 	 * according to the state of the undo stack and the current
-	 * location of the stack pointer. 
+	 * location of the stack pointer.
 	 * @param undoAction the action in the workbench part that performs
 	 * the undo operation.
 	 * @param redoAction the action in the workbench part that performs

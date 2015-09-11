@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Dialog that opens when plug-in validation fails during launching.  Displays
- * a list of problems discovered.  Allows the user to continue the launch or 
+ * a list of problems discovered.  Allows the user to continue the launch or
  * cancel if @link {@link #showCancelButton(boolean)} is set to true.
  */
 public class PluginStatusDialog extends TrayDialog {

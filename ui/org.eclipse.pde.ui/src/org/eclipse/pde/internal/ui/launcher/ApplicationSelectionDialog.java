@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -77,7 +77,7 @@ public class ApplicationSelectionDialog extends TrayDialog {
 
 		applicationCombo.setText(applicationCombo.getItem(0));
 
-		getShell().setText(fMode.equals(ILaunchManager.DEBUG_MODE) ? PDEUIMessages.ApplicationSelectionDialog_dtitle : PDEUIMessages.ApplicationSelectionDialog_rtitle); // 
+		getShell().setText(fMode.equals(ILaunchManager.DEBUG_MODE) ? PDEUIMessages.ApplicationSelectionDialog_dtitle : PDEUIMessages.ApplicationSelectionDialog_rtitle); //
 		Dialog.applyDialogFont(container);
 		return container;
 	}

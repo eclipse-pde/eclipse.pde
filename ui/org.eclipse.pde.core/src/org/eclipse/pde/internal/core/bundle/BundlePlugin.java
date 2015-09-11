@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPlugin#getClassName()
 	 */
 	@Override
@@ -33,7 +33,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.plugin.IPlugin#setClassName(java.lang.String)
 	 */
 	@Override
@@ -53,7 +53,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 
 	@Override
 	public boolean hasExtensibleAPI() {
-		return "true".equals(getValue(ICoreConstants.EXTENSIBLE_API, false)); //$NON-NLS-1$ 
+		return "true".equals(getValue(ICoreConstants.EXTENSIBLE_API, false)); //$NON-NLS-1$
 	}
 
 }

@@ -111,7 +111,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	public void initialize(IManagedForm form) {
 		super.initialize(form);
 		// Unfortunately this has to be explicitly called for sub detail
-		// sections through its main section parent; since, it never is 
+		// sections through its main section parent; since, it never is
 		// registered directly.
 		// Initialize managed form for enclosing text section
 		fEnclosingTextSection.initialize(form);
@@ -185,7 +185,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListenersNameEntry() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -200,7 +200,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListenersPathEntry() {
 		fPathEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -302,7 +302,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 				if (convertPathToken.equals(basePathToken) == false) {
 					// The path segments are not equal
 					// Calculate required ".."
-					// Last base path segment needs to be included in the 
+					// Last base path segment needs to be included in the
 					// relative path
 					return createRelativePath(basePathTokenizer.countTokens(), convertPathToken, convertPathTokenizer);
 				}
@@ -353,7 +353,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		}
 		// Try to find the simple cheat sheet in the workspace
 		IResource resource = root.findMember(path);
-		// If the simple cheat sheet is found open the simple cheat sheet 
+		// If the simple cheat sheet is found open the simple cheat sheet
 		// editor using it as input; otherwise, opne the simple cheat sheet
 		// wizard
 		if ((resource != null) && (resource instanceof IFile)) {
@@ -368,11 +368,11 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleLinkWizardPathEntry() {
 		NewSimpleCSFileWizard wizard = new NewSimpleCSFileWizard();
-		// Select in the tree view the directory this composite cheat sheet is 
+		// Select in the tree view the directory this composite cheat sheet is
 		// stored in
 		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection(fDataTask.getModel().getUnderlyingResource()));
 		// Create the dialog for the wizard
@@ -425,7 +425,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 			// Append the file name
 			endPath.append(convertPathTokenizer.nextToken());
 		}
-		// Calculate the number of base path segments to accumulate 
+		// Calculate the number of base path segments to accumulate
 		int baseSegementCount = basePathTokenizer.countTokens() - dotDotCount - 1;
 		// Check to see if the relative path is bogus
 		if (baseSegementCount < 0) {
@@ -480,7 +480,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListenersSkipButton() {
 		fSkip.addSelectionListener(new SelectionAdapter() {
@@ -509,7 +509,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		updatePathEntry(editable);
 		// Update skip button
 		updateSkipButton(editable);
-		// Update fields within enclosing text section		
+		// Update fields within enclosing text section
 		fEnclosingTextSection.updateFields();
 	}
 

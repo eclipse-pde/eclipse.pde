@@ -183,7 +183,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				 * relative to its target. The position is determined to
 				 * be before, after, or on the item, based on some
 				 * threshold value.
-				 * 
+				 *
 				 * @param event
 				 *            the event
 				 * @return one of the <code>LOCATION_* </code>
@@ -618,7 +618,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	 * Finds a feature with the same id and version as a site feature. If
 	 * feature is not found, but feature with a M.m.s.qualifier exists it will
 	 * be returned.
-	 * 
+	 *
 	 * @param siteFeature
 	 * @return IFeature or null
 	 */
@@ -717,7 +717,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	}
 
 	/**
-	 * 
+	 *
 	 * @param candidates
 	 *            Array of IFeatureModel
 	 * @param monitor
@@ -799,7 +799,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	/**
 	 * Creates a new site feature instance with the same settings as the given source feature.
-	 * 
+	 *
 	 * @param model site model to create the feature from
 	 * @param sourceFeature the feature to copy settings out of
 	 * @return a new site feature instance

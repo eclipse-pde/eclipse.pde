@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * Represents a topic entry in context help. Topics are used to open related
  * help in other files. Topics are leaf objects.
- * 
+ *
  * @since 3.4
  * @see CtxHelpObject
  * @see CtxHelpModel
@@ -32,7 +32,7 @@ public class CtxHelpTopic extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canBeParent()
 	 */
@@ -42,7 +42,7 @@ public class CtxHelpTopic extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getType()
 	 */
@@ -52,7 +52,7 @@ public class CtxHelpTopic extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getName()
 	 */
@@ -71,7 +71,7 @@ public class CtxHelpTopic extends CtxHelpObject {
 	/**
 	 * Set the label attribute, passing <code>null</code> will set the attribute
 	 * to be empty.
-	 * 
+	 *
 	 * @param label
 	 *            new value
 	 */
@@ -93,7 +93,7 @@ public class CtxHelpTopic extends CtxHelpObject {
 	/**
 	 * Set the href (link) attribute, passing <code>null</code> will set the
 	 * attribute to be empty.
-	 * 
+	 *
 	 * @param path
 	 *            new value
 	 */
@@ -107,7 +107,7 @@ public class CtxHelpTopic extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddChild
 	 * (org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject)
@@ -118,7 +118,7 @@ public class CtxHelpTopic extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddSibling
 	 * (int)

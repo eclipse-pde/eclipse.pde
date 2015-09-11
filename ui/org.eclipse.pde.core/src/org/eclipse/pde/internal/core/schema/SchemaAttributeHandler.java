@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.xml.sax.SAXException;
 
 /**
  * AttributeDescriptionHandler
- * 
+ *
  */
 public class SchemaAttributeHandler extends BaseSchemaHandler {
 
@@ -33,10 +33,10 @@ public class SchemaAttributeHandler extends BaseSchemaHandler {
 	private final static String[] DESC_NESTED_ELEM = {"documentation", //$NON-NLS-1$
 			"annotation", "attribute", "complexType", "element"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-	private final static String NAME_ATTR = "name"; //$NON-NLS-1$	
+	private final static String NAME_ATTR = "name"; //$NON-NLS-1$
 
 	/**
-	 * 
+	 *
 	 */
 	public SchemaAttributeHandler(String targetElementName, String targetAttributeName) {
 		super();

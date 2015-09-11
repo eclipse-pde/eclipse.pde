@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -162,16 +162,16 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 
 	/**
 	 * Performs the import.
-	 * 
+	 *
 	 * @param importType one of the import operation types
 	 * @param models models being imported
 	 * @param forceAutobuild whether to force a build after the import
-	 * @param launchedConfiguration if there is a launched target currently running 
+	 * @param launchedConfiguration if there is a launched target currently running
 	 * @param alternateSource used to locate source attachments or <code>null</code> if default
 	 * 	source locations should be used (from active target platform).
 	 * @param importerToDescriptions map of bundle importers to import descriptions if importing
 	 *  from a repository, else <code>null</code>
-	 *  
+	 *
 	 */
 	public static void doImportOperation(int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource, Map<IBundleImporter, ScmUrlImportDescription[]> importerToDescriptions) {
 		PluginImportOperation job = new PluginImportOperation(models, importType, forceAutobuild);

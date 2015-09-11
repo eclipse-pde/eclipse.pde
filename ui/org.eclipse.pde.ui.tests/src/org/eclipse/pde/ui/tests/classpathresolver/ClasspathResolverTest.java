@@ -34,7 +34,7 @@ import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupQuery;
  *
  */
 public class ClasspathResolverTest extends TestCase {
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for bundle classpath resolver API");
 		suite.addTestSuite(ClasspathResolverTest.class);
@@ -46,7 +46,7 @@ public class ClasspathResolverTest extends TestCase {
 	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 	private IProject project;
-	
+
 	/**
 	 * The project name and bundle symbolic name of the test project
 	 */
@@ -109,8 +109,8 @@ public class ClasspathResolverTest extends TestCase {
 	}
 
 	/**
-	 * Imports a project into the test workspace 
-	 * 
+	 * Imports a project into the test workspace
+	 *
 	 * @param workspace workspace to import into
 	 * @return the created project
 	 * @throws IOException
@@ -121,7 +121,7 @@ public class ClasspathResolverTest extends TestCase {
 
 		URL srcURL = PDETestsPlugin.getBundleContext().getBundle().getEntry("tests/projects/" + bundleName);
 		File srcBasedir = new File(FileLocator.toFileURL(srcURL).getFile());
-		
+
 		File dstBasedir = new File(rootFile, bundleName);
 		copyFile(srcBasedir, dstBasedir, ".project");
 		copyFile(srcBasedir, dstBasedir, ".classpath");

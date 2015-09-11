@@ -314,7 +314,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		if (fDSComponentNameText == null || fDSImplementationClassText == null) {
 			return false;
 		}
-		
+
 		if (getFileName() == null || getFileName().length() == 0) {
 			setErrorMessage(Messages.DSFileWizardPage_ComponentNeedsFileName);
 			return false;
@@ -325,7 +325,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 			setErrorMessage(Messages.DSFileWizardPage_ComponentNeedsClass);
 			return false;
 		}
-		
+
 		return super.validatePage();
 	}
 

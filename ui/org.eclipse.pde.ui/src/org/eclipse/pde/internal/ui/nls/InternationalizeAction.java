@@ -8,7 +8,7 @@
  * Contributors:
  *     Team Azure - initial API and implementation
  *     IBM Corporation - ongoing enhancements
- *     
+ *
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
@@ -45,7 +45,7 @@ public class InternationalizeAction extends AbstractHandler {
 				return null;
 			}
 
-			/*	Get the plugin model table containing the list of workspace and 
+			/*	Get the plugin model table containing the list of workspace and
 			 * 	external plug-ins
 			 */
 			InternationalizeModelTable pluginTable = runnable.getPluginTable();

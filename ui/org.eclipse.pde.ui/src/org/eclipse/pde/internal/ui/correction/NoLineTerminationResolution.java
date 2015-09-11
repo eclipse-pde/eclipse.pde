@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ public class NoLineTerminationResolution extends AbstractManifestMarkerResolutio
 
 	/**
 	 * Creates a new resolution
-	 * @param type Either {@link AbstractPDEMarkerResolution#REMOVE_TYPE} to delete a whitespace only line 
+	 * @param type Either {@link AbstractPDEMarkerResolution#REMOVE_TYPE} to delete a whitespace only line
 	 * or {@link AbstractPDEMarkerResolution#CREATE_TYPE} to add a new line
 	 */
 	public NoLineTerminationResolution(int type) {
@@ -32,14 +32,14 @@ public class NoLineTerminationResolution extends AbstractManifestMarkerResolutio
 	/**
 	 * <p>Resolves the problem using one of two methods, depending on the
 	 * content of manifest.</p>
-	 * 
+	 *
 	 * <ul>
 	 *   <li>If the final line of the manifest contains only whitespace, delete
 	 *   all the whitespace.</li>
 	 *   <li>If the final line of the manifest contains actual content, add a
 	 *   new line.</li>
 	 * </ul>
-	 * 
+	 *
 	 * <p>The post-condition will be that the manifest ends with a line delimiter.</p>
 	 */
 	@Override

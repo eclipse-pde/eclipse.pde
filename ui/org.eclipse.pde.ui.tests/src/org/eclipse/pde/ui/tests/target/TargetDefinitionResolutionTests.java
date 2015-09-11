@@ -229,7 +229,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that a target definition is in synch with the target platform.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testTargetInSynch() throws Exception {
@@ -254,7 +254,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition is in synch with the target platform when there
 	 * are duplicates in the target definition (duplicates should be ignored).
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testTargetInSynchWithDuplicates() throws Exception {
@@ -280,7 +280,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition is not in synch with the target platform when a
 	 * bundle is deleted from the underlying files system (target platform).
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testTargetMissingBundle() throws Exception {
@@ -315,7 +315,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition will warn if an expected bundle does not exist on the file
 	 * system.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testTargetPlatformMissingBundle() throws Exception {
@@ -357,7 +357,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that a pre-p2 installation can be read/parsed properly.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testClassicInstallResolution() throws Exception {

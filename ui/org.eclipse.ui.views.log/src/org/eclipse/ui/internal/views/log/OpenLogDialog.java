@@ -100,7 +100,7 @@ public final class OpenLogDialog extends TrayDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
@@ -114,7 +114,7 @@ public final class OpenLogDialog extends TrayDialog {
 	//--------------- configuration handling --------------
 	/**
 	 * Stores the current state in the dialog settings.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	private void storeSettings() {
@@ -124,7 +124,7 @@ public final class OpenLogDialog extends TrayDialog {
 	/**
 	 * Returns the dialog settings object used to share state between several
 	 * event detail dialogs.
-	 * 
+	 *
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {

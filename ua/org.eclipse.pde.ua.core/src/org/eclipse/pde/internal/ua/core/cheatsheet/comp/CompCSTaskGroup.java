@@ -32,7 +32,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 	private ArrayList fFieldTaskObjects;
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -47,7 +47,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#getChildren
 	 * ()
@@ -63,7 +63,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#getName()
 	 */
@@ -73,7 +73,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#getType()
 	 */
@@ -83,7 +83,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#reset()
 	 */
@@ -95,7 +95,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * addFieldTaskObject
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
@@ -109,7 +109,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * addFieldTaskObject(int,
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
@@ -131,7 +131,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * getFieldTaskObjectCount()
 	 */
@@ -141,7 +141,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * getFieldTaskObjects()
 	 */
@@ -152,7 +152,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * hasFieldTaskObjects()
 	 */
@@ -165,7 +165,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * indexOfFieldTaskObject
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
@@ -176,7 +176,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * isFirstFieldTaskObject
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
@@ -191,7 +191,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * isLastFieldTaskObject
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
@@ -207,7 +207,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * removeFieldTaskObject
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
@@ -221,7 +221,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * removeFieldTaskObject(int)
 	 */
@@ -238,7 +238,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
 	 * (org.w3c.dom.Element)
@@ -263,7 +263,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#writeElements
 	 * (java.lang.String, java.io.PrintWriter)
@@ -281,7 +281,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
 	 */
@@ -291,7 +291,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * getNextSibling
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
@@ -309,7 +309,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * getPreviousSibling
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
@@ -326,7 +326,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup#
 	 * moveFieldTaskObject
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject, int)

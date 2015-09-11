@@ -91,7 +91,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 * Returns the currently active window for the workbench (if any). Returns
 	 * <code>null</code> if there is no active workbench window. Returns
 	 * <code>null</code> if called from a non-UI thread.
-	 * 
+	 *
 	 * @return the active workbench window, or <code>null</code> if there is
 	 *         no active workbench window or if called from a non-UI thread
 	 */
@@ -229,7 +229,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 
 	/**
 	 * Returns the shared text file document provider for this plug-in.
-	 * 
+	 *
 	 * @return the shared text file document provider
 	 * @since 3.2
 	 */

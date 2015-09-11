@@ -59,7 +59,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getChildren()
 	 */
@@ -67,21 +67,21 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
 	 */
 	public abstract String getName();
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
 	 */
 	public abstract int getType();
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
 	 */
 	public void reset() {
@@ -96,7 +96,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
 	 * addFieldDependency
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDependency)
@@ -110,7 +110,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#getFieldId
 	 * ()
@@ -121,7 +121,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
 	 * getFieldIntro()
 	 */
@@ -131,7 +131,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#getFieldKind
 	 * ()
@@ -142,7 +142,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#getFieldName
 	 * ()
@@ -153,7 +153,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
 	 * getFieldOnCompletion()
 	 */
@@ -163,7 +163,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#getFieldSkip
 	 * ()
@@ -174,7 +174,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
 	 * removeFieldDepedency
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDependency)
@@ -188,7 +188,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#setFieldId
 	 * (java.lang.String)
@@ -203,7 +203,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
 	 * setFieldIntro
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSIntro)
@@ -218,7 +218,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#setFieldKind
 	 * (java.lang.String)
@@ -233,7 +233,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#setFieldName
 	 * (java.lang.String)
@@ -248,7 +248,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
 	 * setFieldOnCompletion
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSOnCompletion)
@@ -263,7 +263,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#setFieldSkip
 	 * (boolean)
@@ -279,7 +279,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
 	 * getFieldDependencies()
 	 */
@@ -290,7 +290,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
 	 * org.w3c.dom.Text)
@@ -301,7 +301,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
 	 * (org.w3c.dom.Element)
@@ -325,7 +325,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
 	 * (java.lang.StringBuffer)
@@ -361,7 +361,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
 	 * (org.w3c.dom.Element)
@@ -388,7 +388,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
 	 * (java.lang.String, java.io.PrintWriter)
@@ -413,7 +413,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
 	 */

@@ -245,7 +245,7 @@ public class ConfigurationSection extends PDESection {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		Path path = new Path(fCustomEntry.getValue());
 		if (path.isEmpty()) {
-			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); // 
+			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); //
 			return;
 		}
 		IResource resource = root.findMember(path);
@@ -253,7 +253,7 @@ public class ConfigurationSection extends PDESection {
 			if (resource != null && resource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile) resource, true);
 			else
-				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); // 
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); //
 		} catch (PartInitException e) {
 		}
 	}
@@ -283,7 +283,7 @@ public class ConfigurationSection extends PDESection {
 		// their value is toggled, the user switches to another page, and the
 		// user switches back to the same page containing the radio buttons
 		// This appears to be a result of a SWT bug.
-		// If the radio button is the last widget to have focus when leaving 
+		// If the radio button is the last widget to have focus when leaving
 		// the page, an event will be fired when entering the page again.
 		// An event is not fired if the radio button does not have focus.
 		// The solution is to redirect focus to a stable widget.

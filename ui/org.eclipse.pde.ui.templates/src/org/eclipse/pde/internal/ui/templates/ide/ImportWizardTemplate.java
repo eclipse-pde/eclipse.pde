@@ -72,7 +72,7 @@ public class ImportWizardTemplate extends PDETemplateSection {
 
 	/**
 	 * Creates the options to be displayed on the template wizard.
-	 * Various string options, blank fields and a multiple choice 
+	 * Various string options, blank fields and a multiple choice
 	 * option are used.
 	 */
 	private void createOptions() {
@@ -119,7 +119,7 @@ public class ImportWizardTemplate extends PDETemplateSection {
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
+		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
@@ -129,7 +129,7 @@ public class ImportWizardTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		// This method creates the extension point structure through the use
 		// of IPluginElement objects. The element attributes are set based on
-		// user input from the wizard page as well as values required for the 
+		// user input from the wizard page as well as values required for the
 		// operation of the extension point.
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
@@ -167,7 +167,7 @@ public class ImportWizardTemplate extends PDETemplateSection {
 	@Override
 	protected String getFormattedPackageName(String id) {
 		// Package name addition to create a location for containing
-		// any classes required by the decorator. 
+		// any classes required by the decorator.
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)
 			return packageName + ".importWizards"; //$NON-NLS-1$
@@ -181,12 +181,12 @@ public class ImportWizardTemplate extends PDETemplateSection {
 
 	/**
 	 * Returns a 2-D String array based on a comma seperated
-	 * string of choices. 
-	 * 
+	 * string of choices.
+	 *
 	 * @param iconLocations
 	 * 				comma seperated string of icon placement options
 	 * @return the 2-D array of choices
-	 * 				
+	 *
 	 */
 	protected String[][] fromCommaSeparated(String iconLocations) {
 		StringTokenizer tokens = new StringTokenizer(iconLocations, ","); //$NON-NLS-1$

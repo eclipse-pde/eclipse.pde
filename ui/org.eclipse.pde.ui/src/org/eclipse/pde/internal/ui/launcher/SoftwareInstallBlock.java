@@ -24,10 +24,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 /**
- * Block on the {@link ConfigurationTab} that allows the user to choose 
+ * Block on the {@link ConfigurationTab} that allows the user to choose
  * between generating a p2 metadata profile for the launch or simply
  * reusing the profile from the host.
- * 
+ *
  * @since 3.6
  */
 public class SoftwareInstallBlock {

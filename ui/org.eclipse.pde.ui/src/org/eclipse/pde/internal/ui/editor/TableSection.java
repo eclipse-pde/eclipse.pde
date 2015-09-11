@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -84,7 +84,7 @@ public abstract class TableSection extends StructuredViewerSection {
 
 	/**
 	 * Constructor for TableSection.
-	 * 
+	 *
 	 * @param formPage
 	 */
 	public TableSection(PDEFormPage formPage, Composite parent, int style, String[] buttonLabels) {
@@ -93,7 +93,7 @@ public abstract class TableSection extends StructuredViewerSection {
 
 	/**
 	 * Constructor for TableSection.
-	 * 
+	 *
 	 * @param formPage
 	 */
 	public TableSection(PDEFormPage formPage, Composite parent, int style, boolean titleBar, String[] buttonLabels) {

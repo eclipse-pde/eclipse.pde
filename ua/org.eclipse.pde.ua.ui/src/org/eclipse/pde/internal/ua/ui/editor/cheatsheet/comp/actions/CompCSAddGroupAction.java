@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 public class CompCSAddGroupAction extends CompCSAbstractAddAction {
 
 	/**
-	 * 
+	 *
 	 */
 	public CompCSAddGroupAction() {
 		setText(ActionsMessages.CompCSAddGroupAction_group);

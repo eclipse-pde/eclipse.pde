@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -54,7 +54,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 
 	/**
 	 * Returns a JRE runtime classpath entry
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @return a JRE runtime classpath entry
@@ -73,14 +73,14 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	/**
 	 * Returns an array of sorted plug-in projects that represent plug-ins participating
 	 * in the launch
-	 * 
+	 *
 	 * @param configuration
 	 * 			the launch configuration
 	 * @return an array of ordered projects
 	 * @throws CoreException
-	 * 			if unable to retrieve attributes from the launch configuration or if 
+	 * 			if unable to retrieve attributes from the launch configuration or if
 	 * 			an error occurs when checking the nature of the project
-	 * 			
+	 *
 	 */
 	private IProject[] getJavaProjects(ILaunchConfiguration configuration) throws CoreException {
 		IProject[] projects = LaunchPluginValidator.getAffectedProjects(configuration);
@@ -113,7 +113,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	/**
 	 * Adds runtime classpath entries for binary package fragment roots contained within
 	 * the project
-	 * 
+	 *
 	 * @param jProject
 	 * 			the Java project whose roots are to be enumerated
 	 * @param all

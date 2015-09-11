@@ -31,18 +31,18 @@ import org.osgi.framework.Version;
  * @since 3.6
  */
 public class BundleRootTests extends TestCase {
-	
+
 	public static Test suite() {
 		return new TestSuite(BundleRootTests.class);
 	}
-	
+
 	protected IBundleProjectService getBundleProjectService() {
 		return (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
 	}
-	
+
 	/**
 	 * Creates and returns a project for the test case.
-	 * 
+	 *
 	 * @param test test case
 	 * @return project test project
 	 * @exception CoreException on failure
@@ -56,10 +56,10 @@ public class BundleRootTests extends TestCase {
 		proj.open(null);
 		return proj;
 	}
-	
+
 	/**
 	 * Provides a project for the test case.
-	 * 
+	 *
 	 * @param test test case
 	 * @return project which does not yet exist
 	 * @exception CoreException on failure
@@ -72,7 +72,7 @@ public class BundleRootTests extends TestCase {
 		IBundleProjectDescription description = getBundleProjectService().getDescription(proj);
 		description.setSymbolicName(proj.getName());
 		return description;
-	}	
+	}
 
 	/**
 	 * Tests setting/getting the bundle root property for a project.
@@ -83,7 +83,7 @@ public class BundleRootTests extends TestCase {
 		// set to something
 		IFolder folder = project.getFolder(new Path("bundle/root"));
 		PDEProject.setBundleRoot(project, folder);
-		assertEquals("Wrong bundle root", folder, PDEProject.getBundleRoot(project));	
+		assertEquals("Wrong bundle root", folder, PDEProject.getBundleRoot(project));
 		// set to null
 		PDEProject.setBundleRoot(project, null);
 		assertEquals("Bundle root unspecified - should be project itself", project, PDEProject.getBundleRoot(project));
@@ -91,7 +91,7 @@ public class BundleRootTests extends TestCase {
 		PDEProject.setBundleRoot(project, project);
 		assertEquals("Bundle root unspecified - should be project itself", project, PDEProject.getBundleRoot(project));
 	}
-	
+
 	/**
 	 * Tests setting/getting the bundle root property for a project using IBundleProjectService and IBundleProjectDescription
 	 */
@@ -104,13 +104,13 @@ public class BundleRootTests extends TestCase {
 		IFolder folder = project.getFolder(new Path("bundle/root"));
 		service.setBundleRoot(project, folder.getProjectRelativePath());
 		description = service.getDescription(project);
-		assertEquals("Wrong bundle root", folder.getProjectRelativePath(), description.getBundleRoot());	
+		assertEquals("Wrong bundle root", folder.getProjectRelativePath(), description.getBundleRoot());
 		// set to null
 		service.setBundleRoot(project, null);
 		description = service.getDescription(project);
 		assertNull("Bundle root unspecified - should be project itself (null)", description.getBundleRoot());
-	}	
-	
+	}
+
 	/**
 	 * Test getting a root location from a non-existent project
 	 */
@@ -119,10 +119,10 @@ public class BundleRootTests extends TestCase {
 		assertFalse("Project should not exist", project.exists());
 		assertEquals("Root location should be project root", project, PDEProject.getBundleRoot(project));
 	}
-	
+
 	/**
 	 * Tests that IPluginModel.getInstallLocation() returns the bundle root location in a project.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public void testPluginModelInstallLocation() throws CoreException {
 		IBundleProjectDescription description = newProject();
@@ -134,15 +134,15 @@ public class BundleRootTests extends TestCase {
 		IPath nls = new Path("plugin.properties");
 		description.setLocalization(nls);
 		description.apply(null);
-		
+
 		ProjectCreationTests.waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		assertEquals("Wrong install location", project.getFolder(root).getLocation(), new Path(model.getInstallLocation()));
 	}
-	
+
 	/**
 	 * Minimal bundle project with a non-default root - set a symbolic name, and go.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testBundleRoot() throws CoreException {
@@ -156,9 +156,9 @@ public class BundleRootTests extends TestCase {
 		description.setLocalization(nls);
 		description.setActivator("org.eclipse.foo.SomeActivator");
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
-		
+
 		assertEquals("Wrong bundle root", root, d2.getBundleRoot());
 		assertEquals("Should be no activator", "org.eclipse.foo.SomeActivator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -189,43 +189,43 @@ public class BundleRootTests extends TestCase {
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}
-	
+
 	/**
 	 * Creates a bundle project at a root location, and then removes PDE/Java natures. Then attempts create
 	 * a bundle project out of the existing data.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testAssignRootToExistingProject() throws CoreException {
 		testBundleRoot(); // create a simple bundle
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("test.assignroottoexistingproject");
-		
+
 		// remove PDE nature
 		IProjectDescription description = project.getDescription();
 		description.setNatureIds(new String[]{JavaCore.NATURE_ID});
 		project.setDescription(description, null);
-		
+
 		// remove existing root property
 		PDEProject.setBundleRoot(project, null);
-		
+
 		IBundleProjectService service = getBundleProjectService();
 		// reset the root
 		Path root = new Path("bundle/root");
 		service.setBundleRoot(project, root);
-		
+
 		// Resurrect the bundle project, with a modified version
 		IBundleProjectDescription bpd = service.getDescription(project);
 		bpd.setBundleVendor("Some Vendor");
 		bpd.setBundleVersion(new Version("2.0.0"));
 		bpd.setNatureIds(new String[]{PDE.PLUGIN_NATURE, JavaCore.NATURE_ID});
 		bpd.apply(null);
-		
+
 		// validate
 		IBundleProjectDescription d2 = service.getDescription(project);
 		IPath nls = new Path("plugin.properties");
 		IBundleClasspathEntry cp1 = service.newBundleClasspathEntry(new Path("src"), new Path("bin"), new Path("the.jar"));
-		
+
 		assertEquals("Wrong bundle root", root, d2.getBundleRoot());
 		assertEquals("Should be no activator", "org.eclipse.foo.SomeActivator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();

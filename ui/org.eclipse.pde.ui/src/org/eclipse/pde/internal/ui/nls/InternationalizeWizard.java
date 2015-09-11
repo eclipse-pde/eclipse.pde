@@ -8,7 +8,7 @@
  * Contributors:
  *     Team Azure - initial API and implementation
  *     IBM Corporation - ongoing enhancements
- *     
+ *
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.nls;
@@ -90,7 +90,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param master
 	 * @return the created setting for the InternationalizeWizard
 	 */
@@ -103,7 +103,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the list of plug-ins selected for internationalization
 	 */
 	private List<?> getPluginModelsForInternationalization() {
@@ -111,7 +111,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the list of locales specified for internationalization
 	 */
 	private List<?> getLocalesForInternationalization() {
@@ -130,7 +130,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param currentPage
 	 * @return the next wizard page
 	 */
@@ -144,7 +144,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param currentPage
 	 * @return the previous wizard page
 	 */
@@ -180,7 +180,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 			}
 		}
 
-		//Set the selection for the non-externalized plug-ins that 
+		//Set the selection for the non-externalized plug-ins that
 		//should be passed to the ExternalizeStringsWizard
 		IStructuredSelection externalizeSelection = new StructuredSelection(projects);
 		externalize.setExternalizeSelectedPluginsOnly(true);

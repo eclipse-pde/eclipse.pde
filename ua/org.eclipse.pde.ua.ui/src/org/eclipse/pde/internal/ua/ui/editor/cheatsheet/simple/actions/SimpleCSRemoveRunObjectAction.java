@@ -29,7 +29,7 @@ public class SimpleCSRemoveRunObjectAction extends Action {
 	private ISimpleCSRunContainerObject fRunContainerObject;
 
 	/**
-	 * 
+	 *
 	 */
 	public SimpleCSRemoveRunObjectAction() {
 		setText(SimpleActionMessages.SimpleCSRemoveRunObjectAction_actionText);
@@ -49,7 +49,7 @@ public class SimpleCSRemoveRunObjectAction extends Action {
 	 */
 	public void run() {
 		if (fRunContainerObject != null) {
-			// Determine parent type and remove accordingly 
+			// Determine parent type and remove accordingly
 			ISimpleCSObject parent = fRunContainerObject.getParent();
 			if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				ISimpleCSItem item = (ISimpleCSItem) parent;

@@ -367,7 +367,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		}
 		// The configuration page needs to be updated
 		IFormPage currentPage = getPage().getEditor().getActivePageInstance();
-		// If the current page is the configuration page, switch to the 
+		// If the current page is the configuration page, switch to the
 		// overview page before doing the update; otherwise, widget disposed
 		// errors may result
 		if (currentPage instanceof DependenciesPage) {

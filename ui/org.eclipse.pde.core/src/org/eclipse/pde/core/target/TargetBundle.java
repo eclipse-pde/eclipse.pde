@@ -27,7 +27,7 @@ import org.osgi.framework.Constants;
 /**
  * Describes a single bundle in a target definition. Also used to represent
  * content in the target that is missing or invalid.
- * 
+ *
  * @since 3.8
  */
 public class TargetBundle {
@@ -50,7 +50,7 @@ public class TargetBundle {
 	public static final int STATUS_VERSION_DOES_NOT_EXIST = 101;
 
 	/**
-	 * Status code indicating that a bundle's manifest could not be read, or did not exist. 
+	 * Status code indicating that a bundle's manifest could not be read, or did not exist.
 	 */
 	public static final int STATUS_INVALID_MANIFEST = 102;
 
@@ -63,7 +63,7 @@ public class TargetBundle {
 	 * Constructs a target bundle for a local bundle.  The bundle may be a directory or
 	 * an archive file. The manifest of the bundle will be read to collect the additional
 	 * information.
-	 * 
+	 *
 	 * @param bundleLocation the location of the bundle (directory or archive) to open
 	 * @throws CoreException if there is a problem opening the bundle or its manifest
 	 */
@@ -82,8 +82,8 @@ public class TargetBundle {
 	 * Returns a {@link BundleInfo} object containing additional information about the bundle
 	 * this target bundle represents. It is not guaranteed that the bundle info will have any
 	 * fields set.  The base implementation of {@link TargetBundle} will fill in the location,
-	 * symbolic name and version if that information was available in the bundle's manifest. 
-	 * 
+	 * symbolic name and version if that information was available in the bundle's manifest.
+	 *
 	 * @return a bundle info object with information on the bundle this target bundle represents
 	 */
 	public BundleInfo getBundleInfo() {
@@ -91,20 +91,20 @@ public class TargetBundle {
 	}
 
 	/**
-	 * Returns a status object describing any problems with this target bundle. The base 
+	 * Returns a status object describing any problems with this target bundle. The base
 	 * implementation of {@link TargetBundle} will always return an OK status.
-	 * 
+	 *
 	 * @return status of this bundle
 	 */
 	public IStatus getStatus() {
-		// The status will always be ok as the constructor would throw an exception for any issues. 
+		// The status will always be ok as the constructor would throw an exception for any issues.
 		return Status.OK_STATUS;
 	}
 
 	/**
-	 * Returns <code>true</code> if this bundle is a source bundle and 
+	 * Returns <code>true</code> if this bundle is a source bundle and
 	 * <code>false</code> if this bundle is an executable bundle.
-	 * 
+	 *
 	 * @return whether the resolved bundle is a source bundle
 	 */
 	public boolean isSourceBundle() {
@@ -116,7 +116,7 @@ public class TargetBundle {
 	 * representing the executable bundle that this bundle provides source for.
 	 * The returned bundle info may not have a symbolic name and version set if
 	 * this source bundle is an old style source plug-in.
-	 * 
+	 *
 	 * @return bundle info representing bundle this bundle provides source for or <code>null</code>
 	 */
 	public BundleInfo getSourceTarget() {
@@ -125,7 +125,7 @@ public class TargetBundle {
 
 	/**
 	 * Returns whether this bundle is a fragment.
-	 * 
+	 *
 	 * @return whether this bundle is a fragment
 	 */
 	public boolean isFragment() {
@@ -135,7 +135,7 @@ public class TargetBundle {
 	/**
 	 * Returns bundle relative path to old-style source folders, or <code>null</code>
 	 * if not applicable.
-	 * 
+	 *
 	 * @return bundle relative path to old-style source folders, or <code>null</code>
 	 */
 	public String getSourcePath() {
@@ -144,7 +144,7 @@ public class TargetBundle {
 
 	/**
 	 * Initializes the contents of this target bundle from the provided local bundle
-	 * 
+	 *
 	 * @param file the bundle to initialize from
 	 */
 	private void initialize(File file) throws CoreException {
@@ -183,7 +183,7 @@ public class TargetBundle {
 	 * If the given bundle is a source bundle, the bundle that this bundle provides source for will be returned.
 	 * If the given bundle is not a source bundle or there was a problem getting the source target, <code>null</code>
 	 * will be returned.
-	 * 
+	 *
 	 * @param bundle location of the bundle in the file system, can be <code>null</code> to skip searching plugin.xml
 	 * @param symbolicName symbolic name of the bundle, can be <code>null</code> to skip searching of plugin.xml
 	 * @param manifest the bundle's manifest, can be <code>null</code> to skip searching of manifest entries
@@ -223,7 +223,7 @@ public class TargetBundle {
 				return null;
 			}
 
-			// check for an "org.eclipse.pde.core.source" extension 
+			// check for an "org.eclipse.pde.core.source" extension
 			File pxml = new File(bundle, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 			if (!pxml.exists()) {
 				pxml = new File(bundle, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     Sascha Becher <s.becher@qualitype.de> - bug 360894
  *******************************************************************************/
@@ -102,7 +102,7 @@ public class ToggleExpandStateAction extends Action {
 	 * Expands subtrees of given items. Items of type <code>PluginExtensionNode</code> that have multiple children to expand
 	 * will only be expanded to the that level. Further expanding is required to reveal the whole subtree. This is for reasons of
 	 * convenience.
-	 * 
+	 *
 	 * @param items tree items to be expand with their children
 	 */
 	private void traverseChildrenAndSetExpanded(TreeItem[] items) {
@@ -154,7 +154,7 @@ public class ToggleExpandStateAction extends Action {
 
 	/**
 	 * Determines whether the selected leafs are expandable
-	 * 
+	 *
 	 * @param selection selection to test each item with
 	 * @return whether the selection can be expanded
 	 */

@@ -32,7 +32,7 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated. This class is not intended to be subclassed by clients.
  * </p>
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MainTab extends AbstractLauncherTab implements IPDELauncherConstants {
@@ -106,10 +106,10 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 
 	/**
 	 * Applies the given data to this page.
-	 * 
+	 *
 	 * @param data the data to apply
 	 * @since 3.7
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void applyData(Object data) {

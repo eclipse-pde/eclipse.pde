@@ -30,7 +30,7 @@ public abstract class TocAddObjectAction extends Action {
 	/**
 	 * Set the parent object that this action will add
 	 * objects to.
-	 * 
+	 *
 	 * @param parent The new parent object for this action
 	 */
 	public void setParentObject(TocObject parent) {
@@ -40,7 +40,7 @@ public abstract class TocAddObjectAction extends Action {
 	/**
 	 * Set the target object that this action will add
 	 * objects after.
-	 * 
+	 *
 	 * @param target The new target object for this action
 	 */
 	public void setTargetObject(TocObject target) {
@@ -66,7 +66,7 @@ public abstract class TocAddObjectAction extends Action {
 	/**
 	 * Add the child to the parent object. If a target object is specified,
 	 * add the child as a direct sibling after that object.
-	 * 
+	 *
 	 * @param child The object to add to the parent
 	 */
 	protected void addChild(TocObject child) {

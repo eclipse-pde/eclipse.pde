@@ -15,35 +15,35 @@ public interface ISimpleCSConditionalSubItem extends ISimpleCSSubItemObject {
 
 	/**
 	 * Attribute: condition
-	 * 
+	 *
 	 * @return
 	 */
 	public String getCondition();
 
 	/**
 	 * Attribute: condition
-	 * 
+	 *
 	 * @param condition
 	 */
 	public void setCondition(String condition);
 
 	/**
 	 * Element: subitem
-	 * 
+	 *
 	 * @return
 	 */
 	public ISimpleCSSubItem[] getSubItems();
 
 	/**
 	 * Elements: subitem
-	 * 
+	 *
 	 * @param subitems
 	 */
 	public void addSubItem(ISimpleCSSubItem subitem);
 
 	/**
 	 * Elements: subitem
-	 * 
+	 *
 	 * @param subitems
 	 */
 	public void removeSubItem(ISimpleCSSubItem subitem);

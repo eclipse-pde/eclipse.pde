@@ -26,7 +26,7 @@ public class JARSigningTab {
 
 	private static final String S_SIGN_JARS = "signJAR"; //$NON-NLS-1$
 	private static final String S_KEYSTORE = "keystore"; //$NON-NLS-1$
-	private static final String S_KEYPASS = "keypass"; //$NON-NLS-1$ 
+	private static final String S_KEYPASS = "keypass"; //$NON-NLS-1$
 	private static final String S_ALIAS = "alias"; //$NON-NLS-1$
 	private static final String S_PASSWORD = "password"; //$NON-NLS-1$
 

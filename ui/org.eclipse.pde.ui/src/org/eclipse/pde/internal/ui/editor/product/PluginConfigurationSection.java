@@ -124,19 +124,19 @@ public class PluginConfigurationSection extends TableSection {
 	 * require a special startlevel. Each entry is of the form <bundleID>[@ [<startlevel>] [":start"]]
 	 * If the startlevel is omitted then the framework will use the default start level for the bundle.
 	 * The "start" tag indicates that the bundle is autostarted.
-	 * 	
+	 *
 	 * This list loosely based on TargetPlatform.getBundleList and more specifically on
 	 * TargetPlatformHelper.getDefaultBundleList(). Both of these implementations are
 	 * problematic because they are out of date, and also leave out commonly used bundles.
-	 *  
+	 *
 	 * This list attempts to describe a typical set up on the assumption that an advanced user can
 	 * further modify it. The list is hard-coded rather than walking the plugin requirements of
-	 * the product and all required products. The reason for this is that there are some bundles, 
+	 * the product and all required products. The reason for this is that there are some bundles,
 	 * such as org.eclipse.equinox.ds, that are typically needed but users do not remember to
-	 * add them, and they are not required by any bundle. The idea of this list is to suggest 
+	 * add them, and they are not required by any bundle. The idea of this list is to suggest
 	 * these commonly used bundles and start levels that clients typically do not remember.
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=426529
-	 * 
+	 *
 	 * We use the same String format described in TargetPlatform so that in the future, we could
 	 * obtain this list from another source that uses the same format.
 	 */
@@ -360,10 +360,10 @@ public class PluginConfigurationSection extends TableSection {
 					bundlesList.append(startLevel);
 				} else {
 					String defaultLevelColumn = NLS.bind(PDEUIMessages.EquinoxPluginBlock_defaultLevelColumn, "Default"); //$NON-NLS-1$
-					bundlesList.append(defaultLevelColumn); 			
+					bundlesList.append(defaultLevelColumn);
 				}
 				if ("start".equals(config[2])) { //$NON-NLS-1$
-					bundlesList.append(", "); //$NON-NLS-1$ 
+					bundlesList.append(", "); //$NON-NLS-1$
 					bundlesList.append(PDEUIMessages.EquinoxPluginBlock_autoColumn);
 				}
 				bundlesList.append('\n');
@@ -381,7 +381,7 @@ public class PluginConfigurationSection extends TableSection {
 					if (startString.length() > 0) {
 						configuration.setStartLevel(Integer.parseInt(startString));
 					}
-					configuration.setAutoStart("start".equals(plugins.get(i)[2])); //$NON-NLS-1$		
+					configuration.setAutoStart("start".equals(plugins.get(i)[2])); //$NON-NLS-1$
 					pluginConfigs[i] = configuration;
 				}
 				product.addPluginConfigurations(pluginConfigs);

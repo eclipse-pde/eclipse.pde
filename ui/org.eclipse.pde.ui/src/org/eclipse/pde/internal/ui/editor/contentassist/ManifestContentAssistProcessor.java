@@ -149,7 +149,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			return true;
 		int index = text.indexOf(':');
 		while (index != -1) {
-			// if we are at end of the line, assume it the colon is defining a new header.  
+			// if we are at end of the line, assume it the colon is defining a new header.
 			// If the next character is an '=', the colon is part of a directive so we should continue looking
 			if ((index == length - 1) || (text.charAt(index + 1) != '='))
 				return true;
@@ -551,7 +551,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			} else {
 				// We know we are looking for a completion inside the quote of a directive
 				String value = currentValue.substring(quote + 1);
-				// find existing packages 
+				// find existing packages
 				StringTokenizer parser = new StringTokenizer(value, ","); //$NON-NLS-1$
 				HashSet<String> set = new HashSet<>();
 				while (parser.hasMoreTokens()) {
@@ -686,7 +686,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 
 	/**
 	 * Adds completions to the proposals list which represent packages in source folders found in the current project
-	 * 
+	 *
 	 * @param value the current incomplete package value (without any leading spaces)
 	 * @param currentPackages a Set containing the packages already specified by the Manifest Header
 	 * @param offset the offset of the current completion proposal
@@ -735,7 +735,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			if (colon > 0 && newValue.charAt(colon + 1) != '=') {
 				newValue = doc.get(offset, startOfLine - 1 - offset);
 			} else {
-				// break on the comma to find our element, but only break on a comma that is not enclosed in parenthesis 
+				// break on the comma to find our element, but only break on a comma that is not enclosed in parenthesis
 				int comma = newValue.indexOf(',');
 				int parenthesis = newValue.indexOf('"');
 				if (!(parenthesis < comma && newValue.indexOf('"', parenthesis + 1) > comma))

@@ -15,7 +15,7 @@ import org.eclipse.pde.core.target.ITargetLocation;
 
 /**
  * Interface for wizard pages used to edit target locations.
- * 
+ *
  * @see EditBundleContainerWizard
  */
 public interface IEditBundleContainerPage extends IWizardPage {

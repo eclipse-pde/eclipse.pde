@@ -24,14 +24,14 @@ package org.eclipse.pde.core.plugin;
  * <p>
  * The model is capable of notifying listeners about changes. An attempt to
  * change a read-only model will result in a CoreException.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IPluginModel extends IPluginModelBase {
 	/**
 	 * Returns a top-level model object.
-	 * 
+	 *
 	 * @return a root model instance
 	 */
 	IPlugin getPlugin();

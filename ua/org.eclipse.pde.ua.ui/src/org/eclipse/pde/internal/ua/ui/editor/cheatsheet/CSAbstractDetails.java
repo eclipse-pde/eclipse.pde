@@ -31,7 +31,7 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 	private String fContextID;
 
 	/**
-	 * 
+	 *
 	 */
 	public CSAbstractDetails(ICSMaster masterSection, String contextID) {
 		fMasterSection = masterSection;
@@ -60,12 +60,12 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 	public abstract void createDetails(Composite parent);
 
 	/**
-	 * 
+	 *
 	 */
 	public abstract void updateFields();
 
 	/**
-	 * 
+	 *
 	 */
 	public abstract void hookListeners();
 

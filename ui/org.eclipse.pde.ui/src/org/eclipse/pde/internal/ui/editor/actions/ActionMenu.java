@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -67,7 +67,7 @@ public class ActionMenu extends Action implements IMenuCreator {
 
 	/**
 	 * Reorders the actions in the menu based on the most recently launched
-	 * 
+	 *
 	 * @param orderedLauncherIds list of string launcher ids to order the actions by
 	 */
 	public void updateActionOrder(final List<String> orderedLauncherIds) {
@@ -84,7 +84,7 @@ public class ActionMenu extends Action implements IMenuCreator {
 						return 0;
 //						if (id1.contains("pde"))
 //						org.eclipse.pde.ui.runtimeWorkbenchShortcut
-//						
+//
 //						String label1 = o1.getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
 //						String label2 = o2.getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
 //						return label1.compareTo(label2);

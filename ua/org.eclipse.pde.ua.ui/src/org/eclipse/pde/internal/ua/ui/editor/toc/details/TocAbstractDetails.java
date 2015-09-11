@@ -45,7 +45,7 @@ public abstract class TocAbstractDetails extends PDEDetails {
 	private String fContextID;
 
 	/**
-	 * 
+	 *
 	 */
 	public TocAbstractDetails(TocTreeSection masterSection, String contextID) {
 		fMasterSection = masterSection;
@@ -95,27 +95,27 @@ public abstract class TocAbstractDetails extends PDEDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected abstract void createFields(Composite parent);
 
 	/**
-	 * 
+	 *
 	 */
 	protected abstract String getDetailsTitle();
 
 	/**
-	 * 
+	 *
 	 */
 	protected abstract String getDetailsDescription();
 
 	/**
-	 * 
+	 *
 	 */
 	public abstract void updateFields();
 
 	/**
-	 * 
+	 *
 	 */
 	public abstract void hookListeners();
 

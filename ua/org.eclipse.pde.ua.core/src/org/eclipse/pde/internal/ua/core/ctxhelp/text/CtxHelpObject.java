@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.ua.core.ctxhelp.ICtxHelpConstants;
 /**
  * All modeled objects of a context help xml file must extend from this abstract
  * class.
- * 
+ *
  * @since 3.4
  * @see CtxHelpModel
  * @see CtxHelpDocumentFactory
@@ -34,7 +34,7 @@ public abstract class CtxHelpObject extends DocumentObject implements
 
 	/**
 	 * Constructs the CtxHelpObject and initializes its attributes.
-	 * 
+	 *
 	 * @param model
 	 *            The model to associate with this CtxHelpObject
 	 * @param tagName
@@ -68,7 +68,7 @@ public abstract class CtxHelpObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.DocumentElementNode#getAttributeIndent
 	 * ()
@@ -79,7 +79,7 @@ public abstract class CtxHelpObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.DocumentElementNode#getContentIndent()
 	 */
@@ -89,7 +89,7 @@ public abstract class CtxHelpObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.DocumentElementNode#isLeafNode()
 	 */
 	public boolean isLeafNode() {
@@ -155,7 +155,7 @@ public abstract class CtxHelpObject extends DocumentObject implements
 	/**
 	 * Get the concrete type of this object, must be one of the TYPE constants
 	 * defined in ICtxHelpConstants.
-	 * 
+	 *
 	 * @see ICtxHelpConstants
 	 */
 	public abstract int getType();
@@ -172,7 +172,7 @@ public abstract class CtxHelpObject extends DocumentObject implements
 	/**
 	 * Check if the object is a direct or indirect descendant of the object
 	 * parameter.
-	 * 
+	 *
 	 * @param obj
 	 *            The object to find in this object's ancestry
 	 * @return true iff obj is an ancestor of this object
@@ -226,7 +226,7 @@ public abstract class CtxHelpObject extends DocumentObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.toc.TocObject#moveChild(org.eclipse.pde
 	 * .internal.core.toc.TocObject, int)

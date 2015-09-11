@@ -25,7 +25,7 @@ public class Toc extends TocTopic {
 	/**
 	 * Constructs a new Toc. Only takes a model, since the root element cannot
 	 * have a parent.
-	 * 
+	 *
 	 * @param model
 	 *            The model associated with this TOC.
 	 */
@@ -36,7 +36,7 @@ public class Toc extends TocTopic {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isRoot()
 	 */
@@ -46,7 +46,7 @@ public class Toc extends TocTopic {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getType()
 	 */
 	public int getType() {
@@ -63,7 +63,7 @@ public class Toc extends TocTopic {
 
 	/**
 	 * Change the value of the link field and signal a model change if needed.
-	 * 
+	 *
 	 * @param value
 	 *            The new page location to be linked by this topic
 	 */
@@ -80,7 +80,7 @@ public class Toc extends TocTopic {
 
 	/**
 	 * Change the value of the anchor field and signal a model change if needed.
-	 * 
+	 *
 	 * @param The
 	 *            new anchor path to associate with this TOC
 	 */

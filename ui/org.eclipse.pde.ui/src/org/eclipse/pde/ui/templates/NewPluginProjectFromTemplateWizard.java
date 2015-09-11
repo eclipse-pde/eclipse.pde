@@ -32,13 +32,13 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
  * method will create a wizard with the same UI components as the standard new plug-in
  * project wizard.  However, instead of asking the user to select a template, the template
  * is predetermined.  The template selection page will be skipped going directly to the
- * wizard associated with the template.  In addition, if the template requires certain 
+ * wizard associated with the template.  In addition, if the template requires certain
  * settings (determined by the flags set on the extension), the associated UI components
  * will be disabled so that the user cannot change their value.
- * 
+ *
  * Other aspects of this wizard including the window title can be edited by overriding
  * methods in the subclass.
- *  
+ *
  * @since 3.5
  */
 public abstract class NewPluginProjectFromTemplateWizard extends NewWizard implements IExecutableExtension {
@@ -54,7 +54,7 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 	public static final String PLUGIN_POINT = "pluginContent"; //$NON-NLS-1$
 
 	/**
-	 * The extension element that contains the wizard class 
+	 * The extension element that contains the wizard class
 	 */
 	public static final String TAG_WIZARD = "wizard"; //$NON-NLS-1$
 
@@ -77,7 +77,7 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 	}
 
 	/**
-	 * Returns the string id of the template extension to use as the template for the 
+	 * Returns the string id of the template extension to use as the template for the
 	 * new plug-in project wizard.  Must not return <code>null</code>.
 	 * @return string id of the template to use
 	 */
@@ -195,7 +195,7 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 
 	/**
 	 * Creates a WizardElement representing the template extension to be used by this wizard.
-	 * 
+	 *
 	 * @return element representing the template or <code>null</code> if the extension could not be loaded
 	 */
 	private WizardElement getTemplateWizard() {

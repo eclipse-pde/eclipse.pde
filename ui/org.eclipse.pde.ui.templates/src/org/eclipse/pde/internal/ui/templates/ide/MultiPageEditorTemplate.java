@@ -64,7 +64,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 	}
 
 	private void createOptions() {
-		// first page	
+		// first page
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.MultiPageEditorTemplate_packageName, (String) null, 0);
 		addOption("editorClassName", //$NON-NLS-1$
 				PDETemplateMessages.MultiPageEditorTemplate_className, "MultiPageEditor", //$NON-NLS-1$
@@ -89,7 +89,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
+		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));

@@ -51,8 +51,8 @@ public class JREBlock {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
-			// When a radio button selection changes, we get two events.  One for the deselection of the old button and another for the selection 
-			// of the new button.  We only need to update the configuration once when the selection changes.  Hence, we can ignore the deselection 
+			// When a radio button selection changes, we get two events.  One for the deselection of the old button and another for the selection
+			// of the new button.  We only need to update the configuration once when the selection changes.  Hence, we can ignore the deselection
 			// event of the old button.
 			if (source instanceof Button && !((Button) source).getSelection())
 				return;
@@ -158,7 +158,7 @@ public class JREBlock {
 		composite.setLayoutData(gd);
 
 		fJavawButton = new Button(composite, SWT.RADIO);
-		fJavawButton.setText(PDEUIMessages.BasicLauncherTab_javaExecDefault); // 
+		fJavawButton.setText(PDEUIMessages.BasicLauncherTab_javaExecDefault); //
 		fJavawButton.addSelectionListener(fListener);
 
 		fJavaButton = new Button(composite, SWT.RADIO);

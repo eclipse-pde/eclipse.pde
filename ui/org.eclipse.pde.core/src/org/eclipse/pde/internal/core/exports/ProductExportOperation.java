@@ -153,7 +153,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getPaths()
 	 */
 	@Override

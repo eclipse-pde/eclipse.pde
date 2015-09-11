@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -55,7 +55,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	 * the plug-in in the schema registry, then tries additional source locations,
 	 * then looks for a co-located plug-in, then looks in the additional search
 	 * path locations.
-	 * 
+	 *
 	 * @param pluginID ID of the plug-in owning the schema
 	 * @param path the path to the schema inside the plug-in
 	 * @param parentURL url of the parent schema file

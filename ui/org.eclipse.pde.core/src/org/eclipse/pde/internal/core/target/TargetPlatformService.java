@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.*;
 
 /**
  * Target platform service implementation.
- * 
+ *
  * @since 3.5
  */
 public class TargetPlatformService implements ITargetPlatformService {
@@ -79,7 +79,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	/**
 	 * The target service should be obtained by requesting the {@link ITargetPlatformService} from OSGi. This
 	 * method should only be used internally be PDE.
-	 * 
+	 *
 	 * @return The singleton implementation of this service
 	 */
 	public synchronized static ITargetPlatformService getDefault() {
@@ -208,7 +208,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	/**
 	 * Finds and returns all target definition handles defined by workspace files
-	 * 
+	 *
 	 * @return all target definition handles in the workspace
 	 */
 	private List<WorkspaceFileTargetHandle> findWorkspaceTargetDefinitions() {
@@ -314,7 +314,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * This method will not update the stored {@link ICoreConstants#WORKSPACE_TARGET_HANDLE},
 	 * as it should only be called from LoadTargetDefinitionJob which does additional
 	 * steps to reset the target.
-	 * 
+	 *
 	 * @param target the new workspace target definition
 	 */
 	public void setWorkspaceTargetDefinition(ITargetDefinition target) {
@@ -325,7 +325,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * Sets active target definition handle if not yet set. If an existing target
 	 * definition corresponds to workspace target settings, it is selected as the
 	 * active target. If there are no targets that correspond to workspace settings
-	 * a new definition is created. 
+	 * a new definition is created.
 	 */
 	private void initDefaultTargetPlatformDefinition() {
 		String memento = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
@@ -395,16 +395,16 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/**
-	 * Returns a target definition initialized with existing settings from the deprecated 
+	 * Returns a target definition initialized with existing settings from the deprecated
 	 * target platform preferences or <code>null</code> if no deprecated preferences are
 	 * found.
-	 * 
+	 *
 	 * @return a target definition initialized with existing settings or <code>null</code>
 	 */
 	@SuppressWarnings("deprecation")
 	public ITargetDefinition newTargetFromPreferences() {
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		// See if the old preference for the primary target platform location exist 
+		// See if the old preference for the primary target platform location exist
 		boolean useThis = preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS);
 		String platformPath = preferences.getString(ICoreConstants.PLATFORM_PATH);
 		if (useThis || (platformPath != null && platformPath.length() > 0)) {
@@ -423,7 +423,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	/**
 	 * Returns the given string or <code>null</code> if the empty string.
-	 * 
+	 *
 	 * @param value
 	 * @return value or <code>null</code>
 	 */
@@ -653,7 +653,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 
 		// Compare the platform bundles against the definition ones and collect any missing bundles
-		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$ 
+		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 		TargetBundle[] bundles = target.getAllBundles();
 		Set<NameVersionDescriptor> alreadyConsidered = new HashSet<NameVersionDescriptor>(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {

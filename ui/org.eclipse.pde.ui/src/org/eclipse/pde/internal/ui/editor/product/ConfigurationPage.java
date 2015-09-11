@@ -24,7 +24,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * Configuration page of the product editor
- * 
+ *
  * @see ProductEditor
  * @see ConfigurationSection
  * @see PluginConfigurationSection

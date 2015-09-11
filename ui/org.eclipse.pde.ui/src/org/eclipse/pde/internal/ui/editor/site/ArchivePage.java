@@ -17,7 +17,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
- * 
+ *
  * Features page.
  */
 public class ArchivePage extends PDEFormPage {

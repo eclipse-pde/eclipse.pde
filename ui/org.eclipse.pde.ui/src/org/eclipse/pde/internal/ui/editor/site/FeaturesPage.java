@@ -19,7 +19,7 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
- * 
+ *
  * Features page.
  */
 public class FeaturesPage extends PDEFormPage {

@@ -201,7 +201,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 			// Package name without the trailing dot
 			packageName = currentContent.substring(0, index).toCharArray();
 		} else {
-			// There is a package qualification, followed by a dot, and 
+			// There is a package qualification, followed by a dot, and
 			// a type fragment
 			// Type name without the package qualification
 			typeName = currentContent.substring(index + 1).toCharArray();

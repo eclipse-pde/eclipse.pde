@@ -69,7 +69,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 
 	/**
 	 * Creates the options to be displayed on the template wizard.
-	 * Various string options, blank fields and a multiple choice 
+	 * Various string options, blank fields and a multiple choice
 	 * option are used.
 	 */
 	private void createOptions() {
@@ -112,7 +112,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
+		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
@@ -122,7 +122,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		// This method creates the extension point structure through the use
 		// of IPluginElement objects. The element attributes are set based on
-		// user input from the wizard page as well as values required for the 
+		// user input from the wizard page as well as values required for the
 		// operation of the extension point.
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
@@ -148,7 +148,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	@Override
 	protected String getFormattedPackageName(String id) {
 		// Package name addition to create a location for containing
-		// any classes required by the decorator. 
+		// any classes required by the decorator.
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)
 			return packageName + ".perspectives"; //$NON-NLS-1$

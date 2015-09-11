@@ -27,7 +27,7 @@ public class SimpleCSRemoveStepAction extends Action {
 	private ISimpleCSObject fObjectToSelect;
 
 	/**
-	 * 
+	 *
 	 */
 	public SimpleCSRemoveStepAction() {
 		setText(SimpleActionMessages.SimpleCSRemoveStepAction_actionText);
@@ -52,7 +52,7 @@ public class SimpleCSRemoveStepAction extends Action {
 		if (fItem != null) {
 			// Parent can only be a cheat sheet
 			ISimpleCS cheatsheet = (ISimpleCS) fItem.getParent();
-			// Determine the item to select after the deletion takes place 
+			// Determine the item to select after the deletion takes place
 			determineItemToSelect(cheatsheet);
 			// Remove the item
 			cheatsheet.removeItem(fItem);

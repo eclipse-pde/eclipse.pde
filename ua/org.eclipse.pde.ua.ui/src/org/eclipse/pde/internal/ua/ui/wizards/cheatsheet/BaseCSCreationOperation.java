@@ -37,7 +37,7 @@ public abstract class BaseCSCreationOperation extends WorkspaceModifyOperation {
 	protected IFile fFile;
 
 	/**
-	 * 
+	 *
 	 */
 	public BaseCSCreationOperation(IFile file) {
 		fFile = file;
@@ -62,12 +62,12 @@ public abstract class BaseCSCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected abstract void createContent() throws CoreException;
 
 	/**
-	 * 
+	 *
 	 */
 	private void openFile() {
 		Display.getCurrent().asyncExec(new Runnable() {

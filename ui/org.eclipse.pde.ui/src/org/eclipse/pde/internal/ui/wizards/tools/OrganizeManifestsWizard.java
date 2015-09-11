@@ -56,7 +56,7 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 	/**
 	 * Collects a list of projects that have a build.properties with the custom=true property
 	 * as the organize manifest processor may not handle it well.
-	 * 
+	 *
 	 * @param elements the elements the refactoring is applying to, usually IProjects
 	 * @return a list of IProjects that have the custom build property set, possibly empty
 	 */

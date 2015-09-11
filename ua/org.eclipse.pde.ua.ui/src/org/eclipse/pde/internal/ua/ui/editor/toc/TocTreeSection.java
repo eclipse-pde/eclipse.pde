@@ -129,7 +129,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Constructs a new TOC tree section.
-	 * 
+	 *
 	 * @param formPage
 	 *            The page that will hold this new tree section
 	 * @param parent
@@ -161,7 +161,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse
 	 * .ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
@@ -189,7 +189,7 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Adds a link (with hand cursor) for tree 'Collapse All' action, which
 	 * collapses the TOC tree down to the second level
-	 * 
+	 *
 	 * @param section
 	 *            The section that the toolbar will belong to
 	 * @param toolkit
@@ -213,7 +213,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Create the tree widget that will contain the TOC
-	 * 
+	 *
 	 * @param container
 	 *            The container of the tree widget
 	 * @param toolkit
@@ -300,7 +300,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */
 	public boolean setFormInput(Object object) {
@@ -345,7 +345,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse
 	 * .jface.viewers.IStructuredSelection)
@@ -440,7 +440,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu
 	 * (org.eclipse.jface.action.IMenuManager)
@@ -515,7 +515,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Add the addition actions (Topic, Link, Anchor) to the specified submenu
-	 * 
+	 *
 	 * @param submenu
 	 *            The submenu to add the addition actions to
 	 * @param tocObject
@@ -545,7 +545,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Add the remove action to the context menu.
-	 * 
+	 *
 	 * @param manager
 	 *            The context menu to add the remove action to
 	 * @param tocObject
@@ -565,7 +565,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java
 	 * .lang.Object, java.lang.Object[])
@@ -576,7 +576,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang
 	 * .String)
@@ -599,7 +599,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java
 	 * .lang.Object, java.lang.Object[])
@@ -610,7 +610,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.TreeSection#handleDoubleClick(org.
 	 * eclipse.jface.viewers.IStructuredSelection)
@@ -629,7 +629,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Opens a document with the specified path
-	 * 
+	 *
 	 * @param path
 	 *            a path to a resource, relative to this TOC's root project
 	 */
@@ -781,14 +781,14 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Perform a drop of the specified objects on the target in the widget
-	 * 
+	 *
 	 * @param currentTarget
 	 *            The object that the drop will occur near/on
 	 * @param dropped
 	 *            The dropped objects
 	 * @param location
 	 *            The location of the drop relative to the target
-	 * 
+	 *
 	 * @return true iff the drop was successful
 	 */
 	public boolean performDrop(Object currentTarget, Object dropped,
@@ -850,7 +850,7 @@ public class TocTreeSection extends TreeSection {
 	 * Determine the parent object that a drop will occur under, based on the
 	 * relative location of the drop and the ability of the target to be a
 	 * parent
-	 * 
+	 *
 	 * @param dropTarget
 	 *            The target that the drop occurs near/on
 	 * @param dropLocation
@@ -917,14 +917,14 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Get the TocObject representations of a group of dropped objects.
-	 * 
+	 *
 	 * @param droppings
 	 *            The objects that are dropped; can be file path Strings or
 	 *            deserialized TocObjects
-	 * 
+	 *
 	 * @param targetParent
 	 *            The designated parent of the dropped objects
-	 * 
+	 *
 	 * @return a list of the (reconnected) TocObject representations of the
 	 *         dropped objects
 	 */
@@ -994,12 +994,12 @@ public class TocTreeSection extends TreeSection {
 	 * Generate the title of a Topic created via dragging in an HTML page. Use
 	 * the title of the HTML page, or generate a name based on the target parent
 	 * if no title exists.
-	 * 
+	 *
 	 * @param targetParent
 	 *            The designated parent of this topic
 	 * @param path
 	 *            The path to the HTML file
-	 * 
+	 *
 	 * @return The generated name of the Topic.
 	 */
 	private String generateTitle(TocTopic targetParent, Path path) {
@@ -1023,12 +1023,12 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Create a new Topic node using the model's factory.
-	 * 
+	 *
 	 * @param parent
 	 *            The designated parent for the new topic
 	 * @param path
 	 *            The file that this Topic will link to
-	 * 
+	 *
 	 * @return the newly created topic
 	 */
 	private TocTopic makeNewTocTopic(TocObject parent, IFile file) {
@@ -1037,12 +1037,12 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Create a new Link node using the model's factory.
-	 * 
+	 *
 	 * @param parent
 	 *            The designated parent for the new link
 	 * @param path
 	 *            The file that this link will be associated with
-	 * 
+	 *
 	 * @return the newly created link
 	 */
 	private TocLink makeNewTocLink(TocObject parent, IFile file) {
@@ -1051,7 +1051,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected
 	 * (int)
@@ -1082,7 +1082,7 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Handle the addition of an object by preparing and running the specified
 	 * action.
-	 * 
+	 *
 	 * @param action
 	 *            The action to run for the addition
 	 */
@@ -1113,7 +1113,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Handle the addition of multiple initialized objects to the TOC.
-	 * 
+	 *
 	 * @param objectsToAdd
 	 *            The objects to be added
 	 * @param tocTarget
@@ -1186,7 +1186,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Remove the items listed from the TOC.
-	 * 
+	 *
 	 * @param itemsToRemove
 	 *            The list of items to remove from the TOC
 	 */
@@ -1202,7 +1202,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Handle the dragging of objects out of this TOC.
-	 * 
+	 *
 	 * @param itemsDragged
 	 *            The items dragged out of the TOC
 	 */
@@ -1216,7 +1216,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Move an object within the TOC.
-	 * 
+	 *
 	 * @param positionFlag
 	 *            The direction that the object will move
 	 */
@@ -1242,7 +1242,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse
 	 * .pde.core.IModelChangedEvent)
@@ -1280,7 +1280,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * The model is stale, refresh the UI
-	 * 
+	 *
 	 * @param event
 	 *            The world-change event
 	 */
@@ -1290,7 +1290,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Handle insertions in the model
-	 * 
+	 *
 	 * @param event
 	 *            the insertion event
 	 */
@@ -1312,7 +1312,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Handle removals in the model
-	 * 
+	 *
 	 * @param event
 	 *            the removal event
 	 */
@@ -1329,7 +1329,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * An object was removed, update the UI to respond to the removal
-	 * 
+	 *
 	 * @param object
 	 *            The object that was removed
 	 */
@@ -1354,7 +1354,7 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Handle an update to a TocObject's properties
-	 * 
+	 *
 	 * @param event
 	 *            the update event
 	 */
@@ -1370,7 +1370,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
 	public void refresh() {
@@ -1385,7 +1385,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.TreeSection#createTreeViewer(org.eclipse
 	 * .swt.widgets.Composite, int)
@@ -1398,7 +1398,7 @@ public class TocTreeSection extends TreeSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {

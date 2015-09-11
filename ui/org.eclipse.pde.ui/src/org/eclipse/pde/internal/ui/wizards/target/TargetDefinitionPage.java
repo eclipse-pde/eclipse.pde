@@ -33,7 +33,7 @@ public abstract class TargetDefinitionPage extends WizardPage {
 
 	/**
 	 * Returns the target being edited.
-	 * 
+	 *
 	 * @return target definition or <code>null</code>
 	 */
 	public ITargetDefinition getTargetDefinition() {
@@ -50,7 +50,7 @@ public abstract class TargetDefinitionPage extends WizardPage {
 
 	/**
 	 * Returns the target service or <code>null</code> if none.
-	 * 
+	 *
 	 * @return target service or <code>null</code>
 	 */
 	protected static ITargetPlatformService getTargetService() {

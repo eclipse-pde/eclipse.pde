@@ -26,13 +26,13 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject
 
 /**
  * Provides helper methods to create and validate cheatsheet model elements.
- * Two sets of factory methods are provided: ones that generate valid cheatsheat 
+ * Two sets of factory methods are provided: ones that generate valid cheatsheat
  * XML tags and second that build cheatsheet model using API. Both generate the same data
  * that can be validated using validate* methods.
  *
  */
 public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
-	
+
 	protected ISimpleCSAction createAction() {
 		ISimpleCSAction action = fModel.getFactory().createSimpleCSAction(null);
 		action.setClazz("org.eclipse.some.Clazz");
@@ -41,7 +41,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		action.setParam("20", 2);
 		return action;
 	}
-	
+
 	protected ISimpleCSPerformWhen createPerformWhen() {
 		ISimpleCSPerformWhen performWhen = fModel.getFactory().createSimpleCSPerformWhen(null);
 		performWhen.setCondition("some.example.condition");
@@ -60,15 +60,15 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		item.setSkip(true);
 		item.setTitle("Title");
 		item.setDialog(true);
-		
+
 		ISimpleCSDescription description = fModel.getFactory().createSimpleCSDescription(item);
 		description.setContent("Description1");
 		item.setDescription(description);
-		
+
 		ISimpleCSOnCompletion onCompletion = fModel.getFactory().createSimpleCSOnCompletion(item);
 		onCompletion.setContent("On.Completion.Contents");
 		item.setOnCompletion(onCompletion);
-		
+
 		return item;
 	}
 
@@ -84,7 +84,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		for (int i = 0; subitems != null && i < subitems.length; i++) {
 			item.addSubItem(subitems[i]);
 		}
-		
+
 		return new StringBuffer(item.toString());
 	}
 
@@ -93,7 +93,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		subitem.setLabel("label1");
 		subitem.setSkip(true);
 		subitem.setWhen("always");
-		
+
 		return subitem;
 	}
 
@@ -102,7 +102,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		subitem.setValues("repeat.value");
 		return subitem;
 	}
-	
+
 	protected StringBuffer createSimpleCSItem(String subitems, String newline) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<item title=\"Title\">").append(newline);
@@ -110,7 +110,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		buffer.append("</item>").append(newline);
 		return buffer;
 	}
-	
+
 	protected StringBuffer createComplexCSItem(String children, String newline) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<item").append(newline);
@@ -128,7 +128,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		buffer.append("</item>").append(newline);
 		return buffer;
 	}
-	
+
 	protected String createAction(String newline) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<action").append(newline);
@@ -139,7 +139,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		buffer.append("/>").append(newline);
 		return buffer.toString();
 	}
-	
+
 	protected String createPerformWhen(String executables, String newline) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<perform-when").append(newline);
@@ -149,7 +149,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		buffer.append("</perform-when>").append(newline);
 		return buffer.toString();
 	}
-	
+
 	protected String createCommand(String newline) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<command").append(newline);
@@ -158,7 +158,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		buffer.append("/>").append(newline);
 		return buffer.toString();
 	}
-	
+
 	protected String createSubItem(String children, String newline) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<subitem").append(newline);
@@ -170,7 +170,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		buffer.append("</subitem>").append(newline);
 		return buffer.toString();
 	}
-	
+
 	protected String createRepeatedSubItem(String children, String newline) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<repeated-subitem").append(newline);
@@ -180,7 +180,7 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		buffer.append("</repeated-subitem>").append(newline);
 		return buffer.toString();
 	}
-	
+
 	protected String createConditionalSubItem(String children, String newline) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<conditional-subitem").append(newline);
@@ -190,25 +190,25 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		buffer.append("</conditional-subitem>").append(newline);
 		return buffer.toString();
 	}
-	
+
 	protected void validateComplexCSItem(ISimpleCSItem item) {
 		assertTrue(item.getDialog());
 		assertTrue(item.getSkip());
 		assertEquals("Title", item.getTitle());
-		
+
 		ISimpleCSDescription description = item.getDescription();
 		assertNotNull(description);
 		assertEquals(ISimpleCS.TYPE_DESCRIPTION, description.getType());
 		assertEquals(description.getContent(), description.getName());
 		assertEquals("Description1", description.getContent());
-		
+
 		ISimpleCSOnCompletion onCompletion = item.getOnCompletion();
 		assertNotNull(onCompletion);
 		assertEquals(ISimpleCS.TYPE_ON_COMPLETION, onCompletion.getType());
 		assertEquals(ISimpleCS.ELEMENT_ONCOMPLETION, onCompletion.getName());
 		assertEquals("On.Completion.Contents", onCompletion.getContent());
 	}
-	
+
 	protected void validateSubItem(ISimpleCSSubItemObject subitem) {
 		assertTrue(subitem instanceof ISimpleCSSubItem);
 		assertEquals(ISimpleCSConstants.TYPE_SUBITEM, subitem.getType());
@@ -218,19 +218,19 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		assertTrue(simpleSubitem.getSkip());
 		assertEquals("always", simpleSubitem.getWhen());
 	}
-	
+
 	protected void validateRepeatedSubItem(ISimpleCSSubItemObject subitem) {
 		assertTrue(subitem instanceof ISimpleCSRepeatedSubItem);
 		assertEquals(ISimpleCSConstants.TYPE_REPEATED_SUBITEM, subitem.getType());
 		assertEquals("repeat.value", ((ISimpleCSRepeatedSubItem) subitem).getValues());
 	}
-	
+
 	protected void validateConditionalSubItem(ISimpleCSSubItemObject subitem) {
 		assertTrue(subitem instanceof ISimpleCSConditionalSubItem);
 		assertEquals(ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM, subitem.getType());
 		assertEquals("please.do", ((ISimpleCSConditionalSubItem) subitem).getCondition());
 	}
-	
+
 	protected void validateSubItemsCount(int expected, ISimpleCSItem item) {
 		assertTrue(item.hasSubItems());
 		assertEquals(expected, item.getSubItemCount());
@@ -238,25 +238,25 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		assertNotNull(subitems);
 		assertEquals(expected, subitems.length);
 	}
-	
+
 	protected void validateItemsCount(int expected, ISimpleCS model) {
 		assertTrue(model.hasItems());
 		assertEquals(expected, model.getItemCount());
 		ISimpleCSItem[] items = model.getItems();
 		assertEquals(expected, items.length);
 	}
-	
+
 	protected void validateAction(ISimpleCSRunContainerObject executable) {
 		assertNotNull(executable);
 		assertTrue(executable instanceof ISimpleCSAction);
 		ISimpleCSAction action = (ISimpleCSAction) executable;
-		
+
 		String[] params = action.getParams();
 		assertNotNull(params);
 		assertEquals(2, params.length);
 		assertEquals("param1.value", params[0]);
 		assertEquals("20", params[1]);
-		
+
 		assertEquals("org.eclipse.some.Clazz", action.getClazz());
 		assertEquals("org.eclipse.pde.plugin.xyz", action.getPluginId());
 		assertEquals(null, action.getParam(0)); // params are indexed starting with 1
@@ -264,22 +264,22 @@ public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 		assertEquals("20", action.getParam(2));
 		assertEquals(null, action.getParam(3));
 	}
-	
+
 	protected void validateCommand(ISimpleCSRunContainerObject executable) {
 		assertNotNull(executable);
 		assertTrue(executable instanceof ISimpleCSCommand);
 		ISimpleCSCommand command = (ISimpleCSCommand) executable;
-		
+
 		assertTrue(command.getRequired());
 		assertEquals("org.eclipse.my.command", command.getSerialization());
 	}
-	
+
 	protected void validatePerformWhen(ISimpleCSRunContainerObject executable) {
 		assertNotNull(executable);
 		assertTrue(executable instanceof ISimpleCSPerformWhen);
 		ISimpleCSPerformWhen performWhen = (ISimpleCSPerformWhen) executable;
-		
+
 		assertEquals("some.example.condition", performWhen.getCondition());
 	}
-	
+
 }

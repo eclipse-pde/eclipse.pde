@@ -24,13 +24,13 @@ public class Activator extends Plugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.pde.ds.core"; //$NON-NLS-1$
-	
+
 	// The content type ID
 	public static final String CONTENT_TYPE_ID = "org.eclipse.pde.ds.core.content-type"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -52,7 +52,7 @@ public class Activator extends Plugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
+
 	public static void log(IStatus status) {
 		if (status != null) {
 			ResourcesPlugin.getPlugin().getLog().log(status);

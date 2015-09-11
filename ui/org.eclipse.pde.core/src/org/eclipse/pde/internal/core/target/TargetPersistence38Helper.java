@@ -31,7 +31,7 @@ import org.w3c.dom.*;
  * bundle restrictions are set at the target level rather than the bundle container
  * level.  In addition, features can be use on the included settings to restrict
  * by feature. In 3.8 the custom target locations can be contributed
- * 
+ *
  * @see TargetDefinitionPersistenceHelper
  */
 public class TargetPersistence38Helper {
@@ -40,7 +40,7 @@ public class TargetPersistence38Helper {
 
 	<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 	<?pde version="3.8"?>
-	
+
 	<target name="test" sequenceNumber="9">
 	<locations>
 	<location path="${eclipse_home}" type="Directory"/>
@@ -58,7 +58,7 @@ public class TargetPersistence38Helper {
 	</location>
 	</locations>
 	</target>
-	
+
 	*/
 	public static void initFromDoc(ITargetDefinition definition, Element root) {
 		String name = root.getAttribute(TargetDefinitionPersistenceHelper.ATTR_NAME);
@@ -198,7 +198,7 @@ public class TargetPersistence38Helper {
 	 * to the appropriate set (in 3.5 each container had included/optional, in 3.6 only the target has included/optional).  The
 	 * sets may be null to indicate that no container has specified inclusion restrictions yet.
 	 * In 3.8 the target location types can be contributed
-	 * 
+	 *
 	 * @param location document element representing a bundle container
 	 * @return target location instance
 	 * @throws CoreException

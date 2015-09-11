@@ -90,7 +90,7 @@ public class DependencyAnalysisSection extends PDESection {
 			IPlugin plugin = ((IPluginModel) model).getPlugin();
 			DependencyLoop[] loops = DependencyLoopFinder.findLoops(plugin);
 			if (loops.length == 0)
-				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.DependencyAnalysisSection_loops, PDEUIMessages.DependencyAnalysisSection_noCycles); // 
+				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.DependencyAnalysisSection_loops, PDEUIMessages.DependencyAnalysisSection_noCycles); //
 			else {
 				LoopDialog dialog = new LoopDialog(PDEPlugin.getActiveWorkbenchShell(), loops);
 				dialog.open();

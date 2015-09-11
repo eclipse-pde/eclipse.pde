@@ -23,13 +23,13 @@ import org.osgi.framework.Constants;
 /**
  * Supports target weaving (combining the target platform with workspace
  * projects to generate a woven target platform).
- * 
+ *
  * @since 3.4
  */
 public class TargetWeaver {
 
 	/**
-	 * Whether the running platform is in development mode. 
+	 * Whether the running platform is in development mode.
 	 */
 	private static boolean fgIsDev = false;
 
@@ -55,7 +55,7 @@ public class TargetWeaver {
 
 	/**
 	 * Returns the dev.properties as a property store.
-	 * 
+	 *
 	 * @return properties
 	 */
 	protected static Properties getDevProperties() {
@@ -97,8 +97,8 @@ public class TargetWeaver {
 
 	/**
 	 * Updates the bundle class path if this manifest refers to a project in development
-	 * mode from the launching workspace. 
-	 * 
+	 * mode from the launching workspace.
+	 *
 	 * @param manifest manifest to update
 	 */
 	public static void weaveManifest(Map<String, String> manifest) {
@@ -121,7 +121,7 @@ public class TargetWeaver {
 	/**
 	 * When launching a secondary runtime workbench, all projects already in dev mode
 	 * must continue in dev mode such that their class files are found.
-	 * 
+	 *
 	 * @param properties dev.properties
 	 */
 	public static void weaveDevProperties(Properties properties) {
@@ -140,9 +140,9 @@ public class TargetWeaver {
 
 	/**
 	 * If a source annotation is pointing to a host project that is being wove, returns
-	 * an empty string so that the source annotation is the root of the project. 
+	 * an empty string so that the source annotation is the root of the project.
 	 * Otherwise returns the given library name.
-	 *   
+	 *
 	 * @param model plug-in we are attaching source for
 	 * @param libraryName the standard library name
 	 * @return empty string or the standard library name

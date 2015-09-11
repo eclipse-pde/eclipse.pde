@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -169,7 +169,7 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	/**
 	 * Return the feature info for the given info type or <code>null</code> if
 	 * the expected information does not exist.
-	 * 
+	 *
 	 * @param infoType One of {@link IFeature#INFO_LICENSE}, {@link IFeature#INFO_COPYRIGHT} or {@link IFeature#INFO_DESCRIPTION}
 	 * @return the requested feature info or <code>null</code>
 	 */
@@ -182,7 +182,7 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 * method may throw a CoreException if the model
 	 * is not editable.
 	 *
-	 * @param plugins a plug-in reference to remove 
+	 * @param plugins a plug-in reference to remove
 	 */
 	public void removePlugins(IFeaturePlugin[] plugins) throws CoreException;
 
@@ -191,7 +191,7 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 * method may throw a CoreException if the model
 	 * is not editable.
 	 *
-	 * @param entries data entries to remove 
+	 * @param entries data entries to remove
 	 */
 	public void removeData(IFeatureData[] entries) throws CoreException;
 

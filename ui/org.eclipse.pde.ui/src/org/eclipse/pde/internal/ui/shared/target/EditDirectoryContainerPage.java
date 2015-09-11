@@ -34,7 +34,7 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Wizard page for creating a new directory bundle container.
- * 
+ *
  * @see AddBundleContainerWizard
  * @see AddBundleContainerSelectionPage
  * @see ITargetLocation
@@ -62,7 +62,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	private static final String SETTINGS_LOCATION_2 = "location2"; //$NON-NLS-1$
 
 	/**
-	 * Dialog settings key for the third most recent location 
+	 * Dialog settings key for the third most recent location
 	 */
 	private static final String SETTINGS_LOCATION_3 = "location3"; //$NON-NLS-1$
 
@@ -281,10 +281,10 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 
 	/**
 	 * Called whenever the location or another aspect of the container has changed
-	 * in the UI.  Will schedule a UIJob to verify and resolve the container 
+	 * in the UI.  Will schedule a UIJob to verify and resolve the container
 	 * reporting any problems to the user.  If a previous job is running or sleeping
 	 * it will be cancelled.
-	 * 
+	 *
 	 * @param delay a delay to add to the job scheduling
 	 */
 	protected void containerChanged(long delay) {
@@ -299,7 +299,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	/**
 	 * Validate the input fields before a container is created/edited.
 	 * The page's enablement, message and completion should be updated.
-	 * 
+	 *
 	 * @return whether the finish button should be enabled and container creation should continue
 	 */
 	protected boolean validateInput() {
@@ -335,7 +335,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 * Returns a bundle container based on the current inputs to the wizard.
 	 * If a previous container is supplied, any relevant information it stores
 	 * should be copied to the new container.
-	 * 
+	 *
 	 * @param previous previous container to grab information from or <code>null</code> if a new container should be created
 	 * @return a new or modified bundle container
 	 * @throws CoreException

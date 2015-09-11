@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Peter Friese <peter.friese@gentleware.com> - bug 199431
@@ -100,9 +100,9 @@ public abstract class GeneralInfoSection extends PDESection {
 	}
 
 	/**
-	 * Not using the aggregate model from the form editor because it is 
+	 * Not using the aggregate model from the form editor because it is
 	 * a different model instance from the one used by the bundle error
-	 * reporter.  Things get out of sync between the form validator and 
+	 * reporter.  Things get out of sync between the form validator and
 	 * source validator
 	 */
 	protected IPluginModelBase getModelBase() {

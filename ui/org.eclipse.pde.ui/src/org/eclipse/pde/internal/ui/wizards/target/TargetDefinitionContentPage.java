@@ -93,7 +93,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 	/**
 	 * Wrappers the default progress monitor to avoid opening a dialog if the
-	 * operation is blocked.  Instead the blocked message is set as a subtask. 
+	 * operation is blocked.  Instead the blocked message is set as a subtask.
 	 * See bug 276904 [Progress] WizardDialog opens second dialog when blocked
 	 */
 	class ResolutionProgressMonitor extends ProgressMonitorWrapper {
@@ -384,7 +384,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	/**
 	 * Returns the given string or <code>null</code> if the string is empty.
 	 * Used when setting a value in the target definition.
-	 * 
+	 *
 	 * @param value
 	 * @return trimmed value or <code>null</code>
 	 */
@@ -571,9 +571,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 	/**
 	 * Provide a listener for the Add VM Arguments button.
-	 * The listener invokes the <code>VMArgumentsSelectionDialog</code> and 
+	 * The listener invokes the <code>VMArgumentsSelectionDialog</code> and
 	 * updates the selected VM Arguments back in the VM Arguments Text Box
-	 * 
+	 *
 	 * @param textControl
 	 * @return	<code>SelectionListener</code> for the Add VM Arguments button
 	 */
@@ -598,9 +598,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 	/**
 	 * Provide a listener for the Variables button.
-	 * The listener invokes the <code>StringVariableSelectionDialog</code> and 
+	 * The listener invokes the <code>StringVariableSelectionDialog</code> and
 	 * updates the selected Variables back in the VM Arguments Text Box
-	 * 
+	 *
 	 * @param textControl
 	 * @return	<code>SelectionListener</code> for the Variables button
 	 */

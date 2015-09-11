@@ -16,7 +16,7 @@ import org.eclipse.pde.core.IWritable;
 /**
  * Jar entry represents one 'library=folder list' entry
  * in plugin.jars file.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -32,7 +32,7 @@ public interface IBuildEntry extends IWritable {
 	 */
 	public static final String JAR_PREFIX = "source."; //$NON-NLS-1$
 	/**
-	 * The prefix for any key denoting output folders for a particular 
+	 * The prefix for any key denoting output folders for a particular
 	 * JAR.  The suffix will be the name of the JAR.
 	 */
 	public static final String OUTPUT_PREFIX = "output."; //$NON-NLS-1$
@@ -53,7 +53,7 @@ public interface IBuildEntry extends IWritable {
 	public static final String JARS_EXTRA_CLASSPATH = "jars.extra.classpath"; //$NON-NLS-1$
 	/**
 	 * The name of the key that declares additional plug-in dependencies to augment development classpath
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String SECONDARY_DEPENDENCIES = "additional.bundles"; //$NON-NLS-1$

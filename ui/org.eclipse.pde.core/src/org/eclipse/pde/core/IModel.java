@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  * </ul>
  * If a model is not created from a workspace resource file, its underlying
  * resource will be <samp>null </samp>.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
@@ -34,7 +34,7 @@ public interface IModel extends IBaseModel {
 	/**
 	 * Returns a string found in the resource bundle associated with this model
 	 * for the provided key.
-	 * 
+	 *
 	 * @param key
 	 *            the name to use for bundle lookup
 	 * @return the string for the key in the resource bundle, or the key itself
@@ -51,7 +51,7 @@ public interface IModel extends IBaseModel {
 	 * <p>
 	 * With the caveat of stepped loading, all other properties of the
 	 * underlying resource could be used directly (path, project etc.).
-	 * 
+	 *
 	 * @return a workspace resource (file) that this model is associated with,
 	 *         or <samp>null </samp> if the model is not created from a
 	 *         resource.
@@ -60,7 +60,7 @@ public interface IModel extends IBaseModel {
 
 	/**
 	 * Tests if this model is loaded and can be used.
-	 * 
+	 *
 	 * @return <code>true</code> if the model has been loaded
 	 */
 	boolean isLoaded();
@@ -70,7 +70,7 @@ public interface IModel extends IBaseModel {
 	 * from. Models loaded from resources are in sync if underlying resources
 	 * are in sync. Models loaded from files on the file systems are in sync if
 	 * the time stamp matches the model time stamp.
-	 * 
+	 *
 	 * @return <code>true</code> if the model is in sync with the file system.
 	 */
 	boolean isInSync();
@@ -78,7 +78,7 @@ public interface IModel extends IBaseModel {
 	/**
 	 * Returns the last modification time stamp. The model itself does not have
 	 * the time stamp. It is 'borrowed' from the underlying physical object.
-	 * 
+	 *
 	 * @return the time stamp of the underlying physical object.
 	 */
 	long getTimeStamp();
@@ -87,7 +87,7 @@ public interface IModel extends IBaseModel {
 	 * Loads the model directly from an underlying resource. This method does
 	 * nothing if this model has no underlying resource or if there is a buffer
 	 * stage between the model and the resource.
-	 * 
+	 *
 	 * @throws CoreException
 	 *             if errors are encountered during the loading.
 	 */
@@ -97,7 +97,7 @@ public interface IModel extends IBaseModel {
 	 * Loads the model from the provided input stream. This method throws a
 	 * CoreException if errors are encountered during the loading. Upon
 	 * succesful load, 'isLoaded()' should return <samp>true </samp>.
-	 * 
+	 *
 	 * @param source
 	 *            an input stream that should be parsed to load the model
 	 * @param outOfSync
@@ -121,7 +121,7 @@ public interface IModel extends IBaseModel {
 	 * reparse the buffer to sync up. The event that is subsequently fired
 	 * should be used by listeners to discard all caches and/or fully refresh
 	 * views that shows any portion of the model.
-	 * 
+	 *
 	 * @param source
 	 *            an input stream that should be parsed to load the model.
 	 * @param outOfSync
@@ -136,7 +136,7 @@ public interface IModel extends IBaseModel {
 	 * Returns whether this model needs to react to changes in source and
 	 * reconcile them. Only model instances used in editors need to perform this
 	 * task.
-	 * 
+	 *
 	 * @return <code>true</code> if this is a reconciling model,
 	 *         <code>false</code> otherwise.
 	 */

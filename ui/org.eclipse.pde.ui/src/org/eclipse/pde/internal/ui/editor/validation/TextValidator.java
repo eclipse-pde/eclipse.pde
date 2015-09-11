@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public abstract class TextValidator extends AbstractControlValidator {
 	public TextValidator(IManagedForm managedForm, Text control, IProject project, boolean autoValidate) {
 		super(managedForm, control, project);
 		// Turn on / off auto-validation
-		// If auto-validation is on, validation is triggered by modify text 
+		// If auto-validation is on, validation is triggered by modify text
 		// events.  Otherwise, manual calls to validate must be made.
 		fAutoValidate = autoValidate;
 		// Initialize the text validator
@@ -80,7 +80,7 @@ public abstract class TextValidator extends AbstractControlValidator {
 	}
 
 	protected void handleModifyTextEvent(ModifyEvent e) {
-		// Validation is not required if the current text contents is the 
+		// Validation is not required if the current text contents is the
 		// same as the new text contents
 		String newText = getText().getText();
 		if (newText.equals(fCurrentText)) {

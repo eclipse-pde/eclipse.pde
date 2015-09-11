@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -124,7 +124,7 @@ public class ExtensionPointDetails extends PDEDetails {
 			}
 		});
 		boolean editable = getPage().getModel().isEditable();
-		fSchemaEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_schema, PDEUIMessages.ExtensionPointDetails_browse, editable); // 
+		fSchemaEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_schema, PDEUIMessages.ExtensionPointDetails_browse, editable); //
 		fSchemaEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
@@ -245,7 +245,7 @@ public class ExtensionPointDetails extends PDEDetails {
 				IPluginExtensionPoint extPoint = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(pointID);
 				if (e.getHref().equals("search")) { //$NON-NLS-1$
 					new FindReferencesAction(fInput, pluginID).run();
-				} else if (e.getHref().equals("open")) { //$NON-NLS-1$					
+				} else if (e.getHref().equals("open")) { //$NON-NLS-1$
 					if (extPoint == null) {
 						IProject project = getPage().getPDEEditor().getCommonProject();
 						IFile file = project.getFile(fSchemaEntry.getValue());

@@ -34,7 +34,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#getReturns
 	 * ()
@@ -45,7 +45,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#
 	 * getSerialization()
 	 */
@@ -55,7 +55,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#setReturns
 	 * (java.lang.String)
@@ -66,7 +66,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#
 	 * setSerialization(java.lang.String)
 	 */
@@ -76,7 +76,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
@@ -86,7 +86,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
@@ -98,7 +98,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()
@@ -109,7 +109,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isLeafNode()
 	 */

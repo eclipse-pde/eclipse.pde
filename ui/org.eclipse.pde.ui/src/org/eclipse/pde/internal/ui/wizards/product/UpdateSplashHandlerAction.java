@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -86,7 +86,7 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void reset() {
 		fModel = null;
@@ -241,7 +241,7 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		// Point
 		extension.setPoint(F_SPLASH_HANDLERS_EXTENSION);
 		// NO id
-		// NO name 
+		// NO name
 		// Create the extension's children
 		createExtensionChildrenSplashHandlers(extension);
 
@@ -261,7 +261,7 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		// Ensure element was defined and add it to the extension
 		if (splashHandlerElement != null) {
 			// Extension uses the first element only when choosing a splash
-			// handler. Always set as the first extension element to 
+			// handler. Always set as the first extension element to
 			// override any previous elements
 			extension.add(0, splashHandlerElement);
 		}
@@ -273,7 +273,7 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		// Ensure element was defined and add it to the extension
 		if (productBindingElement != null) {
 			// Extension uses the first element only when choosing a splash
-			// handler. Always set as the first extension element to 
+			// handler. Always set as the first extension element to
 			// override any previous elements
 			extension.add(1, productBindingElement);
 		}
@@ -327,12 +327,12 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 		// Find a matching pre-generated product binding element
 		IPluginElement productBindingElement = findProductBindingElement(extension);
-		// Remove any product binding elements bound to the target product but 
+		// Remove any product binding elements bound to the target product but
 		// NOT bound to the target splash ID (if any elements are found)
 		// The splash handler extension provider uses the first product
 		// binding it finds in the extension.
-		// By removing all product bindings bound to a single product, we can 
-		// override an existing splash handler with another existing 
+		// By removing all product bindings bound to a single product, we can
+		// override an existing splash handler with another existing
 		// splash handler.
 		removeMatchingProductBindingElements(extension);
 		// Check to see if one was found
@@ -364,13 +364,13 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 					IPluginAttribute productIDAttribute = element.getAttribute(F_ATTRIBUTE_PRODUCT_ID);
 					// (1) Remove any product binding that has an undefined
 					// product ID or splash ID
-					// (2) Remove any product binding bound to the target 
+					// (2) Remove any product binding bound to the target
 					// product ID but NOT bound to the target splash ID
 					if ((productIDAttribute == null) || (PDETextHelper.isDefined(productIDAttribute.getValue()) == false) || (splashIDAttribute == null) || (PDETextHelper.isDefined(splashIDAttribute.getValue()) == false)) {
-						// Remove product binding element 
+						// Remove product binding element
 						extension.remove(element);
 					} else if (productIDAttribute.getValue().equals(fFieldProductID) && (splashIDAttribute.getValue().equals(fFieldSplashID) == false)) {
-						// Remove product binding element 
+						// Remove product binding element
 						extension.remove(element);
 					}
 				}
@@ -393,7 +393,7 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 				if (element.getName().equals(F_ELEMENT_SPLASH_HANDLER)) {
 					// Get the id attribute
 					IPluginAttribute idAttribute = element.getAttribute(F_ATTRIBUTE_ID);
-					// Check for the generated ID 
+					// Check for the generated ID
 					if ((idAttribute != null) && PDETextHelper.isDefined(idAttribute.getValue()) && idAttribute.getValue().equals(fFieldID)) {
 						// Matching element found
 						return element;
@@ -443,7 +443,7 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 				if (element.getName().equals(F_ELEMENT_PRODUCT_BINDING)) {
 					// Get the id attribute
 					IPluginAttribute splashIDAttribute = element.getAttribute(F_ATTRIBUTE_SPLASH_ID);
-					// Check for the generated ID 
+					// Check for the generated ID
 					if ((splashIDAttribute != null) && PDETextHelper.isDefined(splashIDAttribute.getValue()) && splashIDAttribute.getValue().equals(fFieldSplashID)) {
 						// Matching element found
 						return element;
@@ -462,7 +462,7 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		// Point
 		extension.setPoint(fullExtensionPointID);
 		// NO id
-		// NO name 
+		// NO name
 		// Create the extension's children
 		createExtensionChildrenSplash(extension);
 

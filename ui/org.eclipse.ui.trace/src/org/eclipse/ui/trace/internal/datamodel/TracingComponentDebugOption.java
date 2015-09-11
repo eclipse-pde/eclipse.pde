@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 	 * Construct a new {@link TracingComponentDebugOption} that does not have a parent node set. A parent node is
 	 * required for all {@link TracingComponentDebugOption} instances but can be set at a later time via
 	 * {@link TracingComponentDebugOption#setParent(TracingNode)}.
-	 * 
+	 *
 	 * @param path
 	 *            A non-null path for this debug option
 	 * @param value
@@ -35,7 +35,7 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 
 	/**
 	 * Constructor for a new {@link TracingComponentDebugOption} for a specific parent node.
-	 * 
+	 *
 	 * @param parentNode
 	 *            The parent {@link TracingNode} for this {@link TracingComponentDebugOption}
 	 * @param path
@@ -72,7 +72,7 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -86,7 +86,7 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -148,7 +148,7 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 
 	/**
 	 * Accessor to the debug option path (i.e. bundle/option-path) of this {@link TracingComponentDebugOption}
-	 * 
+	 *
 	 * @return the debug option path (i.e. bundle/option-path) of this {@link TracingComponentDebugOption}
 	 */
 	public String getOptionPath() {
@@ -157,7 +157,7 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 
 	/**
 	 * Accessor to the debug option value of this {@link TracingComponentDebugOption}
-	 * 
+	 *
 	 * @return the debug option value of this {@link TracingComponentDebugOption}
 	 */
 	public String getOptionPathValue() {
@@ -166,7 +166,7 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 
 	/**
 	 * Set the new option-path value
-	 * 
+	 *
 	 * @param newValue
 	 *            A non-null new {@link String} value of the option-path
 	 */
@@ -177,7 +177,7 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 
 	/**
 	 * Set the new option-path value to the specified boolean value
-	 * 
+	 *
 	 * @param newValue
 	 *            A new boolean value of the option-path
 	 */

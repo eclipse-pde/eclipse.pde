@@ -46,7 +46,7 @@ import org.eclipse.ui.progress.UIJob;
  * Editor for target definition (*.target) files.  Interacts with the ITargetDefinition model
  * to modify target attributes.  Uses the target platform service to persist the modified model
  * to the backing file.
- * 
+ *
  * @see ITargetDefinition
  * @see ITargetPlatformService
  */

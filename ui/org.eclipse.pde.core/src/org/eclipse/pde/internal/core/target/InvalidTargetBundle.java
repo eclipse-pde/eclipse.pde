@@ -24,7 +24,7 @@ public class InvalidTargetBundle extends TargetBundle {
 
 	/**
 	 * Creates a new target bundle with the given status and additional bundle information
-	 *  
+	 *
 	 * @param bundleInfo bundle info object containing information about the target content if available (symbolic name, version, location)
 	 * @param status status describing the problem with this content
 	 */

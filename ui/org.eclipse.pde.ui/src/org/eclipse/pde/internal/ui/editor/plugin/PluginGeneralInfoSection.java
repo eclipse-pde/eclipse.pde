@@ -103,7 +103,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				LazyStartHeader[] headers = getLazyStartHeaders();
-				// must block the refresh otherwise we have problems with multiple activation headers. 
+				// must block the refresh otherwise we have problems with multiple activation headers.
 				fBlockListener = true;
 				for (int i = 0; i < headers.length; i++)
 					headers[i].setLazyStart(fLazyStart.getSelection());
@@ -116,7 +116,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 
 	private void createClassEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		boolean isEditable = isEditable();
-		fClassEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_class, PDEUIMessages.GeneralInfoSection_browse, // 
+		fClassEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_class, PDEUIMessages.GeneralInfoSection_browse, //
 				isEditable());
 		fClassEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			@Override

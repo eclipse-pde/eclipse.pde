@@ -346,7 +346,7 @@ public class TracingBlock {
 	/**
 	 * Returns the last selected plug-in as stored in dialog settings or <code>null</code> if no
 	 * previous selection is found.
-	 * 
+	 *
 	 * @return model for the last selected plug-in or <code>null</code>
 	 */
 	private IPluginModelBase getLastSelectedPlugin() {

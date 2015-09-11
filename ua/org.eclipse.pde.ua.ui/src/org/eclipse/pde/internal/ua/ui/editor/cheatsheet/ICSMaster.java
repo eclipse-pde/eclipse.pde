@@ -19,7 +19,7 @@ import org.eclipse.ui.forms.widgets.Section;
 public interface ICSMaster {
 
 	/**
-	 * 
+	 *
 	 */
 	public void updateButtons();
 
@@ -30,7 +30,7 @@ public interface ICSMaster {
 
 	/**
 	 * Special case:  Need to set the selection after the full UI is created
-	 * in order to properly fire an event to summon up the right details 
+	 * in order to properly fire an event to summon up the right details
 	 * section
 	 */
 	public void fireSelection();

@@ -103,8 +103,8 @@ public class PackageExportDescription implements IPackageExportDescription {
 
 	/**
 	 * Returns whether the arrays are equal.
-	 * 
-	 * @param array1 an object array or <code>null</code> 
+	 *
+	 * @param array1 an object array or <code>null</code>
 	 * @param array2 an object array or <code>null</code>
 	 * @return whether the arrays are equal
 	 */

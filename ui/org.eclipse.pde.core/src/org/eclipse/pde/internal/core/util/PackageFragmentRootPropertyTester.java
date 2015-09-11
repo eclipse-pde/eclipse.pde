@@ -21,15 +21,15 @@ import org.eclipse.pde.internal.core.PDECore;
  * a parent of the PDE classpath containers "Plug-in Dependencies or "External Plug-in Libraries".
  * Intended for use with the command/menu framework.  This tester is registered for the type
  * {@link IPackageFragmentRoot}.
- * 
+ *
  * <p>This class must always have a default constructor to function as a property tester</p>
  */
 public class PackageFragmentRootPropertyTester extends PropertyTester {
 
 	/**
-	 * A property indicating a whether a package fragment root belongs to the PDE 
+	 * A property indicating a whether a package fragment root belongs to the PDE
 	 * classpath container.  (value <code>"inPluginContainer"</code>). No expected
-	 * value is required. 
+	 * value is required.
 	 */
 	public static final String PROP_IN_PLUGIN_CONTAINER = "inPluginContainer"; //$NON-NLS-1$
 

@@ -29,7 +29,7 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.dialogs.ISelectionStatusValidator#validate(java.lang.Object
 	 * [])

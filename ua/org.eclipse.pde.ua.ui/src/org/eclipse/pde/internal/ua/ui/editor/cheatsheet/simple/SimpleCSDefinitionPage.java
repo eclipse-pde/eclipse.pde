@@ -36,7 +36,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * SimpleCSPage
- * 
+ *
  */
 public class SimpleCSDefinitionPage extends PDEFormPage implements
 		IModelChangedListener {
@@ -56,7 +56,7 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
@@ -65,7 +65,7 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.
 	 * eclipse.ui.forms.IManagedForm)
@@ -117,7 +117,7 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
 	 */
 	public void dispose() {
@@ -131,7 +131,7 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde
 	 * .core.IModelChangedEvent)
@@ -182,7 +182,7 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#setActive(boolean)
 	 */
 	public void setActive(boolean active) {

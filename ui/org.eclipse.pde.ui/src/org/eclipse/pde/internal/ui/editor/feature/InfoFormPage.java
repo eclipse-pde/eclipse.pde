@@ -19,8 +19,8 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
- * 
- * 
+ *
+ *
  */
 public class InfoFormPage extends PDEFormPage {
 	public static final String PAGE_ID = "info"; //$NON-NLS-1$
@@ -28,7 +28,7 @@ public class InfoFormPage extends PDEFormPage {
 	private InfoSection infoSection;
 
 	/**
-	 * 
+	 *
 	 * @param editor
 	 * @param title
 	 */

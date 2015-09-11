@@ -28,22 +28,22 @@ import org.osgi.framework.ServiceReference;
 
 /**
  * Tests the persistence of target definitions.  Tests memento creation, reading of old target files, and writing of the model.
- * 
- * @since 3.5 
+ *
+ * @since 3.5
  */
 public class TargetDefinitionPersistenceTests extends TestCase {
-	
+
 	public static Test suite() {
 		return new TestSuite(TargetDefinitionPersistenceTests.class);
 	}
-	
+
 	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
 		assertTrue("Target content not equal",((TargetDefinition)targetA).isContentEqual(targetB));
 	}
-	
+
 	/**
 	 * Returns the target platform service or <code>null</code> if none
-	 * 
+	 *
 	 * @return target platform service
 	 */
 	protected ITargetPlatformService getTargetService() {
@@ -53,22 +53,22 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 			return null;
 		return (ITargetPlatformService) PDETestsPlugin.getBundleContext().getService(reference);
 	}
-	
+
 	/**
 	 * Returns the resolved location of the specified bundle container.
-	 * 
+	 *
 	 * @param container bundle container
 	 * @return resolved location
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected String getResolvedLocation(ITargetLocation container) throws CoreException {
 		return container.getLocation(true);
 	}
-	
+
 	/**
 	 * Returns the location of the JDT feature in the running host as
 	 * a path in the local file system.
-	 * 
+	 *
 	 * @return path to JDT feature
 	 */
 	protected IPath getJdtFeatureLocation() {
@@ -87,10 +87,10 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertNotNull("Missing JDT feature", location);
 		return new Path(location);
 	}
-	
+
 	/**
-	 * Tests restoration of a handle to target definition in an IFile 
-	 * @throws CoreException 
+	 * Tests restoration of a handle to target definition in an IFile
+	 * @throws CoreException
 	 */
 	public void testWorkspaceTargetHandleMemento() throws CoreException {
 		ITargetPlatformService service = getTargetService();
@@ -105,12 +105,12 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetHandle handle3 = service.getTarget(file2);
 		assertFalse("Should be different targets", handle.equals(handle3));
 	}
-	
+
 	/**
-	 * Tests restoration of a handle to target definition in local metadata 
-	 * 
-	 * @throws CoreException 
-	 * @throws InterruptedException 
+	 * Tests restoration of a handle to target definition in local metadata
+	 *
+	 * @throws CoreException
+	 * @throws InterruptedException
 	 */
 	public void testLocalTargetHandleMemento() throws CoreException, InterruptedException {
 		ITargetPlatformService service = getTargetService();
@@ -123,12 +123,12 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetHandle handle3 = service.newTarget().getHandle();
 		assertFalse("Should be different targets", handle.equals(handle3));
 	}
-	
+
 	/**
 	 * Tests restoration of a handle to target definition in external URI
-	 * 
-	 * @throws CoreException 
-	 * @throws InterruptedException 
+	 *
+	 * @throws CoreException
+	 * @throws InterruptedException
 	 */
 	public void testExternalFileTargetHandleMemento() throws CoreException, InterruptedException {
 		ITargetPlatformService service = getTargetService();
@@ -153,30 +153,30 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetHandle handle3 = service.getTarget(uri2);
 		assertFalse("Should be different targets", handle.equals(handle3));
 	}
-	
+
 	/**
-	 * Tests that a complex metadata based target definition can be serialized to xml, 
+	 * Tests that a complex metadata based target definition can be serialized to xml,
 	 * then deserialized without any loss of data.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testPersistComplexMetadataDefinition() throws Exception {
 		ITargetDefinition definitionA = getTargetService().newTarget();
 		initComplexDefiniton(definitionA);
-		
+
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		TargetDefinitionPersistenceHelper.persistXML(definitionA, outputStream);
 		ITargetDefinition definitionB = getTargetService().newTarget();
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
-		
+
 		assertTargetDefinitionsEqual(definitionA, definitionB);
 	}
-	
+
 	/**
-	 * Tests that a complex workspace file based target definition can be serialized to xml, 
+	 * Tests that a complex workspace file based target definition can be serialized to xml,
 	 * then deserialized without any loss of data.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testPersistComplexWorkspaceDefinition() throws Exception {
@@ -194,7 +194,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 			initComplexDefiniton(definitionA);
 			getTargetService().saveTargetDefinition(definitionA);
 			ITargetDefinition definitionB = getTargetService().getTarget(target).getTargetDefinition();
-							
+
 			assertTargetDefinitionsEqual(definitionA, definitionB);
 		} finally {
 			if (project.exists()){
@@ -203,8 +203,8 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 			assertFalse("Could not delete test project",project.exists());
 		}
 	}
-	
-	
+
+
 	protected void initComplexDefiniton(ITargetDefinition definition) throws URISyntaxException {
 		definition.setName("name");
 		definition.setOS("os");
@@ -214,13 +214,13 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		definition.setProgramArguments("program\nargs");
 		definition.setVMArguments("vm\nargs");
 		definition.setJREContainer(JavaRuntime.newDefaultJREContainerPath());
-		
+
 		NameVersionDescriptor[] implicit = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.jdt.launching", null),
 				new NameVersionDescriptor("org.eclipse.jdt.debug", null)
-		};			
+		};
 		definition.setImplicitDependencies(implicit);
-		
+
 		// Directory container
 		ITargetLocation dirContainer = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
 		// Profile container with specific config area
@@ -234,23 +234,23 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetLocation featureContainer = getTargetService().newFeatureLocation("${eclipse_home}", "org.eclipse.jdt", version);
 		// Profile container restricted to just two bundles
 		ITargetLocation restrictedProfileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
-	
+
 		// Site bundle containers with different settings
 		IUBundleContainer siteContainer = (IUBundleContainer)getTargetService().newIULocation(new IInstallableUnit[]{}, new URI[]{new URI("TESTURI"), new URI("TESTURI2")}, IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS);
 		IUBundleContainer siteContainer2 = (IUBundleContainer)getTargetService().newIULocation(new String[]{"unit1","unit2"},new String[]{"1.0", "2.0"}, new URI[]{new URI("TESTURI"), new URI("TESTURI2")}, IUBundleContainer.INCLUDE_REQUIRED);
-		
+
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.jdt.launching", null),
 				new NameVersionDescriptor("org.eclipse.jdt.debug", null)
-		};	
+		};
 		definition.setIncluded(restrictions);
 		definition.setTargetLocations(new ITargetLocation[]{dirContainer, profileContainer, featureContainer, restrictedProfileContainer, siteContainer, siteContainer2});
 	}
-	
+
 	/**
 	 * Tests that an empty target definition can be serialized to xml, then deserialized without
 	 * any loss of data.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testPersistEmptyDefinition() throws Exception {
@@ -262,11 +262,11 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
 		assertTargetDefinitionsEqual(definitionA, definitionB);
 	}
-	
+
 	/**
 	 * Reads a target definition file from the tests/targets/target-files location
 	 * with the given name. Note that ".target" will be appended.
-	 * 
+	 *
 	 * @param name
 	 * @return target definition
 	 * @throws Exception
@@ -280,16 +280,16 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		stream.close();
 		return target;
 	}
-	
+
 	/**
 	 * Tests that we can de-serialize an old style target definition file (version 3.2) and retrieve the correct
 	 * contents.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadOldBasicTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("basic");
-		
+
 		assertEquals("Wrong name", "Basic", target.getName());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
@@ -299,23 +299,23 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertNull(target.getVMArguments());
 		assertNull(target.getImplicitDependencies());
 		assertNull(target.getJREContainer());
-		
+
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a profile container", containers[0] instanceof ProfileBundleContainer);
 		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
 				new Path(getResolvedLocation(containers[0])));
 	}
-	
+
 	/**
 	 * Tests that we can de-serialize an old style target definition file (version 3.2) and retrieve the correct
 	 * contents.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadOldBasicDirectoryTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("directory");
-		
+
 		assertEquals("Wrong name", "Directory", target.getName());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
@@ -325,23 +325,23 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertNull(target.getVMArguments());
 		assertNull(target.getImplicitDependencies());
 		assertNull(target.getJREContainer());
-		
+
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
 		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"),
 				new Path(getResolvedLocation(containers[0])));
-	}	
-	
+	}
+
 	/**
 	 * Tests that we can de-serialize an old style target definition file (version 3.2) and retrieve the correct
 	 * contents.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadOldSpecificTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("specific");
-		
+
 		assertEquals("Wrong name", "Specific Settings", target.getName());
 		assertEquals("x86", target.getArch());
 		assertEquals("linux", target.getOS());
@@ -350,7 +350,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertEquals("pgm1 pgm2", target.getProgramArguments());
 		assertEquals("-Dfoo=\"bar\"", target.getVMArguments());
 		assertEquals(JavaRuntime.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4")), target.getJREContainer());
-		
+
 		NameVersionDescriptor[] infos = target.getImplicitDependencies();
 		assertEquals("Wrong number of implicit dependencies", 2, infos.length);
 		Set set = new HashSet();
@@ -360,23 +360,23 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertTrue("Missing ", set.remove("org.eclipse.jdt.debug"));
 		assertTrue("Missing ", set.remove("org.eclipse.debug.core"));
 		assertTrue(set.isEmpty());
-		
+
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
 		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"),
 				new Path(getResolvedLocation(containers[0])));
-	}	
-	
+	}
+
 	/**
 	 * Tests that we can de-serialize an old style target definition file (version 3.2) and retrieve the correct
 	 * contents.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadOldAdditionLocationsTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("additionalLocations");
-		
+
 		assertEquals("Wrong name", "Additional Locations", target.getName());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
@@ -386,33 +386,33 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertNull(target.getVMArguments());
 		assertNull(target.getJREContainer());
 		assertNull(target.getImplicitDependencies());
-		
+
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 3, containers.length);
 		assertTrue(containers[0] instanceof ProfileBundleContainer);
 		assertTrue(containers[1] instanceof DirectoryBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
-		
+
 		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
 				new Path(getResolvedLocation(containers[0])));
-		
+
 		String string = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution("${workspace_loc}");
 		assertEquals("Wrong 1st additional location", new Path(string).append("stuff"),
 				new Path(getResolvedLocation(containers[1])));
-		
+
 		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
 				new Path(getResolvedLocation(containers[2])));
-	}		
-	
+	}
+
 	/**
 	 * Tests that we can de-serialize an old style target definition file (version 3.2) and retrieve the correct
 	 * contents.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadOldFeaturesTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("featureLocations");
-		
+
 		assertEquals("Wrong name", "Features", target.getName());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
@@ -422,7 +422,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertNull(target.getVMArguments());
 		assertNull(target.getJREContainer());
 		assertNull(target.getImplicitDependencies());
-		
+
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 2, containers.length);
 		assertTrue(containers[0] instanceof FeatureBundleContainer);
@@ -431,16 +431,16 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertEquals("Wrong feature location", "org.eclipse.jdt", ((FeatureBundleContainer)containers[0]).getFeatureId());
 		assertEquals("Wrong feature location", "org.eclipse.platform", ((FeatureBundleContainer)containers[1]).getFeatureId());
 	}
-	
+
 	/**
 	 * Tests that we can de-serialize an old style target definition file (version 3.2) and retrieve the correct
 	 * contents.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadOldRestrictionsTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("restrictions");
-		
+
 		assertEquals("Wrong name", "Restrictions", target.getName());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
@@ -450,18 +450,18 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertNull(target.getVMArguments());
 		assertNull(target.getJREContainer());
 		assertNull(target.getImplicitDependencies());
-		
+
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of containers", 3, containers.length);
 		assertTrue(containers[0] instanceof ProfileBundleContainer);
 		assertTrue(containers[1] instanceof FeatureBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
-		
+
 		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()), new Path(getResolvedLocation(containers[0])));
 		assertEquals("Wrong 1st additional location", "org.eclipse.jdt",((FeatureBundleContainer)containers[1]).getFeatureId());
 		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
 				new Path(getResolvedLocation(containers[2])));
-		
+
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.debug.core", null),
 				new NameVersionDescriptor("org.eclipse.debug.ui", null),
@@ -469,24 +469,24 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 				new NameVersionDescriptor("org.eclipse.jdt.debug.ui", null),
 				new NameVersionDescriptor("org.eclipse.jdt.launching", null)
 			};
-		
+
 		NameVersionDescriptor[] actual = target.getIncluded();
 		assertNotNull(actual);
 		assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
 		for (int j = 0; j < actual.length; j++) {
 			assertEquals("Wrong restriction", restrictions[j], actual[j]);
 		}
-	}		
-	
+	}
+
 	/**
 	 * Tests that we can de-serialize an old style target definition file (version 3.2)
 	 * that has extra/unsupported tags and retrieve the correct contents.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadOldTargetFileWithUnknownTags() throws Exception {
 		ITargetDefinition target = readOldTarget("extratags");
-		
+
 		assertEquals("Wrong name", "Restrictions", target.getName());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
@@ -496,43 +496,43 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertNull(target.getVMArguments());
 		assertNull(target.getJREContainer());
 		assertNull(target.getImplicitDependencies());
-		
+
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 3, containers.length);
 		assertTrue(containers[0] instanceof ProfileBundleContainer);
 		assertTrue(containers[1] instanceof FeatureBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
-		
+
 		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()), new Path(getResolvedLocation(containers[0])));
 		assertEquals("Wrong 1st additional location", "org.eclipse.jdt",((FeatureBundleContainer)containers[1]).getFeatureId());
 		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
 				new Path(getResolvedLocation(containers[2])));
-		
+
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.debug.core", null),
 				new NameVersionDescriptor("org.eclipse.debug.ui", null),
 				new NameVersionDescriptor("org.eclipse.jdt.debug", null),
 				new NameVersionDescriptor("org.eclipse.jdt.debug.ui", null),
 				new NameVersionDescriptor("org.eclipse.jdt.launching", null)
-		};	
-		
+		};
+
 		NameVersionDescriptor[] actual = target.getIncluded();
 		assertNotNull(actual);
 		assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
 		for (int j = 0; j < actual.length; j++) {
 			assertEquals("Wrong restriction", restrictions[j], actual[j]);
 		}
-	}			
-	
+	}
+
 	/**
 	 * Tests that we can de-serialize an old style target definition file (version 3.2) and retrieve
 	 * the correct contents with optional bundles.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadOldOptionalTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("optional");
-		
+
 		assertEquals("Wrong name", "Optional", target.getName());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
@@ -542,7 +542,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertNull(target.getVMArguments());
 		assertNull(target.getImplicitDependencies());
 		assertNull(target.getJREContainer());
-		
+
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 2, containers.length);
 		assertTrue("Container should be a profile container", containers[0] instanceof ProfileBundleContainer);
@@ -550,7 +550,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
 				new Path(getResolvedLocation(containers[0])));
 		assertEquals("Wrong feature location", "org.eclipse.jdt", ((FeatureBundleContainer)containers[1]).getFeatureId());
-		
+
 		// Old optional settings are added to includes
 		NameVersionDescriptor[] included = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.debug.core", null),
@@ -560,8 +560,8 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 				new NameVersionDescriptor("org.eclipse.jdt.debug", null),
 				new NameVersionDescriptor("org.eclipse.jdt.debug.ui", null),
 				new NameVersionDescriptor("org.eclipse.jdt.launching", null)
-		};	
-		
+		};
+
 		NameVersionDescriptor[] actual = target.getIncluded();
 		assertNotNull(actual);
 		assertEquals("Wrong number of inclusions", included.length, actual.length);
@@ -569,7 +569,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 			assertEquals("Wrong restriction", included[j], actual[j]);
 		}
 	}
-	
+
 	/**
 	 * Test for bug 268709, if the content section is included in the xml, but there are no specific
 	 * plug-ins or features as well as no useAllPlugins=true setting, treat the file as though it did
@@ -577,23 +577,23 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	 */
 	public void testEmptyContentSection() throws Exception {
 		ITargetDefinition target = readOldTarget("emptycontent");
-			
+
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
 		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"),
 				new Path(getResolvedLocation(containers[0])));
-		
+
 		target.resolve(null);
-		
+
 		assertTrue("Should have resolved bundles", target.getBundles().length > 0);
-		
+
 	}
-	
+
 	/**
 	 * Test for bug 264139. Tests that when a target definition specifies "useAllPlugins=true"
 	 * that we ignore specific plug-ins/features specified in the file during migration.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testMigrationOfUseAllWithRestrictions() throws Exception {
@@ -606,11 +606,11 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		validateTypeAndLocation(containers[3], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-test-framework-3.5M5/eclipse}");
 		validateTypeAndLocation(containers[4], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-core-plugins-3.5M5}");
 		validateTypeAndLocation(containers[5], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/3rdparty-bundles}");
-	}	
-	
+	}
+
 	/**
 	 * Validates the type and location of a bundle container.
-	 * 
+	 *
 	 * @param container container to validate
 	 * @param clazz the type of container expected
 	 * @param rawLocation its unresolved location
@@ -620,22 +620,22 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertTrue(clazz.isInstance(container));
 		assertEquals(rawLocation, container.getLocation(false));
 	}
-	
+
 	/**
 	 * Tests that we increment the sequence number correctly when target is modified
 	 * contents.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSequenceNumberChange() throws Exception {
 		ITargetDefinition target = readOldTarget("featureLocations");
-		
+
 		assertEquals("Wrong name", "Features", target.getName());
 		TargetDefinition targetDef = (TargetDefinition) target;
 		int currentSeqNo = targetDef.getSequenceNumber();
 		target.setArch("x86");
 		asssrtSequenceNumber("Arch", currentSeqNo, targetDef);
-		
+
 		currentSeqNo = targetDef.getSequenceNumber();
 		target.setOS("win32");
 		asssrtSequenceNumber("OS", currentSeqNo, targetDef);
@@ -643,11 +643,11 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		currentSeqNo = targetDef.getSequenceNumber();
 		target.setNL("hi_IN");
 		asssrtSequenceNumber("NL", currentSeqNo, targetDef);
-		
+
 		currentSeqNo = targetDef.getSequenceNumber();
 		target.setWS("carbon");
 		asssrtSequenceNumber("WS", currentSeqNo, targetDef);
-		
+
 		ITargetLocation[] newContainers = new ITargetLocation[1];
 		newContainers[0] = new DirectoryBundleContainer("Path");
 		currentSeqNo = targetDef.getSequenceNumber();
@@ -658,7 +658,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	private void asssrtSequenceNumber(String name, int currentSeqNo, TargetDefinition targetDef) {
 		assertEquals("Sequence number did not increment after updating '" + name + "'", currentSeqNo + 1, targetDef.getSequenceNumber());
 	}
-	
+
 	public void testIncludeSource() throws Exception {
 		ITargetDefinition target = readOldTarget("SoftwareSiteTarget");
 		ITargetLocation[] containers = target.getTargetLocations();

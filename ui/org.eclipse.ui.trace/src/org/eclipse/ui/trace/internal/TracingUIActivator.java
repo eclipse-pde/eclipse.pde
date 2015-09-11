@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class TracingUIActivator extends Plugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static TracingUIActivator getDefault() {
@@ -80,7 +80,7 @@ public class TracingUIActivator extends Plugin {
 
 	/**
 	 * Log the specified {@link Exception} to the workspace logging file.
-	 * 
+	 *
 	 * @param ex
 	 *            The {@link Exception} to log
 	 */

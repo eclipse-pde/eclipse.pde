@@ -24,7 +24,7 @@ import org.eclipse.ui.PlatformUI;
  * the list of template options. The options will be created in the order they
  * are added to the list. When the page is made visible, options that require
  * late initialization will be given a chance to initialize.
- * 
+ *
  * @since 2.0
  */
 
@@ -35,7 +35,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 
 	/**
 	 * The constructor.
-	 * 
+	 *
 	 * @param section
 	 *            the section that is contributing this page
 	 * @param options
@@ -53,7 +53,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 	/**
 	 * Creates the page control by creating individual options in the order
 	 * subject to their position in the list.'
-	 * 
+	 *
 	 * @param composite
 	 */
 	@Override
@@ -78,7 +78,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 	/**
 	 * Initializes the options that require late initialization when the page is
 	 * made visible.
-	 * 
+	 *
 	 * @param visible
 	 */
 	@Override

@@ -27,7 +27,7 @@ import org.w3c.dom.*;
  * bundle restrictions are set at the target level rather than the bundle container
  * level.  In addition, features can be use on the included settings to restrict
  * by feature.
- * 
+ *
  * @see TargetDefinitionPersistenceHelper
  */
 public class TargetPersistence36Helper {
@@ -43,7 +43,7 @@ public class TargetPersistence36Helper {
 	</location>
 	</locations>
 	</target>
-	
+
 	*/
 	public static void initFromDoc(ITargetDefinition definition, Element root) throws CoreException {
 		String name = root.getAttribute(TargetDefinitionPersistenceHelper.ATTR_NAME);
@@ -174,7 +174,7 @@ public class TargetPersistence36Helper {
 	 * Uses the given location to create a bundle container.  If the container had included or optional bundles set, add them
 	 * to the appropriate set (in 3.5 each container had included/optional, in 3.6 only the target has included/optional).  The
 	 * sets may be null to indicate that no container has specified inclusion restrictions yet.
-	 * 
+	 *
 	 * @param location document element representing a bundle container
 	 * @return target location instance
 	 * @throws CoreException

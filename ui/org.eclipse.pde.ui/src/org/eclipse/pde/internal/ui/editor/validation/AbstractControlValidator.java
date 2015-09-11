@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -52,8 +52,8 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 
 	protected boolean autoEnable() {
 		boolean isBinaryProject = WorkspaceModelManager.isBinaryProject(fProject);
-		// Enable validator if this is a source projec, the control is enabled 
-		// and the control is not disposed  
+		// Enable validator if this is a source projec, the control is enabled
+		// and the control is not disposed
 		if ((isBinaryProject == false) && fControl.getEnabled() && (fControl.isDisposed() == false)) {
 			return true;
 		}
@@ -91,7 +91,7 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		}
 		// Validate the control
 		fIsValid = validateControl();
-		// If the control is valid, remove all the messages associated with 
+		// If the control is valid, remove all the messages associated with
 		// the control (in case they were not individually removed by the
 		// child class)
 		if (fIsValid) {

@@ -47,7 +47,7 @@ public class DownloadStatsSection extends TableSection {
 	private FormEntry fURLEntry;
 	private TableViewer fArtifactTable;
 	private ISiteModel fModel;
-	
+
 	class ArtifactsContentProvider extends DefaultTableProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -221,7 +221,7 @@ public class DownloadStatsSection extends TableSection {
 			ManifestEditor.openPluginEditor(((SiteBundleAdapter) selected).bundle.getId());
 		}
 	}
-	
+
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
@@ -240,7 +240,7 @@ public class DownloadStatsSection extends TableSection {
 	 * Finds a feature with the same id and version as a site feature. If
 	 * feature is not found, but feature with a M.m.s.qualifier exists it will
 	 * be returned.
-	 * 
+	 *
 	 * @param siteFeature
 	 * @return IFeature or null
 	 */
@@ -368,7 +368,7 @@ public class DownloadStatsSection extends TableSection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param candidates
 	 *            Array of IFeatureModel
 	 * @param monitor
@@ -391,7 +391,7 @@ public class DownloadStatsSection extends TableSection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param candidates
 	 *            Array of IPluginModelBase
 	 * @param monitor

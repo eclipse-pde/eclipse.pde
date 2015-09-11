@@ -21,15 +21,15 @@ public class PDESchemaHelper {
 
 	/**
 	 * Returns valid attributes given a schema attribute
-	 * 
-	 * @param attribute 
+	 *
+	 * @param attribute
 	 * 		a schema identifier attribute (e.g., org.eclipse.ui.perspectives/perspective/@id)
 	 * @return A map with the ids as keys and respective {@link IConfigurationElement} as pairs
 	 */
 	public static Map<String, IConfigurationElement> getValidAttributes(ISchemaAttribute attribute) {
 		Map<String, IConfigurationElement> attributeMap = new HashMap<String, IConfigurationElement>();
 
-		// TODO support multiple 
+		// TODO support multiple
 
 		gatherAttributes(attributeMap, attribute.getBasedOn());
 
@@ -52,11 +52,11 @@ public class PDESchemaHelper {
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns a reference identifier given a schema attribute
-	 * 
-	 * @param attribute 
-	 * 		a schema attribute 
+	 *
+	 * @param attribute
+	 * 		a schema attribute
 	 * @return a reference identifier (e.g., org.eclipse.ui.perspectives/perspective/@id)
 	 */
 	public static String getReferenceIdentifier(ISchemaAttribute attribute) {

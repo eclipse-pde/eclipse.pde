@@ -40,7 +40,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getChildren()
 	 */
@@ -50,7 +50,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
 	 */
@@ -60,7 +60,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
 	 */
 	public String getName() {
@@ -69,7 +69,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
 	 */
 	public int getType() {
@@ -78,7 +78,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
 	 * (org.w3c.dom.Element)
@@ -91,7 +91,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
 	 * (org.w3c.dom.Element)
@@ -102,7 +102,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
 	 */
 	public void reset() {
@@ -111,7 +111,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
 	 * (java.lang.StringBuffer)
@@ -129,7 +129,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
 	 * (java.lang.String, java.io.PrintWriter)
@@ -140,7 +140,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDependency#getFieldTask
 	 * ()
@@ -151,7 +151,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDependency#setFieldTask
 	 * (java.lang.String)
@@ -166,7 +166,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
 	 * org.w3c.dom.Text)

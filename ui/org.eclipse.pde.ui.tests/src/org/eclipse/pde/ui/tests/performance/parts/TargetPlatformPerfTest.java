@@ -38,7 +38,7 @@ import org.osgi.framework.Version;
  *
  * These performance tests do many I/O operations so they iterate a large number of times to account for
  * the inconsistency.
- * 
+ *
  * The example target used in these tests consists of 1000 simple bundles only containing a manifest.  They
  * were generated using {@link TestBundleCreator} and have increasing numbers of required bundles specified in
  * the manifest (ex TestBundle_100 has required bundles of TestBundle_1 to TestBundle_99).
@@ -211,7 +211,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	/**
 	 * Checks that the given model exists and that all it's required bundles exist as
 	 * models in the plugin registry.
-	 * 
+	 *
 	 * @param model model to look up dependencies for
 	 * @param allBundleNames set of symbolic names that have been looked up to prevent stack overflows
 	 */
@@ -239,7 +239,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 
 	/**
 	 * Unzips the given archive to the specified location.
-	 * 
+	 *
 	 * @param location path in the local file system
 	 * @param archivePath path to archive relative to the test plug-in
 	 * @throws IOException

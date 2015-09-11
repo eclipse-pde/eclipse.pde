@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.ds.core.IDSService;
 /**
  * Handles the creation of document nodes representing the types of elements
  * that can exist in a declarative services xml file.
- * 
+ *
  * @since 3.4
  * @see DSModel
  * @see DSDocumentHandler

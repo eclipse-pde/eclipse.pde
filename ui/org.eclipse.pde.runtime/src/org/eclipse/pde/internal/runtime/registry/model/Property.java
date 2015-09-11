@@ -47,27 +47,27 @@ public class Property extends ModelObject implements Comparable {
 	}
 
 	/**
-	 * Compare properties for order. Returns a negative integer, zero, or a positive 
+	 * Compare properties for order. Returns a negative integer, zero, or a positive
 	 * integer as the first argument is less than, equal to, or greater than the second.
-	 * 
+	 *
 	 * <p>
 	 * The {@link Property}s are compared according to the following rules:
 	 * <ul>
 	 * <li>objectClass is always less than everything else</li>
-	 * <li>properties with names starting with "service." are considered "less" 
+	 * <li>properties with names starting with "service." are considered "less"
 	 * 		than other properties.</li>
 	 * <li>regular properties are considered "more" than other properties</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * When sorting an array of properties with the following code:
-	 * 
+	 *
 	 * <pre>
 	 * Property[] properties = ...;
 	 * Arrays.sort(properties, PropertyComparator.INSTANCE);
 	 * </pre>
-	 * 
+	 *
 	 * the result is something like this:
 	 * <ul>
 	 * <li>objectClass</li>
@@ -75,11 +75,11 @@ public class Property extends ModelObject implements Comparable {
 	 * <li>service.id</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param obj other property to be compared against
-	 * 
-	 * @return a negative integer, zero, or a positive integer as the first 
-	 * 			argument is less than, equal to, or greater than the second. 
+	 *
+	 * @return a negative integer, zero, or a positive integer as the first
+	 * 			argument is less than, equal to, or greater than the second.
 	 */
 	public int compareTo(Object obj) {
 		if (!(obj instanceof Property)) {

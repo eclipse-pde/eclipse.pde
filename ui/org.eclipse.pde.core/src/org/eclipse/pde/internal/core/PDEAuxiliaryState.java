@@ -60,14 +60,14 @@ public class PDEAuxiliaryState {
 	/**
 	 * Constructor, gets the plugin info objects stored in the passed state
 	 * and adds them to this state.
-	 * @param state state containing plugin infos to initialize this state with 
+	 * @param state state containing plugin infos to initialize this state with
 	 */
 	protected PDEAuxiliaryState(PDEAuxiliaryState state) {
 		fPluginInfos = new HashMap<String, PluginInfo>(state.fPluginInfos);
 	}
 
 	/**
-	 * Provides a simple way of storing auxiliary data for a plugin 
+	 * Provides a simple way of storing auxiliary data for a plugin
 	 */
 	class PluginInfo {
 		String name;
@@ -95,9 +95,9 @@ public class PDEAuxiliaryState {
 			info.providerName = element.getAttribute(ATTR_PROVIDER);
 		if (element.hasAttribute(ATTR_CLASS))
 			info.className = element.getAttribute(ATTR_CLASS);
-		info.hasExtensibleAPI = "true".equals(element.getAttribute(ATTR_EXTENSIBLE_API)); //$NON-NLS-1$ 
+		info.hasExtensibleAPI = "true".equals(element.getAttribute(ATTR_EXTENSIBLE_API)); //$NON-NLS-1$
 		info.isPatchFragment = "true".equals(element.getAttribute(ATTR_PATCH)); //$NON-NLS-1$
-		info.hasBundleStructure = !"false".equals(element.getAttribute(ATTR_BUNDLE_STRUCTURE)); //$NON-NLS-1$ 
+		info.hasBundleStructure = !"false".equals(element.getAttribute(ATTR_BUNDLE_STRUCTURE)); //$NON-NLS-1$
 		if (element.hasAttribute(ATTR_PROJECT))
 			info.project = element.getAttribute(ATTR_PROJECT);
 		if (element.hasAttribute(ATTR_LOCALIZATION))
@@ -190,11 +190,11 @@ public class PDEAuxiliaryState {
 				if (info.name != null)
 					element.setAttribute(ATTR_NAME, info.name);
 				if (info.hasExtensibleAPI)
-					element.setAttribute(ATTR_EXTENSIBLE_API, "true"); //$NON-NLS-1$ 
+					element.setAttribute(ATTR_EXTENSIBLE_API, "true"); //$NON-NLS-1$
 				if (info.isPatchFragment)
-					element.setAttribute(ATTR_PATCH, "true"); //$NON-NLS-1$ 
+					element.setAttribute(ATTR_PATCH, "true"); //$NON-NLS-1$
 				if (!info.hasBundleStructure)
-					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$ 
+					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$
 				if (info.localization != null)
 					element.setAttribute(ATTR_LOCALIZATION, info.localization);
 				if (info.bundleSourceEntry != null)
@@ -251,7 +251,7 @@ public class PDEAuxiliaryState {
 
 	/**
 	 * Returns whether the auxiliary state exists in the given directory.
-	 * 
+	 *
 	 * @param dir parent directory
 	 * @return whether the state file exist
 	 */
@@ -288,11 +288,11 @@ public class PDEAuxiliaryState {
 				if (plugin.getName() != null)
 					element.setAttribute(ATTR_NAME, plugin.getName());
 				if (ClasspathUtilCore.hasExtensibleAPI(models[i]))
-					element.setAttribute(ATTR_EXTENSIBLE_API, "true"); //$NON-NLS-1$ 
+					element.setAttribute(ATTR_EXTENSIBLE_API, "true"); //$NON-NLS-1$
 				else if (ClasspathUtilCore.isPatchFragment(models[i]))
-					element.setAttribute(ATTR_PATCH, "true"); //$NON-NLS-1$ 
+					element.setAttribute(ATTR_PATCH, "true"); //$NON-NLS-1$
 				if (!(models[i] instanceof IBundlePluginModelBase))
-					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$ 
+					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$
 				if (models[i] instanceof IBundlePluginModelBase) {
 					String localization = ((IBundlePluginModelBase) models[i]).getBundleLocalization();
 					if (localization != null)
@@ -312,7 +312,7 @@ public class PDEAuxiliaryState {
 					Element lib = doc.createElement(ELEMENT_LIB);
 					lib.setAttribute(ATTR_NAME, libraries[j].getName());
 					if (!libraries[j].isExported())
-						lib.setAttribute(ATTR_EXPORTED, "false"); //$NON-NLS-1$ 
+						lib.setAttribute(ATTR_EXPORTED, "false"); //$NON-NLS-1$
 					element.appendChild(lib);
 				}
 				root.appendChild(element);
@@ -338,7 +338,7 @@ public class PDEAuxiliaryState {
 		String className = manifest.get(ICoreConstants.PLUGIN_CLASS);
 		info.className = className != null ? className : (String) manifest.get(Constants.BUNDLE_ACTIVATOR);
 		info.libraries = getClasspath(manifest);
-		info.hasExtensibleAPI = "true".equals(manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
+		info.hasExtensibleAPI = "true".equals(manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$
 		info.isPatchFragment = "true".equals(manifest.get(ICoreConstants.PATCH_FRAGMENT)); //$NON-NLS-1$
 		info.localization = manifest.get(Constants.BUNDLE_LOCALIZATION);
 		info.hasBundleStructure = hasBundleStructure;

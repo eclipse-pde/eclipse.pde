@@ -19,9 +19,9 @@ import org.eclipse.pde.internal.core.*;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Utility class to resolve plug-in and bundle files relative to a project 
+ * Utility class to resolve plug-in and bundle files relative to a project
  * specific bundle root location.
- * 
+ *
  * @since 3.6
  */
 public class PDEProject {
@@ -35,7 +35,7 @@ public class PDEProject {
 	 * Returns the container in the specified project that corresponds to the
 	 * root of bundle related artifacts. May return the project itself
 	 * or a folder within the project.
-	 * 
+	 *
 	 * @param project project
 	 * @return container corresponding to the bundle root
 	 */
@@ -55,7 +55,7 @@ public class PDEProject {
 	/**
 	 * Returns the launch shortcuts configured for this project
 	 * or <code>null</code> if default launchers should be used.
-	 *  
+	 *
 	 * @param project project
 	 * @return configured launch shortcuts or <code>null</code>
 	 */
@@ -74,7 +74,7 @@ public class PDEProject {
 	/**
 	 * Returns the export wizard configured for this project or <code>null</code>
 	 * if default.
-	 * 
+	 *
 	 * @param project project
 	 * @return export wizard identifier or <code>null</code>
 	 */
@@ -89,10 +89,10 @@ public class PDEProject {
 
 	/**
 	 * Sets the root of the bundle related artifacts in the specified project
-	 * to the specified container. When <code>null</code> is specified, the 
+	 * to the specified container. When <code>null</code> is specified, the
 	 * bundle root will be the project itself. The container must be within
 	 * the specified project.
-	 * 
+	 *
 	 * @param project project
 	 * @param root project relative bundle root path, or <code>null</code> (or an empty path)
 	 *  to indicate the root of the bundle is the root of the project
@@ -136,7 +136,7 @@ public class PDEProject {
 	/**
 	 * Returns the resource in the specified project corresponding to its
 	 * <code>MANIFEST.MF</code> file.
-	 * 
+	 *
 	 * @param project project
 	 * @return <code>MANIFEST.MF</code> file that may or may not exist
 	 */
@@ -147,7 +147,7 @@ public class PDEProject {
 	/**
 	 * Returns the resource in the specified project corresponding to its
 	 * <code>build.properties</code>file.
-	 * 
+	 *
 	 * @param project project
 	 * @return <code>build.properties</code> file that may or may not exist
 	 */
@@ -158,7 +158,7 @@ public class PDEProject {
 	/**
 	 * Returns the resource in the specified project corresponding to its
 	 * <code>plugin.xml</code>file.
-	 * 
+	 *
 	 * @param project project
 	 * @return <code>plugin.xml</code> file that may or may not exist
 	 */
@@ -169,7 +169,7 @@ public class PDEProject {
 	/**
 	 * Returns the resource in the specified project corresponding to its
 	 * <code>fragment.xml</code>file.
-	 * 
+	 *
 	 * @param project project
 	 * @return <code>fragment.xml</code> file that may or may not exist
 	 */
@@ -180,7 +180,7 @@ public class PDEProject {
 	/**
 	 * Returns the resource in the specified project corresponding to its
 	 * <code>feature.xml</code>file.
-	 * 
+	 *
 	 * @param project project
 	 * @return <code>feature.xml</code> file that may or may not exist
 	 */
@@ -191,7 +191,7 @@ public class PDEProject {
 	/**
 	 * Returns the resource in the specified project corresponding to its
 	 * <code>.options</code>file.
-	 * 
+	 *
 	 * @param project project
 	 * @return <code>.options</code> file that may or may not exist
 	 */
@@ -202,7 +202,7 @@ public class PDEProject {
 	/**
 	 * Returns the resource in the specified project corresponding to its
 	 * <code>OSGI-INF/</code>folder.
-	 * 
+	 *
 	 * @param project project
 	 * @return <code>OSGI-INF/</code> folder that may or may not exist
 	 */
@@ -213,7 +213,7 @@ public class PDEProject {
 	/**
 	 * Returns the resource in the specified project corresponding to its
 	 * <code>META-INF/</code>folder.
-	 * 
+	 *
 	 * @param project project
 	 * @return <code>META-INF/</code> folder that may or may not exist
 	 */
@@ -223,7 +223,7 @@ public class PDEProject {
 
 	/**
 	 * Returns a file relative to the bundle root of the specified project.
-	 * 
+	 *
 	 * @param project project
 	 * @param path bundle root relative path
 	 * @return file that may or may not exist
@@ -234,7 +234,7 @@ public class PDEProject {
 
 	/**
 	 * Returns a folder relative to the bundle root of the specified project.
-	 * 
+	 *
 	 * @param project project
 	 * @param path bundle root relative path
 	 * @return folder that may or may not exist
@@ -246,7 +246,7 @@ public class PDEProject {
 	/**
 	 * Returns the bundle localization file for the specified bundle project.
 	 * The file may or may not exist.
-	 * 
+	 *
 	 * @param project
 	 * @return bunlde localization file which may or may not exist
 	 */

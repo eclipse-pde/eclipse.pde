@@ -21,7 +21,7 @@ import java.io.PrintWriter;
  * Models that implement this interface are expected
  * to be able to save in ASCII file format
  * (e.g. XML).
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
@@ -32,11 +32,11 @@ public interface IEditable {
 	 * edited. Even though a model is generally editable,
 	 * it can me marked as read-only because some condition
 	 * prevents it from changing state (for example,
-	 * the underlying resource is locked). While 
+	 * the underlying resource is locked). While
 	 * read-only models can never be changed, editable
 	 * models can go in and out editable state during
 	 * their life cycle.
-	 * 
+	 *
 	 * @return <code>true</code> if model can be modified, <code>false</code>
 	 * otherwise.
 	 */
@@ -63,7 +63,7 @@ public interface IEditable {
 
 	/**
 	 * Sets the dirty flag of the model. This method is
-	 * normally not intended to be used outside the model. 
+	 * normally not intended to be used outside the model.
 	 * Most often, a dirty model should be saved to clear the flag.
 	 *
 	 * @param dirty a new value for the 'dirty' flag

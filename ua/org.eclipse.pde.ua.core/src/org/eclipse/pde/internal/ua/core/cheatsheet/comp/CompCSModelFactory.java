@@ -35,7 +35,7 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCS()
 	 */
@@ -45,7 +45,7 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSDependency
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
@@ -56,7 +56,7 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSIntro
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
@@ -67,7 +67,7 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSOnCompletion
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
@@ -78,7 +78,7 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSParam
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
@@ -89,7 +89,7 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSTask
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
@@ -100,7 +100,7 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSTaskGroup
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)

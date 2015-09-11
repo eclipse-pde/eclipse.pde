@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,9 +15,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * This template option can be used to create blank space on the 
+ * This template option can be used to create blank space on the
  * template section wizard page.
- * 
+ *
  * @since 3.2
  */
 public class BlankField extends TemplateOption {
@@ -34,8 +34,8 @@ public class BlankField extends TemplateOption {
 	private int fheight;
 
 	/**
-	 * The default constructor. 
-	 * 
+	 * The default constructor.
+	 *
 	 * @param section
 	 * 			the parent section
 	 */
@@ -45,8 +45,8 @@ public class BlankField extends TemplateOption {
 	}
 
 	/**
-	 * Overloaded constructor to specify the height of the blank field. 
-	 * 
+	 * Overloaded constructor to specify the height of the blank field.
+	 *
 	 * @param section
 	 * 			the parent section
 	 * @param height
@@ -59,7 +59,7 @@ public class BlankField extends TemplateOption {
 
 	/**
 	 * Creates a blank field using a label widget.
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite of the blank label
 	 * @param span

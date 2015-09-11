@@ -50,7 +50,7 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
@@ -59,7 +59,7 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.
 	 * eclipse.ui.forms.IManagedForm)
@@ -111,7 +111,7 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
 	 */
 	public void dispose() {
@@ -125,7 +125,7 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde
 	 * .core.IModelChangedEvent)

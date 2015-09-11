@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbench;
 
 /**
  * Wizard to export a target definition to a directory on the file system
- * 
+ *
  * @see ExportTargetJob
  */
 public class TargetDefinitionExportWizard extends Wizard implements IExportWizard {

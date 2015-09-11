@@ -34,7 +34,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#addItem(org
 	 * .eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem)
@@ -45,7 +45,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#addItem(int,
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem)
@@ -56,7 +56,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#getIntro()
 	 */
@@ -66,7 +66,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#getItemCount()
 	 */
@@ -76,7 +76,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#getItems()
 	 */
@@ -89,7 +89,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#getNextSibling
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem)
@@ -101,7 +101,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#getPreviousSibling
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem)
@@ -114,7 +114,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#getTitle()
 	 */
@@ -124,7 +124,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#hasItems()
 	 */
@@ -134,7 +134,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#indexOfItem
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem)
@@ -145,7 +145,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#isFirstItem
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem)
@@ -157,7 +157,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#isLastItem
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem)
@@ -168,7 +168,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#moveItem(org
 	 * .eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem, int)
@@ -179,7 +179,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#removeItem
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem)
@@ -190,7 +190,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#removeItem
 	 * (int)
@@ -201,7 +201,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#setIntro(org
 	 * .eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSIntro)
@@ -212,7 +212,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#setTitle(java
 	 * .lang.String)
@@ -223,7 +223,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
@@ -234,7 +234,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()
@@ -245,7 +245,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isRoot()
 	 */

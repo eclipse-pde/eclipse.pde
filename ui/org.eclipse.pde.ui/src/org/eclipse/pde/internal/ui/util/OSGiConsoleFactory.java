@@ -15,7 +15,7 @@ import org.eclipse.ui.console.*;
 
 /**
  * Console factory extension used to create a "Host OSGi Console".
- * 
+ *
  * @since 3.6
  */
 public class OSGiConsoleFactory implements IConsoleFactory {

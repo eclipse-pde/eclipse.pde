@@ -31,40 +31,40 @@ public class DSObjectTestCase extends AbstractDSModelTestCase {
 
 		IDSComponent component = fModel.getDSComponent();
 		assertNotNull(component);
-		
+
 		IDSDocumentFactory factory = fModel.getFactory();
-		
+
 		IDSImplementation implementation = factory.createImplementation();
 		implementation.setClassName("ImplementationClassName");
 		component.setImplementation(implementation);
-		
+
 		IDSProperties properties = factory.createProperties();
 		properties.setEntry("PropertiesEntry");
 		component.addPropertiesElement(properties);
-		
+
 		IDSProperty property = factory.createProperty();
 		property.setPropertyElemBody("Body Values");
 		property.setPropertyType("java.lang.String");
 		component.addPropertyElement(property);
-		
+
 		IDSService service = factory.createService();
 		service.setServiceFactory(true);
 		component.setService(service);
-		
+
 		IDSReference reference = factory.createReference();
 		reference.setReferenceBind("methodBind");
 		reference.setReferenceUnbind("methodUnBind");
 		reference.setReferenceInterface("ReferenceInterface");
 		reference.setReferenceName("ReferenceName");
 		component.addReference(reference);
-		
+
 		List<?> children = component.getChildNodesList();
 		assertTrue(children.size() == 5);
 		assertEquals(component.getModel(), fModel);
-		
+
 		IDSObject child = (IDSObject)children.get(0);
 		assertEquals(child.getComponent(), component);
-		
+
 		assertEquals(child.getParentNode(), component);
 	}
 }

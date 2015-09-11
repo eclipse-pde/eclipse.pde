@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -78,7 +78,7 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		if (event.doit == false) {
 			return;
 		}
-		// TODO: MP: DND: BUG: On text transfer the object is removed, need to force operation into a copy 
+		// TODO: MP: DND: BUG: On text transfer the object is removed, need to force operation into a copy
 		// TODO: MP: DND: BUG: On text transfer no object selected in tree - related to above
 		// Ensure we have a move operation and a model transfer type
 		if (event.detail != DND.DROP_MOVE) {

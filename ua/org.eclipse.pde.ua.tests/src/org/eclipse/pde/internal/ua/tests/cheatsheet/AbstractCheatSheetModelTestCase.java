@@ -24,7 +24,7 @@ public abstract class AbstractCheatSheetModelTestCase extends TestCase {
 	protected static final String LF = "\n"; //$NON-NLS-1$
 	protected static final String CR = "\r"; //$NON-NLS-1$
 	protected static final String CRLF = CR + LF;
-	
+
 	protected Document fDocument;
 	protected SimpleCSModel fModel;
 	protected IModelTextChangeListener fListener;
@@ -54,7 +54,7 @@ public abstract class AbstractCheatSheetModelTestCase extends TestCase {
 			fail("model cannot be loaded");
 		}
 	}
-	
+
 	protected void setXMLContents(StringBuffer body, String newline) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

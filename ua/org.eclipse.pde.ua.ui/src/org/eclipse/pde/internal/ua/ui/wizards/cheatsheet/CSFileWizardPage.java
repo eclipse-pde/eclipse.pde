@@ -55,7 +55,7 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void initialize() {
 		setTitle(CSWizardMessages.CSFileWizardPage_title);

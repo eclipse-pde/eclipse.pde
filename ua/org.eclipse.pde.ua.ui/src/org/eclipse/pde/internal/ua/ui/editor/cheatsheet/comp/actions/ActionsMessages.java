@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class ActionsMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ua.ui.editor.cheatsheet.comp.actions.messages"; //$NON-NLS-1$
-	
+
 	public static String CompCSAddGroupAction_group;
 	public static String CompCSAddTaskAction_task;
 	public static String CompCSRemoveTaskObjectAction_delete;

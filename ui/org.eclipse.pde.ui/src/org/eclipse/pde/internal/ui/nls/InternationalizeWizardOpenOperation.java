@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A helper class to open an InternationalizeWizard dialog.
- * 
+ *
  * @author Team Azure
  */
 public class InternationalizeWizardOpenOperation {

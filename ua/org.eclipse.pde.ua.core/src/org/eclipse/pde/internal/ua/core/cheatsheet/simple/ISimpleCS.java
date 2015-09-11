@@ -15,49 +15,49 @@ public interface ISimpleCS extends ISimpleCSObject {
 
 	/**
 	 * Attribute: title
-	 * 
+	 *
 	 * @return
 	 */
 	public String getTitle();
 
 	/**
 	 * Attribute: title
-	 * 
+	 *
 	 * @param title
 	 */
 	public void setTitle(String title);
 
 	/**
 	 * Element: intro
-	 * 
+	 *
 	 * @return
 	 */
 	public ISimpleCSIntro getIntro();
 
 	/**
 	 * Element: intro
-	 * 
+	 *
 	 * @param intro
 	 */
 	public void setIntro(ISimpleCSIntro intro);
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @return
 	 */
 	public ISimpleCSItem[] getItems();
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @param item
 	 */
 	public void addItem(ISimpleCSItem item);
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @param item
 	 * @param index
 	 */
@@ -65,21 +65,21 @@ public interface ISimpleCS extends ISimpleCSObject {
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @param item
 	 */
 	public void removeItem(ISimpleCSItem item);
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @param index
 	 */
 	public void removeItem(int index);
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @param item
 	 * @param newRelativeIndex
 	 */
@@ -87,14 +87,14 @@ public interface ISimpleCS extends ISimpleCSObject {
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @param item
 	 */
 	public boolean isFirstItem(ISimpleCSItem item);
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @param item
 	 */
 	public boolean isLastItem(ISimpleCSItem item);
@@ -107,21 +107,21 @@ public interface ISimpleCS extends ISimpleCSObject {
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @return
 	 */
 	public int getItemCount();
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean hasItems();
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @param item
 	 * @return
 	 */
@@ -129,7 +129,7 @@ public interface ISimpleCS extends ISimpleCSObject {
 
 	/**
 	 * Element: item
-	 * 
+	 *
 	 * @param item
 	 * @return
 	 */

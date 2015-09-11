@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.core.ibundle;
  * to the parent adapter without making too many assumptions
  * about the nature of the parent. Models that don't have
  * bundle plug-in model parent are required to return <code>null</code>.
- * 
+ *
  * @since 3.0
  */
 public interface IBundlePluginModelProvider {

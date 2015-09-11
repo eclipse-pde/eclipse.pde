@@ -21,7 +21,7 @@ import org.eclipse.pde.core.target.ITargetLocation;
  * their wizards through the <code>org.eclipse.pde.ui.targetLocationProvisioners</code>
  * extension point.  Implementing classes must have a default constructor (zero
  * arguments) for the class to be created from the extension.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.7
  */
@@ -29,9 +29,9 @@ public interface ITargetLocationWizard extends IWizard {
 
 	/**
 	 * After the wizard is created this method will be called, providing this wizard with information
-	 * from the target definition the new location(s) will be added to.  It is not recommended that 
+	 * from the target definition the new location(s) will be added to.  It is not recommended that
 	 * implementors modify the target as UI behaviour is not API (it may change between releases).
-	 * 
+	 *
 	 * @param target the target definition this location is being added to
 	 */
 	public void setTarget(ITargetDefinition target);
@@ -39,7 +39,7 @@ public interface ITargetLocationWizard extends IWizard {
 	/**
 	 * Returns an array of target locations to be added to the target definition. Will be
 	 * called after the wizard is closed.
-	 * 
+	 *
 	 * @return an array of target locations to add to the target definition
 	 */
 	public ITargetLocation[] getLocations();

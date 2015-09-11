@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	 * Replaces all line delimiters to the same characters based on preference settings.  If no project
 	 * or workspace preference has been set then the string will not be modified.  If the
 	 * delimiter matches the current system setting, the string will not be modified.
-	 *  
+	 *
 	 * @param string the string to replace line delimiters in
 	 * @param file the file to lookup specific project preference settings for, can be <code>null</code> to use workspace settings
 	 * @return the provided string with line delimiters replaced
@@ -181,7 +181,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
 	 */
 	@Override

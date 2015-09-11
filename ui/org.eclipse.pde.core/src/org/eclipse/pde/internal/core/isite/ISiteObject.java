@@ -28,21 +28,21 @@ public interface ISiteObject extends IWritable, IAdaptable, Serializable {
 
 	/**
 	 * Returns the top-level site model object.
-	 * 
+	 *
 	 * @return root feature object
 	 */
 	public ISite getSite();
 
 	/**
 	 * Returns the label of this feature model object'
-	 * 
+	 *
 	 * @return feature object label
 	 */
 	String getLabel();
 
 	/**
 	 * Returns the site model that owns this model object.
-	 * 
+	 *
 	 * @return the site model
 	 */
 	ISiteModel getModel();
@@ -51,7 +51,7 @@ public interface ISiteObject extends IWritable, IAdaptable, Serializable {
 
 	/**
 	 * Returns the parent of this model object.
-	 * 
+	 *
 	 * @return the model object parent
 	 */
 	public ISiteObject getParent();
@@ -59,7 +59,7 @@ public interface ISiteObject extends IWritable, IAdaptable, Serializable {
 	/**
 	 * Sets the new label of this model object. This method may throw a
 	 * CoreException if the model is not editable.
-	 * 
+	 *
 	 * @param label
 	 *            the new label
 	 */

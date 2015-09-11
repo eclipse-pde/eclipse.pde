@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -73,7 +73,7 @@ public class SampleEditor extends EditorPart {
 	}
 
 	/**
-	 *  
+	 *
 	 */
 	public SampleEditor() {
 		defaultShortcut = new EclipseLaunchShortcut();
@@ -103,7 +103,7 @@ public class SampleEditor extends EditorPart {
 		descText = toolkit.createFormText(form.getBody(), true);
 		descText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		String desc = properties.getProperty("description"); //$NON-NLS-1$
-		String content = NLS.bind(PDEUIMessages.SampleEditor_desc, (desc != null ? desc : "")); //$NON-NLS-1$ 
+		String content = NLS.bind(PDEUIMessages.SampleEditor_desc, (desc != null ? desc : "")); //$NON-NLS-1$
 		descText.setText(content, true, false);
 		final String helpURL = properties.getProperty("helpHref"); //$NON-NLS-1$
 		if (helpURL != null) {

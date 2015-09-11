@@ -224,7 +224,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	/**
 	 * Returns the version of the OSGi runtime being debugged, based on the target platform.
 	 * Cached per source lookup director.
-	 * 
+	 *
 	 * @return OSGi runtime version
 	 */
 	double getOSGiRuntimeVersion() {

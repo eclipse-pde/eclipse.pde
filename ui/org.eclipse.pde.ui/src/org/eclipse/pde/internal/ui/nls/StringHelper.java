@@ -70,7 +70,7 @@ public class StringHelper {
 			case '\n' :
 				return "\\n";//$NON-NLS-1$
 			case '\f' :
-				return "\\f";//$NON-NLS-1$	
+				return "\\f";//$NON-NLS-1$
 			case '\r' :
 				return "\\r";//$NON-NLS-1$
 			case '\\' :

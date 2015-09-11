@@ -24,7 +24,7 @@ import org.osgi.framework.Version;
  * Describes a project representing an OSGi bundle. Used to create or modify
  * artifacts associated with a bundle project. A bundle project description can be
  * created for an {@link IProject} via {@link IBundleProjectService#getDescription(IProject)}.
- * 
+ *
  * @since 3.6
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -76,7 +76,7 @@ public interface IBundleProjectDescription {
 
 	/**
 	 * Creates or modifies a bundle project and associated artifacts based current settings.
-	 * 
+	 *
 	 * @param monitor progress monitor or <code>null</code>
 	 * @throws CoreException if project creation or modification fails
 	 */
@@ -93,25 +93,25 @@ public interface IBundleProjectDescription {
 
 	/**
 	 * Returns the symbolic name of the described bundle or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @return bundle symbolic name or <code>null</code>
 	 */
 	public String getSymbolicName();
 
 	/**
-	 * Sets the location for the described project.  
+	 * Sets the location for the described project.
 	 * If <code>null</code> is specified, the default location is used.
 	 * <p>
 	 * Setting the location on a description for a project which already
 	 * exists has no effect; the new project location is ignored when the
-	 * description is applied to the already existing project. This method is 
+	 * description is applied to the already existing project. This method is
 	 * intended for use on descriptions for new projects.
 	 * </p>
 	 * <p>
 	 * This operation maps the root folder of the project to the exact location
 	 * provided.  For example, if the location for project named "P" is set
 	 * to the URI file://c:/my_plugins/Project1, the file resource at workspace path
-	 * /P/index.html  would be stored in the local file system at 
+	 * /P/index.html  would be stored in the local file system at
 	 * file://c:/my_plugins/Project1/index.html.
 	 * </p>
 	 *
@@ -133,7 +133,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Sets the value of the Bundle-Name header for the described bundle.
 	 * When <code>null</code>, the bundle name defaults to the bundle symbolic name.
-	 * 
+	 *
 	 * @param name bundle name
 	 */
 	public void setBundleName(String name);
@@ -150,7 +150,7 @@ public interface IBundleProjectDescription {
 
 	/**
 	 * Sets the value of the Bundle-Vendor header for the described bundle.
-	 * 
+	 *
 	 * @param name bundle vendor name
 	 */
 	public void setBundleVendor(String name);
@@ -158,7 +158,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Returns the value of the Bundle-Vendor header for the described bundle
 	 * or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @return bundle vendor name or <code>null</code>
 	 */
 	public String getBundleVendor();
@@ -166,7 +166,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Sets the value of the Bundle-Version header for the described bundle.
 	 * When <code>null</code>, the bundle version defaults to <code>1.0.0.qualifier</code>.
-	 * 
+	 *
 	 * @param version bundle version
 	 */
 	public void setBundleVersion(Version version);
@@ -183,7 +183,7 @@ public interface IBundleProjectDescription {
 
 	/**
 	 * Sets whether the described bundle is a singleton.
-	 * 
+	 *
 	 * @param singleton whether the described bundle is a singleton
 	 */
 	public void setSingleton(boolean singleton);
@@ -199,7 +199,7 @@ public interface IBundleProjectDescription {
 
 	/**
 	 * Sets the value of the Bundle-Localization header for the described bundle.
-	 * 
+	 *
 	 * @param path bundle root relative path or <code>null</code>
 	 */
 	public void setLocalization(IPath path);
@@ -212,7 +212,7 @@ public interface IBundleProjectDescription {
 	 */
 	public IPath getLocalization();
 
-	/** 
+	/**
 	 * Returns the list of natures associated with the described project.
 	 * Returns an empty array if there are no natures on this description.
 	 *
@@ -222,7 +222,7 @@ public interface IBundleProjectDescription {
 	 */
 	public String[] getNatureIds();
 
-	/** 
+	/**
 	 * Sets the list of natures associated with the described project.
 	 * A project created with this description will have these natures
 	 * added to it in the given order when this description is applied.
@@ -236,12 +236,12 @@ public interface IBundleProjectDescription {
 	 */
 	public void setNatureIds(String[] natures);
 
-	/** 
+	/**
 	 * Returns whether the project nature specified by the given
-	 * nature extension id has been added to the described project. 
+	 * nature extension id has been added to the described project.
 	 *
 	 * @param natureId the nature extension identifier
-	 * @return <code>true</code> if the described project has the given nature 
+	 * @return <code>true</code> if the described project has the given nature
 	 * @see IProjectDescription#hasNature(String)
 	 */
 	public boolean hasNature(String natureId);
@@ -249,8 +249,8 @@ public interface IBundleProjectDescription {
 	/**
 	 * Sets the the Fragment-Host header for the described fragment.
 	 * When a non-<code>null</code> value is specified, this bundle description
-	 * describes a fragment. 
-	 * 
+	 * describes a fragment.
+	 *
 	 * @param host host specification or <code>null</code>
 	 */
 	public void setHost(IHostDescription host);
@@ -258,7 +258,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Returns the host bundle for the described fragment,
 	 * or <code>null</code> if this description does not describe a fragment.
-	 * 
+	 *
 	 * @return host specification or <code>null</code>
 	 */
 	public IHostDescription getHost();
@@ -267,7 +267,7 @@ public interface IBundleProjectDescription {
 	 * Sets a project relative path for the default output folder used on the Java build path
 	 * for the described bundle. <code>null</code> indicates the Java project's default output
 	 * location should be used.
-	 * 
+	 *
 	 * @param output project relative path to default output location or <code>null</code>
 	 */
 	public void setDefaultOutputFolder(IPath output);
@@ -275,7 +275,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Returns a project relative path for the described bundle's default output folder used on the Java build path,
 	 * or <code>null</code> to indicate the default output location is used.
-	 * 
+	 *
 	 * @return default project relative output folder path or <code>null</code>
 	 */
 	public IPath getDefaultOutputFolder();
@@ -284,7 +284,7 @@ public interface IBundleProjectDescription {
 	 * Sets the required execution environments for the described bundle, possible <code>null</code>.
 	 * When more than one environment specified, the first will be used to configure compiler compliance
 	 * and build path settings.
-	 * 
+	 *
 	 * @param environments execution environment identifiers or <code>null</code>
 	 */
 	public void setExecutionEnvironments(String[] environments);
@@ -293,7 +293,7 @@ public interface IBundleProjectDescription {
 	 * Returns the required execution environments for the described bundle, or <code>null</code> if unspecified.
 	 * When more than one environment is specified, the first will be used to configure compiler compliance
 	 * and build path settings.
-	 * 
+	 *
 	 * @return execution environment identifiers or <code>null</code>
 	 */
 	public String[] getExecutionEnvironments();
@@ -303,7 +303,7 @@ public interface IBundleProjectDescription {
 	 * or <code>null</code> if unspecified. Specifies the relationship between
 	 * source and/or binary folders with bundle classpath entries. When <code>null</code>
 	 * is specified, no Bundle-Classpath header will be produced.
-	 * 
+	 *
 	 * @param entries Bundle-Classpath header entries or <code>null</code>
 	 * @deprecated use {@link #setBundleClasspath(IBundleClasspathEntry[])}
 	 */
@@ -315,7 +315,7 @@ public interface IBundleProjectDescription {
 	 * or <code>null</code> if unspecified. Specifies the relationship between
 	 * source and/or binary folders with bundle classpath entries. When <code>null</code>
 	 * is specified, no Bundle-Classpath header will be produced.
-	 * 
+	 *
 	 * @param entries Bundle-Classpath header entries or <code>null</code>
 	 * @since 3.7
 	 */
@@ -324,7 +324,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Returns the entries on the Bundle-Classpath header of the described bundle,
 	 * or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @return bundle class path entries or <code>null</code> if unspecified
 	 * @see #setBundleClasspath(IBundleClasspathEntry[])
 	 */
@@ -333,7 +333,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Sets the value of the Bundle-Activator header for the described bundle,
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param className activator class name or <code>null</code>
 	 */
 	public void setActivator(String className);
@@ -341,7 +341,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Returns the value of the Bundle-Activator header for the described bundle,
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @return bundle activator class name or <code>null</code>
 	 */
 	public String getActivator();
@@ -351,9 +351,9 @@ public interface IBundleProjectDescription {
 	 * This affects the values generated for Equinox specific headers.
 	 * Has no effect when {@link #isEquinox()} is <code>false</code>.
 	 * When {@link #isEquinox()} is <code>true</code>, and a target version
-	 * is unspecified or set to <code>null</code>, the newest available 
+	 * is unspecified or set to <code>null</code>, the newest available
 	 * target version of Eclipse is used.
-	 * 
+	 *
 	 * @param version one of the version constant values defined by this class or <code>null</code>
 	 * @see #setEquinox(boolean)
 	 */
@@ -363,7 +363,7 @@ public interface IBundleProjectDescription {
 	 * Returns the version of Eclipse the described bundle is targeted for, or <code>null</code>
 	 * if unspecified. When unspecified, the project is targeted to the newest available
 	 * version of Eclipse when {@link #isEquinox()} is <code>true</code>.
-	 * 
+	 *
 	 * @return target version or <code>null</code>
 	 */
 	public String getTargetVersion();
@@ -396,7 +396,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Returns whether the described bundle is targeted for the Equinox OSGi framework.
 	 * Affects the Equinox lazy-start header generated in the manifest.
-	 * 
+	 *
 	 * @return whether the described bundle is targeted for the Equinox OSGi framework
 	 */
 	public boolean isEquinox();
@@ -426,74 +426,74 @@ public interface IBundleProjectDescription {
 
 	/**
 	 * Returns this bundle's activation policy or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @return activation policy or <code>null</code>
 	 */
 	public String getActivationPolicy();
 
 	/**
-	 * Sets whether this bundle supports extension points and extensions via 
+	 * Sets whether this bundle supports extension points and extensions via
 	 * {@link IExtensionRegistry} support. By default, this value is <code>false</code>
 	 * for new projects.
-	 * 
+	 *
 	 * @param supportExtensions whether extension points and extensions are supported
 	 */
 	public void setExtensionRegistry(boolean supportExtensions);
 
 	/**
-	 * Returns whether this bundle supports extension points and extensions via 
+	 * Returns whether this bundle supports extension points and extensions via
 	 * {@link IExtensionRegistry} support. By default, this value is <code>false</code>
 	 * for new projects.
-	 * 
+	 *
 	 * @return whether extension points and extensions are supported
 	 */
 	public boolean isExtensionRegistry();
 
 	/**
 	 * Sets the value of the Require-Bundle header for the described bundle.
-	 * 
+	 *
 	 * @param bundles required bundle descriptions or <code>null</code> if none
 	 */
 	public void setRequiredBundles(IRequiredBundleDescription[] bundles);
 
 	/**
 	 * Returns the value of the Require-Bundle header or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @return required bundle descriptions or <code>null</code>
 	 */
 	public IRequiredBundleDescription[] getRequiredBundles();
 
 	/**
 	 * Sets the value of the Import-Package header for the described bundle.
-	 * 
+	 *
 	 * @param imports package import descriptions or <code>null</code> if none
 	 */
 	public void setPackageImports(IPackageImportDescription[] imports);
 
 	/**
 	 * Returns the value of the Import-Package header or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @return package import descriptions or <code>null</code>
 	 */
 	public IPackageImportDescription[] getPackageImports();
 
 	/**
 	 * Sets the value of the Export-Package header for the described bundle.
-	 * 
+	 *
 	 * @param exports package export descriptions or <code>null</code> if none
 	 */
 	public void setPackageExports(IPackageExportDescription[] exports);
 
 	/**
 	 * Returns the value of the Export-Package header or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @return package export descriptions or <code>null</code>
 	 */
 	public IPackageExportDescription[] getPackageExports();
 
 	/**
 	 * Returns the project associated with the described bundle.
-	 * 
+	 *
 	 * @return associated project
 	 */
 	public IProject getProject();
@@ -503,7 +503,7 @@ public interface IBundleProjectDescription {
 	 * the <code>build.properties</code> file of the described bundle project.
 	 * <p>
 	 * By default, the <code>MANIFEST/</code> folder and any entries on the
-	 * Bundle-Classpath will be included. This sets any additional entries that 
+	 * Bundle-Classpath will be included. This sets any additional entries that
 	 * are to be included.
 	 * </p>
 	 * @param paths bundle root relative paths of files and folders to include
@@ -516,7 +516,7 @@ public interface IBundleProjectDescription {
 	 * of the <code>build.properties</code> file of the described bundle project.
 	 * <p>
 	 * By default, the <code>MANIFEST/</code> folder and any entries on the
-	 * Bundle-Classpath will be included. This returns any additional entries that 
+	 * Bundle-Classpath will be included. This returns any additional entries that
 	 * are to be included.
 	 * </p>
 	 * @return bundle root relative paths of files and folders on the <code>bin.includes</code>
@@ -547,7 +547,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Returns the location within the project that is the root of the bundle related
 	 * artifacts, or <code>null</code> to indicate the default location (project folder).
-	 * 
+	 *
 	 * @return project relative bundle root path or <code>null</code>
 	 */
 	public IPath getBundleRoot();
@@ -558,7 +558,7 @@ public interface IBundleProjectDescription {
 	 * that will be displayed in the manifest editor for the project associated
 	 * with these settings, or <code>null</code> if default shortcuts are being
 	 * used.
-	 * 
+	 *
 	 * @return identifiers of the <code>org.eclipse.debug.ui.launchShortcuts</code> extensions
 	 *  or <code>null</code>
 	 */
@@ -588,7 +588,7 @@ public interface IBundleProjectDescription {
 	 * Returns the identifier of the <code>org.eclipse.ui.exportWizards</code> extension
 	 * used in the manifest editor for exporting the project associated with these
 	 * settings, or <code>null</code> if the default export wizard should be used.
-	 * 
+	 *
 	 * @return identifier of an <code>org.eclipse.ui.exportWizards</code> extension
 	 *  or <code>null</code>
 	 */
@@ -598,7 +598,7 @@ public interface IBundleProjectDescription {
 	 * Sets the identifier of the <code>org.eclipse.ui.exportWizards</code> extension
 	 * used in the manifest editor for exporting the project associated with these
 	 * settings, or <code>null</code> if the default export wizard should be used.
-	 * 
+	 *
 	 * @param id identifier of an <code>org.eclipse.ui.exportWizards</code> extension
 	 *  or <code>null</code>
 	 */
@@ -626,7 +626,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Returns the value of the specified header from the bundle manifest, or <code>null</code>
 	 * if unspecified. Note that an empty string is returned for a header that has an empty value.
-	 * 
+	 *
 	 * @param header
 	 * @return header value or <code>null</code>
 	 */

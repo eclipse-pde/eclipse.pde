@@ -250,5 +250,5 @@ public class DSEditPropertiesDialog extends FormDialog {
 		IPath path = project.getFullPath().append(value);
 		return project.getWorkspace().getRoot().findMember(path);
 	}
-	
+
 }

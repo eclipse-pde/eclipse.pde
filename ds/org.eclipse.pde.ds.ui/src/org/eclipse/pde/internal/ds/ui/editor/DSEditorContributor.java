@@ -24,7 +24,7 @@ public class DSEditorContributor extends PDEFormTextEditorContributor {
 	public boolean supportsHyperlinking() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean supportsContentAssist() {
 		return true;

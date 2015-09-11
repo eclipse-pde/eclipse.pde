@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class TocWizardMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ua.ui.wizards.toc.messages"; //$NON-NLS-1$
-	
+
 	public static String NewTocFileWizard_title;
 	public static String RegisterTocOperation_errorMessage1;
 	public static String RegisterTocOperation_errorMessage2;

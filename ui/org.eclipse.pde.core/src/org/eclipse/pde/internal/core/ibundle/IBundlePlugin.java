@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.core.ibundle;
 import org.eclipse.pde.core.plugin.IPlugin;
 
 /**
- * An extension of bundle plug-in base that is used 
+ * An extension of bundle plug-in base that is used
  * specifically for root model objects of plug-ins with
  * OSGi manifest. The goal is to continue to preserve
  * pre-3.0 compatibility for all the clients that

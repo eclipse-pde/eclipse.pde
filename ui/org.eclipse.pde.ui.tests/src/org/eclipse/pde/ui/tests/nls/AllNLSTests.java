@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 225047     
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 225047
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.nls;
 

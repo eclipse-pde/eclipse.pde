@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,8 +24,8 @@ public class XMLElementProposalComputer {
 	 * @param sElement
 	 * @param node
 	 * @return A set of elements that can be added as children to element,
-	 * <code>node</code>, as described by schema element, <code>sElement</code>, 
-	 * given multiplicity constraints and existing children found under 
+	 * <code>node</code>, as described by schema element, <code>sElement</code>,
+	 * given multiplicity constraints and existing children found under
 	 * <code>node</code>.
 	 */
 	public static TreeSet<ISchemaElement> computeElementProposal(ISchemaElement sElement, IDocumentElementNode node) {
@@ -80,8 +80,8 @@ public class XMLElementProposalComputer {
 		// Compositor can be null only in cases where we had a schema complex
 		// type but that complex type was complex because it had attributes
 		// rather than element children
-		// All we care about is choices and sequences (Alls and groups not 
-		// supported)		
+		// All we care about is choices and sequences (Alls and groups not
+		// supported)
 		if (compositor == null) {
 			return;
 		} else if (compositor.getKind() == ISchemaCompositor.CHOICE) {
@@ -200,7 +200,7 @@ public class XMLElementProposalComputer {
 		if (multiplicityTracker < Integer.MAX_VALUE) {
 			multiplicityTracker = schemaElement.getMaxOccurs() * multiplicityTracker;
 		}
-		// Only add a new proposal for a given element if it has not exceeded 
+		// Only add a new proposal for a given element if it has not exceeded
 		// the multiplicity
 		// Note:  This is a simple calculation that does not address all complex
 		// XML Schema multiplity rules.  For instance, multiple layers of

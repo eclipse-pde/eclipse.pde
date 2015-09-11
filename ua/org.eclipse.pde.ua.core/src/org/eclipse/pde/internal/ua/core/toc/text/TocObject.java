@@ -31,7 +31,7 @@ public abstract class TocObject extends DocumentObject implements
 
 	/**
 	 * Constructs the TocObject and initializes its attributes.
-	 * 
+	 *
 	 * @param model
 	 *            The model associated with this TocObject.
 	 * @param parent
@@ -123,7 +123,7 @@ public abstract class TocObject extends DocumentObject implements
 	/**
 	 * Check if the object is a direct or indirect descendant of the object
 	 * parameter.
-	 * 
+	 *
 	 * @param obj
 	 *            The TOC object to find in this object's ancestry
 	 * @return true iff obj is an ancestor of this TOC object

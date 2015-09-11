@@ -25,7 +25,7 @@ public class EquinoxPluginsTab extends BundlesTab {
 
 	/**
 	 * Returns the default start level for the launch configuration
-	 * 
+	 *
 	 * @return the default start level
 	 */
 	public int getDefaultStartLevel() {

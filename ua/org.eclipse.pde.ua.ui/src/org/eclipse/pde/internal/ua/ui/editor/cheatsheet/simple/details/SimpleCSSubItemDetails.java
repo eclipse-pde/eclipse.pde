@@ -90,7 +90,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 	public void initialize(IManagedForm form) {
 		super.initialize(form);
 		// Unfortunately this has to be explicitly called for sub detail
-		// sections through its main section parent; since, it never is 
+		// sections through its main section parent; since, it never is
 		// registered directly.
 		// Initialize managed form for command section
 		fCommandSection.initialize(form);

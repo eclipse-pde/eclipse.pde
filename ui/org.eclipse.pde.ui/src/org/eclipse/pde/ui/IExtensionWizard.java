@@ -17,7 +17,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
  * An interface for extension wizards. Clients should implement this interface
  * if they are plugging into PDE using <samp>org.eclipse.pde.ui.newExtension
  * </samp> extension point.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
  */
@@ -33,7 +33,7 @@ public interface IExtensionWizard extends IBasePluginWizard {
 	 * <p>
 	 * Although the wizard is launched to create an extension, there is no
 	 * reason a wizard cannot create several at once.
-	 * 
+	 *
 	 * @param project
 	 *            the plug-in project resource where the new code and resources
 	 *            should go

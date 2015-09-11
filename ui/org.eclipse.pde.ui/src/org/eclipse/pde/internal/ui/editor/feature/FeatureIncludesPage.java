@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
- * 
+ *
  */
 public class FeatureIncludesPage extends PDEFormPage {
 	public static final String PAGE_ID = "includes"; //$NON-NLS-1$
@@ -32,7 +32,7 @@ public class FeatureIncludesPage extends PDEFormPage {
 	private IncludedFeaturesPortabilitySection fIncludedPortabilitySection;
 
 	/**
-	 * 
+	 *
 	 * @param editor
 	 * @param title
 	 */

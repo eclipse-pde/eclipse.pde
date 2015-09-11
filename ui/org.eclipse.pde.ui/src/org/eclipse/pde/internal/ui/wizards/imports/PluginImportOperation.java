@@ -53,7 +53,7 @@ import org.osgi.framework.BundleException;
 /**
  * Imports one or more plug-ins into the workspace.  There are three different
  * ways to import a plugin: as binary, as binary with linked source,
- * and as source. 
+ * and as source.
  */
 @SuppressWarnings("restriction")
 // The IBundleImporter API is currently provisional
@@ -117,7 +117,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * Sets a source location manager to use to find source attachments. This should
 	 * be specified when importing plug-ins that are not from the active target platform
 	 * so source attachments can be found.
-	 * 
+	 *
 	 * @param alternate source location manager.
 	 */
 	public void setAlternateSource(SourceLocationManager alternate) {
@@ -127,7 +127,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * This custom message box class is used for warning the user about the projects that did not get imported.
 	 * see bug 337730
-	 * 
+	 *
 	 * This class should get removed when Bug 346078 is fixed.
 	 *
 	 */
@@ -141,7 +141,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		/**
 		 * Creates a warning message dialog. The message area will contain the scrollable
 		 * text box that will show the list of the projects supplied.
-		 * 
+		 *
 		 * @param warningMessage
 		 * 				the warning message to be shown on the dialog.
 		 * @param namesOfNotImportedProjects
@@ -269,7 +269,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * If there are existing projects in the workspace with the same symbolic name, open a dialog
 	 * asking the user if they would like to delete those projects.  The projects are deleted before
 	 * the import continues so the individual imports can do a simple search for an allowed plug-in name.
-	 * 
+	 *
 	 * @param status the multi-status used to report problems
 	 * @param monitor progress monitor, must not be <code>null</code>
 	 */
@@ -405,7 +405,7 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	/**
 	 * This method starts the import of a specific plugin.  Checks if the execution
-	 * environment is supported and also checks if the project already exists and 
+	 * environment is supported and also checks if the project already exists and
 	 * needs to be replaced.
 	 * @param model model representing the plugin to import
 	 * @param instructions instructions for how to import from repository
@@ -553,7 +553,7 @@ public class PluginImportOperation extends WorkspaceJob {
 
 			// Extract the source, track build entries and package locations
 			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(PDEProject.getBuildProperties(project));
-			Map<IPath, IPath> packageLocations = new HashMap<>(); // maps package path to a src folder 
+			Map<IPath, IPath> packageLocations = new HashMap<>(); // maps package path to a src folder
 			boolean sourceFound = extractSourceFolders(project, model, buildModel, packageLocations, new SubProgressMonitor(monitor, 1));
 			// If no source was found previously, check if there was a source folder (src) inside the binary plug-in
 			if (!sourceFound) {
@@ -617,10 +617,10 @@ public class PluginImportOperation extends WorkspaceJob {
 	}
 
 	/**
-	 * Creates the project to add to the workspace.  If the project already exists in 
+	 * Creates the project to add to the workspace.  If the project already exists in
 	 * the workspace ask the user if it is ok to overwrite.  Will return <code>null</code>
 	 * if no project could be created for the import (i.e. the user chooses to not overwrite).
-	 * 
+	 *
 	 * @param model plug-in being imported
 	 * @param monitor progress monitor
 	 * @return the project to use or <code>null</code> if no project could be created/overwritten
@@ -695,7 +695,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * Returns true if it is safe to delete the project.  It is not safe to delete if
 	 * one of its libraries is locked by a running launch configuration.
-	 * 
+	 *
 	 * @param project project to test
 	 * @param monitor progress monitor
 	 * @return true is it is safe to delete the project, false otherwise
@@ -771,7 +771,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * a location other than the active target platform.  In that case we want to use source from the import location
 	 * if available.  If this method returns <code>null</code> no seperate source feature/bundle could be found.  There
 	 * may still be source stored internally in the plug-in.
-	 * 
+	 *
 	 * @return the most relevant source manager than contains source for the plug-in or <code>null</code> if no separate source could be found
 	 */
 	private SourceLocationManager getSourceManager(IPluginModelBase model) {
@@ -884,11 +884,11 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * Looks up the source locations for the plug-in and imports the source for each library.  Each source root is
 	 * extracted to a source folder in the project and a build model containing the source entries is returned.
-	 * 
+	 *
 	 * @param project destination project
 	 * @param model plug-in being imported
 	 * @param buildModel a workspace build model that entries for each created source folder will be added to
-	 * @param packageLocations map that will be updated with package locations (package path to a source foldeR) 
+	 * @param packageLocations map that will be updated with package locations (package path to a source foldeR)
 	 * @param monitor progress monitor
 	 * @return whether a source location was found
 	 * @throws CoreException if there is a problem extracting the source or creating a build entry
@@ -964,13 +964,13 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * Looks inside the binary plug-in to see if source was packaged inside of a 'src' directory.  If found, the build model and
 	 * package locations are updated with the appropriate information.  This method does not actually import the source as
-	 * that is handled when the binary plug-in is extracted. 
-	 * 
+	 * that is handled when the binary plug-in is extracted.
+	 *
 	 * @param model plug-in model being imported
 	 * @param buildModel build model to update if source is found
 	 * @param packageLocations package location map (package path to destination) to update if source is found
 	 * @return true if source was found inside the binary plug-in, false otherwise
-	 * 
+	 *
 	 * @throws CoreException
 	 * @throws ZipException
 	 * @throws IOException
@@ -1013,10 +1013,10 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	/**
 	 * Adds a set of packages to the package location map.  For each package in the given set
-	 * an entry will be added to the map pointing to the destination.  In additional, any parent 
+	 * an entry will be added to the map pointing to the destination.  In additional, any parent
 	 * package fragments that do not have entries in the map will be added (also pointing to the
 	 * destination path).
-	 *  
+	 *
 	 * @param packages set of packages to add to the map
 	 * @param destination the destination directory that the packages belong to
 	 * @param packageLocations the map to add the entries to
@@ -1079,7 +1079,7 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	/**
 	 * Imports files from the plug-in that are necessary to make the created project a plug-in project.
-	 * Specifically the manifest and related file are extracted.  
+	 * Specifically the manifest and related file are extracted.
 	 * @param project
 	 * @param model
 	 * @param monitor
@@ -1179,7 +1179,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * Creates a model for an existing manifest file, replacing the classpath entry with the
 	 * new location of the referenced library.  Also removes any extra entries such as signing
-	 * headers. 
+	 * headers.
 	 * @param project
 	 * @param base
 	 */
@@ -1258,10 +1258,10 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * Gets the list of libraries from the model and returns an array of their expanded
 	 * names.  Will add the default library name if no libraries are specified.
-	 * 
+	 *
 	 * <p>If run in dev mode (target workbench), and the plug-in is in the host workspace
 	 * the library names will be replaced with 'bin/'.  See bug 294005.</p>
-	 * 
+	 *
 	 * @param model
 	 * @return list of library names
 	 */
@@ -1277,7 +1277,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	}
 
 	/**
-	 * Returns the standard source directory name for a library name.  
+	 * Returns the standard source directory name for a library name.
 	 * Used to get the source root name for a library as well as the
 	 * standard destination name.
 	 * @param libraryName
@@ -1299,7 +1299,7 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	/**
 	 * Sets the import descriptions to use when importing from a repository.
-	 * 
+	 *
 	 * @param descriptions map of {@link IBundleImporter} to arrays of {@link BundleImportDescription}.
 	 */
 	public void setImportDescriptions(Map<IBundleImporter, ScmUrlImportDescription[]> descriptions) {

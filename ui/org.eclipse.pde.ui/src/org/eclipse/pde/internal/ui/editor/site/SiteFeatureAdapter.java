@@ -35,7 +35,7 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 	/*
 	 * For retaining selectiong in the tree, when modyfing or moving features,
 	 * SiteFeatureAdapter are equal if features are equal (same ID and version)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

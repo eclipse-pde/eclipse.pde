@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.pde.ui.IFieldData;
  * implemented using PDE template support. The assumption is that one or more
  * templates will be used to generate plug-in content. Dependencies, new files
  * and wizard pages are all computed based on the templates.
- * 
+ *
  * @since 2.0
  */
 public abstract class AbstractNewPluginTemplateWizard extends Wizard implements IBundleContentWizard {
@@ -49,7 +49,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 
 	/**
 	 * Returns the field data passed to the wizard during the initialization.
-	 * 
+	 *
 	 * @return the parent wizard field data
 	 */
 	public IFieldData getData() {
@@ -79,7 +79,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	/**
 	 * Implements the interface method by looping through template sections and
 	 * executing them sequentially.
-	 * 
+	 *
 	 * @param project
 	 *            the project
 	 * @param model
@@ -111,7 +111,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 
 	/**
 	 * Returns the template sections used in this wizard.
-	 * 
+	 *
 	 * @return the array of template sections
 	 */
 	public abstract ITemplateSection[] getTemplateSections();

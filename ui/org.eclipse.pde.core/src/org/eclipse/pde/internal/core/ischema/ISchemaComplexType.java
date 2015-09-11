@@ -19,7 +19,7 @@ import org.eclipse.pde.core.IWritable;
 public interface ISchemaComplexType extends ISchemaType, ISchemaAttributeProvider, IWritable {
 	/**
 	 * A complex type can have one root compositor.
-	 * 
+	 *
 	 * @return root complex type compositor
 	 */
 	public ISchemaCompositor getCompositor();
@@ -27,7 +27,7 @@ public interface ISchemaComplexType extends ISchemaType, ISchemaAttributeProvide
 	/**
 	 * Returns whether the content of the element that owns this type
 	 * can mix child elements and text.
-	 * 
+	 *
 	 * @return true if element can mix text and other elements
 	 */
 	public boolean isMixed();

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ package org.eclipse.pde.ui.templates;
  * The list of templates is fixed. It must be known in advance so that the
  * required wizard pages can be created. Upon finish, the template sections are
  * executed in the order of creation.
- * 
+ *
  * @since 2.0
  */
 public abstract class NewPluginTemplateWizard extends AbstractNewPluginTemplateWizard {
@@ -35,14 +35,14 @@ public abstract class NewPluginTemplateWizard extends AbstractNewPluginTemplateW
 	/**
 	 * Subclasses are required to implement this method by creating templates
 	 * that will appear in this wizard.
-	 * 
+	 *
 	 * @return an array of template sections that will appear in this wizard.
 	 */
 	public abstract ITemplateSection[] createTemplateSections();
 
 	/**
 	 * Returns templates that appear in this section.
-	 * 
+	 *
 	 * @return an array of templates
 	 */
 	@Override
@@ -52,7 +52,7 @@ public abstract class NewPluginTemplateWizard extends AbstractNewPluginTemplateW
 
 	/**
 	 * Implemented by asking templates in this wizard to contribute pages.
-	 *  
+	 *
 	 */
 	@Override
 	protected final void addAdditionalPages() {

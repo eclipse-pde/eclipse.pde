@@ -28,7 +28,7 @@ public class PluginImportHelper {
 
 	/**
 	 * Imports the contents of a zip file or folder, extracting the necessary files and
-	 * putting them in the specified destination.  
+	 * putting them in the specified destination.
 	 * @param source the file or folder to import from, should either be the root of the zip file or the File representing the folder
 	 * @param dstPath
 	 * @param provider
@@ -129,12 +129,12 @@ public class PluginImportHelper {
 
 	/**
 	 * Searches the given archive file for java source folders.  Imports the files in the
-	 * source folders to the specified destination unless the folder is in the list of 
-	 * folders to exclude. 
+	 * source folders to the specified destination unless the folder is in the list of
+	 * folders to exclude.
 	 * @param file archive file to search for source in
 	 * @param excludeFolders list of IPaths describing folders to ignore while searching
 	 * @param dstPath full path to destination to put the extracted source
-	 * @param collectedPackages will be updated with the set of packages the extracted source belongs to, if <code>null</code> this step will be skipped 
+	 * @param collectedPackages will be updated with the set of packages the extracted source belongs to, if <code>null</code> this step will be skipped
 	 * @param monitor progress monitor
 	 * @throws CoreException if there is a problem extracting source from the zip
 	 */
@@ -168,7 +168,7 @@ public class PluginImportHelper {
 	 * the package path.
 	 * <p>
 	 * This method uses only the directory structure to determine package structure.
-	 * </p> 
+	 * </p>
 	 * @param provider file structure provider for the files (either folder or a zip)
 	 * @param javaFiles list of files in the file structure to search through
 	 * @param prefixPath a path that one or more of the files may have at the start of their path, the prefix is removed before adding to the package list, can be <code>null</code>
@@ -273,10 +273,10 @@ public class PluginImportHelper {
 	/**
 	 * Collects all items that are not .class files or signing files, uses the provided map to split
 	 * up entries into multiple destinations
-	 * 
+	 *
 	 * @param provider import provider
 	 * @param element element to start search at
-	 * @param packageLocations pre-populated map of package names to a destination folder 
+	 * @param packageLocations pre-populated map of package names to a destination folder
 	 * @param collected map to collect a file list (maps destination folder to a list of files
 	 */
 	public static void collectBinaryFiles(IImportStructureProvider provider, Object element, Map<IPath, IPath> packageLocations, Map<IPath, List<Object>> collected) {
@@ -324,12 +324,12 @@ public class PluginImportHelper {
 	}
 
 	/**
-	 * Searches the content from the provider for non java files that should be imported from a 
+	 * Searches the content from the provider for non java files that should be imported from a
 	 * source bundle.  Source folders containing java files are ignores.  The META-INF folder is
 	 * ignored.  The OSGI-INF folder is ignored to skip source bundle localization.
-	 * 
+	 *
 	 * Note: It would be more accurate to skip localization by reading the localization header of the bundle
-	 * 
+	 *
 	 * @param provider import provider to search
 	 * @param element root element to search in the provider
 	 * @param collected list of children that should be imported
@@ -359,7 +359,7 @@ public class PluginImportHelper {
 
 	/**
 	 * Recursively searches the given folder/zip structure for all non-class files.
-	 * 
+	 *
 	 * @param provider zip/folder structure provider
 	 * @param element element within the structure to search
 	 * @param collected collection for gathering file list
@@ -470,11 +470,11 @@ public class PluginImportHelper {
 	}
 
 	/**
-	 * Recursively searches the children of the given element inside of a zip file. 
+	 * Recursively searches the children of the given element inside of a zip file.
 	 * If the folder path is in the set of folders to ignore, the folder will be skipped.
 	 * All files found, except for .class files, will be added. The given list will be
 	 * updated with the source files.
-	 * 
+	 *
 	 * @param provider zip provider
 	 * @param element current element inside the zip
 	 * @param ignoreFolders list of IPath folder paths to skip while searching

@@ -87,7 +87,7 @@ public class TocAnchorDetails extends TocAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createAnchorIdEntryListeners() {
 		fAnchorIdEntry.setFormEntryListener(new FormEntryAdapter(this) {

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -51,7 +51,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	private static String MEMENTO_SAMPLE_ID_ATT = "sampleId"; //$NON-NLS-1$
 
 	/**
-	 *  
+	 *
 	 */
 	public SampleStandbyContent() {
 		defaultShortcut = new EclipseLaunchShortcut();
@@ -232,7 +232,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		IConfigurationElement[] descConfig = sample != null ? sample.getChildren("description") : null; //$NON-NLS-1$
 		if (descConfig != null && descConfig.length == 1) {
 			String desc = descConfig[0].getValue();
-			String content = NLS.bind(PDEUIMessages.SampleStandbyContent_desc, (desc != null ? desc : "")); //$NON-NLS-1$ 
+			String content = NLS.bind(PDEUIMessages.SampleStandbyContent_desc, (desc != null ? desc : "")); //$NON-NLS-1$
 			helpURL = descConfig[0].getAttribute("helpHref"); //$NON-NLS-1$
 			moreLink.setVisible(helpURL != null);
 			descText.setText(content, true, false);
@@ -262,7 +262,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 
 	/**
 	* Tries to create the last content part viewed, based on sample id.
-	* 
+	*
 	* @param memento
 	*/
 	private String getCachedInput(IMemento memento) {

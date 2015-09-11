@@ -25,9 +25,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 
 	public static final String ATTRIBUTE_VALUE_TRUE = "true"; //$NON-NLS-1$
 
-	public static final String ATTRIBUTE_VALUE_FALSE = "false"; //$NON-NLS-1$	
+	public static final String ATTRIBUTE_VALUE_FALSE = "false"; //$NON-NLS-1$
 
-	public static final String EMPTY_VALUE = ""; //$NON-NLS-1$	
+	public static final String EMPTY_VALUE = ""; //$NON-NLS-1$
 
 	private transient IDocumentElementNode fParent;
 	private transient boolean fIsErrorNode;
@@ -47,7 +47,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	// TODO: MP: TEO: LOW: Regenerate comments
 
 	/**
-	 * 
+	 *
 	 */
 	public DocumentElementNode() {
 		fParent = null;
@@ -595,7 +595,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void reconnectDocument() {
 		// Transient field:  Indent
@@ -656,7 +656,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void reconnectText() {
 		// Transient field:  Text Node

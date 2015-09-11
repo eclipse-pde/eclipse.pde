@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -50,7 +50,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	private ProvisioningUI provUI;
 
 	/**
-	 *  
+	 *
 	 */
 	public ShowSampleAction() {
 		provUI = ProvisioningUI.getDefaultUI();
@@ -126,7 +126,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 
 	/**
 	 * Ensure the sample feature is present. If not present, attempt to install it.
-	 * 
+	 *
 	 * @return <code>true</code> if the sample features are present, and
 	 * <code>false</code> otherwise.
 	 */

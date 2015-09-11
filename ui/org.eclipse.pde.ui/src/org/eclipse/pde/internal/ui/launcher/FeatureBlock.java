@@ -843,7 +843,7 @@ public class FeatureBlock {
 		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, null, SWT.FULL_SELECTION, filter) {
 			@Override
 			protected WorkbenchJob doCreateRefreshJob() {
-				// If we are only showing selected items, we need to redo the filter after text filtering is applied.  The only selected filter uses the tree's check state, which hasn't been restored correctly at filter time. 
+				// If we are only showing selected items, we need to redo the filter after text filtering is applied.  The only selected filter uses the tree's check state, which hasn't been restored correctly at filter time.
 				WorkbenchJob job = super.doCreateRefreshJob();
 				job.addJobChangeListener(new JobChangeAdapter() {
 					@Override
@@ -1132,7 +1132,7 @@ public class FeatureBlock {
 
 	/**
 	 * Sets input to the tree, including location selection and checked features
-	 * 
+	 *
 	 * @param config configuration to get attributes from
 	 * @param tree tree to set input and checked items on
 	 */

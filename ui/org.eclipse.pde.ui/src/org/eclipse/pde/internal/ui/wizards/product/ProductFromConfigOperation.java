@@ -29,7 +29,7 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
 
 /**
  * This operation generates a product configuration filling in fields based on information
- * stored a launch configuration. Product, application, JRE, and config information is 
+ * stored a launch configuration. Product, application, JRE, and config information is
  * collected from the launch config.
  */
 public class ProductFromConfigOperation extends BaseProductCreationOperation {

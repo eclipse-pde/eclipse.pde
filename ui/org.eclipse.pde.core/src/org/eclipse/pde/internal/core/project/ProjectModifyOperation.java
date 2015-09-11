@@ -36,7 +36,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Operation to create or modify a PDE project based on a bundle project description.
- * 
+ *
  * @since 3.6
  */
 public class ProjectModifyOperation {
@@ -47,7 +47,7 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Creates or modifies a project based on the given description.
-	 * 
+	 *
 	 * @param monitor progress monitor or <code>null</code>
 	 * @param description project description
 	 * @throws CoreException if project creation fails
@@ -182,8 +182,8 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Returns the model created by this operation.
-	 * 
-	 * @return model 
+	 *
+	 * @return model
 	 */
 	public WorkspacePluginModelBase getModel() {
 		return fModel;
@@ -194,7 +194,7 @@ public class ProjectModifyOperation {
 	 * If the Java project existed before this operation, new build path entries are
 	 * added for the bundle class path, if required, but we don't change the exiting
 	 * build path.
-	 * 
+	 *
 	 * @param description desired project description
 	 * @param before state before the operation
 	 * @param existed whether the Java project existed before the operation
@@ -276,8 +276,8 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Returns whether the arrays are equal.
-	 * 
-	 * @param array1 an object array or <code>null</code> 
+	 *
+	 * @param array1 an object array or <code>null</code>
 	 * @param array2 an object array or <code>null</code>
 	 * @return whether the arrays are equal
 	 */
@@ -301,7 +301,7 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Returns whether the two objects are equal or both <code>null</code>.
-	 * 
+	 *
 	 * @param st1
 	 * @param st2
 	 * @return whether equal or both <code>null</code>
@@ -318,7 +318,7 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Returns the class path entries to create for the given project.
-	 * 
+	 *
 	 * @param project Java project
 	 * @param description project description
 	 * @return class path entries
@@ -342,7 +342,7 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Returns source folder class path entries.
-	 * 
+	 *
 	 * @param project Java project
 	 * @param description project description
 	 * @return source folder class path entries, possibly empty.
@@ -382,7 +382,7 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Create and open the described project, as necessary.
-	 * 
+	 *
 	 * @param description project description
 	 * @exception CoreException on failure
 	 */
@@ -400,7 +400,7 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Configures project natures.
-	 * 
+	 *
 	 * @param description description of project to modify
 	 * @exception CoreException if something goes wrong
 	 */
@@ -425,7 +425,7 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Configures the MANIFEST.MF for the given description.
-	 * 
+	 *
 	 * @param description project description
 	 * @param before description before operation began
 	 * @throws CoreException
@@ -594,7 +594,7 @@ public class ProjectModifyOperation {
 				if (exports == null) {
 					bundle.setHeader(Constants.EXPORT_PACKAGE, null); // remove
 				} else {
-					ExportPackageHeader header = (ExportPackageHeader) factory.createHeader(Constants.EXPORT_PACKAGE, ""); //$NON-NLS-1$					
+					ExportPackageHeader header = (ExportPackageHeader) factory.createHeader(Constants.EXPORT_PACKAGE, ""); //$NON-NLS-1$
 					for (int i = 0; i < exports.length; i++) {
 						IPackageExportDescription pkg = exports[i];
 						ExportPackageObject epo = header.addPackage(pkg.getName());
@@ -699,7 +699,7 @@ public class ProjectModifyOperation {
 	/**
 	 * Returns the names of libraries as they should appear on the Bundle-Classpath header
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param description project description
 	 * @return library names in the order they should appear or <code>null</code>
 	 */
@@ -722,10 +722,10 @@ public class ProjectModifyOperation {
 	}
 
 	/**
-	 * Sets the bundle class path entries in the manifest. If there is only 
+	 * Sets the bundle class path entries in the manifest. If there is only
 	 * one entry with the default name '.', it is not added to the Bundle-Classpath
 	 * header.
-	 * 
+	 *
 	 * @param description project description
 	 * @param before original state of project
 	 * @throws CoreException
@@ -777,7 +777,7 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Configures the bin.includes entry based on the included libraries and explicit entries to add.
-	 * 
+	 *
 	 * @param project
 	 * @param binEntry
 	 * @param description
@@ -915,7 +915,7 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Gets the specified build entry, creating and adding it if not already present.
-	 * 
+	 *
 	 * @param build build
 	 * @param factory factory to create new entries
 	 * @param key the entry to create
@@ -933,10 +933,10 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Remove a build entry from the model.
-	 * 
+	 *
 	 * @param build
 	 * @param key
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	private void removeBuildEntry(IBuild build, String key) throws CoreException {
 		IBuildEntry entry = build.getEntry(key);

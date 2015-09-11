@@ -65,8 +65,8 @@ public class PDEModelUtility {
 
 	/**
 	 * PDE editors should call this during their creation.
-	 * 
-	 * Currently the pde editor superclass (PDEFormEditor) 
+	 *
+	 * Currently the pde editor superclass (PDEFormEditor)
 	 * connects during its createPages method and so this
 	 * method does not need to be invoked anywhere else.
 	 * @param editor the editor to connect to
@@ -94,7 +94,7 @@ public class PDEModelUtility {
 		IProject project = editor.getCommonProject();
 		if (project == null) {
 			// getCommonProject will return null when project is deleted with editor open - bug 226788
-			// Solution is to use editor input if it is a FileEditorInput. 
+			// Solution is to use editor input if it is a FileEditorInput.
 			IEditorInput input = editor.getEditorInput();
 			if (input != null && input instanceof FileEditorInput) {
 				FileEditorInput fei = (FileEditorInput) input;
@@ -169,14 +169,14 @@ public class PDEModelUtility {
 		if (list == null) {
 			return null;
 		}
-		// Get the open editor whose 
+		// Get the open editor whose
 		// (1) Editor ID matches the specified editor ID
 		// (2) Underlying file matches the specified file
 		// Check all open editors
 		for (int i = 0; i < list.size(); i++) {
 			// Get the editor
 			PDEFormEditor editor = (PDEFormEditor) list.get(i);
-			// Check for the specified type 
+			// Check for the specified type
 			// Get the editor ID
 			String currentEditorID = editor.getEditorSite().getId();
 			if (currentEditorID.equals(editorID) == false) {
@@ -197,7 +197,7 @@ public class PDEModelUtility {
 			}
 			// Get the editor's underlying file
 			IFile currentFile = ((IFileEditorInput) input).getFile();
-			// If the file matches the specified file, we have found the 
+			// If the file matches the specified file, we have found the
 			// specified editor
 			if (currentFile.equals(file)) {
 				return editor;
@@ -238,7 +238,7 @@ public class PDEModelUtility {
 				}
 
 //				IBuildModel bModel = model.getBuildModel();
-//				if (bModel instanceof IEditingModel && 
+//				if (bModel instanceof IEditingModel &&
 //						doc == ((IEditingModel)bModel).getDocument())
 //					return (IEditingModel)bModel;
 
@@ -251,11 +251,11 @@ public class PDEModelUtility {
 
 	/**
 	 * Modify a model based on the specifications provided by the ModelModification parameter.
-	 * 
+	 *
 	 * A model will be searched for in the open editors, if it is found changes will be applied
 	 * and the editor will be saved.
 	 * If no model is found one will be created and text edit operations will be generated / applied.
-	 * 
+	 *
 	 * NOTE: If a MANIFEST.MF file is specified in the ModelModification a BundlePluginModel will be
 	 * searched for / created and passed to ModelModification#modifyModel(IBaseModel).
 	 * (not a BundleModel - which can be retreived from the BundlePluginModel)

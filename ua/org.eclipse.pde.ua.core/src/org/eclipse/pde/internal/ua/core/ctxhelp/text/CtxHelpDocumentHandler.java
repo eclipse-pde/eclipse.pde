@@ -18,7 +18,7 @@ import org.xml.sax.SAXParseException;
 
 /**
  * Document handler for context help xml files.
- * 
+ *
  * @since 3.4
  * @see CtxHelpObject
  * @see CtxHelpModel
@@ -35,7 +35,7 @@ public class CtxHelpDocumentHandler extends NodeDocumentHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocument()
 	 */
 	protected IDocument getDocument() {
@@ -44,7 +44,7 @@ public class CtxHelpDocumentHandler extends NodeDocumentHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.NodeDocumentHandler#getRootNode()
 	 */
 	protected IDocumentElementNode getRootNode() {

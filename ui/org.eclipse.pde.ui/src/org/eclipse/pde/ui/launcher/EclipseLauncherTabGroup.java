@@ -42,10 +42,10 @@ public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGr
 			if (!(configuration.getAttribute(IPDEUIConstants.GENERATED_CONFIG, false)))
 				return;
 			ILaunchConfiguration original = configuration.getOriginal();
-			// peformApply is called when opening the launch dialog the first time.  In this case the user has not modified the configuration so we should 
+			// peformApply is called when opening the launch dialog the first time.  In this case the user has not modified the configuration so we should
 			// keep the GENERATED_CONFIG flag.  To check to see if this is the case, we need to see if an attribute used to initialize the launch config
-			// is present in the original copy.  We do this by querying the config twice, with different default values.  If the values == eachother, we 
-			// we know the value is present.  Since generated configs don't contain DOCLEARLOG, we know if DOCLEARLOG is present in the original copy the 
+			// is present in the original copy.  We do this by querying the config twice, with different default values.  If the values == eachother, we
+			// we know the value is present.  Since generated configs don't contain DOCLEARLOG, we know if DOCLEARLOG is present in the original copy the
 			// perform apply so save the initialization values has already been run and this is a user modification.
 			if (original != null) {
 				boolean firstQuery = original.getAttribute(IPDEConstants.DOCLEARLOG, false);

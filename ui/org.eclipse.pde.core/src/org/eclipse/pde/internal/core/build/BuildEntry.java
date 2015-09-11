@@ -120,7 +120,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 
 	/**
 	 * Returns the path that this entries tokens are relative to, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return relative root path, or <code>null</code>
 	 */
 	IPath getRootPath() {
@@ -142,7 +142,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 
 	/**
 	 * Makes the token a bundle root relative path
-	 * 
+	 *
 	 * @param token token
 	 * @param root bundle root path or <code>null</code>
 	 * @return bundle relative token
@@ -156,7 +156,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 
 	/**
 	 * Makes the token a project relative path
-	 * 
+	 *
 	 * @param token token
 	 * @param root bundle root path or <code>null</code>
 	 * @return project relative token

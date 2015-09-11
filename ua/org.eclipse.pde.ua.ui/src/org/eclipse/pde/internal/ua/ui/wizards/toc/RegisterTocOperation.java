@@ -61,7 +61,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	private Shell fShell;
 
 	/**
-	 * 
+	 *
 	 */
 	public RegisterTocOperation(IRegisterTOCData page, Shell shell) {
 		fPage = page;
@@ -106,7 +106,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		public IPluginElement fTocElement;
 
 		/**
-		 * 
+		 *
 		 */
 		public FindTocExtensionResult() {
 			fTocExtension = null;
@@ -136,7 +136,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
 
 		// Validate the operation
-		// Note: This is not accurate, we are validating the plugin.xml file 
+		// Note: This is not accurate, we are validating the plugin.xml file
 		// but not the manifest.mf file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
@@ -162,7 +162,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 			return;
 		}
 		IPluginModelBase modelBase = (IPluginModelBase) model;
-		// Find an existing cheat sheet extension 
+		// Find an existing cheat sheet extension
 		FindTocExtensionResult result = findTocExtensionResult(modelBase);
 		// Check search results and act accordingly
 		if (result.foundTocExtension() && result.foundExactTocElement()) {
@@ -171,7 +171,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 			modifyExistingElement(result.fTocElement, monitor);
 		} else if (result.foundTocExtension()) {
 			// No exact match to an existing TOC element found within
-			// the existing TOC extension.  Update the 
+			// the existing TOC extension.  Update the
 			// existing extension by adding a new TOC element
 			// to it
 			modifyExistingExtension(result.fTocExtension, monitor);
@@ -242,9 +242,9 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		IPluginExtension[] extensions = findTOCExtensions(model);
 		// Process all TOC extensions
 		// Extension search results
-		// (1) An existing extension containing a TOC element with the 
+		// (1) An existing extension containing a TOC element with the
 		//     exact TOC filename
-		// (2) An existing extension (last one found) containing 0 or more 
+		// (2) An existing extension (last one found) containing 0 or more
 		//     TOC elements
 		// (3) No existing extension
 		for (int i = 0; i < extensions.length; i++) {
@@ -354,7 +354,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}
 		IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 		IBundle bundle = modelBase.getBundleModel().getBundle();
-		// Get the heading specifying the singleton declaration 
+		// Get the heading specifying the singleton declaration
 		IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		if (header instanceof BundleSymbolicNameHeader) {
 			BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader) header;
@@ -401,7 +401,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		if (entry.contains(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) == false) {
 			entry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 		}
-		// There does not seem to be any support in PDEModelUtility or the 
+		// There does not seem to be any support in PDEModelUtility or the
 		// ModelModification framework to save build.properties modifications
 		// As a result, explicitly do that here
 		if (build instanceof BuildObject) {

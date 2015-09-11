@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - bug 208534
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
 /**
  * Abstract implementation of the TemplateOption that allows users to choose a value from
  * the fixed set of options.
- * 
+ *
  * @since 2.0
  */
 public abstract class AbstractChoiceOption extends TemplateOption {
@@ -28,7 +28,7 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 
 	/**
 	 * Constructor for AbstractChoiceOption.
-	 * 
+	 *
 	 * @param section
 	 *            the parent section.
 	 * @param name
@@ -48,7 +48,7 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 
 	/**
 	 * Returns the string value of the current choice.
-	 * 
+	 *
 	 * @return the current choice or <samp>null </samp> if not initialized.
 	 */
 	public String getChoice() {
@@ -58,7 +58,7 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 	/**
 	 * Implements the superclass method by passing the new value to the option's
 	 * widget.
-	 * 
+	 *
 	 * @param value
 	 *            the new value.
 	 */
@@ -70,13 +70,13 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 	/**
 	 * Implements the superclass method by passing the new value to the option's
 	 * widget; updates to the combo can be supressed.
-	 * 
+	 *
 	 * @param value
 	 *            the new value.
 	 * @param updateControl
 	 *            true to have the Combo's displayed value updated too, false to
 	 *            indicate that this isn't necessary.
-	 *            
+	 *
 	 * @since 3.4
 	 */
 	protected void setValue(Object value, boolean updateControl) {

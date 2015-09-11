@@ -73,7 +73,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 	public String getOverwrite() {
 		return fOverwrite;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPreferencesInfo#setPreferenceCustomizationPath(java.lang.String)
 	 */
@@ -113,7 +113,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 		if (fPreferenceCustomizationPath != null && fPreferenceCustomizationPath.length() > 0) {
 			targetFile += " path=\"" + getWritableString(fPreferenceCustomizationPath.trim()) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		targetFile += "/>"; //$NON-NLS-1$ 			
+		targetFile += "/>"; //$NON-NLS-1$
 		writer.println(targetFile);
 		writer.println(indent + "</preferencesInfo>"); //$NON-NLS-1$
 	}

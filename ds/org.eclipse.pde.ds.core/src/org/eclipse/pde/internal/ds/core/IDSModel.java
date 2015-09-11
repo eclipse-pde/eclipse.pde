@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738 
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
@@ -17,7 +17,7 @@ import org.eclipse.pde.core.IModelChangeProvider;
 
 /**
  * Represents the DS Text Model
- * 
+ *
  * @since 3.4
  * @see IDSComponent
  * @see IDSFactory
@@ -26,7 +26,7 @@ public interface IDSModel extends IModelChangeProvider, IModel {
 
 	/**
 	 * Return the factory object of this model
-	 * 
+	 *
 	 * @return existing IDSDocumentfactory object, or create a new object for
 	 *         the first time it is called
 	 */
@@ -34,7 +34,7 @@ public interface IDSModel extends IModelChangeProvider, IModel {
 
 	/**
 	 * Return the root component element of this model
-	 * 
+	 *
 	 * @return existing IDSComponent object, or create a new object for the
 	 *         first time it is called
 	 */
@@ -49,7 +49,7 @@ public interface IDSModel extends IModelChangeProvider, IModel {
 	 * <p>
 	 * With the caveat of stepped loading, all other properties of the
 	 * underlying resource could be used directly (path, project etc.).
-	 * 
+	 *
 	 * @param resource
 	 *            a workspace resource (file) that this model is associated
 	 *            with.
@@ -58,7 +58,7 @@ public interface IDSModel extends IModelChangeProvider, IModel {
 
 	/**
 	 * Saves the model into the underlying resource
-	 * 
+	 *
 	 */
 	public abstract void save();
 

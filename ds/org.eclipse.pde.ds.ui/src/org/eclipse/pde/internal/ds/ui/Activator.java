@@ -37,7 +37,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -64,7 +64,7 @@ public class Activator extends AbstractUIPlugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
+
 	@Override
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		registry.put(SharedImages.DESC_IMPLEMENTATION,
@@ -100,11 +100,11 @@ public class Activator extends AbstractUIPlugin {
 		registry.put(SharedImages.DESC_DS_WIZ,
 				createImageDescriptor(SharedImages.DESC_DS_WIZ));
 	}
-	
+
 	private ImageDescriptor createImageDescriptor(String id) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, id);
 	}
-	
+
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window != null) {
@@ -116,7 +116,7 @@ public class Activator extends AbstractUIPlugin {
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
-	
+
 	public static void logException(Throwable e, final String title,
 			String message) {
 		if (e instanceof InvocationTargetException) {
@@ -139,7 +139,7 @@ public class Activator extends AbstractUIPlugin {
 		final IStatus fstatus = status;
 		display.asyncExec(() -> ErrorDialog.openError(null, title, null, fstatus));
 	}
-	
+
 	public static void logException(Throwable e) {
 		logException(e, null, null);
 	}

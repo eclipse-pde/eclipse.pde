@@ -21,7 +21,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * Editor contributor for the target definition editor.  Adds support for certain
  * global actions.
- * 
+ *
  * @see TargetEditor
  */
 public class TargetEditorContributor extends EditorActionBarContributor {

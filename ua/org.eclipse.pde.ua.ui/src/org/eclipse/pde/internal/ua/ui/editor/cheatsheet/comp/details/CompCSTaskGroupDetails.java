@@ -90,7 +90,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	public void initialize(IManagedForm form) {
 		super.initialize(form);
 		// Unfortunately this has to be explicitly called for sub detail
-		// sections through its main section parent; since, it never is 
+		// sections through its main section parent; since, it never is
 		// registered directly.
 		// Initialize managed form for enclosing text section
 		fEnclosingTextSection.initialize(form);
@@ -188,7 +188,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListenersNameEntry() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -203,7 +203,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListenersKindCombo() {
 		fKindCombo.addSelectionListener(new SelectionAdapter() {
@@ -225,7 +225,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListenersSkipButton() {
 		fSkip.addSelectionListener(new SelectionAdapter() {

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 200756
@@ -165,7 +165,7 @@ public class ExportPackageSection extends TableSection {
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		HashMap<?, ?> currentPackageFragments = null;
-		// Only export package objects that represent existing package 
+		// Only export package objects that represent existing package
 		// fragments within the Java project that this plugin.xml is stored
 		// can be pasted
 		for (int i = 0; i < sourceObjects.length; i++) {
@@ -173,7 +173,7 @@ public class ExportPackageSection extends TableSection {
 			if ((sourceObjects[i] instanceof ExportPackageObject) == false) {
 				return false;
 			}
-			// Get the package fragments that are allowed and store them to 
+			// Get the package fragments that are allowed and store them to
 			// assist in searching
 			if (currentPackageFragments == null) {
 				currentPackageFragments = createCurrentExportPackageMap();

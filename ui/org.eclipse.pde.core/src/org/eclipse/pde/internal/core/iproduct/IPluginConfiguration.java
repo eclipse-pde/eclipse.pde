@@ -13,8 +13,8 @@
 package org.eclipse.pde.internal.core.iproduct;
 
 /**
- * PluginConfiguration description defines plug-in start level, and other properties 
- * that can be used during product launching/building    
+ * PluginConfiguration description defines plug-in start level, and other properties
+ * that can be used during product launching/building
  */
 public interface IPluginConfiguration extends IProductObject {
 	public static final String P_AUTO_START = "autoStart"; //$NON-NLS-1$

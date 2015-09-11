@@ -186,11 +186,11 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		delta.accept(fSelfVisitor);
 		int type = fSelfVisitor.getType();
 
-		// catch anything we have missed 
+		// catch anything we have missed
 		// For example, upon startup, when target has changed since shutdown
 		// we depend on class file changes in the project that have resulted
 		// from the Java compiler detecting the change in classpath.
-		// Note that we do NOT validate anything if there was a change 
+		// Note that we do NOT validate anything if there was a change
 		// in a .java file.  A change in a .java file means that the user has modified
 		// its content and this does not warrant a rebuild of manifest files.
 		if ((type & MANIFEST | EXTENSIONS) != (MANIFEST | EXTENSIONS)) {
@@ -406,7 +406,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	/**
 	 * Cleans PDE problems from the given resource to the specified depth.
-	 * 
+	 *
 	 * @param resource resource to delete markers from
 	 * @param depth one of the depth constants in {@link IResource}
 	 * @throws CoreException

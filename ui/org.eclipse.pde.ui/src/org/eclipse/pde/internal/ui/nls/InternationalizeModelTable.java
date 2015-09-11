@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
+ *
  * Stores the list of BundlePluginModels and ExternalPluginModels to be passed to the
  * InternationalizeWizard. This class could also used to populate the list of locales
  * to which plug-ins will be internationalized.
- * 
+ *
  * @author Team Azure
  *
  */
@@ -62,7 +62,7 @@ public class InternationalizeModelTable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the number of models in the table
 	 */
 	public int getModelCount() {
@@ -86,7 +86,7 @@ public class InternationalizeModelTable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return whether or not the model table contains preselected models
 	 */
 	public boolean hasPreSelected() {
@@ -94,7 +94,7 @@ public class InternationalizeModelTable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return whether or not the list of models is empty
 	 */
 	public boolean isEmpty() {

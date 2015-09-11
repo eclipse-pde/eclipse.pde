@@ -122,7 +122,7 @@ public class TocDetails extends TocAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createNameEntryListeners() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -138,7 +138,7 @@ public class TocDetails extends TocAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createAnchorEntryListeners() {
 		fAnchorEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -154,7 +154,7 @@ public class TocDetails extends TocAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createPageEntryListeners() {
 		fPageEntry.setFormEntryListener(new FormEntryAdapter(this) {

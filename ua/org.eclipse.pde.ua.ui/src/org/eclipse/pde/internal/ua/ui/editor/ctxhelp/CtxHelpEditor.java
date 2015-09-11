@@ -126,7 +126,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 
 	/**
 	 * Returns the <code>IShowInSource</code> for this editor.
-	 * @return the <code>IShowInSource</code> 
+	 * @return the <code>IShowInSource</code>
 	 */
 	private IShowInSource getShowInSource() {
 		return new IShowInSource() {
@@ -161,7 +161,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 
 	/**
 	 * Returns the <code>IShowInTargetList</code> for this editor.
-	 * @return the <code>IShowInTargetList</code> 
+	 * @return the <code>IShowInTargetList</code>
 	 */
 	private IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {

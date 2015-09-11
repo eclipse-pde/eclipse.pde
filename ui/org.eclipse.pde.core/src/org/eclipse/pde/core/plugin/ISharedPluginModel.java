@@ -34,7 +34,7 @@ import org.eclipse.pde.core.IModelChangeProvider;
  * The model is capable of notifying listeners
  * about changes. An attempt to change a read-only
  * model will result in a CoreException.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -42,18 +42,18 @@ public interface ISharedPluginModel extends IModel, IModelChangeProvider {
 	/**
 	 * Returns a factory object that should be used
 	 * to create new instances of the model objects.
-	 * 
-	 * @return factory object to create new model objects 
+	 *
+	 * @return factory object to create new model objects
 	 */
 	IExtensionsModelFactory getFactory();
 
 	/**
 	 * Returns a location of the file that was used
-	 * to create this model.  The location can be that 
+	 * to create this model.  The location can be that
 	 * of a directory or that of a JAR file.
 	 *
 	 * @return a location of the external model, or
-	 * <samp>null</samp> if the model is not created 
+	 * <samp>null</samp> if the model is not created
 	 * from a resource or a file in the file system.
 	 */
 	String getInstallLocation();

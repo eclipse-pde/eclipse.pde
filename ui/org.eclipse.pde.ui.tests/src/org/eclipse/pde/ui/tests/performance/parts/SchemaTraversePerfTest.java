@@ -53,7 +53,7 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 		InputStream input = null;
 		try {
 			connection = SchemaUtil.getURLConnection(fXSDFile.toURL());
-			input = connection.getInputStream(); 
+			input = connection.getInputStream();
 			SAXParserWrapper parser = new SAXParserWrapper();
 			XMLDefaultHandler handler = new XMLDefaultHandler(true);
 			parser.parse(input, handler);

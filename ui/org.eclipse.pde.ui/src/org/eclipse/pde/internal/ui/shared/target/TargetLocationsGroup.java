@@ -42,7 +42,7 @@ import org.eclipse.ui.progress.UIJob;
  * UI part that can be added to a dialog or to a form editor.  Contains a table displaying
  * the bundle containers of a target definition.  Also has buttons to add, edit and remove
  * bundle containers of varying types.
- * 
+ *
  * @see TargetEditor
  * @see TargetDefinitionContentPage
  * @see ITargetDefinition
@@ -63,7 +63,7 @@ public class TargetLocationsGroup {
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given composite.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @param toolkit toolkit to create the widgets with
 	 * @return generated instance of the table part
@@ -76,7 +76,7 @@ public class TargetLocationsGroup {
 
 	/**
 	 * Creates this part using standard dialog widgets and adds it to the given composite.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @return generated instance of the table part
 	 */
@@ -89,7 +89,7 @@ public class TargetLocationsGroup {
 	/**
 	 * Private constructor, use one of {@link #createTableInDialog(Composite, ITargetChangedListener)}
 	 * or {@link #createTableInForm(Composite, FormToolkit, ITargetChangedListener)}.
-	 * 
+	 *
 	 * @param reporter reporter implementation that will handle resolving and changes to the containers
 	 */
 	private TargetLocationsGroup() {
@@ -98,8 +98,8 @@ public class TargetLocationsGroup {
 
 	/**
 	 * Adds a listener to the set of listeners that will be notified when the bundle containers
-	 * are modified.  This method has no effect if the listener has already been added. 
-	 * 
+	 * are modified.  This method has no effect if the listener has already been added.
+	 *
 	 * @param listener target changed listener to add
 	 */
 	public void addTargetChangedListener(ITargetChangedListener listener) {

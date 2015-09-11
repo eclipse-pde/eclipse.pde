@@ -229,7 +229,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaAttribute#isTranslatable()
 	 */
 	@Override
@@ -241,7 +241,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.ischema.IMetaAttribute#isDeprecated()
 	 */
 	@Override

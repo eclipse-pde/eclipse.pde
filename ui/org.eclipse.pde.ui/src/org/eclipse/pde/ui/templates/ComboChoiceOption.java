@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * Implementation of the AbstractTemplateOption that allows users to choose a value from
  * the fixed set of options using a combo box.
- * 
+ *
  * @since 3.2
  */
 public class ComboChoiceOption extends AbstractChoiceOption {
@@ -40,7 +40,7 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 	 *            the list of choices from which the value can be chosen. Each
 	 *            array entry should be an array of size 2, where position 0
 	 *            will be interpeted as the choice unique name, and position 1
-	 *            as the choice presentable label. 
+	 *            as the choice presentable label.
 	 */
 	public ComboChoiceOption(BaseOptionTemplateSection section, String name, String label, String[][] choices) {
 		super(section, name, label, choices);
@@ -110,7 +110,7 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 
 	/**
 	 * Get the index (in the collection) of the choice
-	 * 
+	 *
 	 * @param choice
 	 *            The key of the item
 	 * @return The position in the list, or -1 if not found

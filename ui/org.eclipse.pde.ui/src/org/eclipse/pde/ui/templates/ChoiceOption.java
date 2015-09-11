@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * Implementation of the TemplateOption that allows users to choose a value from
  * the fixed set of options.
- * 
+ *
  * @since 2.0
  * @deprecated see {@link RadioChoiceOption} and {@link ComboChoiceOption}
  */
@@ -32,7 +32,7 @@ public class ChoiceOption extends TemplateOption {
 
 	/**
 	 * Constructor for ChoiceOption.
-	 * 
+	 *
 	 * @param section
 	 *            the parent section.
 	 * @param name
@@ -89,7 +89,7 @@ public class ChoiceOption extends TemplateOption {
 
 	/**
 	 * Returns the string value of the current choice.
-	 * 
+	 *
 	 * @return the current choice or <samp>null </samp> if not initialized.
 	 */
 	public String getChoice() {
@@ -99,7 +99,7 @@ public class ChoiceOption extends TemplateOption {
 	/**
 	 * Implements the superclass method by passing the new value to the option's
 	 * widget.
-	 * 
+	 *
 	 * @param value
 	 *            the new value.
 	 */

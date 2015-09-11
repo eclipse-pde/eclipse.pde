@@ -98,7 +98,7 @@ public class CoreUtility {
 	 * Convenience method to delete the given file and any content (if the file is a
 	 * directory). Equivalent to calling {@link #deleteContent(File, IProgressMonitor)}
 	 * with <code>null</code> as the monitor.  This operation cannot be undone.
-	 * 
+	 *
 	 * @param fileToDelete the file to delete
 	 */
 	public static void deleteContent(File fileToDelete) {
@@ -108,7 +108,7 @@ public class CoreUtility {
 	/**
 	 * Deletes the given file and any content (if the file is a directory).  There is
 	 * no way to undo this action. Providing a progress monitor allows for cancellation.
-	 * 
+	 *
 	 * @param fileToDelete the file to delete
 	 * @param monitor progress monitor for reporting and cancellation, can be <code>null</code>
 	 */

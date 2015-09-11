@@ -16,7 +16,7 @@ import org.eclipse.pde.core.IIdentifiable;
 /**
  * Classes that implement this interface model the extension
  * element found in the plug-in or fragment manifest.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -30,8 +30,8 @@ public interface IPluginExtension extends IPluginParent, IIdentifiable {
 	/**
 	 * Returns the full ID of the extension point that this extension
 	 * is plugged into.
-	 * 
-	 * @return the full extension point ID  
+	 *
+	 * @return the full extension point ID
 	 */
 	String getPoint();
 
@@ -40,7 +40,7 @@ public interface IPluginExtension extends IPluginParent, IIdentifiable {
 	 * is plugged into or <code>null</code> if not found.
 	 * <p>This method is an implementation detail - schema object
 	 * is not needed for clients outside PDE and should not be used.
-	 * 
+	 *
 	 * @return The schema for the associated extension point or <code>null</code>
 	 */
 	Object getSchema();

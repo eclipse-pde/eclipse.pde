@@ -26,7 +26,7 @@ public class TocFileValidator implements ISelectionStatusValidator {
 	IBaseModel fModel;
 
 	/**
-	 * 
+	 *
 	 */
 	public TocFileValidator(IBaseModel model) {
 		fModel = model;

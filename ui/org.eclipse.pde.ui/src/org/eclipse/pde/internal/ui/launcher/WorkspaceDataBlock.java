@@ -32,7 +32,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 	/**
 	 * Transient launch configuration attribute key that tells whether the launch configuration has been newly created but
 	 * <em>not duplicated</em>.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	private static final String ATTR_IS_NEWLY_CREATED = "isNewlyCreated"; //$NON-NLS-1$

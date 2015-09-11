@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ import org.osgi.framework.Constants;
 
 /**
  * Ant task that takes a plug-in and created HTML reference documents for all schema (.exsd) files.
- * 
+ *
  */
 public class ConvertSchemaToHTML extends Task {
 
@@ -52,7 +52,7 @@ public class ConvertSchemaToHTML extends Task {
 			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_missingAttribute, "manifest")); //$NON-NLS-1$
 		}
 		if (!new Path(destination).isValidPath(destination)) {
-			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "destination")); //$NON-NLS-1$ 
+			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "destination")); //$NON-NLS-1$
 		}
 
 		IPluginModelBase model = readManifestFile();
@@ -120,7 +120,7 @@ public class ConvertSchemaToHTML extends Task {
 	 * Required attribute describing the location of the plugin.xml file
 	 * for the plug-in to create schema html docs for.  May be an absolute
 	 * file path or a path relative to the ant base directory <code>${basedir}</code>
-	 * 
+	 *
 	 * @param manifest string file path to plugin.xml for the plug-in to convert
 	 */
 	public void setManifest(String manifest) {
@@ -129,7 +129,7 @@ public class ConvertSchemaToHTML extends Task {
 
 	/**
 	 * Required attribute describing the location to output the HTML.
-	 * 
+	 *
 	 * @param destination string file path to output html to
 	 */
 	public void setDestination(String destination) {
@@ -137,11 +137,11 @@ public class ConvertSchemaToHTML extends Task {
 	}
 
 	/**
-	 * Optional attribute providing a comma <code>','</code> delimited 
+	 * Optional attribute providing a comma <code>','</code> delimited
 	 * list of file paths to search for plug-ins that provide schema
 	 * files included by the schema files being converted.
 	 * <p>
-	 * When a schema file includes another, the html will include the 
+	 * When a schema file includes another, the html will include the
 	 * element definitions from the included schema if it is available.
 	 * If the schema does not exist in the same plug-in, the task will
 	 * assume the schema url is of the form
@@ -153,7 +153,7 @@ public class ConvertSchemaToHTML extends Task {
 	 * The paths can be absolute file paths or paths relative to the ant
 	 * base directory <code>${basedir}</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param additionalSearchPaths comma delimited list of search paths
 	 */
 	public void setAdditionalSearchPaths(String additionalSearchPaths) {
@@ -168,7 +168,7 @@ public class ConvertSchemaToHTML extends Task {
 	 * Sets a url location to lookup a CSS file to use during
 	 * the schema transformation.  If not set, the task will search
 	 * for a default CSS in the product plug-in.
-	 * 
+	 *
 	 * @param url string form of url pointing to a CSS file
 	 */
 	public void setCSSURL(String url) {
@@ -244,7 +244,7 @@ public class ConvertSchemaToHTML extends Task {
 				model = new ExternalPluginModel();
 			else {
 				stream.close();
-				throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$ 
+				throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$
 			}
 
 			String parentPath = file.getParentFile().getAbsolutePath();

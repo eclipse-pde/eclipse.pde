@@ -66,7 +66,7 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIListenerImageHyperlinkRegisterCS() {
 		fImageHyperlinkRegisterCS
@@ -109,7 +109,7 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleLinkActivatedRegisterCS() {
 		RegisterCSWizard wizard = new RegisterCSWizard(

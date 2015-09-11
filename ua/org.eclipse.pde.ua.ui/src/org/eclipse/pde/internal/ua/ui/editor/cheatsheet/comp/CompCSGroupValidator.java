@@ -37,7 +37,7 @@ public class CompCSGroupValidator {
 	// TODO: MP: LOW: CompCS: Can augment the model to have isValid() methods to simplify validation
 
 	/**
-	 * 
+	 *
 	 */
 	public CompCSGroupValidator(ICompCS cheatsheet, Form form, String errorCategory) {
 		fForm = form;

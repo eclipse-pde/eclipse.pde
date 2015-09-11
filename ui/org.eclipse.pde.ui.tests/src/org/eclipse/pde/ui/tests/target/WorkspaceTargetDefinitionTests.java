@@ -20,18 +20,18 @@ import org.eclipse.core.resources.*;
 
 /**
  * Tests for target definitions.  The tested targets will be backed by a workspace file.
- * 
+ *
  * @see LocalTargetDefinitionTests
- * @since 3.5 
+ * @since 3.5
  */
 public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
-	
+
 	private static final String PROJECT_NAME = "WorkspaceTargetDefinitionTests";
-	
+
 	public static Test suite() {
 		return new TestSuite(WorkspaceTargetDefinitionTests.class);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
@@ -42,7 +42,7 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 		project.open(null);
 		assertTrue("Could not open test project", project.isOpen());
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
@@ -51,7 +51,7 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 		}
 		assertFalse("Could not delete test project",project.exists());
 	}
-	
+
 	@Override
 	protected ITargetDefinition getNewTarget() {
 		IFile target = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME).getFile(new Long(System.currentTimeMillis()).toString() + ".target");
@@ -62,6 +62,5 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 		}
 		return null;
 	}
-	
+
 }
-	

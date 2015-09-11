@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ua.core.ctxhelp.text;
 /**
  * Represents a command entry in context help. Commands are used to launch
  * actions when clicked on by the user. Commands are leaf objects.
- * 
+ *
  * @since 3.4
  * @see CtxHelpObject
  * @see CtxHelpModel
@@ -29,7 +29,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canBeParent()
 	 */
 	public boolean canBeParent() {
@@ -38,7 +38,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getType()
 	 */
 	public int getType() {
@@ -47,7 +47,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getName()
 	 */
 	public String getName() {
@@ -65,7 +65,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 	/**
 	 * Set the label attribute, passing <code>null</code> will set the attribute
 	 * to be empty.
-	 * 
+	 *
 	 * @param label
 	 *            new value
 	 */
@@ -84,7 +84,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 	/**
 	 * Set the serialization attribute, passing <code>null</code> will set the
 	 * attribute to be empty.
-	 * 
+	 *
 	 * @param serialization
 	 *            new value
 	 */
@@ -94,7 +94,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddChild(org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject)
 	 */
@@ -104,7 +104,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddSibling
 	 * (int)

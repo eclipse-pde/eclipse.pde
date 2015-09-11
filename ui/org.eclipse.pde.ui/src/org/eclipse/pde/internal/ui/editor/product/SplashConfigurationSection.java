@@ -85,7 +85,7 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIListenersFieldTemplateCombo() {
 		// Selection listener
@@ -113,7 +113,7 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleTemplateComboWidgetSelected() {
 		// Ignore event if notifications are blocked
@@ -140,14 +140,14 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUI() {
 		// Create the container
 		Composite container = createUISectionContainer(fSection);
 		// Create the template field label
 		createUILabelType(container);
-		// Create the template field 
+		// Create the template field
 		createUIFieldTemplateCombo(container);
 		// Create the template field decoration
 		createUIFieldDecorationTemplate();
@@ -166,7 +166,7 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createUIFieldDecorationTemplate() {
 		// Decorate the combo with the info image
@@ -236,7 +236,7 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void configureUISection() {
 		fSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -385,7 +385,7 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void resetProgressBarGeometry() {
 		// X Offset
@@ -399,7 +399,7 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void resetProgressMessageGeometry() {
 		// X Offset
@@ -455,7 +455,7 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateUIFieldTemplateCombo() {
 		// Update this sections enablement
@@ -566,7 +566,7 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateFieldEnablement() {
 		// Enable / disable progress and message bar fields
@@ -576,7 +576,7 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateFieldProgressEnablement() {
 		// Get the splash info if any
@@ -619,7 +619,7 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateFieldTemplateEnablement() {
 		// Get the splash info if any

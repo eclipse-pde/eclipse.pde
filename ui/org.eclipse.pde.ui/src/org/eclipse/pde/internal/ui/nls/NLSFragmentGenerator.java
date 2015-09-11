@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * 
+ *
  * Generates the fragment projects for the list of selected plug-ins.
  * Each fragment contains a series of properties files specific to the locales
  * the user selected. For example plugin_fr.properties for the french locale
@@ -169,10 +169,10 @@ public class NLSFragmentGenerator {
 	/**
 	 * Creates an NL fragment project along with the locale specific properties
 	 * files.
-	 * @throws CoreException 
-	 * @throws IOException 
-	 * @throws InvocationTargetException 
-	 * @throws InterruptedException 
+	 * @throws CoreException
+	 * @throws IOException
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
 	 */
 	private void internationalizePlugins(List<?> plugins, List<?> locales, Map<String, Object> overwrites) throws CoreException, IOException, InvocationTargetException, InterruptedException {
 
@@ -235,9 +235,9 @@ public class NLSFragmentGenerator {
 	 * Creates a fragment project for the specified plug-in and populates
 	 * the field data.
 	 * @param plugin
-	 * @throws CoreException 
-	 * @throws InvocationTargetException 
-	 * @throws InterruptedException 
+	 * @throws CoreException
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
 	 */
 	private void createNLFragment(final IPluginModelBase plugin, final IProject project, final Locale locale) throws CoreException, InvocationTargetException, InterruptedException {
 		FragmentFieldData fragmentData = populateFieldData(plugin, locale);
@@ -299,8 +299,8 @@ public class NLSFragmentGenerator {
 
 	/**
 	 * Adjusts the plug-in's version to reflect the required
-	 * fragment-host bundle-version range. For example, 
-	 * fragment-host's bundle-version range would be: "[1.0.0, 1.1.0)" 
+	 * fragment-host bundle-version range. For example,
+	 * fragment-host's bundle-version range would be: "[1.0.0, 1.1.0)"
 	 * if the host's version is 1.0.0
 	 * @param oldVersion
 	 * @return adjusted plug-in version
@@ -326,12 +326,12 @@ public class NLSFragmentGenerator {
 	}
 
 	/**
-	 * Creates a locale specific properties file within the fragment project 
+	 * Creates a locale specific properties file within the fragment project
 	 * based on the content of the host plug-in's properties file.
 	 * @param fragmentProject
 	 * @param locale
-	 * @throws CoreException 
-	 * @throws IOException 
+	 * @throws CoreException
+	 * @throws IOException
 	 */
 	private void createLocaleSpecificPropertiesFile(final IProject fragmentProject, IPluginModelBase plugin, final Locale locale) throws CoreException, IOException {
 		final IFolder localeResourceFolder = fragmentProject.getFolder(RESOURCE_FOLDER_PARENT).getFolder(locale.toString());

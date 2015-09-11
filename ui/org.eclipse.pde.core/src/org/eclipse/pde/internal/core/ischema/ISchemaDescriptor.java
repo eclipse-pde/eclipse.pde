@@ -21,7 +21,7 @@ import java.net.URL;
 public interface ISchemaDescriptor {
 	/**
 	 * Returns identifier of the extension point defined in this schema.
-	 * 
+	 *
 	 * @return id of the schema extension point
 	 */
 	public String getPointId();
@@ -31,21 +31,21 @@ public interface ISchemaDescriptor {
 	 * previously disposed, this method will load it before returning. If
 	 * abbreviated, the light-weight schema will not contain descriptions for
 	 * elements or the content of documentation sections.
-	 * 
+	 *
 	 * @return a loaded schema object
 	 */
 	ISchema getSchema(boolean abbreviated);
 
 	/**
 	 * Returns the URL of the schema XML file.
-	 * 
+	 *
 	 * @return the URL of the schema XML file
 	 */
 	URL getSchemaURL();
 
 	/**
 	 * Tests if the descriptor is created outside the registry.
-	 * 
+	 *
 	 * @return <code>true</code> if the descriptor is outside the registry,
 	 *         <code>false</code> otherwise.
 	 */

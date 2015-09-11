@@ -13,8 +13,8 @@
 package org.eclipse.pde.internal.ds.ui;
 
 public interface IConstants {
-	
+
 	public static final String ID_EDITOR = "org.eclipse.pde.ui.dsEditor"; //$NON-NLS-1$
 	public static final String ID_BUILDER = "org.eclipse.pde.ds.core.builder"; //$NON-NLS-1$
-	
+
 }

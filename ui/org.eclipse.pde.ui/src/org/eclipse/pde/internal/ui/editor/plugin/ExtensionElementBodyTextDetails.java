@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brian de Alwis (MTI) - bug 429420
@@ -164,7 +164,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		createUIInfoHoverControl(client);
 		// Create the body text label
 		createUIHyperlinkBody(client);
-		// Create the body text field 
+		// Create the body text field
 		createUITextBody(client);
 		// Associate the client with the section
 		fToolkit.paintBordersFor(client);
@@ -268,7 +268,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	}
 
 	private void updateUITextBody() {
-		// Set the new body text value from the new plugin element data if 
+		// Set the new body text value from the new plugin element data if
 		// defined
 		if (fPluginElement == null) {
 			fTextBody.setEditable(false);
@@ -346,7 +346,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 
 	@Override
 	public String getHoverContent(Control control) {
-		// Retrieve either the hyperlink, label or text description as the 
+		// Retrieve either the hyperlink, label or text description as the
 		// hover content
 		if ((control instanceof Hyperlink) || (control instanceof Label)) {
 			return getHyperlinkDescription();
@@ -373,7 +373,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		}
 		String bodyText = text.getText();
 		String translatedBodyText = null;
-		// If the text represents a translated string key, retrieve its 
+		// If the text represents a translated string key, retrieve its
 		// associated value
 		if ((bodyText.startsWith("%")) && //$NON-NLS-1$
 				fSchemaElement.hasTranslatableContent()) {

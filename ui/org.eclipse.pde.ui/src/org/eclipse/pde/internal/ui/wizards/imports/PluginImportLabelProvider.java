@@ -18,9 +18,9 @@ import org.osgi.framework.Version;
 
 /**
  * Label provider for lists of plug-ins in the plug-in import wizard.  Uses images
- * from the PDELabelProvider, but uses a styled string for the text to colour the 
+ * from the PDELabelProvider, but uses a styled string for the text to colour the
  * versions in a different colour.
- * 
+ *
  * @since 3.6
  */
 public class PluginImportLabelProvider extends StyledCellLabelProvider implements ILabelProvider {

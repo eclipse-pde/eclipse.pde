@@ -59,11 +59,11 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 	/* Create options expected in the page */
 	private void createOptions() {
-		addOption(KEY_WINDOW_TITLE, PDETemplateMessages.E4ApplicationTemplate_windowTitle, "Eclipse 4 RCP Application", 0); //$NON-NLS-1$ 
+		addOption(KEY_WINDOW_TITLE, PDETemplateMessages.E4ApplicationTemplate_windowTitle, "Eclipse 4 RCP Application", 0); //$NON-NLS-1$
 		addOption(KEY_CREATE_SAMPLE_CONTENT, PDETemplateMessages.E4ApplicationTemplate_createSampleContent, false, 0);
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.E4ApplicationTemplate_packageName, (String) null, 0);
 		addOption(KEY_CREATE_LIFE_CYCLE, PDETemplateMessages.E4ApplicationTemplate_createLifeCycle, false, 0);
-		lifeCycleClassnameOption = addOption(KEY_LIFE_CYCLE_CLASS_NAME, PDETemplateMessages.E4ApplicationTemplate_lifeCycleClassname, "E4LifeCycle", 0); //$NON-NLS-1$ 
+		lifeCycleClassnameOption = addOption(KEY_LIFE_CYCLE_CLASS_NAME, PDETemplateMessages.E4ApplicationTemplate_lifeCycleClassname, "E4LifeCycle", 0); //$NON-NLS-1$
 		lifeCycleClassnameOption.setRequired(false);
 		lifeCycleClassnameOption.setEnabled(false);
 	}
@@ -87,7 +87,7 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
-		// There is only a product extension 
+		// There is only a product extension
 		createProductExtension();
 
 		// Other files located in 'org.eclipse.pde.ui.templates/templates_3.5/E4Application' are copied automatically
@@ -100,7 +100,7 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 		IPluginElement element = model.getFactory().createElement(extension);
 		element.setName("product"); //$NON-NLS-1$
-		element.setAttribute("application", E4_SWT_APPLICATION_ID); //$NON-NLS-1$ 
+		element.setAttribute("application", E4_SWT_APPLICATION_ID); //$NON-NLS-1$
 		element.setAttribute("name", getStringOption(KEY_PACKAGE_NAME)); //$NON-NLS-1$
 
 		IPluginElement property;
@@ -146,8 +146,8 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 		// There are 2 application models :
 		// the bin/Application.e4xmi containing the empty model
-		// the Application.e4xmi containing the customized model with content. 
-		// We must keep one of them depending on the KEY_CREATE_SAMPLE_CONTENT 
+		// the Application.e4xmi containing the customized model with content.
+		// We must keep one of them depending on the KEY_CREATE_SAMPLE_CONTENT
 
 		if (fname.endsWith(E4_MODEL_FILE)) {
 			boolean createSampleContent = getBooleanOption(KEY_CREATE_SAMPLE_CONTENT);

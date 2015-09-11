@@ -45,7 +45,7 @@ public class TargetPersistence35Helper {
 	<plugin id="org.eclipse.osgi.services"/>
 	<plugin id="org.junit"/>
 	</includeBundles>
-	
+
 	</location>
 	<location path="D:\targets\equinox\eclipse" type="Directory">
 	<includeBundles>
@@ -166,7 +166,7 @@ public class TargetPersistence35Helper {
 	 * Uses the given location to create a bundle container.  If the container had included or optional bundles set, add them
 	 * to the appropriate set (in 3.5 each container had included/optional, in 3.6 only the target has included/optional).  The
 	 * sets may be null to indicate that no container has specified inclusion restrictions yet.
-	 * 
+	 *
 	 * @param definition the target definition to deserialize
 	 * @param location document element representing a bundle container
 	 * @throws CoreException

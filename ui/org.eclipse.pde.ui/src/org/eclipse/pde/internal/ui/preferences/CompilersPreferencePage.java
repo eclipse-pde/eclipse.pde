@@ -46,7 +46,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	private Map<?, ?> fPageData = null;
 
 	/**
-	 *  
+	 *
 	 */
 	public CompilersPreferencePage() {
 		super();

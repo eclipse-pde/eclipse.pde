@@ -252,7 +252,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	/**
 	 * Returns a new {@link ServiceRegistration} for the given service reference.  If the service being
 	 * referenced is unregistered, the returned service registration will not have a bundle set.
-	 * 
+	 *
 	 * @param ref the service reference to get the registration for
 	 * @return a new service registration containing information from the service reference
 	 */

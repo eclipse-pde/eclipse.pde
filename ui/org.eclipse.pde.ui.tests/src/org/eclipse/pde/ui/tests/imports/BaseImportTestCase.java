@@ -21,10 +21,10 @@ import org.eclipse.pde.ui.tests.PDETestCase;
 import org.osgi.framework.Version;
 
 public abstract class BaseImportTestCase extends PDETestCase {
-	
+
 	protected abstract int getType();
 	protected abstract void verifyProject(String projectName, boolean isJava);
-	
+
 	public void testImportJAR() {
 		doSingleImport("org.eclipse.jsch.core", true);
 	}
@@ -41,15 +41,15 @@ public abstract class BaseImportTestCase extends PDETestCase {
 		doSingleImport("org.eclipse.jdt.doc.user", false);
 		doSingleImport("org.eclipse.pde.ui.source", false);
 	}
-	
+
 	public void testImportJUnit4() {
 		doSingleImport("org.junit", 4, true);
 	}
-	
+
 	public void testImportICU(){
 		doSingleImport("com.ibm.icu", true);
 	}
-	
+
 	public void testImportLinksMultiple() {
 		IPluginModelBase[] modelsToImport = getModels(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"});
 		runOperation(modelsToImport, getType());
@@ -57,19 +57,19 @@ public abstract class BaseImportTestCase extends PDETestCase {
 			verifyProject(modelsToImport[i], i != 1);
 		}
 	}
-	
+
 	protected void doSingleImport(String bundleSymbolicName, boolean isJava) {
 		IPluginModelBase modelToImport = PluginRegistry.findModel(bundleSymbolicName);
 		assertNull(modelToImport.getUnderlyingResource());
 		runOperation(new IPluginModelBase[] {modelToImport}, getType());
 		verifyProject(modelToImport, isJava);
 	}
-	
+
 	/**
 	 * Imports a bundle with the given symbolic name and a version with a major version matching
 	 * the given int.  The result is checked for flags and natures.  This method was added to
 	 * test org.junit which will have two versions of the same bundle in the SDK.
-	 *     
+	 *
 	 * @param bundleSymbolicName name of the plug-in to import
 	 * @param majorVersion the major version that the imported plug-in must have
 	 * @param isJava whether the imported plug-in should have a java nature
@@ -79,7 +79,7 @@ public abstract class BaseImportTestCase extends PDETestCase {
 		IPluginModelBase models[] = entry.getExternalModels();
 		assertTrue("No models for " + bundleSymbolicName + " could be found", models.length > 0);
 		IPluginModelBase modelToImport = null;
-		
+
 		for (int i = 0; i < models.length; i++) {
 			Version version = new Version(models[i].getPluginBase().getVersion());
 			if (version.getMajor() == majorVersion){
@@ -87,12 +87,12 @@ public abstract class BaseImportTestCase extends PDETestCase {
 				break;
 			}
 		}
-		
+
 		assertNull("Model with correct major version " + majorVersion + " could not be found",  modelToImport.getUnderlyingResource());
 		runOperation(new IPluginModelBase[] {modelToImport}, getType());
 		verifyProject(modelToImport, isJava);
 	}
-	
+
 	protected void runOperation(IPluginModelBase[] models, int type) {
 		PluginImportOperation job = new PluginImportOperation(models, type, false);
 		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
@@ -118,7 +118,7 @@ public abstract class BaseImportTestCase extends PDETestCase {
 		}
 		return models;
 	}
-	
+
 	protected void verifyProject(IPluginModelBase modelImported, boolean isJava) {
 		String id = modelImported.getPluginBase().getId();
 		verifyProject(id, isJava);

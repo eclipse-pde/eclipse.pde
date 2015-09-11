@@ -11,13 +11,13 @@
 package org.eclipse.pde.ui.launcher;
 
 /**
- * Initializes launch configuration attributes for newly-created OSGi Framework 
+ * Initializes launch configuration attributes for newly-created OSGi Framework
  * launch configurations
- * 
+ *
  * <p>
  * Clients may instantiate or subclass this class
  * </p>
- * 
+ *
  * @since 3.3
  * @deprecated use {@link org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer} instead.
  * @see org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer

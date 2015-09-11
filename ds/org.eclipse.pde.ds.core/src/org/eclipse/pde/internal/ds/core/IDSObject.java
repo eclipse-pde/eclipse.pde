@@ -15,20 +15,20 @@ import org.eclipse.pde.internal.core.text.IDocumentObject;
 
 /**
  * Represents a general DS element of a DS xml file.
- * 
+ *
  */
 public interface IDSObject extends IDocumentObject {
 
 	/**
 	 * Returns the model object of this object.
-	 * 
+	 *
 	 * @return IDSModel object containing the model.
 	 */
 	public abstract IDSModel getModel();
 
 	/**
 	 * Returns the root element that is an ancestor to this object.
-	 * 
+	 *
 	 * @return IDSComponent object containing the root element.
 	 */
 	public abstract IDSComponent getComponent();
@@ -36,7 +36,7 @@ public interface IDSObject extends IDocumentObject {
 	/**
 	 * Returns the identifier for this object to be used when displaying the
 	 * element to the user
-	 * 
+	 *
 	 * @return String containing the identifier
 	 */
 	public abstract String getName();
@@ -44,36 +44,36 @@ public interface IDSObject extends IDocumentObject {
 	/**
 	 * Returns the concrete type of this object, must be one of the TYPE constants
 	 * defined in IDSConstants.
-	 * 
+	 *
 	 * @return int value containing one of the TYPE constants defined in
 	 *         IDSConstants.
 	 * @see IDSConstants
 	 */
 	public abstract int getType();
-	
+
 	/**
 	 * Returns a boolean which represents if this object is capable of
 	 * containing children
-	 * 
+	 *
 	 * @return true if this object can have children.
 	 */
 	public abstract boolean canBeParent();
-	
-	
+
+
 	/**
 	 * Returns all attributes` names of this element
-	 * 
+	 *
 	 * @return an array of String containing all attributes` names
 	 */
 	public abstract String[] getAttributesNames();
-	
+
 	/**
 	 * Returns the XML Tag Name of this element
-	 * 
+	 *
 	 * @return a String containing the XML Tag Name
 	 */
 	@Override
 	public abstract String getXMLTagName();
-	
-	
+
+
 }

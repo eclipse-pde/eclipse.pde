@@ -62,12 +62,12 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	}
 
 	/**
-	 * Testing for the spelling error annotation being present at the right location 
+	 * Testing for the spelling error annotation being present at the right location
 	 * in a string with double quotes
 	 */
 	public void testSpellingErrorInDoubleQuotedStringTestCase() {
 		StringBuffer csText = new StringBuffer();
-		
+
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
 		append(csText,"title=\"Title\">");
@@ -88,7 +88,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	}
 
 	/**
-	 * Testing for the spelling error annotation being present at the right location 
+	 * Testing for the spelling error annotation being present at the right location
 	 * in a string with single quotes
 	 */
 	public void testSpellingErrorInSingleQuotedStringTestCase() {
@@ -115,7 +115,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	}
 
 	/**
-	 * Testing for the spelling error annotation being present at the right location 
+	 * Testing for the spelling error annotation being present at the right location
 	 * in a double quoted string containing single quotes
 	 */
 	public void testSpellingErrorInDoubleQuotedStringWithSingleQuotesTestCase() {
@@ -140,9 +140,9 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 		validateAnnotations(csText.toString(), 120, 2, 1);
 
 	}
-	
+
 	/**
-	 * Testing for the spelling error annotation being present at the right location 
+	 * Testing for the spelling error annotation being present at the right location
 	 * in a single quoted string containing double quotes
 	 */
 	public void testSpellingErrorInDoubleQuotedStringWithDoubleQuotesTestCase() {
@@ -228,7 +228,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 
 		validateAnnotations(csText.toString(), 0, 1, 0);
 	}
-	
+
 	/**
 	 * Testing for the multiple spelling error annotations
 	 */
@@ -278,9 +278,9 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 
 		validateAnnotations(csText.toString(), 0, 1, 0);
 	}
-	
+
 	/**
-	 * The spelling errors in the XML comments should be ignored 
+	 * The spelling errors in the XML comments should be ignored
 	 */
 	public void testSpellingErrorsInXMLCommentTestCase() {
 		StringBuffer csText = new StringBuffer();
@@ -305,9 +305,9 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 
 		validateAnnotations(csText.toString(), 0, 1, 0);
 	}
-	
+
 	/**
-	 * The spelling errors in the multiple line XML comments should be ignored 
+	 * The spelling errors in the multiple line XML comments should be ignored
 	 */
 	public void testSpellingErrorsInMultiLineXMLCommentTestCase() {
 		StringBuffer csText = new StringBuffer();
@@ -334,7 +334,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 
 		validateAnnotations(csText.toString(), 0, 1, 0);
 	}
-	
+
 	/**
 	 * Testing for no unwanted spelling annotations due to single quote in XML comment
 	 */
@@ -361,7 +361,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 
 		validateAnnotations(csText.toString(), 0, 1, 0);
 	}
-	
+
 	/**
 	 * Testing for no unwanted spelling annotations due to double quote in XML comment
 	 */
@@ -388,7 +388,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 
 		validateAnnotations(csText.toString(), 0, 1, 0);
 	}
-	
+
 	private void createAndOpenFile(String fileName, String fileContents) throws CoreException, IOException {
 		IPath path = fProject.getLocation();
 		path = path.append(fileName);
@@ -421,7 +421,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 		IDocumentProvider dp = pdeSrcPage.getDocumentProvider();
 		fDocument = (Document) dp.getDocument(fEditor.getEditorInput());
 	}
-	
+
 	private void append(StringBuffer buffer, String text){
 		buffer.append(text + CRLF);
 	}

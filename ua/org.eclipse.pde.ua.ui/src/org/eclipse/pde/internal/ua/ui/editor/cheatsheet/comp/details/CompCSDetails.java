@@ -91,7 +91,7 @@ public class CompCSDetails extends CSAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createListenersNameEntry() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {

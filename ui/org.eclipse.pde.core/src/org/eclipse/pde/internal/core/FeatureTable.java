@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -142,7 +142,7 @@ class FeatureTable {
 
 	/**
 	 * Removes the model.
-	 * 
+	 *
 	 * @return Idver if model existed and was removed, null otherwise
 	 */
 	public synchronized Idver remove(IFeatureModel model) {
@@ -180,7 +180,7 @@ class FeatureTable {
 
 	/**
 	 * Adds the model. Updates the position of the model if already exist.
-	 * 
+	 *
 	 * @return Idver used during insertion
 	 */
 	public synchronized Idver add(IFeatureModel model) {

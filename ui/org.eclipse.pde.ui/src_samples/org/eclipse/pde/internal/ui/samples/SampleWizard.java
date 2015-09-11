@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -63,7 +63,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 
 	/**
 	 * The default constructor.
-	 *  
+	 *
 	 */
 	public SampleWizard() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -86,7 +86,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 	}
 
 	/**
-	 *  
+	 *
 	 */
 	@Override
 	public void addPages() {
@@ -98,7 +98,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 	}
 
 	/**
-	 *  
+	 *
 	 */
 	@Override
 	public boolean performFinish() {
@@ -193,7 +193,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 	}
 
 	/**
-	 *  
+	 *
 	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {

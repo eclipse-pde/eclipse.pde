@@ -93,7 +93,7 @@ public class PDEJavaHelperUI {
 
 	/**
 	 * Open/Create a java class
-	 * 
+	 *
 	 * @param name fully qualified java classname
 	 * @param project
 	 * @param value for creation of the class
@@ -212,7 +212,7 @@ public class PDEJavaHelperUI {
 
 	/**
 	 * Disposer returned used to dispose of label provider and remove listeners
-	 * Callers responsibility to call dispose method when underlying text 
+	 * Callers responsibility to call dispose method when underlying text
 	 * widget is being disposed
 	 * @param text
 	 * @param project

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -51,7 +51,7 @@ public class BuildObject implements IBuildObject {
 
 	/**
 	 * If the property defined by name is valid, changes its value to newValue
-	 * 
+	 *
 	 * @param name name of the property to modify
 	 * @param oldValue the previous value
 	 * @param newValue the new value

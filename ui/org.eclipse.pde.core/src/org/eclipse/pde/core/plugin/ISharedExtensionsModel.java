@@ -11,10 +11,10 @@
 package org.eclipse.pde.core.plugin;
 
 /**
- * This type of model is created by parsing the plug-in 
+ * This type of model is created by parsing the plug-in
  * manifest file but only takes the extensions and extension
- * points into account.  
- * 
+ * points into account.
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */

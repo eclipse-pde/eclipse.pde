@@ -30,12 +30,12 @@ public class PDEJavaHelper {
 
 	/*static class Requestor extends TypeNameRequestor {
 		int count = 0;
-		
+
 		public void acceptType(int modifiers, char[] packageName, char[] simpleTypeName,
 				char[][] enclosingTypeNames, String path) {
 			count += 1;
 		}
-		
+
 		public boolean hasMatches() {
 			return count > 0;
 		}
@@ -89,14 +89,14 @@ public class PDEJavaHelper {
 		/*try {
 			Requestor requestor = new Requestor();
 			new SearchEngine().searchAllTypeNames(
-					fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf('.')).toCharArray(), 
-					SearchPattern.R_EXACT_MATCH|SearchPattern.R_CASE_SENSITIVE, 
-					fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf('.') + 1).toCharArray(), 
-					SearchPattern.R_EXACT_MATCH|SearchPattern.R_CASE_SENSITIVE, 
-					IJavaSearchConstants.TYPE, 
-					SearchEngine.createJavaSearchScope(new IJavaElement[] {project}), 
+					fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf('.')).toCharArray(),
+					SearchPattern.R_EXACT_MATCH|SearchPattern.R_CASE_SENSITIVE,
+					fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf('.') + 1).toCharArray(),
+					SearchPattern.R_EXACT_MATCH|SearchPattern.R_CASE_SENSITIVE,
+					IJavaSearchConstants.TYPE,
+					SearchEngine.createJavaSearchScope(new IJavaElement[] {project}),
 					requestor,
-					IJavaSearchConstants.FORCE_IMMEDIATE_SEARCH, 
+					IJavaSearchConstants.FORCE_IMMEDIATE_SEARCH,
 					new NullProgressMonitor());
 			return requestor.hasMatches();
 		} catch (JavaModelException e) {
@@ -317,12 +317,12 @@ public class PDEJavaHelper {
 	 */
 	public static String getJavaLevel(IProject project, String optionName) {
 		// Returns the corresponding java project
-		// No need to check for null, will return null		
+		// No need to check for null, will return null
 		IJavaProject javaProject = JavaCore.create(project);
 		String value = null;
 		// Preferred to use the project
 		if ((javaProject != null) && javaProject.exists()) {
-			// Get the project specific option if one exists. Rolls up to the 
+			// Get the project specific option if one exists. Rolls up to the
 			// general preference option if no project specific option exists.
 			value = javaProject.getOption(optionName, true);
 			if (value != null) {

@@ -356,9 +356,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			} else if (name.equals("version")) { //$NON-NLS-1$
 				validateVersionAttribute(element, (Attr) attributes.item(i));
 			}
-			if (name.equals("primary")) { //$NON-NLS-1$ 
+			if (name.equals("primary")) { //$NON-NLS-1$
 				reportDeprecatedAttribute(element, (Attr) attributes.item(i));
-			} else if (name.equals("plugin")) { //$NON-NLS-1$ 
+			} else if (name.equals("plugin")) { //$NON-NLS-1$
 				validatePluginExists(element, (Attr) attributes.item(i), false);
 			}
 		}
@@ -368,7 +368,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	 * Checks whether the given attribute value is a valid feature ID.  If it is not valid, a marker
 	 * is created on the element and <code>false</code> is returned. If valid, <code>true</code> is
 	 * returned.  Also see {@link #validatePluginID(Element, Attr)}
-	 * 
+	 *
 	 * @param element element to add the marker to if invalid
 	 * @param attr the attribute to check the value of
 	 * @return whether the given attribute value is a valid feature ID.
@@ -437,7 +437,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		}
 
 		if ("true".equals(unpack) && !CoreUtility.guessUnpack(pModel.getBundleDescription())) {//$NON-NLS-1$
-			String message = NLS.bind(PDECoreMessages.Builders_Feature_missingUnpackFalse, (new String[] {parent.getAttribute("id"), "unpack=\"false\""})); //$NON-NLS-1$ //$NON-NLS-2$			
+			String message = NLS.bind(PDECoreMessages.Builders_Feature_missingUnpackFalse, (new String[] {parent.getAttribute("id"), "unpack=\"false\""})); //$NON-NLS-1$ //$NON-NLS-2$
 			report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
 		}
 	}

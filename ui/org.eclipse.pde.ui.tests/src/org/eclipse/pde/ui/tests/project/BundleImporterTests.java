@@ -21,17 +21,17 @@ import org.eclipse.team.core.importing.provisional.IBundleImporter;
 
 /**
  * Tests for bundle importer extensions.
- * 
+ *
  * @since 3.6
  */
 public class BundleImporterTests extends TestCase {
-	
+
 	private static final String CVS_IMPORTER = "org.eclipse.team.core.cvs.importer";
 
 	public static Test suite() {
 		return new TestSuite(BundleImporterTests.class);
 	}
-	
+
 
 	/**
 	 * Tests that a import description can be created for a known plug-in
@@ -56,7 +56,7 @@ public class BundleImporterTests extends TestCase {
 		assertEquals(bundleId, ((IPluginModelBase)description.getProperty(BundleProjectService.PLUGIN)).getBundleDescription().getSymbolicName());
 		assertTrue(description.getProperty(BundleProjectService.BUNDLE_IMPORTER) instanceof IBundleImporter);
 	}
-	
+
 	/**
 	 * Tests that the team API returns all known bundle importers
 	 */

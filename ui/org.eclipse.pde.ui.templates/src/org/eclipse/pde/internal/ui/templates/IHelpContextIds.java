@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.templates;
 
 public interface IHelpContextIds {
 
-	public static final String PREFIX = "org.eclipse.pde.doc.user."; //$NON-NLS-1$	
+	public static final String PREFIX = "org.eclipse.pde.doc.user."; //$NON-NLS-1$
 	public static final String TEMPLATE_EDITOR = PREFIX + "template_editor"; //$NON-NLS-1$
 	public static final String TEMPLATE_HELLO_WORLD = PREFIX + "template_hello_world"; //$NON-NLS-1$
 	public static final String TEMPLATE_INTRO = PREFIX + "template_intro"; //$NON-NLS-1$

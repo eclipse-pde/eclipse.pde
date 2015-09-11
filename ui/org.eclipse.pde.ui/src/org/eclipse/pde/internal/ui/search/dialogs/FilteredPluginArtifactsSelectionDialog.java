@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 230248
@@ -366,7 +366,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			progressMonitor.worked(1);
 		}
 
-		// cycle through all the models and grab entries 
+		// cycle through all the models and grab entries
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
 			IPluginExtensionPoint[] eps = model.getPluginBase().getExtensionPoints();
@@ -389,7 +389,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 				SubProgressMonitor subMonitor2 = new SubProgressMonitor(progressMonitor, epds.length);
 				for (int j = 0; j < epds.length; j++) {
 					ExportPackageDescription epd = epds[j];
-					// ensure we don't get EE packages 
+					// ensure we don't get EE packages
 					int ee = ((Integer) epd.getDirective("x-equinox-ee")).intValue(); //$NON-NLS-1$
 					if (ee < 0)
 						contentProvider.add(epd, itemsFilter);

@@ -729,7 +729,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		// create a tmp. copy of this file and make it
 		// read-only. This is to ensure that the original
 		// file belonging to the external plug-in directories
-		// will not be modified. 
+		// will not be modified.
 		String fileName = file.getName();
 		String prefix;
 		String suffix = null;
@@ -840,7 +840,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 				if (fTreeViewer.getTree().isDisposed())
 					return;
 				if ((kind & PluginModelDelta.CHANGED) != 0 || (kind & PluginModelDelta.REMOVED) != 0) {
-					// Don't know exactly what change - 
+					// Don't know exactly what change -
 					// the safest way out is to refresh
 					fTreeViewer.refresh();
 				} else if ((kind & PluginModelDelta.ADDED) != 0) {
@@ -887,7 +887,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	/**
 	 * Returns the <code>IShowInSource</code> for this view.
-	 * @return the <code>IShowInSource</code> 
+	 * @return the <code>IShowInSource</code>
 	 */
 	protected IShowInSource getShowInSource() {
 		return new IShowInSource() {
@@ -915,7 +915,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	/**
 	 * Returns the <code>IShowInTargetList</code> for this view.
-	 * @return the <code>IShowInTargetList</code> 
+	 * @return the <code>IShowInTargetList</code>
 	 */
 	protected IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {

@@ -41,9 +41,9 @@ public class MailTemplate extends PDETemplateSection {
 	private void createOptions() {
 		addOption(KEY_PRODUCT_NAME, PDETemplateMessages.MailTemplate_productName, VALUE_PRODUCT_NAME, 0);
 
-		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.MailTemplate_packageName, (String) null, 0); //		
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.MailTemplate_packageName, (String) null, 0); //
 
-		addOption(KEY_APPLICATION_CLASS, PDETemplateMessages.MailTemplate_appClass, "Application", 0); //$NON-NLS-1$ 
+		addOption(KEY_APPLICATION_CLASS, PDETemplateMessages.MailTemplate_appClass, "Application", 0); //$NON-NLS-1$
 	}
 
 	@Override
@@ -238,7 +238,7 @@ public class MailTemplate extends PDETemplateSection {
 
 		IPluginElement element = model.getFactory().createElement(extension);
 		element.setName("product"); //$NON-NLS-1$
-		element.setAttribute("name", getStringOption(KEY_PRODUCT_NAME)); //$NON-NLS-1$		
+		element.setAttribute("name", getStringOption(KEY_PRODUCT_NAME)); //$NON-NLS-1$
 		element.setAttribute("application", plugin.getId() + "." + VALUE_APPLICATION_ID); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement property = model.getFactory().createElement(element);

@@ -24,7 +24,7 @@ import org.osgi.framework.Version;
 
 /**
  * Tests for plug-in searching
- * 
+ *
  * @since 3.6
  */
 public class PluginRegistryTests extends TestCase {

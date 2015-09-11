@@ -35,7 +35,7 @@ public interface IMetaAttribute {
 	/**
 	 * Indicates that the value of the associated attribute is defined
 	 * in another extension element attribute.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final int IDENTIFIER = 3;

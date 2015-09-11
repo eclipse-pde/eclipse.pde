@@ -40,7 +40,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 	public final static int USE_PRODUCT = 1;
 	public final static int USE_LAUNCH_CONFIG = 2;
 
-	private static final String F_FILE_EXTENSION = "product"; //$NON-NLS-1$	
+	private static final String F_FILE_EXTENSION = "product"; //$NON-NLS-1$
 
 	private Button fBasicButton;
 	private Button fProductButton;

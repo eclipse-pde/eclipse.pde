@@ -64,7 +64,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	private final String DS_MANIFEST_KEY = "Service-Component"; //$NON-NLS-1$
 
 	/**
-	 * 
+	 *
 	 */
 	public DSCreationOperation(IFile file, String componentName,
 			String implementationClass) {
@@ -219,7 +219,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void openFile() {
 		Display.getCurrent().asyncExec(() -> {

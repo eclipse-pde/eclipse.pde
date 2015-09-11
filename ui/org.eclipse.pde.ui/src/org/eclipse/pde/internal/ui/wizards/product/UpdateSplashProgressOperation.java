@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 274107 
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 274107
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.wizards.product;
@@ -139,7 +139,7 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 			// Operation: Remove progress
 			// The preference customization property does not exist
 			// NO-OP
-			// Note: If plugin_customization.ini exists in the root of the 
+			// Note: If plugin_customization.ini exists in the root of the
 			// plug-in, this is the default file name in the default location
 			// Its values will be loaded.
 			// Therefore, since it is possible for a the show progress on

@@ -116,7 +116,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			return;
 		fAttribute = (SchemaAttribute) object;
 		setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
-		fName.setValue(fAttribute.getName(), true); 
+		fName.setValue(fAttribute.getName(), true);
 		fDepTrue.setSelection(fAttribute.isDeprecated());
 		fDepFalse.setSelection(!fAttribute.isDeprecated());
 

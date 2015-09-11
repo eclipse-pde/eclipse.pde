@@ -99,7 +99,7 @@ public class TocLinkDetails extends TocAbstractDetails {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createTocPathEntryListeners() {
 		fTocPathEntry.setFormEntryListener(new FormEntryAdapter(this) {

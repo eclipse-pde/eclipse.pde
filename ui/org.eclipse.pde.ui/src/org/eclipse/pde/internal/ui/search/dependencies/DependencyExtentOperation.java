@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -67,7 +67,7 @@ public class DependencyExtentOperation {
 
 	public void execute(IProgressMonitor monitor) {
 		IPluginModelBase[] plugins = PluginJavaSearchUtil.getPluginImports(fImportID);
-		monitor.beginTask(PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10); //$NON-NLS-1$//$NON-NLS-2$ 
+		monitor.beginTask(PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10); //$NON-NLS-1$//$NON-NLS-2$
 		checkForJavaDependencies(plugins, new SubProgressMonitor(monitor, 9));
 		for (int i = 0; i < plugins.length; i++) {
 			checkForExtensionPointsUsed(plugins[i]);
@@ -112,7 +112,7 @@ public class DependencyExtentOperation {
 				if (monitor.isCanceled())
 					break;
 				IPackageFragment pkgFragment = packageFragments[i];
-				monitor.subTask(PDEUIMessages.DependencyExtentOperation_inspecting + " " + pkgFragment.getElementName()); //$NON-NLS-1$ 
+				monitor.subTask(PDEUIMessages.DependencyExtentOperation_inspecting + " " + pkgFragment.getElementName()); //$NON-NLS-1$
 				if (pkgFragment.hasChildren()) {
 					IJavaElement[] children = pkgFragment.getChildren();
 					for (int j = 0; j < children.length; j++) {

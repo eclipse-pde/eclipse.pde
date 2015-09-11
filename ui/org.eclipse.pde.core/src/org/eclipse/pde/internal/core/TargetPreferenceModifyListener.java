@@ -16,7 +16,7 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * Disallows importing of target platform preferences. Target platform should not
  * be modified by preference import.
- * 
+ *
  * @since 3.5
  */
 public class TargetPreferenceModifyListener extends PreferenceModifyListener {

@@ -32,7 +32,7 @@ import org.eclipse.ui.IURIEditorInput;
 
 public class TocInputContext extends XMLInputContext {
 
-	public static final String CONTEXT_ID = "toc-context"; //$NON-NLS-1$	
+	public static final String CONTEXT_ID = "toc-context"; //$NON-NLS-1$
 
 	/**
 	 * @param editor

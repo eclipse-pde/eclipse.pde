@@ -25,9 +25,9 @@ import org.w3c.dom.*;
 
 /**
  * Location factory contributed through extension to org.eclipse.pde.core.targetLocations
- * 
+ *
  * Provides serialization and deserialize method for InstallableUnit target location
- * 
+ *
  */
 public class IULocationFactory implements ITargetLocationFactory {
 

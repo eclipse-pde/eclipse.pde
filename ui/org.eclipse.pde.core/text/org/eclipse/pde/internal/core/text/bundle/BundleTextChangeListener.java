@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -50,13 +50,13 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * This method is overwritten in the BundleTextChangeListener so that newly inserted headers
 	 * will have their separator inserted at the start of the change rather than the end when there
 	 * is not already a new line at the end of the manifest. This allows the "Add a new line at the
 	 * end of the file" change to go at the bottom of the preview as the user would expect. Previously
 	 * it was added before all inserts so the new headers would appear on new lines.
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.core.text.AbstractKeyValueTextChangeListener#insertKey(org.eclipse.pde.internal.core.text.IDocumentKey, java.lang.String)
 	 */
 	@Override

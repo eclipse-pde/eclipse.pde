@@ -33,7 +33,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
 	 * #
@@ -46,7 +46,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
 	 * #getCondition()
@@ -57,7 +57,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
 	 * #getSubItems()
@@ -71,7 +71,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
 	 * #removeSubItem(org.eclipse.pde.internal.ua.core.icheatsheet.simple.
@@ -83,7 +83,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
 	 * #setCondition(java.lang.String)
@@ -94,7 +94,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getChildren
 	 * ()
@@ -106,7 +106,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getName
 	 * ()
@@ -118,7 +118,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getType
 	 * ()

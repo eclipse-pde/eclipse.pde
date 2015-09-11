@@ -57,10 +57,10 @@ public class Bundle extends BundleObject implements IBundle {
 	}
 
 	/**
-	 * Load a map of String key value pairs into the list of known manifest headers.  Any 
+	 * Load a map of String key value pairs into the list of known manifest headers.  Any
 	 * headers previously loaded will be cleared. Empty value strings will create empty headers.
 	 * Null values will be ignored.
-	 * 
+	 *
 	 * @param headers map<String, String> of manifest key and values
 	 */
 	public void load(Map<?, ?> headers) {

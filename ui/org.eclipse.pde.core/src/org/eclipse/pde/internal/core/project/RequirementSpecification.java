@@ -25,7 +25,7 @@ public abstract class RequirementSpecification {
 
 	/**
 	 * Constructs a new requirement specification.
-	 * 
+	 *
 	 * @param name
 	 * @param range
 	 * @param export

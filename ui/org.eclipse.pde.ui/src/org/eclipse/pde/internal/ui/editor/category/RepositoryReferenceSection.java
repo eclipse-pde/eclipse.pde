@@ -41,7 +41,7 @@ public class RepositoryReferenceSection extends TableSection {
 	private class RepositoryReferenceDialog extends StatusDialog {
 		private Text fLocation;
 		private IRepositoryReference fEdit;
-		
+
 		public RepositoryReferenceDialog(Shell shell, IRepositoryReference repo) {
 			super(shell);
 			fEdit = repo;
@@ -247,7 +247,7 @@ public class RepositoryReferenceSection extends TableSection {
 			}
 
 		});
-		
+
 
 
 		fRepositoryTable.setLabelProvider(new LabelProvider());
@@ -405,7 +405,7 @@ public class RepositoryReferenceSection extends TableSection {
 		tablePart.setButtonEnabled(2, enabled);
 		tablePart.setButtonEnabled(3, isEditable() && getSite().getRepositoryReferences().length > 0);
 	}
-	
+
 	private void clearEditors() {
 		Control oldEditor = fEnabledColumnEditor.getEditor();
 		if (oldEditor != null && !oldEditor.isDisposed())
@@ -428,7 +428,7 @@ public class RepositoryReferenceSection extends TableSection {
 			}
 		});
 	}
-	
+
 	private void showControls() {
 		// Clean up any previous editor control
 		clearEditors();

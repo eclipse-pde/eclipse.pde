@@ -75,7 +75,7 @@ public class PluginStructureCreator extends StructureCreator {
 		final PDELabelProvider labelProvider = new PDELabelProvider();
 		// Create a resource manager to manage the images.
 		// We can't use the label provider because an image could be disposed that is still in use.
-		// By using a resource manager, we ensure that the image is not disposed until no resource 
+		// By using a resource manager, we ensure that the image is not disposed until no resource
 		// managers reference it.
 		final ResourceManager resources = new LocalResourceManager(JFaceResources.getResources());
 		DocumentRangeNode rootNode = new StructureRootNode(document, input, this, adapter) {

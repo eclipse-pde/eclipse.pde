@@ -112,7 +112,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			}
 		}
 
-		// Remove packages that don't exist	
+		// Remove packages that don't exist
 		if (removeUnresolved)
 			for (int i = 0; i < currentPkgs.length; i++)
 				if (!packages.contains(currentPkgs[i].getName()))
@@ -382,8 +382,8 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	 * Finds all resource paths ending with a valid icon file extension and creates
 	 * a text edit operation in <code>multiEdit</code> for each one that is not prefixed by an
 	 * $nl$ segment.
-	 *  
-	 * @param model - 
+	 *
+	 * @param model -
 	 */
 	public static void prefixIconPaths(IPluginModelBase model) {
 		if (model == null)
