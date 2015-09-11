@@ -143,6 +143,7 @@ public class ExportPackageObject extends PackageObject {
 		return getDirective(Constants.USES_DIRECTIVE);
 	}
 
+	@Override
 	protected void appendValuesToBuffer(StringBuffer sb, TreeMap<String, Serializable> table) {
 
 		if (table == null) {
@@ -292,6 +293,7 @@ public class ExportPackageObject extends PackageObject {
 	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#write(java.lang.String,
 	 *      java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write());

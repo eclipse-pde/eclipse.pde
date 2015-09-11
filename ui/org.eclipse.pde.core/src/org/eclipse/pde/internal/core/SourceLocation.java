@@ -36,10 +36,12 @@ public class SourceLocation {
 		this.userDefined = userDefined;
 	}
 
+	@Override
 	public String toString() {
 		return path.toOSString();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SourceLocation) {
 			SourceLocation object = (SourceLocation) obj;
@@ -48,6 +50,7 @@ public class SourceLocation {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return path.hashCode();
 	}

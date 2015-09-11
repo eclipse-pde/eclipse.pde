@@ -31,6 +31,7 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 	 * 
 	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getKind()
 	 */
+	@Override
 	public int getKind() {
 		return kind;
 	}
@@ -40,6 +41,7 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 	 * 
 	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getAdded()
 	 */
+	@Override
 	public IFeatureModel[] getAdded() {
 		return get(fAdded);
 	}
@@ -49,6 +51,7 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 	 * 
 	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getRemoved()
 	 */
+	@Override
 	public IFeatureModel[] getRemoved() {
 		return get(fRemoved);
 	}
@@ -58,6 +61,7 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 	 * 
 	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getChanged()
 	 */
+	@Override
 	public IFeatureModel[] getChanged() {
 		return get(fChanged);
 	}

@@ -46,6 +46,7 @@ public class TestClasspathContributor implements IClasspathContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IClasspathContributor#getInitialEntries(org.eclipse.osgi.service.resolver.BundleDescription)
 	 */
+	@Override
 	public List getInitialEntries(BundleDescription project) {
 		if (project.getSymbolicName().equals(ClasspathResolverTest.bundleName)){
 			return entries;
@@ -56,6 +57,7 @@ public class TestClasspathContributor implements IClasspathContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IClasspathContributor#getEntriesForDependency(org.eclipse.osgi.service.resolver.BundleDescription, org.eclipse.osgi.service.resolver.BundleDescription)
 	 */
+	@Override
 	public List getEntriesForDependency(BundleDescription project, BundleDescription addedDependency) {
 		if (project.getSymbolicName().equals(ClasspathResolverTest.bundleName) && addedDependency.getSymbolicName().equals("org.eclipse.pde.core")){
 			return entries2;

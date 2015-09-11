@@ -51,6 +51,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#addToken(java.lang.String)
 	 */
+	@Override
 	public void addToken(String token) throws CoreException {
 		if (fTokens.contains(token))
 			return;
@@ -61,6 +62,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -68,6 +70,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#getTokens()
 	 */
+	@Override
 	public String[] getTokens() {
 		return fTokens.toArray(new String[fTokens.size()]);
 	}
@@ -75,6 +78,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#contains(java.lang.String)
 	 */
+	@Override
 	public boolean contains(String token) {
 		return fTokens.contains(token);
 	}
@@ -82,6 +86,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#removeToken(java.lang.String)
 	 */
+	@Override
 	public void removeToken(String token) throws CoreException {
 		if (fTokens.remove(token))
 			getModel().fireModelObjectChanged(this, getName(), token, null);
@@ -90,6 +95,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#renameToken(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void renameToken(String oldToken, String newToken) throws CoreException {
 		int index = fTokens.indexOf(oldToken);
 		if (index != -1) {
@@ -101,6 +107,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) {
 		String oldName = fName;
 		if (getModel() != null) {
@@ -120,6 +127,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getOffset()
 	 */
+	@Override
 	public int getOffset() {
 		return fOffset;
 	}
@@ -127,6 +135,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setOffset(int)
 	 */
+	@Override
 	public void setOffset(int offset) {
 		fOffset = offset;
 	}
@@ -134,6 +143,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getLength()
 	 */
+	@Override
 	public int getLength() {
 		return fLength;
 	}
@@ -141,6 +151,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setLength(int)
 	 */
+	@Override
 	public void setLength(int length) {
 		fLength = length;
 	}
@@ -148,9 +159,11 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 	}
 
+	@Override
 	public IBuildModel getModel() {
 		return fModel;
 	}
@@ -168,6 +181,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#write()
 	 */
+	@Override
 	public String write() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(PropertiesUtil.createWritableName(fName));

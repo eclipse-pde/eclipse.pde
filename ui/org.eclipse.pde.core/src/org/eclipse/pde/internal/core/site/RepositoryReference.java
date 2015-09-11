@@ -30,6 +30,7 @@ public class RepositoryReference extends SiteObject implements IRepositoryRefere
 		super();
 	}
 
+	@Override
 	public void setURL(String url) throws CoreException {
 		String old = fURL;
 		fURL = url;
@@ -37,14 +38,17 @@ public class RepositoryReference extends SiteObject implements IRepositoryRefere
 		firePropertyChanged(P_LOCATION, old, fURL);
 	}
 
+	@Override
 	public String getURL() {
 		return fURL;
 	}
 
+	@Override
 	public boolean getEnabled() {
 		return fEnabled;
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) throws CoreException {
 		boolean old = fEnabled;
 		fEnabled = enabled;
@@ -52,6 +56,7 @@ public class RepositoryReference extends SiteObject implements IRepositoryRefere
 		firePropertyChanged(P_ENABLED, old, fEnabled);
 	}
 
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -60,6 +65,7 @@ public class RepositoryReference extends SiteObject implements IRepositoryRefere
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (isURLDefined()) {
 			writer.print(indent + "<repository-reference location=\"" + fURL + "\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -75,6 +81,7 @@ public class RepositoryReference extends SiteObject implements IRepositoryRefere
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteObject#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		return isURLDefined();
 	}

@@ -61,6 +61,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 			this.type = type;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof ModelChange) {
 				ModelChange change = (ModelChange) obj;
@@ -109,6 +110,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 	 * 
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		switch (event.getType()) {
 			case IResourceChangeEvent.POST_CHANGE :
@@ -134,6 +136,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 	 */
+	@Override
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		if (delta != null) {
 

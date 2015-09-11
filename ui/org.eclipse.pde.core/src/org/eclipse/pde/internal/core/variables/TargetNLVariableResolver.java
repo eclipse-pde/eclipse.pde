@@ -17,6 +17,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 
 public class TargetNLVariableResolver implements IDynamicVariableResolver {
 
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		return TargetPlatform.getNL();
 	}

@@ -24,6 +24,7 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginId()
 	 */
+	@Override
 	public String getPluginId() {
 		return getXMLAttributeValue(P_PLUGIN_ID);
 	}
@@ -31,6 +32,7 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginVersion()
 	 */
+	@Override
 	public String getPluginVersion() {
 		return getXMLAttributeValue(P_PLUGIN_VERSION);
 	}
@@ -38,6 +40,7 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#getRule()
 	 */
+	@Override
 	public int getRule() {
 		String match = getXMLAttributeValue("match"); //$NON-NLS-1$
 		if (match == null || match.trim().length() == 0)
@@ -54,6 +57,7 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#setPluginId(java.lang.String)
 	 */
+	@Override
 	public void setPluginId(String id) throws CoreException {
 		setXMLAttribute(P_PLUGIN_ID, id);
 	}
@@ -61,6 +65,7 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#setPluginVersion(java.lang.String)
 	 */
+	@Override
 	public void setPluginVersion(String version) throws CoreException {
 		setXMLAttribute(P_PLUGIN_VERSION, version);
 	}
@@ -68,6 +73,7 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#setRule(int)
 	 */
+	@Override
 	public void setRule(int rule) throws CoreException {
 		String match = ""; //$NON-NLS-1$
 		switch (rule) {
@@ -89,6 +95,7 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode#getSpecificAttributes()
 	 */
+	@Override
 	protected String[] getSpecificAttributes() {
 		ArrayList<String> result = new ArrayList<String>();
 

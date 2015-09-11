@@ -26,6 +26,7 @@ public class TargetPreferenceModifyListener extends PreferenceModifyListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor#visit(org.eclipse.core.runtime.preferences.IEclipsePreferences)
 		 */
+		@Override
 		public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 			if (node.name().equals(PDECore.PLUGIN_ID)) {
 				// Importing the preferences should not change the current target platform

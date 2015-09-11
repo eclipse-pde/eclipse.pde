@@ -179,6 +179,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 			return getValue();
 		}
@@ -186,6 +187,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof EncodingEntry) {
 				EncodingEntry other = (EncodingEntry) obj;
@@ -197,6 +199,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#hashCode()
 		 */
+		@Override
 		public int hashCode() {
 			return fEncoding.hashCode() + fResource.hashCode();
 		}
@@ -233,6 +236,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
 		 */
+		@Override
 		public boolean visit(IResource resource) throws CoreException {
 			String encoding = null;
 			switch (resource.getType()) {

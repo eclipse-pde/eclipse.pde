@@ -31,6 +31,7 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 		super(document, generateReadableNames);
 	}
 
+	@Override
 	public TextEdit[] getTextOperations() {
 		TextEdit[] ops = super.getTextOperations();
 		try {
@@ -58,6 +59,7 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 	 * 
 	 * @see org.eclipse.pde.internal.core.text.AbstractKeyValueTextChangeListener#insertKey(org.eclipse.pde.internal.core.text.IDocumentKey, java.lang.String)
 	 */
+	@Override
 	protected void insertKey(IDocumentKey key, String name) {
 		int offset = PropertiesUtil.getInsertOffset(fDocument);
 		StringBuffer buffer = new StringBuffer(key.write());
@@ -76,6 +78,7 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 			fReadableNames.put(edit, name);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {

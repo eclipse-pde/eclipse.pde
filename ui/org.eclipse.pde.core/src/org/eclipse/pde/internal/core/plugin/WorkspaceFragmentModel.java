@@ -23,16 +23,19 @@ public class WorkspaceFragmentModel extends WorkspacePluginModelBase implements 
 		super(file, abbreviated);
 	}
 
+	@Override
 	public IPluginBase createPluginBase() {
 		Fragment fragment = new Fragment(!isEditable());
 		fragment.setModel(this);
 		return fragment;
 	}
 
+	@Override
 	public IFragment getFragment() {
 		return (IFragment) getPluginBase();
 	}
 
+	@Override
 	public boolean isFragmentModel() {
 		return true;
 	}

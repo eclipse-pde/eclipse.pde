@@ -37,6 +37,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteBundle#addCategories(org.eclipse.pde.internal.core.isite.ISiteCategory[])
 	 */
+	@Override
 	public void addCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newCategories.length; i++) {
@@ -50,6 +51,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteBundle#removeCategories(org.eclipse.pde.internal.core.isite.ISiteCategory[])
 	 */
+	@Override
 	public void removeCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newCategories.length; i++) {
@@ -63,6 +65,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getCategories()
 	 */
+	@Override
 	public ISiteCategory[] getCategories() {
 		return fCategories.toArray(new ISiteCategory[fCategories.size()]);
 	}

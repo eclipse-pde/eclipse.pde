@@ -113,6 +113,7 @@ public class Schema extends PlatformObject implements ISchema {
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE, new Object[] {include}, null));
 	}
 
+	@Override
 	public void addModelChangedListener(IModelChangedListener listener) {
 		fListeners.add(listener);
 	}
@@ -132,6 +133,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		if (fIncludes != null) {
 			for (int i = 0; i < fIncludes.size(); i++) {
@@ -143,6 +145,7 @@ public class Schema extends PlatformObject implements ISchema {
 		fDisposed = true;
 	}
 
+	@Override
 	public ISchemaElement findElement(String name) {
 		if (!isLoaded())
 			load();
@@ -165,6 +168,7 @@ public class Schema extends PlatformObject implements ISchema {
 		return null;
 	}
 
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		if (!fNotificationEnabled)
 			return;
@@ -174,6 +178,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 
+	@Override
 	public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue) {
 		fireModelChanged(new ModelChangedEvent(this, object, property, oldValue, newValue));
 	}
@@ -189,6 +194,7 @@ public class Schema extends PlatformObject implements ISchema {
 		return null;
 	}
 
+	@Override
 	public ISchemaElement[] getCandidateChildren(ISchemaElement element) {
 		Vector<Object> candidates = new Vector<Object>();
 		ISchemaType type = element.getType();
@@ -202,22 +208,27 @@ public class Schema extends PlatformObject implements ISchema {
 		return result;
 	}
 
+	@Override
 	public String getDescription() {
 		return fDescription;
 	}
 
+	@Override
 	public boolean isValid() {
 		return fValid;
 	}
 
+	@Override
 	public IDocumentSection[] getDocumentSections() {
 		return fDocSections.toArray(new IDocumentSection[fDocSections.size()]);
 	}
 
+	@Override
 	public int getElementCount() {
 		return fElements.size();
 	}
 
+	@Override
 	public int getResolvedElementCount() {
 		int localCount = getElementCount();
 		if (fIncludes == null)
@@ -233,12 +244,14 @@ public class Schema extends PlatformObject implements ISchema {
 		return totalCount;
 	}
 
+	@Override
 	public ISchemaElement[] getElements() {
 		if (!isLoaded())
 			load();
 		return fElements.toArray(new ISchemaElement[fElements.size()]);
 	}
 
+	@Override
 	public String[] getElementNames() {
 		ISchemaElement[] elements = getElements();
 		String[] names = new String[elements.length];
@@ -247,6 +260,7 @@ public class Schema extends PlatformObject implements ISchema {
 		return names;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public ISchemaElement[] getResolvedElements() {
 		if (fIncludes == null)
@@ -267,12 +281,14 @@ public class Schema extends PlatformObject implements ISchema {
 		return (ISchemaElement[]) result.toArray(new ISchemaElement[result.size()]);
 	}
 
+	@Override
 	public ISchemaInclude[] getIncludes() {
 		if (fIncludes == null)
 			return new ISchemaInclude[0];
 		return fIncludes.toArray(new ISchemaInclude[fIncludes.size()]);
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -286,10 +302,12 @@ public class Schema extends PlatformObject implements ISchema {
 		return result;
 	}
 
+	@Override
 	public ISchemaObject getParent() {
 		return null;
 	}
 
+	@Override
 	public void setParent(ISchemaObject obj) {
 	}
 
@@ -297,26 +315,32 @@ public class Schema extends PlatformObject implements ISchema {
 		return fElements.get(index);
 	}
 
+	@Override
 	public String getQualifiedPointId() {
 		return fPluginID + "." + fPointID; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getPluginId() {
 		return fPluginID;
 	}
 
+	@Override
 	public String getPointId() {
 		return fPointID;
 	}
 
+	@Override
 	public ISchema getSchema() {
 		return this;
 	}
 
+	@Override
 	public ISchemaDescriptor getSchemaDescriptor() {
 		return fSchemaDescriptor;
 	}
 
+	@Override
 	public URL getURL() {
 		return fURL;
 	}
@@ -325,10 +349,12 @@ public class Schema extends PlatformObject implements ISchema {
 		return fElements.indexOf(obj);
 	}
 
+	@Override
 	public boolean isDisposed() {
 		return fDisposed;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return false;
 	}
@@ -810,6 +836,7 @@ public class Schema extends PlatformObject implements ISchema {
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE, new Object[] {element}, null));
 	}
 
+	@Override
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		fListeners.remove(listener);
 	}
@@ -872,12 +899,14 @@ public class Schema extends PlatformObject implements ISchema {
 		fireModelObjectChanged(this, P_NAME, oldValue, fName);
 	}
 
+	@Override
 	public void setPluginId(String newId) {
 		String oldValue = fPluginID;
 		fPluginID = newId;
 		fireModelObjectChanged(this, P_PLUGIN, oldValue, newId);
 	}
 
+	@Override
 	public void setPointId(String newId) {
 		String oldValue = fPointID;
 		fPointID = newId;
@@ -968,6 +997,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version='1.0' encoding='UTF-8'?>"); //$NON-NLS-1$
 		writer.println("<!-- Schema file written by PDE -->"); //$NON-NLS-1$
@@ -1017,6 +1047,7 @@ public class Schema extends PlatformObject implements ISchema {
 		return platformDescription;
 	}
 
+	@Override
 	public boolean isDeperecated() {
 		Iterator<ISchemaElement> it = fElements.iterator();
 		while (it.hasNext()) {
@@ -1027,6 +1058,7 @@ public class Schema extends PlatformObject implements ISchema {
 		return false;
 	}
 
+	@Override
 	public String getDeprecatedSuggestion() {
 		Iterator<ISchemaElement> it = fElements.iterator();
 		while (it.hasNext()) {
@@ -1037,6 +1069,7 @@ public class Schema extends PlatformObject implements ISchema {
 		return null;
 	}
 
+	@Override
 	public boolean isInternal() {
 		Iterator<ISchemaElement> it = fElements.iterator();
 		while (it.hasNext()) {
@@ -1047,6 +1080,7 @@ public class Schema extends PlatformObject implements ISchema {
 		return false;
 	}
 
+	@Override
 	public double getSchemaVersion() {
 		if (fTargetVersion == 0) {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginID);

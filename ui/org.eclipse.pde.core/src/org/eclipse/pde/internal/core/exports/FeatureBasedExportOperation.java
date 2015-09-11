@@ -34,6 +34,7 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			createDestination();
@@ -74,6 +75,7 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 
 	protected abstract void createPostProcessingFiles();
 
+	@Override
 	protected String[] getPaths() {
 		String[] paths = super.getPaths();
 		String[] all = new String[paths.length + 1];

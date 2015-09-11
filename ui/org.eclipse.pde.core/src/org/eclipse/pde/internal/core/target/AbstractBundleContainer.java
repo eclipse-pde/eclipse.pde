@@ -65,6 +65,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetLocation#isResolved()
 	 */
+	@Override
 	public final boolean isResolved() {
 		return fResolutionStatus != null && fResolutionStatus.getSeverity() != IStatus.CANCEL;
 	}
@@ -72,6 +73,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetLocation#resolve(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public final IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor) {
 		int resolveBundlesWork = getResolveBundlesWork();
 		int resolveFeaturesWork = getResolveFeaturesWork();
@@ -125,6 +127,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetLocation#getStatus()
 	 */
+	@Override
 	public IStatus getStatus() {
 		if (!isResolved()) {
 			return null;
@@ -135,6 +138,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetLocation#getBundles()
 	 */
+	@Override
 	public final TargetBundle[] getBundles() {
 		if (isResolved()) {
 			return fBundles;
@@ -145,6 +149,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetLocation#getFeatures()
 	 */
+	@Override
 	public TargetFeature[] getFeatures() {
 		if (isResolved()) {
 			return fFeatures;
@@ -188,6 +193,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 * 
 	 * @return string identifier for the type of bundle container.
 	 */
+	@Override
 	public abstract String getType();
 
 	/**
@@ -200,6 +206,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 * @return home location
 	 * @exception CoreException if unable to resolve the location
 	 */
+	@Override
 	public abstract String getLocation(boolean resolve) throws CoreException;
 
 	/**
@@ -212,6 +219,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetLocation#getVMArguments()
 	 */
+	@Override
 	public String[] getVMArguments() {
 		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$
 
@@ -269,6 +277,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetLocation#serialize()
 	 */
+	@Override
 	public String serialize() {
 		// The default implementation returns null as most containers do not use the new UI
 		return null;

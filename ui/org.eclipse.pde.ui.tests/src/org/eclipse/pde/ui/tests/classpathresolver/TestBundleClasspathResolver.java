@@ -19,6 +19,7 @@ import org.eclipse.pde.core.IBundleClasspathResolver;
 
 public class TestBundleClasspathResolver implements IBundleClasspathResolver {
 
+	@Override
 	public Map getAdditionalClasspathEntries(IJavaProject javaProject) {
 		Map result = new LinkedHashMap();
 
@@ -31,6 +32,7 @@ public class TestBundleClasspathResolver implements IBundleClasspathResolver {
 		return result;
 	}
 
+	@Override
 	public Collection getAdditionalSourceEntries(IJavaProject javaProject) {
 		List result = new ArrayList();
 

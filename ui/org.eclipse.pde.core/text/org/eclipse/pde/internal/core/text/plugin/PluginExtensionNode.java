@@ -29,6 +29,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtension#getPoint()
 	 */
+	@Override
 	public String getPoint() {
 		return getXMLAttributeValue(P_POINT);
 	}
@@ -36,6 +37,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtension#setPoint(java.lang.String)
 	 */
+	@Override
 	public void setPoint(String point) throws CoreException {
 		setXMLAttribute(P_POINT, point);
 	}
@@ -43,6 +45,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) throws CoreException {
 		setXMLAttribute(P_NAME, name);
 	}
@@ -50,6 +53,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
+	@Override
 	public String getName() {
 		return getXMLAttributeValue(P_NAME);
 	}
@@ -57,6 +61,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getTranslatedName()
 	 */
+	@Override
 	public String getTranslatedName() {
 		String name = getName();
 		if (name != null && name.trim().length() > 0)
@@ -69,6 +74,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
+	@Override
 	public String getId() {
 		return getXMLAttributeValue(P_ID);
 	}
@@ -76,6 +82,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
+	@Override
 	public void setId(String id) throws CoreException {
 		setXMLAttribute(P_ID, id);
 	}
@@ -83,6 +90,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
+	@Override
 	public String write(boolean indent) {
 		String sep = getLineDelimiter();
 		StringBuffer buffer = new StringBuffer();
@@ -101,6 +109,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write(true));
@@ -109,6 +118,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
+	@Override
 	public String writeShallow(boolean terminate) {
 		String sep = getLineDelimiter();
 		String attrIndent = "      "; //$NON-NLS-1$
@@ -131,6 +141,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtension#getSchema()
 	 */
+	@Override
 	public Object getSchema() {
 		if (fSchema == null) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
@@ -144,6 +155,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public void reconnect(IDocumentElementNode parent, IModel model) {
 		super.reconnect(parent, model);
 		// Transient Field:  Schema

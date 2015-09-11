@@ -49,6 +49,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		return new TestSuite(NewFeatureProjectTestCase.class);
 	}
 
+	@Override
 	protected String getProjectName() {
 		return PROJECT_NAME;
 	}

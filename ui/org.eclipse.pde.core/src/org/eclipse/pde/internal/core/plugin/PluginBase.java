@@ -44,6 +44,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		super(readOnly);
 	}
 
+	@Override
 	public void add(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
 		fLibraries.add(library);
@@ -52,6 +53,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fireStructureChanged(library, IModelChangedEvent.INSERT);
 	}
 
+	@Override
 	public void add(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
 		((PluginImport) iimport).setInTheModel(true);
@@ -73,12 +75,14 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getLibraries()
 	 */
+	@Override
 	public IPluginLibrary[] getLibraries() {
 		// Returns an empty array if no libraries are specified in the manifest of the plug-in.
 		// If no libraries are specified, the root of the bundle '.' is the default library location
 		return fLibraries.toArray(new IPluginLibrary[fLibraries.size()]);
 	}
 
+	@Override
 	public IPluginImport[] getImports() {
 		return fImports.toArray(new IPluginImport[fImports.size()]);
 	}
@@ -88,14 +92,17 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		return this;
 	}
 
+	@Override
 	public String getProviderName() {
 		return fProviderName;
 	}
 
+	@Override
 	public String getVersion() {
 		return fVersion;
 	}
 
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -249,6 +256,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		}
 	}
 
+	@Override
 	public void remove(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
 		fLibraries.remove(library);
@@ -256,6 +264,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fireStructureChanged(library, IModelChangedEvent.REMOVE);
 	}
 
+	@Override
 	public void remove(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
 		fImports.remove(iimport);
@@ -289,6 +298,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		super.reset();
 	}
 
+	@Override
 	public void setProviderName(String providerName) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fProviderName;
@@ -296,6 +306,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		firePropertyChanged(P_PROVIDER, oldValue, fProviderName);
 	}
 
+	@Override
 	public void setVersion(String newVersion) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fVersion;
@@ -303,6 +314,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		firePropertyChanged(P_VERSION, oldValue, fVersion);
 	}
 
+	@Override
 	public void setId(String newId) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fId;
@@ -314,6 +326,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fVersion = newVersion;
 	}
 
+	@Override
 	public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
 		ensureModelEditable();
 		int index1 = fLibraries.indexOf(l1);
@@ -328,6 +341,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginImport, org.eclipse.pde.core.plugin.IPluginImport)
 	 */
+	@Override
 	public void swap(IPluginImport import1, IPluginImport import2) throws CoreException {
 		ensureModelEditable();
 		int index1 = fImports.indexOf(import1);

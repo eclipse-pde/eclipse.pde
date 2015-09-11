@@ -44,6 +44,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#getBundleModel()
 	 */
+	@Override
 	public IBundleModel getBundleModel() {
 		return fBundleModel;
 	}
@@ -58,6 +59,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#getExtensionsModel()
 	 */
+	@Override
 	public ISharedExtensionsModel getExtensionsModel() {
 		return fExtensionsModel;
 	}
@@ -79,6 +81,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		super.dispose();
 	}
 
+	@Override
 	public void save() {
 		if (fBundleModel != null && fBundleModel instanceof IEditableModel) {
 			IEditableModel emodel = (IEditableModel) fBundleModel;
@@ -97,6 +100,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#setBundleModel(org.eclipse.pde.internal.core.ibundle.IBundleModel)
 	 */
+	@Override
 	public void setBundleModel(IBundleModel bundleModel) {
 		if (fBundleModel != null && fBundlePluginBase != null) {
 			fBundleModel.removeModelChangedListener(fBundlePluginBase);
@@ -111,6 +115,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#setExtensionsModel(org.eclipse.pde.core.plugin.IExtensionsModel)
 	 */
+	@Override
 	public void setExtensionsModel(ISharedExtensionsModel extensionsModel) {
 		if (fExtensionsModel != null && fBundlePluginBase != null) {
 			fExtensionsModel.removeModelChangedListener(fBundlePluginBase);
@@ -123,6 +128,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 			extensionsModel.addModelChangedListener(fBundlePluginBase);
 	}
 
+	@Override
 	@Deprecated
 	public IBuildModel getBuildModel() {
 		return fBuildModel;
@@ -132,10 +138,12 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		fBuildModel = buildModel;
 	}
 
+	@Override
 	public IPluginBase getPluginBase() {
 		return getPluginBase(true);
 	}
 
+	@Override
 	public IExtensions getExtensions() {
 		return getPluginBase();
 	}
@@ -159,6 +167,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase(boolean)
 	 */
+	@Override
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (fBundlePluginBase == null && createIfMissing) {
 			fBundlePluginBase = (BundlePluginBase) createPluginBase();
@@ -169,6 +178,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return fBundlePluginBase;
 	}
 
+	@Override
 	public IExtensions getExtensions(boolean createIfMissing) {
 		return getPluginBase(createIfMissing);
 	}
@@ -178,6 +188,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginFactory()
 	 */
+	@Override
 	public IPluginModelFactory getPluginFactory() {
 		return this;
 	}
@@ -187,6 +198,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getFactory()
 	 */
+	@Override
 	public IExtensionsModelFactory getFactory() {
 		if (fExtensionsModel != null)
 			return fExtensionsModel.getFactory();
@@ -198,12 +210,14 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getInstallLocation()
 	 */
+	@Override
 	public String getInstallLocation() {
 		if (fBundleModel != null)
 			return fBundleModel.getInstallLocation();
 		return null;
 	}
 
+	@Override
 	public String getBundleLocalization() {
 		IBundle bundle = fBundleModel != null ? fBundleModel.getBundle() : null;
 		return bundle != null ? bundle.getLocalization() : Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
@@ -216,6 +230,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return localization == null ? null : new NLResourceHelper(localization, PDEManager.getNLLookupLocations(this));
 	}
 
+	@Override
 	@Deprecated
 	public URL getNLLookupLocation() {
 		try {
@@ -230,6 +245,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IModel#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		if (fBundleModel != null && fBundleModel.isEditable() == false)
 			return false;
@@ -243,6 +259,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
+	@Override
 	public boolean isInSync() {
 		return ((fBundleModel == null || fBundleModel.isInSync()) && (fExtensionsModel == null || fExtensionsModel.isInSync()));
 	}
@@ -262,6 +279,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IModel#load()
 	 */
+	@Override
 	public void load() {
 	}
 
@@ -270,6 +288,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
+	@Override
 	public void load(InputStream source, boolean outOfSync) {
 	}
 
@@ -278,16 +297,19 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
+	@Override
 	public void reload(InputStream source, boolean outOfSync) {
 	}
 
 	/**
 	 * @return Returns the enabled.
 	 */
+	@Override
 	public boolean isEnabled() {
 		return true;
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 	}
 
@@ -300,6 +322,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	protected void updateTimeStamp() {
 	}
 
+	@Override
 	public IPluginImport createImport() {
 		PluginImport iimport = new PluginImport();
 		iimport.setModel(this);
@@ -313,6 +336,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return iimport;
 	}
 
+	@Override
 	public IPluginLibrary createLibrary() {
 		PluginLibrary library = new PluginLibrary();
 		library.setModel(this);
@@ -320,24 +344,28 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return library;
 	}
 
+	@Override
 	public IPluginAttribute createAttribute(IPluginElement element) {
 		if (fExtensionsModel != null)
 			return fExtensionsModel.getFactory().createAttribute(element);
 		return null;
 	}
 
+	@Override
 	public IPluginElement createElement(IPluginObject parent) {
 		if (fExtensionsModel != null)
 			return fExtensionsModel.getFactory().createElement(parent);
 		return null;
 	}
 
+	@Override
 	public IPluginExtension createExtension() {
 		if (fExtensionsModel != null)
 			return fExtensionsModel.getFactory().createExtension();
 		return null;
 	}
 
+	@Override
 	public IPluginExtensionPoint createExtensionPoint() {
 		if (fExtensionsModel != null)
 			return fExtensionsModel.getFactory().createExtensionPoint();
@@ -353,6 +381,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
 	 */
+	@Override
 	public BundleDescription getBundleDescription() {
 		return fBundleDescription;
 	}
@@ -362,6 +391,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
 	 */
+	@Override
 	public void setBundleDescription(BundleDescription description) {
 		fBundleDescription = description;
 	}
@@ -371,6 +401,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IEditable#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		if (fBundleModel != null && (fBundleModel instanceof IEditable) && ((IEditable) fBundleModel).isDirty())
 			return true;
@@ -384,6 +415,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
 	 */
+	@Override
 	public void save(PrintWriter writer) {
 		// Does nothing - individual models are saved instead
 	}
@@ -393,6 +425,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean dirty) {
 		//does nothing
 	}

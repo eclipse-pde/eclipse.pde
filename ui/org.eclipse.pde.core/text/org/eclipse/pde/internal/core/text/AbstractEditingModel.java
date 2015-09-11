@@ -42,6 +42,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fNLResourceHelper != null) {
 			fNLResourceHelper.dispose();
@@ -54,6 +55,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#getResourceString(java.lang.String)
 	 */
+	@Override
 	public String getResourceString(String key) {
 		if (key == null || key.length() == 0)
 			return ""; //$NON-NLS-1$
@@ -72,6 +74,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isDisposed()
 	 */
+	@Override
 	public boolean isDisposed() {
 		return fDisposed;
 	}
@@ -79,6 +82,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return fReconciling;
 	}
@@ -86,6 +90,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isLoaded()
 	 */
+	@Override
 	public boolean isLoaded() {
 		return fLoaded;
 	}
@@ -101,6 +106,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
+	@Override
 	public boolean isInSync() {
 		return fInSync;
 	}
@@ -108,6 +114,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IBaseModel#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		return isLoaded();
 	}
@@ -115,6 +122,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#getTimeStamp()
 	 */
+	@Override
 	public final long getTimeStamp() {
 		return fTimestamp;
 	}
@@ -122,6 +130,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load()
 	 */
+	@Override
 	public final void load() throws CoreException {
 		try {
 			load(getInputStream(getDocument()), false);
@@ -132,6 +141,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
+	@Override
 	public final void reload(InputStream source, boolean outOfSync) throws CoreException {
 		load(source, outOfSync);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {this}, null));
@@ -141,10 +151,12 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
 	 */
+	@Override
 	public boolean isReconcilingModel() {
 		return fReconciling;
 	}
 
+	@Override
 	public IDocument getDocument() {
 		return fDocument;
 	}
@@ -152,6 +164,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.text.IReconcilingParticipant#reconciled(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public final void reconciled(IDocument document) {
 		if (isReconcilingModel()) {
 			try {
@@ -178,6 +191,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IEditingModel#getCharset()
 	 */
+	@Override
 	public String getCharset() {
 		return fCharset != null ? fCharset : "UTF-8"; //$NON-NLS-1$
 	}
@@ -185,6 +199,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IEditingModel#setCharset(java.lang.String)
 	 */
+	@Override
 	public void setCharset(String charset) {
 		fCharset = charset;
 	}
@@ -192,11 +207,13 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#addModelChangedListener(org.eclipse.pde.core.IModelChangedListener)
 	 */
+	@Override
 	public void addModelChangedListener(IModelChangedListener listener) {
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}
 
+	@Override
 	public void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter) {
 		@SuppressWarnings("unchecked")
 		List<IModelChangedListener> oldList = (List<IModelChangedListener>) fListeners.clone();
@@ -214,6 +231,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE && event.getOldValue() != null && event.getOldValue().equals(event.getNewValue()))
 			return;
@@ -226,6 +244,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelObjectChanged(java.lang.Object, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue) {
 		fireModelChanged(new ModelChangedEvent(this, object, property, oldValue, newValue));
 	}
@@ -233,6 +252,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#removeModelChangedListener(org.eclipse.pde.core.IModelChangedListener)
 	 */
+	@Override
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		fListeners.remove(listener);
 	}
@@ -240,6 +260,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
@@ -247,12 +268,14 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
 	 */
+	@Override
 	public void save(PrintWriter writer) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean dirty) {
 		this.fDirty = dirty;
 	}
@@ -260,6 +283,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IEditingModel#isStale()
 	 */
+	@Override
 	public boolean isStale() {
 		return fStale;
 	}
@@ -267,6 +291,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IEditingModel#setStale(boolean)
 	 */
+	@Override
 	public void setStale(boolean stale) {
 		fStale = stale;
 	}
@@ -274,6 +299,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#getUnderlyingResource()
 	 */
+	@Override
 	public IResource getUnderlyingResource() {
 		return fUnderlyingResource;
 	}

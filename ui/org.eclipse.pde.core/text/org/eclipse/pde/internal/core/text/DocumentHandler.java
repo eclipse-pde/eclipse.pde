@@ -35,6 +35,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#startDocument()
 	 */
+	@Override
 	public void startDocument() throws SAXException {
 		fDocumentNodeStack.clear();
 		fHighestOffset = 0;
@@ -51,6 +52,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
+	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		IDocumentElementNode parent = getLastParsedDocumentNode();
 		IDocumentElementNode node = getDocumentNode(qName, parent);
@@ -195,6 +197,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (fDocumentNodeStack.isEmpty())
 			return;
@@ -243,6 +246,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#fatalError(org.xml.sax.SAXParseException)
 	 */
+	@Override
 	public void fatalError(SAXParseException e) throws SAXException {
 		generateErrorElementHierarchy();
 	}
@@ -264,6 +268,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#error(org.xml.sax.SAXParseException)
 	 */
+	@Override
 	public void error(SAXParseException e) throws SAXException {
 		generateErrorElementHierarchy();
 	}
@@ -271,12 +276,14 @@ public abstract class DocumentHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
+	@Override
 	public void setDocumentLocator(Locator locator) {
 		fLocator = locator;
 	}
 
 	protected abstract IDocument getDocument();
 
+	@Override
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		// Prevent the resolution of external entities in order to
 		// prevent the parser from accessing the Internet
@@ -291,6 +298,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
+	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		if (!fReconciling || fDocumentNodeStack.isEmpty())
 			return;

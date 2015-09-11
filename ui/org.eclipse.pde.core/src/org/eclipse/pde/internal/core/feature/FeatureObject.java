@@ -38,6 +38,7 @@ public abstract class FeatureObject extends PlatformObject implements IFeatureOb
 		inTheModel = value;
 	}
 
+	@Override
 	public boolean isInTheModel() {
 		return inTheModel;
 	}
@@ -71,20 +72,24 @@ public abstract class FeatureObject extends PlatformObject implements IFeatureOb
 		}
 	}
 
+	@Override
 	public IFeature getFeature() {
 		return model.getFeature();
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
 
+	@Override
 	public String getTranslatableLabel() {
 		if (label == null)
 			return ""; //$NON-NLS-1$
 		return model.getResourceString(label);
 	}
 
+	@Override
 	public IFeatureModel getModel() {
 		return model;
 	}
@@ -122,6 +127,7 @@ public abstract class FeatureObject extends PlatformObject implements IFeatureOb
 		return result;
 	}
 
+	@Override
 	public IFeatureObject getParent() {
 		return parent;
 	}
@@ -134,6 +140,7 @@ public abstract class FeatureObject extends PlatformObject implements IFeatureOb
 		label = null;
 	}
 
+	@Override
 	public void setLabel(String newLabel) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.label;
@@ -154,6 +161,7 @@ public abstract class FeatureObject extends PlatformObject implements IFeatureOb
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 	}
 

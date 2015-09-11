@@ -39,6 +39,7 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		return iimport;
 	}
 
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof ImportObject) {
 			ImportObject io = (ImportObject) object;
@@ -51,10 +52,12 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		iimport.write(indent, writer);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> key) {
 		if (key.equals(ISourceObject.class)) {
@@ -67,6 +70,7 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginReference#reconnect(org.eclipse.pde.core.plugin.IPlugin)
 	 */
+	@Override
 	public void reconnect(IPluginModelBase model) {
 		super.reconnect(model);
 		// Field that has transient fields:  Import
@@ -81,6 +85,7 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
 	 */
+	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		// Note:  Cannot make into a 'IDocument*' interface.  The functionality
 		// is usually done by the '*Node' classes; but, it is the opposite here

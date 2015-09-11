@@ -39,6 +39,7 @@ class FeatureTable {
 			return fVer;
 		}
 
+		@Override
 		public int hashCode() {
 			int code = 0;
 			if (fId != null)
@@ -49,6 +50,7 @@ class FeatureTable {
 			return code;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
@@ -64,6 +66,7 @@ class FeatureTable {
 
 		}
 
+		@Override
 		public String toString() {
 			return fId + "_" + fVer; //$NON-NLS-1$
 		}
@@ -207,6 +210,7 @@ class FeatureTable {
 		return idver;
 	}
 
+	@Override
 	public synchronized String toString() {
 		IFeatureModel[] models = getAllImpl();
 		StringBuffer buf = new StringBuffer(30 * models.length);

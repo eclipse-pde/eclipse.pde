@@ -38,6 +38,7 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 	public PluginObject() {
 	}
 
+	@Override
 	public boolean isValid() {
 		return true;
 	}
@@ -48,10 +49,12 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		}
 	}
 
+	@Override
 	public void setInTheModel(boolean value) {
 		fInTheModel = value;
 	}
 
+	@Override
 	public boolean isInTheModel() {
 		return fInTheModel;
 	}
@@ -91,10 +94,12 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		}
 	}
 
+	@Override
 	public ISharedPluginModel getModel() {
 		return fModel;
 	}
 
+	@Override
 	public IPluginModelBase getPluginModel() {
 		if (fModel instanceof IBundlePluginModelProvider)
 			return ((IBundlePluginModelProvider) fModel).getBundlePluginModel();
@@ -102,10 +107,12 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		return fModel instanceof IPluginModelBase ? (IPluginModelBase) fModel : null;
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public String getTranslatedName() {
 		if (fTranslatedName != null && !fModel.isEditable())
 			return fTranslatedName;
@@ -122,15 +129,18 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		return null;
 	}
 
+	@Override
 	public IPluginObject getParent() {
 		return fParent;
 	}
 
+	@Override
 	public IPluginBase getPluginBase() {
 		IPluginModelBase pluginModel = getPluginModel();
 		return pluginModel != null ? pluginModel.getPluginBase() : null;
 	}
 
+	@Override
 	public String getResourceString(String key) {
 		return fModel.getResourceString(key);
 	}
@@ -154,6 +164,7 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		fTranslatedName = null;
 	}
 
+	@Override
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.fName;
@@ -172,6 +183,7 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		throw ce;
 	}
 
+	@Override
 	public String toString() {
 		String result = null;
 		if (fName != null) {
@@ -218,14 +230,17 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		return PDEXMLHelper.getWritableString(source);
 	}
 
+	@Override
 	public int getStartLine() {
 		return fStartLine;
 	}
 
+	@Override
 	public int getStopLine() {
 		return fStartLine;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(IPluginModelBase.class)) {
@@ -252,6 +267,7 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
 	 */
+	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		// NO-OP
 		// Child classes to override

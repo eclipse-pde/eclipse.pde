@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 public class PluginExportTask extends BaseExportTask {
 	protected IPluginModelBase[] fPlugins = new IPluginModelBase[0];
 
+	@Override
 	protected Job getExportJob(String jobName) {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fToDirectory;

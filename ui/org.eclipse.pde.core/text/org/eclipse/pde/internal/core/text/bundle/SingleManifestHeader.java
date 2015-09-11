@@ -24,6 +24,7 @@ public class SingleManifestHeader extends ManifestHeader {
 		super(name, value, bundle, lineDelimiter);
 	}
 
+	@Override
 	protected void processValue(String value) {
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(getName(), value);
@@ -66,11 +67,13 @@ public class SingleManifestHeader extends ManifestHeader {
 		return fElement.getValue();
 	}
 
+	@Override
 	public void update() {
 		// single headers will fire a change by default
 		update(true);
 	}
 
+	@Override
 	public void update(boolean notify) {
 		String old = fValue;
 		fValue = fElement.write();

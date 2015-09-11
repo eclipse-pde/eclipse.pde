@@ -23,12 +23,14 @@ public class WorkspaceBundlePluginModel extends WorkspaceBundlePluginModelBase i
 		super(manifestFile, pluginFile);
 	}
 
+	@Override
 	public IPluginBase createPluginBase() {
 		BundlePlugin base = new BundlePlugin();
 		base.setModel(this);
 		return base;
 	}
 
+	@Override
 	public IPlugin getPlugin() {
 		return (IPlugin) getPluginBase();
 	}

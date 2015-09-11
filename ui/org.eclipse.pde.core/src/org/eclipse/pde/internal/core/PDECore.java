@@ -289,16 +289,20 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 		// use save participant to clean orphaned profiles.
 		ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, new ISaveParticipant() {
+			@Override
 			public void saving(ISaveContext saveContext) throws CoreException {
 				P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 			}
 
+			@Override
 			public void rollback(ISaveContext saveContext) {
 			}
 
+			@Override
 			public void prepareToSave(ISaveContext saveContext) throws CoreException {
 			}
 
+			@Override
 			public void doneSaving(ISaveContext saveContext) {
 			}
 		});
@@ -376,6 +380,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
 	 */
+	@Override
 	public void optionsChanged(DebugOptions options) {
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
 		DEBUG_CLASSPATH = DEBUG && options.getBooleanOption(CLASSPATH_DEBUG, false);

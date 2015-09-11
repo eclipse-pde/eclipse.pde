@@ -90,6 +90,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getArch()
 	 */
+	@Override
 	public String getArch() {
 		return fArch;
 	}
@@ -97,6 +98,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getBundleContainers()
 	 */
+	@Override
 	public ITargetLocation[] getTargetLocations() {
 		return fContainers;
 	}
@@ -104,6 +106,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getNL()
 	 */
+	@Override
 	public String getNL() {
 		return fNL;
 	}
@@ -111,6 +114,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -118,6 +122,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getOS()
 	 */
+	@Override
 	public String getOS() {
 		return fOS;
 	}
@@ -125,6 +130,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getProgramArguments()
 	 */
+	@Override
 	public String getProgramArguments() {
 		return fProgramArgs;
 	}
@@ -132,6 +138,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getVMArguments()
 	 */
+	@Override
 	public String getVMArguments() {
 		return fVMArgs;
 	}
@@ -139,6 +146,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getWS()
 	 */
+	@Override
 	public String getWS() {
 		return fWS;
 	}
@@ -146,6 +154,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setArch(java.lang.String)
 	 */
+	@Override
 	public void setArch(String arch) {
 		incrementSequenceNumber();
 		fArch = arch;
@@ -154,6 +163,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setNL(java.lang.String)
 	 */
+	@Override
 	public void setNL(String nl) {
 		incrementSequenceNumber();
 		fNL = nl;
@@ -162,6 +172,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) {
 		fName = name;
 	}
@@ -169,6 +180,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setOS(java.lang.String)
 	 */
+	@Override
 	public void setOS(String os) {
 		incrementSequenceNumber();
 		fOS = os;
@@ -177,6 +189,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setProgramArguments(java.lang.String)
 	 */
+	@Override
 	public void setProgramArguments(String args) {
 		if (args != null && args.length() == 0) {
 			args = null;
@@ -187,6 +200,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setVMArguments(java.lang.String)
 	 */
+	@Override
 	public void setVMArguments(String args) {
 		if (args != null && args.length() == 0) {
 			args = null;
@@ -197,6 +211,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setWS(java.lang.String)
 	 */
+	@Override
 	public void setWS(String ws) {
 		incrementSequenceNumber();
 		fWS = ws;
@@ -205,6 +220,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setBundleContainers(org.eclipse.pde.core.target.ITargetLocation[])
 	 */
+	@Override
 	public void setTargetLocations(ITargetLocation[] locations) {
 		incrementSequenceNumber();
 		// Clear the feature model cache as it is based on the bundle container locations
@@ -250,6 +266,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#resolve(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus resolve(IProgressMonitor monitor) {
 		ITargetLocation[] containers = getTargetLocations();
 		int num = 0;
@@ -315,6 +332,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#isResolved()
 	 */
+	@Override
 	public boolean isResolved() {
 		ITargetLocation[] containers = getTargetLocations();
 		if (containers != null) {
@@ -331,6 +349,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getBundleStatus()
 	 */
+	@Override
 	public IStatus getStatus() {
 		if (fResolutionStatus != null && !fResolutionStatus.isOK()) {
 			return fResolutionStatus;
@@ -371,6 +390,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setIncluded(org.eclipse.pde.core.target.NameVersionDescriptor[])
 	 */
+	@Override
 	public void setIncluded(NameVersionDescriptor[] included) {
 		fIncluded = included;
 	}
@@ -378,6 +398,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getIncluded()
 	 */
+	@Override
 	public NameVersionDescriptor[] getIncluded() {
 		return fIncluded;
 	}
@@ -385,6 +406,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getBundles()
 	 */
+	@Override
 	public TargetBundle[] getBundles() {
 		return getBundles(false);
 	}
@@ -392,6 +414,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getAllBundles()
 	 */
+	@Override
 	public TargetBundle[] getAllBundles() {
 		return getBundles(true);
 	}
@@ -579,6 +602,7 @@ public class TargetDefinition implements ITargetDefinition {
 				if (list.size() > 1) {
 					// sort the list
 					Collections.sort(list, new Comparator<Object>() {
+						@Override
 						public int compare(Object o1, Object o2) {
 							BundleInfo b1 = ((TargetBundle) o1).getBundleInfo();
 							BundleInfo b2 = ((TargetBundle) o2).getBundleInfo();
@@ -628,6 +652,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getHandle()
 	 */
+	@Override
 	public ITargetHandle getHandle() {
 		return fHandle;
 	}
@@ -697,6 +722,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getImplicitDependencies()
 	 */
+	@Override
 	public NameVersionDescriptor[] getImplicitDependencies() {
 		return fImplicit;
 	}
@@ -704,6 +730,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setImplicitDependencies(org.eclipse.pde.core.target.NameVersionDescriptor[])
 	 */
+	@Override
 	public void setImplicitDependencies(NameVersionDescriptor[] bundles) {
 		if (bundles != null && bundles.length == 0) {
 			bundles = null;
@@ -714,6 +741,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getJREContainer()
 	 */
+	@Override
 	public IPath getJREContainer() {
 		return fJREContainer;
 	}
@@ -721,6 +749,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#setJREContainer(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setJREContainer(IPath containerPath) {
 		fJREContainer = containerPath;
 	}
@@ -908,6 +937,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getAllFeatures()
 	 */
+	@Override
 	public TargetFeature[] getAllFeatures() {
 		if (!isResolved()) {
 			return null;

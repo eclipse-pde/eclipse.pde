@@ -21,6 +21,7 @@ public class BuildModelFactory implements IBuildModelFactory {
 		this.model = model;
 	}
 
+	@Override
 	public IBuildEntry createEntry(String name) {
 		BuildEntry entry = new BuildEntry(name);
 		entry.setModel(model);

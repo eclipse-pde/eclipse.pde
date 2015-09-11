@@ -31,6 +31,7 @@ public class SourceLocationKey {
 		this(bundleName, null);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SourceLocationKey) {
 			SourceLocationKey key = (SourceLocationKey) obj;
@@ -43,6 +44,7 @@ public class SourceLocationKey {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		if (fVersion == null) {
 			return fBundleName.hashCode();

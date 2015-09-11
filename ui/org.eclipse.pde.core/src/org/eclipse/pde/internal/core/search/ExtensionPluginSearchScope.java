@@ -30,6 +30,7 @@ public class ExtensionPluginSearchScope extends PluginSearchScope {
 		fInput = input;
 	}
 
+	@Override
 	public IPluginModelBase[] getMatchingModels() {
 		if (fInput == null)
 			return new IPluginModelBase[0];

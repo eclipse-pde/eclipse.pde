@@ -38,6 +38,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		boolean hasChanged = false;
 		boolean veto = false;
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			if (delta != null && !veto) {
 				int kind = delta.getKind();
@@ -73,6 +74,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	class SelfVisitor implements IResourceDeltaVisitor {
 		int type = 0;
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			if (delta != null && type != (MANIFEST | EXTENSIONS | BUILD | STRUCTURE)) {
 				int kind = delta.getKind();
@@ -141,6 +143,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		return file.equals(PDEProject.getLocalizationFile(getProject()));
 	}
 
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE || monitor.isCanceled())
 			return EMPTY_LIST;
@@ -371,6 +374,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	class ManifestFilter implements FilenameFilter {
 
+		@Override
 		public boolean accept(File dir, String name) {
 			return (name.equalsIgnoreCase(ICoreConstants.MANIFEST_FILENAME));
 		}
@@ -379,6 +383,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.ManifestConsistencyChecker_0, getProject().getName()), 1);
 		try {

@@ -28,6 +28,7 @@ public class ImportAsBinaryTestCase extends BaseImportTestCase {
 		return new TestSuite(ImportAsBinaryTestCase.class);
 	}
 
+	@Override
 	protected int getType() {
 		return TYPE;
 	}
@@ -37,11 +38,13 @@ public class ImportAsBinaryTestCase extends BaseImportTestCase {
 		doSingleImport("org.apache.ant", true);
 	}
 
+	@Override
 	public void testImportJUnit4() {
 		// Note: JUnit 4 does not have source but it is a java project
 		doSingleImport("org.junit", 4, true);
 	}
 
+	@Override
 	protected void verifyProject(String projectName, boolean isJava) {
 		try {
 			IProject project = verifyProject(projectName);

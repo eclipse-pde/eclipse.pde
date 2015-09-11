@@ -95,6 +95,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		return text;
 	}
 
+	@Override
 	public ISchemaAttribute getAttribute(String name) {
 		if (type != null && type instanceof ISchemaComplexType) {
 			return ((ISchemaComplexType) type).getAttribute(name);
@@ -102,6 +103,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		return null;
 	}
 
+	@Override
 	public int getAttributeCount() {
 		if (type != null && type instanceof ISchemaComplexType) {
 			return ((ISchemaComplexType) type).getAttributeCount();
@@ -109,6 +111,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		return 0;
 	}
 
+	@Override
 	public ISchemaAttribute[] getAttributes() {
 		if (type != null && type instanceof ISchemaComplexType) {
 			return ((ISchemaComplexType) type).getAttributes();
@@ -116,6 +119,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		return new ISchemaAttribute[0];
 	}
 
+	@Override
 	public String[] getAttributeNames() {
 		ISchemaAttribute[] attributes = getAttributes();
 		String[] names = new String[attributes.length];
@@ -124,6 +128,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		return names;
 	}
 
+	@Override
 	public String getDTDRepresentation(boolean addLinks) {
 		String text = ""; //$NON-NLS-1$
 		if (type == null)
@@ -147,6 +152,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		return text;
 	}
 
+	@Override
 	public String getIconProperty() {
 		if (iconName != null)
 			return iconName;
@@ -158,6 +164,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		return null;
 	}
 
+	@Override
 	public String getLabelProperty() {
 		if (labelProperty != null)
 			return labelProperty;
@@ -177,10 +184,12 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		return a.getKind() == IMetaAttribute.RESOURCE;
 	}
 
+	@Override
 	public ISchemaType getType() {
 		return type;
 	}
 
+	@Override
 	public void setParent(ISchemaObject parent) {
 		super.setParent(parent);
 		if (type != null) {
@@ -231,6 +240,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		getSchema().fireModelObjectChanged(this, P_TYPE, oldValue, type);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<element name=\"" + getName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		ISchemaType type = getType();
@@ -287,6 +297,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 	 * 
 	 * @see org.eclipse.pde.internal.core.ischema.IMetaElement#isTranslatable()
 	 */
+	@Override
 	public boolean hasTranslatableContent() {
 		return fTranslatable;
 	}
@@ -294,6 +305,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.IMetaElement#isDeprecated()
 	 */
+	@Override
 	public boolean isDeprecated() {
 		return fDeprecated;
 	}
@@ -301,6 +313,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaElement#hasDeprecatedAttributes()
 	 */
+	@Override
 	public boolean hasDeprecatedAttributes() {
 		for (ISchemaAttribute att : getAttributes()) {
 			if (att.isDeprecated()) {
@@ -314,6 +327,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		return null;
 	}
 
+	@Override
 	public String getDescription() {
 		if (super.getDescription() != null) {
 			return super.getDescription();
@@ -335,6 +349,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		return description;
 	}
 
+	@Override
 	public int compareTo(Object arg0) {
 		if (arg0 instanceof ISchemaElement)
 			return getName().compareToIgnoreCase(((ISchemaElement) arg0).getName());

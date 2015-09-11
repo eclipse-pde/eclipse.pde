@@ -26,6 +26,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPlugin#getClassName()
 	 */
+	@Override
 	public String getClassName() {
 		return getValue(Constants.BUNDLE_ACTIVATOR, false);
 	}
@@ -35,6 +36,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPlugin#setClassName(java.lang.String)
 	 */
+	@Override
 	public void setClassName(String className) throws CoreException {
 		IBundle bundle = getBundle();
 		if (bundle != null) {
@@ -49,6 +51,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 		}
 	}
 
+	@Override
 	public boolean hasExtensibleAPI() {
 		return "true".equals(getValue(ICoreConstants.EXTENSIBLE_API, false)); //$NON-NLS-1$ 
 	}

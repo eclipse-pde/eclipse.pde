@@ -36,6 +36,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 
 	private static boolean fOneTimeSetupComplete = false;
 
+	@Override
 	protected void setUp() throws Exception {
 		if (fOneTimeSetupComplete)
 			return;

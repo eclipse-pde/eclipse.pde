@@ -25,10 +25,12 @@ public class PluginExportOperation extends FeatureBasedExportOperation {
 		super(info, name);
 	}
 
+	@Override
 	protected void createPostProcessingFiles() {
 		createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
 	}
 
+	@Override
 	protected State getState(String os, String ws, String arch) {
 		// the way plug-in export works, the os, ws and arch should ALWAYS equal the target settings.
 		if (os.equals(TargetPlatform.getOS()) && ws.equals(TargetPlatform.getWS()) && arch.equals(TargetPlatform.getOSArch()) && fStateCopy != null) {
@@ -38,6 +40,7 @@ public class PluginExportOperation extends FeatureBasedExportOperation {
 		return super.getState(os, ws, arch);
 	}
 
+	@Override
 	protected boolean shouldAddPlugin(BundleDescription bundle, Dictionary<String, String> environment) {
 		// if there is an environment conflict
 		boolean conflict = !super.shouldAddPlugin(bundle, environment);
@@ -57,6 +60,7 @@ public class PluginExportOperation extends FeatureBasedExportOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setAdditionalAttributes(org.w3c.dom.Element, org.eclipse.osgi.service.resolver.BundleDescription)
 	 */
+	@Override
 	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
 		plugin.setAttribute("unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$
 	}

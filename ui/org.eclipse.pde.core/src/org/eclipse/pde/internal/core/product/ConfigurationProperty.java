@@ -36,6 +36,7 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
 	 */
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -50,6 +51,7 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<property name=\"" + fName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(" value=\"" + fValue + "\""); //$NON-NLS-1$//$NON-NLS-2$
@@ -62,14 +64,17 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 		writer.println(" />"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public String getValue() {
 		return fValue;
 	}
 
+	@Override
 	public void setName(String name) {
 		String oldValue = fName;
 		fName = name;
@@ -78,6 +83,7 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 		}
 	}
 
+	@Override
 	public void setValue(String value) {
 		String oldValue = fValue;
 		fValue = value;
@@ -86,14 +92,17 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 		}
 	}
 
+	@Override
 	public String toString() {
 		return fName + " : " + fValue; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getOs() {
 		return fOS;
 	}
 
+	@Override
 	public void setOs(String os) {
 		String oldValue = fOS;
 		fOS = os;
@@ -102,10 +111,12 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 		}
 	}
 
+	@Override
 	public String getArch() {
 		return fArch;
 	}
 
+	@Override
 	public void setArch(String arch) {
 		String oldValue = fArch;
 		fArch = arch;

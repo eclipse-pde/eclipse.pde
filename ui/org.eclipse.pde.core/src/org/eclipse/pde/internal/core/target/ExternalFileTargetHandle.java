@@ -56,6 +56,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#delete()
 	 */
+	@Override
 	void delete() throws CoreException {
 		// We can not delete a file lying outside the workspace
 	}
@@ -63,6 +64,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#getInputStream()
 	 */
+	@Override
 	protected InputStream getInputStream() throws CoreException {
 		try {
 			return fURI.toURL().openStream();
@@ -75,6 +77,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.core.target.ITargetDefinition)
 	 */
+	@Override
 	void save(ITargetDefinition definition) throws CoreException {
 		try {
 			OutputStream stream = new BufferedOutputStream(new FileOutputStream(fFile));
@@ -88,6 +91,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetHandle#exists()
 	 */
+	@Override
 	public boolean exists() {
 		return fFile != null && fFile.exists();
 	}
@@ -95,10 +99,12 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetHandle#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		return fURI.toString();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ExternalFileTargetHandle) {
 			ExternalFileTargetHandle target = (ExternalFileTargetHandle) obj;
@@ -114,6 +120,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return fURI.toString();
 	}

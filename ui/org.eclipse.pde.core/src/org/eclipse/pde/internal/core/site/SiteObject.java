@@ -36,6 +36,7 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 		inTheModel = value;
 	}
 
+	@Override
 	public boolean isInTheModel() {
 		return inTheModel;
 	}
@@ -67,10 +68,12 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 		}
 	}
 
+	@Override
 	public ISite getSite() {
 		return model.getSite();
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
@@ -81,6 +84,7 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 		return model.getResourceString(label);
 	}
 
+	@Override
 	public ISiteModel getModel() {
 		return model;
 	}
@@ -121,6 +125,7 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 		return result;
 	}
 
+	@Override
 	public ISiteObject getParent() {
 		return parent;
 	}
@@ -133,6 +138,7 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 		label = null;
 	}
 
+	@Override
 	public void setLabel(String newLabel) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.label;
@@ -183,6 +189,7 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 	}
 

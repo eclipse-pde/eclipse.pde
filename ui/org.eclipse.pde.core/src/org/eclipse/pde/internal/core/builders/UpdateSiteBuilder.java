@@ -27,6 +27,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 			this.monitor = monitor;
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 
@@ -55,6 +56,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
 		IResourceDelta delta = null;
@@ -89,6 +91,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		IFile site = getProject().getFile("site.xml"); //$NON-NLS-1$
 		if (site.exists()) {

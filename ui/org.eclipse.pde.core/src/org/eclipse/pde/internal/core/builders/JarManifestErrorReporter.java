@@ -258,6 +258,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		validateHeaderValue(header, BOOLEAN_VALUES);
 	}
 
+	@Override
 	protected void validate(IProgressMonitor monitor) {
 		if (fTextDocument != null)
 			parseManifest(fTextDocument, monitor);

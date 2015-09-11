@@ -18,10 +18,12 @@ public class FeatureProject extends BaseProject {
 		super();
 	}
 
+	@Override
 	public void configure() throws CoreException {
 		addToBuildSpec(PDE.FEATURE_BUILDER_ID);
 	}
 
+	@Override
 	public void deconfigure() throws CoreException {
 		removeFromBuildSpec(PDE.FEATURE_BUILDER_ID);
 	}

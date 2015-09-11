@@ -42,6 +42,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getAttributeName()
 	 */
+	@Override
 	public String getAttributeName() {
 		return fName;
 	}
@@ -49,6 +50,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getAttributeValue()
 	 */
+	@Override
 	public String getAttributeValue() {
 		return fValue;
 	}
@@ -56,6 +58,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getEnclosingElement()
 	 */
+	@Override
 	public IDocumentElementNode getEnclosingElement() {
 		return fEnclosingElement;
 	}
@@ -63,6 +66,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getNameLength()
 	 */
+	@Override
 	public int getNameLength() {
 		return fNameLength;
 	}
@@ -70,6 +74,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getNameOffset()
 	 */
+	@Override
 	public int getNameOffset() {
 		return fNameOffset;
 	}
@@ -77,6 +82,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getValueLength()
 	 */
+	@Override
 	public int getValueLength() {
 		return fValueLength;
 	}
@@ -84,6 +90,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getValueOffset()
 	 */
+	@Override
 	public int getValueOffset() {
 		return fValueOffset;
 	}
@@ -91,6 +98,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeName(java.lang.String)
 	 */
+	@Override
 	public void setAttributeName(String name) {
 		fName = name;
 	}
@@ -98,6 +106,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeValue(java.lang.String)
 	 */
+	@Override
 	public void setAttributeValue(String value) {
 		fValue = value;
 	}
@@ -105,6 +114,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setEnclosingElement(org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public void setEnclosingElement(IDocumentElementNode node) {
 		fEnclosingElement = node;
 	}
@@ -112,6 +122,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setNameLength(int)
 	 */
+	@Override
 	public void setNameLength(int length) {
 		fNameLength = length;
 	}
@@ -119,6 +130,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setNameOffset(int)
 	 */
+	@Override
 	public void setNameOffset(int offset) {
 		fNameOffset = offset;
 	}
@@ -126,6 +138,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setValueLength(int)
 	 */
+	@Override
 	public void setValueLength(int length) {
 		fValueLength = length;
 	}
@@ -133,6 +146,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setValueOffset(int)
 	 */
+	@Override
 	public void setValueOffset(int offset) {
 		fValueOffset = offset;
 	}
@@ -140,6 +154,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#write()
 	 */
+	@Override
 	public String write() {
 		return fName + "=\"" + //$NON-NLS-1$
 				PDEXMLHelper.getWritableAttributeString(fValue) + "\""; //$NON-NLS-1$
@@ -148,6 +163,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#reconnect(org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public void reconnect(IDocumentElementNode parent) {
 		// Transient field:  Enclosing element
 		// Essentially is the parent (an element)
@@ -167,6 +183,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentRange#getLength()
 	 */
+	@Override
 	public int getLength() {
 		// Implemented for backwards compatibility with utility methods that
 		// assume that an attribute is a document range.
@@ -188,6 +205,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentRange#getOffset()
 	 */
+	@Override
 	public int getOffset() {
 		// Implemented for backwards compatibility with utility methods that
 		// assume that an attribute is a document range.
@@ -199,6 +217,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentXMLNode#getXMLType()
 	 */
+	@Override
 	public int getXMLType() {
 		return F_TYPE_ATTRIBUTE;
 	}

@@ -74,10 +74,12 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		fListeners = Collections.synchronizedList(new ArrayList<IModelChangedListener>());
 	}
 
+	@Override
 	public void addModelChangedListener(IModelChangedListener listener) {
 		fListeners.add(listener);
 	}
 
+	@Override
 	public void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter) {
 		ArrayList<IModelChangedListener> removed = new ArrayList<IModelChangedListener>();
 		for (int i = 0; i < fListeners.size(); i++) {
@@ -90,10 +92,12 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		fListeners.removeAll(removed);
 	}
 
+	@Override
 	public void dispose() {
 		fDisposed = true;
 	}
 
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		IModelChangedListener[] list = fListeners.toArray(new IModelChangedListener[fListeners.size()]);
 		for (int i = 0; i < list.length; i++) {
@@ -102,14 +106,17 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		}
 	}
 
+	@Override
 	public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue) {
 		fireModelChanged(new ModelChangedEvent(this, object, property, oldValue, newValue));
 	}
 
+	@Override
 	public String getResourceString(String key) {
 		return key;
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		return null;
 	}
@@ -118,10 +125,12 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		return localFile.exists() && localFile.lastModified() == getTimeStamp();
 	}
 
+	@Override
 	public boolean isValid() {
 		return !isDisposed() && isLoaded();
 	}
 
+	@Override
 	public final long getTimeStamp() {
 		return fTimestamp;
 	}
@@ -133,10 +142,12 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 			fTimestamp = localFile.lastModified();
 	}
 
+	@Override
 	public boolean isDisposed() {
 		return fDisposed;
 	}
 
+	@Override
 	public boolean isLoaded() {
 		return fLoaded;
 	}
@@ -153,6 +164,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		return fException;
 	}
 
+	@Override
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		fListeners.remove(listener);
 	}
@@ -172,6 +184,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	 * 
 	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
 	 */
+	@Override
 	public boolean isReconcilingModel() {
 		return false;
 	}

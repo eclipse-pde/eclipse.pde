@@ -35,8 +35,10 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 		fPluginFile = pluginFile;
 	}
 
+	@Override
 	abstract public IPluginBase createPluginBase();
 
+	@Override
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		if (fPluginBase == null)
 			fPluginBase = createPluginBase();
@@ -47,6 +49,7 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 		fBundleModel.load(stream, outOfSync);
 	}
 
+	@Override
 	public void save() {
 		if (fExtensionsModel != null && fExtensionsModel.getExtensions().getExtensions().length > 0) {
 			((BundlePluginBase) fPluginBase).updateSingleton(true);
@@ -58,22 +61,26 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 			((IEditableModel) fBundleModel).save();
 	}
 
+	@Override
 	public String getContents() {
 		if (fBundleModel != null && fBundleModel instanceof WorkspaceBundleModel)
 			return ((WorkspaceBundleModel) fBundleModel).getContents();
 		return null;
 	}
 
+	@Override
 	public String getBundleLocalization() {
 		IBundle bundle = fBundleModel != null ? fBundleModel.getBundle() : null;
 		return bundle != null ? bundle.getLocalization() : Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 	}
 
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		String localization = getBundleLocalization();
 		return localization == null ? null : new NLResourceHelper(localization, PDEManager.getNLLookupLocations(this));
 	}
 
+	@Override
 	public IBundleModel getBundleModel() {
 		if (fBundleModel == null) {
 			IFile file = (IFile) getUnderlyingResource();
@@ -88,6 +95,7 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 		return fBundleModel;
 	}
 
+	@Override
 	public ISharedExtensionsModel getExtensionsModel() {
 		if (fExtensionsModel == null && fPluginFile != null) {
 			fExtensionsModel = new WorkspaceExtensionsModel(fPluginFile);
@@ -102,11 +110,13 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 		return fExtensionsModel;
 	}
 
+	@Override
 	public void setBundleModel(IBundleModel bundleModel) {
 		if (bundleModel instanceof IEditableModel)
 			fBundleModel = bundleModel;
 	}
 
+	@Override
 	public void setExtensionsModel(ISharedExtensionsModel extensionsModel) {
 		if (extensionsModel instanceof IEditableModel)
 			fExtensionsModel = extensionsModel;

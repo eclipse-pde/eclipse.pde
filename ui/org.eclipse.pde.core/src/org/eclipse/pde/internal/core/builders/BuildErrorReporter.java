@@ -80,6 +80,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			fExtraBuntryEntryIndex = 0;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof BuildProblem))
 				return false;
@@ -120,6 +121,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			pattern = PatternConstructor.createPattern(file, false);
 		}
 
+		@Override
 		public boolean accept(File dir, String name) {
 			Matcher matcher = pattern.matcher(name);
 			return matcher.matches();
@@ -153,6 +155,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		fEncodingSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_ENCODINGS);
 	}
 
+	@Override
 	public void validate(IProgressMonitor monitor) {
 		/*if (fBuildSeverity == CompilerFlags.IGNORE && fClasspathSeverity == CompilerFlags.IGNORE)
 			return;*/

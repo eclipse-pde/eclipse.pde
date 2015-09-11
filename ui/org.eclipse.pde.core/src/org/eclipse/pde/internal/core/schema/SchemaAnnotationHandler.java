@@ -47,6 +47,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 		super();
 	}
 
+	@Override
 	protected void reset() {
 		super.reset();
 		fName = null;
@@ -55,6 +56,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 		fAppInfoElemFlag = false;
 	}
 
+	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
 
@@ -73,6 +75,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 		}
 	}
 
+	@Override
 	public void characters(char[] ch, int start, int length) {
 		if (onTarget()) {
 			for (int i = 0; i < length; i++) {

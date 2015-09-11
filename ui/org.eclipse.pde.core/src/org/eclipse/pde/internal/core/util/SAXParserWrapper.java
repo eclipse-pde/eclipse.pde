@@ -64,6 +64,7 @@ public class SAXParserWrapper {
 	// wrapper method needs to be added here
 
 	// Implicit disposal
+	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
 		dispose();

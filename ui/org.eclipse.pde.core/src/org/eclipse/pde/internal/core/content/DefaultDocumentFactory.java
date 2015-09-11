@@ -19,6 +19,7 @@ public class DefaultDocumentFactory implements IDocumentFactory {
 	 * Just ensures, that the default document is created.
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=307524
 	 */
+	@Override
 	@Deprecated
 	public IDocument createDocument() {
 		return FileBuffers.getTextFileBufferManager().createEmptyDocument(null, LocationKind.LOCATION);

@@ -24,6 +24,7 @@ public class PluginModel extends PluginModelBase implements IPluginModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModel#getPlugin()
 	 */
+	@Override
 	public IPlugin getPlugin() {
 		return (IPlugin) getPluginBase();
 	}
@@ -31,6 +32,7 @@ public class PluginModel extends PluginModelBase implements IPluginModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isFragmentModel()
 	 */
+	@Override
 	public boolean isFragmentModel() {
 		return false;
 	}
@@ -38,6 +40,7 @@ public class PluginModel extends PluginModelBase implements IPluginModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
 	 */
+	@Override
 	public BundleDescription getBundleDescription() {
 		return null;
 	}
@@ -45,6 +48,7 @@ public class PluginModel extends PluginModelBase implements IPluginModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
 	 */
+	@Override
 	public void setBundleDescription(BundleDescription description) {
 	}
 

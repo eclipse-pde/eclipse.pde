@@ -18,16 +18,19 @@ public class ExternalFragmentModel extends ExternalPluginModelBase implements IF
 
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	public IPluginBase createPluginBase() {
 		PluginBase base = new Fragment(true);
 		base.setModel(this);
 		return base;
 	}
 
+	@Override
 	public IFragment getFragment() {
 		return (IFragment) getPluginBase();
 	}
 
+	@Override
 	public boolean isFragmentModel() {
 		return true;
 	}

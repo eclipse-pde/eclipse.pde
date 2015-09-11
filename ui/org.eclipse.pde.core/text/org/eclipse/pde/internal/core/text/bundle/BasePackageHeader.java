@@ -56,6 +56,7 @@ public abstract class BasePackageHeader extends CompositeManifestHeader {
 		return false;
 	}
 
+	@Override
 	protected void processValue(String value) {
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(fName, value);

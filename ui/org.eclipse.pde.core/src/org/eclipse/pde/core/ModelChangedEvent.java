@@ -69,6 +69,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedEvent#getChangeProvider()
 	 */
+	@Override
 	public IModelChangeProvider getChangeProvider() {
 		return provider;
 	}
@@ -76,6 +77,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedEvent#getChangedObjects()
 	 */
+	@Override
 	public Object[] getChangedObjects() {
 		return (changedObjects == null) ? new Object[0] : changedObjects;
 	}
@@ -83,6 +85,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedEvent#getChangedProperty()
 	 */
+	@Override
 	public String getChangedProperty() {
 		return changedProperty;
 	}
@@ -90,6 +93,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedEvent#getOldValue()
 	 */
+	@Override
 	public Object getOldValue() {
 		return oldValue;
 	}
@@ -97,6 +101,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedEvent#getNewValue()
 	 */
+	@Override
 	public Object getNewValue() {
 		return newValue;
 	}
@@ -104,6 +109,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedEvent#getChangeType()
 	 */
+	@Override
 	public int getChangeType() {
 		return type;
 	}

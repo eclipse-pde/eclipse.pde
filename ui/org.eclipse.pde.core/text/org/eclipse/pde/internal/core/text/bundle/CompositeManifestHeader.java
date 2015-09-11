@@ -43,6 +43,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 		processValue(value);
 	}
 
+	@Override
 	protected void processValue(String value) {
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(fName, value);
@@ -59,11 +60,13 @@ public class CompositeManifestHeader extends ManifestHeader {
 		return new PDEManifestElement(this, element);
 	}
 
+	@Override
 	public void update() {
 		// let subclasses fire changes
 		update(false);
 	}
 
+	@Override
 	public void update(boolean notify) {
 		StringBuffer sb = new StringBuffer();
 		PDEManifestElement[] elements = getElements();

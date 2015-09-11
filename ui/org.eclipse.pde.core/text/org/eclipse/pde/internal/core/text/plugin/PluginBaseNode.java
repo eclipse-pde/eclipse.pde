@@ -25,6 +25,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
+	@Override
 	public void add(IPluginLibrary library) throws CoreException {
 		IDocumentElementNode parent = getEnclosingElement("runtime", true); //$NON-NLS-1$
 		if (library instanceof PluginLibraryNode) {
@@ -38,6 +39,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
+	@Override
 	public void add(IPluginImport pluginImport) throws CoreException {
 		IDocumentElementNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
 		if (pluginImport instanceof PluginImportNode) {
@@ -61,6 +63,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
+	@Override
 	public void remove(IPluginImport pluginImport) throws CoreException {
 		IDocumentElementNode parent = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (parent != null) {
@@ -84,6 +87,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getLibraries()
 	 */
+	@Override
 	public IPluginLibrary[] getLibraries() {
 		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
 		IDocumentElementNode requiresNode = getEnclosingElement("runtime", false); //$NON-NLS-1$
@@ -131,6 +135,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getImports()
 	 */
+	@Override
 	public IPluginImport[] getImports() {
 		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
 		IDocumentElementNode requiresNode = getEnclosingElement("requires", false); //$NON-NLS-1$
@@ -148,6 +153,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getProviderName()
 	 */
+	@Override
 	public String getProviderName() {
 		return getXMLAttributeValue(P_PROVIDER);
 	}
@@ -155,6 +161,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getVersion()
 	 */
+	@Override
 	public String getVersion() {
 		return getXMLAttributeValue(P_VERSION);
 	}
@@ -162,6 +169,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
+	@Override
 	public void remove(IPluginLibrary library) throws CoreException {
 		IDocumentElementNode parent = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (parent != null) {
@@ -174,6 +182,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setProviderName(java.lang.String)
 	 */
+	@Override
 	public void setProviderName(String providerName) throws CoreException {
 		setXMLAttribute(P_PROVIDER, providerName);
 	}
@@ -181,6 +190,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setVersion(java.lang.String)
 	 */
+	@Override
 	public void setVersion(String version) throws CoreException {
 		setXMLAttribute(P_VERSION, version);
 	}
@@ -188,6 +198,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginLibrary, org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
+	@Override
 	public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
 		IDocumentElementNode node = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (node != null) {
@@ -199,6 +210,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getSchemaVersion()
 	 */
+	@Override
 	public String getSchemaVersion() {
 		return fSchemaVersion;
 	}
@@ -206,6 +218,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setSchemaVersion(java.lang.String)
 	 */
+	@Override
 	public void setSchemaVersion(String schemaVersion) throws CoreException {
 		fSchemaVersion = schemaVersion;
 	}
@@ -213,6 +226,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
+	@Override
 	public void add(IPluginExtension extension) throws CoreException {
 		if (extension instanceof PluginExtensionNode) {
 			PluginExtensionNode node = (PluginExtensionNode) extension;
@@ -243,6 +257,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
 	 */
+	@Override
 	public void add(IPluginExtensionPoint extensionPoint) throws CoreException {
 		if (extensionPoint instanceof PluginExtensionPointNode) {
 			PluginExtensionPointNode node = (PluginExtensionPointNode) extensionPoint;
@@ -271,6 +286,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#getExtensionPoints()
 	 */
+	@Override
 	public IPluginExtensionPoint[] getExtensionPoints() {
 		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
 		IDocumentElementNode[] children = getChildNodes();
@@ -284,6 +300,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#getExtensions()
 	 */
+	@Override
 	public IPluginExtension[] getExtensions() {
 		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
 		IDocumentElementNode[] children = getChildNodes();
@@ -294,6 +311,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		return result.toArray(new IPluginExtension[result.size()]);
 	}
 
+	@Override
 	public int getIndexOf(IPluginExtension e) {
 		IPluginExtension[] children = getExtensions();
 		for (int i = 0; i < children.length; i++) {
@@ -306,6 +324,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
+	@Override
 	public void remove(IPluginExtension extension) throws CoreException {
 		if (extension instanceof IDocumentElementNode) {
 			removeChildNode((IDocumentElementNode) extension);
@@ -317,6 +336,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
 	 */
+	@Override
 	public void remove(IPluginExtensionPoint extensionPoint) throws CoreException {
 		if (extensionPoint instanceof IDocumentElementNode) {
 			removeChildNode((IDocumentElementNode) extensionPoint);
@@ -336,6 +356,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#swap(org.eclipse.pde.core.plugin.IPluginExtension, org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
+	@Override
 	public void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException {
 		swap((IDocumentElementNode) e1, (IDocumentElementNode) e2);
 		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);
@@ -344,6 +365,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginImport, org.eclipse.pde.core.plugin.IPluginImport)
 	 */
+	@Override
 	public void swap(IPluginImport import1, IPluginImport import2) throws CoreException {
 		IDocumentElementNode node = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (node != null) {
@@ -355,6 +377,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
+	@Override
 	public String getId() {
 		return getXMLAttributeValue(P_ID);
 	}
@@ -362,6 +385,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
+	@Override
 	public void setId(String id) throws CoreException {
 		setXMLAttribute(P_ID, id);
 	}
@@ -369,6 +393,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
+	@Override
 	public String getName() {
 		return getXMLAttributeValue(P_NAME);
 	}
@@ -376,6 +401,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) throws CoreException {
 		setXMLAttribute(P_NAME, name);
 	}
@@ -383,6 +409,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
+	@Override
 	public String write(boolean indent) {
 		String newLine = getLineDelimiter();
 
@@ -425,6 +452,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow()
 	 */
+	@Override
 	public String writeShallow(boolean terminate) {
 		String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buffer = new StringBuffer();
@@ -460,6 +488,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 
 	protected abstract String[] getSpecificAttributes();
 
+	@Override
 	public boolean isRoot() {
 		return true;
 	}

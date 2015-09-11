@@ -23,12 +23,14 @@ public class WorkspacePluginModel extends WorkspacePluginModelBase implements IP
 		super(file, abbreviated);
 	}
 
+	@Override
 	public IPluginBase createPluginBase() {
 		Plugin plugin = new Plugin(!isEditable());
 		plugin.setModel(this);
 		return plugin;
 	}
 
+	@Override
 	public IPlugin getPlugin() {
 		return (IPlugin) getPluginBase();
 	}

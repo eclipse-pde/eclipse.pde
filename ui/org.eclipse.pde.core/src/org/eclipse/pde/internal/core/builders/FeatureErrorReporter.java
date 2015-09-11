@@ -45,6 +45,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.builders.XMLErrorReporter#validateContent(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void validateContent(IProgressMonitor monitor) {
 		fMonitor = monitor;
 		Element element = getDocumentRoot();

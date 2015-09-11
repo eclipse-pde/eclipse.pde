@@ -22,6 +22,7 @@ public class ExternalJavaSearchClasspathContainer implements IClasspathContainer
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
 	 */
+	@Override
 	public IClasspathEntry[] getClasspathEntries() {
 		if (fEntries == null) {
 			try {
@@ -38,6 +39,7 @@ public class ExternalJavaSearchClasspathContainer implements IClasspathContainer
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return PDECoreMessages.ExternalJavaSearchClasspathContainer_description;
 	}
@@ -46,6 +48,7 @@ public class ExternalJavaSearchClasspathContainer implements IClasspathContainer
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getKind()
 	 */
+	@Override
 	public int getKind() {
 		return K_APPLICATION;
 	}
@@ -54,6 +57,7 @@ public class ExternalJavaSearchClasspathContainer implements IClasspathContainer
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return PDECore.JAVA_SEARCH_CONTAINER_PATH;
 	}

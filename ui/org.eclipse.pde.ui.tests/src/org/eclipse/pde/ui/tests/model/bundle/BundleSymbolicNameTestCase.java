@@ -28,6 +28,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		return new TestSuite(BundleSymbolicNameTestCase.class);
 	}
 
+	@Override
 	public void testAbsentHeader() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -38,6 +39,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertNull(fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME));
 	}
 
+	@Override
 	public void testPresentHeader() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -49,6 +51,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertNotNull(fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME));
 	}
 
+	@Override
 	public void testHeaderOffset1() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -61,6 +64,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertEquals(fDocument.getLineOffset(2), header.getOffset());
 	}
 
+	@Override
 	public void testHeaderOffset2() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -74,6 +78,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertEquals(fDocument.getLineOffset(2), header.getOffset());
 	}
 
+	@Override
 	public void testHeaderLength() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -86,6 +91,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertEquals(fDocument.getLineLength(2), header.getLength());
 	}
 
+	@Override
 	public void testHeaderLengthWithWindowsDelimiter() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\r\n");

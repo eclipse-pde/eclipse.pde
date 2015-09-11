@@ -19,30 +19,35 @@ public class ExportBuildListener implements BuildListener {
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void buildStarted(BuildEvent event) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void buildFinished(BuildEvent event) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void targetStarted(BuildEvent event) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void targetFinished(BuildEvent event) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void taskStarted(BuildEvent event) {
 	}
 
@@ -52,6 +57,7 @@ public class ExportBuildListener implements BuildListener {
 	private static final String RUN_DIRECTOR = "runDirector"; //$NON-NLS-1$
 	private static final String DIRECTOR_OUTPUT = "p2.director.java.output"; //$NON-NLS-1$
 
+	@Override
 	public void taskFinished(BuildEvent event) {
 		if (event.getException() != null && event.getTarget().getName().equals(RUN_DIRECTOR)) {
 			String directorOutput = event.getProject().getProperty(DIRECTOR_OUTPUT);
@@ -68,6 +74,7 @@ public class ExportBuildListener implements BuildListener {
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void messageLogged(BuildEvent event) {
 		if (event.getPriority() == Project.MSG_ERR) {
 			FeatureExportOperation.errorFound();

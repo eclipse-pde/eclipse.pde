@@ -30,10 +30,12 @@ public class ImportAsSourceTestCase extends BaseImportTestCase {
 		return new TestSuite(ImportAsSourceTestCase.class);
 	}
 
+	@Override
 	protected int getType() {
 		return TYPE;
 	}
 
+	@Override
 	protected void verifyProject(String projectName, boolean isJava) {
 		try {
 			IProject project = verifyProject(projectName);

@@ -26,6 +26,7 @@ public class ExternalJavaSearchInitializer extends ClasspathContainerInitializer
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#initialize(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
 		try {
 			JavaCore.setClasspathContainer(PDECore.JAVA_SEARCH_CONTAINER_PATH, new IJavaProject[] {javaProject}, new IClasspathContainer[] {new ExternalJavaSearchClasspathContainer()}, null);

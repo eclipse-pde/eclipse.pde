@@ -29,25 +29,30 @@ public class EditableSchema extends Schema implements IEditable {
 
 	private boolean dirty;
 
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		if (isNotificationEnabled())
 			dirty = true;
 		super.fireModelChanged(event);
 	}
 
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return true;
 	}
 
+	@Override
 	public void save(PrintWriter writer) {
 		this.write("", writer); //$NON-NLS-1$
 		dirty = false;
 	}
 
+	@Override
 	public void setDirty(boolean newDirty) {
 		dirty = newDirty;
 	}

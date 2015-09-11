@@ -31,6 +31,7 @@ public class PackageObject extends PDEManifestElement {
 			addAttribute(fVersionAttribute, version);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer(getValue());
 		String version = getVersion();

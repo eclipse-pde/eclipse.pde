@@ -18,6 +18,7 @@ public class TargetPDERegistryStrategy extends PDERegistryStrategy {
 		super(storageDirs, cacheReadOnly, key, registry);
 	}
 
+	@Override
 	protected void init() {
 		// don't attach listeners to ModelManager since we don't need to listen for changes
 	}

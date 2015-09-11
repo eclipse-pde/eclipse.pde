@@ -25,6 +25,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#getName()
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -32,6 +33,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#getURL()
 	 */
+	@Override
 	public String getURL() {
 		return url;
 	}
@@ -39,6 +41,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#getText()
 	 */
+	@Override
 	public String getText() {
 		return text;
 	}
@@ -46,6 +49,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.name;
@@ -56,6 +60,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#setURL(java.lang.String)
 	 */
+	@Override
 	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
@@ -66,6 +71,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#setText(java.lang.String)
 	 */
+	@Override
 	public void setText(String text) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.text;
@@ -73,12 +79,14 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		firePropertyChanged(P_TEXT, oldValue, text);
 	}
 
+	@Override
 	protected void reset() {
 		name = null;
 		url = null;
 		text = null;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		name = getNodeAttribute(node, P_NAME);
 		url = getNodeAttribute(node, P_URL);
@@ -94,6 +102,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		}
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_NAME)) {
 			setName(newValue != null ? newValue.toString() : null);
@@ -105,6 +114,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		if ((name == null || name.length() <= 0) && (url == null || url.length() <= 0) && (text == null || text.trim().length() <= 0))
 			return;
@@ -122,6 +132,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		writer.println(indent + "</description>"); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isValid() {
 		return true;
 	}

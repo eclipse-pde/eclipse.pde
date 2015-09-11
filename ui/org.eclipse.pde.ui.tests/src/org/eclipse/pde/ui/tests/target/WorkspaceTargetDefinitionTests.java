@@ -32,6 +32,7 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 		return new TestSuite(WorkspaceTargetDefinitionTests.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		if (!project.exists()){
@@ -42,6 +43,7 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 		assertTrue("Could not open test project", project.isOpen());
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		if (project.exists()){
@@ -50,6 +52,7 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 		assertFalse("Could not delete test project",project.exists());
 	}
 	
+	@Override
 	protected ITargetDefinition getNewTarget() {
 		IFile target = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME).getFile(new Long(System.currentTimeMillis()).toString() + ".target");
 		try {

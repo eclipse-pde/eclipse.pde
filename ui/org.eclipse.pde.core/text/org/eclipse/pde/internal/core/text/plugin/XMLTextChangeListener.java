@@ -37,6 +37,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 			fReadableNames = new HashMap<TextEdit, String>();
 	}
 
+	@Override
 	public TextEdit[] getTextOperations() {
 		if (fOperationList.size() == 0)
 			return new TextEdit[0];
@@ -420,6 +421,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		return PDEXMLHelper.getWritableString(source);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		if (objects == null)
@@ -455,6 +457,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		}
 	}
 
+	@Override
 	public String getReadableName(TextEdit edit) {
 		if (fReadableNames != null && fReadableNames.containsKey(edit))
 			return fReadableNames.get(edit);

@@ -18,12 +18,14 @@ public class ExternalPluginModel extends ExternalPluginModelBase implements IPlu
 
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	public IPluginBase createPluginBase() {
 		PluginBase base = new Plugin(true);
 		base.setModel(this);
 		return base;
 	}
 
+	@Override
 	public IPlugin getPlugin() {
 		return (IPlugin) getPluginBase();
 	}

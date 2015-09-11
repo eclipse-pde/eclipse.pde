@@ -22,6 +22,7 @@ public class TargetHomeDynamicVariableResolver implements IDynamicVariableResolv
 	 * 
 	 * @since 3.2
 	 */
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		return TargetPlatform.getLocation();
 	}

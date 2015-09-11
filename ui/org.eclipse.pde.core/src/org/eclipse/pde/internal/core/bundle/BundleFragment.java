@@ -24,6 +24,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	public String getPluginId() {
 		return getValue(Constants.FRAGMENT_HOST, true);
 	}
@@ -31,6 +32,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginVersion()
 	 */
+	@Override
 	public String getPluginVersion() {
 		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
 		try {
@@ -45,6 +47,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#getRule()
 	 */
+	@Override
 	public int getRule() {
 		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
 		VersionRange versionRange = new VersionRange(version);
@@ -54,6 +57,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#setPluginId(java.lang.String)
 	 */
+	@Override
 	public void setPluginId(String id) throws CoreException {
 		IBundle bundle = getBundle();
 		if (bundle != null) {
@@ -71,6 +75,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#setPluginVersion(java.lang.String)
 	 */
+	@Override
 	public void setPluginVersion(String version) throws CoreException {
 		IBundle bundle = getBundle();
 		if (bundle != null) {
@@ -88,6 +93,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#setRule(int)
 	 */
+	@Override
 	public void setRule(int rule) throws CoreException {
 	}
 

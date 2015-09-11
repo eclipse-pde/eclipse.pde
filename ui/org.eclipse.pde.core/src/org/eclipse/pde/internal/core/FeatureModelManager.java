@@ -81,6 +81,7 @@ public class FeatureModelManager {
 		fInactiveModels = new FeatureTable();
 
 		fProviderListener = new IModelProviderListener() {
+			@Override
 			public void modelsChanged(IModelProviderEvent e) {
 				handleModelsChanged(e);
 			}

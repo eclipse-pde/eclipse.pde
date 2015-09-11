@@ -31,6 +31,7 @@ public class WindowImages extends ProductObject implements IWindowImages {
 		super(model);
 	}
 
+	@Override
 	public String getImagePath(int size) {
 		switch (size) {
 			case 0 :
@@ -49,6 +50,7 @@ public class WindowImages extends ProductObject implements IWindowImages {
 		return null;
 	}
 
+	@Override
 	public void setImagePath(String path, int size) {
 		String old;
 		switch (size) {
@@ -92,6 +94,7 @@ public class WindowImages extends ProductObject implements IWindowImages {
 
 	}
 
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -112,6 +115,7 @@ public class WindowImages extends ProductObject implements IWindowImages {
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<windowImages"); //$NON-NLS-1$
 		if (f16ImagePath != null && f16ImagePath.length() > 0) {

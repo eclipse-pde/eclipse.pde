@@ -37,6 +37,7 @@ public class ParserWrapperTestCase extends TestCase {
 		return new TestSuite(ParserWrapperTestCase.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PDETestsPlugin plugin = PDETestsPlugin.getDefault();
@@ -99,6 +100,7 @@ public class ParserWrapperTestCase extends TestCase {
 			fParserXMLFile = file;
 		}
 
+		@Override
 		public void run() {
 
 			if (fParserType == ParserWrapperTestCase.FSAX) {

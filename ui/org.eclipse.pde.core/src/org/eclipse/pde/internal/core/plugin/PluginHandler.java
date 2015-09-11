@@ -36,6 +36,7 @@ public class PluginHandler extends DefaultHandler {
 		fAbbreviated = abbreviated;
 	}
 
+	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 		fPop = true;
@@ -69,6 +70,7 @@ public class PluginHandler extends DefaultHandler {
 		return IdUtil.isInterestingExtensionPoint(point);
 	}
 
+	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (fPop || (qName.equals("extension") && fOpenElements.size() == 2)) { //$NON-NLS-1$
 			fOpenElements.pop();
@@ -78,6 +80,7 @@ public class PluginHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
+	@Override
 	public void setDocumentLocator(Locator locator) {
 		fLocator = locator;
 	}
@@ -85,6 +88,7 @@ public class PluginHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#startDocument()
 	 */
+	@Override
 	public void startDocument() throws SAXException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -96,6 +100,7 @@ public class PluginHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
+	@Override
 	public void endDocument() throws SAXException {
 		fDocument.appendChild(fRootElement);
 	}
@@ -103,6 +108,7 @@ public class PluginHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void processingInstruction(String target, String data) throws SAXException {
 		if ("eclipse".equals(target)) { //$NON-NLS-1$
 			// Data should be of the form: version="<version>"
@@ -117,6 +123,7 @@ public class PluginHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
+	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
 		if (fAbbreviated)
 			return;
@@ -153,6 +160,7 @@ public class PluginHandler extends DefaultHandler {
 		return fSchemaVersion;
 	}
 
+	@Override
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		// Prevent the resolution of external entities in order to
 		// prevent the parser from accessing the Internet

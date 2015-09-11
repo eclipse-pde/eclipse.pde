@@ -34,6 +34,7 @@ public class AbbreviatedPluginHandler extends PluginHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginHandler#isInterestingExtension(org.w3c.dom.Element)
 	 */
+	@Override
 	protected boolean isInterestingExtension(Element element) {
 		String point = element.getAttribute("point"); //$NON-NLS-1$
 		for (int i = 0; i < fExtensionPointIDs.length; i++) {
@@ -47,6 +48,7 @@ public class AbbreviatedPluginHandler extends PluginHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginHandler#characters(char[], int, int)
 	 */
+	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
 		processCharacters(characters, start, length);
 	}

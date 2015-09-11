@@ -88,6 +88,7 @@ public interface ISite extends ISiteObject {
 
 	void setStatsInfo(IStatsInfo info) throws CoreException;
 
+	@Override
 	boolean isValid();
 
 }

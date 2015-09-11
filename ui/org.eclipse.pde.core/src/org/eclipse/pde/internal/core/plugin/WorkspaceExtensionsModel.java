@@ -35,10 +35,12 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 	private boolean fEditable = true;
 	private transient IBundlePluginModelBase fBundleModel;
 
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		return new NLResourceHelper(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME, getNLLookupLocations());
 	}
 
+	@Override
 	public URL getNLLookupLocation() {
 		try {
 			return new URL("file:" + getInstallLocation() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -51,6 +53,7 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 		fUnderlyingResource = file;
 	}
 
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		fDirty = true;
 		super.fireModelChanged(event);
@@ -69,14 +72,17 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 		return swriter.toString();
 	}
 
+	@Override
 	public String getInstallLocation() {
 		return fUnderlyingResource.getLocation().removeLastSegments(1).addTrailingSeparator().toOSString();
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		return fUnderlyingResource;
 	}
 
+	@Override
 	public boolean isInSync() {
 		if (fUnderlyingResource == null)
 			return true;
@@ -86,24 +92,29 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 		return super.isInSync(path.toFile());
 	}
 
+	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return fEditable;
 	}
 
+	@Override
 	public void load() {
 		if (fUnderlyingResource == null)
 			return;
 		getExtensions(true);
 	}
 
+	@Override
 	protected void updateTimeStamp() {
 		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
 
+	@Override
 	public void save() {
 		if (fUnderlyingResource == null)
 			return;
@@ -145,6 +156,7 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 		}
 	}
 
+	@Override
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			fExtensions.write("", writer); //$NON-NLS-1$
@@ -152,6 +164,7 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 		fDirty = false;
 	}
 
+	@Override
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}
@@ -163,6 +176,7 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.AbstractExtensionsModel#createExtensions()
 	 */
+	@Override
 	protected Extensions createExtensions() {
 		Extensions extensions = super.createExtensions();
 		extensions.setIsFragment(fUnderlyingResource.getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR));
@@ -172,6 +186,7 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return fUnderlyingResource.getName();
 	}
@@ -180,6 +195,7 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 		fBundleModel = model;
 	}
 
+	@Override
 	public IBundlePluginModelBase getBundlePluginModel() {
 		return fBundleModel;
 	}

@@ -35,22 +35,27 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 		fBundle.setModel(this);
 	}
 
+	@Override
 	public IBundle getBundle() {
 		if (!isLoaded())
 			load();
 		return fBundle;
 	}
 
+	@Override
 	public String getInstallLocation() {
 		return null;
 	}
 
+	@Override
 	public abstract void load();
 
+	@Override
 	public boolean isFragmentModel() {
 		return fBundle.getHeader(Constants.FRAGMENT_HOST) != null;
 	}
 
+	@Override
 	public void load(InputStream source, boolean outOfSync) {
 		try {
 			setLoaded(true); // Must be set before loading the manifest otherwise calls to getModel() cause a stack overflow
@@ -119,6 +124,7 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 		return buffer.toString();
 	}
 
+	@Override
 	public void reload(InputStream source, boolean outOfSync) {
 		load(source, outOfSync);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[0], null));

@@ -25,6 +25,7 @@ public class ProductModelFactory implements IProductModelFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createProduct()
 	 */
+	@Override
 	public IProduct createProduct() {
 		return new Product(fModel);
 	}
@@ -32,6 +33,7 @@ public class ProductModelFactory implements IProductModelFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createAboutInfo()
 	 */
+	@Override
 	public IAboutInfo createAboutInfo() {
 		return new AboutInfo(fModel);
 	}
@@ -39,6 +41,7 @@ public class ProductModelFactory implements IProductModelFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createPlugin()
 	 */
+	@Override
 	public IProductPlugin createPlugin() {
 		return new ProductPlugin(fModel);
 	}
@@ -46,6 +49,7 @@ public class ProductModelFactory implements IProductModelFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createPluginConfiguration()
 	 */
+	@Override
 	public IPluginConfiguration createPluginConfiguration() {
 		return new PluginConfiguration(fModel);
 	}
@@ -53,6 +57,7 @@ public class ProductModelFactory implements IProductModelFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createPropertyConfiguration()
 	 */
+	@Override
 	public IConfigurationProperty createConfigurationProperty() {
 		return new ConfigurationProperty(fModel);
 	}
@@ -60,50 +65,62 @@ public class ProductModelFactory implements IProductModelFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createConfigFileInfo()
 	 */
+	@Override
 	public IConfigurationFileInfo createConfigFileInfo() {
 		return new ConfigurationFileInfo(fModel);
 	}
 
+	@Override
 	public IWindowImages createWindowImages() {
 		return new WindowImages(fModel);
 	}
 
+	@Override
 	public ISplashInfo createSplashInfo() {
 		return new SplashInfo(fModel);
 	}
 
+	@Override
 	public ILauncherInfo createLauncherInfo() {
 		return new LauncherInfo(fModel);
 	}
 
+	@Override
 	public IProductFeature createFeature() {
 		return new ProductFeature(fModel);
 	}
 
+	@Override
 	public IArgumentsInfo createLauncherArguments() {
 		return new ArgumentsInfo(fModel);
 	}
 
+	@Override
 	public IIntroInfo createIntroInfo() {
 		return new IntroInfo(fModel);
 	}
 
+	@Override
 	public IJREInfo createJVMInfo() {
 		return new JREInfo(fModel);
 	}
 
+	@Override
 	public ILicenseInfo createLicenseInfo() {
 		return new LicenseInfo(fModel);
 	}
 
+	@Override
 	public IRepositoryInfo createRepositoryInfo() {
 		return new RepositoryInfo(fModel);
 	}
 
+	@Override
 	public IPreferencesInfo createPreferencesInfo() {
 		return new PreferencesInfo(fModel);
 	}
 
+	@Override
 	public ICSSInfo createCSSInfo() {
 		return new CSSInfo(fModel);
 	}

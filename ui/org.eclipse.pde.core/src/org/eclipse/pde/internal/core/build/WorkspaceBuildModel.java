@@ -29,6 +29,7 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		fUnderlyingResource = file;
 	}
 
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		super.fireModelChanged(event);
@@ -48,18 +49,22 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		return swriter.toString();
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		return fUnderlyingResource;
 	}
 
+	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return fEditable;
 	}
 
+	@Override
 	public void load() {
 		if (fUnderlyingResource.exists()) {
 			InputStream stream = null;
@@ -83,14 +88,17 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		}
 	}
 
+	@Override
 	public boolean isInSync() {
 		return true;
 	}
 
+	@Override
 	protected void updateTimeStamp() {
 		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
 
+	@Override
 	public void save() {
 		if (fUnderlyingResource == null)
 			return;
@@ -118,11 +126,13 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		}
 	}
 
+	@Override
 	public void save(PrintWriter writer) {
 		getBuild().write("", writer); //$NON-NLS-1$
 		fDirty = false;
 	}
 
+	@Override
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}
@@ -134,6 +144,7 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildModel#getInstallLocation()
 	 */
+	@Override
 	public String getInstallLocation() {
 		return fUnderlyingResource.getLocation().toOSString();
 	}

@@ -27,12 +27,14 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	public FeaturePlugin() {
 	}
 
+	@Override
 	protected void reset() {
 		super.reset();
 		fVersion = null;
 		fFragment = false;
 	}
 
+	@Override
 	public boolean isFragment() {
 		return fFragment;
 	}
@@ -65,14 +67,17 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		return null;
 	}
 
+	@Override
 	public String getVersion() {
 		return fVersion;
 	}
 
+	@Override
 	public boolean isUnpack() {
 		return fUnpack;
 	}
 
+	@Override
 	public void setVersion(String version) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fVersion;
@@ -80,6 +85,7 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		firePropertyChanged(this, P_VERSION, oldValue, version);
 	}
 
+	@Override
 	public void setUnpack(boolean unpack) throws CoreException {
 		ensureModelEditable();
 		boolean oldValue = fUnpack;
@@ -87,6 +93,7 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		firePropertyChanged(this, P_UNPACK, Boolean.valueOf(oldValue), Boolean.valueOf(unpack));
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_VERSION)) {
 			setVersion(newValue != null ? newValue.toString() : null);
@@ -99,6 +106,7 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		this.fFragment = fragment;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		fVersion = getNodeAttribute(node, "version"); //$NON-NLS-1$
@@ -117,6 +125,7 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		fFragment = plugin instanceof IFragment;
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<plugin"); //$NON-NLS-1$
 		String indent2 = indent + Feature.INDENT + Feature.INDENT;
@@ -137,6 +146,7 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		//writer.println(indent + "</plugin>");
 	}
 
+	@Override
 	public String getLabel() {
 		IPluginBase pluginBase = getPluginBase();
 		if (pluginBase != null) {
@@ -148,6 +158,7 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		return name;
 	}
 
+	@Override
 	public String toString() {
 		return getLabel();
 	}

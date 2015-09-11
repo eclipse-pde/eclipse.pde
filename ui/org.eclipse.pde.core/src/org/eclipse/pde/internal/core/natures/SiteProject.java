@@ -18,10 +18,12 @@ public class SiteProject extends BaseProject {
 		super();
 	}
 
+	@Override
 	public void configure() throws CoreException {
 		addToBuildSpec(PDE.SITE_BUILDER_ID);
 	}
 
+	@Override
 	public void deconfigure() throws CoreException {
 		removeFromBuildSpec(PDE.SITE_BUILDER_ID);
 	}

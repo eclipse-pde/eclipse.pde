@@ -28,10 +28,12 @@ public class StorageSchemaDescriptor implements ISchemaDescriptor {
 		fStorage = storage;
 	}
 
+	@Override
 	public URL getSchemaURL() {
 		return fSchema != null ? fSchema.getURL() : null;
 	}
 
+	@Override
 	public String getPointId() {
 		return fSchema == null ? null : fSchema.getQualifiedPointId();
 	}
@@ -62,6 +64,7 @@ public class StorageSchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getSchema(boolean)
 	 */
+	@Override
 	public ISchema getSchema(boolean abbreviated) {
 		if (fSchema == null)
 			loadSchema(abbreviated);
@@ -71,6 +74,7 @@ public class StorageSchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#isStandalone()
 	 */
+	@Override
 	public boolean isStandalone() {
 		return true;
 	}
@@ -78,6 +82,7 @@ public class StorageSchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getLastModified()
 	 */
+	@Override
 	public long getLastModified() {
 		return 0;
 	}

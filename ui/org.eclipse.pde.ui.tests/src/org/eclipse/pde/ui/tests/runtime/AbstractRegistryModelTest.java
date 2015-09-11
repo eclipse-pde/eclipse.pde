@@ -75,6 +75,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 
 	protected ModelChangeDelta[] deltas;
 
+	@Override
 	public void modelChanged(ModelChangeDelta[] deltas) {
 		this.deltas = deltas;
 	}
@@ -90,6 +91,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		testExtPointBundle = TestUtils.getBundle(TEST_EXT_POINT_BUNDLE);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		model = createModel();
 		model.connect(new NullProgressMonitor(), false);
@@ -98,6 +100,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		model.addModelChangeListener(this);
 	}
 
+	@Override
 	protected void tearDown() {
 		model.removeModelChangeListener(this);
 		model.disconnect();

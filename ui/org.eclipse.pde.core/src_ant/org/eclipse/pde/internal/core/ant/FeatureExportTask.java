@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 public class FeatureExportTask extends BaseExportTask {
 	private IFeatureModel[] fFeatures = new IFeatureModel[0];
 
+	@Override
 	protected Job getExportJob(String jobName) {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fToDirectory;

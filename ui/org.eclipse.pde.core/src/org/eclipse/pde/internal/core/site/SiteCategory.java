@@ -25,18 +25,22 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategory#getName()
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public boolean isValid() {
 		return name != null;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		name = getNodeAttribute(node, "name"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void reset() {
 		name = null;
 	}
@@ -44,6 +48,7 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategory#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.name;
@@ -51,6 +56,7 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 		firePropertyChanged(P_NAME, oldValue, name);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<category"); //$NON-NLS-1$
@@ -59,6 +65,7 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_NAME)) {
 			setName(newValue != null ? newValue.toString() : null);
@@ -66,6 +73,7 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public ISiteCategoryDefinition getDefinition() {
 		ISite site = getSite();
 		ISiteCategoryDefinition[] definitions = site.getCategoryDefinitions();

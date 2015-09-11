@@ -26,12 +26,14 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 	public PluginParent() {
 	}
 
+	@Override
 	public void add(int index, IPluginObject child) throws CoreException {
 		ensureModelEditable();
 		getChildrenList().add(index, child);
 		postAdd(child);
 	}
 
+	@Override
 	public void add(IPluginObject child) throws CoreException {
 		ensureModelEditable();
 		getChildrenList().add(child);
@@ -48,10 +50,12 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 		fireStructureChanged(child, IModelChangedEvent.INSERT);
 	}
 
+	@Override
 	public int getChildCount() {
 		return getChildrenList().size();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -73,10 +77,12 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 		return false;
 	}
 
+	@Override
 	public int getIndexOf(IPluginObject child) {
 		return getChildrenList().indexOf(child);
 	}
 
+	@Override
 	public void swap(IPluginObject child1, IPluginObject child2) throws CoreException {
 		ensureModelEditable();
 		int index1 = getChildrenList().indexOf(child1);
@@ -88,10 +94,12 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 		firePropertyChanged(this, P_SIBLING_ORDER, child1, child2);
 	}
 
+	@Override
 	public IPluginObject[] getChildren() {
 		return getChildrenList().toArray(new IPluginObject[getChildrenList().size()]);
 	}
 
+	@Override
 	public void remove(IPluginObject child) throws CoreException {
 		ensureModelEditable();
 		getChildrenList().remove(child);

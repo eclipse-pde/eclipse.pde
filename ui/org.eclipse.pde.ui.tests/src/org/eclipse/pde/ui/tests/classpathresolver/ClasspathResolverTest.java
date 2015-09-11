@@ -52,10 +52,12 @@ public class ClasspathResolverTest extends TestCase {
 	 */
 	public static final String bundleName = "classpathresolver";
 
+	@Override
 	protected void setUp() throws Exception {
 		project = importProject(workspace);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		project.delete(true, true, monitor);
 	}
@@ -66,6 +68,7 @@ public class ClasspathResolverTest extends TestCase {
 			super(director, object);
 		}
 
+		@Override
 		public ISourceContainer[] getSourceContainers(String location, String id) throws CoreException {
 			return super.getSourceContainers(location, id);
 		}

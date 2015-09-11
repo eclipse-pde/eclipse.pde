@@ -27,6 +27,7 @@ public class IntroInfo extends ProductObject implements IIntroInfo {
 		super(model);
 	}
 
+	@Override
 	public void setId(String id) {
 		String old = fIntroId;
 		fIntroId = id;
@@ -34,10 +35,12 @@ public class IntroInfo extends ProductObject implements IIntroInfo {
 			firePropertyChanged(P_INTRO_ID, old, fIntroId);
 	}
 
+	@Override
 	public String getId() {
 		return fIntroId;
 	}
 
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -45,6 +48,7 @@ public class IntroInfo extends ProductObject implements IIntroInfo {
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (fIntroId != null && fIntroId.length() > 0)
 			writer.println(indent + "<intro " + P_INTRO_ID + "=\"" + getWritableString(fIntroId) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

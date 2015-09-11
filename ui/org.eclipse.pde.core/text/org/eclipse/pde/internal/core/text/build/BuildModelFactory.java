@@ -25,6 +25,7 @@ public class BuildModelFactory implements IBuildModelFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildModelFactory#createEntry(java.lang.String)
 	 */
+	@Override
 	public IBuildEntry createEntry(String name) {
 		return new BuildEntry(name, fModel);
 	}

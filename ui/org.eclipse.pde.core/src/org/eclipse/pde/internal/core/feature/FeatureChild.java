@@ -30,6 +30,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	private String fNl;
 	private String fFilter;
 
+	@Override
 	protected void reset() {
 		super.reset();
 		fVersion = null;
@@ -44,6 +45,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fFilter = null;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		fVersion = getNodeAttribute(node, "version"); //$NON-NLS-1$
@@ -87,42 +89,52 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	/**
 	 * @see IFeatureChild#getVersion()
 	 */
+	@Override
 	public String getVersion() {
 		return fVersion;
 	}
 
+	@Override
 	public boolean isOptional() {
 		return fOptional;
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public int getSearchLocation() {
 		return fSearchLocation;
 	}
 
+	@Override
 	public int getMatch() {
 		return fMatch;
 	}
 
+	@Override
 	public String getOS() {
 		return fOs;
 	}
 
+	@Override
 	public String getWS() {
 		return fWs;
 	}
 
+	@Override
 	public String getArch() {
 		return fArch;
 	}
 
+	@Override
 	public String getNL() {
 		return fNl;
 	}
 
+	@Override
 	public String getFilter() {
 		return fFilter;
 	}
@@ -138,6 +150,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	/**
 	 * @see IFeatureChild#setVersion(String)
 	 */
+	@Override
 	public void setVersion(String version) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fVersion;
@@ -145,6 +158,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_VERSION, oldValue, version);
 	}
 
+	@Override
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fName;
@@ -152,6 +166,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_NAME, oldValue, name);
 	}
 
+	@Override
 	public void setMatch(int match) throws CoreException {
 		ensureModelEditable();
 		Integer oldValue = new Integer(this.fMatch);
@@ -159,6 +174,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
 	}
 
+	@Override
 	public void setSearchLocation(int searchLocation) throws CoreException {
 		ensureModelEditable();
 		Integer oldValue = new Integer(this.fSearchLocation);
@@ -166,6 +182,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_SEARCH_LOCATION, oldValue, new Integer(searchLocation));
 	}
 
+	@Override
 	public void setOptional(boolean optional) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = Boolean.valueOf(this.fOptional);
@@ -173,6 +190,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_NAME, oldValue, Boolean.valueOf(optional));
 	}
 
+	@Override
 	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fOs;
@@ -180,6 +198,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_OS, oldValue, os);
 	}
 
+	@Override
 	public void setWS(String ws) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fWs;
@@ -187,6 +206,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_WS, oldValue, ws);
 	}
 
+	@Override
 	public void setArch(String arch) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fArch;
@@ -194,6 +214,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_ARCH, oldValue, arch);
 	}
 
+	@Override
 	public void setNL(String nl) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fNl;
@@ -201,6 +222,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_NL, oldValue, nl);
 	}
 
+	@Override
 	public void setFilter(String filter) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fFilter;
@@ -208,6 +230,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_FILTER, oldValue, filter);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_VERSION)) {
 			setVersion((String) newValue);
@@ -231,6 +254,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public void setId(String id) throws CoreException {
 		super.setId(id);
 	}
@@ -238,6 +262,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	/**
 	 * @see IWritable#write(String, PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<includes"); //$NON-NLS-1$
 		String indent2 = indent + Feature.INDENT + Feature.INDENT;

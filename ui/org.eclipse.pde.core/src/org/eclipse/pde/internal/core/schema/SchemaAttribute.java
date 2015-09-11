@@ -61,24 +61,29 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		super(parent, name);
 	}
 
+	@Override
 	public String getBasedOn() {
 		if (getKind() == JAVA || getKind() == IDENTIFIER)
 			return basedOn;
 		return null;
 	}
 
+	@Override
 	public int getKind() {
 		return kind;
 	}
 
+	@Override
 	public ISchemaSimpleType getType() {
 		return type;
 	}
 
+	@Override
 	public int getUse() {
 		return use;
 	}
 
+	@Override
 	public Object getValue() {
 		return value;
 	}
@@ -117,6 +122,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		getSchema().fireModelObjectChanged(this, P_TYPE, oldValue, type);
 	}
 
+	@Override
 	public void setParent(ISchemaObject obj) {
 		super.setParent(obj);
 		if (type != null)
@@ -141,6 +147,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		getSchema().fireModelObjectChanged(this, P_VALUE_FILTER, oldValue, valueFilter);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		boolean annotation = false;
 		ISchemaSimpleType type = getType();
@@ -225,6 +232,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	 * 
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaAttribute#isTranslatable()
 	 */
+	@Override
 	public boolean isTranslatable() {
 		if (getKind() == STRING && fTranslatable)
 			return type == null || "string".equals(type.getName()); //$NON-NLS-1$
@@ -236,10 +244,12 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	 * 
 	 * @see org.eclipse.pde.internal.core.ischema.IMetaAttribute#isDeprecated()
 	 */
+	@Override
 	public boolean isDeprecated() {
 		return fDeprecated;
 	}
 
+	@Override
 	public String getDescription() {
 		if (super.getDescription() != null) {
 			return super.getDescription();

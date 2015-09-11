@@ -56,6 +56,7 @@ public class SchemaLoaderPerfTest extends AbstractSchemaPerfTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.tests.performance.parts.AbstractSchemaPerfTest#executeTest()
 	 */
+	@Override
 	protected void executeTest() throws Exception {
 		SchemaDescriptor descriptor = new SchemaDescriptor(fXSDFile);
 		Schema schema = (Schema) descriptor.getSchema(fAbbreviated);

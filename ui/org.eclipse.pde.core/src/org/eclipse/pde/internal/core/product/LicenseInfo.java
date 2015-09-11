@@ -29,6 +29,7 @@ public class LicenseInfo extends ProductObject implements ILicenseInfo {
 		super(model);
 	}
 
+	@Override
 	public void setURL(String url) {
 		String old = fURL;
 		fURL = url;
@@ -36,14 +37,17 @@ public class LicenseInfo extends ProductObject implements ILicenseInfo {
 			firePropertyChanged(P_URL, old, fURL);
 	}
 
+	@Override
 	public String getURL() {
 		return fURL;
 	}
 
+	@Override
 	public String getLicense() {
 		return fLicense;
 	}
 
+	@Override
 	public void setLicense(String text) {
 		String old = fLicense;
 		fLicense = text;
@@ -51,6 +55,7 @@ public class LicenseInfo extends ProductObject implements ILicenseInfo {
 			firePropertyChanged(P_LICENSE, old, fLicense);
 	}
 
+	@Override
 	public void parse(Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -78,6 +83,7 @@ public class LicenseInfo extends ProductObject implements ILicenseInfo {
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (isURLDefined() || isLicenseTextDefined()) {
 			writer.println(indent + "<license>"); //$NON-NLS-1$

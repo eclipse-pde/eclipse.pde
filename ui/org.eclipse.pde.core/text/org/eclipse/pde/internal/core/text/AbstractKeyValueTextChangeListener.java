@@ -29,6 +29,7 @@ public abstract class AbstractKeyValueTextChangeListener extends AbstractTextCha
 			fReadableNames = new HashMap<TextEdit, String>();
 	}
 
+	@Override
 	public TextEdit[] getTextOperations() {
 		if (fOperationTable.size() == 0)
 			return new TextEdit[0];
@@ -63,6 +64,7 @@ public abstract class AbstractKeyValueTextChangeListener extends AbstractTextCha
 		}
 	}
 
+	@Override
 	public String getReadableName(TextEdit edit) {
 		if (fReadableNames != null && fReadableNames.containsKey(edit))
 			return fReadableNames.get(edit);

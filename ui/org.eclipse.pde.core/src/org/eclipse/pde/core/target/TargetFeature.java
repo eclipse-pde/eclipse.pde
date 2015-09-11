@@ -135,6 +135,7 @@ public class TargetFeature {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		result.append(getId()).append(' ').append(getVersion()).append(" (Feature)"); //$NON-NLS-1$

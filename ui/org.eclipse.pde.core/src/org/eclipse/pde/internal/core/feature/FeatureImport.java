@@ -37,6 +37,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		return null;
 	}
 
+	@Override
 	public IFeature getFeature() {
 		if (id != null && fType == FEATURE) {
 			return findFeature(id, getVersion(), fMatch);
@@ -71,10 +72,12 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		return findFeature(models, id, version, match);
 	}
 
+	@Override
 	public int getIdMatch() {
 		return fIdMatch;
 	}
 
+	@Override
 	protected void reset() {
 		super.reset();
 		fPatch = false;
@@ -84,6 +87,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		fFilter = null;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		this.id = getNodeAttribute(node, "plugin"); //$NON-NLS-1$
@@ -120,10 +124,12 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		version = feature.getVersion();
 	}
 
+	@Override
 	public int getMatch() {
 		return fMatch;
 	}
 
+	@Override
 	public void setMatch(int match) throws CoreException {
 		ensureModelEditable();
 		Integer oldValue = new Integer(this.fMatch);
@@ -131,6 +137,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
 	}
 
+	@Override
 	public void setIdMatch(int idMatch) throws CoreException {
 		ensureModelEditable();
 		Integer oldValue = new Integer(this.fIdMatch);
@@ -138,10 +145,12 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		firePropertyChanged(P_ID_MATCH, oldValue, new Integer(idMatch));
 	}
 
+	@Override
 	public int getType() {
 		return fType;
 	}
 
+	@Override
 	public void setType(int type) throws CoreException {
 		ensureModelEditable();
 		Integer oldValue = new Integer(this.fType);
@@ -149,10 +158,12 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		firePropertyChanged(P_TYPE, oldValue, new Integer(type));
 	}
 
+	@Override
 	public boolean isPatch() {
 		return fPatch;
 	}
 
+	@Override
 	public void setPatch(boolean patch) throws CoreException {
 		ensureModelEditable();
 		Boolean oldValue = Boolean.valueOf(this.fPatch);
@@ -160,6 +171,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		firePropertyChanged(P_PATCH, oldValue, Boolean.valueOf(patch));
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_MATCH)) {
 			setMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
@@ -173,6 +185,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		String typeAtt = fType == FEATURE ? "feature" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(indent + "<import " + typeAtt + "=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -195,6 +208,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String toString() {
 		IPlugin plugin = getPlugin();
 		if (plugin != null)
@@ -205,10 +219,12 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		return getId();
 	}
 
+	@Override
 	public String getFilter() {
 		return fFilter;
 	}
 
+	@Override
 	public void setFilter(String filter) throws CoreException {
 		this.fFilter = filter;
 

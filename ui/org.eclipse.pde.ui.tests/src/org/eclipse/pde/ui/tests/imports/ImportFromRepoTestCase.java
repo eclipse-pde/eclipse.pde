@@ -44,6 +44,7 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	public void setUp() throws CoreException {
 		// Validate that we can connect to the repository
 		CVSRepositoryLocation repository = (CVSRepositoryLocation)KnownRepositories.getInstance().getRepository(REPOSITORY_LOCATION);
@@ -70,6 +71,7 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 		}
 	}
 	
+	@Override
 	protected int getType() {
 		return TYPE;
 	}
@@ -82,6 +84,7 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 		doSingleImport("org.eclipse.rcp", false);
 	}
 	
+	@Override
 	protected void runOperation(IPluginModelBase[] models, int type) {
 		PluginImportOperation job = new PluginImportOperation(models, type, false);
 		try{
@@ -102,6 +105,7 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 		}
 	}
 
+	@Override
 	protected void verifyProject(String projectName, boolean isJava) {
 		try {
 			IProject project = verifyProject(projectName);
@@ -134,12 +138,14 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.internal.ccvs.core.IUserAuthenticator#promptForUserInfo(org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, org.eclipse.team.internal.ccvs.core.IUserInfo, java.lang.String)
 		 */
+		@Override
 		public void promptForUserInfo(ICVSRepositoryLocation location, IUserInfo userInfo, String message) throws CVSException {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.internal.ccvs.core.IUserAuthenticator#prompt(org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, int, java.lang.String, java.lang.String, int[], int)
 		 */
+		@Override
 		public int prompt(ICVSRepositoryLocation location, int promptType, String title, String message, int[] promptResponses, int defaultResponseIndex) {
 			return defaultResponseIndex;
 		}
@@ -147,14 +153,17 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.internal.ccvs.core.IUserAuthenticator#promptForKeyboradInteractive(org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, java.lang.String, java.lang.String, java.lang.String, java.lang.String[], boolean[])
 		 */
+		@Override
 		public String[] promptForKeyboradInteractive(ICVSRepositoryLocation location, String destination, String name, String instruction, String[] prompt, boolean[] echo) throws CVSException {
 			return prompt;
 		}
 
-	    public boolean promptForHostKeyChange(ICVSRepositoryLocation location) {
+	    @Override
+		public boolean promptForHostKeyChange(ICVSRepositoryLocation location) {
 	        return false;
 	    }
 
+		@Override
 		public Map promptToConfigureRepositoryLocations(Map alternativeMap) {
 			return null;
 		}

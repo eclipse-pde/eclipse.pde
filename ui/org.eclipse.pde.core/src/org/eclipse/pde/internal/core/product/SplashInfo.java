@@ -45,6 +45,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		super(model);
 	}
 
+	@Override
 	public void setLocation(String location, boolean blockNotification) {
 		String old = fLocation;
 		fLocation = location;
@@ -52,10 +53,12 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 			firePropertyChanged(P_LOCATION, old, fLocation);
 	}
 
+	@Override
 	public String getLocation() {
 		return fLocation;
 	}
 
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -68,6 +71,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (!hasData())
 			return;
@@ -101,6 +105,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		writer.print(indent + indent + name + "=\"" + value + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public void setProgressGeometry(int[] geo, boolean blockNotification) {
 		fCustomizeProgressBar = geo != null;
 		int[] old = fProgressGeometry;
@@ -109,10 +114,12 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 			firePropertyChanged(P_PROGRESS_GEOMETRY, old, fProgressGeometry);
 	}
 
+	@Override
 	public int[] getProgressGeometry() {
 		return fCustomizeProgressBar ? fProgressGeometry : null;
 	}
 
+	@Override
 	public void setMessageGeometry(int[] geo, boolean blockNotification) {
 		fCustomizeProgressMessage = geo != null;
 		int[] old = fMessageGeometry;
@@ -121,10 +128,12 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 			firePropertyChanged(P_MESSAGE_GEOMETRY, old, fMessageGeometry);
 	}
 
+	@Override
 	public int[] getMessageGeometry() {
 		return fCustomizeProgressMessage ? fMessageGeometry : null;
 	}
 
+	@Override
 	public void setForegroundColor(String hexColor, boolean blockNotification) throws IllegalArgumentException {
 		if (hexColor != null && hexColor.length() == 0)
 			hexColor = null;
@@ -137,6 +146,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 			firePropertyChanged(P_FOREGROUND_COLOR, old, fForegroundColor);
 	}
 
+	@Override
 	public String getForegroundColor() {
 		return fCustomizeForegroundColor ? fForegroundColor : null;
 	}
@@ -183,6 +193,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		return (fLocation != null && fLocation.length() > 0) || (fCustomizeForegroundColor && fForegroundColor != null && isValidHexValue(fForegroundColor)) || isDefinedGeometry() || isDefinedSplashHandlerType();
 	}
 
+	@Override
 	public boolean isDefinedSplashHandlerType() {
 		if ((fFieldSplashHandlerType != null) && (fFieldSplashHandlerType.length() > 0)) {
 			return true;
@@ -190,6 +201,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		return false;
 	}
 
+	@Override
 	public void addProgressBar(boolean add, boolean blockNotification) {
 		boolean old = fCustomizeProgressBar;
 		fCustomizeProgressBar = add;
@@ -200,6 +212,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 			firePropertyChanged("", Boolean.toString(old), Boolean.toString(add)); //$NON-NLS-1$
 	}
 
+	@Override
 	public void addProgressMessage(boolean add, boolean blockNotification) {
 		boolean mold = fCustomizeProgressMessage;
 		boolean cold = fCustomizeForegroundColor;
@@ -217,6 +230,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.ISplashInfo#getFieldSplashHandlerType()
 	 */
+	@Override
 	public String getFieldSplashHandlerType() {
 		return fFieldSplashHandlerType;
 	}
@@ -224,6 +238,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.ISplashInfo#setFieldSplashHandlerType(java.lang.String)
 	 */
+	@Override
 	public void setFieldSplashHandlerType(String type, boolean blockNotification) {
 		String old = fFieldSplashHandlerType;
 		fFieldSplashHandlerType = type;
@@ -235,6 +250,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.ISplashInfo#isDefinedGeometry()
 	 */
+	@Override
 	public boolean isDefinedGeometry() {
 		if ((fCustomizeProgressBar && fProgressGeometry != null) || (fCustomizeProgressMessage && fMessageGeometry != null)) {
 			return true;

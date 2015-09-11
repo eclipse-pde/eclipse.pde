@@ -29,6 +29,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	public FeatureData() {
 	}
 
+	@Override
 	protected void reset() {
 		super.reset();
 		os = null;
@@ -39,6 +40,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		installSize = 0;
 	}
 
+	@Override
 	public boolean exists() {
 		String location = getModel().getInstallLocation();
 		if (location.startsWith("file:")) //$NON-NLS-1$
@@ -47,6 +49,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		return file.exists();
 	}
 
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		os = getNodeAttribute(node, "os"); //$NON-NLS-1$
@@ -82,6 +85,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<data"); //$NON-NLS-1$
 		String indent2 = indent + Feature.INDENT + Feature.INDENT;
@@ -94,6 +98,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Gets the os.
 	 * @return Returns a String
 	 */
+	@Override
 	public String getOS() {
 		return os;
 	}
@@ -102,6 +107,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Sets the os.
 	 * @param os The os to set
 	 */
+	@Override
 	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.os;
@@ -113,6 +119,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Gets the ws.
 	 * @return Returns a String
 	 */
+	@Override
 	public String getWS() {
 		return ws;
 	}
@@ -121,6 +128,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Sets the ws.
 	 * @param ws The ws to set
 	 */
+	@Override
 	public void setWS(String ws) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.ws;
@@ -132,6 +140,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Gets the nl.
 	 * @return Returns a String
 	 */
+	@Override
 	public String getNL() {
 		return nl;
 	}
@@ -140,6 +149,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Sets the nl.
 	 * @param nl The nl to set
 	 */
+	@Override
 	public void setNL(String nl) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.nl;
@@ -151,6 +161,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Gets the arch.
 	 * @return Returns a String
 	 */
+	@Override
 	public String getArch() {
 		return arch;
 	}
@@ -159,6 +170,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Sets the arch.
 	 * @param arch The arch to set
 	 */
+	@Override
 	public void setArch(String arch) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.arch;
@@ -170,6 +182,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Get the LDAP filter
 	 * @return the filter or null
 	 */
+	@Override
 	public String getFilter() {
 		return filter;
 	}
@@ -177,6 +190,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	/** Set the LDAP filter
 	 * @param filter The filter to set
 	 */
+	@Override
 	public void setFilter(String filter) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.filter;
@@ -188,6 +202,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Gets the downloadSize.
 	 * @return Returns a int
 	 */
+	@Override
 	public long getDownloadSize() {
 		return downloadSize;
 	}
@@ -196,6 +211,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Sets the downloadSize.
 	 * @param downloadSize The downloadSize to set
 	 */
+	@Override
 	public void setDownloadSize(long downloadSize) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = new Long(this.downloadSize);
@@ -207,6 +223,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Gets the installSize.
 	 * @return Returns a int
 	 */
+	@Override
 	public long getInstallSize() {
 		return installSize;
 	}
@@ -215,6 +232,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	 * Sets the installSize.
 	 * @param installSize The installSize to set
 	 */
+	@Override
 	public void setInstallSize(long installSize) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = new Long(this.installSize);
@@ -222,6 +240,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		firePropertyChanged(P_INSTALL_SIZE, oldValue, new Long(installSize));
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_OS)) {
 			setOS((String) newValue);
@@ -239,10 +258,12 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public String getLabel() {
 		return getId();
 	}
 
+	@Override
 	public String toString() {
 		return getLabel();
 	}

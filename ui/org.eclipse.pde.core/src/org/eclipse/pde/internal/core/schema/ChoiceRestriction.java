@@ -36,10 +36,12 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		}
 	}
 
+	@Override
 	public ISchemaSimpleType getBaseType() {
 		return baseType;
 	}
 
+	@Override
 	public ISchemaEnumeration[] getChildren() {
 		return (children != null) ? children.toArray(new ISchemaEnumeration[children.size()]) : new ISchemaEnumeration[0];
 	}
@@ -57,12 +59,14 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		return choices;
 	}
 
+	@Override
 	public ISchemaObject getParent() {
 		if (baseType != null)
 			return baseType.getSchema();
 		return super.getParent();
 	}
 
+	@Override
 	public boolean isValueValid(java.lang.Object value) {
 		if (children == null)
 			return false;
@@ -76,6 +80,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		return false;
 	}
 
+	@Override
 	public void setBaseType(ISchemaSimpleType baseType) {
 		this.baseType = baseType;
 	}
@@ -87,6 +92,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 			getSchema().fireModelObjectChanged(this, P_CHOICES, oldValue, children);
 	}
 
+	@Override
 	public String toString() {
 		if (children == null)
 			return ""; //$NON-NLS-1$
@@ -104,6 +110,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		return buffer.toString();
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<restriction base=\"" + baseType.getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < children.size(); i++) {

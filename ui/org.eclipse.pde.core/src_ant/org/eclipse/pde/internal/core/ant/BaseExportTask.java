@@ -39,6 +39,7 @@ public abstract class BaseExportTask extends Task {
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
+	@Override
 	public void execute() throws BuildException {
 		if (fDestination == null)
 			throw new BuildException("No destination is specified"); //$NON-NLS-1$

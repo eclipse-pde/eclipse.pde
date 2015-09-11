@@ -115,11 +115,13 @@ public class XMLErrorReporter extends DefaultHandler {
 		addMarker(e.getMessage(), e.getLineNumber(), severity, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
 	}
 
+	@Override
 	public void error(SAXParseException exception) throws SAXException {
 		addMarker(exception, IMarker.SEVERITY_ERROR);
 		generateErrorElementHierarchy();
 	}
 
+	@Override
 	public void fatalError(SAXParseException exception) throws SAXException {
 		addMarker(exception, IMarker.SEVERITY_ERROR);
 		generateErrorElementHierarchy();
@@ -190,6 +192,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		return report(message, line, severity, PDEMarkerFactory.NO_RESOLUTION, category);
 	}
 
+	@Override
 	public void warning(SAXParseException exception) throws SAXException {
 		addMarker(exception, IMarker.SEVERITY_WARNING);
 	}
@@ -197,6 +200,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#startDocument()
 	 */
+	@Override
 	public void startDocument() throws SAXException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -208,6 +212,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
+	@Override
 	public void endDocument() throws SAXException {
 		fXMLDocument.appendChild(fRootElement);
 	}
@@ -215,6 +220,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
+	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		Element element = fXMLDocument.createElement(qName);
 		for (int i = 0; i < attributes.getLength(); i++) {
@@ -236,6 +242,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		fElementStack.pop();
 	}
@@ -251,6 +258,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
+	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
 		StringBuffer buff = new StringBuffer();
 		for (int i = 0; i < length; i++) {
@@ -266,6 +274,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
+	@Override
 	public void setDocumentLocator(Locator locator) {
 		fLocator = locator;
 	}
@@ -406,6 +415,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		return fRootElement;
 	}
 
+	@Override
 	public void processingInstruction(String target, String data) throws SAXException {
 		if ("eclipse".equals(target)) { //$NON-NLS-1$
 			// Data should be of the form: version="<version>"
@@ -421,6 +431,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		return fSchemaVersion;
 	}
 
+	@Override
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		int x = fTextDocument.get().indexOf("!DOCTYPE"); //$NON-NLS-1$
 		if (x > 0) {

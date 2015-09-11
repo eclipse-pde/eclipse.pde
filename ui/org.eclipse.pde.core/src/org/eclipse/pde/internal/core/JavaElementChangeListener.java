@@ -34,6 +34,7 @@ public class JavaElementChangeListener implements IElementChangedListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
 	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		handleDelta(event.getDelta());
 	}

@@ -18,15 +18,18 @@ public class VersionableObject extends IdentifiableObject implements IVersionabl
 	private static final long serialVersionUID = 1L;
 	protected String version;
 
+	@Override
 	public String getVersion() {
 		return version;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		version = getNodeAttribute(node, "version"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void setVersion(String version) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.version;
@@ -34,6 +37,7 @@ public class VersionableObject extends IdentifiableObject implements IVersionabl
 		firePropertyChanged(this, P_VERSION, oldValue, version);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_VERSION)) {
 			setVersion(newValue != null ? newValue.toString() : null);
@@ -41,6 +45,7 @@ public class VersionableObject extends IdentifiableObject implements IVersionabl
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	protected void reset() {
 		super.reset();
 		version = null;

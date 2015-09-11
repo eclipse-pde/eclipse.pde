@@ -23,6 +23,7 @@ public class SchemaEnumeration extends SchemaObject implements ISchemaEnumeratio
 		super(parent, name);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<enumeration value=\"" + getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		String description = getDescription();

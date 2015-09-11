@@ -47,6 +47,7 @@ public class PluginRebuilder implements IStateDeltaListener, IResourceChangeList
 		JavaCore.removePreProcessingResourceChangedListener(this);
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
 			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
@@ -80,11 +81,13 @@ public class PluginRebuilder implements IStateDeltaListener, IResourceChangeList
 		}
 	}
 
+	@Override
 	public void stateChanged(State newState) {
 		fTouchWorkspace = true;
 		fProjectNames.clear();
 	}
 
+	@Override
 	public void stateResolved(StateDelta delta) {
 		if (delta == null) {
 			// if delta is null, then target has changed

@@ -34,6 +34,7 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		fProperties = properties;
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		if (FACTORY == null)
 			FACTORY = Platform.getPlatformAdmin().getFactory();

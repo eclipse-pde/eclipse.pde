@@ -38,6 +38,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	private ArrayList<IPluginModelListener> fListeners;
 
 	class Listener implements IElementChangedListener {
+		@Override
 		public void elementChanged(ElementChangedEvent e) {
 			if (e.getType() == ElementChangedEvent.POST_CHANGE) {
 				handleDelta(e.getDelta());
@@ -174,6 +175,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		return result.toArray(new IClasspathEntry[result.size()]);
 	}
 
+	@Override
 	public Object createAdapterChild(FileAdapter parent, File file) {
 		if (!file.isDirectory()) {
 			if (file.isFile()) {
@@ -298,6 +300,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		}
 	}
 
+	@Override
 	public void modelsChanged(PluginModelDelta delta) {
 		ModelEntry[] entries = delta.getRemovedEntries();
 		for (int i = 0; i < entries.length; i++) {

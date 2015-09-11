@@ -29,12 +29,14 @@ public class PDEClasspathContainer {
 		IPath path;
 		boolean discouraged;
 
+		@Override
 		public boolean equals(Object other) {
 			if (!(other instanceof Rule))
 				return false;
 			return discouraged == ((Rule) other).discouraged && path.equals(((Rule) other).path);
 		}
 
+		@Override
 		public String toString() {
 			return discouraged ? path.toString() + " [discouraged]" : path.toString(); //$NON-NLS-1$
 		}

@@ -18,12 +18,15 @@ import org.eclipse.pde.internal.runtime.registry.model.RegistryModel;
 
 public class LocalModelTest extends AbstractRegistryModelTest {
 	
+	@Override
 	protected RegistryModel createModel() {
 		return new RegistryModel(new LocalRegistryBackend() {
+			@Override
 			public void connect(IProgressMonitor monitor) {
 				mockFramework.setListener(this);
 			}
 			
+			@Override
 			public void disconnect() {
 				// empty
 			}

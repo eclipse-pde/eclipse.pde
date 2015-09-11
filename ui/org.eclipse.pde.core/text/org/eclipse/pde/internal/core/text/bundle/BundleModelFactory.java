@@ -23,10 +23,12 @@ public class BundleModelFactory implements IBundleModelFactory {
 		fModel = model;
 	}
 
+	@Override
 	public IManifestHeader createHeader() {
 		return null;
 	}
 
+	@Override
 	public IManifestHeader createHeader(String key, String value) {
 		ManifestHeader header = null;
 		IBundle bundle = fModel.getBundle();

@@ -59,6 +59,7 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * @deprecated This method has always returned <code>null</code>. 
 	 *   Since 3.7, use {@link PluginRegistry#createBuildModel(IPluginModelBase)} instead.
 	 */
+	@Deprecated
 	IBuildModel getBuildModel();
 
 	/**
@@ -123,6 +124,7 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * an encoding tool such as {@link URIUtil}. Deprecated in
 	 * 4.3.
 	 */
+	@Deprecated
 	URL getNLLookupLocation();
 
 	/**

@@ -88,6 +88,7 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 		removeManifestElement(bundle);
 	}
 
+	@Override
 	protected PDEManifestElement createElement(ManifestElement element) {
 		return new RequireBundleObject(this, element);
 	}

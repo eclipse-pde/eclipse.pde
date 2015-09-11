@@ -46,11 +46,13 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 		JavaCore.removePreProcessingResourceChangedListener(this);
 	}
 
+	@Override
 	public void modelsChanged(IFeatureModelDelta delta) {
 		if ((IFeatureModelDelta.ADDED & delta.getKind()) != 0 || (IFeatureModelDelta.REMOVED & delta.getKind()) != 0)
 			fTouchFeatures = true;
 	}
 
+	@Override
 	public void modelsChanged(PluginModelDelta delta) {
 		if ((PluginModelDelta.ADDED & delta.getKind()) != 0 || (PluginModelDelta.REMOVED & delta.getKind()) != 0) {
 			fTouchFeatures = true;
@@ -67,6 +69,7 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 		}
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getType() == IResourceChangeEvent.PRE_BUILD && fTouchFeatures) {
 			touchFeatures();

@@ -24,6 +24,7 @@ public class FeatureInstallHandler extends FeatureObject implements IFeatureInst
 	/*
 	 * @see IFeatureInstallHandler#getLibrary()
 	 */
+	@Override
 	public String getLibrary() {
 		return fLibrary;
 	}
@@ -31,6 +32,7 @@ public class FeatureInstallHandler extends FeatureObject implements IFeatureInst
 	/*
 	 * @see IFeatureInstallHandler#getClassName()
 	 */
+	@Override
 	public String getHandlerName() {
 		return fHandlerName;
 	}
@@ -38,6 +40,7 @@ public class FeatureInstallHandler extends FeatureObject implements IFeatureInst
 	/*
 	 * @see IFeatureInstallHandler#setLibrary(String)
 	 */
+	@Override
 	public void setLibrary(String library) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fLibrary;
@@ -48,6 +51,7 @@ public class FeatureInstallHandler extends FeatureObject implements IFeatureInst
 	/*
 	 * @see IFeatureInstallHandler#setClassName(String)
 	 */
+	@Override
 	public void setHandlerName(String handlerName) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fHandlerName;
@@ -55,6 +59,7 @@ public class FeatureInstallHandler extends FeatureObject implements IFeatureInst
 		firePropertyChanged(P_HANDLER_NAME, oldValue, handlerName);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_LIBRARY)) {
 			setLibrary((String) newValue);
@@ -64,11 +69,13 @@ public class FeatureInstallHandler extends FeatureObject implements IFeatureInst
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	protected void parse(Node node) {
 		fLibrary = getNodeAttribute(node, "library"); //$NON-NLS-1$
 		fHandlerName = getNodeAttribute(node, "handler"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<install-handler"); //$NON-NLS-1$
 		if (fLibrary != null) {

@@ -30,6 +30,7 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 		super(model);
 	}
 
+	@Override
 	public void setURL(String url) {
 		String old = fURL;
 		fURL = url;
@@ -37,14 +38,17 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 			firePropertyChanged(P_LOCATION, old, fURL);
 	}
 
+	@Override
 	public String getURL() {
 		return fURL;
 	}
 
+	@Override
 	public boolean getEnabled() {
 		return fEnabled;
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		boolean old = fEnabled;
 		fEnabled = enabled;
@@ -52,6 +56,7 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 			firePropertyChanged(P_ENABLED, old, fEnabled);
 	}
 
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -61,6 +66,7 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 	}
 
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (isURLDefined()) {
 			writer.print(indent + "<repository location=\"" + fURL + "\""); //$NON-NLS-1$ //$NON-NLS-2$

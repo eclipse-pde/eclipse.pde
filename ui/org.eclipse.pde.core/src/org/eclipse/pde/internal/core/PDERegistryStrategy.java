@@ -53,6 +53,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 
 	class ModelListener extends RegistryListener implements IPluginModelListener {
 
+		@Override
 		public void modelsChanged(PluginModelDelta delta) {
 			if (fRegistry == null)
 				createRegistry();
@@ -94,6 +95,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 
 	class ExtensionListener extends RegistryListener implements IExtensionDeltaListener {
 
+		@Override
 		public void extensionsChanged(IExtensionDeltaEvent event) {
 			if (fRegistry == null)
 				createRegistry();
@@ -129,6 +131,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.spi.RegistryStrategy#log(org.eclipse.core.runtime.IStatus)
 	 */
+	@Override
 	public void log(IStatus status) {
 		// Because we are at development time, we create markers for registry problems and therefore do not log anything (bug 330648)
 	}
@@ -147,6 +150,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 			fExtensionListener.setRegistry(registry);
 	}
 
+	@Override
 	public void onStart(IExtensionRegistry registry, boolean loadedFromCache) {
 		super.onStart(registry, loadedFromCache);
 		setListenerRegistry(registry);
@@ -154,6 +158,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 			processBundles(registry);
 	}
 
+	@Override
 	public void onStop(IExtensionRegistry registry) {
 		super.onStop(registry);
 		setListenerRegistry(null);
@@ -162,6 +167,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.spi.RegistryStrategy#getXMLParser()
 	 */
+	@Override
 	public SAXParserFactory getXMLParser() {
 		if (xmlTracker == null) {
 			xmlTracker = new ServiceTracker<Object, Object>(PDECore.getDefault().getBundleContext(), SAXParserFactory.class.getName(), null);
@@ -297,6 +303,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	}
 
 	// Same timestamp calculations as PDEState.computeTimestamp(URL[] urls, long timestamp)
+	@Override
 	public long getContributionsTimestamp() {
 		IPluginModelBase[] bases = fPDERegistry.getModels();
 		long timeStamp = 0;

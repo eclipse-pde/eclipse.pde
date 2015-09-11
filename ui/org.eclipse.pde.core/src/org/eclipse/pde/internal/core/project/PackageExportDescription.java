@@ -36,6 +36,7 @@ public class PackageExportDescription implements IPackageExportDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IPackageExportDescription#getVersion()
 	 */
+	@Override
 	public Version getVersion() {
 		return fVersion;
 	}
@@ -43,6 +44,7 @@ public class PackageExportDescription implements IPackageExportDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IPackageExportDescription#getFriends()
 	 */
+	@Override
 	public String[] getFriends() {
 		return fFriends;
 	}
@@ -50,6 +52,7 @@ public class PackageExportDescription implements IPackageExportDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IPackageExportDescription#isApi()
 	 */
+	@Override
 	public boolean isApi() {
 		return fApi;
 	}
@@ -57,10 +60,12 @@ public class PackageExportDescription implements IPackageExportDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IPackageExportDescription#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof PackageExportDescription) {
 			PackageExportDescription spec = (PackageExportDescription) obj;
@@ -72,6 +77,7 @@ public class PackageExportDescription implements IPackageExportDescription {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int code = getClass().hashCode() + fName.hashCode();
 		if (fVersion != null) {
@@ -123,6 +129,7 @@ public class PackageExportDescription implements IPackageExportDescription {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append(fName);

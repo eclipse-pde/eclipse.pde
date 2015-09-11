@@ -23,12 +23,14 @@ public class WorkspaceBundleFragmentModel extends WorkspaceBundlePluginModelBase
 		super(manifestFile, pluginFile);
 	}
 
+	@Override
 	public IPluginBase createPluginBase() {
 		BundleFragment frag = new BundleFragment();
 		frag.setModel(this);
 		return frag;
 	}
 
+	@Override
 	public IFragment getFragment() {
 		return (IFragment) getPluginBase();
 	}

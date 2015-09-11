@@ -23,10 +23,12 @@ public abstract class IdentifiablePluginObject extends PluginObject implements I
 	public IdentifiablePluginObject() {
 	}
 
+	@Override
 	public String getId() {
 		return fID;
 	}
 
+	@Override
 	public void setId(String id) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fID;
@@ -34,6 +36,7 @@ public abstract class IdentifiablePluginObject extends PluginObject implements I
 		firePropertyChanged(P_ID, oldValue, id);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_ID)) {
 			setId(newValue != null ? newValue.toString() : null);
@@ -45,6 +48,7 @@ public abstract class IdentifiablePluginObject extends PluginObject implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
 	 */
+	@Override
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		super.reconnect(model, parent);
 		// No transient fields

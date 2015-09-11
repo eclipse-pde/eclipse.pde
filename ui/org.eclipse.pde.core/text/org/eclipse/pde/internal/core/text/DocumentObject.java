@@ -48,6 +48,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#setSharedModel(org.eclipse.pde.core.IModel)
 	 */
+	@Override
 	public void setSharedModel(IModel model) {
 		fModel = model;
 	}
@@ -55,6 +56,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#getSharedModel()
 	 */
+	@Override
 	public IModel getSharedModel() {
 		return fModel;
 	}
@@ -62,6 +64,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#reset()
 	 */
+	@Override
 	public void reset() {
 		// TODO: MP: TEO: LOW: Reset parent fields? or super.reset?
 		fModel = null;
@@ -71,6 +74,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#isInTheModel()
 	 */
+	@Override
 	public boolean isInTheModel() {
 		return fInTheModel;
 	}
@@ -78,6 +82,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#setInTheModel(boolean)
 	 */
+	@Override
 	public void setInTheModel(boolean inModel) {
 		fInTheModel = inModel;
 	}
@@ -85,6 +90,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		// Convenience method
 		return fModel.isEditable();
@@ -199,6 +205,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	 * @param position
 	 * @param fireEvent
 	 */
+	@Override
 	public void addChildNode(IDocumentElementNode child, int position, boolean fireEvent) {
 		addChildNode(child, position);
 		// Fire event
@@ -211,6 +218,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	 * @param child
 	 * @param fireEvent
 	 */
+	@Override
 	public void addChildNode(IDocumentElementNode child, boolean fireEvent) {
 		addChildNode(child);
 		// Fire event
@@ -243,6 +251,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return node;
 	}
 
+	@Override
 	public IDocumentElementNode removeChildNode(IDocumentElementNode child, boolean fireEvent) {
 		IDocumentElementNode node = removeChildNode(child);
 		// Fire event
@@ -252,6 +261,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return node;
 	}
 
+	@Override
 	public IDocumentElementNode removeChildNode(int index, Class<?> clazz, boolean fireEvent) {
 		IDocumentElementNode node = removeChildNode(index, clazz);
 		// Fire event
@@ -261,6 +271,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return node;
 	}
 
+	@Override
 	public IDocumentElementNode removeChildNode(int index, Class<?> clazz) {
 		// Validate index
 		if ((index < 0) || (index >= getChildCount()) || (clazz.isInstance(getChildAt(index)) == false)) {
@@ -276,6 +287,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write(true));
@@ -285,6 +297,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	 * @param newNode
 	 * @param clazz
 	 */
+	@Override
 	public void setChildNode(IDocumentElementNode newNode, Class<?> clazz) {
 		// Determine whether to fire the event
 		boolean fireEvent = shouldFireEvent();
@@ -327,6 +340,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		removeChildNode(oldNode, fireEvent);
 	}
 
+	@Override
 	public IDocumentElementNode getChildNode(Class<?> clazz) {
 		// Linear search O(n)
 		ArrayList<?> children = getChildNodesList();
@@ -340,6 +354,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return null;
 	}
 
+	@Override
 	public int getChildNodeCount(Class<?> clazz) {
 		// Linear search O(n)
 		int count = 0;
@@ -354,10 +369,12 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return count;
 	}
 
+	@Override
 	public ArrayList<IDocumentElementNode> getChildNodesList(Class<?> clazz, boolean match) {
 		return getChildNodesList(new Class[] {clazz}, match);
 	}
 
+	@Override
 	public ArrayList<IDocumentElementNode> getChildNodesList(Class<?>[] classes, boolean match) {
 		ArrayList<IDocumentElementNode> filteredChildren = new ArrayList<IDocumentElementNode>();
 		ArrayList<?> children = getChildNodesList();
@@ -375,6 +392,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return filteredChildren;
 	}
 
+	@Override
 	public IDocumentElementNode getNextSibling(IDocumentElementNode node, Class<?> clazz) {
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
@@ -393,6 +411,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return null;
 	}
 
+	@Override
 	public IDocumentElementNode getPreviousSibling(IDocumentElementNode node, Class<?> clazz) {
 		int position = indexOf(node);
 		if ((position <= 0) || (position >= getChildCount())) {
@@ -410,6 +429,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return null;
 	}
 
+	@Override
 	public boolean hasChildNodes(Class<?> clazz) {
 		ArrayList<?> children = getChildNodesList();
 		Iterator<?> iterator = children.iterator();
@@ -422,6 +442,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return false;
 	}
 
+	@Override
 	public boolean isFirstChildNode(IDocumentElementNode node, Class<?> clazz) {
 		int position = indexOf(node);
 		// Check to see if node is found
@@ -445,6 +466,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return true;
 	}
 
+	@Override
 	public boolean isLastChildNode(IDocumentElementNode node, Class<?> clazz) {
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
@@ -472,6 +494,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#swap(org.eclipse.pde.internal.core.text.IDocumentElementNode, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public void swap(IDocumentElementNode child1, IDocumentElementNode child2, boolean fireEvent) {
 		super.swap(child1, child2);
 		// Fire event
@@ -484,6 +507,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	 * @param node
 	 * @param newRelativeIndex
 	 */
+	@Override
 	public void moveChildNode(IDocumentElementNode node, int newRelativeIndex, boolean fireEvent) {
 
 		// TODO: MP: TEO: MED: Test Problem, if generic not viewable, may appear that node did not move
@@ -533,6 +557,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		}
 	}
 
+	@Override
 	public IDocumentElementNode clone(IDocumentElementNode node) {
 		IDocumentElementNode clone = null;
 		try {
@@ -558,6 +583,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return clone;
 	}
 
+	@Override
 	public boolean getBooleanAttributeValue(String name, boolean defaultValue) {
 		String value = getXMLAttributeValue(name);
 		if (value == null) {
@@ -570,6 +596,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return defaultValue;
 	}
 
+	@Override
 	public boolean setBooleanAttributeValue(String name, boolean value) {
 		String newValue = Boolean.valueOf(value).toString();
 		return setXMLAttribute(name, newValue);

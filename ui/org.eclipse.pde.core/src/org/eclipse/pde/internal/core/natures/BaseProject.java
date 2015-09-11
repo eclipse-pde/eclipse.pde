@@ -47,6 +47,7 @@ public abstract class BaseProject extends PlatformObject implements IProjectNatu
 		return null;
 	}
 
+	@Override
 	public IProject getProject() {
 		return project;
 	}
@@ -97,6 +98,7 @@ public abstract class BaseProject extends PlatformObject implements IProjectNatu
 		getProject().setDescription(description, null);
 	}
 
+	@Override
 	public void setProject(IProject project) {
 		this.project = project;
 	}

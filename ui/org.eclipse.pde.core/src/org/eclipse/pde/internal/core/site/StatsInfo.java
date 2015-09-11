@@ -33,6 +33,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 		super();
 	}
 
+	@Override
 	public void setURL(String url) throws CoreException {
 		String old = fURL;
 		fURL = url;
@@ -40,6 +41,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 		firePropertyChanged(P_URL, old, fURL);
 	}
 
+	@Override
 	public String getURL() {
 		return fURL;
 	}
@@ -47,6 +49,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.IStatsInfo#addFeatureArtifacts(org.eclipse.pde.internal.core.isite.ISiteFeature[])
 	 */
+	@Override
 	public void addFeatureArtifacts(ISiteFeature[] newFeatures) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newFeatures.length; i++) {
@@ -60,6 +63,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.IStatsInfo#addBundleArtifacts(org.eclipse.pde.internal.core.isite.ISiteBundle[])
 	 */
+	@Override
 	public void addBundleArtifacts(ISiteBundle[] newBundles) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newBundles.length; i++) {
@@ -73,6 +77,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.IStatsInfo#removeFeatureArtifacts(org.eclipse.pde.internal.core.isite.ISiteFeature[])
 	 */
+	@Override
 	public void removeFeatureArtifacts(ISiteFeature[] newFeatures) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newFeatures.length; i++) {
@@ -86,6 +91,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.IStatsInfo#removeBundleArtifacts(org.eclipse.pde.internal.core.isite.ISiteBundle[])
 	 */
+	@Override
 	public void removeBundleArtifacts(ISiteBundle[] newBundles) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newBundles.length; i++) {
@@ -99,6 +105,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.IStatsInfo#getFeatureArtifacts()
 	 */
+	@Override
 	public ISiteFeature[] getFeatureArtifacts() {
 		return featureArtifacts.toArray(new ISiteFeature[featureArtifacts.size()]);
 	}
@@ -106,10 +113,12 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.IStatsInfo#getBundleArtifacts()
 	 */
+	@Override
 	public ISiteBundle[] getBundleArtifacts() {
 		return bundleArtifacts.toArray(new ISiteBundle[bundleArtifacts.size()]);
 	}
 
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -139,6 +148,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (isURLDefined()) {
 			writer.print(indent + "<stats location=\"" + fURL + "\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -165,6 +175,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteObject#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		for (int i = 0; i < featureArtifacts.size(); i++) {
 			ISiteFeature feature = (ISiteFeature) featureArtifacts.get(i);

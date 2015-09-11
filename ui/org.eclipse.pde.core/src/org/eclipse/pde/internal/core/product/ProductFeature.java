@@ -35,6 +35,7 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 		super(model);
 	}
 
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -44,6 +45,7 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<feature id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals(ICoreConstants.DEFAULT_VERSION)) {
@@ -55,18 +57,22 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getId() {
 		return fId;
 	}
 
+	@Override
 	public void setId(String id) {
 		fId = id;
 	}
 
+	@Override
 	public String getVersion() {
 		return fVersion;
 	}
 
+	@Override
 	public void setVersion(String version) {
 		String old = fVersion;
 		fVersion = version;

@@ -23,6 +23,7 @@ public class PluginErrorReporter extends PluginBaseErrorReporter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.builders.PluginBaseErrorReporter#validateTopLevelAttributes(org.w3c.dom.Element)
 	 */
+	@Override
 	protected void validateTopLevelAttributes(Element element) {
 		super.validateTopLevelAttributes(element);
 		Attr attr = element.getAttributeNode("class"); //$NON-NLS-1$
@@ -30,6 +31,7 @@ public class PluginErrorReporter extends PluginBaseErrorReporter {
 			validateJavaAttribute(element, attr);
 	}
 
+	@Override
 	protected String getRootElementName() {
 		return "plugin"; //$NON-NLS-1$
 	}

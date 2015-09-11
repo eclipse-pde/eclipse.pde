@@ -87,6 +87,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		String[][] configurations = fInfo.targets;
 		if (configurations == null)
@@ -136,6 +137,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		return Status.OK_STATUS;
 	}
 
+	@Override
 	protected boolean groupedConfigurations() {
 		// we never group product exports
 		return false;
@@ -154,6 +156,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getPaths()
 	 */
+	@Override
 	protected String[] getPaths() {
 		String[] paths = super.getPaths();
 		String[] all = new String[paths.length + 1];
@@ -250,6 +253,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#publishingP2Metadata()
 	 */
+	@Override
 	protected boolean publishingP2Metadata() {
 		return fInfo.exportMetadata;
 	}
@@ -320,6 +324,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		buffer.append(file.getAbsolutePath());
 	}
 
+	@Override
 	protected HashMap<String, String> createAntBuildProperties(String[][] configs) {
 		HashMap<String, String> properties = super.createAntBuildProperties(configs);
 		properties.put(IXMLConstants.PROPERTY_LAUNCHER_NAME, getLauncherName());
@@ -358,6 +363,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setP2MetaDataProperties(java.util.Map)
 	 */
+	@Override
 	protected void setP2MetaDataProperties(Map<String, String> map) {
 		if (fInfo.exportMetadata) {
 			if (PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature() == null)
@@ -438,6 +444,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		return null;
 	}
 
+	@Override
 	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String[][] configs, String featureLocation) throws CoreException {
 		super.setupGenerator(generator, featureID, versionId, configs, featureLocation);
 		generator.setGenerateVersionsList(true);
@@ -475,6 +482,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		return null;
 	}
 
+	@Override
 	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
 		plugin.setAttribute("unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$
 	}

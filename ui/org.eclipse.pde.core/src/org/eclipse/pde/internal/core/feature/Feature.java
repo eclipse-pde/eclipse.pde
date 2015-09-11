@@ -50,6 +50,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private String fLicenseFeatureID;
 	private String fLicenseFeatureVersion;
 
+	@Override
 	public void addPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newPlugins.length; i++) {
@@ -59,6 +60,7 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(newPlugins, IModelChangedEvent.INSERT);
 	}
 
+	@Override
 	public void addData(IFeatureData[] newData) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newData.length; i++) {
@@ -68,6 +70,7 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(newData, IModelChangedEvent.INSERT);
 	}
 
+	@Override
 	public void addIncludedFeatures(IFeatureChild[] features) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < features.length; i++) {
@@ -77,6 +80,7 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(features, IModelChangedEvent.INSERT);
 	}
 
+	@Override
 	public void addImports(IFeatureImport[] iimports) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < iimports.length; i++) {
@@ -86,38 +90,45 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(iimports, IModelChangedEvent.INSERT);
 	}
 
+	@Override
 	public IFeaturePlugin[] getPlugins() {
 		IFeaturePlugin[] result = new IFeaturePlugin[fPlugins.size()];
 		fPlugins.copyInto(result);
 		return result;
 	}
 
+	@Override
 	public IFeatureData[] getData() {
 		IFeatureData[] result = new IFeatureData[fData.size()];
 		fData.copyInto(result);
 		return result;
 	}
 
+	@Override
 	public IFeatureChild[] getIncludedFeatures() {
 		IFeatureChild[] result = new IFeatureChild[fChildren.size()];
 		fChildren.copyInto(result);
 		return result;
 	}
 
+	@Override
 	public IFeatureImport[] getImports() {
 		IFeatureImport[] result = new IFeatureImport[fImports.size()];
 		fImports.copyInto(result);
 		return result;
 	}
 
+	@Override
 	public String getProviderName() {
 		return fProviderName;
 	}
 
+	@Override
 	public void setLicenseFeatureID(String featureID) {
 		fLicenseFeatureID = featureID;
 	}
 
+	@Override
 	public String getLicenseFeatureID() {
 		if (fLicenseFeatureID == null) {
 			fLicenseFeatureID = ""; //$NON-NLS-1$
@@ -125,10 +136,12 @@ public class Feature extends VersionableObject implements IFeature {
 		return fLicenseFeatureID;
 	}
 
+	@Override
 	public void setLicenseFeatureVersion(String version) {
 		fLicenseFeatureVersion = version;
 	}
 
+	@Override
 	public String getLicenseFeatureVersion() {
 		if (fLicenseFeatureVersion == null) {
 			fLicenseFeatureVersion = ""; //$NON-NLS-1$
@@ -136,19 +149,23 @@ public class Feature extends VersionableObject implements IFeature {
 		return fLicenseFeatureVersion;
 	}
 
+	@Override
 	public String getPlugin() {
 		return fPlugin;
 	}
 
+	@Override
 	public IPluginModelBase getReferencedModel(IFeaturePlugin reference) {
 		IPluginModelBase model = PluginRegistry.findModel(reference.getId());
 		return (model != null && model.isEnabled()) ? model : null;
 	}
 
+	@Override
 	public IFeatureURL getURL() {
 		return fUrl;
 	}
 
+	@Override
 	public IFeatureInstallHandler getInstallHandler() {
 		return fHandler;
 	}
@@ -156,6 +173,7 @@ public class Feature extends VersionableObject implements IFeature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ifeature.IFeature#getFeatureInfo(int)
 	 */
+	@Override
 	public IFeatureInfo getFeatureInfo(int infoType) {
 		if (infoType < 0 || infoType > (fInfos.length - 1)) {
 			return null;
@@ -163,14 +181,17 @@ public class Feature extends VersionableObject implements IFeature {
 		return fInfos[infoType];
 	}
 
+	@Override
 	public boolean isPrimary() {
 		return fPrimary;
 	}
 
+	@Override
 	public boolean isExclusive() {
 		return fExclusive;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		fProviderName = getNodeAttribute(node, "provider-name"); //$NON-NLS-1$
@@ -257,6 +278,7 @@ public class Feature extends VersionableObject implements IFeature {
 		}
 	}
 
+	@Override
 	public void computeImports() throws CoreException {
 		// some existing imports may valid and can be preserved
 		Vector<IFeatureImport> preservedImports = new Vector<IFeatureImport>(fImports.size());
@@ -401,6 +423,7 @@ public class Feature extends VersionableObject implements IFeature {
 		return null;
 	}
 
+	@Override
 	public void removePlugins(IFeaturePlugin[] removed) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < removed.length; i++) {
@@ -410,6 +433,7 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(removed, IModelChangedEvent.REMOVE);
 	}
 
+	@Override
 	public void removeData(IFeatureData[] removed) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < removed.length; i++) {
@@ -419,6 +443,7 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(removed, IModelChangedEvent.REMOVE);
 	}
 
+	@Override
 	public void removeIncludedFeatures(IFeatureChild[] features) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < features.length; i++) {
@@ -428,6 +453,7 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(features, IModelChangedEvent.REMOVE);
 	}
 
+	@Override
 	public void removeImports(IFeatureImport[] iimports) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < iimports.length; i++) {
@@ -437,30 +463,37 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(iimports, IModelChangedEvent.REMOVE);
 	}
 
+	@Override
 	public String getOS() {
 		return fOs;
 	}
 
+	@Override
 	public String getWS() {
 		return fWs;
 	}
 
+	@Override
 	public String getNL() {
 		return fNl;
 	}
 
+	@Override
 	public String getArch() {
 		return fArch;
 	}
 
+	@Override
 	public String getColocationAffinity() {
 		return fColocationAffinity;
 	}
 
+	@Override
 	public String getApplication() {
 		return fApplication;
 	}
 
+	@Override
 	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fOs;
@@ -468,6 +501,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_OS, oldValue, os);
 	}
 
+	@Override
 	public void setWS(String ws) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fWs;
@@ -475,6 +509,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_WS, oldValue, ws);
 	}
 
+	@Override
 	public void setNL(String nl) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fNl;
@@ -482,6 +517,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_NL, oldValue, nl);
 	}
 
+	@Override
 	public void setArch(String arch) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fArch;
@@ -489,6 +525,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_ARCH, oldValue, arch);
 	}
 
+	@Override
 	public void setPrimary(boolean newValue) throws CoreException {
 		if (this.fPrimary == newValue)
 			return;
@@ -498,6 +535,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_PRIMARY, oldValue, newValue ? Boolean.TRUE : Boolean.FALSE);
 	}
 
+	@Override
 	public void setExclusive(boolean newValue) throws CoreException {
 		if (this.fExclusive == newValue)
 			return;
@@ -507,6 +545,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_EXCLUSIVE, oldValue, newValue ? Boolean.TRUE : Boolean.FALSE);
 	}
 
+	@Override
 	public void setColocationAffinity(String newValue) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fColocationAffinity;
@@ -514,6 +553,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_COLLOCATION_AFFINITY, oldValue, newValue);
 	}
 
+	@Override
 	public void setApplication(String newValue) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fApplication;
@@ -521,6 +561,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_APPLICATION, oldValue, newValue);
 	}
 
+	@Override
 	public void setProviderName(String providerName) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fProviderName;
@@ -528,6 +569,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_PROVIDER, oldValue, providerName);
 	}
 
+	@Override
 	public void setPlugin(String plugin) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fPlugin;
@@ -535,6 +577,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_PLUGIN, oldValue, plugin);
 	}
 
+	@Override
 	public void setURL(IFeatureURL url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fUrl;
@@ -545,6 +588,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_URL, oldValue, url);
 	}
 
+	@Override
 	public void setInstallHandler(IFeatureInstallHandler handler) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fHandler;
@@ -555,6 +599,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_INSTALL_HANDLER, oldValue, handler);
 	}
 
+	@Override
 	public void setFeatureInfo(IFeatureInfo info, int index) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = fInfos[index];
@@ -585,6 +630,7 @@ public class Feature extends VersionableObject implements IFeature {
 	 * @param imageName
 	 *            The imageName to set
 	 */
+	@Override
 	public void setImageName(String imageName) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fImageName;
@@ -592,6 +638,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_IMAGE, oldValue, imageName);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_OS)) {
 			setOS((String) newValue);
@@ -629,6 +676,7 @@ public class Feature extends VersionableObject implements IFeature {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public void reset() {
 		super.reset();
 		fData.clear();
@@ -652,6 +700,7 @@ public class Feature extends VersionableObject implements IFeature {
 		fValid = false;
 	}
 
+	@Override
 	public boolean isValid() {
 		return fValid;
 	}
@@ -688,6 +737,7 @@ public class Feature extends VersionableObject implements IFeature {
 		return true;
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (fCopyright != null) {
 			writer.println("<!--" + fCopyright + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -781,6 +831,7 @@ public class Feature extends VersionableObject implements IFeature {
 	 * 
 	 * @return Returns a String
 	 */
+	@Override
 	public String getImageName() {
 		return fImageName;
 	}
@@ -793,6 +844,7 @@ public class Feature extends VersionableObject implements IFeature {
 		fCopyright = copyright;
 	}
 
+	@Override
 	public void swap(IFeatureChild feature1, IFeatureChild feature2) {
 		int index1 = fChildren.indexOf(feature1);
 		int index2 = fChildren.indexOf(feature2);

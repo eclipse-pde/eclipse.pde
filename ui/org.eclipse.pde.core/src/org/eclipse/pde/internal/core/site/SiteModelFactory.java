@@ -22,6 +22,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createSite()
 	 */
+	@Override
 	public ISite createSite() {
 		Site site = new Site();
 		site.model = model;
@@ -29,6 +30,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return site;
 	}
 
+	@Override
 	public ISiteFeature createFeature() {
 		SiteFeature feature = new SiteFeature();
 		feature.model = model;
@@ -36,6 +38,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return feature;
 	}
 
+	@Override
 	public ISiteBundle createBundle() {
 		SiteBundle bundle = new SiteBundle();
 		bundle.model = model;
@@ -43,6 +46,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return bundle;
 	}
 
+	@Override
 	public ISiteCategory createCategory(ISiteFeature feature) {
 		SiteCategory category = new SiteCategory();
 		category.model = model;
@@ -50,6 +54,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return category;
 	}
 
+	@Override
 	public ISiteCategory createCategory(ISiteBundle bundle) {
 		SiteCategory category = new SiteCategory();
 		category.model = model;
@@ -57,6 +62,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return category;
 	}
 
+	@Override
 	public ISiteCategoryDefinition createCategoryDefinition() {
 		SiteCategoryDefinition def = new SiteCategoryDefinition();
 		def.model = model;
@@ -64,6 +70,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return def;
 	}
 
+	@Override
 	public IRepositoryReference createRepositoryReference() {
 		RepositoryReference repo = new RepositoryReference();
 		repo.model = model;
@@ -74,6 +81,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createDescription(org.eclipse.pde.internal.core.isite.ISiteObject)
 	 */
+	@Override
 	public ISiteDescription createDescription(ISiteObject parent) {
 		SiteDescription desc = new SiteDescription();
 		desc.model = model;
@@ -84,6 +92,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createArchive()
 	 */
+	@Override
 	public ISiteArchive createArchive() {
 		SiteArchive archive = new SiteArchive();
 		archive.model = model;
@@ -94,6 +103,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createStatsInfo()
 	 */
+	@Override
 	public IStatsInfo createStatsInfo() {
 		StatsInfo info = new StatsInfo();
 		info.model = model;

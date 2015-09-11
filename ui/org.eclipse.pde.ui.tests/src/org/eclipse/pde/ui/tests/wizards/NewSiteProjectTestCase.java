@@ -46,6 +46,7 @@ public class NewSiteProjectTestCase extends TestCase {
 	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		if ("testExistingSiteProject".equalsIgnoreCase(getName())) { //$NON-NLS-1$
@@ -71,6 +72,7 @@ public class NewSiteProjectTestCase extends TestCase {
 	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();

@@ -35,6 +35,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
+	@Override
 	public void load(InputStream source, boolean outOfSync) {
 		try {
 			fLoaded = true;
@@ -60,6 +61,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 
 	protected abstract DefaultHandler createDocumentHandler(IModel model, boolean reconciling);
 
+	@Override
 	public void adjustOffsets(IDocument document) {
 		try {
 			SAXParserWrapper parser = new SAXParserWrapper();
@@ -159,6 +161,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#save(java.io.PrintWriter)
 	 */
+	@Override
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			getRoot().write("", writer); //$NON-NLS-1$
@@ -166,6 +169,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		setDirty(false);
 	}
 
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		// by default, don't create one
 		return null;

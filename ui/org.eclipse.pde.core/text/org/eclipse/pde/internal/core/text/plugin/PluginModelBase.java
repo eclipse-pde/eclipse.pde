@@ -60,6 +60,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		return getPluginBase();
 	}
 
+	@Override
 	public IPluginBase createPluginBase() {
 		return createPluginBase(isFragmentModel());
 	}
@@ -67,6 +68,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBuildModel()
 	 */
+	@Override
 	@Deprecated
 	public IBuildModel getBuildModel() {
 		return null;
@@ -75,10 +77,12 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase()
 	 */
+	@Override
 	public IPluginBase getPluginBase() {
 		return getPluginBase(true);
 	}
 
+	@Override
 	public IExtensions getExtensions() {
 		return getPluginBase();
 	}
@@ -86,6 +90,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase(boolean)
 	 */
+	@Override
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (!fLoaded && !fHasTriedToCreateModel && createIfMissing) {
 			try {
@@ -99,6 +104,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		return fPluginBase;
 	}
 
+	@Override
 	public IExtensions getExtensions(boolean createIfMissing) {
 		return getPluginBase(createIfMissing);
 	}
@@ -106,6 +112,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		return fIsEnabled;
 	}
@@ -113,6 +120,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		fIsEnabled = enabled;
 	}
@@ -120,6 +128,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginFactory()
 	 */
+	@Override
 	public IPluginModelFactory getPluginFactory() {
 		return fFactory;
 	}
@@ -127,6 +136,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getNLLookupLocation()
 	 */
+	@Override
 	@Deprecated
 	public URL getNLLookupLocation() {
 		try {
@@ -140,6 +150,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getFactory()
 	 */
+	@Override
 	public IExtensionsModelFactory getFactory() {
 		return fFactory;
 	}
@@ -188,6 +199,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 	 * @since 3.6
 	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 		fHasTriedToCreateModel = false;
 		fLoaded = false;
@@ -197,6 +209,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 * @since 3.6
 	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 	}
 

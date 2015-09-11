@@ -38,24 +38,29 @@ public class Fragment extends PluginBase implements IFragment {
 		super(readOnly);
 	}
 
+	@Override
 	public String getPluginId() {
 		return fPluginId;
 	}
 
+	@Override
 	public String getPluginVersion() {
 		return fPluginVersion;
 	}
 
+	@Override
 	public int getRule() {
 		return fMatchRule;
 	}
 
+	@Override
 	protected boolean hasRequiredAttributes() {
 		if (fPluginId == null || fPluginVersion == null)
 			return false;
 		return super.hasRequiredAttributes();
 	}
 
+	@Override
 	void load(BundleDescription bundleDescription, PDEState state) {
 		HostSpecification host = bundleDescription.getHost();
 		fPluginId = host.getName();
@@ -68,6 +73,7 @@ public class Fragment extends PluginBase implements IFragment {
 		super.load(bundleDescription, state);
 	}
 
+	@Override
 	void load(Node node, String schemaVersion) {
 		fPluginId = getNodeAttribute(node, "plugin-id"); //$NON-NLS-1$
 		fPluginVersion = getNodeAttribute(node, "plugin-version"); //$NON-NLS-1$
@@ -84,6 +90,7 @@ public class Fragment extends PluginBase implements IFragment {
 		super.load(node, schemaVersion);
 	}
 
+	@Override
 	public void reset() {
 		fPluginId = ""; //$NON-NLS-1$
 		fPluginVersion = ""; //$NON-NLS-1$
@@ -91,6 +98,7 @@ public class Fragment extends PluginBase implements IFragment {
 		super.reset();
 	}
 
+	@Override
 	public void setPluginId(String newPluginId) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.fPluginId;
@@ -98,6 +106,7 @@ public class Fragment extends PluginBase implements IFragment {
 		firePropertyChanged(P_PLUGIN_ID, oldValue, fPluginId);
 	}
 
+	@Override
 	public void setPluginVersion(String newPluginVersion) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.fPluginVersion;
@@ -105,6 +114,7 @@ public class Fragment extends PluginBase implements IFragment {
 		firePropertyChanged(P_PLUGIN_VERSION, oldValue, fPluginVersion);
 	}
 
+	@Override
 	public void setRule(int rule) throws CoreException {
 		ensureModelEditable();
 		Integer oldValue = new Integer(this.fMatchRule);
@@ -112,6 +122,7 @@ public class Fragment extends PluginBase implements IFragment {
 		firePropertyChanged(P_RULE, oldValue, new Integer(rule));
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_PLUGIN_ID)) {
 			setPluginId(newValue != null ? newValue.toString() : null);
@@ -128,6 +139,7 @@ public class Fragment extends PluginBase implements IFragment {
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		if (getSchemaVersion() != null) {

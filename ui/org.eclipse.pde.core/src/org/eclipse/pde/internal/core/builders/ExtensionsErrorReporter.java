@@ -49,9 +49,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	/**
 	 * @throws SAXException  
 	 */
+	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
 	}
 
+	@Override
 	public void validateContent(IProgressMonitor monitor) {
 		Element element = getDocumentRoot();
 		if (element == null)

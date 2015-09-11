@@ -21,6 +21,7 @@ public class ImportPackageHeader extends BasePackageHeader {
 		super(name, value, bundle, lineDelimiter);
 	}
 
+	@Override
 	protected PDEManifestElement createElement(ManifestElement element) {
 		return new ImportPackageObject(this, element, getVersionAttribute());
 	}

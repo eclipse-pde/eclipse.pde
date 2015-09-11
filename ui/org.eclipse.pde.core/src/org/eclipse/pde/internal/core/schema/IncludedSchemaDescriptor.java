@@ -138,6 +138,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getPointId()
 	 */
+	@Override
 	public String getPointId() {
 		int dotLoc = fSchemaLocation.lastIndexOf('.');
 		if (dotLoc != -1) {
@@ -149,6 +150,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getSchemaURL()
 	 */
+	@Override
 	public URL getSchemaURL() {
 		return fSchemaURL;
 	}
@@ -156,6 +158,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getSchema(boolean)
 	 */
+	@Override
 	public ISchema getSchema(boolean abbreviated) {
 		if (fSchema == null && fSchemaURL != null) {
 			fSchema = new Schema(this, fSchemaURL, abbreviated);
@@ -167,6 +170,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#isStandalone()
 	 */
+	@Override
 	public boolean isStandalone() {
 		return false;
 	}
@@ -174,6 +178,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getLastModified()
 	 */
+	@Override
 	public long getLastModified() {
 		return fLastModified;
 	}

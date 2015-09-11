@@ -20,10 +20,12 @@ public class BuildObject implements IBuildObject {
 
 	private boolean fInTheModel;
 
+	@Override
 	public boolean isInTheModel() {
 		return fInTheModel;
 	}
 
+	@Override
 	public void setInTheModel(boolean inTheModel) {
 		fInTheModel = inTheModel;
 	}

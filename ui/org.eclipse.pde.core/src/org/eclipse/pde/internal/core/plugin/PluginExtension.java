@@ -35,16 +35,19 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		fExtension = extension;
 	}
 
+	@Override
 	public String getPoint() {
 		if (fPoint == null && fExtension != null)
 			fPoint = fExtension.getExtensionPointUniqueIdentifier();
 		return fPoint;
 	}
 
+	@Override
 	public boolean isValid() {
 		return getPoint() != null;
 	}
 
+	@Override
 	public Object getSchema() {
 		if (schema == null) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
@@ -80,6 +83,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		fStartLine = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -123,6 +127,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		return stringEqualWithNull(targetName, getName());
 	}
 
+	@Override
 	public void setPoint(String point) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fPoint;
@@ -130,6 +135,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		firePropertyChanged(P_POINT, oldValue, point);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_POINT)) {
 			setPoint(newValue != null ? newValue.toString() : null);
@@ -138,12 +144,14 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public String toString() {
 		if (getName() != null)
 			return getName();
 		return getPoint();
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<extension"); //$NON-NLS-1$
@@ -169,6 +177,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		writer.println(indent + "</extension>"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		if (fName == null && fExtension != null) {
 			fName = fExtension.getLabel();
@@ -176,6 +185,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		return fName;
 	}
 
+	@Override
 	public String getId() {
 		if (fID == null && fExtension != null) {
 			fID = fExtension.getUniqueIdentifier();
@@ -191,6 +201,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		return fID;
 	}
 
+	@Override
 	protected ArrayList<IPluginObject> getChildrenList() {
 		if (fChildren == null) {
 			fChildren = new ArrayList<IPluginObject>();

@@ -40,6 +40,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getModel()
 	 */
+	@Override
 	public ISharedPluginModel getModel() {
 		return fModel;
 	}
@@ -49,6 +50,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getPluginModel()
 	 */
+	@Override
 	public IPluginModelBase getPluginModel() {
 		return (IPluginModelBase) fModel;
 	}
@@ -58,6 +60,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -67,6 +70,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#isInTheModel()
 	 */
+	@Override
 	public boolean isInTheModel() {
 		return fInTheModel;
 	}
@@ -76,6 +80,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getTranslatedName()
 	 */
+	@Override
 	public String getTranslatedName() {
 		return getResourceString(getName());
 	}
@@ -85,6 +90,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getParent()
 	 */
+	@Override
 	public IPluginObject getParent() {
 		return (IPluginObject) getParentNode();
 	}
@@ -94,6 +100,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getPluginBase()
 	 */
+	@Override
 	public IPluginBase getPluginBase() {
 		return fModel != null ? ((IPluginModelBase) fModel).getPluginBase() : null;
 	}
@@ -103,6 +110,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getResourceString(java.lang.String)
 	 */
+	@Override
 	public String getResourceString(String key) {
 		return fModel != null ? fModel.getResourceString(key) : key;
 	}
@@ -112,6 +120,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) throws CoreException {
 		fName = name;
 	}
@@ -121,6 +130,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		return false;
 	}
@@ -131,6 +141,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String,
 	 *      java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 	}
 
@@ -139,6 +150,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}
@@ -148,6 +160,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setInTheModel(boolean)
 	 */
+	@Override
 	public void setInTheModel(boolean inModel) {
 		fInTheModel = inModel;
 	}
@@ -162,6 +175,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setXMLAttribute(java.lang.String,
 	 *      java.lang.String)
 	 */
+	@Override
 	public boolean setXMLAttribute(String name, String value) {
 		// Overrided by necessity - dealing with different objects
 		String oldValue = getXMLAttributeValue(name);
@@ -233,17 +247,20 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 		}
 	}
 
+	@Override
 	public String getLineDelimiter() {
 		ISharedPluginModel model = getModel();
 		IDocument document = ((IEditingModel) model).getDocument();
 		return TextUtilities.getDefaultLineDelimiter(document);
 	}
 
+	@Override
 	public void addChildNode(IDocumentElementNode child, int position) {
 		super.addChildNode(child, position);
 		((IPluginObject) child).setInTheModel(true);
 	}
 
+	@Override
 	public String toString() {
 		return write(false);
 	}
@@ -251,6 +268,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public void reconnect(IDocumentElementNode parent, IModel model) {
 		super.reconnect(parent, model);
 		// Transient field:  In The Model
@@ -268,6 +286,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
 	 */
+	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		// NO-OP
 		// Child classes to override
@@ -276,6 +295,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getXMLAttributeValue(java.lang.String)
 	 */
+	@Override
 	public String getXMLAttributeValue(String name) {
 		// Overrided by necessity - dealing with different objects
 		PluginAttribute attr = (PluginAttribute) getNodeAttributesMap().get(name);
@@ -285,6 +305,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#write(boolean)
 	 */
+	@Override
 	public String write(boolean indent) {
 		// Used by text edit operations
 		// Subclasses to override
@@ -294,6 +315,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#writeShallow(boolean)
 	 */
+	@Override
 	public String writeShallow(boolean terminate) {
 		// Used by text edit operations
 		// Subclasses to override
@@ -303,6 +325,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#getFileEncoding()
 	 */
+	@Override
 	protected String getFileEncoding() {
 		if ((fModel != null) && (fModel instanceof IEditingModel)) {
 			return ((IEditingModel) fModel).getCharset();

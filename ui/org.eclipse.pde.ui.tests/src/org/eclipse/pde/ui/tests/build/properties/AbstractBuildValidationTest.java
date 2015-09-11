@@ -49,6 +49,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		URL location = PDETestsPlugin.getBundleContext().getBundle().getEntry("/tests/build.properties/build.properties.tests.zip");
 		File projectFile = new File(FileLocator.toFileURL(location).getFile());
@@ -58,6 +59,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 		projectFile = PDETestsPlugin.getDefault().getStateLocation().removeLastSegments(3).toFile();
 		File[] projects = projectFile.listFiles(new FileFilter() {
 
+			@Override
 			public boolean accept(File pathname) {
 				int index = pathname.getName().lastIndexOf('.');
 				if (index > 1 && pathname.isDirectory()) { // look out for "CVS" files in the workspace

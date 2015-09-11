@@ -24,16 +24,19 @@ public class SchemaRootElement extends SchemaElement implements ISchemaRootEleme
 		super(parent, name);
 	}
 
+	@Override
 	public void setDeprecatedSuggestion(String value) {
 		Object oldValue = fDeperecatedReplacement;
 		fDeperecatedReplacement = value;
 		getSchema().fireModelObjectChanged(this, P_DEP_REPLACEMENT, oldValue, fDeperecatedReplacement);
 	}
 
+	@Override
 	public String getDeprecatedSuggestion() {
 		return fDeperecatedReplacement;
 	}
 
+	@Override
 	public String getExtendedAttributes() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(" "); //$NON-NLS-1$
@@ -46,10 +49,12 @@ public class SchemaRootElement extends SchemaElement implements ISchemaRootEleme
 		return buffer.toString();
 	}
 
+	@Override
 	public boolean isInternal() {
 		return fInternal;
 	}
 
+	@Override
 	public void setInternal(boolean value) {
 		boolean oldValue = fInternal;
 		fInternal = value;

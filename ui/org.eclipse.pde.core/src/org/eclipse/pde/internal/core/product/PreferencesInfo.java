@@ -29,6 +29,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPreferencesInfo#setSourceFilePath(java.lang.String)
 	 */
+	@Override
 	public void setSourceFilePath(String text) {
 		String old = fSourceFilePath;
 		fSourceFilePath = text;
@@ -44,6 +45,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPreferencesInfo#getSourceFilePath()
 	 */
+	@Override
 	public String getSourceFilePath() {
 		return fSourceFilePath;
 	}
@@ -51,6 +53,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPreferencesInfo#setOverwrite(java.lang.String)
 	 */
+	@Override
 	public void setOverwrite(String text) {
 		String old = fOverwrite;
 		fOverwrite = text;
@@ -66,6 +69,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPreferencesInfo#getOverwrite()
 	 */
+	@Override
 	public String getOverwrite() {
 		return fOverwrite;
 	}
@@ -73,6 +77,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPreferencesInfo#setPreferenceCustomizationPath(java.lang.String)
 	 */
+	@Override
 	public void setPreferenceCustomizationPath(String text) {
 		String old = fPreferenceCustomizationPath;
 		fPreferenceCustomizationPath = text;
@@ -88,6 +93,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPreferencesInfo#getPreferenceCustomizationPath()
 	 */
+	@Override
 	public String getPreferenceCustomizationPath() {
 		return fPreferenceCustomizationPath;
 	}
@@ -96,6 +102,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<preferencesInfo>"); //$NON-NLS-1$
 		if (fSourceFilePath != null && fSourceFilePath.length() > 0) {
@@ -114,6 +121,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
 	 */
+	@Override
 	public void parse(Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {

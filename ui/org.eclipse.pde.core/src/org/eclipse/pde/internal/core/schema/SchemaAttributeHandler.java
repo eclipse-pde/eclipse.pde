@@ -52,6 +52,7 @@ public class SchemaAttributeHandler extends BaseSchemaHandler {
 		fTargetAttributeName = targetAttributeName;
 	}
 
+	@Override
 	protected void reset() {
 		super.reset();
 		fDescription = new StringBuffer();
@@ -59,6 +60,7 @@ public class SchemaAttributeHandler extends BaseSchemaHandler {
 		fAttributeName = null;
 	}
 
+	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
 		if (qName.compareTo(DESC_NESTED_ELEM[4]) == 0) {
@@ -77,6 +79,7 @@ public class SchemaAttributeHandler extends BaseSchemaHandler {
 		}
 	}
 
+	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
 
 		if (onTarget()) {

@@ -18,6 +18,7 @@ public class BundleFragmentModel extends BundlePluginModelBase implements IBundl
 
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	public IPluginBase createPluginBase() {
 		BundleFragment bfragment = new BundleFragment();
 		bfragment.setModel(this);
@@ -27,6 +28,7 @@ public class BundleFragmentModel extends BundlePluginModelBase implements IBundl
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragmentModel#getFragment()
 	 */
+	@Override
 	public IFragment getFragment() {
 		return (IFragment) getPluginBase();
 	}
@@ -34,6 +36,7 @@ public class BundleFragmentModel extends BundlePluginModelBase implements IBundl
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isFragmentModel()
 	 */
+	@Override
 	public boolean isFragmentModel() {
 		return true;
 	}

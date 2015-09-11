@@ -38,10 +38,12 @@ public class SchemaSimpleType extends SchemaType implements ISchemaSimpleType, I
 		}
 	}
 
+	@Override
 	public ISchemaRestriction getRestriction() {
 		return restriction;
 	}
 
+	@Override
 	public void setSchema(ISchema schema) {
 		super.setSchema(schema);
 		if (restriction != null)
@@ -56,6 +58,7 @@ public class SchemaSimpleType extends SchemaType implements ISchemaSimpleType, I
 		getSchema().fireModelObjectChanged(this, P_RESTRICTION, oldValue, restriction);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<simpleType>"); //$NON-NLS-1$
 		if (restriction != null) {

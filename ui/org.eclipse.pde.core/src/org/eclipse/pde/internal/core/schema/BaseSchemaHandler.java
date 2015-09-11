@@ -35,16 +35,19 @@ public class BaseSchemaHandler extends DefaultHandler {
 		fElementList = new LinkedList<String>();
 	}
 
+	@Override
 	public void startDocument() throws SAXException {
 		reset();
 	}
 
+	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		// Track where we are in the XML document
 		// Note:  XML namespaces not utilized, safe to use qualified name
 		fElementList.addFirst(qName);
 	}
 
+	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		// Track where we are in the XML document
 		if (fElementList.size() != 0) {
@@ -55,6 +58,7 @@ public class BaseSchemaHandler extends DefaultHandler {
 		}
 	}
 
+	@Override
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		// Prevent the resolution of external entities in order to
 		// prevent the parser from accessing the Internet

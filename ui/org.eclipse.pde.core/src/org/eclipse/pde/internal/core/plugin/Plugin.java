@@ -29,6 +29,7 @@ public class Plugin extends PluginBase implements IPlugin {
 		super(readOnly);
 	}
 
+	@Override
 	public String getClassName() {
 		return fClassname;
 	}
@@ -37,22 +38,26 @@ public class Plugin extends PluginBase implements IPlugin {
 		return this;
 	}
 
+	@Override
 	void load(BundleDescription bundleDescription, PDEState state) {
 		fClassname = state.getClassName(bundleDescription.getBundleId());
 		fHasExtensibleAPI = state.hasExtensibleAPI(bundleDescription.getBundleId());
 		super.load(bundleDescription, state);
 	}
 
+	@Override
 	void load(Node node, String schemaVersion) {
 		fClassname = getNodeAttribute(node, "class"); //$NON-NLS-1$
 		super.load(node, schemaVersion);
 	}
 
+	@Override
 	public void reset() {
 		fClassname = null;
 		super.reset();
 	}
 
+	@Override
 	public void setClassName(String newClassName) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fClassname;
@@ -60,6 +65,7 @@ public class Plugin extends PluginBase implements IPlugin {
 		firePropertyChanged(P_CLASS_NAME, oldValue, fClassname);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_CLASS_NAME)) {
 			setClassName(newValue != null ? newValue.toString() : null);
@@ -68,6 +74,7 @@ public class Plugin extends PluginBase implements IPlugin {
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		if (getSchemaVersion() != null) {

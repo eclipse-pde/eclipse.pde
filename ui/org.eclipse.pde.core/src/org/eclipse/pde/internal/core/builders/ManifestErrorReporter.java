@@ -143,10 +143,12 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 		class NodeListImpl implements NodeList {
 			ArrayList<Node> nodes = new ArrayList<Node>();
 
+			@Override
 			public int getLength() {
 				return nodes.size();
 			}
 
+			@Override
 			public Node item(int index) {
 				return nodes.get(index);
 			}

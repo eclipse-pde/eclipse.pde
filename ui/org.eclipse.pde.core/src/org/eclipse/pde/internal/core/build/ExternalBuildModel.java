@@ -26,14 +26,17 @@ public class ExternalBuildModel extends BuildModel {
 		fInstallLocation = installLocation;
 	}
 
+	@Override
 	public String getInstallLocation() {
 		return fInstallLocation;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return false;
 	}
 
+	@Override
 	public void load() {
 		InputStream stream = null;
 		try {
@@ -60,6 +63,7 @@ public class ExternalBuildModel extends BuildModel {
 		}
 	}
 
+	@Override
 	protected void updateTimeStamp() {
 		updateTimeStamp(getLocalFile());
 	}
@@ -69,6 +73,7 @@ public class ExternalBuildModel extends BuildModel {
 		return (file.isFile()) ? file : new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 	}
 
+	@Override
 	public boolean isInSync() {
 		return true;
 	}

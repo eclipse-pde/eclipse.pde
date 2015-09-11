@@ -23,6 +23,7 @@ public class FragmentErrorReporter extends PluginBaseErrorReporter {
 	/* (non-Javadoc)
 	* @see org.eclipse.pde.internal.builders.PluginBaseErrorReporter#validateTopLevelAttributes(org.w3c.dom.Element)
 	*/
+	@Override
 	protected void validateTopLevelAttributes(Element element) {
 		super.validateTopLevelAttributes(element);
 
@@ -37,6 +38,7 @@ public class FragmentErrorReporter extends PluginBaseErrorReporter {
 			validateMatch(element, attr);
 	}
 
+	@Override
 	protected String getRootElementName() {
 		return "fragment"; //$NON-NLS-1$
 	}

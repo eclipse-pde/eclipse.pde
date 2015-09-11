@@ -79,10 +79,12 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		return path.removeLastSegments(2).addTrailingSeparator().toOSString();
 	}
 
+	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return fEditable;
 	}
@@ -109,6 +111,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		}
 	}
 
+	@Override
 	public boolean isInSync() {
 		// If we have no underlying resource, it probably got deleted from right
 		// underneath us; thus, the model is not in sync
@@ -132,6 +135,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
 
+	@Override
 	public void save() {
 		if (fUnderlyingResource == null)
 			return;
@@ -167,6 +171,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
 	 */
+	@Override
 	public void save(PrintWriter writer) {
 		IBundle bundle = getBundle();
 		Map<String, String> headers = ((Bundle) bundle).getHeaders();
@@ -187,6 +192,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		fDirty = false;
 	}
 
+	@Override
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}
@@ -195,6 +201,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		fEditable = editable;
 	}
 
+	@Override
 	public IBundleModelFactory getFactory() {
 		if (fFactory == null)
 			fFactory = new BundleModelFactory(this);

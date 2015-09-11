@@ -20,10 +20,12 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 
+	@Override
 	protected boolean isInterestingProject(IProject project) {
 		return isFeatureProject(project);
 	}
 
+	@Override
 	protected void createModel(IProject project, boolean notify) {
 		IFile featureXml = PDEProject.getFeatureXml(project);
 		if (featureXml.exists()) {
@@ -37,6 +39,7 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 		}
 	}
 
+	@Override
 	protected void handleFileDelta(IResourceDelta delta) {
 		IFile file = (IFile) delta.getResource();
 		IProject project = file.getProject();
@@ -55,11 +58,13 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 		}
 	}
 
+	@Override
 	protected void addListeners() {
 		int event = IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE;
 		PDECore.getWorkspace().addResourceChangeListener(this, event);
 	}
 
+	@Override
 	protected void removeListeners() {
 		PDECore.getWorkspace().removeResourceChangeListener(this);
 		super.removeListeners();

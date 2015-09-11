@@ -39,6 +39,7 @@ public abstract class AbstractFeatureModel extends AbstractNLModel implements IF
 		super();
 	}
 
+	@Override
 	public IFeature getFeature() {
 		if (feature == null) {
 			Feature f = new Feature();
@@ -48,24 +49,29 @@ public abstract class AbstractFeatureModel extends AbstractNLModel implements IF
 		return feature;
 	}
 
+	@Override
 	public IFeatureModelFactory getFactory() {
 		if (factory == null)
 			factory = new FeatureFactory(this);
 		return factory;
 	}
 
+	@Override
 	public String getInstallLocation() {
 		return null;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return true;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
 
+	@Override
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
 			SAXParser parser = getSaxParser();
@@ -88,6 +94,7 @@ public abstract class AbstractFeatureModel extends AbstractNLModel implements IF
 		}
 	}
 
+	@Override
 	public boolean isValid() {
 		if (!isLoaded())
 			return false;
@@ -106,6 +113,7 @@ public abstract class AbstractFeatureModel extends AbstractNLModel implements IF
 		feature.parse(rootNode);
 	}
 
+	@Override
 	public void reload(InputStream stream, boolean outOfSync) throws CoreException {
 		if (feature != null)
 			feature.reset();
@@ -113,6 +121,7 @@ public abstract class AbstractFeatureModel extends AbstractNLModel implements IF
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {feature}, null));
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}

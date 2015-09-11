@@ -31,26 +31,32 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		super();
 	}
 
+	@Override
 	public abstract String getInstallLocation();
 
+	@Override
 	public abstract IPluginBase createPluginBase();
 
 	public IExtensions createExtensions() {
 		return createPluginBase();
 	}
 
+	@Override
 	public IExtensionsModelFactory getFactory() {
 		return this;
 	}
 
+	@Override
 	public IPluginModelFactory getPluginFactory() {
 		return this;
 	}
 
+	@Override
 	public IPluginBase getPluginBase() {
 		return getPluginBase(true);
 	}
 
+	@Override
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (fPluginBase == null && createIfMissing) {
 			fPluginBase = createPluginBase();
@@ -59,6 +65,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		return fPluginBase;
 	}
 
+	@Override
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		load(stream, outOfSync, new PluginHandler(fAbbreviated));
 	}
@@ -92,31 +99,38 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		setLoaded(true);
 	}
 
+	@Override
 	public IExtensions getExtensions() {
 		return getPluginBase();
 	}
 
+	@Override
 	public IExtensions getExtensions(boolean createIfMissing) {
 		return getPluginBase(createIfMissing);
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
 
+	@Override
 	public boolean isFragmentModel() {
 		return false;
 	}
 
+	@Override
 	public void reload(InputStream stream, boolean outOfSync) throws CoreException {
 		load(stream, outOfSync);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {fPluginBase}, null));
 	}
 
+	@Override
 	public void setEnabled(boolean newEnabled) {
 		enabled = newEnabled;
 	}
 
+	@Override
 	public String toString() {
 		IPluginBase pluginBase = getPluginBase();
 		if (pluginBase != null)
@@ -124,8 +138,10 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		return super.toString();
 	}
 
+	@Override
 	protected abstract void updateTimeStamp();
 
+	@Override
 	public IPluginAttribute createAttribute(IPluginElement element) {
 		PluginAttribute attribute = new PluginAttribute();
 		attribute.setModel(this);
@@ -133,6 +149,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		return attribute;
 	}
 
+	@Override
 	public IPluginElement createElement(IPluginObject parent) {
 		PluginElement element = new PluginElement();
 		element.setModel(this);
@@ -140,6 +157,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		return element;
 	}
 
+	@Override
 	public IPluginExtension createExtension() {
 		PluginExtension extension = new PluginExtension();
 		extension.setParent(getPluginBase());
@@ -147,6 +165,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		return extension;
 	}
 
+	@Override
 	public IPluginExtensionPoint createExtensionPoint() {
 		PluginExtensionPoint extensionPoint = new PluginExtensionPoint();
 		extensionPoint.setModel(this);
@@ -154,6 +173,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		return extensionPoint;
 	}
 
+	@Override
 	public IPluginImport createImport() {
 		PluginImport iimport = new PluginImport();
 		iimport.setModel(this);
@@ -167,6 +187,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		return iimport;
 	}
 
+	@Override
 	public IPluginLibrary createLibrary() {
 		PluginLibrary library = new PluginLibrary();
 		library.setModel(this);
@@ -174,6 +195,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		return library;
 	}
 
+	@Override
 	public boolean isValid() {
 		if (!isLoaded())
 			return false;
@@ -189,6 +211,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fBundleDescription = null;
 		super.dispose();
@@ -197,6 +220,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
 	 */
+	@Override
 	public BundleDescription getBundleDescription() {
 		return fBundleDescription;
 	}
@@ -204,6 +228,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
 	 */
+	@Override
 	public void setBundleDescription(BundleDescription description) {
 		fBundleDescription = description;
 	}

@@ -46,6 +46,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#setEnclosingElement(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
+	@Override
 	public void setEnclosingElement(IDocumentElementNode node) {
 		fEnclosingElement = node;
 	}
@@ -53,6 +54,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#getEnclosingElement()
 	 */
+	@Override
 	public IDocumentElementNode getEnclosingElement() {
 		return fEnclosingElement;
 	}
@@ -60,6 +62,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#setText(java.lang.String)
 	 */
+	@Override
 	public void setText(String text) {
 		fText = text;
 	}
@@ -67,6 +70,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#getText()
 	 */
+	@Override
 	public String getText() {
 		return fText == null ? "" : fText; //$NON-NLS-1$
 	}
@@ -74,6 +78,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#setOffset(int)
 	 */
+	@Override
 	public void setOffset(int offset) {
 		fOffset = offset;
 	}
@@ -81,6 +86,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#getOffset()
 	 */
+	@Override
 	public int getOffset() {
 		return fOffset;
 	}
@@ -88,6 +94,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#getLength()
 	 */
+	@Override
 	public int getLength() {
 		return fLength;
 	}
@@ -95,6 +102,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#setLength(int)
 	 */
+	@Override
 	public void setLength(int length) {
 		fLength = length;
 	}
@@ -102,6 +110,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentTextNode#reconnectText(org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public void reconnect(IDocumentElementNode parent) {
 		// Transient field:  Enclosing Element
 		// Essentially the parent (an element)
@@ -115,6 +124,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentTextNode#write()
 	 */
+	@Override
 	public String write() {
 		String content = getText().trim();
 		return PDETextHelper.translateWriteText(content, SUBSTITUTE_CHARS);
@@ -123,6 +133,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentXMLNode#getXMLType()
 	 */
+	@Override
 	public int getXMLType() {
 		return F_TYPE_TEXT;
 	}

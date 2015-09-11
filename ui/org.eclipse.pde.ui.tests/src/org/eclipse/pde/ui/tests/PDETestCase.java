@@ -23,6 +23,7 @@ import org.eclipse.ui.*;
  */
 public abstract class PDETestCase extends TestCase {
 
+	@Override
 	protected void tearDown() {
 		// Close any editors we opened
 		IWorkbenchWindow[] workbenchPages = PlatformUI.getWorkbench().getWorkbenchWindows();

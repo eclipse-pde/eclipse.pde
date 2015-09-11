@@ -101,6 +101,7 @@ public class PluginRegistryTests extends TestCase {
 			/* (non-Javadoc)
 			 * @see org.eclipse.pde.core.plugin.PluginRegistry.PluginFilter#accept(org.eclipse.pde.core.plugin.IPluginModelBase)
 			 */
+			@Override
 			public boolean accept(IPluginModelBase model) {
 				IPluginBase base = model.getPluginBase();
 				if (base != null) {
@@ -122,6 +123,7 @@ public class PluginRegistryTests extends TestCase {
 			/* (non-Javadoc)
 			 * @see org.eclipse.pde.core.plugin.PluginRegistry.PluginFilter#accept(org.eclipse.pde.core.plugin.IPluginModelBase)
 			 */
+			@Override
 			public boolean accept(IPluginModelBase model) {
 				IPluginBase base = model.getPluginBase();
 				if (base != null) {

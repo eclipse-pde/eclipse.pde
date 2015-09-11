@@ -111,6 +111,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		disposeWidget(enableTracingButton);
@@ -266,6 +267,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		// install focus cell and cell editor activation for keyboard access (Bug 385100)
 		TreeViewerFocusCellManager focusCellManager = new TreeViewerFocusCellManager(getViewer(), new FocusCellOwnerDrawHighlighter(getViewer()));
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(getViewer()) {
+			@Override
 			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
 				return (event.eventType == KEY_PRESSED && event.keyCode == VALUE_EDITOR_ACTIVATION_KEY) //
 						|| event.eventType == TRAVERSAL //

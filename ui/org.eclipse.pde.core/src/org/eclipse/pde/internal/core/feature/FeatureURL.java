@@ -26,6 +26,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 	private IFeatureURLElement fUpdate;
 	private Vector<IFeatureURLElement> fDiscoveries = new Vector<IFeatureURLElement>();
 
+	@Override
 	public void addDiscovery(IFeatureURLElement discovery) throws CoreException {
 		ensureModelEditable();
 		fDiscoveries.add(discovery);
@@ -33,6 +34,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 		fireStructureChanged(discovery, IModelChangedEvent.INSERT);
 	}
 
+	@Override
 	public void setUpdate(IFeatureURLElement update) throws CoreException {
 		ensureModelEditable();
 		if (fUpdate == update) {
@@ -52,14 +54,17 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 		}
 	}
 
+	@Override
 	public IFeatureURLElement[] getDiscoveries() {
 		return fDiscoveries.toArray(new IFeatureURLElement[fDiscoveries.size()]);
 	}
 
+	@Override
 	public IFeatureURLElement getUpdate() {
 		return fUpdate;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -87,6 +92,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 		}
 	}
 
+	@Override
 	public void removeDiscovery(IFeatureURLElement discovery) throws CoreException {
 		ensureModelEditable();
 		fDiscoveries.remove(discovery);
@@ -94,6 +100,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 		fireStructureChanged(discovery, IModelChangedEvent.REMOVE);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (fUpdate == null && fDiscoveries.size() <= 0) {
 			return;

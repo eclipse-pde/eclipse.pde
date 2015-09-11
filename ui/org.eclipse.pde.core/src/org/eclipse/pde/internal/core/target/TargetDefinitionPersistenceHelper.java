@@ -127,6 +127,7 @@ public class TargetDefinitionPersistenceHelper {
 		NameVersionDescriptor[] included = definition.getIncluded();
 		if (included != null) {
 			Arrays.sort(included, new Comparator<NameVersionDescriptor>() {
+				@Override
 				public int compare(NameVersionDescriptor o1, NameVersionDescriptor o2) {
 					int compareType = o1.getType().compareTo(o2.getType());
 					if (compareType != 0) {

@@ -51,24 +51,28 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		this.compositor = compositor;
 	}
 
+	@Override
 	public ISchemaAttribute getAttribute(String name) {
 		if (element == null)
 			return null;
 		return element.getAttribute(name);
 	}
 
+	@Override
 	public int getAttributeCount() {
 		if (element == null)
 			return 0;
 		return element.getAttributeCount();
 	}
 
+	@Override
 	public ISchemaAttribute[] getAttributes() {
 		if (element == null)
 			return new ISchemaAttribute[0];
 		return element.getAttributes();
 	}
 
+	@Override
 	public String[] getAttributeNames() {
 		if (element == null)
 			return new String[0];
@@ -79,46 +83,55 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		return compositor;
 	}
 
+	@Override
 	public String getDescription() {
 		if (element == null)
 			return ""; //$NON-NLS-1$
 		return element.getDescription();
 	}
 
+	@Override
 	public String getDTDRepresentation(boolean addLinks) {
 		if (element == null)
 			return PDECoreMessages.SchemaElementReference_refElementMissing;
 		return element.getDTDRepresentation(addLinks);
 	}
 
+	@Override
 	public String getIconProperty() {
 		if (element == null)
 			return ""; //$NON-NLS-1$
 		return element.getIconProperty();
 	}
 
+	@Override
 	public String getLabelProperty() {
 		if (element == null)
 			return ""; //$NON-NLS-1$
 		return element.getLabelProperty();
 	}
 
+	@Override
 	public int getMaxOccurs() {
 		return maxOccurs;
 	}
 
+	@Override
 	public int getMinOccurs() {
 		return minOccurs;
 	}
 
+	@Override
 	public String getName() {
 		return referenceName;
 	}
 
+	@Override
 	public ISchemaObject getParent() {
 		return compositor;
 	}
 
+	@Override
 	public void setParent(ISchemaObject parent) {
 	}
 
@@ -126,10 +139,12 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		return element;
 	}
 
+	@Override
 	public ISchemaObject getReferencedObject() {
 		return element;
 	}
 
+	@Override
 	public Class<ISchemaElement> getReferencedObjectClass() {
 		return ISchemaElement.class;
 	}
@@ -138,6 +153,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		return referenceName;
 	}
 
+	@Override
 	public ISchema getSchema() {
 		if (element != null) {
 			ISchema schema = element.getSchema();
@@ -156,6 +172,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		return null;
 	}
 
+	@Override
 	public ISchemaType getType() {
 		if (element == null)
 			return null;
@@ -186,6 +203,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 			schema.fireModelObjectChanged(this, P_MIN_OCCURS, oldValue, new Integer(minOccurs));
 	}
 
+	@Override
 	public void setReferencedObject(ISchemaObject referencedObject) {
 		if (referencedObject instanceof ISchemaElement)
 			element = (ISchemaElement) referencedObject;
@@ -201,6 +219,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 			schema.fireModelObjectChanged(this, P_REFERENCE_NAME, oldValue, name);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writeComments(writer);
 		writer.print(indent + "<element"); //$NON-NLS-1$
@@ -246,10 +265,12 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		}
 	}
 
+	@Override
 	public int getStartLine() {
 		return range == null ? -1 : range[0];
 	}
 
+	@Override
 	public int getStopLine() {
 		return range == null ? -1 : range[1];
 	}
@@ -268,6 +289,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 	 * 
 	 * @see org.eclipse.pde.internal.core.ischema.IMetaElement#isTranslatable()
 	 */
+	@Override
 	public boolean hasTranslatableContent() {
 		if (element == null)
 			return false;
@@ -277,6 +299,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.IMetaElement#isDeprecated()
 	 */
+	@Override
 	public boolean isDeprecated() {
 		if (element == null)
 			return false;
@@ -286,12 +309,14 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaElement#hasDeprecatedAttributes()
 	 */
+	@Override
 	public boolean hasDeprecatedAttributes() {
 		if (element == null)
 			return false;
 		return element.hasDeprecatedAttributes();
 	}
 
+	@Override
 	public int compareTo(Object arg0) {
 		if (element == null) {
 			return -1;

@@ -40,6 +40,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginImport#isReexported()
 	 */
+	@Override
 	public boolean isReexported() {
 		String value = getXMLAttributeValue(P_REEXPORTED);
 		return value != null && value.equals("true"); //$NON-NLS-1$
@@ -48,6 +49,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginImport#isOptional()
 	 */
+	@Override
 	public boolean isOptional() {
 		String value = getXMLAttributeValue(P_OPTIONAL);
 		return value != null && value.equals("true"); //$NON-NLS-1$
@@ -56,6 +58,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginImport#setReexported(boolean)
 	 */
+	@Override
 	public void setReexported(boolean value) throws CoreException {
 		setXMLAttribute(P_REEXPORTED, value ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -63,6 +66,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginImport#setOptional(boolean)
 	 */
+	@Override
 	public void setOptional(boolean value) throws CoreException {
 		setXMLAttribute(P_OPTIONAL, value ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -70,6 +74,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginReference#getMatch()
 	 */
+	@Override
 	public int getMatch() {
 		String match = getXMLAttributeValue(P_MATCH);
 		if (match == null || match.trim().length() == 0)
@@ -86,6 +91,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginReference#getVersion()
 	 */
+	@Override
 	public String getVersion() {
 		return getXMLAttributeValue(P_VERSION);
 	}
@@ -93,6 +99,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginReference#setMatch(int)
 	 */
+	@Override
 	public void setMatch(int match) throws CoreException {
 		switch (match) {
 			case IMatchRules.GREATER_OR_EQUAL :
@@ -115,6 +122,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginReference#setVersion(java.lang.String)
 	 */
+	@Override
 	public void setVersion(String version) throws CoreException {
 		setXMLAttribute(P_VERSION, version);
 	}
@@ -122,6 +130,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
+	@Override
 	public String getId() {
 		return getXMLAttributeValue("plugin"); //$NON-NLS-1$
 	}
@@ -129,6 +138,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
+	@Override
 	public void setId(String id) throws CoreException {
 		setXMLAttribute("plugin", id); //$NON-NLS-1$
 	}
@@ -136,6 +146,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
+	@Override
 	public String write(boolean indent) {
 		return indent ? getIndent() + writeShallow(true) : writeShallow(true);
 	}
@@ -143,6 +154,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
+	@Override
 	public String writeShallow(boolean terminate) {
 		StringBuffer buffer = new StringBuffer("<import"); //$NON-NLS-1$
 		appendAttribute(buffer, "plugin"); //$NON-NLS-1$

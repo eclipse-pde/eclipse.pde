@@ -75,6 +75,7 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 		getSchema().fireModelChanged(new ModelChangedEvent(getSchema(), IModelChangedEvent.CHANGE, new Object[] {attribute.getParent()}, null));
 	}
 
+	@Override
 	public ISchemaAttribute getAttribute(String name) {
 		for (int i = 0; i < attributes.size(); i++) {
 			ISchemaAttribute attribute = attributes.elementAt(i);
@@ -84,20 +85,24 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 		return null;
 	}
 
+	@Override
 	public int getAttributeCount() {
 		return attributes.size();
 	}
 
+	@Override
 	public ISchemaAttribute[] getAttributes() {
 		ISchemaAttribute[] result = new ISchemaAttribute[attributes.size()];
 		attributes.copyInto(result);
 		return result;
 	}
 
+	@Override
 	public ISchemaCompositor getCompositor() {
 		return compositor;
 	}
 
+	@Override
 	public boolean isMixed() {
 		return mixed;
 	}
@@ -117,6 +122,7 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 		mixed = newMixed;
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<complexType>"); //$NON-NLS-1$
 		String indent2 = indent + Schema.INDENT;

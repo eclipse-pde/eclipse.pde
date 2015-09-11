@@ -51,10 +51,12 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		}
 	}
 
+	@Override
 	public void setProgramArguments(String args, int platform) {
 		setProgramArguments(args, platform, L_ARGS_ARCH_ALL);
 	}
 
+	@Override
 	public void setProgramArguments(String args, int platform, int arch) {
 		String old;
 		if (args == null)
@@ -93,10 +95,12 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		}
 	}
 
+	@Override
 	public String getProgramArguments(int platform) {
 		return getProgramArguments(platform, L_ARGS_ARCH_ALL);
 	}
 
+	@Override
 	public String getProgramArguments(int platform, int arch) {
 		switch (platform) {
 			case L_ARGS_ALL :
@@ -113,10 +117,12 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getCompleteProgramArguments(String os) {
 		return getCompleteProgramArguments(os, ""); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getCompleteProgramArguments(String os, String arch) {
 		int archIndex = L_ARGS_ARCH_ALL;
 		if (arch != null && arch.length() > 0) {
@@ -155,10 +161,12 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		}
 	}
 
+	@Override
 	public void setVMArguments(String args, int platform) {
 		setVMArguments(args, platform, L_ARGS_ARCH_ALL);
 	}
 
+	@Override
 	public void setVMArguments(String args, int platform, int arch) {
 		String old;
 		if (args == null)
@@ -197,10 +205,12 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		}
 	}
 
+	@Override
 	public String getVMArguments(int platform) {
 		return getVMArguments(platform, L_ARGS_ARCH_ALL);
 	}
 
+	@Override
 	public String getVMArguments(int platform, int arch) {
 		switch (platform) {
 			case L_ARGS_ALL :
@@ -217,10 +227,12 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getCompleteVMArguments(String os) {
 		return getCompleteVMArguments(os, ""); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getCompleteVMArguments(String os, String arch) {
 		int archIndex = L_ARGS_ARCH_ALL;
 		if (arch != null && arch.length() > 0) {
@@ -269,6 +281,7 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		return args.trim();
 	}
 
+	@Override
 	public void parse(Node node) {
 		NodeList list = node.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -341,6 +354,7 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public void write(String indent, java.io.PrintWriter writer) {
 		writer.println(indent + "<launcherArgs>"); //$NON-NLS-1$
 		String subIndent = indent + "   "; //$NON-NLS-1$

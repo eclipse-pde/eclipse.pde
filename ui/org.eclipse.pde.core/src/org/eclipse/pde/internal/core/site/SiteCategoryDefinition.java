@@ -26,6 +26,7 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#getName()
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -33,6 +34,7 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteObject#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		return name != null && getLabel() != null;
 	}
@@ -40,6 +42,7 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.name;
@@ -50,6 +53,7 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#getDescription()
 	 */
+	@Override
 	public ISiteDescription getDescription() {
 		return description;
 	}
@@ -57,6 +61,7 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#setDescription(org.eclipse.pde.internal.core.isite.ISiteDescription)
 	 */
+	@Override
 	public void setDescription(ISiteDescription description) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.description;

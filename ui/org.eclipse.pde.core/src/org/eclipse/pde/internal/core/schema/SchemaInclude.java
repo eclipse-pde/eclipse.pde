@@ -54,6 +54,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	/**
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaInclude#getLocation()
 	 */
+	@Override
 	public String getLocation() {
 		return fLocation;
 	}
@@ -61,6 +62,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	/**
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaInclude#setLocation(java.lang.String)
 	 */
+	@Override
 	public void setLocation(String location) throws CoreException {
 		String oldValue = this.fLocation;
 		this.fLocation = location;
@@ -72,11 +74,13 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String,
 	 *      java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.println("<include schemaLocation=\"" + fLocation + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public ISchema getIncludedSchema() {
 		if (fIncludedSchema != null) {
 			return fIncludedSchema;
@@ -104,6 +108,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		if (fIncludedSchema != null && !fIncludedSchema.isDisposed()) {
 			fIncludedSchema.dispose();

@@ -37,6 +37,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		fCache = !readOnly;
 	}
 
+	@Override
 	public void add(IPluginExtension extension) throws CoreException {
 		ensureModelEditable();
 		getExtensionsList().add(extension);
@@ -45,6 +46,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		fireStructureChanged(extension, IModelChangedEvent.INSERT);
 	}
 
+	@Override
 	public void add(IPluginExtensionPoint extensionPoint) throws CoreException {
 		ensureModelEditable();
 		getExtensionPointsList().add(extensionPoint);
@@ -53,16 +55,19 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		fireStructureChanged(extensionPoint, IModelChangedEvent.INSERT);
 	}
 
+	@Override
 	public IPluginExtensionPoint[] getExtensionPoints() {
 		List<IPluginExtensionPoint> extPoints = getExtensionPointsList();
 		return extPoints.toArray(new IPluginExtensionPoint[extPoints.size()]);
 	}
 
+	@Override
 	public IPluginExtension[] getExtensions() {
 		List<IPluginExtension> extensions = getExtensionsList();
 		return extensions.toArray(new IPluginExtension[extensions.size()]);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_EXTENSION_ORDER)) {
 			swap((IPluginExtension) oldValue, (IPluginExtension) newValue);
@@ -89,6 +94,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		}
 	}
 
+	@Override
 	public void remove(IPluginExtension extension) throws CoreException {
 		ensureModelEditable();
 		getExtensionsList().remove(extension);
@@ -96,6 +102,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		fireStructureChanged(extension, IModelChangedEvent.REMOVE);
 	}
 
+	@Override
 	public void remove(IPluginExtensionPoint extensionPoint) throws CoreException {
 		ensureModelEditable();
 		getExtensionPointsList().remove(extensionPoint);
@@ -116,10 +123,12 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		return getExtensionsList().size();
 	}
 
+	@Override
 	public int getIndexOf(IPluginExtension e) {
 		return getExtensionsList().indexOf(e);
 	}
 
+	@Override
 	public void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException {
 		ensureModelEditable();
 		List<IPluginExtension> extensions = getExtensionsList();

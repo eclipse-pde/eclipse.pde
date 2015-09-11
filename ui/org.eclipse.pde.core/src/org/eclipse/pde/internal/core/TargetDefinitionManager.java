@@ -35,6 +35,7 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 		attributes = new String[] {"id", "name"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] deltas = event.getExtensionDeltas();
 		for (int i = 0; i < deltas.length; i++) {
@@ -62,6 +63,7 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 		IConfigurationElement[] result = fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
 		Arrays.sort(result, new Comparator<Object>() {
 
+			@Override
 			public int compare(Object o1, Object o2) {
 				String value1 = getString((IConfigurationElement) o1);
 				String value2 = getString((IConfigurationElement) o2);

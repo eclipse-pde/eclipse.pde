@@ -79,6 +79,7 @@ public class ImportPackageObject extends PackageObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write());

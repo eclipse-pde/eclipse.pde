@@ -49,6 +49,7 @@ public class JarManifestHeader implements IHeader {
 		fLines++;
 	}
 
+	@Override
 	public ManifestElement[] getElements() {
 		if (fManifestElements == null) {
 			if (getValue().trim().length() > 0) {
@@ -68,22 +69,27 @@ public class JarManifestHeader implements IHeader {
 		return fManifestElements;
 	}
 
+	@Override
 	public int getLineNumber() {
 		return fLineNumber;
 	}
 
+	@Override
 	public int getLinesSpan() {
 		return fLines;
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public String getValue() {
 		return fValue;
 	}
 
+	@Override
 	public String toString() {
 		return fName + "=" + fValue; //$NON-NLS-1$
 	}

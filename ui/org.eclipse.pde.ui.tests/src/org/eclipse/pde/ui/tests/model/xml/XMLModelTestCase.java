@@ -32,6 +32,7 @@ public abstract class XMLModelTestCase extends TestCase {
 	protected PluginModel fModel;
 	protected IModelTextChangeListener fListener;
 
+	@Override
 	protected void setUp() throws Exception {
 		fDocument = new Document();
 	}

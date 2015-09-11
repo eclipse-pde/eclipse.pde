@@ -37,12 +37,14 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
 	 */
+	@Override
 	protected void updateTimeStamp() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModel#getProduct()
 	 */
+	@Override
 	public IProduct getProduct() {
 		if (fProduct == null)
 			fProduct = getFactory().createProduct();
@@ -52,6 +54,7 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModel#getFactory()
 	 */
+	@Override
 	public IProductModelFactory getFactory() {
 		if (fFactory == null)
 			fFactory = new ProductModelFactory(this);
@@ -61,6 +64,7 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModel#getInstallLocation()
 	 */
+	@Override
 	public String getInstallLocation() {
 		return null;
 	}
@@ -68,6 +72,7 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
+	@Override
 	public boolean isInSync() {
 		return true;
 	}
@@ -75,12 +80,14 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load()
 	 */
+	@Override
 	public void load() throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
+	@Override
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
 			SAXParser parser = getSaxParser();
@@ -104,6 +111,7 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
+	@Override
 	public void reload(InputStream source, boolean outOfSync) throws CoreException {
 		load(source, outOfSync);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {fProduct}, null));
@@ -112,6 +120,7 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IBaseModel#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return false;
 	}

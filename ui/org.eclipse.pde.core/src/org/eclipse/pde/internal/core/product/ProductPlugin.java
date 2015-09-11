@@ -41,6 +41,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
 	 */
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -54,6 +55,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<plugin id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals(ICoreConstants.DEFAULT_VERSION)) {
@@ -75,6 +77,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId.trim();
 	}
@@ -82,14 +85,17 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#setId(java.lang.String)
 	 */
+	@Override
 	public void setId(String id) {
 		fId = id;
 	}
 
+	@Override
 	public String getVersion() {
 		return fVersion;
 	}
 
+	@Override
 	public void setVersion(String version) {
 		String old = fVersion;
 		fVersion = version;
@@ -100,6 +106,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#isFragment()
 	 */
+	@Override
 	public boolean isFragment() {
 		return fFragment;
 	}
@@ -107,6 +114,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#setFragment(boolean)
 	 */
+	@Override
 	public void setFragment(boolean isFragment) {
 		fFragment = isFragment;
 	}

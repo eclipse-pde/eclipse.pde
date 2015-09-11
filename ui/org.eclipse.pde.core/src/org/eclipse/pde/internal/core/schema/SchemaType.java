@@ -25,18 +25,22 @@ public abstract class SchemaType implements ISchemaType, Serializable {
 		name = typeName;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public ISchema getSchema() {
 		return schema;
 	}
 
+	@Override
 	public void setSchema(ISchema schema) {
 		this.schema = schema;
 	}
 
+	@Override
 	public String toString() {
 		return name;
 	}

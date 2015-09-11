@@ -39,6 +39,7 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 	private static final long serialVersionUID = 1L;
 	protected Extensions fExtensions;
 
+	@Override
 	public IExtensionsModelFactory getFactory() {
 		return this;
 	}
@@ -49,10 +50,12 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 		return extensions;
 	}
 
+	@Override
 	public IExtensions getExtensions() {
 		return getExtensions(true);
 	}
 
+	@Override
 	public IExtensions getExtensions(boolean createIfMissing) {
 		if (fExtensions == null && createIfMissing) {
 			fExtensions = createExtensions();
@@ -68,6 +71,7 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 		return locations;
 	}
 
+	@Override
 	public synchronized void load(InputStream stream, boolean outOfSync) throws CoreException {
 
 		if (fExtensions == null) {
@@ -102,13 +106,16 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 		setLoaded(true);
 	}
 
+	@Override
 	public void reload(InputStream stream, boolean outOfSync) throws CoreException {
 		load(stream, outOfSync);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {fExtensions}, null));
 	}
 
+	@Override
 	protected abstract void updateTimeStamp();
 
+	@Override
 	public IPluginAttribute createAttribute(IPluginElement element) {
 		PluginAttribute attribute = new PluginAttribute();
 		attribute.setModel(this);
@@ -116,6 +123,7 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 		return attribute;
 	}
 
+	@Override
 	public IPluginElement createElement(IPluginObject parent) {
 		PluginElement element = new PluginElement();
 		element.setModel(this);
@@ -123,6 +131,7 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 		return element;
 	}
 
+	@Override
 	public IPluginExtension createExtension() {
 		PluginExtension extension = new PluginExtension();
 		extension.setParent(getExtensions());
@@ -130,6 +139,7 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 		return extension;
 	}
 
+	@Override
 	public IPluginExtensionPoint createExtensionPoint() {
 		PluginExtensionPoint extensionPoint = new PluginExtensionPoint();
 		extensionPoint.setModel(this);
@@ -137,6 +147,7 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 		return extensionPoint;
 	}
 
+	@Override
 	public boolean isValid() {
 		if (!isLoaded())
 			return false;

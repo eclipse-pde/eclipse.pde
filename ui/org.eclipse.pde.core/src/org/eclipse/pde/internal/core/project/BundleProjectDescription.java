@@ -450,6 +450,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#apply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void apply(IProgressMonitor monitor) throws CoreException {
 		ProjectModifyOperation operation = new ProjectModifyOperation();
 		operation.execute(monitor, this);
@@ -459,6 +460,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setSymbolicName(java.lang.String)
 	 */
+	@Override
 	public void setSymbolicName(String name) {
 		fSymbolicName = name;
 	}
@@ -466,6 +468,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getSymbolicName()
 	 */
+	@Override
 	public String getSymbolicName() {
 		return fSymbolicName;
 	}
@@ -473,6 +476,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setLocationURI(java.net.URI)
 	 */
+	@Override
 	public void setLocationURI(URI location) {
 		fUri = location;
 	}
@@ -480,6 +484,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getLocationURI()
 	 */
+	@Override
 	public URI getLocationURI() {
 		return fUri;
 	}
@@ -487,6 +492,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleName(java.lang.String)
 	 */
+	@Override
 	public void setBundleName(String name) {
 		fBundleName = name;
 	}
@@ -494,6 +500,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getBundleName()
 	 */
+	@Override
 	public String getBundleName() {
 		return fBundleName;
 	}
@@ -501,6 +508,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleVendor(java.lang.String)
 	 */
+	@Override
 	public void setBundleVendor(String name) {
 		fBundleVendor = name;
 	}
@@ -508,6 +516,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getBundleVendor()
 	 */
+	@Override
 	public String getBundleVendor() {
 		return fBundleVendor;
 	}
@@ -515,6 +524,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleVersion(org.osgi.framework.Version)
 	 */
+	@Override
 	public void setBundleVersion(Version version) {
 		fVersion = version;
 	}
@@ -522,6 +532,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getBundleVersion()
 	 */
+	@Override
 	public Version getBundleVersion() {
 		return fVersion;
 	}
@@ -529,6 +540,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setSingleton(boolean)
 	 */
+	@Override
 	public void setSingleton(boolean singleton) {
 		fSingleton = singleton;
 	}
@@ -536,6 +548,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#isSingleton()
 	 */
+	@Override
 	public boolean isSingleton() {
 		return fSingleton;
 	}
@@ -543,6 +556,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setLocalization(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setLocalization(IPath path) {
 		fLocalization = path;
 	}
@@ -550,6 +564,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getLocalization()
 	 */
+	@Override
 	public IPath getLocalization() {
 		return fLocalization;
 	}
@@ -557,6 +572,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getNatureIds()
 	 */
+	@Override
 	public String[] getNatureIds() {
 		if (fNatures == null) {
 			return new String[0];
@@ -569,6 +585,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setNatureIds(java.lang.String[])
 	 */
+	@Override
 	public void setNatureIds(String[] natures) {
 		String[] copy = null;
 		if (natures != null) {
@@ -581,6 +598,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#hasNature(java.lang.String)
 	 */
+	@Override
 	public boolean hasNature(String natureId) {
 		if (fNatures != null) {
 			for (int i = 0; i < fNatures.length; i++) {
@@ -595,6 +613,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setHost(org.eclipse.pde.core.project.IHostDescription)
 	 */
+	@Override
 	public void setHost(IHostDescription host) {
 		fHost = host;
 	}
@@ -602,6 +621,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getHost()
 	 */
+	@Override
 	public IHostDescription getHost() {
 		return fHost;
 	}
@@ -609,6 +629,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setDefaultOutputFolder(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setDefaultOutputFolder(IPath output) {
 		fDefaultOuputFolder = output;
 	}
@@ -616,6 +637,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getDefaultOutputFolder()
 	 */
+	@Override
 	public IPath getDefaultOutputFolder() {
 		return fDefaultOuputFolder;
 	}
@@ -623,6 +645,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setExecutionEnvironments(java.lang.String[])
 	 */
+	@Override
 	public void setExecutionEnvironments(String[] environments) {
 		fEEs = environments;
 	}
@@ -630,6 +653,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getExecutionEnvironments()
 	 */
+	@Override
 	public String[] getExecutionEnvironments() {
 		return fEEs;
 	}
@@ -637,6 +661,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getBundleClasspath()
 	 */
+	@Override
 	public IBundleClasspathEntry[] getBundleClasspath() {
 		return fBundleClasspath;
 	}
@@ -644,6 +669,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setActivator(java.lang.String)
 	 */
+	@Override
 	public void setActivator(String className) {
 		fActivator = className;
 	}
@@ -651,6 +677,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getActivator()
 	 */
+	@Override
 	public String getActivator() {
 		return fActivator;
 	}
@@ -658,6 +685,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setTargetVersion(java.lang.String)
 	 */
+	@Override
 	public void setTargetVersion(String version) {
 		fTargetVersion = version;
 	}
@@ -665,6 +693,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getTargetVersion()
 	 */
+	@Override
 	public String getTargetVersion() {
 		return fTargetVersion;
 	}
@@ -672,6 +701,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setEqunioxHeaders(boolean)
 	 */
+	@Override
 	public void setEquinox(boolean equinox) {
 		fIsEquinox = equinox;
 	}
@@ -679,6 +709,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#isEquinoxHeaders()
 	 */
+	@Override
 	public boolean isEquinox() {
 		return fIsEquinox;
 	}
@@ -686,6 +717,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setRequiredBundles(org.eclipse.pde.core.project.IRequiredBundleDescription[])
 	 */
+	@Override
 	public void setRequiredBundles(IRequiredBundleDescription[] bundles) {
 		fRequiredBundles = bundles;
 	}
@@ -693,6 +725,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getRequiredBundles()
 	 */
+	@Override
 	public IRequiredBundleDescription[] getRequiredBundles() {
 		return fRequiredBundles;
 	}
@@ -700,6 +733,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setPackageImports(org.eclipse.pde.core.project.IPackageImportDescription[])
 	 */
+	@Override
 	public void setPackageImports(IPackageImportDescription[] imports) {
 		fImports = imports;
 	}
@@ -707,6 +741,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getPackageImports()
 	 */
+	@Override
 	public IPackageImportDescription[] getPackageImports() {
 		return fImports;
 	}
@@ -714,6 +749,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setPackageExports(org.eclipse.pde.core.project.IPackageExportDescription[])
 	 */
+	@Override
 	public void setPackageExports(IPackageExportDescription[] exports) {
 		fExports = exports;
 	}
@@ -721,6 +757,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getPackageExports()
 	 */
+	@Override
 	public IPackageExportDescription[] getPackageExports() {
 		return fExports;
 	}
@@ -728,6 +765,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
@@ -735,6 +773,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleClassath(org.eclipse.pde.core.project.IBundleClasspathEntry[])
 	 */
+	@Override
 	@Deprecated
 	public void setBundleClassath(IBundleClasspathEntry[] entries) {
 		setBundleClasspath(entries);
@@ -743,6 +782,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleClasspath(org.eclipse.pde.core.project.IBundleClasspathEntry[])
 	 */
+	@Override
 	public void setBundleClasspath(IBundleClasspathEntry[] entries) {
 		fBundleClasspath = entries;
 	}
@@ -750,6 +790,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBinIncludes(org.eclipse.core.runtime.IPath[])
 	 */
+	@Override
 	public void setBinIncludes(IPath[] paths) {
 		fBinIncludes = paths;
 	}
@@ -757,6 +798,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getBinIncludes()
 	 */
+	@Override
 	public IPath[] getBinIncludes() {
 		return fBinIncludes;
 	}
@@ -764,6 +806,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleRoot(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setBundleRoot(IPath path) {
 		fRoot = path;
 	}
@@ -771,6 +814,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getBundleRoot()
 	 */
+	@Override
 	public IPath getBundleRoot() {
 		return fRoot;
 	}
@@ -778,6 +822,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#isExtensionRegistry()
 	 */
+	@Override
 	public boolean isExtensionRegistry() {
 		return fIsExtensionRegistry;
 	}
@@ -785,6 +830,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setExtensionRegistry(boolean)
 	 */
+	@Override
 	public void setExtensionRegistry(boolean supportExtensions) {
 		fIsExtensionRegistry = supportExtensions;
 	}
@@ -792,6 +838,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getLaunchShortcuts()
 	 */
+	@Override
 	public String[] getLaunchShortcuts() {
 		return fLaunchShortcuts;
 	}
@@ -799,6 +846,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setLaunchShortcuts(java.lang.String[])
 	 */
+	@Override
 	public void setLaunchShortcuts(String[] ids) {
 		fLaunchShortcuts = ids;
 	}
@@ -806,6 +854,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getExportWizardId()
 	 */
+	@Override
 	public String getExportWizardId() {
 		return fExportWizard;
 	}
@@ -813,6 +862,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setExportWizardId(java.lang.String)
 	 */
+	@Override
 	public void setExportWizardId(String id) {
 		fExportWizard = id;
 	}
@@ -820,6 +870,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setActivationPolicy(java.lang.String)
 	 */
+	@Override
 	public void setActivationPolicy(String policy) {
 		if (Constants.ACTIVATION_LAZY.equals(policy)) {
 			fActivationPolicy = policy;
@@ -831,6 +882,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getActivationPolicy()
 	 */
+	@Override
 	public String getActivationPolicy() {
 		return fActivationPolicy;
 	}
@@ -838,6 +890,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setHeader(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void setHeader(String header, String value) {
 		fHeaders.put(header, value);
 	}
@@ -845,6 +898,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getHeader(java.lang.String)
 	 */
+	@Override
 	public String getHeader(String header) {
 		if (fHeaders.containsKey(header)) { // might be null so check contains
 			return fHeaders.get(header);

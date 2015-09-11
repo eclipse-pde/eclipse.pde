@@ -43,6 +43,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginAttribute#getValue()
 	 */
+	@Override
 	public String getValue() {
 		return fValue;
 	}
@@ -50,6 +51,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginAttribute#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String value) throws CoreException {
 		fValue = value;
 	}
@@ -57,6 +59,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setEnclosingElement(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
+	@Override
 	public void setEnclosingElement(IDocumentElementNode node) {
 		fAttribute.setEnclosingElement(node);
 	}
@@ -64,6 +67,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getEnclosingElement()
 	 */
+	@Override
 	public IDocumentElementNode getEnclosingElement() {
 		return fAttribute.getEnclosingElement();
 	}
@@ -71,6 +75,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setNameOffset(int)
 	 */
+	@Override
 	public void setNameOffset(int offset) {
 		fAttribute.setNameOffset(offset);
 	}
@@ -78,6 +83,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getNameOffset()
 	 */
+	@Override
 	public int getNameOffset() {
 		return fAttribute.getNameOffset();
 	}
@@ -85,6 +91,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setNameLength(int)
 	 */
+	@Override
 	public void setNameLength(int length) {
 		fAttribute.setNameLength(length);
 	}
@@ -92,6 +99,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getNameLength()
 	 */
+	@Override
 	public int getNameLength() {
 		return fAttribute.getNameLength();
 	}
@@ -99,6 +107,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setValueOffset(int)
 	 */
+	@Override
 	public void setValueOffset(int offset) {
 		fAttribute.setValueOffset(offset);
 	}
@@ -106,6 +115,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getValueOffset()
 	 */
+	@Override
 	public int getValueOffset() {
 		return fAttribute.getValueOffset();
 	}
@@ -113,6 +123,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setValueLength(int)
 	 */
+	@Override
 	public void setValueLength(int length) {
 		fAttribute.setValueLength(length);
 	}
@@ -120,6 +131,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getValueLength()
 	 */
+	@Override
 	public int getValueLength() {
 		return fAttribute.getValueLength();
 	}
@@ -127,6 +139,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getAttributeName()
 	 */
+	@Override
 	public String getAttributeName() {
 		return getName();
 	}
@@ -134,6 +147,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getAttributeValue()
 	 */
+	@Override
 	public String getAttributeValue() {
 		return getValue();
 	}
@@ -141,6 +155,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#write()
 	 */
+	@Override
 	public String write() {
 		return getName() + "=\"" + getWritableString(getValue()) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -148,6 +163,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#getWritableString(java.lang.String)
 	 */
+	@Override
 	public String getWritableString(String source) {
 		return super.getWritableString(source).replaceAll("\\r", "&#x0D;") //$NON-NLS-1$ //$NON-NLS-2$
 				.replaceAll("\\n", "&#x0A;"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -156,6 +172,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeName(java.lang.String)
 	 */
+	@Override
 	public void setAttributeName(String name) throws CoreException {
 		setName(name);
 	}
@@ -163,6 +180,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeValue(java.lang.String)
 	 */
+	@Override
 	public void setAttributeValue(String value) throws CoreException {
 		setValue(value);
 	}
@@ -170,6 +188,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public void reconnect(IDocumentElementNode parent) {
 		// Inconsistency in model
 		// A document attribute node should not extend plugin object because plugin object extends 
@@ -181,6 +200,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations
 		// Although attributes cannot be copied directly

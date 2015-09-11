@@ -55,22 +55,27 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		}
 	}
 
+	@Override
 	public boolean isValid() {
 		return getId() != null;
 	}
 
+	@Override
 	public int getMatch() {
 		return match;
 	}
 
+	@Override
 	public String getVersion() {
 		return version;
 	}
 
+	@Override
 	public boolean isReexported() {
 		return reexported;
 	}
 
+	@Override
 	public boolean isOptional() {
 		return optional;
 	}
@@ -113,6 +118,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		}
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -157,6 +163,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		this.optional = optional;
 	}
 
+	@Override
 	public void setMatch(int match) throws CoreException {
 		ensureModelEditable();
 		Integer oldValue = new Integer(this.match);
@@ -164,6 +171,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
 	}
 
+	@Override
 	public void setReexported(boolean value) throws CoreException {
 		ensureModelEditable();
 		Boolean oldValue = Boolean.valueOf(reexported);
@@ -171,6 +179,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		firePropertyChanged(P_REEXPORTED, oldValue, Boolean.valueOf(value));
 	}
 
+	@Override
 	public void setOptional(boolean value) throws CoreException {
 		ensureModelEditable();
 		Boolean oldValue = Boolean.valueOf(this.optional);
@@ -178,6 +187,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		firePropertyChanged(P_OPTIONAL, oldValue, Boolean.valueOf(value));
 	}
 
+	@Override
 	public void setVersion(String version) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.version;
@@ -185,6 +195,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		firePropertyChanged(P_VERSION, oldValue, version);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_MATCH)) {
 			setMatch(((Integer) newValue).intValue());
@@ -208,6 +219,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		// This is a round-about way to do this; but, leveraging existing
 		// functionality is key.  The fact we have to do this suggests a model 
@@ -283,6 +295,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.IdentifiablePluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
 	 */
+	@Override
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		super.reconnect(model, parent);
 		// No transient fields
@@ -291,6 +304,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#writeDelimeter(java.io.PrintWriter)
 	 */
+	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		writer.println(',');
 		writer.print(' ');

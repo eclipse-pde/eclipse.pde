@@ -70,6 +70,7 @@ public class PDEPreferencesTestCase extends TestCase {
 
 		IPreferenceChangeListener listener = new IPreferenceChangeListener(){
 
+			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				assertEquals(event.getKey(), key);
 				assertEquals(event.getNewValue(), "stringValue");
@@ -93,6 +94,7 @@ public class PDEPreferencesTestCase extends TestCase {
 
 		IPreferenceChangeListener listener = new IPreferenceChangeListener(){
 
+			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				assertEquals(event.getKey(), key);
 				assertEquals(event.getOldValue(), "oldStringValue");

@@ -36,6 +36,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
 	 */
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -49,6 +50,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<plugin id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(" autoStart=\"" + fAutoStart + "\""); //$NON-NLS-1$//$NON-NLS-2$
@@ -59,6 +61,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPluginConfiguration#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -66,6 +69,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPluginConfiguration#getStartLevel()
 	 */
+	@Override
 	public int getStartLevel() {
 		return fStartLevel;
 	}
@@ -73,6 +77,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPluginConfiguration#isAutoStart()
 	 */
+	@Override
 	public boolean isAutoStart() {
 		return fAutoStart;
 	}
@@ -80,6 +85,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPluginConfiguration#setAutoStart(boolean)
 	 */
+	@Override
 	public void setAutoStart(boolean autostart) {
 		boolean oldValue = fAutoStart;
 		fAutoStart = autostart;
@@ -91,6 +97,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IPluginConfiguration#setStartLevel(java.lang.String)
 	 */
+	@Override
 	public void setStartLevel(int startLevel) {
 		int oldValue = fStartLevel;
 		fStartLevel = startLevel;
@@ -101,6 +108,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductPluginConfiguration#setId(java.lang.String)
 	 */
+	@Override
 	public void setId(String id) {
 		fId = id;
 	}

@@ -723,6 +723,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		return super.getAdapter(adapter);
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(getClass().getSimpleName());
 		sb.append('[');

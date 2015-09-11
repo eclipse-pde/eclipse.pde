@@ -33,6 +33,7 @@ public class InvalidTargetBundle extends TargetBundle {
 		fStatus = status;
 	}
 
+	@Override
 	public IStatus getStatus() {
 		return fStatus;
 	}
@@ -40,6 +41,7 @@ public class InvalidTargetBundle extends TargetBundle {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof InvalidTargetBundle) {
 			if (fInfo != null && fInfo.equals(((InvalidTargetBundle) obj).fInfo)) {
@@ -52,6 +54,7 @@ public class InvalidTargetBundle extends TargetBundle {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		if (fInfo != null) {
 			return fInfo.hashCode();

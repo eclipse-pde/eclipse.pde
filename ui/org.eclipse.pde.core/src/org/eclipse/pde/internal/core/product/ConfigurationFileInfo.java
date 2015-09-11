@@ -58,6 +58,7 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
 	 */
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
@@ -120,6 +121,7 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 
 		// the first entry here is for backwards compatibility
@@ -164,6 +166,7 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 		writer.println();
 	}
 
+	@Override
 	public void setUse(String os, String use) {
 		if (os == null) {
 			String old = fUse;
@@ -195,6 +198,7 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 		}
 	}
 
+	@Override
 	public String getUse(String os) {
 		if (os == null)
 			return fUse;
@@ -211,6 +215,7 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 		return null;
 	}
 
+	@Override
 	public void setPath(String os, String path) {
 		if (os == null) {
 			String old = fPath;
@@ -242,6 +247,7 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 		}
 	}
 
+	@Override
 	public String getPath(String os) {
 		if (os == null)
 			return fPath;

@@ -23,6 +23,7 @@ public class ClasspathContainerInitializer extends org.eclipse.jdt.core.Classpat
 	public ClasspathContainerInitializer() {
 	}
 
+	@Override
 	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
 		JavaCore.setClasspathContainer(containerPath, new IJavaProject[]{project}, new IClasspathContainer[]{new ClasspathContainer(PATH)}, null);
 	}
@@ -43,6 +44,7 @@ public class ClasspathContainerInitializer extends org.eclipse.jdt.core.Classpat
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
 		 */
+		@Override
 		public IClasspathEntry[] getClasspathEntries() {
 			return new IClasspathEntry[0]; // empty
 		}
@@ -50,6 +52,7 @@ public class ClasspathContainerInitializer extends org.eclipse.jdt.core.Classpat
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 		 */
+		@Override
 		public String getDescription() {
 			return "PDE Test Classpath Container";
 		}
@@ -57,6 +60,7 @@ public class ClasspathContainerInitializer extends org.eclipse.jdt.core.Classpat
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.IClasspathContainer#getKind()
 		 */
+		@Override
 		public int getKind() {
 			return IClasspathContainer.K_APPLICATION;
 		}
@@ -64,6 +68,7 @@ public class ClasspathContainerInitializer extends org.eclipse.jdt.core.Classpat
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.IClasspathContainer#getPath()
 		 */
+		@Override
 		public IPath getPath() {
 			return fPath;
 		}

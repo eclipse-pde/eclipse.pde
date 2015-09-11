@@ -195,6 +195,7 @@ public class PluginModelManager implements IModelProviderListener {
 	/**
 	 * React to changes in plug-ins in the workspace and/or target
 	 */
+	@Override
 	public void modelsChanged(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();
 

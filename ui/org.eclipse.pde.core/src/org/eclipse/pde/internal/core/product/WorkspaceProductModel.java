@@ -38,6 +38,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductModel#load()
 	 */
+	@Override
 	public void load() throws CoreException {
 		if (fFile.exists()) {
 			InputStream stream = null;
@@ -68,6 +69,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductModel#isInSync()
 	 */
+	@Override
 	public boolean isInSync() {
 		IPath path = fFile.getLocation();
 		return path == null ? false : isInSync(path.toFile());
@@ -76,6 +78,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.AbstractModel#getUnderlyingResource()
 	 */
+	@Override
 	public IResource getUnderlyingResource() {
 		return fFile;
 	}
@@ -83,6 +86,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductModel#getInstallLocation()
 	 */
+	@Override
 	public String getInstallLocation() {
 		return fFile.getLocation().toOSString();
 	}
@@ -90,6 +94,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditableModel#save()
 	 */
+	@Override
 	public void save() {
 		ByteArrayInputStream stream = null;
 		try {
@@ -132,6 +137,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
@@ -139,6 +145,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
 	 */
+	@Override
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
@@ -152,6 +159,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}
@@ -159,6 +167,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.AbstractModel#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(true);
 		super.fireModelChanged(event);
@@ -167,6 +176,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductModel#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return fEditable;
 	}
@@ -174,6 +184,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.IWorkspaceModel#reload()
 	 */
+	@Override
 	public void reload() {
 		// Underlying file has to exist in order to reload the model
 		if (fFile.exists()) {

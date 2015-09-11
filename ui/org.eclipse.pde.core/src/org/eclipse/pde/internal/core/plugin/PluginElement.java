@@ -55,6 +55,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		fElement = element.fElement;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -79,20 +80,24 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		return false;
 	}
 
+	@Override
 	public IPluginElement createCopy() {
 		return new PluginElement(this);
 	}
 
+	@Override
 	public IPluginAttribute getAttribute(String name) {
 		return getAttributeMap().get(name);
 	}
 
+	@Override
 	public IPluginAttribute[] getAttributes() {
 		Collection<IPluginAttribute> values = getAttributeMap().values();
 		IPluginAttribute[] result = new IPluginAttribute[values.size()];
 		return values.toArray(result);
 	}
 
+	@Override
 	public int getAttributeCount() {
 		// if attributes are initialized, don't load the entire map to find the # of elements
 		if (fAttributes == null && fElement != null)
@@ -100,6 +105,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		return getAttributeMap().size();
 	}
 
+	@Override
 	public Object getElementInfo() {
 		if (fElementInfo != null) {
 			ISchema schema = fElementInfo.getSchema();
@@ -123,6 +129,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		return fElementInfo;
 	}
 
+	@Override
 	public String getText() {
 		if (fText == null && fElement != null)
 			fText = fElement.getValue();
@@ -171,6 +178,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		firePropertyChanged(P_ATTRIBUTE, oldValue, null);
 	}
 
+	@Override
 	public void setAttribute(String name, String value) throws CoreException {
 		ensureModelEditable();
 		if (value == null) {
@@ -197,6 +205,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 	}
 
+	@Override
 	public void setText(String newText) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fText;
@@ -205,6 +214,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<" + getName()); //$NON-NLS-1$
@@ -263,6 +273,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		return null;
 	}
 
+	@Override
 	protected ArrayList<IPluginObject> getChildrenList() {
 		if (fChildren == null) {
 			fChildren = new ArrayList<IPluginObject>();
@@ -279,6 +290,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		return fChildren;
 	}
 
+	@Override
 	public String getName() {
 		if (fName == null && fElement != null) {
 			fName = fElement.getName();

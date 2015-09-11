@@ -36,6 +36,7 @@ public class TargetPlatformProvisionTask extends Task {
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
+	@Override
 	public void execute() throws BuildException {
 
 		try {
@@ -65,6 +66,7 @@ public class TargetPlatformProvisionTask extends Task {
 		// resolve using Job to allow progress reporting when run inside IDE
 		final IStatus[] status = new IStatus[1];
 		Job resolveJob = new Job(NLS.bind(PDECoreMessages.TargetPlatformProvisionTask_Resolving_X_Job, null != targetDefinition.getName() && targetDefinition.getName().length() > 0 ? targetDefinition.getName() : targetFile.getName())) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				status[0] = targetDefinition.resolve(monitor);
 				return Status.OK_STATUS;

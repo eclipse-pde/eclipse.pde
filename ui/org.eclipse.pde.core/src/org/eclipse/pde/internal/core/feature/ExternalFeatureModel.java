@@ -23,12 +23,14 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
 	 */
+	@Override
 	protected void updateTimeStamp() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
+	@Override
 	public boolean isInSync() {
 		return true;
 	}
@@ -36,6 +38,7 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.feature.AbstractFeatureModel#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return false;
 	}
@@ -43,6 +46,7 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load()
 	 */
+	@Override
 	public void load() throws CoreException {
 	}
 
@@ -53,6 +57,7 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.feature.AbstractFeatureModel#getInstallLocation()
 	 */
+	@Override
 	public String getInstallLocation() {
 		return location;
 	}
@@ -60,6 +65,7 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.AbstractNLModel#createNLResourceHelper()
 	 */
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		if (location != null) {
 			URL url = getNLLookupLocation();

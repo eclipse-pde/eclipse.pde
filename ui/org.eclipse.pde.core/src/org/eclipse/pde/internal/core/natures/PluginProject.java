@@ -22,11 +22,13 @@ public class PluginProject extends BaseProject {
 		super();
 	}
 
+	@Override
 	public void configure() throws CoreException {
 		addToBuildSpec(PDE.MANIFEST_BUILDER_ID);
 		addToBuildSpec(PDE.SCHEMA_BUILDER_ID);
 	}
 
+	@Override
 	public void deconfigure() throws CoreException {
 		removeFromBuildSpec(PDE.MANIFEST_BUILDER_ID);
 		removeFromBuildSpec(PDE.SCHEMA_BUILDER_ID);

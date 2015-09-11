@@ -28,6 +28,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 			this.monitor = monitor;
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 
@@ -56,6 +57,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE || monitor.isCanceled())
 			return new IProject[0];
@@ -103,6 +105,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		IFile file = PDEProject.getFeatureXml(getProject());
 		if (file.exists()) {

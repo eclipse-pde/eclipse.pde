@@ -60,6 +60,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetHandle#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		try {
 			URI uri = new URI(SCHEME, fFile.getFullPath().toPortableString(), null);
@@ -72,6 +73,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#getInputStream()
 	 */
+	@Override
 	protected InputStream getInputStream() throws CoreException {
 		return fFile.getContents();
 	}
@@ -79,6 +81,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetHandle#exists()
 	 */
+	@Override
 	public boolean exists() {
 		return fFile.exists();
 	}
@@ -86,6 +89,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof WorkspaceFileTargetHandle) {
 			WorkspaceFileTargetHandle handle = (WorkspaceFileTargetHandle) obj;
@@ -97,6 +101,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return fFile.hashCode() + getClass().hashCode();
 	}
@@ -104,6 +109,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#delete()
 	 */
+	@Override
 	void delete() throws CoreException {
 		if (fFile.exists()) {
 			fFile.delete(false, null);
@@ -114,6 +120,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.core.target.ITargetDefinition)
 	 */
+	@Override
 	public void save(ITargetDefinition definition) throws CoreException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		((TargetDefinition) definition).write(outputStream);
@@ -135,6 +142,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return fFile.getName();
 	}

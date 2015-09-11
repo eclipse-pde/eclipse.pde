@@ -28,10 +28,12 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		super(model);
 	}
 
+	@Override
 	public String getLauncherName() {
 		return fLauncherName;
 	}
 
+	@Override
 	public void setLauncherName(String name) {
 		String old = fLauncherName;
 		fLauncherName = name;
@@ -39,6 +41,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 			firePropertyChanged(P_LAUNCHER, old, fLauncherName);
 	}
 
+	@Override
 	public void setIconPath(String iconId, String path) {
 		if (path == null)
 			path = ""; //$NON-NLS-1$
@@ -48,14 +51,17 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 			firePropertyChanged(iconId, old, path);
 	}
 
+	@Override
 	public String getIconPath(String iconId) {
 		return fIcons.get(iconId);
 	}
 
+	@Override
 	public boolean usesWinIcoFile() {
 		return fUseIcoFile;
 	}
 
+	@Override
 	public void setUseWinIcoFile(boolean use) {
 		boolean old = fUseIcoFile;
 		fUseIcoFile = use;
@@ -63,6 +69,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 			firePropertyChanged(P_USE_ICO, Boolean.toString(old), Boolean.toString(fUseIcoFile));
 	}
 
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			fLauncherName = ((Element) node).getAttribute("name"); //$NON-NLS-1$
@@ -122,6 +129,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		fIcons.put(LINUX_ICON, element.getAttribute("icon")); //$NON-NLS-1$
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<launcher"); //$NON-NLS-1$
 		if (fLauncherName != null && fLauncherName.length() > 0)

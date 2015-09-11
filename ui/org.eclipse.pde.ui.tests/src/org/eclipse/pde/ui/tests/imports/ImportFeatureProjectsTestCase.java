@@ -36,11 +36,13 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 		return new TestSuite(ImportFeatureProjectsTestCase.class);
 	}
 
+	@Override
 	protected void tearDown() {
 		fProjectName = null;
 		super.tearDown();
 	}
 
+	@Override
 	protected String getProjectName() {
 		return fProjectName;
 	}
@@ -94,6 +96,7 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 		}
 	}
 
+	@Override
 	protected void verifyProjectExistence() {
 		IFeatureModel[] imported = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
 		for (int i = 0; i < imported.length; i++) {

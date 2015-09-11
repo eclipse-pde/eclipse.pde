@@ -31,11 +31,13 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		return new TestSuite(ExportPackageTestCase.class);
 	}
 
+	@Override
 	protected void addPackage(IManifestHeader header, String packageName) {
 		PackageObject packageObject = new PackageObject((ExportPackageHeader) header, packageName, null, null);
 		((ExportPackageHeader) header).addPackage(packageObject);
 	}
 
+	@Override
 	protected PackageObject getPackage(IManifestHeader header, String packageName) {
 		return ((ExportPackageHeader) header).getPackage(packageName);
 	}

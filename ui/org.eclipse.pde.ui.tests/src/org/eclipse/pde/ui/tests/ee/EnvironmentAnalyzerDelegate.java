@@ -29,6 +29,7 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate#analyze(org.eclipse.jdt.launching.IVMInstall, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		if (!(vm instanceof IVMInstall2))
 			return new CompatibleEnvironment[0];

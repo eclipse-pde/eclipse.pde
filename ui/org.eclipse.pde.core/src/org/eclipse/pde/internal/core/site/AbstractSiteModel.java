@@ -36,6 +36,7 @@ public abstract class AbstractSiteModel extends AbstractModel implements ISiteMo
 		super();
 	}
 
+	@Override
 	public ISite getSite() {
 		if (site == null) {
 			Site s = new Site();
@@ -45,30 +46,36 @@ public abstract class AbstractSiteModel extends AbstractModel implements ISiteMo
 		return site;
 	}
 
+	@Override
 	public ISiteModelFactory getFactory() {
 		if (factory == null)
 			factory = new SiteModelFactory(this);
 		return factory;
 	}
 
+	@Override
 	public String getInstallLocation() {
 		return null;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return true;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
 
+	@Override
 	public boolean isValid() {
 		if (!isLoaded() || site == null)
 			return false;
 		return site.isValid();
 	}
 
+	@Override
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
 			SAXParser parser = getSaxParser();
@@ -96,6 +103,7 @@ public abstract class AbstractSiteModel extends AbstractModel implements ISiteMo
 		site.parse(rootNode);
 	}
 
+	@Override
 	public void reload(InputStream stream, boolean outOfSync) throws CoreException {
 		if (site != null)
 			site.reset();
@@ -103,6 +111,7 @@ public abstract class AbstractSiteModel extends AbstractModel implements ISiteMo
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {site}, null));
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}

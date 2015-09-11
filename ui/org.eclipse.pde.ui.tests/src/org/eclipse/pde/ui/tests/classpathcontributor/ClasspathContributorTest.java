@@ -44,6 +44,7 @@ public class ClasspathContributorTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		project = importProject(workspace);
 	}
@@ -51,6 +52,7 @@ public class ClasspathContributorTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		project.delete(true, true, monitor);
 	}

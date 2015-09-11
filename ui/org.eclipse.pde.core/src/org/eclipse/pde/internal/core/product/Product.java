@@ -55,6 +55,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -62,6 +63,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getProductId()
 	 */
+	@Override
 	public String getProductId() {
 		return fProductId;
 	}
@@ -69,6 +71,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -76,6 +79,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getVersion()
 	 */
+	@Override
 	public String getVersion() {
 		return fVersion;
 	}
@@ -83,6 +87,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getApplication()
 	 */
+	@Override
 	public String getApplication() {
 		return fApplication;
 	}
@@ -90,6 +95,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getDefiningPluginId()
 	 */
+	@Override
 	public String getDefiningPluginId() {
 		if (fProductId == null)
 			return null;
@@ -100,6 +106,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setId(java.lang.String)
 	 */
+	@Override
 	public void setId(String id) {
 		String old = fId;
 		fId = id;
@@ -110,6 +117,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setProductId(java.lang.String)
 	 */
+	@Override
 	public void setProductId(String id) {
 		String old = fProductId;
 		fProductId = id;
@@ -120,6 +128,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setVersion(java.lang.String)
 	 */
+	@Override
 	public void setVersion(String version) {
 		String old = fVersion;
 		fVersion = version;
@@ -130,6 +139,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) {
 		String old = fName;
 		fName = name;
@@ -140,6 +150,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setAboutInfo(org.eclipse.pde.internal.core.iproduct.IAboutInfo)
 	 */
+	@Override
 	public void setAboutInfo(IAboutInfo info) {
 		fAboutInfo = info;
 	}
@@ -147,6 +158,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setApplication(java.lang.String)
 	 */
+	@Override
 	public void setApplication(String application) {
 		String old = fApplication;
 		fApplication = application;
@@ -157,6 +169,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<product"); //$NON-NLS-1$
 		if (fName != null && fName.length() > 0)
@@ -283,6 +296,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getAboutInfo()
 	 */
+	@Override
 	public IAboutInfo getAboutInfo() {
 		return fAboutInfo;
 	}
@@ -290,6 +304,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#reset()
 	 */
+	@Override
 	public void reset() {
 		fApplication = null;
 		fId = null;
@@ -315,6 +330,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
 	 */
+	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("product")) { //$NON-NLS-1$
 			Element element = (Element) node;
@@ -439,6 +455,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#addPlugin(org.eclipse.pde.internal.core.iproduct.IProductPlugin)
 	 */
+	@Override
 	public void addPlugins(IProductPlugin[] plugins) {
 		boolean modified = false;
 		for (int i = 0; i < plugins.length; i++) {
@@ -461,6 +478,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#addPluginConfigurations(org.eclipse.pde.internal.core.iproduct.IPluginConfiguration[])
 	 */
+	@Override
 	public void addPluginConfigurations(IPluginConfiguration[] configuration) {
 		boolean modified = false;
 		for (int i = 0; i < configuration.length; i++) {
@@ -483,6 +501,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#addConfigurationProperties(org.eclipse.pde.internal.core.iproduct.IConfigurationProperty[])
 	 */
+	@Override
 	public void addConfigurationProperties(IConfigurationProperty[] properties) {
 		boolean modified = false;
 		for (int i = 0; i < properties.length; i++) {
@@ -504,6 +523,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removePlugins(org.eclipse.pde.internal.core.iproduct.IProductPlugin[])
 	 */
+	@Override
 	public void removePlugins(IProductPlugin[] plugins) {
 		boolean modified = false;
 		LinkedList<Object> removedConfigurations = new LinkedList<Object>();
@@ -528,6 +548,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removePluginConfigurations(org.eclipse.pde.internal.core.iproduct.IProductPluginConfiguration[])
 	 */
+	@Override
 	public void removePluginConfigurations(IPluginConfiguration[] configurations) {
 		boolean modified = false;
 		for (int i = 0; i < configurations.length; i++) {
@@ -542,6 +563,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removeConfigurationProperties(org.eclipse.pde.internal.core.iproduct.IConfigurationProperty[])
 	 */
+	@Override
 	public void removeConfigurationProperties(IConfigurationProperty[] properties) {
 		boolean modified = false;
 		for (int i = 0; i < properties.length; i++) {
@@ -556,6 +578,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPlugins()
 	 */
+	@Override
 	public IProductPlugin[] getPlugins() {
 		return fPlugins.values().toArray(new IProductPlugin[fPlugins.size()]);
 	}
@@ -563,6 +586,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPluginConfigurations()
 	 */
+	@Override
 	public IPluginConfiguration[] getPluginConfigurations() {
 		return fPluginConfigurations.values().toArray(new IPluginConfiguration[fPluginConfigurations.size()]);
 	}
@@ -570,6 +594,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getConfigurationProperties()
 	 */
+	@Override
 	public IConfigurationProperty[] getConfigurationProperties() {
 		return fConfigurationProperties.values().toArray(new IConfigurationProperty[fConfigurationProperties.size()]);
 	}
@@ -577,6 +602,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getRepositories()
 	 */
+	@Override
 	public IRepositoryInfo[] getRepositories() {
 		return fRepositories.toArray(new IRepositoryInfo[fRepositories.size()]);
 	}
@@ -584,6 +610,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#addRepositories(org.eclipse.pde.internal.core.iproduct.IRepositoryInfo[])
 	 */
+	@Override
 	public void addRepositories(IRepositoryInfo[] repos) {
 		boolean modified = false;
 		for (int i = 0; i < repos.length; i++) {
@@ -596,6 +623,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removeRepositories(org.eclipse.pde.internal.core.iproduct.IRepositoryInfo[])
 	 */
+	@Override
 	public void removeRepositories(IRepositoryInfo[] repos) {
 		boolean modified = false;
 		for (int i = 0; i < repos.length; i++) {
@@ -608,6 +636,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPreferencesInfo()
 	 */
+	@Override
 	public IPreferencesInfo getPreferencesInfo() {
 		return fPreferencesInfo;
 	}
@@ -615,6 +644,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setPreferencesInfo(org.eclipse.pde.internal.core.iproduct.IPreferencesInfo)
 	 */
+	@Override
 	public void setPreferencesInfo(IPreferencesInfo info) {
 		fPreferencesInfo = info;
 	}
@@ -622,6 +652,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getCSSInfo()
 	 */
+	@Override
 	public ICSSInfo getCSSInfo() {
 		return fCSSInfo;
 	}
@@ -629,6 +660,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setCSSInfo(org.eclipse.pde.internal.core.iproduct.ICSSInfo)
 	 */
+	@Override
 	public void setCSSInfo(ICSSInfo info) {
 		fCSSInfo = info;
 	}
@@ -636,6 +668,7 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getConfigurationFileInfo()
 	 */
+	@Override
 	public IConfigurationFileInfo getConfigurationFileInfo() {
 		return fConfigIniInfo;
 	}
@@ -643,14 +676,17 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setConfigurationFileInfo(org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo)
 	 */
+	@Override
 	public void setConfigurationFileInfo(IConfigurationFileInfo info) {
 		fConfigIniInfo = info;
 	}
 
+	@Override
 	public boolean useFeatures() {
 		return fUseFeatures;
 	}
 
+	@Override
 	public void setUseFeatures(boolean use) {
 		boolean old = fUseFeatures;
 		fUseFeatures = use;
@@ -658,10 +694,12 @@ public class Product extends ProductObject implements IProduct {
 			firePropertyChanged(P_USEFEATURES, Boolean.toString(old), Boolean.toString(fUseFeatures));
 	}
 
+	@Override
 	public boolean containsPlugin(String id) {
 		return fPlugins.containsKey(id);
 	}
 
+	@Override
 	public boolean containsFeature(String id) {
 		IProductFeature[] features = getFeatures();
 		for (int i = 0; i < features.length; i++) {
@@ -671,30 +709,37 @@ public class Product extends ProductObject implements IProduct {
 		return false;
 	}
 
+	@Override
 	public IWindowImages getWindowImages() {
 		return fWindowImages;
 	}
 
+	@Override
 	public void setWindowImages(IWindowImages images) {
 		fWindowImages = images;
 	}
 
+	@Override
 	public ISplashInfo getSplashInfo() {
 		return fSplashInfo;
 	}
 
+	@Override
 	public void setSplashInfo(ISplashInfo info) {
 		fSplashInfo = info;
 	}
 
+	@Override
 	public ILauncherInfo getLauncherInfo() {
 		return fLauncherInfo;
 	}
 
+	@Override
 	public void setLauncherInfo(ILauncherInfo info) {
 		fLauncherInfo = info;
 	}
 
+	@Override
 	public void addFeatures(IProductFeature[] features) {
 		boolean modified = false;
 		for (int i = 0; i < features.length; i++) {
@@ -715,6 +760,7 @@ public class Product extends ProductObject implements IProduct {
 			fireStructureChanged(features, IModelChangedEvent.INSERT);
 	}
 
+	@Override
 	public void removeFeatures(IProductFeature[] features) {
 		boolean modified = false;
 		for (int i = 0; i < features.length; i++) {
@@ -727,42 +773,52 @@ public class Product extends ProductObject implements IProduct {
 			fireStructureChanged(features, IModelChangedEvent.REMOVE);
 	}
 
+	@Override
 	public IProductFeature[] getFeatures() {
 		return fFeatures.toArray(new IProductFeature[fFeatures.size()]);
 	}
 
+	@Override
 	public IArgumentsInfo getLauncherArguments() {
 		return fLauncherArgs;
 	}
 
+	@Override
 	public void setLauncherArguments(IArgumentsInfo info) {
 		fLauncherArgs = info;
 	}
 
+	@Override
 	public IIntroInfo getIntroInfo() {
 		return fIntroInfo;
 	}
 
+	@Override
 	public void setIntroInfo(IIntroInfo introInfo) {
 		fIntroInfo = introInfo;
 	}
 
+	@Override
 	public IJREInfo getJREInfo() {
 		return fJVMInfo;
 	}
 
+	@Override
 	public void setJREInfo(IJREInfo info) {
 		fJVMInfo = info;
 	}
 
+	@Override
 	public ILicenseInfo getLicenseInfo() {
 		return fLicenseInfo;
 	}
 
+	@Override
 	public void setLicenseInfo(ILicenseInfo info) {
 		fLicenseInfo = info;
 	}
 
+	@Override
 	public void swap(IProductFeature feature1, IProductFeature feature2) {
 		int index1 = fFeatures.indexOf(feature1);
 		int index2 = fFeatures.indexOf(feature2);
@@ -778,14 +834,17 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#findPluginConfiguration(java.lang.String)
 	 */
+	@Override
 	public IPluginConfiguration findPluginConfiguration(String id) {
 		return (IPluginConfiguration) fPluginConfigurations.get(id);
 	}
 
+	@Override
 	public boolean includeLaunchers() {
 		return fIncludeLaunchers;
 	}
 
+	@Override
 	public void setIncludeLaunchers(boolean include) {
 		boolean old = fIncludeLaunchers;
 		fIncludeLaunchers = include;

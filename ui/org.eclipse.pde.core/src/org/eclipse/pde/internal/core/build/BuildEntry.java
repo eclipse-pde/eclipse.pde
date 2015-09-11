@@ -28,22 +28,26 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		this.name = name;
 	}
 
+	@Override
 	public void addToken(String token) throws CoreException {
 		ensureModelEditable();
 		tokens.add(token);
 		getModel().fireModelChanged(new ModelChangedEvent(getModel(), IModelChangedEvent.INSERT, new Object[] {token}, null));
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String[] getTokens() {
 		String[] result = new String[tokens.size()];
 		tokens.copyInto(result);
 		return result;
 	}
 
+	@Override
 	public boolean contains(String token) {
 		return tokens.contains(token);
 	}
@@ -59,12 +63,14 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		}
 	}
 
+	@Override
 	public void removeToken(String token) throws CoreException {
 		ensureModelEditable();
 		tokens.remove(token);
 		getModel().fireModelChanged(new ModelChangedEvent(getModel(), IModelChangedEvent.REMOVE, new Object[] {token}, null));
 	}
 
+	@Override
 	public void renameToken(String oldName, String newName) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < tokens.size(); i++) {
@@ -76,6 +82,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		getModel().fireModelChanged(new ModelChangedEvent(getModel(), IModelChangedEvent.CHANGE, new Object[] {oldName}, null));
 	}
 
+	@Override
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.name;
@@ -83,10 +90,12 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		getModel().fireModelObjectChanged(this, P_NAME, oldValue, name);
 	}
 
+	@Override
 	public String toString() {
 		return name + " = " + tokens; //$NON-NLS-1$
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		Enumeration<String> elements = tokens.elements();
 		IPath rootPath = getRootPath();
@@ -102,6 +111,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		PropertiesUtil.writeKeyValuePair(indent, name, elements, writer);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_NAME)) {
 			setName(newValue != null ? newValue.toString() : null);

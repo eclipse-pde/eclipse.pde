@@ -116,6 +116,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetHandle#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		try {
 			URI uri = new URI(SCHEME, getFile().getName(), null);
@@ -128,6 +129,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetHandle#exists()
 	 */
+	@Override
 	public boolean exists() {
 		return getFile().exists();
 	}

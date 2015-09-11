@@ -32,6 +32,7 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 		fFile = file;
 	}
 
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		super.fireModelChanged(event);
@@ -69,30 +70,37 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 		return fFile;
 	}
 
+	@Override
 	public String getInstallLocation() {
 		return fFile.getParent().getLocation().toOSString();
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		return fFile;
 	}
 
+	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return fEditable;
 	}
 
+	@Override
 	public boolean isInSync() {
 		return isInSync(fFile.getLocation().toFile());
 	}
 
+	@Override
 	protected void updateTimeStamp() {
 		updateTimeStamp(fFile.getLocation().toFile());
 	}
 
+	@Override
 	public void load() {
 		if (fFile.exists()) {
 			InputStream stream = null;
@@ -121,6 +129,7 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 		}
 	}
 
+	@Override
 	public void save() {
 		try {
 			String contents = fixLineDelimiter(getContents(), fFile);
@@ -137,6 +146,7 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 		}
 	}
 
+	@Override
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
@@ -145,6 +155,7 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 		setDirty(false);
 	}
 
+	@Override
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}

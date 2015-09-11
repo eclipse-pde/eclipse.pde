@@ -31,6 +31,7 @@ public class PackageFriend extends BundleObject {
 		return fName;
 	}
 
+	@Override
 	public String toString() {
 		return fName;
 	}
@@ -49,6 +50,7 @@ public class PackageFriend extends BundleObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#writeDelimeter(java.io.PrintWriter)
 	 */
+	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		writer.print(',');
 	}

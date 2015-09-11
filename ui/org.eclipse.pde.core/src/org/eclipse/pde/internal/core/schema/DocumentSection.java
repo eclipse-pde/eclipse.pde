@@ -28,10 +28,12 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 		this.sectionId = sectionId;
 	}
 
+	@Override
 	public String getSectionId() {
 		return sectionId;
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		String description = getWritableDescription();
 		if (description == null || description.equals("")) //$NON-NLS-1$
@@ -48,12 +50,14 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 		writer.println(indent + "</annotation>"); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DocumentSection && ((DocumentSection) obj).getSectionId().equalsIgnoreCase(sectionId))
 			return true;
 		return false;
 	}
 
+	@Override
 	public int compareTo(Object arg0) {
 		if (arg0 instanceof DocumentSection) {
 			int otherIndex = getIndex(((DocumentSection) arg0).getSectionId());

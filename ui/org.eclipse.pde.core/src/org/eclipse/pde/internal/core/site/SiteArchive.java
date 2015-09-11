@@ -21,14 +21,17 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 	private String url;
 	private String path;
 
+	@Override
 	public boolean isValid() {
 		return url != null && path != null;
 	}
 
+	@Override
 	public String getURL() {
 		return url;
 	}
 
+	@Override
 	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
@@ -36,10 +39,12 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 		firePropertyChanged(P_URL, oldValue, url);
 	}
 
+	@Override
 	public String getPath() {
 		return path;
 	}
 
+	@Override
 	public void setPath(String path) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.path;
@@ -47,18 +52,21 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 		firePropertyChanged(P_PATH, oldValue, path);
 	}
 
+	@Override
 	public void reset() {
 		super.reset();
 		url = null;
 		path = null;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		path = getNodeAttribute(node, "path"); //$NON-NLS-1$
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<archive"); //$NON-NLS-1$
@@ -69,6 +77,7 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_PATH)) {
 			setPath(newValue != null ? newValue.toString() : null);

@@ -29,6 +29,7 @@ public class ImportWithLinksTestCase extends BaseImportTestCase {
 		return new TestSuite(ImportWithLinksTestCase.class);
 	}
 
+	@Override
 	protected int getType() {
 		return TYPE;
 	}
@@ -38,6 +39,7 @@ public class ImportWithLinksTestCase extends BaseImportTestCase {
 		doSingleImport("org.apache.ant", true);
 	}
 
+	@Override
 	protected void verifyProject(String projectName, boolean isJava) {
 		try {
 			IProject project = verifyProject(projectName);

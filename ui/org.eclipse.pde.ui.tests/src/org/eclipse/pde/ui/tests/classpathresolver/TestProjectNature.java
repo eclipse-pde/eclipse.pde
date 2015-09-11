@@ -19,16 +19,20 @@ public class TestProjectNature implements IProjectNature {
 
 	private IProject project;
 
+	@Override
 	public void configure() throws CoreException {
 	}
 
+	@Override
 	public void deconfigure() throws CoreException {
 	}
 
+	@Override
 	public IProject getProject() {
 		return project;
 	}
 
+	@Override
 	public void setProject(IProject project) {
 		this.project = project;
 	}

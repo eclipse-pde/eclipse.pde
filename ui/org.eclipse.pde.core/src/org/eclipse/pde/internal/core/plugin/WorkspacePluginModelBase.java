@@ -41,6 +41,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 		return new NLResourceHelper("plugin", PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
 	}
 
+	@Override
 	@Deprecated
 	public URL getNLLookupLocation() {
 		try {
@@ -62,6 +63,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 		super.fireModelChanged(event);
 	}
 
+	@Override
 	@Deprecated
 	public IBuildModel getBuildModel() {
 		return null;
@@ -95,6 +97,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 		return fUnderlyingResource;
 	}
 
+	@Override
 	public boolean isInSync() {
 		if (fUnderlyingResource == null)
 			return true;
@@ -104,14 +107,17 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 		return super.isInSync(path.toFile());
 	}
 
+	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return fEditable;
 	}
 
+	@Override
 	public void load() {
 		if (fUnderlyingResource == null)
 			return;
@@ -141,6 +147,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
 
+	@Override
 	public void save() {
 		if (fUnderlyingResource == null)
 			return;
@@ -168,6 +175,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 		}
 	}
 
+	@Override
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			fPluginBase.write("", writer); //$NON-NLS-1$
@@ -175,6 +183,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 		fDirty = false;
 	}
 
+	@Override
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}

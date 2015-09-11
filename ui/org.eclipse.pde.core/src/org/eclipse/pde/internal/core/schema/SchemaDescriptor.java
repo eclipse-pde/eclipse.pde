@@ -69,6 +69,7 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getPointId()
 	 */
+	@Override
 	public String getPointId() {
 		if (fPoint != null)
 			return fPoint;
@@ -78,6 +79,7 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getSchema(boolean)
 	 */
+	@Override
 	public ISchema getSchema(boolean abbreviated) {
 		if (fSchema == null && fSchemaURL != null) {
 			if (fEditable)
@@ -93,6 +95,7 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getSchemaURL()
 	 */
+	@Override
 	public URL getSchemaURL() {
 		return fSchemaURL;
 	}
@@ -100,10 +103,12 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#isStandalone()
 	 */
+	@Override
 	public boolean isStandalone() {
 		return true;
 	}
 
+	@Override
 	public long getLastModified() {
 		return fLastModified;
 	}

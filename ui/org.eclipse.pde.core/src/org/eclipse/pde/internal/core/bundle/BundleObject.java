@@ -65,6 +65,7 @@ public class BundleObject implements Serializable, IWritable, IWritableDelimiter
 		provider.fireModelObjectChanged(object, property, oldValue, newValue);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print(toString());
@@ -81,6 +82,7 @@ public class BundleObject implements Serializable, IWritable, IWritableDelimiter
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
 	 */
+	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		writer.println(',');
 		writer.print(' ');

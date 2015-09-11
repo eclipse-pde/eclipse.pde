@@ -30,6 +30,7 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public IDocumentAttributeNode createAttribute(String name, String value, IDocumentElementNode enclosingElement) {
 
 		IDocumentAttributeNode attribute = new DocumentAttributeNode();
@@ -46,6 +47,7 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentTextNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public IDocumentTextNode createDocumentTextNode(String content, IDocumentElementNode parent) {
 		IDocumentTextNode textNode = new DocumentTextNode();
 		textNode.setEnclosingElement(parent);
@@ -57,6 +59,7 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
 		// Cannot return null
 		return createGeneric(name);

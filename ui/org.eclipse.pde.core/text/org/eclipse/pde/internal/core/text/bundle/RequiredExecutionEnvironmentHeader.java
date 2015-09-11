@@ -23,6 +23,7 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 		super(name, value, bundle, lineDelimiter);
 	}
 
+	@Override
 	protected PDEManifestElement createElement(ManifestElement element) {
 		return new ExecutionEnvironment(this, element.getValue());
 	}

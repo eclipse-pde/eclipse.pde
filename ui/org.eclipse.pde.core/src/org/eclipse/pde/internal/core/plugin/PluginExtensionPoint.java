@@ -31,10 +31,12 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 		fPoint = point;
 	}
 
+	@Override
 	public boolean isValid() {
 		return getId() != null && getName() != null;
 	}
 
+	@Override
 	public String getFullId() {
 		if (fPoint != null)
 			return fPoint.getUniqueIdentifier();
@@ -52,6 +54,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 		return pluginBase.getId() + '.' + pointId;
 	}
 
+	@Override
 	public String getSchema() {
 		if (fSchema == null && fPoint != null)
 			fSchema = fPoint.getSchemaReference();
@@ -65,6 +68,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 		fStartLine = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -80,6 +84,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 		return false;
 	}
 
+	@Override
 	public void setSchema(String newSchema) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fSchema;
@@ -87,6 +92,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 		firePropertyChanged(P_SCHEMA, oldValue, fSchema);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_SCHEMA)) {
 			setSchema(newValue != null ? newValue.toString() : null);
@@ -95,6 +101,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<extension-point"); //$NON-NLS-1$
@@ -107,12 +114,14 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		if (fName == null)
 			fName = fPoint.getLabel();
 		return fName;
 	}
 
+	@Override
 	public String getId() {
 		if (fID == null) {
 			fID = fPoint.getUniqueIdentifier();

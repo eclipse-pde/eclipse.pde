@@ -35,6 +35,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocument()
 	 */
+	@Override
 	protected IDocument getDocument() {
 		return fModel.getDocument();
 	}
@@ -42,6 +43,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
+	@Override
 	public void endDocument() throws SAXException {
 		IPluginBase pluginBase = fModel.getPluginBase(false);
 		try {
@@ -54,6 +56,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void processingInstruction(String target, String data) throws SAXException {
 		if ("eclipse".equals(target)) { //$NON-NLS-1$
 			// Data should be of the form: version="<version>"
@@ -68,6 +71,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.DocumentHandler#startDocument()
 	 */
+	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
 		fSchemaVersion = null;
@@ -80,6 +84,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentNode(java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
+	@Override
 	protected IDocumentElementNode getDocumentNode(String name, IDocumentElementNode parent) {
 		IDocumentElementNode node = null;
 		if (parent == null) {
@@ -130,6 +135,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
+	@Override
 	protected IDocumentAttributeNode getDocumentAttribute(String name, String value, IDocumentElementNode parent) {
 		IDocumentAttributeNode attr = parent.getDocumentAttribute(name);
 		try {
@@ -149,6 +155,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocumentTextNode()
 	 */
+	@Override
 	protected IDocumentTextNode getDocumentTextNode(String content, IDocumentElementNode parent) {
 
 		IDocumentTextNode textNode = parent.getTextNode();

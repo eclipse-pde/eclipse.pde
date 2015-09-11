@@ -28,6 +28,7 @@ public class FeatureFactory implements IFeatureModelFactory {
 		this.model = model;
 	}
 
+	@Override
 	public IFeaturePlugin createPlugin() {
 		FeaturePlugin plugin = new FeaturePlugin();
 		plugin.model = model;
@@ -35,6 +36,7 @@ public class FeatureFactory implements IFeatureModelFactory {
 		return plugin;
 	}
 
+	@Override
 	public IFeatureData createData() {
 		FeatureData data = new FeatureData();
 		data.model = model;
@@ -42,6 +44,7 @@ public class FeatureFactory implements IFeatureModelFactory {
 		return data;
 	}
 
+	@Override
 	public IFeatureChild createChild() {
 		FeatureChild child = new FeatureChild();
 		child.model = model;
@@ -49,6 +52,7 @@ public class FeatureFactory implements IFeatureModelFactory {
 		return child;
 	}
 
+	@Override
 	public IFeatureImport createImport() {
 		FeatureImport iimport = new FeatureImport();
 		iimport.model = model;
@@ -56,6 +60,7 @@ public class FeatureFactory implements IFeatureModelFactory {
 		return iimport;
 	}
 
+	@Override
 	public IFeatureURL createURL() {
 		FeatureURL url = new FeatureURL();
 		url.model = model;
@@ -63,6 +68,7 @@ public class FeatureFactory implements IFeatureModelFactory {
 		return url;
 	}
 
+	@Override
 	public IFeatureInstallHandler createInstallHandler() {
 		FeatureInstallHandler handler = new FeatureInstallHandler();
 		handler.model = model;
@@ -70,6 +76,7 @@ public class FeatureFactory implements IFeatureModelFactory {
 		return handler;
 	}
 
+	@Override
 	public IFeatureInfo createInfo(int index) {
 		FeatureInfo info = new FeatureInfo(index);
 		info.model = model;
@@ -77,6 +84,7 @@ public class FeatureFactory implements IFeatureModelFactory {
 		return info;
 	}
 
+	@Override
 	public IFeatureURLElement createURLElement(IFeatureURL parent, int elementType) {
 		FeatureURLElement element = new FeatureURLElement(elementType);
 		element.model = model;

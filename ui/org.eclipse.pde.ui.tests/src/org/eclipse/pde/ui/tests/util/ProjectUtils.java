@@ -40,6 +40,7 @@ public class ProjectUtils {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.wizards.IProjectProvider#getLocationPath()
 		 */
+		@Override
 		public IPath getLocationPath() {
 			return ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		}
@@ -47,6 +48,7 @@ public class ProjectUtils {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.wizards.IProjectProvider#getProject()
 		 */
+		@Override
 		public IProject getProject() {
 			return ResourcesPlugin.getWorkspace().getRoot().getProject(fProjectName);
 		}
@@ -54,6 +56,7 @@ public class ProjectUtils {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.wizards.IProjectProvider#getProjectName()
 		 */
+		@Override
 		public String getProjectName() {
 			return fProjectName;
 		}
@@ -68,12 +71,14 @@ public class ProjectUtils {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard#addAdditionalPages()
 		 */
+		@Override
 		protected void addAdditionalPages() {			
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard#getTemplateSections()
 		 */
+		@Override
 		public ITemplateSection[] getTemplateSections() {
 			return new ITemplateSection[0];
 		}

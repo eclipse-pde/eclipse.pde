@@ -56,6 +56,7 @@ public class DOMParserWrapper {
 	// wrapper method needs to be added here
 
 	// Explicit disposal	
+	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
 		dispose();

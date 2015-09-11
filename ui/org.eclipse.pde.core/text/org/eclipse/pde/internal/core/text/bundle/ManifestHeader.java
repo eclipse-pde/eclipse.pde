@@ -56,6 +56,7 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) {
 		fName = name;
 	}
@@ -63,14 +64,17 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public String getValue() {
 		return fValue;
 	}
 
+	@Override
 	public void setValue(String value) {
 		String old = fValue;
 		fValue = value;
@@ -80,6 +84,7 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setOffset(int)
 	 */
+	@Override
 	public void setOffset(int offset) {
 		fOffset = offset;
 	}
@@ -87,6 +92,7 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getOffset()
 	 */
+	@Override
 	public int getOffset() {
 		return fOffset;
 	}
@@ -94,6 +100,7 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setLength(int)
 	 */
+	@Override
 	public void setLength(int length) {
 		fLength = length;
 	}
@@ -101,6 +108,7 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getLength()
 	 */
+	@Override
 	public int getLength() {
 		return fLength;
 	}
@@ -108,6 +116,7 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#write()
 	 */
+	@Override
 	public String write() {
 		StringBuffer sb = new StringBuffer(fName);
 		sb.append(": "); //$NON-NLS-1$
@@ -136,6 +145,7 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 	}
 
@@ -147,10 +157,12 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 		return fBundle;
 	}
 
+	@Override
 	public String getKey() {
 		return getName();
 	}
 
+	@Override
 	public void setKey(String key) throws CoreException {
 		setName(key);
 	}
@@ -159,12 +171,14 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 		return BundlePluginBase.getBundleManifestVersion(fBundle);
 	}
 
+	@Override
 	public void update() {
 		// TODO
 		// should do something for headers that don't have their own class
 		// (and don't override this method)
 	}
 
+	@Override
 	public void update(boolean notify) {
 	}
 }

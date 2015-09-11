@@ -22,6 +22,7 @@ public class ExecutionEnvironment extends PDEManifestElement {
 		return getValue();
 	}
 
+	@Override
 	public String toString() {
 		return getName();
 	}

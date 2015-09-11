@@ -101,11 +101,13 @@ public class ImportPackageTestCase extends PackageHeaderTestCase {
 		assertEquals(fHeaderName + ": org.osgi.framework\n", fDocument.get(pos, length));
 	}
 
+	@Override
 	protected void addPackage(IManifestHeader header, String packageName) {
 		((ImportPackageHeader) header).addPackage(packageName);
 
 	}
 
+	@Override
 	protected PackageObject getPackage(IManifestHeader header, String packageName) {
 		return ((ImportPackageHeader) header).getPackage(packageName);
 	}

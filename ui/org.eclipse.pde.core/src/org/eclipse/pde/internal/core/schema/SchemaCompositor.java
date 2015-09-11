@@ -96,16 +96,19 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 		getSchema().fireModelChanged(new ModelChangedEvent(getSchema(), IModelChangedEvent.INSERT, new Object[] {newChild}, null));
 	}
 
+	@Override
 	public int getChildCount() {
 		return children.size();
 	}
 
+	@Override
 	public ISchemaObject[] getChildren() {
 		ISchemaObject[] result = new ISchemaObject[children.size()];
 		children.copyInto(result);
 		return result;
 	}
 
+	@Override
 	public void setParent(ISchemaObject parent) {
 		super.setParent(parent);
 		for (int i = 0; i < children.size(); i++) {
@@ -114,6 +117,7 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 		}
 	}
 
+	@Override
 	public int getKind() {
 		return kind;
 	}
@@ -188,6 +192,7 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 		}
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		String tag = null;
 

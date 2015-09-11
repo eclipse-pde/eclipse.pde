@@ -39,6 +39,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getNLLookupLocation()
 	 */
+	@Override
 	@Deprecated
 	public URL getNLLookupLocation() {
 		try {
@@ -50,6 +51,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		}
 	}
 
+	@Override
 	@Deprecated
 	public IBuildModel getBuildModel() {
 		return null;
@@ -60,10 +62,12 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		return fInstallLocation;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return false;
 	}
 
+	@Override
 	public void load() {
 	}
 
@@ -78,6 +82,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		super.load(description, state);
 	}
 
+	@Override
 	public boolean isInSync() {
 		return isInSync(getLocalFile());
 	}

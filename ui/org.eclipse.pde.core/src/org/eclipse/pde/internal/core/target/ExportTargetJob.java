@@ -46,6 +46,7 @@ public class ExportTargetJob extends Job {
 		fclearDestinationDirectory = clearDestinationDirectory;
 	}
 
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			constructFilter(fTarget);

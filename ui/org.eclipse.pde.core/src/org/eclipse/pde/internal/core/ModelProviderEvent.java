@@ -28,22 +28,27 @@ public class ModelProviderEvent implements IModelProviderEvent {
 		this.changed = changed;
 	}
 
+	@Override
 	public IModel[] getAddedModels() {
 		return (added == null) ? new IModel[0] : added;
 	}
 
+	@Override
 	public IModel[] getRemovedModels() {
 		return (removed == null) ? new IModel[0] : removed;
 	}
 
+	@Override
 	public IModel[] getChangedModels() {
 		return (changed == null) ? new IModel[0] : changed;
 	}
 
+	@Override
 	public int getEventTypes() {
 		return types;
 	}
 
+	@Override
 	public Object getEventSource() {
 		return source;
 	}

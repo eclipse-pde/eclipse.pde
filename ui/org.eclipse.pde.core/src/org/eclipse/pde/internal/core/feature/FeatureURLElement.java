@@ -33,18 +33,22 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 		this.fUrl = url;
 	}
 
+	@Override
 	public int getElementType() {
 		return fElementType;
 	}
 
+	@Override
 	public URL getURL() {
 		return fUrl;
 	}
 
+	@Override
 	public int getSiteType() {
 		return fSiteType;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		String urlName = getNodeAttribute(node, "url"); //$NON-NLS-1$
@@ -58,6 +62,7 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 			fSiteType = WEB_SITE;
 	}
 
+	@Override
 	public void setURL(URL url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fUrl;
@@ -65,6 +70,7 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 		firePropertyChanged(this, P_URL, oldValue, url);
 	}
 
+	@Override
 	public void setSiteType(int type) throws CoreException {
 		ensureModelEditable();
 		Integer oldValue = new Integer(this.fSiteType);
@@ -72,6 +78,7 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 		firePropertyChanged(this, P_URL, oldValue, new Integer(type));
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_URL)) {
 			setURL((URL) newValue);
@@ -81,6 +88,7 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public String toString() {
 		if (label != null)
 			return label;
@@ -89,6 +97,7 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 		return super.toString();
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		String tag = null;
 		switch (fElementType) {

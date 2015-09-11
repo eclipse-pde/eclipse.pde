@@ -49,6 +49,7 @@ public abstract class RequirementSpecification {
 		return fExport;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof RequirementSpecification) {
 			RequirementSpecification spec = (RequirementSpecification) obj;
@@ -60,6 +61,7 @@ public abstract class RequirementSpecification {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int code = getClass().hashCode() + fName.hashCode();
 		if (fRange != null) {
@@ -91,6 +93,7 @@ public abstract class RequirementSpecification {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append(fName);

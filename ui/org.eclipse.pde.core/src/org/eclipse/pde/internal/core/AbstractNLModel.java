@@ -27,6 +27,7 @@ public abstract class AbstractNLModel extends AbstractModel {
 		fNLHelper = null;
 	}
 
+	@Override
 	public void dispose() {
 		if (fNLHelper != null) {
 			fNLHelper.dispose();
@@ -35,6 +36,7 @@ public abstract class AbstractNLModel extends AbstractModel {
 		super.dispose();
 	}
 
+	@Override
 	public String getResourceString(String key) {
 		if (key == null)
 			return ""; //$NON-NLS-1$
@@ -47,6 +49,7 @@ public abstract class AbstractNLModel extends AbstractModel {
 
 	protected abstract NLResourceHelper createNLResourceHelper();
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T  getAdapter(Class<T> adapter) {
 		if (adapter == IResource.class) {

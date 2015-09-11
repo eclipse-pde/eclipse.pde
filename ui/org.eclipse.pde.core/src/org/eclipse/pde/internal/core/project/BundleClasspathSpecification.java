@@ -40,6 +40,7 @@ public class BundleClasspathSpecification implements IBundleClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleClasspathSpecification#getSourceFolder()
 	 */
+	@Override
 	public IPath getSourcePath() {
 		return fSource;
 	}
@@ -47,6 +48,7 @@ public class BundleClasspathSpecification implements IBundleClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleClasspathSpecification#getClassfileFolder()
 	 */
+	@Override
 	public IPath getBinaryPath() {
 		return fBinary;
 	}
@@ -54,6 +56,7 @@ public class BundleClasspathSpecification implements IBundleClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleClasspathSpecification#getBundleClasspathEntry()
 	 */
+	@Override
 	public IPath getLibrary() {
 		return fEntry;
 	}
@@ -61,6 +64,7 @@ public class BundleClasspathSpecification implements IBundleClasspathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IBundleClasspathEntry) {
 			IBundleClasspathEntry spec = (IBundleClasspathEntry) obj;
@@ -79,6 +83,7 @@ public class BundleClasspathSpecification implements IBundleClasspathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int code = getClass().hashCode();
 		if (fSource != null) {
@@ -96,6 +101,7 @@ public class BundleClasspathSpecification implements IBundleClasspathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("Bundle-Claspath: ["); //$NON-NLS-1$

@@ -28,6 +28,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		this.index = index;
 	}
 
+	@Override
 	public int getIndex() {
 		return index;
 	}
@@ -39,6 +40,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	/*
 	 * @see IFeatureInfo#getURL()
 	 */
+	@Override
 	public String getURL() {
 		return url;
 	}
@@ -46,6 +48,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	/*
 	 * @see IFeatureInfo#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -53,6 +56,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	/*
 	 * @see IFeatureInfo#setURL(URL)
 	 */
+	@Override
 	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
@@ -60,6 +64,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		firePropertyChanged(P_URL, oldValue, url);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_DESC)) {
 			setDescription(newValue != null ? newValue.toString() : null);
@@ -72,6 +77,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	/*
 	 * @see IFeatureInfo#setDescription(String)
 	 */
+	@Override
 	public void setDescription(String description) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.description;
@@ -79,6 +85,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		firePropertyChanged(P_DESC, oldValue, description);
 	}
 
+	@Override
 	protected void parse(Node node) {
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		Node firstChild = node.getFirstChild();
@@ -86,6 +93,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 			description = getNormalizedText(firstChild.getNodeValue());
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		String indent2 = indent + Feature.INDENT;
 		String desc = description != null ? getWritableString(description.trim()) : null;
@@ -100,6 +108,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		writer.println(indent + "</" + getTag() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public boolean isEmpty() {
 		if (url != null)
 			return false;
@@ -109,6 +118,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		switch (index) {
 			case IFeature.INFO_DESCRIPTION :

@@ -18,15 +18,18 @@ public class IdentifiableObject extends FeatureObject implements IIdentifiable {
 	private static final long serialVersionUID = 1L;
 	protected String id;
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		id = getNodeAttribute(node, "id"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void setId(String id) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.id;
@@ -34,6 +37,7 @@ public class IdentifiableObject extends FeatureObject implements IIdentifiable {
 		firePropertyChanged(this, P_ID, oldValue, id);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_ID)) {
 			setId(newValue != null ? newValue.toString() : null);
@@ -41,6 +45,7 @@ public class IdentifiableObject extends FeatureObject implements IIdentifiable {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	protected void reset() {
 		super.reset();
 		id = null;

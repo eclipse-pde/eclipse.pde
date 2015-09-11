@@ -37,11 +37,13 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 		setFile(file);
 	}
 
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		super.fireModelChanged(event);
 	}
 
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		try {
 			// TODO revisit this method
@@ -79,31 +81,38 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 		return file;
 	}
 
+	@Override
 	public String getInstallLocation() {
 		IPath path = file.getParent().getLocation();
 		return path == null ? null : path.toOSString();
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		return file;
 	}
 
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return editable;
 	}
 
+	@Override
 	public boolean isInSync() {
 		return isInSync(file.getLocation().toFile());
 	}
 
+	@Override
 	protected void updateTimeStamp() {
 		updateTimeStamp(file.getLocation().toFile());
 	}
 
+	@Override
 	public void load() {
 		if (file == null)
 			return;
@@ -136,6 +145,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 		}
 	}
 
+	@Override
 	public void save() {
 		if (file == null)
 			return;
@@ -162,6 +172,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 		}
 	}
 
+	@Override
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
@@ -171,6 +182,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 		setDirty(false);
 	}
 
+	@Override
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}

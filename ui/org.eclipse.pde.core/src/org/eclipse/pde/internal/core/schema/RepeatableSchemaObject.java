@@ -24,10 +24,12 @@ public abstract class RepeatableSchemaObject extends SchemaObject implements ISc
 		super(parent, name);
 	}
 
+	@Override
 	public int getMaxOccurs() {
 		return maxOccurs;
 	}
 
+	@Override
 	public int getMinOccurs() {
 		return minOccurs;
 	}

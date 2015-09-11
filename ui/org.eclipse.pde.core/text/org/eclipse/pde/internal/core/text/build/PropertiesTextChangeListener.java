@@ -27,6 +27,7 @@ public class PropertiesTextChangeListener extends AbstractKeyValueTextChangeList
 		super(document, generateReadableNames);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {

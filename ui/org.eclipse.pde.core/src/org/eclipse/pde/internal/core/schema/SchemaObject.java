@@ -32,22 +32,27 @@ public abstract class SchemaObject extends PlatformObject implements ISchemaObje
 		fName = name;
 	}
 
+	@Override
 	public String getDescription() {
 		return fDescription;
 	}
 
+	@Override
 	public java.lang.String getName() {
 		return fName;
 	}
 
+	@Override
 	public ISchemaObject getParent() {
 		return fParent;
 	}
 
+	@Override
 	public void setParent(ISchemaObject parent) {
 		fParent = parent;
 	}
 
+	@Override
 	public ISchema getSchema() {
 		ISchemaObject object = this;
 
@@ -77,6 +82,7 @@ public abstract class SchemaObject extends PlatformObject implements ISchemaObje
 		getSchema().fireModelObjectChanged(this, P_NAME, oldValue, fName);
 	}
 
+	@Override
 	public String toString() {
 		if (fName != null)
 			return fName;

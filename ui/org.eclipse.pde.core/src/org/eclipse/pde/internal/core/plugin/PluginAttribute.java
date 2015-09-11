@@ -37,10 +37,12 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 		this.attributeInfo = ((PluginAttribute) attribute).getAttributeInfo();
 	}
 
+	@Override
 	public Object clone() {
 		return new PluginAttribute(this);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -73,6 +75,7 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 		return attributeInfo;
 	}
 
+	@Override
 	public String getValue() {
 		return fValue;
 	}
@@ -91,6 +94,7 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 		attributeInfo = newAttributeInfo;
 	}
 
+	@Override
 	public void setValue(String newValue) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fValue;
@@ -99,6 +103,7 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 		fireModelChanged(e);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (fValue == null)
 			return;

@@ -33,6 +33,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 		fModel = model;
 	}
 
+	@Override
 	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
 		if (parent == null)
 			return createPluginBase(name);
@@ -64,6 +65,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 		return node;
 	}
 
+	@Override
 	public IDocumentAttributeNode createAttribute(String name, String value, IDocumentElementNode enclosingElement) {
 		PluginAttribute attribute = new PluginAttribute();
 		try {
@@ -85,6 +87,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelFactory#createImport()
 	 */
+	@Override
 	public IPluginImport createImport() {
 		PluginImportNode node = new PluginImportNode();
 		node.setModel(fModel);
@@ -102,6 +105,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelFactory#createLibrary()
 	 */
+	@Override
 	public IPluginLibrary createLibrary() {
 		PluginLibraryNode node = new PluginLibraryNode();
 		node.setModel(fModel);
@@ -112,6 +116,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createAttribute(org.eclipse.pde.core.plugin.IPluginElement)
 	 */
+	@Override
 	public IPluginAttribute createAttribute(IPluginElement element) {
 		return null;
 	}
@@ -119,6 +124,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createElement(org.eclipse.pde.core.plugin.IPluginObject)
 	 */
+	@Override
 	public IPluginElement createElement(IPluginObject parent) {
 		PluginElementNode node = new PluginElementNode();
 		node.setModel(fModel);
@@ -128,6 +134,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createExtension()
 	 */
+	@Override
 	public IPluginExtension createExtension() {
 		PluginExtensionNode node = new PluginExtensionNode();
 		node.setModel(fModel);
@@ -138,6 +145,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createExtensionPoint()
 	 */
+	@Override
 	public IPluginExtensionPoint createExtensionPoint() {
 		PluginExtensionPointNode node = new PluginExtensionPointNode();
 		node.setModel(fModel);
@@ -148,6 +156,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentTextNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public IDocumentTextNode createDocumentTextNode(String content, IDocumentElementNode parent) {
 		DocumentTextNode textNode = new DocumentTextNode();
 		textNode.setEnclosingElement(parent);

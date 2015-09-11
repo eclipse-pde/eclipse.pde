@@ -23,6 +23,7 @@ public class ExportPackageHeader extends BasePackageHeader {
 		super(name, value, bundle, lineDelimiter);
 	}
 
+	@Override
 	protected PDEManifestElement createElement(ManifestElement element) {
 		return new ExportPackageObject(this, element, getVersionAttribute());
 	}

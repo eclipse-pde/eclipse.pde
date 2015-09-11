@@ -34,11 +34,13 @@ public class Extensions extends AbstractExtensions {
 		fSchemaVersion = schemaVersion;
 	}
 
+	@Override
 	public void reset() {
 		super.reset();
 		fValid = null;
 	}
 
+	@Override
 	public boolean isValid() {
 		if (fValid == null) {
 			fValid = Boolean.valueOf(hasRequiredAttributes());
@@ -46,6 +48,7 @@ public class Extensions extends AbstractExtensions {
 		return fValid.booleanValue();
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		if (fSchemaVersion != null)

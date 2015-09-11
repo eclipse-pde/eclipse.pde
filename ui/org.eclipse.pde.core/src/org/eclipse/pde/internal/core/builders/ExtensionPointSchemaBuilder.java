@@ -31,6 +31,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			this.monitor = monitor;
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 
@@ -56,6 +57,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		IResourceDelta delta = null;
 		if (kind != FULL_BUILD)
@@ -73,6 +75,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.ExtensionPointSchemaBuilder_0, getProject().getName()), 1);
 		try {

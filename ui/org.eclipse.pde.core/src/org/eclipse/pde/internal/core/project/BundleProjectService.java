@@ -80,6 +80,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @return bundle description for the associated project
 	 * @exception CoreException if unable to create a description on an existing project
 	 */
+	@Override
 	public IBundleProjectDescription getDescription(IProject project) throws CoreException {
 		return new BundleProjectDescription(project);
 	}
@@ -91,6 +92,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @param range version constraint or <code>null</code>
 	 * @return host description
 	 */
+	@Override
 	public IHostDescription newHost(String name, VersionRange range) {
 		return new HostDescriptoin(name, range);
 	}
@@ -103,6 +105,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @param optional whether the import is optional
 	 * @return package import description
 	 */
+	@Override
 	public IPackageImportDescription newPackageImport(String name, VersionRange range, boolean optional) {
 		return new PackageImportDescription(name, range, optional);
 	}
@@ -117,6 +120,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 *  friends are specified the package will not be API
 	 * @return package export description
 	 */
+	@Override
 	public IPackageExportDescription newPackageExport(String name, Version version, boolean api, String[] friends) {
 		return new PackageExportDescription(name, version, friends, api);
 	}
@@ -130,6 +134,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @param export whether the required bundle is re-exported
 	 * @return required bundle description
 	 */
+	@Override
 	public IRequiredBundleDescription newRequiredBundle(String name, VersionRange range, boolean optional, boolean export) {
 		return new RequiredBundleDescription(name, range, export, optional);
 	}
@@ -149,6 +154,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @param library associated entry on the Bundle-Classpath header or <code>null</code>
 	 * 	to indicate default entry "."
 	 */
+	@Override
 	public IBundleClasspathEntry newBundleClasspathEntry(IPath sourceFolder, IPath binaryFolder, IPath library) {
 		return new BundleClasspathSpecification(sourceFolder, binaryFolder, library);
 	}
@@ -168,6 +174,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @param bundleRoot project relative path to bundle root artifacts in the project or <code>null</code>
 	 * @throws CoreException if setting the root fails
 	 */
+	@Override
 	public void setBundleRoot(IProject project, IPath bundleRoot) throws CoreException {
 		PDEProject.setBundleRoot(project, (bundleRoot == null) ? null : project.getFolder(bundleRoot));
 	}

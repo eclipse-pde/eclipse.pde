@@ -38,10 +38,12 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	public PluginLibrary() {
 	}
 
+	@Override
 	public boolean isValid() {
 		return fName != null;
 	}
 
+	@Override
 	public String[] getContentFilters() {
 		IPluginModelBase model = (IPluginModelBase) getModel();
 		if (ClasspathUtilCore.hasBundleStructure(model)) {
@@ -63,27 +65,33 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#addContentFilter(java.lang.String)
 	 */
+	@Override
 	public void addContentFilter(String filter) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#removeContentFilter(java.lang.String)
 	 */
+	@Override
 	public void removeContentFilter(String filter) throws CoreException {
 	}
 
+	@Override
 	public String[] getPackages() {
 		return new String[0];
 	}
 
+	@Override
 	public boolean isExported() {
 		return fExported;
 	}
 
+	@Override
 	public boolean isFullyExported() {
 		return fExported && (fContentFilters == null || fContentFilters.length == 0);
 	}
 
+	@Override
 	public String getType() {
 		return fType;
 	}
@@ -123,6 +131,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		fExported = all || exports.size() > 0;
 	}
 
+	@Override
 	public void setContentFilters(String[] filters) throws CoreException {
 		ensureModelEditable();
 		ArrayList<String> oldValue = createArrayList(fContentFilters);
@@ -130,9 +139,11 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		firePropertyChanged(P_CONTENT_FILTERS, oldValue, createArrayList(filters));
 	}
 
+	@Override
 	public void setPackages(String[] packages) throws CoreException {
 	}
 
+	@Override
 	public void setExported(boolean value) throws CoreException {
 		ensureModelEditable();
 		Boolean oldValue = Boolean.valueOf(fExported);
@@ -140,6 +151,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		firePropertyChanged(P_EXPORTED, oldValue, Boolean.valueOf(value));
 	}
 
+	@Override
 	public void setType(String type) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fType;
@@ -147,6 +159,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		firePropertyChanged(P_TYPE, oldValue, type);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_CONTENT_FILTERS)) {
 			ArrayList<?> list = (ArrayList<?>) newValue;
@@ -180,6 +193,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Get the model
 		IPluginModelBase modelBase = getPluginModel();
@@ -213,6 +227,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
 	 */
+	@Override
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		super.reconnect(model, parent);
 		// No transient fields
@@ -221,6 +236,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#writeDelimeter(java.io.PrintWriter)
 	 */
+	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		writer.println(',');
 		writer.print(' ');

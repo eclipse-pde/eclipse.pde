@@ -307,6 +307,7 @@ public interface IBundleProjectDescription {
 	 * @param entries Bundle-Classpath header entries or <code>null</code>
 	 * @deprecated use {@link #setBundleClasspath(IBundleClasspathEntry[])}
 	 */
+	@Deprecated
 	public void setBundleClassath(IBundleClasspathEntry[] entries);
 
 	/**

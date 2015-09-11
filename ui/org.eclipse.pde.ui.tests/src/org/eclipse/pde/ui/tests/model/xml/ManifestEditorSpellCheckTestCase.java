@@ -42,6 +42,7 @@ public class ManifestEditorSpellCheckTestCase extends XMLModelTestCase {
 		return new TestSuite(ManifestEditorSpellCheckTestCase.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

@@ -42,6 +42,7 @@ public class PluginReference extends PlatformObject {
 		return fPlugin;
 	}
 
+	@Override
 	public String toString() {
 		if (fPlugin != null) {
 			return fPlugin.getTranslatedName();

@@ -26,18 +26,22 @@ public class ExtensionDeltaEvent implements IExtensionDeltaEvent {
 		this.removed = removed;
 	}
 
+	@Override
 	public IPluginModelBase[] getAddedModels() {
 		return added;
 	}
 
+	@Override
 	public IPluginModelBase[] getChangedModels() {
 		return changed;
 	}
 
+	@Override
 	public IPluginModelBase[] getRemovedModels() {
 		return removed;
 	}
 
+	@Override
 	public int getEventTypes() {
 		return types;
 	}

@@ -24,6 +24,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#getContentFilters()
 	 */
+	@Override
 	public String[] getContentFilters() {
 		IDocumentElementNode[] children = getChildNodes();
 		ArrayList<String> result = new ArrayList<String>();
@@ -45,6 +46,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#getPackages()
 	 */
+	@Override
 	public String[] getPackages() {
 		return new String[0];
 	}
@@ -52,6 +54,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#isExported()
 	 */
+	@Override
 	public boolean isExported() {
 		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
@@ -65,6 +68,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#isFullyExported()
 	 */
+	@Override
 	public boolean isFullyExported() {
 		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
@@ -81,6 +85,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#getType()
 	 */
+	@Override
 	public String getType() {
 		String type = getXMLAttributeValue(P_TYPE);
 		return (type != null && type.equals("resource")) ? IPluginLibrary.RESOURCE : IPluginLibrary.CODE; //$NON-NLS-1$
@@ -89,12 +94,14 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setContentFilters(java.lang.String[])
 	 */
+	@Override
 	public void setContentFilters(String[] filters) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#addContentFilter(java.lang.String)
 	 */
+	@Override
 	public void addContentFilter(String filter) throws CoreException {
 		PluginElementNode node = new PluginElementNode();
 		node.setXMLTagName(P_EXPORTED);
@@ -115,6 +122,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#removeContentFilter(java.lang.String)
 	 */
+	@Override
 	public void removeContentFilter(String filter) throws CoreException {
 		if (!filter.endsWith(".*")) //$NON-NLS-1$
 			filter += ".*"; //$NON-NLS-1$
@@ -137,12 +145,14 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setPackages(java.lang.String[])
 	 */
+	@Override
 	public void setPackages(String[] packages) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setExported(boolean)
 	 */
+	@Override
 	public void setExported(boolean exported) throws CoreException {
 		IDocumentElementNode[] children = getChildNodes();
 		boolean alreadyExported = false;
@@ -166,12 +176,14 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setType(java.lang.String)
 	 */
+	@Override
 	public void setType(String type) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
+	@Override
 	public String getName() {
 		return getXMLAttributeValue(P_NAME);
 	}
@@ -179,6 +191,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) throws CoreException {
 		setXMLAttribute(P_NAME, name);
 	}
@@ -186,6 +199,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
+	@Override
 	public String write(boolean indent) {
 		String sep = getLineDelimiter();
 		StringBuffer buffer = new StringBuffer();
@@ -209,6 +223,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
+	@Override
 	public String writeShallow(boolean terminate) {
 		StringBuffer buffer = new StringBuffer("<" + getXMLTagName()); //$NON-NLS-1$
 
@@ -222,6 +237,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		return buffer.toString();
 	}
 
+	@Override
 	public String toString() {
 		return getName();
 	}

@@ -34,6 +34,7 @@ public class IULocationFactory implements ITargetLocationFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetLocationFactory#getTargetLocation(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public ITargetLocation getTargetLocation(String type, String serializedXML) throws CoreException {
 
 		Element location;

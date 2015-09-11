@@ -27,6 +27,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#deleteFile(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IFile, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor) {
 			if (isBinaryResource(file, true))
 				tree.failed(createProblemStatus());
@@ -38,6 +39,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#deleteFolder(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IFolder, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public boolean deleteFolder(IResourceTree tree, IFolder folder, int updateFlags, IProgressMonitor monitor) {
 			if (isBinaryResource(folder, true))
 				tree.failed(createProblemStatus());
@@ -49,6 +51,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#deleteProject(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IProject, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public boolean deleteProject(IResourceTree tree, IProject project, int updateFlags, IProgressMonitor monitor) {
 			return false;
 		}
@@ -56,6 +59,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#moveFile(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public boolean moveFile(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) {
 			if (isBinaryResource(source, false))
 				tree.failed(createProblemStatus());
@@ -67,6 +71,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#moveFolder(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IFolder, org.eclipse.core.resources.IFolder, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public boolean moveFolder(IResourceTree tree, IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor) {
 			if (isBinaryResource(source, false))
 				tree.failed(createProblemStatus());
@@ -78,6 +83,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#moveProject(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IProject, org.eclipse.core.resources.IProjectDescription, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public boolean moveProject(IResourceTree tree, IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor) {
 			return false;
 		}
@@ -126,6 +132,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	/**
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		IProject project = getProject();
 		project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, null);

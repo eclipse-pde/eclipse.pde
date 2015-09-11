@@ -27,6 +27,7 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(InputStream, IContentDescription)
 	 */
+	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		byte[] bom = getByteOrderMark(contents);
 		contents.reset();
@@ -59,6 +60,7 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 	 *  (non-Javadoc)
 	 * @see org.eclipse.core.runtime.content.ITextContentDescriber#describe(java.io.Reader, org.eclipse.core.runtime.content.IContentDescription)
 	 */
+	@Override
 	public int describe(Reader contents, IContentDescription description) throws IOException {
 		BufferedReader reader = new BufferedReader(contents);
 		String line;
@@ -91,6 +93,7 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 	 *  (non-Javadoc)
 	 * @see org.eclipse.core.runtime.content.IContentDescriber#getSupportedOptions()
 	 */
+	@Override
 	public QualifiedName[] getSupportedOptions() {
 		return SUPPORTED_OPTIONS;
 	}

@@ -19,12 +19,14 @@ public class ExternalSiteModel extends AbstractSiteModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
 	 */
+	@Override
 	protected void updateTimeStamp() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
+	@Override
 	public boolean isInSync() {
 		return true;
 	}
@@ -32,6 +34,7 @@ public class ExternalSiteModel extends AbstractSiteModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.site.AbstractSiteModel#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return false;
 	}
@@ -39,6 +42,7 @@ public class ExternalSiteModel extends AbstractSiteModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load()
 	 */
+	@Override
 	public void load() throws CoreException {
 	}
 

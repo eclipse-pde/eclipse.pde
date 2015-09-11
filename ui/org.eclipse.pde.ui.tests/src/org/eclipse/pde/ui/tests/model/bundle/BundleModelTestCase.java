@@ -29,6 +29,7 @@ public abstract class BundleModelTestCase extends TestCase {
 		fHeaderName = headerName;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		fDocument = new Document();
 	}

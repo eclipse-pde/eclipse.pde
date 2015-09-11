@@ -22,6 +22,7 @@ import org.eclipse.pde.core.build.IBuildEntry;
 public class Build extends BuildObject implements IBuild {
 	protected ArrayList<IBuildEntry> fEntries = new ArrayList<IBuildEntry>();
 
+	@Override
 	public void add(IBuildEntry entry) throws CoreException {
 		ensureModelEditable();
 		fEntries.add(entry);
@@ -29,10 +30,12 @@ public class Build extends BuildObject implements IBuild {
 		getModel().fireModelChanged(new ModelChangedEvent(getModel(), IModelChangedEvent.INSERT, new Object[] {entry}, null));
 	}
 
+	@Override
 	public IBuildEntry[] getBuildEntries() {
 		return fEntries.toArray(new IBuildEntry[fEntries.size()]);
 	}
 
+	@Override
 	public IBuildEntry getEntry(String name) {
 		for (int i = 0; i < fEntries.size(); i++) {
 			IBuildEntry entry = fEntries.get(i);
@@ -48,6 +51,7 @@ public class Build extends BuildObject implements IBuild {
 		entry.processEntry(value);
 	}
 
+	@Override
 	public void remove(IBuildEntry entry) throws CoreException {
 		ensureModelEditable();
 		fEntries.remove(entry);
@@ -58,6 +62,7 @@ public class Build extends BuildObject implements IBuild {
 		fEntries.clear();
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		for (int i = 0; i < fEntries.size(); i++) {
 			IBuildEntry entry = fEntries.get(i);
