@@ -539,7 +539,6 @@ public class BundleLauncherHelper {
 					list.add(IPDEBuildConstants.BUNDLE_EQUINOX_COMMON);
 					list.add("org.eclipse.equinox.preferences"); //$NON-NLS-1$
 					list.add("org.eclipse.equinox.registry"); //$NON-NLS-1$
-					list.add("org.eclipse.core.runtime.compatibility.registry"); //$NON-NLS-1$
 				}
 				if (!"3.3".equals(version) && newApp) //$NON-NLS-1$
 					list.add("org.eclipse.equinox.app"); //$NON-NLS-1$

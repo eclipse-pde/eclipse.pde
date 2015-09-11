@@ -12,11 +12,8 @@
 package org.eclipse.pde.internal.core.bundle;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePlugin;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.text.bundle.BundleActivatorHeader;
 import org.osgi.framework.Constants;
 
@@ -30,7 +27,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	 * @see org.eclipse.pde.core.plugin.IPlugin#getClassName()
 	 */
 	public String getClassName() {
-		return getValue(getClassHeader(), false);
+		return getValue(Constants.BUNDLE_ACTIVATOR, false);
 	}
 
 	/*
@@ -42,23 +39,14 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getClassName();
-			String classHeader = getClassHeader();
+			String classHeader = Constants.BUNDLE_ACTIVATOR;
 			IManifestHeader header = bundle.getManifestHeader(classHeader);
 			if (header instanceof BundleActivatorHeader)
 				((BundleActivatorHeader) header).setClassName(className);
 			else
-				bundle.setHeader(getClassHeader(), className);
+				bundle.setHeader(Constants.BUNDLE_ACTIVATOR, className);
 			model.fireModelObjectChanged(this, P_CLASS_NAME, old, className);
 		}
-	}
-
-	private String getClassHeader() {
-		IPluginImport[] imports = getImports();
-		for (int i = 0; i < imports.length; i++) {
-			if ("org.eclipse.core.runtime.compatibility".equals(imports[i].getId()))//$NON-NLS-1$
-				return ICoreConstants.PLUGIN_CLASS;
-		}
-		return Constants.BUNDLE_ACTIVATOR;
 	}
 
 	public boolean hasExtensibleAPI() {
