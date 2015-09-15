@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,7 @@ public class NonUIThreadTestApplication implements IApplication {
 	protected IApplication fApplication;
 	protected Object fTestHarness;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 
@@ -80,9 +78,7 @@ public class NonUIThreadTestApplication implements IApplication {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
+	@Override
 	public void stop() {
 		if (fApplication != null)
 			fApplication.stop();

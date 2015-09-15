@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,14 +34,17 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			this.bundle = target;
 		}
 
+		@Override
 		protected Class findClass(String name) throws ClassNotFoundException {
 			return bundle.loadClass(name);
 		}
 
+		@Override
 		protected URL findResource(String name) {
 			return bundle.getResource(name);
 		}
 
+		@Override
 		protected Enumeration findResources(String name) throws IOException {
 			return bundle.getResources(name);
 		}
@@ -66,6 +69,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	 * Returns the Plugin class loader of the plugin containing the test.
 	 * @see RemoteTestRunner#getTestClassLoader()
 	 */
+	@Override
 	protected ClassLoader getTestClassLoader() {
 		final String pluginId = fTestPluginName;
 		return getClassLoader(pluginId);
@@ -79,6 +83,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		return new BundleClassLoader(bundle);
 	}
 
+	@Override
 	public void init(String[] args) {
 		readPluginArgs(args);
 		defaultInit(args);
@@ -100,6 +105,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			fLoaderClassLoader = getClass().getClassLoader();
 	}
 
+	@Override
 	protected Class loadTestLoaderClass(String className) throws ClassNotFoundException {
 		return fLoaderClassLoader.loadClass(className);
 	}

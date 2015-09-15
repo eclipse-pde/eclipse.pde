@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,17 +22,13 @@ public class UITestApplication extends NonUIThreadTestApplication {
 
 	private static final String DEFAULT_APP_3_0 = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication#getDefaultApplicationId()
-	 */
+	@Override
 	protected String getDefaultApplicationId() {
 		// In 3.0, the default is the "org.eclipse.ui.ide.worbench" application.
 		return DEFAULT_APP_3_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication#runApp(java.lang.Object, org.eclipse.equinox.app.IApplicationContext, java.lang.String[])
-	 */
+	@Override
 	protected Object runApp(Object app, IApplicationContext context, String[] args) throws Exception {
 		// Get the testable object from the service
 		Object testableObject = PDEJUnitRuntimePlugin.getDefault().getTestableObject();

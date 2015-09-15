@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2013 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,9 +26,7 @@ public class LegacyUITestApplication implements IPlatformRunnable, ITestHarness 
 
 	private TestableObject fTestableObject;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IPlatformRunnable#run(java.lang.Object)
-	 */
+	@Override
 	public Object run(final Object args) throws Exception {
 		IPlatformRunnable application = getApplication((String[]) args);
 
@@ -83,16 +81,10 @@ public class LegacyUITestApplication implements IPlatformRunnable, ITestHarness 
 		return DEFAULT_APP_3_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.testing.ITestHarness#runTests()
-	 */
+	@Override
 	public void runTests() {
 		fTestableObject.testingStarting();
-		fTestableObject.runTest(new Runnable() {
-			public void run() {
-				RemotePluginTestRunner.main(Platform.getCommandLineArgs());
-			}
-		});
+		fTestableObject.runTest(() -> RemotePluginTestRunner.main(Platform.getCommandLineArgs()));
 		fTestableObject.testingFinished();
 	}
 

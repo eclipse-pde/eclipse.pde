@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,16 +76,12 @@ public class PDEJUnitRuntimePlugin implements BundleActivator {
 		return inst;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (testableTracker != null) {
 			testableTracker.close();
