@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -377,14 +378,14 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 			}
 			return project;
 		}
+		SubMonitor subMonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.SearchablePluginsManager_createProjectTaskName, SearchablePluginsManager.PROXY_PROJECT_NAME), 5);
 
-		monitor.beginTask(NLS.bind(PDECoreMessages.SearchablePluginsManager_createProjectTaskName, SearchablePluginsManager.PROXY_PROJECT_NAME), 5);
-		project.create(new SubProgressMonitor(monitor, 1));
-		project.open(new SubProgressMonitor(monitor, 1));
-		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, new SubProgressMonitor(monitor, 1));
+		project.create(subMonitor.newChild(1));
+		project.open(subMonitor.newChild(1));
+		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, subMonitor.newChild(1));
 		IJavaProject jProject = JavaCore.create(project);
-		jProject.setOutputLocation(project.getFullPath(), new SubProgressMonitor(monitor, 1));
-		computeClasspath(jProject, new SubProgressMonitor(monitor, 1));
+		jProject.setOutputLocation(project.getFullPath(), subMonitor.newChild(1));
+		computeClasspath(jProject, subMonitor.newChild(1));
 		return project;
 	}
 

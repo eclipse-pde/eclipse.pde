@@ -8,7 +8,8 @@
  * Contributors:
  *     EclipseSource Inc. - initial API and implementation
  *     IBM Corporation - ongoing enhancements
- *     Manumitting Technologies Inc - bug 437726: wrong error messages opening target definition
+ *     Manumitting Technologies Inc - Bug 437726
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -887,19 +888,19 @@ public class P2TargetUtils {
 			repos = manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
 		}
 
-		IProgressMonitor loadMonitor = new SubProgressMonitor(monitor, 10);
 		int repoCount = repos.length;
-		loadMonitor.beginTask(null, repoCount * 10);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, repoCount);
+
+
 		List<IMetadataRepository> result = new ArrayList<IMetadataRepository>(repoCount);
 		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		for (int i = 0; i < repoCount; ++i) {
 			try {
-				result.add(manager.loadRepository(repos[i], new SubProgressMonitor(loadMonitor, 10)));
+				result.add(manager.loadRepository(repos[i], subMonitor.newChild(1)));
 			} catch (ProvisionException e) {
 				repoStatus.add(e.getStatus());
 			}
 		}
-		loadMonitor.done();
 
 		if (result.size() != repos.length) {
 			throw new CoreException(repoStatus);

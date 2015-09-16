@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2015 EclipseSource Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     EclipseSource Inc. - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
-
-import org.eclipse.pde.core.target.NameVersionDescriptor;
 
 import java.net.URI;
 import java.util.*;
@@ -98,7 +97,7 @@ public class ExportTargetJob extends Job {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Destination directory not writable.")); //$NON-NLS-1$
 		}
 		IFileStore destination = fileSystem.getStore(fDestination);
-		featureDir = destination.getChild("features"); //$NON-NLS-1$
+		featureDir = destination.getChild("features"); //$NON-NLS-1$ExportTargetJob
 		pluginDir = destination.getChild("plugins"); //$NON-NLS-1$
 		if (fclearDestinationDirectory) {
 			monitor.subTask(PDECoreMessages.ExportTargetDeleteOldData); //Deleting old data...
@@ -189,17 +188,20 @@ public class ExportTargetJob extends Job {
 
 	private IStatus copy(String src, IFileStore destinationParent, IFileSystem fileSystem, IProgressMonitor monitor) throws CoreException {
 		Path srcPath = new Path(src);
+
 		IFileStore source = fileSystem.getStore(srcPath);
 		String elementName = srcPath.segment(srcPath.segmentCount() - 1);
 		IFileStore destination = destinationParent.getChild(elementName);
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
+
 		if (destination.fetchInfo().exists()) {
-			monitor.worked(1);
 			return Status.OK_STATUS;
 		}
 		if (source.fetchInfo().isDirectory()) {
 			destination.mkdir(EFS.NONE, new NullProgressMonitor());
 		}
-		source.copy(destination, EFS.OVERWRITE, new SubProgressMonitor(monitor, 1));
+		source.copy(destination, EFS.OVERWRITE, subMonitor.newChild(1));
 		return Status.OK_STATUS;
 	}
 

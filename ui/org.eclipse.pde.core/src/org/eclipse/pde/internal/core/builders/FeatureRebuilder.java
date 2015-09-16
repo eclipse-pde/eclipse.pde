@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,24 +7,15 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.internal.core.FeatureModelManager;
-import org.eclipse.pde.internal.core.IFeatureModelDelta;
-import org.eclipse.pde.internal.core.IFeatureModelListener;
-import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelDelta;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 /**
@@ -81,16 +72,16 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 		IFeatureModel[] workspaceFeatures = manager.getWorkspaceModels();
 		if (workspaceFeatures.length > 0) {
 			IProgressMonitor monitor = new NullProgressMonitor();
-			monitor.beginTask("", workspaceFeatures.length); //$NON-NLS-1$
+			SubMonitor subMonitor = SubMonitor.convert(monitor, workspaceFeatures.length);
 			for (int i = 0; i < workspaceFeatures.length; i++) {
+				SubMonitor iterationMonitor = subMonitor.newChild(1);
 				try {
 					IResource resource = workspaceFeatures[i].getUnderlyingResource();
 					if (resource != null) {
-						resource.touch(new SubProgressMonitor(monitor, 1));
-					} else {
-						monitor.worked(1);
+						resource.touch(iterationMonitor);
 					}
 				} catch (CoreException e) {
+					PDECore.log(e);
 				}
 			}
 		}

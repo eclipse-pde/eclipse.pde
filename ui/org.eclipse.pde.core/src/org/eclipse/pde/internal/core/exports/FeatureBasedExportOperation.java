@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
@@ -36,20 +37,22 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Exporting...", 33); //$NON-NLS-1$
 		try {
 			createDestination();
-			monitor.beginTask("Exporting...", 33); //$NON-NLS-1$
+
 			// create a feature to contain all plug-ins
 			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 			String[][] config = new String[][] {{TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL()}};
 			createFeature(featureID, fFeatureLocation, config, false);
 			createBuildPropertiesFile(fFeatureLocation);
-			if (fInfo.useJarFormat)
+			if (fInfo.useJarFormat) {
 				createPostProcessingFiles();
-			IStatus status = testBuildWorkspaceBeforeExport(new SubProgressMonitor(monitor, 10));
-			doExport(featureID, null, fFeatureLocation, config, new SubProgressMonitor(monitor, 20));
-			if (monitor.isCanceled()) {
+			}
+			IStatus status = testBuildWorkspaceBeforeExport(subMonitor.newChild(10));
+			doExport(featureID, null, fFeatureLocation, config, subMonitor.newChild(20));
+			if (subMonitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 			return status;
@@ -68,8 +71,7 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 						PDECore.log(e);
 					}
 			}
-			cleanup(null, new SubProgressMonitor(monitor, 3));
-			monitor.done();
+			cleanup(null, subMonitor.newChild(3));
 		}
 	}
 

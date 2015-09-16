@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
@@ -95,45 +96,41 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		cleanupBuildRepo();
 		errorMessage = null;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 9);
 
 		try {
-			monitor.beginTask("", 10); //$NON-NLS-1$
-			try {
-				// create a feature to wrap all plug-ins and features
-				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
-				fFeatureLocation = fBuildTempLocation + File.separator + featureID;
+			// create a feature to wrap all plug-ins and features
+			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
+			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 
-				createFeature(featureID, fFeatureLocation, configurations, fProduct.includeLaunchers());
-				createBuildPropertiesFile(fFeatureLocation, configurations);
-				doExport(featureID, null, fFeatureLocation, configurations, new SubProgressMonitor(monitor, 8));
-			} catch (IOException e) {
-				PDECore.log(e);
-			} catch (InvocationTargetException e) {
-				return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
-			} catch (CoreException e) {
-				if (errorMessage != null)
-					return parseErrorMessage(e);
-				return e.getStatus();
-			} finally {
-				// Clean up generated files
-				for (int j = 0; j < fInfo.items.length; j++) {
-					try {
-						deleteBuildFiles(fInfo.items[j]);
-					} catch (CoreException e) {
-						PDECore.log(e);
-					}
-				}
-				cleanup(null, new SubProgressMonitor(monitor, 1));
-			}
-
-			if (hasAntErrors()) {
-				return new Status(IStatus.WARNING, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_CompilationErrors, fInfo.destinationDirectory));
-			}
-
+			createFeature(featureID, fFeatureLocation, configurations, fProduct.includeLaunchers());
+			createBuildPropertiesFile(fFeatureLocation, configurations);
+			doExport(featureID, null, fFeatureLocation, configurations, subMonitor.newChild(8));
+		} catch (IOException e) {
+			PDECore.log(e);
+		} catch (InvocationTargetException e) {
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
+		} catch (CoreException e) {
+			if (errorMessage != null)
+				return parseErrorMessage(e);
+			return e.getStatus();
 		} finally {
-			monitor.done();
-			errorMessage = null;
+			// Clean up generated files
+			for (int j = 0; j < fInfo.items.length; j++) {
+				try {
+					deleteBuildFiles(fInfo.items[j]);
+				} catch (CoreException e) {
+					PDECore.log(e);
+				}
+			}
+			cleanup(null, subMonitor.newChild(1));
 		}
+
+		if (hasAntErrors()) {
+			return new Status(IStatus.WARNING, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_CompilationErrors, fInfo.destinationDirectory));
+		}
+
+		errorMessage = null;
 		return Status.OK_STATUS;
 	}
 
