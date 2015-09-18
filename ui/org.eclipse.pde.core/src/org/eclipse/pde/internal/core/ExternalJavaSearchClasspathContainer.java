@@ -18,10 +18,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 public class ExternalJavaSearchClasspathContainer implements IClasspathContainer {
 	private IClasspathEntry[] fEntries;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
-	 */
 	@Override
 	public IClasspathEntry[] getClasspathEntries() {
 		if (fEntries == null) {
@@ -35,28 +31,16 @@ public class ExternalJavaSearchClasspathContainer implements IClasspathContainer
 		return fEntries;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return PDECoreMessages.ExternalJavaSearchClasspathContainer_description;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IClasspathContainer#getKind()
-	 */
 	@Override
 	public int getKind() {
 		return K_APPLICATION;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IClasspathContainer#getPath()
-	 */
 	@Override
 	public IPath getPath() {
 		return PDECore.JAVA_SEARCH_CONTAINER_PATH;

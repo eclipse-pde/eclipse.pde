@@ -173,9 +173,6 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 		fEditable = editable;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.AbstractExtensionsModel#createExtensions()
-	 */
 	@Override
 	protected Extensions createExtensions() {
 		Extensions extensions = super.createExtensions();
@@ -183,9 +180,6 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 		return extensions;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return fUnderlyingResource.getName();

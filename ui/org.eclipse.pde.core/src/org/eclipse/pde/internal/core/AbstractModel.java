@@ -179,11 +179,6 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		return SAXParserFactory.newInstance().newSAXParser();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
-	 */
 	@Override
 	public boolean isReconcilingModel() {
 		return false;

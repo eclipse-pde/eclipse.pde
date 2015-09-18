@@ -92,18 +92,12 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			fTarget = service.newTarget();
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-	 */
+
 	@Override
 	public boolean belongsTo(Object family) {
 		return JOB_FAMILY_ID.equals(family);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_mainTaskName, 40);

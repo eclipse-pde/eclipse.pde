@@ -128,9 +128,6 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		connectListeners();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.spi.RegistryStrategy#log(org.eclipse.core.runtime.IStatus)
-	 */
 	@Override
 	public void log(IStatus status) {
 		// Because we are at development time, we create markers for registry problems and therefore do not log anything (bug 330648)
@@ -164,9 +161,6 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		setListenerRegistry(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.spi.RegistryStrategy#getXMLParser()
-	 */
 	@Override
 	public SAXParserFactory getXMLParser() {
 		if (xmlTracker == null) {

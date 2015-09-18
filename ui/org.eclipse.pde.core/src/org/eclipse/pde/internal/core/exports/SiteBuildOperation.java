@@ -170,26 +170,17 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 		return newestName.substring(id.length() + 1, newestName.length() - 4);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.exports.FeatureBasedExportOperation#createPostProcessingFiles()
-	 */
 	@Override
 	protected void createPostProcessingFiles() {
 		createPostProcessingFile(new File(fFeatureLocation, FEATURE_POST_PROCESSING));
 		createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#publishingP2Metadata()
-	 */
 	@Override
 	protected boolean publishingP2Metadata() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setP2MetaDataProperties(java.util.Map)
-	 */
 	@Override
 	protected void setP2MetaDataProperties(Map<String, String> map) {
 		if (fInfo.toDirectory) {

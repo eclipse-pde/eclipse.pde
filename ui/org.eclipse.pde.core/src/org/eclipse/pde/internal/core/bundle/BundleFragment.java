@@ -29,9 +29,6 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		return getValue(Constants.FRAGMENT_HOST, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginVersion()
-	 */
 	@Override
 	public String getPluginVersion() {
 		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
@@ -44,9 +41,6 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		return version;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#getRule()
-	 */
 	@Override
 	public int getRule() {
 		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
@@ -54,9 +48,6 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		return PluginBase.getMatchRule(versionRange);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#setPluginId(java.lang.String)
-	 */
 	@Override
 	public void setPluginId(String id) throws CoreException {
 		IBundle bundle = getBundle();
@@ -72,9 +63,6 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#setPluginVersion(java.lang.String)
-	 */
 	@Override
 	public void setPluginVersion(String version) throws CoreException {
 		IBundle bundle = getBundle();
@@ -90,9 +78,6 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#setRule(int)
-	 */
 	@Override
 	public void setRule(int rule) throws CoreException {
 	}

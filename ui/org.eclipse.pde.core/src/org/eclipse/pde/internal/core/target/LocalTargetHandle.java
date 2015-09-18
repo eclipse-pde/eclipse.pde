@@ -101,9 +101,6 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		fTimeStamp = stamp;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#getInputStream()
-	 */
 	@Override
 	protected InputStream getInputStream() throws CoreException {
 		try {
@@ -113,9 +110,6 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetHandle#getMemento()
-	 */
 	@Override
 	public String getMemento() throws CoreException {
 		try {
@@ -126,9 +120,6 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetHandle#exists()
-	 */
 	@Override
 	public boolean exists() {
 		return getFile().exists();
@@ -147,9 +138,6 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		return LOCAL_TARGET_CONTAINER_PATH.append(name.toString()).toFile();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof LocalTargetHandle) {
@@ -159,17 +147,11 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return (int) fTimeStamp;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#delete()
-	 */
 	@Override
 	void delete() throws CoreException {
 		File file = getFile();
@@ -182,9 +164,6 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		P2TargetUtils.deleteProfile(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#getOutputStream()
-	 */
 	protected OutputStream getOutputStream() throws CoreException {
 		try {
 			File file = getFile();
@@ -200,9 +179,6 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.core.target.ITargetDefinition)
-	 */
 	@Override
 	void save(ITargetDefinition definition) throws CoreException {
 		OutputStream stream = getOutputStream();
@@ -214,9 +190,6 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getFile().getName();

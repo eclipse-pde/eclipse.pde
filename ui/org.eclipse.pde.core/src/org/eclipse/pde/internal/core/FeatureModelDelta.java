@@ -26,41 +26,21 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 	public FeatureModelDelta() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getKind()
-	 */
 	@Override
 	public int getKind() {
 		return kind;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getAdded()
-	 */
 	@Override
 	public IFeatureModel[] getAdded() {
 		return get(fAdded);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getRemoved()
-	 */
 	@Override
 	public IFeatureModel[] getRemoved() {
 		return get(fRemoved);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.IFeatureModelDelta#getChanged()
-	 */
 	@Override
 	public IFeatureModel[] getChanged() {
 		return get(fChanged);

@@ -35,9 +35,6 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		fEditable = editable;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.product.ProductModel#load()
-	 */
 	@Override
 	public void load() throws CoreException {
 		if (fFile.exists()) {
@@ -66,34 +63,22 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.product.ProductModel#isInSync()
-	 */
 	@Override
 	public boolean isInSync() {
 		IPath path = fFile.getLocation();
 		return path == null ? false : isInSync(path.toFile());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.AbstractModel#getUnderlyingResource()
-	 */
 	@Override
 	public IResource getUnderlyingResource() {
 		return fFile;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.product.ProductModel#getInstallLocation()
-	 */
 	@Override
 	public String getInstallLocation() {
 		return fFile.getLocation().toOSString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IEditableModel#save()
-	 */
 	@Override
 	public void save() {
 		ByteArrayInputStream stream = null;
@@ -134,17 +119,11 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		return swriter.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IEditable#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
-	 */
 	@Override
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
@@ -156,34 +135,22 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		setDirty(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
-	 */
 	@Override
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.AbstractModel#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(true);
 		super.fireModelChanged(event);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.product.ProductModel#isEditable()
-	 */
 	@Override
 	public boolean isEditable() {
 		return fEditable;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.IWorkspaceModel#reload()
-	 */
 	@Override
 	public void reload() {
 		// Underlying file has to exist in order to reload the model

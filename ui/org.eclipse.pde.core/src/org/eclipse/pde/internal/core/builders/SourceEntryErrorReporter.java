@@ -176,17 +176,11 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			return fResource;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			return getValue();
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof EncodingEntry) {
@@ -196,9 +190,6 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			return false;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return fEncoding.hashCode() + fResource.hashCode();
@@ -233,9 +224,6 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			fLibs = list.toArray(new String[list.size()]);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
-		 */
 		@Override
 		public boolean visit(IResource resource) throws CoreException {
 			String encoding = null;

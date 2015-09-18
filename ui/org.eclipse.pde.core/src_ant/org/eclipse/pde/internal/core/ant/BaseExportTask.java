@@ -36,9 +36,6 @@ public abstract class BaseExportTask extends Task {
 	public BaseExportTask() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.Task#execute()
-	 */
 	@Override
 	public void execute() throws BuildException {
 		if (fDestination == null)

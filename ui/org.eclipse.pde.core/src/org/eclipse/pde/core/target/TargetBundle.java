@@ -255,10 +255,7 @@ public class TargetBundle {
 		}
 		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer().append(getBundleInfo().toString());

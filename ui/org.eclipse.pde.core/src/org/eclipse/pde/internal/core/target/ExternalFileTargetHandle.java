@@ -52,18 +52,12 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 		fURI = uri;
 		fFile = URIUtil.toFile(fURI);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#delete()
-	 */
+
 	@Override
 	void delete() throws CoreException {
 		// We can not delete a file lying outside the workspace
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#getInputStream()
-	 */
+
 	@Override
 	protected InputStream getInputStream() throws CoreException {
 		try {
@@ -73,10 +67,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 		}
 		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.core.target.ITargetDefinition)
-	 */
+
 	@Override
 	void save(ITargetDefinition definition) throws CoreException {
 		try {
@@ -87,18 +78,12 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.LocalTargetHandle_4, fFile.getName()), e));
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetHandle#exists()
-	 */
+
 	@Override
 	public boolean exists() {
 		return fFile != null && fFile.exists();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetHandle#getMemento()
-	 */
+
 	@Override
 	public String getMemento() throws CoreException {
 		return fURI.toString();
@@ -116,10 +101,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	public URI getLocation() {
 		return fURI;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
 	public String toString() {
 		return fURI.toString();

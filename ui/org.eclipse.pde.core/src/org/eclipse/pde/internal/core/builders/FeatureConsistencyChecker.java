@@ -102,9 +102,6 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		return file.equals(PDEProject.getFeatureXml(file.getProject()));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		IFile file = PDEProject.getFeatureXml(getProject());

@@ -227,17 +227,11 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 			firePropertyChanged("", Boolean.toString(mold || cold), Boolean.toString(add)); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.ISplashInfo#getFieldSplashHandlerType()
-	 */
 	@Override
 	public String getFieldSplashHandlerType() {
 		return fFieldSplashHandlerType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.ISplashInfo#setFieldSplashHandlerType(java.lang.String)
-	 */
 	@Override
 	public void setFieldSplashHandlerType(String type, boolean blockNotification) {
 		String old = fFieldSplashHandlerType;
@@ -247,9 +241,6 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.ISplashInfo#isDefinedGeometry()
-	 */
 	@Override
 	public boolean isDefinedGeometry() {
 		if ((fCustomizeProgressBar && fProgressGeometry != null) || (fCustomizeProgressMessage && fMessageGeometry != null)) {

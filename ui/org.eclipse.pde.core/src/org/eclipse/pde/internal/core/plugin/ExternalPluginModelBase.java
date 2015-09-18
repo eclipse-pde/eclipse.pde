@@ -36,9 +36,6 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		return (fLocalization == null) ? null : new NLResourceHelper(fLocalization, PDEManager.getNLLookupLocations(this));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getNLLookupLocation()
-	 */
 	@Override
 	@Deprecated
 	public URL getNLLookupLocation() {

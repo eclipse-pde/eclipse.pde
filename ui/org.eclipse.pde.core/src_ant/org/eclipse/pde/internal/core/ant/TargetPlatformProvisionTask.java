@@ -32,10 +32,7 @@ public class TargetPlatformProvisionTask extends Task {
 	private File targetFile;
 	private File destinationDirectory;
 	private boolean clearDestination;
-
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.Task#execute()
-	 */
+
 	@Override
 	public void execute() throws BuildException {
 

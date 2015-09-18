@@ -57,9 +57,6 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 		fFile = file;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetHandle#getMemento()
-	 */
 	@Override
 	public String getMemento() throws CoreException {
 		try {
@@ -70,25 +67,16 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#getInputStream()
-	 */
 	@Override
 	protected InputStream getInputStream() throws CoreException {
 		return fFile.getContents();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetHandle#exists()
-	 */
 	@Override
 	public boolean exists() {
 		return fFile.exists();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof WorkspaceFileTargetHandle) {
@@ -98,17 +86,11 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return fFile.hashCode() + getClass().hashCode();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#delete()
-	 */
 	@Override
 	void delete() throws CoreException {
 		if (fFile.exists()) {
@@ -117,9 +99,6 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 		P2TargetUtils.deleteProfile(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.core.target.ITargetDefinition)
-	 */
 	@Override
 	public void save(ITargetDefinition definition) throws CoreException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -139,9 +118,6 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return fFile.getName();

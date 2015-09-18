@@ -22,10 +22,6 @@ public class ExternalJavaSearchInitializer extends ClasspathContainerInitializer
 
 	ExternalJavaSearchClasspathContainer fContainer;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#initialize(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
-	 */
 	@Override
 	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
 		try {

@@ -25,17 +25,11 @@ public class BundlePluginModel extends BundlePluginModelBase implements IBundleP
 		return bplugin;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModel#getPlugin()
-	 */
 	@Override
 	public IPlugin getPlugin() {
 		return (IPlugin) getPluginBase();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isFragmentModel()
-	 */
 	@Override
 	public boolean isFragmentModel() {
 		return false;

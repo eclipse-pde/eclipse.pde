@@ -45,9 +45,6 @@ public abstract class IdentifiablePluginObject extends PluginObject implements I
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
-	 */
 	@Override
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		super.reconnect(model, parent);

@@ -170,9 +170,6 @@ public class Feature extends VersionableObject implements IFeature {
 		return fHandler;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ifeature.IFeature#getFeatureInfo(int)
-	 */
 	@Override
 	public IFeatureInfo getFeatureInfo(int infoType) {
 		if (infoType < 0 || infoType > (fInfos.length - 1)) {

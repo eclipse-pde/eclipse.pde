@@ -216,9 +216,6 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		// This is a round-about way to do this; but, leveraging existing
@@ -292,18 +289,12 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		writer.print(element.write());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.IdentifiablePluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
-	 */
 	@Override
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		super.reconnect(model, parent);
 		// No transient fields
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#writeDelimeter(java.io.PrintWriter)
-	 */
 	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		writer.println(',');

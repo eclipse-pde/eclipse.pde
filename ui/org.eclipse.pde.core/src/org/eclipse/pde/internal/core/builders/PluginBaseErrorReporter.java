@@ -26,9 +26,6 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		super(file);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.builders.ExtensionsErrorReporter#validateContent(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void validateContent(IProgressMonitor monitor) {
 		Element element = getDocumentRoot();

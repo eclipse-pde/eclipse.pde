@@ -131,10 +131,7 @@ public class TargetFeature {
 		}
 		featureModel = ExternalFeatureModelManager.createModel(featureXML);
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();

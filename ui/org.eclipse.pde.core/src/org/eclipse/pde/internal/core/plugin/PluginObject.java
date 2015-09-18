@@ -264,9 +264,6 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		fTranslatedName = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
-	 */
 	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		// NO-OP

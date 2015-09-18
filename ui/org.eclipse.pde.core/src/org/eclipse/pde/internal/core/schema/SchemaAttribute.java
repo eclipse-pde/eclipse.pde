@@ -227,11 +227,6 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.ischema.ISchemaAttribute#isTranslatable()
-	 */
 	@Override
 	public boolean isTranslatable() {
 		if (getKind() == STRING && fTranslatable)
@@ -239,11 +234,6 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.ischema.IMetaAttribute#isDeprecated()
-	 */
 	@Override
 	public boolean isDeprecated() {
 		return fDeprecated;

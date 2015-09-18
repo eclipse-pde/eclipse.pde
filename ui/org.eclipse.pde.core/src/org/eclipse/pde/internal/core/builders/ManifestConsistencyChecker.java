@@ -382,9 +382,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.ManifestConsistencyChecker_0, getProject().getName()), 1);

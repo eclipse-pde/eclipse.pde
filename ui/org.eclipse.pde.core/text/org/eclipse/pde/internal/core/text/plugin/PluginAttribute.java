@@ -40,154 +40,97 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 		fValue = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginAttribute#getValue()
-	 */
 	@Override
 	public String getValue() {
 		return fValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginAttribute#setValue(java.lang.String)
-	 */
 	@Override
 	public void setValue(String value) throws CoreException {
 		fValue = value;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setEnclosingElement(org.eclipse.pde.internal.ui.model.IDocumentNode)
-	 */
 	@Override
 	public void setEnclosingElement(IDocumentElementNode node) {
 		fAttribute.setEnclosingElement(node);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getEnclosingElement()
-	 */
 	@Override
 	public IDocumentElementNode getEnclosingElement() {
 		return fAttribute.getEnclosingElement();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setNameOffset(int)
-	 */
 	@Override
 	public void setNameOffset(int offset) {
 		fAttribute.setNameOffset(offset);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getNameOffset()
-	 */
 	@Override
 	public int getNameOffset() {
 		return fAttribute.getNameOffset();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setNameLength(int)
-	 */
 	@Override
 	public void setNameLength(int length) {
 		fAttribute.setNameLength(length);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getNameLength()
-	 */
 	@Override
 	public int getNameLength() {
 		return fAttribute.getNameLength();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setValueOffset(int)
-	 */
 	@Override
 	public void setValueOffset(int offset) {
 		fAttribute.setValueOffset(offset);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getValueOffset()
-	 */
 	@Override
 	public int getValueOffset() {
 		return fAttribute.getValueOffset();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setValueLength(int)
-	 */
 	@Override
 	public void setValueLength(int length) {
 		fAttribute.setValueLength(length);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getValueLength()
-	 */
 	@Override
 	public int getValueLength() {
 		return fAttribute.getValueLength();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getAttributeName()
-	 */
 	@Override
 	public String getAttributeName() {
 		return getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getAttributeValue()
-	 */
 	@Override
 	public String getAttributeValue() {
 		return getValue();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#write()
-	 */
 	@Override
 	public String write() {
 		return getName() + "=\"" + getWritableString(getValue()) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#getWritableString(java.lang.String)
-	 */
 	@Override
 	public String getWritableString(String source) {
 		return super.getWritableString(source).replaceAll("\\r", "&#x0D;") //$NON-NLS-1$ //$NON-NLS-2$
 				.replaceAll("\\n", "&#x0A;"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeName(java.lang.String)
-	 */
 	@Override
 	public void setAttributeName(String name) throws CoreException {
 		setName(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeValue(java.lang.String)
-	 */
 	@Override
 	public void setAttributeValue(String value) throws CoreException {
 		setValue(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
 	@Override
 	public void reconnect(IDocumentElementNode parent) {
 		// Inconsistency in model
@@ -197,9 +140,6 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 		fAttribute.reconnect(parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations

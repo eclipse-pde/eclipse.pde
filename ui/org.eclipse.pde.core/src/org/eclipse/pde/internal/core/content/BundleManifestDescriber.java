@@ -56,10 +56,6 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 		return INDETERMINATE;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.runtime.content.ITextContentDescriber#describe(java.io.Reader, org.eclipse.core.runtime.content.IContentDescription)
-	 */
 	@Override
 	public int describe(Reader contents, IContentDescription description) throws IOException {
 		BufferedReader reader = new BufferedReader(contents);
@@ -89,10 +85,6 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 		return null;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.runtime.content.IContentDescriber#getSupportedOptions()
-	 */
 	@Override
 	public QualifiedName[] getSupportedOptions() {
 		return SUPPORTED_OPTIONS;

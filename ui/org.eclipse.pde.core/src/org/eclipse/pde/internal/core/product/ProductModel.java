@@ -34,16 +34,10 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	private IProductModelFactory fFactory;
 	private IProduct fProduct;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
-	 */
 	@Override
 	protected void updateTimeStamp() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModel#getProduct()
-	 */
 	@Override
 	public IProduct getProduct() {
 		if (fProduct == null)
@@ -51,9 +45,6 @@ public class ProductModel extends AbstractModel implements IProductModel {
 		return fProduct;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModel#getFactory()
-	 */
 	@Override
 	public IProductModelFactory getFactory() {
 		if (fFactory == null)
@@ -61,32 +52,20 @@ public class ProductModel extends AbstractModel implements IProductModel {
 		return fFactory;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModel#getInstallLocation()
-	 */
 	@Override
 	public String getInstallLocation() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#isInSync()
-	 */
 	@Override
 	public boolean isInSync() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#load()
-	 */
 	@Override
 	public void load() throws CoreException {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
-	 */
 	@Override
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
@@ -108,18 +87,12 @@ public class ProductModel extends AbstractModel implements IProductModel {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
-	 */
 	@Override
 	public void reload(InputStream source, boolean outOfSync) throws CoreException {
 		load(source, outOfSync);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {fProduct}, null));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IBaseModel#isEditable()
-	 */
 	@Override
 	public boolean isEditable() {
 		return false;

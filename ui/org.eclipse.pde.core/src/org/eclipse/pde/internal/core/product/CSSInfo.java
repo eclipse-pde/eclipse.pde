@@ -24,9 +24,6 @@ public class CSSInfo extends ProductObject implements ICSSInfo {
 		super(model);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.ICSSInfo#setFilePath(java.lang.String)
-	 */
 	@Override
 	public void setFilePath(String text) {
 		String old = fFilePath;
@@ -36,18 +33,12 @@ public class CSSInfo extends ProductObject implements ICSSInfo {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.ICSSInfo#getFilePath()
-	 */
 	@Override
 	public String getFilePath() {
 		return fFilePath;
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<cssInfo>"); //$NON-NLS-1$
@@ -57,9 +48,6 @@ public class CSSInfo extends ProductObject implements ICSSInfo {
 		writer.println(indent + "</cssInfo>"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
-	 */
 	@Override
 	public void parse(Node node) {
 		NodeList children = node.getChildNodes();

@@ -85,9 +85,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 		fRoot = root;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		String[][] configurations = fInfo.targets;
@@ -148,11 +145,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getPaths()
-	 */
 	@Override
 	protected String[] getPaths() {
 		String[] paths = super.getPaths();
@@ -247,9 +239,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 		save(new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR), properties, "Build Configuration"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#publishingP2Metadata()
-	 */
 	@Override
 	protected boolean publishingP2Metadata() {
 		return fInfo.exportMetadata;
@@ -357,9 +346,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 		return properties;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setP2MetaDataProperties(java.util.Map)
-	 */
 	@Override
 	protected void setP2MetaDataProperties(Map<String, String> map) {
 		if (fInfo.exportMetadata) {

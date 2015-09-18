@@ -32,9 +32,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	private String fNL;
 	private boolean fIsPatch;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.site.IdentifiableObject#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		if (fUrl == null)
@@ -47,9 +44,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#addCategories(org.eclipse.pde.internal.core.isite.ISiteCategory[])
-	 */
 	@Override
 	public void addCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
@@ -61,9 +55,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		fireStructureChanged(newCategories, IModelChangedEvent.INSERT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#removeCategories(org.eclipse.pde.internal.core.isite.ISiteCategory[])
-	 */
 	@Override
 	public void removeCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
@@ -75,33 +66,21 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		fireStructureChanged(newCategories, IModelChangedEvent.REMOVE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getCategories()
-	 */
 	@Override
 	public ISiteCategory[] getCategories() {
 		return fCategories.toArray(new ISiteCategory[fCategories.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getType()
-	 */
 	@Override
 	public String getType() {
 		return fType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getURL()
-	 */
 	@Override
 	public String getURL() {
 		return fUrl;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setType(java.lang.String)
-	 */
 	@Override
 	public void setType(String type) throws CoreException {
 		ensureModelEditable();
@@ -110,9 +89,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		firePropertyChanged(P_TYPE, oldValue, fType);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setURL(java.lang.String)
-	 */
 	@Override
 	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
@@ -121,9 +97,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		firePropertyChanged(P_TYPE, oldValue, url);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.site.VersionableObject#parse(org.w3c.dom.Node)
-	 */
 	@Override
 	protected void parse(Node node) {
 		super.parse(node);
@@ -147,9 +120,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.site.VersionableObject#reset()
-	 */
 	@Override
 	protected void reset() {
 		super.reset();
@@ -163,9 +133,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		fCategories.clear();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.site.VersionableObject#restoreProperty(java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_TYPE)) {
@@ -187,9 +154,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.site.SiteObject#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
@@ -226,9 +190,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 			writer.println("/>"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getArchiveFile()
-	 */
 	@Override
 	public IFile getArchiveFile() {
 		if (fUrl == null)
@@ -243,41 +204,26 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getOS()
-	 */
 	@Override
 	public String getOS() {
 		return fOS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getNL()
-	 */
 	@Override
 	public String getNL() {
 		return fNL;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getArch()
-	 */
 	@Override
 	public String getArch() {
 		return fArch;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getWS()
-	 */
 	@Override
 	public String getWS() {
 		return fWS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setOS(java.lang.String)
-	 */
 	@Override
 	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
@@ -286,9 +232,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		firePropertyChanged(P_OS, oldValue, fOS);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setWS(java.lang.String)
-	 */
 	@Override
 	public void setWS(String ws) throws CoreException {
 		ensureModelEditable();
@@ -297,9 +240,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		firePropertyChanged(P_WS, oldValue, fWS);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setArch(java.lang.String)
-	 */
 	@Override
 	public void setArch(String arch) throws CoreException {
 		ensureModelEditable();
@@ -308,9 +248,6 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		firePropertyChanged(P_ARCH, oldValue, fArch);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setNL(java.lang.String)
-	 */
 	@Override
 	public void setNL(String nl) throws CoreException {
 		ensureModelEditable();
@@ -319,17 +256,11 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		firePropertyChanged(P_NL, oldValue, fNL);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#isPatch()
-	 */
 	@Override
 	public boolean isPatch() {
 		return fIsPatch;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setIsPatch(boolean)
-	 */
 	@Override
 	public void setIsPatch(boolean patch) throws CoreException {
 		ensureModelEditable();

@@ -22,9 +22,6 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 		super(file);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.builders.XMLErrorReporter#validateContent(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void validateContent(IProgressMonitor monitor) {
 		fMonitor = monitor;

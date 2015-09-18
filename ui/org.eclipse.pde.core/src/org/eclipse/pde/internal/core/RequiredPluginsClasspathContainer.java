@@ -49,37 +49,21 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		fBuild = build;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IClasspathContainer#getKind()
-	 */
 	@Override
 	public int getKind() {
 		return K_APPLICATION;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IClasspathContainer#getPath()
-	 */
 	@Override
 	public IPath getPath() {
 		return PDECore.REQUIRED_PLUGINS_CONTAINER_PATH;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return PDECoreMessages.RequiredPluginsClasspathContainer_description;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
-	 */
 	@Override
 	public IClasspathEntry[] getClasspathEntries() {
 		if (fModel == null) {

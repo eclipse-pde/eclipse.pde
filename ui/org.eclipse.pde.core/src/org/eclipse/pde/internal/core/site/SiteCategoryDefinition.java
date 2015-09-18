@@ -23,25 +23,16 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 	private String name;
 	private ISiteDescription description;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#getName()
-	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteObject#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		return name != null && getLabel() != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#setName(java.lang.String)
-	 */
 	@Override
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
@@ -50,17 +41,11 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 		firePropertyChanged(P_NAME, oldValue, name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#getDescription()
-	 */
 	@Override
 	public ISiteDescription getDescription() {
 		return description;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#setDescription(org.eclipse.pde.internal.core.isite.ISiteDescription)
-	 */
 	@Override
 	public void setDescription(ISiteDescription description) throws CoreException {
 		ensureModelEditable();
@@ -69,9 +54,6 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 		firePropertyChanged(P_DESCRIPTION, oldValue, description);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.site.SiteObject#reset()
-	 */
 	@Override
 	protected void reset() {
 		super.reset();
@@ -79,9 +61,6 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 		description = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.site.SiteObject#parse(org.w3c.dom.Node)
-	 */
 	@Override
 	protected void parse(Node node) {
 		super.parse(node);
@@ -98,9 +77,6 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.site.SiteObject#restoreProperty(java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_NAME)) {
@@ -111,9 +87,6 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.site.SiteObject#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);

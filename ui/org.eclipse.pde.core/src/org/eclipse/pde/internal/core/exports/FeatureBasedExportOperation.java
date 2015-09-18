@@ -32,9 +32,6 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 		super(info, name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Exporting...", 33); //$NON-NLS-1$

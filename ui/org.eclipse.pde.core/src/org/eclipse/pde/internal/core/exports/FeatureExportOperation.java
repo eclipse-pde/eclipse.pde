@@ -73,9 +73,6 @@ public class FeatureExportOperation extends Job {
 		fBuildTempMetadataLocation = PDECore.getDefault().getStateLocation().append("tempp2metadata").toString(); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {

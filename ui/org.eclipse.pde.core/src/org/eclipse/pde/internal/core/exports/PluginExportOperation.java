@@ -57,9 +57,6 @@ public class PluginExportOperation extends FeatureBasedExportOperation {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setAdditionalAttributes(org.w3c.dom.Element, org.eclipse.osgi.service.resolver.BundleDescription)
-	 */
 	@Override
 	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
 		plugin.setAttribute("unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$

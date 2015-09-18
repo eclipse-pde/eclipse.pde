@@ -377,9 +377,6 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		return service;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
-	 */
 	@Override
 	public void optionsChanged(DebugOptions options) {
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);

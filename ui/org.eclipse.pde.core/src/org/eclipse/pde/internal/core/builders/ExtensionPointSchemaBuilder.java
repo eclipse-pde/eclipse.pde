@@ -72,9 +72,6 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		return new IProject[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.ExtensionPointSchemaBuilder_0, getProject().getName()), 1);

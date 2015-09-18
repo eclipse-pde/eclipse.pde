@@ -42,9 +42,6 @@ public class JREInfo extends ProductObject implements IJREInfo {
 		super(model);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IJREInfo#getJREContainerPath(java.lang.String)
-	 */
 	@Override
 	public IPath getJREContainerPath(String os) {
 		if (Platform.OS_WIN32.equals(os)) {
@@ -59,9 +56,6 @@ public class JREInfo extends ProductObject implements IJREInfo {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IJREInfo#setJREContainerPath(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void setJREContainerPath(String os, IPath jreContainerPath) {
 		if (Platform.OS_WIN32.equals(os)) {
@@ -87,9 +81,6 @@ public class JREInfo extends ProductObject implements IJREInfo {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IJREInfo#getJVMLocation(java.lang.String)
-	 */
 	@Override
 	public File getJVMLocation(String os) {
 		IPath jreContainerPath = getJREContainerPath(os);
@@ -102,9 +93,6 @@ public class JREInfo extends ProductObject implements IJREInfo {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
-	 */
 	@Override
 	public void parse(Node node) {
 		NodeList list = node.getChildNodes();
@@ -147,9 +135,6 @@ public class JREInfo extends ProductObject implements IJREInfo {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<vm>"); //$NON-NLS-1$

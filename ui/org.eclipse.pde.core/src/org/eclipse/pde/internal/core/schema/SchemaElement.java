@@ -292,27 +292,16 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		writer.println(indent + "</element>"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.ischema.IMetaElement#isTranslatable()
-	 */
 	@Override
 	public boolean hasTranslatableContent() {
 		return fTranslatable;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ischema.IMetaElement#isDeprecated()
-	 */
 	@Override
 	public boolean isDeprecated() {
 		return fDeprecated;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ischema.ISchemaElement#hasDeprecatedAttributes()
-	 */
 	@Override
 	public boolean hasDeprecatedAttributes() {
 		for (ISchemaAttribute att : getAttributes()) {

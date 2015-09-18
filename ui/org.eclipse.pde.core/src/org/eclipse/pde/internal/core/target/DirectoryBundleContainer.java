@@ -47,9 +47,6 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 		fPath = path;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
-	 */
 	@Override
 	public String getLocation(boolean resolve) throws CoreException {
 		if (resolve) {
@@ -58,17 +55,11 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 		return fPath;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getType()
-	 */
 	@Override
 	public String getType() {
 		return TYPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		File dir = getDirectory();
@@ -99,9 +90,6 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		if (definition instanceof TargetDefinition) {
@@ -120,9 +108,6 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 		return new File(path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof DirectoryBundleContainer) {
@@ -132,17 +117,11 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return fPath.hashCode();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return new StringBuffer().append("Directory ").append(fPath).toString(); //$NON-NLS-1$

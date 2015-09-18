@@ -45,25 +45,16 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		setXMLTagName(tagName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#setSharedModel(org.eclipse.pde.core.IModel)
-	 */
 	@Override
 	public void setSharedModel(IModel model) {
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#getSharedModel()
-	 */
 	@Override
 	public IModel getSharedModel() {
 		return fModel;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#reset()
-	 */
 	@Override
 	public void reset() {
 		// TODO: MP: TEO: LOW: Reset parent fields? or super.reset?
@@ -71,25 +62,16 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		fInTheModel = false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#isInTheModel()
-	 */
 	@Override
 	public boolean isInTheModel() {
 		return fInTheModel;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#setInTheModel(boolean)
-	 */
 	@Override
 	public void setInTheModel(boolean inModel) {
 		fInTheModel = inModel;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#isEditable()
-	 */
 	@Override
 	public boolean isEditable() {
 		// Convenience method
@@ -103,9 +85,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#getLineDelimiter()
-	 */
 	@Override
 	protected String getLineDelimiter() {
 		if (fModel instanceof IEditingModel) {
@@ -115,9 +94,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return super.getLineDelimiter();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
 	@Override
 	public void reconnect(IDocumentElementNode parent, IModel model) {
 		super.reconnect(parent, model);
@@ -173,9 +149,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
 	@Override
 	public void addChildNode(IDocumentElementNode child) {
 		if (child instanceof IDocumentObject) {
@@ -184,9 +157,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		super.addChildNode(child);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentElementNode, int)
-	 */
 	@Override
 	public void addChildNode(IDocumentElementNode child, int position) {
 		// Ensure the position is valid
@@ -227,9 +197,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
 	@Override
 	public IDocumentElementNode removeChildNode(IDocumentElementNode child) {
 		IDocumentElementNode node = super.removeChildNode(child);
@@ -239,9 +206,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return node;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(int)
-	 */
 	@Override
 	public IDocumentElementNode removeChildNode(int index) {
 		IDocumentElementNode node = super.removeChildNode(index);
@@ -284,9 +248,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return node;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations
@@ -491,9 +452,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#swap(org.eclipse.pde.internal.core.text.IDocumentElementNode, org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
 	@Override
 	public void swap(IDocumentElementNode child1, IDocumentElementNode child2, boolean fireEvent) {
 		super.swap(child1, child2);
@@ -613,9 +571,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return changed;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#setXMLContent(java.lang.String)
-	 */
 	@Override
 	public boolean setXMLContent(String text) {
 		String oldText = null;
@@ -641,9 +596,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return changed;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#getFileEncoding()
-	 */
 	@Override
 	protected String getFileEncoding() {
 		if ((fModel != null) && (fModel instanceof IEditingModel)) {

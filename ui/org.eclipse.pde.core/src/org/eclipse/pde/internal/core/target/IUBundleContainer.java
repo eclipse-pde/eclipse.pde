@@ -161,25 +161,16 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
-	 */
 	@Override
 	public String getLocation(boolean resolve) throws CoreException {
 		return P2TargetUtils.BUNDLE_POOL.toOSString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getType()
-	 */
 	@Override
 	public String getType() {
 		return TYPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		fTarget = definition;
@@ -245,9 +236,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		return fFeatures;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		fTarget = definition;
@@ -437,9 +425,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -453,9 +438,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		return hash;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -645,9 +627,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		fSynchronizer.setIncludeConfigurePhase((fFlags & INCLUDE_CONFIGURE_PHASE) == INCLUDE_CONFIGURE_PHASE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#serialize()
-	 */
 	@Override
 	public String serialize() {
 		Element containerElement;

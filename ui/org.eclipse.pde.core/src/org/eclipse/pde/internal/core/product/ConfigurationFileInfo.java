@@ -38,9 +38,6 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 		super(model);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo#setPath(java.lang.String)
-	 */
 	public void setPath(String path) {
 		String old = fPath;
 		fPath = path;
@@ -48,16 +45,10 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 			firePropertyChanged(P_PATH, old, fPath);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo#getPath()
-	 */
 	public String getPath() {
 		return fPath;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
-	 */
 	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -118,9 +109,6 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 

@@ -35,25 +35,16 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 		fBundle = new Bundle(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#createNLResourceHelper()
-	 */
 	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundleModel#isFragmentModel()
-	 */
 	@Override
 	public boolean isFragmentModel() {
 		return getBundle().getHeader(Constants.FRAGMENT_HOST) != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
-	 */
 	@Override
 	public void load(InputStream source, boolean outOfSync) throws CoreException {
 		try {
@@ -66,18 +57,12 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#adjustOffsets(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void adjustOffsets(IDocument document) {
 		((Bundle) getBundle()).clearOffsets();
 		((Bundle) getBundle()).adjustOffsets(document);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundleModel#getBundle()
-	 */
 	@Override
 	public IBundle getBundle() {
 		return fBundle;

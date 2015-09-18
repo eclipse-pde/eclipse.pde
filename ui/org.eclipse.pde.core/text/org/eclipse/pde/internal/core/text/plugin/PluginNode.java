@@ -17,25 +17,16 @@ public class PluginNode extends PluginBaseNode implements IPlugin {
 
 	private static final long serialVersionUID = 1L;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPlugin#getClassName()
-	 */
 	@Override
 	public String getClassName() {
 		return getXMLAttributeValue(P_CLASS_NAME);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPlugin#setClassName(java.lang.String)
-	 */
 	@Override
 	public void setClassName(String className) throws CoreException {
 		setXMLAttribute(P_CLASS_NAME, className);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode#getSpecificAttributes()
-	 */
 	@Override
 	protected String[] getSpecificAttributes() {
 		String classname = getClassName();

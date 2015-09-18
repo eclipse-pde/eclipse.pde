@@ -44,9 +44,6 @@ public class AbbreviatedFragmentModel extends WorkspaceFragmentModel {
 		fExtensionPointIDs = new String[] {extensionPointID};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase#load(java.io.InputStream, boolean)
-	 */
 	@Override
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		load(stream, outOfSync, new AbbreviatedPluginHandler(fExtensionPointIDs));

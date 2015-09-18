@@ -62,16 +62,10 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		return isFullyExported() ? new String[] {"**"} : fContentFilters; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#addContentFilter(java.lang.String)
-	 */
 	@Override
 	public void addContentFilter(String filter) throws CoreException {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#removeContentFilter(java.lang.String)
-	 */
 	@Override
 	public void removeContentFilter(String filter) throws CoreException {
 	}
@@ -190,9 +184,6 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		return list;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Get the model
@@ -224,18 +215,12 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 			writer.print(PDEXMLHelper.getWritableString(getName()));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
-	 */
 	@Override
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		super.reconnect(model, parent);
 		// No transient fields
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#writeDelimeter(java.io.PrintWriter)
-	 */
 	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		writer.println(',');

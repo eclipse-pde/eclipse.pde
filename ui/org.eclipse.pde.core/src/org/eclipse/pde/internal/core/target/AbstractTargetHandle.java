@@ -24,9 +24,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class AbstractTargetHandle implements ITargetHandle {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetHandle#getTargetDefinition()
-	 */
 	@Override
 	public ITargetDefinition getTargetDefinition() throws CoreException {
 		TargetDefinition definition = new TargetDefinition(this);

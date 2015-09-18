@@ -21,33 +21,21 @@ public class PluginModel extends PluginModelBase implements IPluginModel {
 		super(document, isReconciling);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModel#getPlugin()
-	 */
 	@Override
 	public IPlugin getPlugin() {
 		return (IPlugin) getPluginBase();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isFragmentModel()
-	 */
 	@Override
 	public boolean isFragmentModel() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
-	 */
 	@Override
 	public BundleDescription getBundleDescription() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
-	 */
 	@Override
 	public void setBundleDescription(BundleDescription description) {
 	}

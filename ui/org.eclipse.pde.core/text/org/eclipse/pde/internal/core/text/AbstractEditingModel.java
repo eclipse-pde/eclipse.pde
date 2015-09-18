@@ -39,9 +39,6 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		fReconciling = isReconciling;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fNLResourceHelper != null) {
@@ -52,9 +49,6 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		fListeners.clear();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#getResourceString(java.lang.String)
-	 */
 	@Override
 	public String getResourceString(String key) {
 		if (key == null || key.length() == 0)
@@ -71,25 +65,16 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		return fNLResourceHelper;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#isDisposed()
-	 */
 	@Override
 	public boolean isDisposed() {
 		return fDisposed;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#isEditable()
-	 */
 	@Override
 	public boolean isEditable() {
 		return fReconciling;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#isLoaded()
-	 */
 	@Override
 	public boolean isLoaded() {
 		return fLoaded;
@@ -103,33 +88,21 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		fLoaded = loaded;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#isInSync()
-	 */
 	@Override
 	public boolean isInSync() {
 		return fInSync;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IBaseModel#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		return isLoaded();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#getTimeStamp()
-	 */
 	@Override
 	public final long getTimeStamp() {
 		return fTimestamp;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#load()
-	 */
 	@Override
 	public final void load() throws CoreException {
 		try {
@@ -138,9 +111,6 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
-	 */
 	@Override
 	public final void reload(InputStream source, boolean outOfSync) throws CoreException {
 		load(source, outOfSync);
@@ -148,9 +118,6 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
-	 */
 	@Override
 	public boolean isReconcilingModel() {
 		return fReconciling;
@@ -161,9 +128,6 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		return fDocument;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.text.IReconcilingParticipant#reconciled(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public final void reconciled(IDocument document) {
 		if (isReconcilingModel()) {
@@ -188,25 +152,16 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		return new BufferedInputStream(new ByteArrayInputStream(document.get().getBytes(getCharset())));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IEditingModel#getCharset()
-	 */
 	@Override
 	public String getCharset() {
 		return fCharset != null ? fCharset : "UTF-8"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IEditingModel#setCharset(java.lang.String)
-	 */
 	@Override
 	public void setCharset(String charset) {
 		fCharset = charset;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangeProvider#addModelChangedListener(org.eclipse.pde.core.IModelChangedListener)
-	 */
 	@Override
 	public void addModelChangedListener(IModelChangedListener listener) {
 		if (!fListeners.contains(listener))
@@ -228,9 +183,6 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE && event.getOldValue() != null && event.getOldValue().equals(event.getNewValue()))
@@ -241,64 +193,40 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelObjectChanged(java.lang.Object, java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue) {
 		fireModelChanged(new ModelChangedEvent(this, object, property, oldValue, newValue));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangeProvider#removeModelChangedListener(org.eclipse.pde.core.IModelChangedListener)
-	 */
 	@Override
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		fListeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IEditable#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
-	 */
 	@Override
 	public void save(PrintWriter writer) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
-	 */
 	@Override
 	public void setDirty(boolean dirty) {
 		this.fDirty = dirty;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IEditingModel#isStale()
-	 */
 	@Override
 	public boolean isStale() {
 		return fStale;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IEditingModel#setStale(boolean)
-	 */
 	@Override
 	public void setStale(boolean stale) {
 		fStale = stale;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#getUnderlyingResource()
-	 */
 	@Override
 	public IResource getUnderlyingResource() {
 		return fUnderlyingResource;
@@ -308,9 +236,6 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		fUnderlyingResource = resource;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getInstallLocation()
-	 */
 	public String getInstallLocation() {
 		if (fInstallLocation == null && fUnderlyingResource != null) {
 			IPath path = fUnderlyingResource.getProject().getLocation();

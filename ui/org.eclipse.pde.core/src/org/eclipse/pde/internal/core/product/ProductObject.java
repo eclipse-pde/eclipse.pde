@@ -27,9 +27,6 @@ public abstract class ProductObject extends PlatformObject implements IProductOb
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#getModel()
-	 */
 	@Override
 	public IProductModel getModel() {
 		return fModel;
@@ -40,9 +37,6 @@ public abstract class ProductObject extends PlatformObject implements IProductOb
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#getProduct()
-	 */
 	@Override
 	public IProduct getProduct() {
 		return getModel().getProduct();

@@ -208,26 +208,17 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fBundleDescription = null;
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
-	 */
 	@Override
 	public BundleDescription getBundleDescription() {
 		return fBundleDescription;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
-	 */
 	@Override
 	public void setBundleDescription(BundleDescription description) {
 		fBundleDescription = description;

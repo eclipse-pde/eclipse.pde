@@ -21,25 +21,16 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return getXMLAttributeValue(P_PLUGIN_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginVersion()
-	 */
 	@Override
 	public String getPluginVersion() {
 		return getXMLAttributeValue(P_PLUGIN_VERSION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#getRule()
-	 */
 	@Override
 	public int getRule() {
 		String match = getXMLAttributeValue("match"); //$NON-NLS-1$
@@ -54,25 +45,16 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 		return IMatchRules.GREATER_OR_EQUAL;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#setPluginId(java.lang.String)
-	 */
 	@Override
 	public void setPluginId(String id) throws CoreException {
 		setXMLAttribute(P_PLUGIN_ID, id);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#setPluginVersion(java.lang.String)
-	 */
 	@Override
 	public void setPluginVersion(String version) throws CoreException {
 		setXMLAttribute(P_PLUGIN_VERSION, version);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragment#setRule(int)
-	 */
 	@Override
 	public void setRule(int rule) throws CoreException {
 		String match = ""; //$NON-NLS-1$
@@ -92,9 +74,6 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 		setXMLAttribute(P_RULE, match);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode#getSpecificAttributes()
-	 */
 	@Override
 	protected String[] getSpecificAttributes() {
 		ArrayList<String> result = new ArrayList<String>();

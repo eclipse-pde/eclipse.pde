@@ -105,11 +105,6 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		return fModels.values().toArray();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		switch (event.getType()) {
@@ -132,10 +127,6 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
-	 */
 	@Override
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		if (delta != null) {

@@ -33,33 +33,21 @@ public class PackageExportDescription implements IPackageExportDescription {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.project.IPackageExportDescription#getVersion()
-	 */
 	@Override
 	public Version getVersion() {
 		return fVersion;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.project.IPackageExportDescription#getFriends()
-	 */
 	@Override
 	public String[] getFriends() {
 		return fFriends;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.project.IPackageExportDescription#isApi()
-	 */
 	@Override
 	public boolean isApi() {
 		return fApi;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.project.IPackageExportDescription#getName()
-	 */
 	@Override
 	public String getName() {
 		return fName;
@@ -74,9 +62,6 @@ public class PackageExportDescription implements IPackageExportDescription {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		int code = getClass().hashCode() + fName.hashCode();
@@ -126,9 +111,6 @@ public class PackageExportDescription implements IPackageExportDescription {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();

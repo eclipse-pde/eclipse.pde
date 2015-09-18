@@ -22,33 +22,21 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	private String url;
 	private String text;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#getName()
-	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#getURL()
-	 */
 	@Override
 	public String getURL() {
 		return url;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#getText()
-	 */
 	@Override
 	public String getText() {
 		return text;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#setName(java.lang.String)
-	 */
 	@Override
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
@@ -57,9 +45,6 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		firePropertyChanged(P_URL, oldValue, name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#setURL(java.lang.String)
-	 */
 	@Override
 	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
@@ -68,9 +53,6 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		firePropertyChanged(P_URL, oldValue, url);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#setText(java.lang.String)
-	 */
 	@Override
 	public void setText(String text) throws CoreException {
 		ensureModelEditable();

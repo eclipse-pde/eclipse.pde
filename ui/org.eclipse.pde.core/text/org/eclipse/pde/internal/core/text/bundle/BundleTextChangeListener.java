@@ -49,8 +49,6 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 	}
 
 	/*
-	 * (non-Javadoc)
-	 *
 	 * This method is overwritten in the BundleTextChangeListener so that newly inserted headers
 	 * will have their separator inserted at the start of the change rather than the end when there
 	 * is not already a new line at the end of the manifest. This allows the "Add a new line at the

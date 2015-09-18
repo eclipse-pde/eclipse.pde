@@ -78,9 +78,6 @@ public class RepositoryReference extends SiteObject implements IRepositoryRefere
 		return fURL != null && fURL.length() > 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.isite.ISiteObject#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		return isURLDefined();

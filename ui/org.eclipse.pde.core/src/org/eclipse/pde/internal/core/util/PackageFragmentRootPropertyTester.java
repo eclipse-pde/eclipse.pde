@@ -33,9 +33,6 @@ public class PackageFragmentRootPropertyTester extends PropertyTester {
 	 */
 	public static final String PROP_IN_PLUGIN_CONTAINER = "inPluginContainer"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (property.equals(PROP_IN_PLUGIN_CONTAINER)) {

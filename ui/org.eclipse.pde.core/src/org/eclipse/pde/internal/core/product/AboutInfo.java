@@ -29,9 +29,6 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 		super(model);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IAboutInfo#setText(java.lang.String)
-	 */
 	@Override
 	public void setText(String text) {
 		String old = fAboutText;
@@ -40,17 +37,11 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 			firePropertyChanged(P_TEXT, old, fAboutText);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IAboutInfo#getText()
-	 */
 	@Override
 	public String getText() {
 		return fAboutText;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IAboutInfo#setImagePath(java.lang.String)
-	 */
 	@Override
 	public void setImagePath(String path) {
 		String old = fImagePath;
@@ -59,17 +50,11 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 			firePropertyChanged(P_IMAGE, old, fImagePath);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IAboutInfo#getImagePath()
-	 */
 	@Override
 	public String getImagePath() {
 		return fImagePath;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (isAboutImageDefined() || isAboutTextDefined()) {
@@ -93,9 +78,6 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 		return fImagePath != null && fImagePath.length() > 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
-	 */
 	@Override
 	public void parse(Node node) {
 		NodeList children = node.getChildNodes();

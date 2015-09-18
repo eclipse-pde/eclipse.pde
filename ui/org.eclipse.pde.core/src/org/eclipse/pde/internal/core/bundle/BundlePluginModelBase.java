@@ -39,11 +39,6 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		getPluginBase();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#getBundleModel()
-	 */
 	@Override
 	public IBundleModel getBundleModel() {
 		return fBundleModel;
@@ -54,11 +49,6 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return fBundleModel.getUnderlyingResource();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#getExtensionsModel()
-	 */
 	@Override
 	public ISharedExtensionsModel getExtensionsModel() {
 		return fExtensionsModel;
@@ -95,11 +85,6 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#setBundleModel(org.eclipse.pde.internal.core.ibundle.IBundleModel)
-	 */
 	@Override
 	public void setBundleModel(IBundleModel bundleModel) {
 		if (fBundleModel != null && fBundlePluginBase != null) {
@@ -110,11 +95,6 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 			bundleModel.addModelChangedListener(fBundlePluginBase);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#setExtensionsModel(org.eclipse.pde.core.plugin.IExtensionsModel)
-	 */
 	@Override
 	public void setExtensionsModel(ISharedExtensionsModel extensionsModel) {
 		if (fExtensionsModel != null && fBundlePluginBase != null) {
@@ -148,9 +128,6 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return getPluginBase();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		super.fireModelChanged(event);
@@ -162,11 +139,6 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase(boolean)
-	 */
 	@Override
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (fBundlePluginBase == null && createIfMissing) {
@@ -183,21 +155,11 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return getPluginBase(createIfMissing);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginFactory()
-	 */
 	@Override
 	public IPluginModelFactory getPluginFactory() {
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getFactory()
-	 */
 	@Override
 	public IExtensionsModelFactory getFactory() {
 		if (fExtensionsModel != null)
@@ -205,11 +167,6 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getInstallLocation()
-	 */
 	@Override
 	public String getInstallLocation() {
 		if (fBundleModel != null)
@@ -240,11 +197,6 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#isEditable()
-	 */
 	@Override
 	public boolean isEditable() {
 		if (fBundleModel != null && fBundleModel.isEditable() == false)
@@ -254,49 +206,24 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#isInSync()
-	 */
 	@Override
 	public boolean isInSync() {
 		return ((fBundleModel == null || fBundleModel.isInSync()) && (fExtensionsModel == null || fExtensionsModel.isInSync()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		return ((fBundleModel == null || fBundleModel.isValid()) && (fExtensionsModel == null || fExtensionsModel.isValid()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#load()
-	 */
 	@Override
 	public void load() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
-	 */
 	@Override
 	public void load(InputStream source, boolean outOfSync) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
-	 */
 	@Override
 	public void reload(InputStream source, boolean outOfSync) {
 	}
@@ -313,11 +240,6 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	public void setEnabled(boolean enabled) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
-	 */
 	@Override
 	protected void updateTimeStamp() {
 	}
@@ -376,31 +298,16 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
-	 */
 	@Override
 	public BundleDescription getBundleDescription() {
 		return fBundleDescription;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
-	 */
 	@Override
 	public void setBundleDescription(BundleDescription description) {
 		fBundleDescription = description;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IEditable#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		if (fBundleModel != null && (fBundleModel instanceof IEditable) && ((IEditable) fBundleModel).isDirty())
@@ -410,21 +317,11 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
-	 */
 	@Override
 	public void save(PrintWriter writer) {
 		// Does nothing - individual models are saved instead
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
-	 */
 	@Override
 	public void setDirty(boolean dirty) {
 		//does nothing

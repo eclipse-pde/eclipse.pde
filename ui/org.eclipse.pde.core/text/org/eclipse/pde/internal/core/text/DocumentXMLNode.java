@@ -17,9 +17,6 @@ public abstract class DocumentXMLNode implements IDocumentXMLNode {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return write();

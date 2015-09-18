@@ -197,9 +197,6 @@ public class XMLErrorReporter extends DefaultHandler {
 		addMarker(exception, IMarker.SEVERITY_WARNING);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#startDocument()
-	 */
 	@Override
 	public void startDocument() throws SAXException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -209,17 +206,11 @@ public class XMLErrorReporter extends DefaultHandler {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
-	 */
 	@Override
 	public void endDocument() throws SAXException {
 		fXMLDocument.appendChild(fRootElement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-	 */
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		Element element = fXMLDocument.createElement(qName);
@@ -239,9 +230,6 @@ public class XMLErrorReporter extends DefaultHandler {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		fElementStack.pop();
@@ -255,9 +243,6 @@ public class XMLErrorReporter extends DefaultHandler {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
-	 */
 	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
 		StringBuffer buff = new StringBuffer();
@@ -271,9 +256,6 @@ public class XMLErrorReporter extends DefaultHandler {
 			fElementStack.peek().appendChild(text);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
-	 */
 	@Override
 	public void setDocumentLocator(Locator locator) {
 		fLocator = locator;

@@ -79,9 +79,6 @@ public class BundleObject implements Serializable, IWritable, IWritableDelimiter
 		this.model = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
-	 */
 	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		writer.println(',');

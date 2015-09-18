@@ -88,9 +88,6 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		monitor.done();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		IFile site = getProject().getFile("site.xml"); //$NON-NLS-1$

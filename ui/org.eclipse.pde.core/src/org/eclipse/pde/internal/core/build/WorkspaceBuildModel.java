@@ -141,9 +141,6 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		fEditable = editable;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.build.IBuildModel#getInstallLocation()
-	 */
 	@Override
 	public String getInstallLocation() {
 		return fUnderlyingResource.getLocation().toOSString();

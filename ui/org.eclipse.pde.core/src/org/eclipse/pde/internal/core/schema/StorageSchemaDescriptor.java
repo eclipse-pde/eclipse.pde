@@ -61,9 +61,6 @@ public class StorageSchemaDescriptor implements ISchemaDescriptor {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getSchema(boolean)
-	 */
 	@Override
 	public ISchema getSchema(boolean abbreviated) {
 		if (fSchema == null)
@@ -71,17 +68,11 @@ public class StorageSchemaDescriptor implements ISchemaDescriptor {
 		return fSchema;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#isStandalone()
-	 */
 	@Override
 	public boolean isStandalone() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getLastModified()
-	 */
 	@Override
 	public long getLastModified() {
 		return 0;

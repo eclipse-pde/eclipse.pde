@@ -90,9 +90,6 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	}
 
 	class BinaryFileModificationValidator extends FileModificationValidator {
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.team.FileModificationValidator#validateEdit(org.eclipse.core.resources.IFile[], org.eclipse.core.resources.team.FileModificationValidationContext)
-		 */
 		@Override
 		public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
 			for (int i = 0; i < files.length; i++) {
@@ -103,9 +100,6 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 			return createOKStatus();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.team.FileModificationValidator#validateSave(org.eclipse.core.resources.IFile)
-		 */
 		@Override
 		public IStatus validateSave(IFile file) {
 			if (isBinaryResource(file, false)) {

@@ -22,49 +22,31 @@ public class ProductModelFactory implements IProductModelFactory {
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createProduct()
-	 */
 	@Override
 	public IProduct createProduct() {
 		return new Product(fModel);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createAboutInfo()
-	 */
 	@Override
 	public IAboutInfo createAboutInfo() {
 		return new AboutInfo(fModel);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createPlugin()
-	 */
 	@Override
 	public IProductPlugin createPlugin() {
 		return new ProductPlugin(fModel);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createPluginConfiguration()
-	 */
 	@Override
 	public IPluginConfiguration createPluginConfiguration() {
 		return new PluginConfiguration(fModel);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createPropertyConfiguration()
-	 */
 	@Override
 	public IConfigurationProperty createConfigurationProperty() {
 		return new ConfigurationProperty(fModel);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createConfigFileInfo()
-	 */
 	@Override
 	public IConfigurationFileInfo createConfigFileInfo() {
 		return new ConfigurationFileInfo(fModel);

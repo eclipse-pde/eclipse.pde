@@ -47,9 +47,6 @@ public class PackageFriend extends BundleObject {
 		fPackageObject = object;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#writeDelimeter(java.io.PrintWriter)
-	 */
 	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		writer.print(',');

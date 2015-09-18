@@ -38,9 +38,6 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 		super(model);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
-	 */
 	@Override
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -52,9 +49,6 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<plugin id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -74,17 +68,11 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#getId()
-	 */
 	@Override
 	public String getId() {
 		return fId.trim();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#setId(java.lang.String)
-	 */
 	@Override
 	public void setId(String id) {
 		fId = id;
@@ -103,17 +91,11 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 			firePropertyChanged("version", old, fVersion); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#isFragment()
-	 */
 	@Override
 	public boolean isFragment() {
 		return fFragment;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#setFragment(boolean)
-	 */
 	@Override
 	public void setFragment(boolean isFragment) {
 		fFragment = isFragment;

@@ -20,9 +20,6 @@ public class FragmentErrorReporter extends PluginBaseErrorReporter {
 		super(file);
 	}
 
-	/* (non-Javadoc)
-	* @see org.eclipse.pde.internal.builders.PluginBaseErrorReporter#validateTopLevelAttributes(org.w3c.dom.Element)
-	*/
 	@Override
 	protected void validateTopLevelAttributes(Element element) {
 		super.validateTopLevelAttributes(element);

@@ -21,33 +21,21 @@ public class FragmentModel extends PluginModelBase implements IFragmentModel {
 		super(document, isReconciling);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IFragmentModel#getFragment()
-	 */
 	@Override
 	public IFragment getFragment() {
 		return (IFragment) getPluginBase();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isFragmentModel()
-	 */
 	@Override
 	public boolean isFragmentModel() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
-	 */
 	@Override
 	public BundleDescription getBundleDescription() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
-	 */
 	@Override
 	public void setBundleDescription(BundleDescription description) {
 	}

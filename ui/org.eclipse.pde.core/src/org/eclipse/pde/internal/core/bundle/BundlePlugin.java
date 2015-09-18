@@ -21,21 +21,11 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 
 	private static final long serialVersionUID = 1L;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.plugin.IPlugin#getClassName()
-	 */
 	@Override
 	public String getClassName() {
 		return getValue(Constants.BUNDLE_ACTIVATOR, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.plugin.IPlugin#setClassName(java.lang.String)
-	 */
 	@Override
 	public void setClassName(String className) throws CoreException {
 		IBundle bundle = getBundle();

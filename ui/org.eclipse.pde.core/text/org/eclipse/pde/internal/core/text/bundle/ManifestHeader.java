@@ -53,17 +53,11 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 		return fLineDelimiter;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setName(java.lang.String)
-	 */
 	@Override
 	public void setName(String name) {
 		fName = name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getName()
-	 */
 	@Override
 	public String getName() {
 		return fName;
@@ -81,41 +75,26 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 		fBundle.getModel().fireModelObjectChanged(this, getName(), old, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setOffset(int)
-	 */
 	@Override
 	public void setOffset(int offset) {
 		fOffset = offset;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getOffset()
-	 */
 	@Override
 	public int getOffset() {
 		return fOffset;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setLength(int)
-	 */
 	@Override
 	public void setLength(int length) {
 		fLength = length;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getLength()
-	 */
 	@Override
 	public int getLength() {
 		return fLength;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#write()
-	 */
 	@Override
 	public String write() {
 		StringBuffer sb = new StringBuffer(fName);
@@ -142,9 +121,6 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 		return sb.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 	}

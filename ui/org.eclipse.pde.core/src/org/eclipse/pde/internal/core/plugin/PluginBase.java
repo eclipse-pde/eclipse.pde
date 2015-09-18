@@ -72,9 +72,6 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fireStructureChanged(iimports, IModelChangedEvent.INSERT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginBase#getLibraries()
-	 */
 	@Override
 	public IPluginLibrary[] getLibraries() {
 		// Returns an empty array if no libraries are specified in the manifest of the plug-in.
@@ -338,9 +335,6 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		firePropertyChanged(this, P_LIBRARY_ORDER, l1, l2);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginImport, org.eclipse.pde.core.plugin.IPluginImport)
-	 */
 	@Override
 	public void swap(IPluginImport import1, IPluginImport import2) throws CoreException {
 		ensureModelEditable();

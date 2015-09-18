@@ -36,46 +36,28 @@ public class Build implements IBuild {
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.build.IBuild#add(org.eclipse.pde.core.build.IBuildEntry)
-	 */
 	@Override
 	public void add(IBuildEntry entry) throws CoreException {
 		fEntries.put(entry.getName(), entry);
 		fModel.fireModelChanged(new ModelChangedEvent(fModel, IModelChangedEvent.INSERT, new Object[] {entry}, null));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.build.IBuild#getBuildEntries()
-	 */
 	@Override
 	public IBuildEntry[] getBuildEntries() {
 		return fEntries.values().toArray(new IBuildEntry[fEntries.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.build.IBuild#getEntry(java.lang.String)
-	 */
 	@Override
 	public IBuildEntry getEntry(String name) {
 		return fEntries.get(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.build.IBuild#remove(org.eclipse.pde.core.build.IBuildEntry)
-	 */
 	@Override
 	public void remove(IBuildEntry entry) throws CoreException {
 		if (fEntries.remove(entry.getName()) != null)
 			fModel.fireModelChanged(new ModelChangedEvent(fModel, IModelChangedEvent.REMOVE, new Object[] {entry}, null));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String,
-	 *      java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 	}

@@ -89,9 +89,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 		return fgDefault;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#deleteTarget(org.eclipse.pde.core.target.ITargetHandle)
-	 */
 	@Override
 	public void deleteTarget(ITargetHandle handle) throws CoreException {
 		if (handle instanceof ExternalFileTargetHandle)
@@ -99,17 +96,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 		((AbstractTargetHandle) handle).delete();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getTarget(org.eclipse.core.resources.IFile)
-	 */
 	@Override
 	public ITargetHandle getTarget(IFile file) {
 		return new WorkspaceFileTargetHandle(file);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getTarget(java.lang.String)
-	 */
 	@Override
 	public ITargetHandle getTarget(String memento) throws CoreException {
 		try {
@@ -128,9 +119,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetPlatformService_1, null));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getTarget(java.net.URI)
-	 */
 	@Override
 	public ITargetHandle getTarget(URI uri) {
 		if (fExtTargetHandles == null)
@@ -143,9 +131,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 		return externalTarget;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getTargets(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public ITargetHandle[] getTargets(IProgressMonitor monitor) {
 		List<ITargetHandle> local = findLocalTargetDefinitions();
@@ -229,49 +214,31 @@ public class TargetPlatformService implements ITargetPlatformService {
 		return handles;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newDirectoryLocation(java.lang.String)
-	 */
 	@Override
 	public ITargetLocation newDirectoryLocation(String path) {
 		return new DirectoryBundleContainer(path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newProfileLocation(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public ITargetLocation newProfileLocation(String home, String configurationLocation) {
 		return new ProfileBundleContainer(home, configurationLocation);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newTarget()
-	 */
 	@Override
 	public ITargetDefinition newTarget() {
 		return new TargetDefinition(new LocalTargetHandle());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#saveTargetDefinition(org.eclipse.pde.core.target.ITargetDefinition)
-	 */
 	@Override
 	public void saveTargetDefinition(ITargetDefinition definition) throws CoreException {
 		((AbstractTargetHandle) definition.getHandle()).save(definition);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newFeatureLocation(java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public ITargetLocation newFeatureLocation(String home, String id, String version) {
 		return new FeatureBundleContainer(home, id, version);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getWorkspaceTargetHandle()
-	 */
 	@Override
 	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
@@ -282,9 +249,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getWorkspaceTargetDefinition()
-	 */
 	@Override
 	public synchronized ITargetDefinition getWorkspaceTargetDefinition() throws CoreException {
 		if (fWorkspaceTarget != null && fWorkspaceTarget.getHandle().equals(getWorkspaceTargetHandle())) {
@@ -360,9 +324,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#copyTargetDefinition(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.pde.core.target.ITargetDefinition)
-	 */
 	@Override
 	public void copyTargetDefinition(ITargetDefinition from, ITargetDefinition to) throws CoreException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -371,9 +332,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 		((TargetDefinition) to).setContents(inputStream);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#loadTargetDefinition(org.eclipse.pde.core.target.ITargetDefinition, java.lang.String)
-	 */
 	@Override
 	public void loadTargetDefinition(ITargetDefinition definition, String targetExtensionId) throws CoreException {
 		IConfigurationElement elem = PDECore.getDefault().getTargetProfileManager().getTarget(targetExtensionId);
@@ -633,9 +591,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 		return target;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#compareWithTargetPlatform(org.eclipse.pde.core.target.ITargetDefinition)
-	 */
 	@Override
 	public IStatus compareWithTargetPlatform(ITargetDefinition target) throws CoreException {
 		if (!target.isResolved()) {
@@ -694,17 +649,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newIULocation(org.eclipse.equinox.p2.metadata.IInstallableUnit[], java.net.URI[], int)
-	 */
 	@Override
 	public ITargetLocation newIULocation(IInstallableUnit[] units, URI[] repositories, int resolutionFlags) {
 		return new IUBundleContainer(units, repositories, resolutionFlags);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newIULocation(java.lang.String[], java.lang.String[], java.net.URI[], int)
-	 */
 	@Override
 	public ITargetLocation newIULocation(String[] unitIds, String[] versions, URI[] repositories, int resolutionFlags) {
 		return new IUBundleContainer(unitIds, versions, repositories, resolutionFlags);

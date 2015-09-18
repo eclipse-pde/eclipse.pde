@@ -35,15 +35,9 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 		return fFactory;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocument()
-	 */
 	@Override
 	protected abstract IDocument getDocument();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
-	 */
 	@Override
 	protected IDocumentAttributeNode getDocumentAttribute(String name, String value, IDocumentElementNode parent) {
 		IDocumentAttributeNode attr = parent.getDocumentAttribute(name);
@@ -63,9 +57,6 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 
 	protected abstract IDocumentElementNode getRootNode();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentNode(java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
-	 */
 	@Override
 	protected IDocumentElementNode getDocumentNode(String name, IDocumentElementNode parent) {
 		IDocumentElementNode node = null;
@@ -114,9 +105,6 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 		return node;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocumentTextNode()
-	 */
 	@Override
 	protected IDocumentTextNode getDocumentTextNode(String content, IDocumentElementNode parent) {
 

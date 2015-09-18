@@ -49,9 +49,6 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		iimport.write(indent, writer);
@@ -67,9 +64,6 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		return super.getAdapter(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.PluginReference#reconnect(org.eclipse.pde.core.plugin.IPlugin)
-	 */
 	@Override
 	public void reconnect(IPluginModelBase model) {
 		super.reconnect(model);
@@ -82,9 +76,6 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
-	 */
 	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		// Note:  Cannot make into a 'IDocument*' interface.  The functionality

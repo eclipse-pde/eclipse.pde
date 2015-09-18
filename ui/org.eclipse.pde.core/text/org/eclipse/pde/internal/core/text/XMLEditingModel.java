@@ -32,9 +32,6 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		super(document, isReconciling);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
-	 */
 	@Override
 	public void load(InputStream source, boolean outOfSync) {
 		try {
@@ -102,9 +99,6 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.IWorkspaceModel#reload()
-	 */
 	public void reload() {
 		if (isResourceFile() == false) {
 			return;
@@ -158,9 +152,6 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		return swriter.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#save(java.io.PrintWriter)
-	 */
 	@Override
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {

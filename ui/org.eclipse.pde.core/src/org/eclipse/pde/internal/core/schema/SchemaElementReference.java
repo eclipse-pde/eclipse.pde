@@ -284,11 +284,6 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.ischema.IMetaElement#isTranslatable()
-	 */
 	@Override
 	public boolean hasTranslatableContent() {
 		if (element == null)
@@ -296,9 +291,6 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		return element.hasTranslatableContent();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ischema.IMetaElement#isDeprecated()
-	 */
 	@Override
 	public boolean isDeprecated() {
 		if (element == null)
@@ -306,9 +298,6 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		return element.isDeprecated();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ischema.ISchemaElement#hasDeprecatedAttributes()
-	 */
 	@Override
 	public boolean hasDeprecatedAttributes() {
 		if (element == null)

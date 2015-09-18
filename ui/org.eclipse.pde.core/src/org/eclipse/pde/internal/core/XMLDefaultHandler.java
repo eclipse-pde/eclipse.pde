@@ -62,16 +62,10 @@ public class XMLDefaultHandler extends DefaultHandler {
 			fElementStack.pop();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
-	 */
 	@Override
 	public void setDocumentLocator(Locator locator) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#startDocument()
-	 */
 	@Override
 	public void startDocument() throws SAXException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -81,27 +75,18 @@ public class XMLDefaultHandler extends DefaultHandler {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
-	 */
 	@Override
 	public void endDocument() throws SAXException {
 		if (isPrepared())
 			fDocument.appendChild(fRootElement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void processingInstruction(String target, String data) throws SAXException {
 		if (isPrepared())
 			fDocument.appendChild(fDocument.createProcessingInstruction(target, data));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
-	 */
 	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
 		if (fAbbreviated || !isPrepared())

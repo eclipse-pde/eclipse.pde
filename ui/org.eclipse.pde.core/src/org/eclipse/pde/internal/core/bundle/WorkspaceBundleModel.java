@@ -168,9 +168,6 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
-	 */
 	@Override
 	public void save(PrintWriter writer) {
 		IBundle bundle = getBundle();

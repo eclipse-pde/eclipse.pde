@@ -67,9 +67,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		fConfiguration = configurationLocation;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
-	 */
 	@Override
 	public String getLocation(boolean resolve) throws CoreException {
 		if (resolve) {
@@ -78,9 +75,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		return fHome;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getType()
-	 */
 	@Override
 	public String getType() {
 		return TYPE;
@@ -95,9 +89,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		return fConfiguration;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		String home = resolveHomeLocation().toOSString();
@@ -161,9 +152,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		return all.toArray(new TargetBundle[all.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		if (definition instanceof TargetDefinition) {
@@ -253,9 +241,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof ProfileBundleContainer) {
@@ -265,9 +250,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		int hash = fHome.hashCode();
@@ -392,9 +374,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		return o1.equals(o2);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return new StringBuffer().append("Installation ").append(fHome).append(' ').append(fConfiguration == null ? "Default Configuration" : fConfiguration).toString(); //$NON-NLS-1$ //$NON-NLS-2$

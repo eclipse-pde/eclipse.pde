@@ -39,9 +39,6 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		document.addDocumentListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#createPluginBase()
-	 */
 	public IPluginBase createPluginBase(boolean isFragment) {
 		if (isFragment) {
 			fPluginBase = new FragmentNode();
@@ -65,18 +62,12 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		return createPluginBase(isFragmentModel());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBuildModel()
-	 */
 	@Override
 	@Deprecated
 	public IBuildModel getBuildModel() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase()
-	 */
 	@Override
 	public IPluginBase getPluginBase() {
 		return getPluginBase(true);
@@ -87,9 +78,6 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		return getPluginBase();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase(boolean)
-	 */
 	@Override
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (!fLoaded && !fHasTriedToCreateModel && createIfMissing) {
@@ -109,33 +97,21 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		return getPluginBase(createIfMissing);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		return fIsEnabled;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setEnabled(boolean)
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		fIsEnabled = enabled;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginFactory()
-	 */
 	@Override
 	public IPluginModelFactory getPluginFactory() {
 		return fFactory;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getNLLookupLocation()
-	 */
 	@Override
 	@Deprecated
 	public URL getNLLookupLocation() {
@@ -147,17 +123,11 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getFactory()
-	 */
 	@Override
 	public IExtensionsModelFactory getFactory() {
 		return fFactory;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#createNLResourceHelper()
-	 */
 	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		URL[] locations = PDEManager.getNLLookupLocations(this);
@@ -165,9 +135,6 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 				locations);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.XMLEditingModel#createDocumentHandler(org.eclipse.pde.core.IModel)
-	 */
 	@Override
 	protected DefaultHandler createDocumentHandler(IModel model, boolean reconciling) {
 		if (fHandler == null)

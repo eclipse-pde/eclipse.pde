@@ -17,11 +17,6 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		//set defaults for compiler preferences in org.eclipse.pde pref node, not org.eclipse.pde.core

@@ -104,9 +104,6 @@ public class Bundle implements IBundle {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void setHeader(String key, String value) {
 		if (value == null) {
@@ -130,18 +127,12 @@ public class Bundle implements IBundle {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getHeader(java.lang.String)
-	 */
 	@Override
 	public String getHeader(String key) {
 		ManifestHeader header = (ManifestHeader) fDocumentHeaders.get(key);
 		return (header != null) ? header.getValue() : null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getManifestHeader(java.lang.String)
-	 */
 	@Override
 	public IManifestHeader getManifestHeader(String key) {
 		return fDocumentHeaders.get(key);
@@ -156,18 +147,12 @@ public class Bundle implements IBundle {
 		return fModel;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getLocalization()
-	 */
 	@Override
 	public String getLocalization() {
 		String localization = getHeader(Constants.BUNDLE_LOCALIZATION);
 		return localization != null ? localization : Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#renameHeader(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void renameHeader(String key, String newKey) {
 		ManifestHeader header = (ManifestHeader) getManifestHeader(key);

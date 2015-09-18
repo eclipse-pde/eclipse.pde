@@ -287,12 +287,6 @@ public class ExportPackageObject extends PackageObject {
 		sb.append("\""); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#write(java.lang.String,
-	 *      java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations

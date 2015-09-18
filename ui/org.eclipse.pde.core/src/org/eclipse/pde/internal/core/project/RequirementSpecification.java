@@ -58,9 +58,6 @@ public abstract class RequirementSpecification {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		int code = getClass().hashCode() + fName.hashCode();
@@ -83,16 +80,10 @@ public abstract class RequirementSpecification {
 		return o1.equals(o2);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.project.IRequirementSpecification#isOptional()
-	 */
 	public boolean isOptional() {
 		return fOptional;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();

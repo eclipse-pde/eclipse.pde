@@ -30,58 +30,37 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 
 	private transient ISchemaElement elementInfo;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginElement#createCopy()
-	 */
 	@Override
 	public IPluginElement createCopy() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginElement#getAttribute(java.lang.String)
-	 */
 	@Override
 	public IPluginAttribute getAttribute(String name) {
 		return (IPluginAttribute) getNodeAttributesMap().get(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginElement#getAttributes()
-	 */
 	@Override
 	public IPluginAttribute[] getAttributes() {
 		return getNodeAttributesMap().values().toArray(new IPluginAttribute[getNodeAttributesMap().size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginElement#getAttributeCount()
-	 */
 	@Override
 	public int getAttributeCount() {
 		return getNodeAttributesMap().size();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginElement#getText()
-	 */
 	@Override
 	public String getText() {
 		IDocumentTextNode node = getTextNode();
 		return node == null ? "" : node.getText(); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginElement#setAttribute(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void setAttribute(String name, String value) throws CoreException {
 		setXMLAttribute(name, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginElement#setText(java.lang.String)
-	 */
 	@Override
 	public void setText(String text) throws CoreException {
 		IDocumentTextNode node = getTextNode();
@@ -95,9 +74,6 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 		firePropertyChanged(node, P_TEXT, oldText, text);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
-	 */
 	@Override
 	public String write(boolean indent) {
 		String sep = getLineDelimiter();
@@ -130,9 +106,6 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 		return buffer.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
-	 */
 	@Override
 	public String writeShallow(boolean terminate) {
 		String sep = getLineDelimiter();
@@ -149,25 +122,16 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 		return buffer.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
-	 */
 	@Override
 	public String getName() {
 		return getXMLTagName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
-	 */
 	@Override
 	public void setName(String name) throws CoreException {
 		setXMLTagName(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginElement#getElementInfo()
-	 */
 	@Override
 	public Object getElementInfo() {
 		if (elementInfo == null) {
@@ -188,9 +152,6 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 		return elementInfo;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
 	@Override
 	public void reconnect(IDocumentElementNode parent, IModel model) {
 		super.reconnect(parent, model);
@@ -200,9 +161,6 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 		elementInfo = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations

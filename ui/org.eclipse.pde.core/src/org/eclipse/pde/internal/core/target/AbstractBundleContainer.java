@@ -62,17 +62,11 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 		return manager.performStringSubstitution(text);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetLocation#isResolved()
-	 */
 	@Override
 	public final boolean isResolved() {
 		return fResolutionStatus != null && fResolutionStatus.getSeverity() != IStatus.CANCEL;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetLocation#resolve(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public final IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor) {
 		int resolveBundlesWork = getResolveBundlesWork();
@@ -124,9 +118,6 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
     return 50;
   }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetLocation#getStatus()
-	 */
 	@Override
 	public IStatus getStatus() {
 		if (!isResolved()) {
@@ -135,9 +126,6 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 		return fResolutionStatus;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetLocation#getBundles()
-	 */
 	@Override
 	public final TargetBundle[] getBundles() {
 		if (isResolved()) {
@@ -146,9 +134,6 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetLocation#getFeatures()
-	 */
 	@Override
 	public TargetFeature[] getFeatures() {
 		if (isResolved()) {
@@ -216,9 +201,6 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 		fResolutionStatus = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetLocation#getVMArguments()
-	 */
 	@Override
 	public String[] getVMArguments() {
 		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$
@@ -274,9 +256,6 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 		// Do nothing by default
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetLocation#serialize()
-	 */
 	@Override
 	public String serialize() {
 		// The default implementation returns null as most containers do not use the new UI

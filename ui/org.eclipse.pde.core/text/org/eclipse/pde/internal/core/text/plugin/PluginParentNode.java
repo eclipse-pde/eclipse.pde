@@ -22,18 +22,12 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 
 	private static final long serialVersionUID = 1L;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginParent#add(int, org.eclipse.pde.core.plugin.IPluginObject)
-	 */
 	@Override
 	public void add(int index, IPluginObject child) throws CoreException {
 		addChildNode((IDocumentElementNode) child, index);
 		fireStructureChanged(child, IModelChangedEvent.INSERT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginParent#add(org.eclipse.pde.core.plugin.IPluginObject)
-	 */
 	@Override
 	public void add(IPluginObject child) throws CoreException {
 		add(getChildCount(), child);
@@ -41,34 +35,22 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 		((PluginObjectNode) child).setModel(getModel());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginParent#getChildCount()
-	 */
 	@Override
 	public int getChildCount() {
 		return getChildNodes().length;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginParent#getIndexOf(org.eclipse.pde.core.plugin.IPluginObject)
-	 */
 	@Override
 	public int getIndexOf(IPluginObject child) {
 		return indexOf((IDocumentElementNode) child);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginParent#swap(org.eclipse.pde.core.plugin.IPluginObject, org.eclipse.pde.core.plugin.IPluginObject)
-	 */
 	@Override
 	public void swap(IPluginObject child1, IPluginObject child2) throws CoreException {
 		swap((IDocumentElementNode) child1, (IDocumentElementNode) child2);
 		firePropertyChanged(this, P_SIBLING_ORDER, child1, child2);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginParent#getChildren()
-	 */
 	@Override
 	public IPluginObject[] getChildren() {
 		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
@@ -79,9 +61,6 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 		return result.toArray(new IPluginObject[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginParent#remove(org.eclipse.pde.core.plugin.IPluginObject)
-	 */
 	@Override
 	public void remove(IPluginObject child) throws CoreException {
 		removeChildNode((IDocumentElementNode) child);

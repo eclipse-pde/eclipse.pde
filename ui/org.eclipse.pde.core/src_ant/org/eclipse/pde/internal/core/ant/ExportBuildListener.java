@@ -16,44 +16,26 @@ import org.eclipse.pde.internal.core.exports.ProductExportOperation;
 
 public class ExportBuildListener implements BuildListener {
 
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void buildStarted(BuildEvent event) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void buildFinished(BuildEvent event) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void targetStarted(BuildEvent event) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void targetFinished(BuildEvent event) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void taskStarted(BuildEvent event) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	private static final String RUN_DIRECTOR = "runDirector"; //$NON-NLS-1$
 	private static final String DIRECTOR_OUTPUT = "p2.director.java.output"; //$NON-NLS-1$
 
@@ -71,9 +53,6 @@ public class ExportBuildListener implements BuildListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void messageLogged(BuildEvent event) {
 		if (event.getPriority() == Project.MSG_ERR) {

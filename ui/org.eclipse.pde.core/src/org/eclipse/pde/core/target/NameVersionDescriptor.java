@@ -72,10 +72,7 @@ public class NameVersionDescriptor {
 		}
 		fType = type;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof NameVersionDescriptor) {
@@ -86,10 +83,7 @@ public class NameVersionDescriptor {
 		}
 		return false;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		return fId.hashCode() + (fVersion != null ? fVersion.hashCode() : 0);
@@ -106,10 +100,7 @@ public class NameVersionDescriptor {
 	public String getType() {
 		return fType;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
