@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.JavaModelException;
@@ -125,20 +125,20 @@ public class CreateFileChange extends ResourceChange {
 
 		InputStream is = null;
 		try {
-			pm.beginTask(RefactoringMessages.CreateFileChange_3, 3);
+			SubMonitor subMonitor = SubMonitor.convert(pm, RefactoringMessages.CreateFileChange_3, 3);
 
 			initializeEncoding();
-			IFile file = getOldFile(new SubProgressMonitor(pm, 1));
+			IFile file = getOldFile(subMonitor.newChild(1));
 			try {
 				is = new ByteArrayInputStream(fSource.getBytes(fEncoding));
-				file.create(is, false, new SubProgressMonitor(pm, 1));
+				file.create(is, false, subMonitor.newChild(1));
 				if (fStampToRestore != IResource.NULL_STAMP) {
 					file.revertModificationStamp(fStampToRestore);
 				}
 				if (fExplicitEncoding) {
-					file.setCharset(fEncoding, new SubProgressMonitor(pm, 1));
+					file.setCharset(fEncoding, subMonitor.newChild(1));
 				} else {
-					pm.worked(1);
+					subMonitor.worked(1);
 				}
 				return new DeleteResourceChange(file.getFullPath(), true);
 			} catch (UnsupportedEncodingException e) {
@@ -151,19 +151,13 @@ public class CreateFileChange extends ResourceChange {
 				}
 			} catch (IOException ioe) {
 				throw new JavaModelException(ioe, IJavaModelStatusConstants.IO_EXCEPTION);
-			} finally {
-				pm.done();
 			}
 		}
 	}
 
 	protected IFile getOldFile(IProgressMonitor pm) throws OperationCanceledException {
-		pm.beginTask("", 1); //$NON-NLS-1$
-		try {
-			return ResourcesPlugin.getWorkspace().getRoot().getFile(fPath);
-		} finally {
-			pm.done();
-		}
+		SubMonitor.convert(pm, 1);
+		return ResourcesPlugin.getWorkspace().getRoot().getFile(fPath);
 	}
 
 	private void initializeEncoding() {
