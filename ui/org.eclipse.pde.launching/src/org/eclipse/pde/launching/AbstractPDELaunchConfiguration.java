@@ -52,12 +52,12 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		try {
 			fConfigDir = null;
-			monitor.beginTask("", 4); //$NON-NLS-1$
+			SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
 			try {
-				preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
+				preLaunchCheck(configuration, launch, subMonitor.newChild(2));
 			} catch (CoreException e) {
 				if (e.getStatus().getSeverity() == IStatus.CANCEL) {
-					monitor.setCanceled(true);
+					subMonitor.setCanceled(true);
 					return;
 				}
 				throw e;
@@ -70,18 +70,17 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			runnerConfig.setEnvironment(getEnvironment(configuration));
 			runnerConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
 
-			monitor.worked(1);
+			subMonitor.worked(1);
 
 			setDefaultSourceLocator(configuration);
 			manageLaunch(launch);
 			IVMRunner runner = getVMRunner(configuration, mode);
 			if (runner != null)
-				runner.run(runnerConfig, launch, monitor);
+				runner.run(runnerConfig, launch, subMonitor.newChild(1));
 			else
-				monitor.setCanceled(true);
-			monitor.done();
+				subMonitor.setCanceled(true);
+
 		} catch (final CoreException e) {
-			monitor.setCanceled(true);
 			throw e;
 		}
 	}
@@ -287,14 +286,14 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
-		monitor.beginTask("", autoValidate ? 3 : 4); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "", autoValidate ? 3 : 4); //$NON-NLS-1$
 		if (autoValidate)
-			validatePluginDependencies(configuration, new SubProgressMonitor(monitor, 1));
-		validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+			validatePluginDependencies(configuration, subMonitor.newChild(1));
+		validateProjectDependencies(configuration, subMonitor.newChild(1));
 		LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
-		clear(configuration, new SubProgressMonitor(monitor, 1));
+		clear(configuration, subMonitor.newChild(1));
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
-		synchronizeManifests(configuration, new SubProgressMonitor(monitor, 1));
+		synchronizeManifests(configuration, subMonitor.newChild(1));
 	}
 
 	/**
