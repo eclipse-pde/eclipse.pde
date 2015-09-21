@@ -154,18 +154,18 @@ public class AnalysisReportConversionTask extends Task {
 
 		public void addNonApiBundles(String bundleName) {
 			if (this.nonApiBundles == null) {
-				this.nonApiBundles = new ArrayList<String>();
+				this.nonApiBundles = new ArrayList<>();
 			}
 			this.nonApiBundles.add(bundleName);
 		}
 
 		public void addProblem(String category, Problem problem) {
 			if (this.problemsPerCategories == null) {
-				this.problemsPerCategories = new HashMap<String, List<Problem>>();
+				this.problemsPerCategories = new HashMap<>();
 			}
 			List<Problem> problemsList = this.problemsPerCategories.get(category);
 			if (problemsList == null) {
-				problemsList = new ArrayList<Problem>();
+				problemsList = new ArrayList<>();
 				this.problemsPerCategories.put(category, problemsList);
 			}
 			problemsList.add(problem);
@@ -483,7 +483,7 @@ public class AnalysisReportConversionTask extends Task {
 			});
 			if (allFiles != null) {
 				int length = allFiles.length;
-				List<Summary> summariesList = new ArrayList<Summary>(length);
+				List<Summary> summariesList = new ArrayList<>(length);
 				Summary nonApiBundleSummary = null;
 				for (int i = 0; i < length; i++) {
 					File file = allFiles[i];

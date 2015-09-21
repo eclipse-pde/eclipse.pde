@@ -56,7 +56,7 @@ public final class FileManager {
 	public void recordTempFileRoot(String absolutepath) {
 		if (absolutepath != null) {
 			if (fFilePaths == null) {
-				fFilePaths = new HashSet<String>(10);
+				fFilePaths = new HashSet<>(10);
 			}
 			synchronized (fFilePaths) {
 				fFilePaths.add(absolutepath);

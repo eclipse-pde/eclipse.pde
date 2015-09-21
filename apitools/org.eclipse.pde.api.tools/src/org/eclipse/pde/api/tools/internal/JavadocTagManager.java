@@ -171,7 +171,7 @@ public final class JavadocTagManager {
 	private static final HashMap<String, String> fqAnnotationNames;
 
 	static {
-		HashSet<String> tags = new HashSet<String>(5, 1);
+		HashSet<String> tags = new HashSet<>(5, 1);
 		tags.add(TAG_NOEXTEND);
 		tags.add(TAG_NOIMPLEMENT);
 		tags.add(TAG_NOINSTANTIATE);
@@ -179,7 +179,7 @@ public final class JavadocTagManager {
 		tags.add(TAG_NOREFERENCE);
 		ALL_TAGS = Collections.unmodifiableSet(tags);
 
-		tags = new HashSet<String>();
+		tags = new HashSet<>();
 		tags.add(ANNOTATION_NOEXTEND);
 		tags.add(ANNOTATION_NOIMPLEMENT);
 		tags.add(ANNOTATION_NOINSTANTIATE);
@@ -187,7 +187,7 @@ public final class JavadocTagManager {
 		tags.add(ANNOTATION_NOREFERENCE);
 		ALL_ANNOTATIONS = Collections.unmodifiableSet(tags);
 
-		fqAnnotationNames = new HashMap<String, String>();
+		fqAnnotationNames = new HashMap<>();
 		fqAnnotationNames.put(ANNOTATION_NOEXTEND, "org.eclipse.pde.api.tools.annotations.NoExtend"); //$NON-NLS-1$
 		fqAnnotationNames.put(ANNOTATION_NOIMPLEMENT, "org.eclipse.pde.api.tools.annotations.NoImplement"); //$NON-NLS-1$
 		fqAnnotationNames.put(ANNOTATION_NOINSTANTIATE, "org.eclipse.pde.api.tools.annotations.NoInstantiate"); //$NON-NLS-1$
@@ -219,24 +219,24 @@ public final class JavadocTagManager {
 	 */
 	private void initializeAnnotations() {
 		if (fAnnotationCache == null) {
-			fAnnotationCache = new HashMap<Key, Set<String>>();
-			HashSet<String> annots = new HashSet<String>();
+			fAnnotationCache = new HashMap<>();
+			HashSet<String> annots = new HashSet<>();
 			annots.add(ANNOTATION_NOEXTEND);
 			annots.add(ANNOTATION_NOINSTANTIATE);
 			annots.add(ANNOTATION_NOREFERENCE);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE), annots);
-			annots = new HashSet<String>();
+			annots = new HashSet<>();
 			annots.add(ANNOTATION_NOEXTEND);
 			annots.add(ANNOTATION_NOIMPLEMENT);
 			annots.add(ANNOTATION_NOREFERENCE);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_NONE), annots);
-			annots = new HashSet<String>();
+			annots = new HashSet<>();
 			annots.add(ANNOTATION_NOOVERRIDE);
 			annots.add(ANNOTATION_NOREFERENCE);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_METHOD), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_CONSTRUCTOR), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_METHOD), annots);
-			annots = new HashSet<String>();
+			annots = new HashSet<>();
 			annots.add(ANNOTATION_NOREFERENCE);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_FIELD), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_FIELD), annots);
@@ -254,8 +254,8 @@ public final class JavadocTagManager {
 	 */
 	private void initializeJavadocTags() {
 		if (tagcache == null) {
-			tagcache = new HashMap<String, IApiJavadocTag>();
-			List<ApiJavadocTag> list = new ArrayList<ApiJavadocTag>(4);
+			tagcache = new HashMap<>();
+			List<ApiJavadocTag> list = new ArrayList<>(4);
 
 			// noimplement tag
 			ApiJavadocTag newtag = new ApiJavadocTag(IApiJavadocTag.NO_IMPLEMENT_TAG_ID, "noimplement", //$NON-NLS-1$
@@ -320,7 +320,7 @@ public final class JavadocTagManager {
 	 */
 	public synchronized IApiJavadocTag[] getTagsForType(int type, int member) {
 		initializeJavadocTags();
-		List<IApiJavadocTag> list = new ArrayList<IApiJavadocTag>();
+		List<IApiJavadocTag> list = new ArrayList<>();
 		for (int i = 0; i < tags.length; i++) {
 			if (tags[i].isApplicable(type, member)) {
 				list.add(tags[i]);
@@ -398,7 +398,7 @@ public final class JavadocTagManager {
 	 */
 	public synchronized Set<String> getAllTagNames() {
 		IApiJavadocTag[] tags = getAllTags();
-		HashSet<String> names = new HashSet<String>(tags.length);
+		HashSet<String> names = new HashSet<>(tags.length);
 		for (int i = 0; i < tags.length; i++) {
 			names.add(tags[i].getTagName());
 		}

@@ -54,13 +54,13 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 	public TypeScope(IApiComponent component, IReferenceTypeDescriptor[] types) {
 		super(component, IApiElement.API_TYPE_CONTAINER, null);
 		fComponent = component;
-		fPackageToTypes = new HashMap<String, Set<IReferenceTypeDescriptor>>();
+		fPackageToTypes = new HashMap<>();
 		for (int i = 0; i < types.length; i++) {
 			IReferenceTypeDescriptor type = types[i];
 			String name = type.getPackage().getName();
 			Set<IReferenceTypeDescriptor> set = fPackageToTypes.get(name);
 			if (set == null) {
-				set = new HashSet<IReferenceTypeDescriptor>();
+				set = new HashSet<>();
 				fPackageToTypes.put(name, set);
 			}
 			set.add(type);

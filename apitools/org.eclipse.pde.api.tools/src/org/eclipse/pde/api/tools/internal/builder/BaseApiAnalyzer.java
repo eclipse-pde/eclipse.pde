@@ -134,12 +134,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * The backing list of problems found so far
 	 */
-	private ArrayList<IApiProblem> fProblems = new ArrayList<IApiProblem>(25);
+	private ArrayList<IApiProblem> fProblems = new ArrayList<>(25);
 
 	/**
 	 * List of pending deltas for which the @since tags should be checked
 	 */
-	private List<IDelta> fPendingDeltaInfos = new ArrayList<IDelta>(3);
+	private List<IDelta> fPendingDeltaInfos = new ArrayList<>(3);
 
 	/**
 	 * The current build state to use
@@ -386,7 +386,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			if (externalDependencies != null) {
 				localmonitor.setWorkRemaining(externalDependencies.length);
-				HashMap<String, IApiProblem> problems = new HashMap<String, IApiProblem>();
+				HashMap<String, IApiProblem> problems = new HashMap<>();
 				for (int i = 0; i < externalDependencies.length; i++) {
 					Util.updateMonitor(localmonitor, 1);
 					Reference externalReference = null;
@@ -601,7 +601,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			boolean autoremove = ApiPlugin.getDefault().getEnableState(IApiProblemTypes.AUTOMATICALLY_REMOVE_UNUSED_PROBLEM_FILTERS, project);
 			ArrayList<IApiProblemFilter> toremove = null;
 			if (autoremove) {
-				toremove = new ArrayList<IApiProblemFilter>(8);
+				toremove = new ArrayList<>(8);
 			}
 			IApiProblemFilter[] filters = null;
 			if (context.hasTypes()) {
@@ -872,7 +872,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return
 	 */
 	private IReferenceTypeDescriptor[] getScopedElements(final String[] typenames) {
-		ArrayList<IReferenceTypeDescriptor> types = new ArrayList<IReferenceTypeDescriptor>(typenames.length);
+		ArrayList<IReferenceTypeDescriptor> types = new ArrayList<>(typenames.length);
 		for (int i = 0; i < typenames.length; i++) {
 			if (typenames[i] == null) {
 				continue;
@@ -1242,7 +1242,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				size += deptypes.length;
 			}
 			String[] structtypes = context.getStructurallyChangedTypes();
-			HashSet<String> typenames = new HashSet<String>(size + structtypes.length);
+			HashSet<String> typenames = new HashSet<>(size + structtypes.length);
 			if (deptypes != null) {
 				for (int i = 0; i < deptypes.length; i++) {
 					if (deptypes[i] == null) {

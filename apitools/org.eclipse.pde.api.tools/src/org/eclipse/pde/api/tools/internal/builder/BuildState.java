@@ -81,10 +81,10 @@ public class BuildState {
 	 * Constructor
 	 */
 	BuildState() {
-		this.compatibleChanges = new HashMap<String, Set<IDelta>>();
-		this.breakingChanges = new HashMap<String, Set<IDelta>>();
-		this.manifestChanges = new HashMap<String, String>();
-		this.buildPropChanges = new HashMap<String, String>();
+		this.compatibleChanges = new HashMap<>();
+		this.breakingChanges = new HashMap<>();
+		this.manifestChanges = new HashMap<>();
+		this.buildPropChanges = new HashMap<>();
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class BuildState {
 				count = in.readInt();
 				if (count > 0) {
 					// read the saved headers
-					HashMap<String, String> map = new HashMap<String, String>(count);
+					HashMap<String, String> map = new HashMap<>(count);
 					for (int i = 0; i < count; i++) {
 						String key = in.readUTF();
 						String value = in.readUTF();
@@ -147,7 +147,7 @@ public class BuildState {
 				count = in.readInt();
 				if (count > 0) {
 					// read the saved headers
-					HashMap<String, String> map = new HashMap<String, String>(count);
+					HashMap<String, String> map = new HashMap<>(count);
 					for (int i = 0; i < count; i++) {
 						String key = in.readUTF();
 						String value = in.readUTF();
@@ -240,7 +240,7 @@ public class BuildState {
 		int length = in.readInt(); // arguments.length;
 		String[] datas = null;
 		if (length != 0) {
-			ArrayList<String> arguments = new ArrayList<String>();
+			ArrayList<String> arguments = new ArrayList<>();
 			for (int i = 0; i < length; i++) {
 				arguments.add(in.readUTF());
 			}
@@ -300,7 +300,7 @@ public class BuildState {
 		String typeName = delta.getTypeName();
 		Set<IDelta> object = this.compatibleChanges.get(typeName);
 		if (object == null) {
-			Set<IDelta> changes = new HashSet<IDelta>();
+			Set<IDelta> changes = new HashSet<>();
 			changes.add(delta);
 			this.compatibleChanges.put(typeName, changes);
 		} else {
@@ -318,7 +318,7 @@ public class BuildState {
 		String typeName = delta.getTypeName();
 		Set<IDelta> object = this.breakingChanges.get(typeName);
 		if (object == null) {
-			Set<IDelta> changes = new HashSet<IDelta>();
+			Set<IDelta> changes = new HashSet<>();
 			changes.add(delta);
 			this.breakingChanges.put(typeName, changes);
 		} else {
@@ -334,7 +334,7 @@ public class BuildState {
 		if (this.breakingChanges == null || this.breakingChanges.size() == 0) {
 			return EMPTY_DELTAS;
 		}
-		HashSet<IDelta> collector = new HashSet<IDelta>();
+		HashSet<IDelta> collector = new HashSet<>();
 		Collection<Set<IDelta>> values = this.breakingChanges.values();
 		for (Iterator<Set<IDelta>> iterator = values.iterator(); iterator.hasNext();) {
 			collector.addAll(iterator.next());
@@ -350,7 +350,7 @@ public class BuildState {
 		if (this.compatibleChanges == null || this.compatibleChanges.size() == 0) {
 			return EMPTY_DELTAS;
 		}
-		HashSet<IDelta> collector = new HashSet<IDelta>();
+		HashSet<IDelta> collector = new HashSet<>();
 		Collection<Set<IDelta>> values = this.compatibleChanges.values();
 		for (Iterator<Set<IDelta>> iterator = values.iterator(); iterator.hasNext();) {
 			collector.addAll(iterator.next());
@@ -406,7 +406,7 @@ public class BuildState {
 	 */
 	public void addApiToolingDependentProject(String projectName) {
 		if (this.apiToolingDependentProjects == null) {
-			this.apiToolingDependentProjects = new HashSet<String>(3);
+			this.apiToolingDependentProjects = new HashSet<>(3);
 		}
 		this.apiToolingDependentProjects.add(projectName);
 	}
@@ -428,7 +428,7 @@ public class BuildState {
 	 */
 	public void setManifestState(Map<String, String> state) {
 		if (state != null) {
-			Map<String, String> compact = new HashMap<String, String>(7);
+			Map<String, String> compact = new HashMap<>(7);
 			for (Iterator<String> i = ApiAnalysisBuilder.IMPORTANT_HEADERS.iterator(); i.hasNext();) {
 				String key = i.next();
 				String val = state.get(key);

@@ -107,7 +107,7 @@ public class ApiDescriptionProcessor {
 		/**
 		 * Members collected from current type.
 		 */
-		private List<IElementDescriptor> members = new ArrayList<IElementDescriptor>();
+		private List<IElementDescriptor> members = new ArrayList<>();
 
 		/**
 		 * List of exception statuses that occurred, or <code>null</code> if
@@ -190,7 +190,7 @@ public class ApiDescriptionProcessor {
 		 */
 		private void addStatus(IStatus status) {
 			if (exceptions == null) {
-				exceptions = new ArrayList<IStatus>();
+				exceptions = new ArrayList<>();
 			}
 			exceptions.add(status);
 		}
@@ -230,7 +230,7 @@ public class ApiDescriptionProcessor {
 			this.apis = apis;
 			this.description = description;
 			this.rewrite = rewrite;
-			typeStack = new Stack<Integer>();
+			typeStack = new Stack<>();
 		}
 
 		/*
@@ -369,7 +369,7 @@ public class ApiDescriptionProcessor {
 		 */
 		private String[] collectMissingTags(IApiAnnotations api, List<TagElement> tags, int type, int member) {
 			int res = api.getRestrictions();
-			ArrayList<String> missing = new ArrayList<String>();
+			ArrayList<String> missing = new ArrayList<>();
 			JavadocTagManager jtm = ApiPlugin.getJavadocTagManager();
 			switch (member) {
 				case IApiJavadocTag.MEMBER_FIELD:
@@ -603,7 +603,7 @@ public class ApiDescriptionProcessor {
 					IFile file = (IFile) cunit.getUnderlyingResource();
 					Set<TextEdit> edits = collector.get(file);
 					if (edits == null) {
-						edits = new HashSet<TextEdit>(3);
+						edits = new HashSet<>(3);
 						collector.put(file, edits);
 					}
 					edits.add(edit);

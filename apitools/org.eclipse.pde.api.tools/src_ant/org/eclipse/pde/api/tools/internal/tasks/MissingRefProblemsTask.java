@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -70,7 +69,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	private String apiUseScans;
 	private String[] usescans;
 	private Properties properties = new Properties();
-	TreeSet<SkippedComponent> notsearched = new TreeSet<SkippedComponent>(Util.componentsorter);
+	TreeSet<SkippedComponent> notsearched = new TreeSet<>(Util.componentsorter);
 
 	public static final String COMPATIBILITY = "compatibility"; //$NON-NLS-1$
 	private static final Summary[] NO_SUMMARIES = new Summary[0];
@@ -162,11 +161,11 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 			}
 		}
 
-		Map<String, IApiProblem[]> allProblems = new HashMap<String, IApiProblem[]>();
+		Map<String, IApiProblem[]> allProblems = new HashMap<>();
 		try {
 			IApiComponent[] apiComponents = profile.getApiComponents();
 			int length = apiComponents.length;
-			Set<String> visitedApiComponentNames = new HashSet<String>();
+			Set<String> visitedApiComponentNames = new HashSet<>();
 			for (int i = 0; i < length; i++) {
 				IApiComponent apiComponent = apiComponents[i];
 				String name = apiComponent.getSymbolicName();
@@ -284,7 +283,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		if (size == 0) {
 			return NO_SUMMARIES;
 		}
-		List<Map.Entry<String, IApiProblem[]>> allEntries = new ArrayList<Entry<String, IApiProblem[]>>();
+		List<Map.Entry<String, IApiProblem[]>> allEntries = new ArrayList<>();
 		allEntries.addAll(entrySet);
 		Collections.sort(allEntries, new Comparator<Object>() {
 			@SuppressWarnings("unchecked")

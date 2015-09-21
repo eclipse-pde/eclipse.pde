@@ -115,7 +115,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * 
 	 * @since 1.0.3
 	 */
-	public static final HashSet<String> IMPORTANT_HEADERS = new HashSet<String>(7);
+	public static final HashSet<String> IMPORTANT_HEADERS = new HashSet<>(7);
 
 	static {
 		IMPORTANT_HEADERS.add(Constants.SYSTEM_BUNDLE_SYMBOLICNAME);
@@ -165,12 +165,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Maps prerequisite projects to their output location(s)
 	 */
-	HashMap<IProject, HashSet<IPath>> output_locs = new HashMap<IProject, HashSet<IPath>>();
+	HashMap<IProject, HashSet<IPath>> output_locs = new HashMap<>();
 
 	/**
 	 * Maps prerequisite projects to their source locations
 	 */
-	HashMap<IProject, HashSet<IPath>> src_locs = new HashMap<IProject, HashSet<IPath>>();
+	HashMap<IProject, HashSet<IPath>> src_locs = new HashMap<>();
 
 	/**
 	 * Current build state
@@ -1045,7 +1045,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (ApiPlugin.DEBUG_BUILDER) {
 			System.out.println("ApiAnalysisBuilder: Searching for deltas for build of project: " + this.currentproject.getName()); //$NON-NLS-1$
 		}
-		ArrayList<IResourceDelta> deltas = new ArrayList<IResourceDelta>();
+		ArrayList<IResourceDelta> deltas = new ArrayList<>();
 		IResourceDelta delta = getDelta(this.currentproject);
 		if (delta != null) {
 			if (ApiPlugin.DEBUG_BUILDER) {
@@ -1090,13 +1090,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (this.currentproject == null || workspaceRoot == null) {
 			return new IProject[0];
 		}
-		ArrayList<IProject> projects = new ArrayList<IProject>();
+		ArrayList<IProject> projects = new ArrayList<>();
 		try {
 			IJavaProject javaProject = JavaCore.create(this.currentproject);
-			HashSet<IPath> blocations = new HashSet<IPath>();
+			HashSet<IPath> blocations = new HashSet<>();
 			blocations.add(javaProject.getOutputLocation());
 			this.output_locs.put(this.currentproject, blocations);
-			HashSet<IPath> slocations = new HashSet<IPath>();
+			HashSet<IPath> slocations = new HashSet<>();
 			IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
 				if (roots[i].isArchive()) {
@@ -1154,8 +1154,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					// try to derive all of the output locations for each of the
 					// projects
 					javaProject = JavaCore.create(p);
-					HashSet<IPath> bins = new HashSet<IPath>();
-					HashSet<IPath> srcs = new HashSet<IPath>();
+					HashSet<IPath> bins = new HashSet<>();
+					HashSet<IPath> srcs = new HashSet<>();
 					if (javaProject.exists()) {
 						bins.add(javaProject.getOutputLocation());
 						IClasspathEntry[] source = javaProject.getRawClasspath();

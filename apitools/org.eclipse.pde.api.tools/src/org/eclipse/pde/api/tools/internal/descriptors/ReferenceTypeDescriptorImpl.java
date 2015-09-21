@@ -123,7 +123,7 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 			IReferenceTypeDescriptor enclosingType = getEnclosingType();
 			while (enclosingType != null) {
 				if (all == null) {
-					all = new ArrayList<IReferenceTypeDescriptor>();
+					all = new ArrayList<>();
 				}
 				all.add(0, enclosingType);
 				enclosingType = enclosingType.getEnclosingType();

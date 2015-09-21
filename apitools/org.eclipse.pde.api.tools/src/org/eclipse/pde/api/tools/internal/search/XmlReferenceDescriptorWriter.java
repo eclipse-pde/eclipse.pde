@@ -135,7 +135,7 @@ public class XmlReferenceDescriptorWriter {
 	 */
 	private void collateResults(IReferenceDescriptor[] references) throws CoreException {
 		if (fReferenceMap == null) {
-			fReferenceMap = new HashMap<String, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>>>();
+			fReferenceMap = new HashMap<>();
 		}
 		Integer type = null;
 		Integer visibility = null;
@@ -153,14 +153,14 @@ public class XmlReferenceDescriptorWriter {
 			id = getId(rcomponent);
 			rmap = fReferenceMap.get(id);
 			if (rmap == null) {
-				rmap = new HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>>();
+				rmap = new HashMap<>();
 				fReferenceMap.put(id, rmap);
 			}
 			mcomponent = references[i].getComponent();
 			id = getId(mcomponent);
 			mmap = rmap.get(id);
 			if (mmap == null) {
-				mmap = new HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>();
+				mmap = new HashMap<>();
 				rmap.put(id, mmap);
 			}
 			if ((references[i].getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
@@ -170,19 +170,19 @@ public class XmlReferenceDescriptorWriter {
 			}
 			vmap = mmap.get(visibility);
 			if (vmap == null) {
-				vmap = new HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>();
+				vmap = new HashMap<>();
 				mmap.put(visibility, vmap);
 			}
 			type = new Integer(references[i].getReferenceType());
 			tmap = vmap.get(type);
 			if (tmap == null) {
-				tmap = new HashMap<String, HashSet<IReferenceDescriptor>>();
+				tmap = new HashMap<>();
 				vmap.put(type, tmap);
 			}
 			tname = getText(references[i].getReferencedMember());
 			reflist = tmap.get(tname);
 			if (reflist == null) {
-				reflist = new HashSet<IReferenceDescriptor>();
+				reflist = new HashSet<>();
 				tmap.put(tname, reflist);
 			}
 			reflist.add(references[i]);

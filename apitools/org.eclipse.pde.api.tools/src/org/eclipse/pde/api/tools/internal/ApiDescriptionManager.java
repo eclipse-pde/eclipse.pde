@@ -69,7 +69,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	/**
 	 * Maps Java projects to API descriptions
 	 */
-	private Map<IJavaProject, IApiDescription> fDescriptions = new HashMap<IJavaProject, IApiDescription>();
+	private Map<IJavaProject, IApiDescription> fDescriptions = new HashMap<>();
 
 	/**
 	 * Path to the local directory where API descriptions are cached per
@@ -334,7 +334,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
 			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 			// collect fragments
-			List<IJavaElement> fragments = new ArrayList<IJavaElement>();
+			List<IJavaElement> fragments = new ArrayList<>();
 			NodeList childNodes = element.getChildNodes();
 			String pkgName = null;
 			for (int i = 0; i < childNodes.getLength(); i++) {

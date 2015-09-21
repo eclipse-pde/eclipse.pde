@@ -123,7 +123,7 @@ public class ApiFileGenerationTask extends Task {
 	 * @since 1.0.600
 	 */
 	String encoding;
-	Set<String> apiPackages = new HashSet<String>(0);
+	Set<String> apiPackages = new HashSet<>(0);
 
 	/**
 	 * Set the project name.
@@ -332,7 +332,7 @@ public class ApiFileGenerationTask extends Task {
 			// create the directory class file container used to resolve
 			// signatures during tag scanning
 			String[] allBinaryLocations = this.binaryLocations.split(File.pathSeparator);
-			List<IApiTypeContainer> allContainers = new ArrayList<IApiTypeContainer>();
+			List<IApiTypeContainer> allContainers = new ArrayList<>();
 			IApiTypeContainer container = null;
 			for (int i = 0; i < allBinaryLocations.length; i++) {
 				container = getContainer(allBinaryLocations[i]);
@@ -511,7 +511,7 @@ public class ApiFileGenerationTask extends Task {
 	 *             names fail for some reason
 	 */
 	private Set<String> collectApiPackageNames(Map<String, String> manifestmap) throws BundleException {
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		ManifestElement[] packages = ManifestElement.parseHeader(Constants.EXPORT_PACKAGE, manifestmap.get(Constants.EXPORT_PACKAGE));
 		if (packages != null) {
 			for (int i = 0; i < packages.length; i++) {

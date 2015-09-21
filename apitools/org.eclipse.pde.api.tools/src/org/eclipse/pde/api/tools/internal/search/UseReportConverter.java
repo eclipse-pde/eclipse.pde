@@ -86,12 +86,12 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	class Visitor extends UseScanVisitor {
 
-		ArrayList<Report> reports = new ArrayList<Report>();
+		ArrayList<Report> reports = new ArrayList<>();
 		Report currentreport = null;
 		Type currenttype = null, currentreferee = null;
 		Member currentmember = null;
-		HashMap<IReferenceTypeDescriptor, Type> keys = new HashMap<IReferenceTypeDescriptor, Type>();
-		ArrayList<Type> referees = new ArrayList<Type>();
+		HashMap<IReferenceTypeDescriptor, Type> keys = new HashMap<>();
+		ArrayList<Type> referees = new ArrayList<>();
 
 		/**
 		 * Returns if the reference should be reported or not
@@ -230,7 +230,7 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			TreeMap<IMemberDescriptor, Member> map = this.currentreport.children.get(this.currenttype);
 			if (map == null) {
-				map = new TreeMap<IMemberDescriptor, Member>(compare);
+				map = new TreeMap<>(compare);
 				this.currentreport.children.put(this.currenttype, map);
 			}
 			this.currentmember = map.get(referencedMember);
@@ -301,7 +301,7 @@ public class UseReportConverter extends HTMLConvertor {
 			String refname = org.eclipse.pde.api.tools.internal.builder.Reference.getReferenceText(refKind);
 			List<Reference> refs = this.currentmember.children.get(refname);
 			if (refs == null) {
-				refs = new ArrayList<Reference>();
+				refs = new ArrayList<>();
 				this.currentmember.children.put(refname, refs);
 			}
 			refs.add(new Reference(fromMember, lineNumber, visibility, formatMessages(reference.getProblemMessages())));
@@ -475,7 +475,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	static class Report {
 		String name = null;
-		TreeMap<Type, TreeMap<IMemberDescriptor, Member>> children = new TreeMap<Type, TreeMap<IMemberDescriptor, Member>>(compare);
+		TreeMap<Type, TreeMap<IMemberDescriptor, Member>> children = new TreeMap<>(compare);
 		CountGroup counts = new CountGroup();
 	}
 
@@ -496,7 +496,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	static class Member {
 		IElementDescriptor descriptor = null;
-		TreeMap<String, List<Reference>> children = new TreeMap<String, List<Reference>>(compare);
+		TreeMap<String, List<Reference>> children = new TreeMap<>(compare);
 		CountGroup counts = new CountGroup();
 
 		public Member(IElementDescriptor desc) {
@@ -570,7 +570,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * missing required bundles
 	 */
 	static final class MissingHandler extends DefaultHandler {
-		List<String> missing = new ArrayList<String>();
+		List<String> missing = new ArrayList<>();
 		static String pattern = "Require-Bundle:"; //$NON-NLS-1$
 
 		@Override
@@ -677,7 +677,7 @@ public class UseReportConverter extends HTMLConvertor {
 		this.xmlLocation = xmlroot;
 		this.htmlLocation = htmlroot;
 		if (topatterns != null) {
-			ArrayList<Pattern> pats = new ArrayList<Pattern>(topatterns.length);
+			ArrayList<Pattern> pats = new ArrayList<>(topatterns.length);
 			for (int i = 0; i < topatterns.length; i++) {
 				try {
 					pats.add(Pattern.compile(topatterns[i]));
@@ -693,7 +693,7 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 		}
 		if (frompatterns != null) {
-			ArrayList<Pattern> pats = new ArrayList<Pattern>(frompatterns.length);
+			ArrayList<Pattern> pats = new ArrayList<>(frompatterns.length);
 			for (int i = 0; i < frompatterns.length; i++) {
 				try {
 					pats.add(Pattern.compile(frompatterns[i]));
@@ -1073,7 +1073,7 @@ public class UseReportConverter extends HTMLConvertor {
 				// try <root>/xml in case a raw reports root was specified
 				file = new File(getReportsRoot() + File.separator + "xml", "not_searched.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			TreeSet<String> sorted = new TreeSet<String>(Util.componentsorter);
+			TreeSet<String> sorted = new TreeSet<>(Util.componentsorter);
 			if (file.exists()) {
 				String[] missingBundles = getMissingBundles(file);
 				hasMissing = missingBundles.length > 0;

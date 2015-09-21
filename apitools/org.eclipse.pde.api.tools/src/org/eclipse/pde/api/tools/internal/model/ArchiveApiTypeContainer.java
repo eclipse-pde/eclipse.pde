@@ -192,12 +192,12 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		if (visitor.visit(this)) {
 			init();
-			List<String> packages = new ArrayList<String>(fPackages.keySet());
+			List<String> packages = new ArrayList<>(fPackages.keySet());
 			Collections.sort(packages);
 			for (String pkg : packages) {
 				if (visitor.visitPackage(pkg)) {
-					List<String> types = new ArrayList<String>(fPackages.get(pkg));
-					List<ArchiveApiTypeRoot> classFiles = new ArrayList<ArchiveApiTypeRoot>(types.size());
+					List<String> types = new ArrayList<>(fPackages.get(pkg));
+					List<ArchiveApiTypeRoot> classFiles = new ArrayList<>(types.size());
 					for (String entryName : types) {
 						classFiles.add(new ArchiveApiTypeRoot(this, entryName));
 					}
@@ -276,7 +276,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 */
 	private synchronized void init() throws CoreException {
 		if (fPackages == null) {
-			fPackages = new HashMap<String, Set<String>>();
+			fPackages = new HashMap<>();
 			ZipFile zipFile;
 			try {
 				zipFile = new ZipFile(fLocation);
@@ -297,7 +297,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 						}
 						Set<String> fileNames = fPackages.get(pkg);
 						if (fileNames == null) {
-							fileNames = new HashSet<String>();
+							fileNames = new HashSet<>();
 							fPackages.put(pkg, fileNames);
 						}
 						fileNames.add(name);

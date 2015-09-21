@@ -130,7 +130,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	 */
 	private void doVisit(IContainer container, String pkgName, ApiTypeContainerVisitor visitor) throws CoreException {
 		IResource[] members = container.members();
-		List<IContainer> dirs = new ArrayList<IContainer>();
+		List<IContainer> dirs = new ArrayList<>();
 		boolean visitPkg = visitor.visitPackage(pkgName);
 		for (int i = 0; i < members.length; i++) {
 			IResource file = members[i];
@@ -200,7 +200,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	@Override
 	public String[] getPackageNames() throws CoreException {
 		if (fPackageNames == null) {
-			List<String> names = new ArrayList<String>();
+			List<String> names = new ArrayList<>();
 			collectPackageNames(names, Util.DEFAULT_PACKAGE_NAME, fRoot);
 			fPackageNames = names.toArray(new String[names.size()]);
 			Arrays.sort(fPackageNames);

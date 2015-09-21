@@ -32,7 +32,7 @@ public class AntFilterStore extends FilterStore {
 
 	String fComponentId = null;
 	String fFiltersRoot = null;
-	public static ArrayList<IApiProblem> filteredAPIProblems = new ArrayList<IApiProblem>();
+	public static ArrayList<IApiProblem> filteredAPIProblems = new ArrayList<>();
 	/**
 	 * Constructor
 	 * 
@@ -70,7 +70,7 @@ public class AntFilterStore extends FilterStore {
 		if (fFilterMap != null) {
 			return;
 		}
-		fFilterMap = new HashMap<String, Set<IApiProblemFilter>>(5);
+		fFilterMap = new HashMap<>(5);
 		InputStream contents = null;
 		try {
 			File filterFileParent = new File(fFiltersRoot, fComponentId);
@@ -108,7 +108,7 @@ public class AntFilterStore extends FilterStore {
 		// to GLOBAL
 		Set<IApiProblemFilter> globalFilters = fFilterMap.get(GLOBAL);
 		if (globalFilters == null) {
-			globalFilters = new HashSet<IApiProblemFilter>();
+			globalFilters = new HashSet<>();
 			fFilterMap.put(GLOBAL, globalFilters);
 		}
 

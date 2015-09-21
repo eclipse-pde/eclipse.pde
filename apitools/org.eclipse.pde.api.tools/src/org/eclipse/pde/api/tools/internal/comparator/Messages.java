@@ -58,7 +58,7 @@ public class Messages extends NLS {
 			System.out.println("Missing resource : " + bundleName.replace('.', '/') + ".properties for locale " + loc); //$NON-NLS-1$//$NON-NLS-2$
 			throw e;
 		}
-		Hashtable<Integer, String> templates = new Hashtable<Integer, String>(700);
+		Hashtable<Integer, String> templates = new Hashtable<>(700);
 		Enumeration<String> keys = bundle.getKeys();
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();

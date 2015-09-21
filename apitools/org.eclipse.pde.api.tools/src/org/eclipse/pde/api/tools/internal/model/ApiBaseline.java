@@ -267,7 +267,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			systemPackages = value.split(","); //$NON-NLS-1$
 		}
 		if (!(this instanceof WorkspaceBaseline)) {
-			Dictionary<String, Object> dictionary = new Hashtable<String, Object>();
+			Dictionary<String, Object> dictionary = new Hashtable<>();
 			dictionary.put(Constants.FRAMEWORK_SYSTEMPACKAGES, value);
 			value = profile.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
 			if (value != null) {
@@ -318,13 +318,13 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			return;
 		}
 		if (fComponentsById == null) {
-			fComponentsById = new HashMap<String, IApiComponent>();
+			fComponentsById = new HashMap<>();
 		}
 		fComponentsById.put(component.getSymbolicName(), component);
 		if (component instanceof ProjectComponent) {
 			ProjectComponent projectApiComponent = (ProjectComponent) component;
 			if (this.fComponentsByProjectNames == null) {
-				this.fComponentsByProjectNames = new HashMap<String, IApiComponent>();
+				this.fComponentsByProjectNames = new HashMap<>();
 			}
 			this.fComponentsByProjectNames.put(projectApiComponent.getJavaProject().getProject().getName(), component);
 		}
@@ -338,7 +338,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 */
 	@Override
 	public void addApiComponents(IApiComponent[] components) throws CoreException {
-		HashSet<String> ees = new HashSet<String>();
+		HashSet<String> ees = new HashSet<>();
 		for (int i = 0; i < components.length; i++) {
 			BundleComponent component = (BundleComponent) components[i];
 			if (component.isSourceComponent()) {
@@ -362,7 +362,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (ApiPlugin.isRunningInFramework() && fAutoResolve) {
 			IStatus error = null;
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			Map<IVMInstall, Set<String>> VMsToEEs = new HashMap<IVMInstall, Set<String>>();
+			Map<IVMInstall, Set<String>> VMsToEEs = new HashMap<>();
 			for (String ee : ees) {
 				IExecutionEnvironment environment = manager.getEnvironment(ee);
 				if (environment != null) {
@@ -371,7 +371,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 						IVMInstall vm = compatibleVMs[i];
 						Set<String> EEs = VMsToEEs.get(vm);
 						if (EEs == null) {
-							EEs = new HashSet<String>();
+							EEs = new HashSet<>();
 							VMsToEEs.put(vm, EEs);
 						}
 						EEs.add(ee);
@@ -428,8 +428,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			}
 			if (error == null) {
 				// build status for unbound required EE's
-				Set<String> missing = new HashSet<String>(ees);
-				Set<String> covered = new HashSet<String>(VMsToEEs.get(bestFit));
+				Set<String> missing = new HashSet<>(ees);
+				Set<String> covered = new HashSet<>(VMsToEEs.get(bestFit));
 				missing.removeAll(covered);
 				if (missing.isEmpty()) {
 					fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_1, new Object[] { systemEE }));
@@ -482,7 +482,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (fComponentsProvidingPackageCache != null) {
 			componentsForPackage = fComponentsProvidingPackageCache.get(packageName);
 		} else {
-			fComponentsProvidingPackageCache = new HashMap<String, HashMap<IApiComponent, IApiComponent[]>>(8);
+			fComponentsProvidingPackageCache = new HashMap<>(8);
 		}
 		IApiComponent[] cachedComponents = null;
 		if (componentsForPackage != null) {
@@ -491,14 +491,14 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				return cachedComponents;
 			}
 		} else {
-			componentsForPackage = new HashMap<IApiComponent, IApiComponent[]>(8);
+			componentsForPackage = new HashMap<>(8);
 			fComponentsProvidingPackageCache.put(packageName, componentsForPackage);
 		}
 
 		// check resolvePackage0 before the system packages to avoid wrong
 		// add/remove API problems - see bug 430640
 		if (sourceComponent != null) {
-			ArrayList<IApiComponent> componentsList = new ArrayList<IApiComponent>();
+			ArrayList<IApiComponent> componentsList = new ArrayList<>();
 			resolvePackage0(sourceComponent, packageName, componentsList);
 			if (componentsList.size() != 0) {
 				cachedComponents = new IApiComponent[componentsList.size()];
@@ -592,7 +592,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	public IApiComponent[] getVisibleDependentComponents(IApiComponent[] components) throws CoreException {
 		ArrayList<BundleDescription> bundles = getBundleDescriptions(components);
 		BundleDescription[] descs = getState().getStateHelper().getDependentBundles(bundles.toArray(new BundleDescription[bundles.size()]));
-		HashSet<BundleDescription> visible = new HashSet<BundleDescription>();
+		HashSet<BundleDescription> visible = new HashSet<>();
 		ExportPackageDescription[] packages = null;
 		for (int i = 0; i < descs.length; i++) {
 			packages = getState().getStateHelper().getVisiblePackages(descs[i]);
@@ -617,7 +617,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 		if (fSystemPackageNames == null) {
 			ExportPackageDescription[] systemPackages = getState().getSystemPackages();
-			fSystemPackageNames = new HashSet<String>(systemPackages.length);
+			fSystemPackageNames = new HashSet<>(systemPackages.length);
 			for (int i = 0; i < systemPackages.length; i++) {
 				fSystemPackageNames.add(systemPackages[i].getName());
 			}
@@ -690,7 +690,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			ResolverError[] errors = getState().getResolverErrors(bundles[i]);
 			for (int j = 0; j < errors.length; j++) {
 				if (errs == null) {
-					errs = new ArrayList<ResolverError>();
+					errs = new ArrayList<>();
 				}
 				errs.add(errors[j]);
 			}
@@ -813,7 +813,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @return corresponding API components
 	 */
 	private IApiComponent[] getApiComponents(BundleDescription[] bundles) {
-		ArrayList<IApiComponent> dependents = new ArrayList<IApiComponent>(bundles.length);
+		ArrayList<IApiComponent> dependents = new ArrayList<>(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			BundleDescription bundle = bundles[i];
 			IApiComponent component = getApiComponent(bundle.getSymbolicName());
@@ -832,7 +832,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @return corresponding bundle descriptions
 	 */
 	private ArrayList<BundleDescription> getBundleDescriptions(IApiComponent[] components) throws CoreException {
-		ArrayList<BundleDescription> bundles = new ArrayList<BundleDescription>(components.length);
+		ArrayList<BundleDescription> bundles = new ArrayList<>(components.length);
 		for (int i = 0; i < components.length; i++) {
 			IApiComponent component = components[i];
 			if (component instanceof BundleComponent) {
@@ -942,7 +942,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	private void rebindVM() throws CoreException {
 		fVMBinding = null;
 		IApiComponent[] components = getApiComponents();
-		HashSet<String> ees = new HashSet<String>();
+		HashSet<String> ees = new HashSet<>();
 		for (int i = 0; i < components.length; i++) {
 			ees.addAll(Arrays.asList(components[i].getExecutionEnvironments()));
 		}

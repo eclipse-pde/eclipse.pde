@@ -161,11 +161,11 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	@Override
 	public List<IReference> extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException {
-		HashSet<Reference> references = new HashSet<Reference>();
+		HashSet<Reference> references = new HashSet<>();
 		ReferenceExtractor extractor = new ReferenceExtractor(this, references, referenceMask);
 		ClassReader reader = new ClassReader(((AbstractApiTypeRoot) fStorage).getContents());
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);
-		return new LinkedList<IReference>(references);
+		return new LinkedList<>(references);
 	}
 
 	/*
@@ -216,7 +216,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public ApiMethod addMethod(String name, String signature, String genericSig, int modifiers, String[] exceptions) {
 		if (fMethods == null) {
-			fMethods = new LinkedHashMap<MethodKey, ApiMethod>();
+			fMethods = new LinkedHashMap<>();
 		}
 		ApiMethod method = new ApiMethod(this, name, signature, genericSig, modifiers, exceptions);
 		fMethods.put(new MethodKey(getName(), name, signature, true), method);
@@ -234,7 +234,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public ApiField addField(String name, String signature, String genericSig, int modifiers, Object value) {
 		if (fFields == null) {
-			fFields = new HashMap<String, ApiField>();
+			fFields = new HashMap<>();
 		}
 		ApiField field = new ApiField(this, name, signature, genericSig, modifiers, value);
 		fFields.put(name, field);
@@ -586,7 +586,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public void addMemberType(String name, int modifiers) {
 		if (fMemberTypes == null) {
-			fMemberTypes = new HashMap<String, IApiTypeRoot>();
+			fMemberTypes = new HashMap<>();
 		}
 		int index = name.lastIndexOf('$');
 		String simpleName = name.substring(index + 1);

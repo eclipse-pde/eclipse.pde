@@ -57,9 +57,9 @@ import org.w3c.dom.Element;
 public class APIToolsAnalysisTask extends CommonUtilsTask {
 
 	private static class Summary {
-		List<IApiProblem> apiBundleVersionProblems = new ArrayList<IApiProblem>();
-		List<IApiProblem> apiCompatibilityProblems = new ArrayList<IApiProblem>();
-		List<IApiProblem> apiUsageProblems = new ArrayList<IApiProblem>();
+		List<IApiProblem> apiBundleVersionProblems = new ArrayList<>();
+		List<IApiProblem> apiCompatibilityProblems = new ArrayList<>();
+		List<IApiProblem> apiUsageProblems = new ArrayList<>();
 		String componentID;
 
 		public Summary(String componentID, IApiProblem[] apiProblems) {
@@ -173,7 +173,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		if (size == 0) {
 			return NO_SUMMARIES;
 		}
-		List<Entry<String, IApiProblem[]>> allEntries = new ArrayList<Entry<String, IApiProblem[]>>();
+		List<Entry<String, IApiProblem[]>> allEntries = new ArrayList<>();
 		allEntries.addAll(entrySet);
 		Collections.sort(allEntries, new Comparator<Object>() {
 			@SuppressWarnings("unchecked")
@@ -384,14 +384,14 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			System.out.println("Creation of both baselines : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
-		Map<String, IApiProblem[]> allProblems = new HashMap<String, IApiProblem[]>();
-		List<String> allNonApiBundles = new ArrayList<String>();
-		List<String> allApiBundles = new ArrayList<String>();
-		Map<String, Object> bundlesWithErrors = new HashMap<String, Object>();
+		Map<String, IApiProblem[]> allProblems = new HashMap<>();
+		List<String> allNonApiBundles = new ArrayList<>();
+		List<String> allApiBundles = new ArrayList<>();
+		Map<String, Object> bundlesWithErrors = new HashMap<>();
 		try {
 			IApiComponent[] apiComponents = currentBaseline.getApiComponents();
 			int length = apiComponents.length;
-			Set<String> visitedApiComponentNames = new HashSet<String>();
+			Set<String> visitedApiComponentNames = new HashSet<>();
 			for (int i = 0; i < length; i++) {
 				IApiComponent apiComponent = apiComponents[i];
 				String name = apiComponent.getSymbolicName();
@@ -465,7 +465,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				System.out.println("=========================="); //$NON-NLS-1$
 				System.out.println("Total number of components with resolver errors :" + bundlesWithErrors.size()); //$NON-NLS-1$
 				System.out.println("Details:"); //$NON-NLS-1$
-				List<String> names = new ArrayList<String>();
+				List<String> names = new ArrayList<>();
 				names.addAll(bundlesWithErrors.keySet());
 				Collections.sort(names);
 				for (String name : names) {
@@ -546,14 +546,14 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		if (length <= 1) {
 			return problems;
 		}
-		Set<String> uniqueProblems = new HashSet<String>(length);
+		Set<String> uniqueProblems = new HashSet<>(length);
 		List<IApiProblem> allProblems = null;
 		for (int i = 0; i < length; i++) {
 			IApiProblem apiProblem = problems[i];
 			String message = apiProblem.getMessage();
 			if (!uniqueProblems.contains(message)) {
 				if (allProblems == null) {
-					allProblems = new ArrayList<IApiProblem>(length);
+					allProblems = new ArrayList<>(length);
 				}
 				uniqueProblems.add(message);
 				allProblems.add(apiProblem);

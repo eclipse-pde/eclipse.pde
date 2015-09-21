@@ -33,7 +33,7 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  */
 public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReference {
 
-	private Map<String, String> fIllegalTypes = new HashMap<String, String>();
+	private Map<String, String> fIllegalTypes = new HashMap<>();
 
 	/**
 	 * Adds an {@link IReferenceTypeDescriptor} that is reference-restricted

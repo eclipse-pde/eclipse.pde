@@ -38,7 +38,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 		public List<Report> reports;
 
 		public void visitScan() {
-			reports = new ArrayList<Report>();
+			reports = new ArrayList<>();
 		}
 
 		public boolean visitComponent(IComponentDescriptor targetComponent) {
@@ -251,7 +251,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 	 */
 	static class Report {
 		String name = null;
-		TreeMap<Integer, TreeMap<String, List<IApiProblem>>> apiProblems = new TreeMap<Integer, TreeMap<String, List<IApiProblem>>>();
+		TreeMap<Integer, TreeMap<String, List<IApiProblem>>> apiProblems = new TreeMap<>();
 		int typeProblems = 0;
 		int methodProblems = 0;
 		int fieldProblems = 0;
@@ -263,13 +263,13 @@ public class MissingRefReportConverter extends UseReportConverter {
 				Integer key = new Integer(pb.getKind());
 				types = this.apiProblems.get(key);
 				if (types == null) {
-					types = new TreeMap<String, List<IApiProblem>>(missingcompare);
+					types = new TreeMap<>(missingcompare);
 					this.apiProblems.put(key, types);
 				}
 				String tname = pb.getTypeName();
 				list = types.get(tname);
 				if (list == null) {
-					list = new ArrayList<IApiProblem>();
+					list = new ArrayList<>();
 					types.put(tname, list);
 				}
 				list.add(pb);

@@ -49,7 +49,7 @@ public abstract class Validator extends ASTVisitor {
 	/**
 	 * Type stack that tracks types as the visitor descends
 	 */
-	private Stack<Item> fStack = new Stack<Item>();
+	private Stack<Item> fStack = new Stack<>();
 	/**
 	 * The compilation unit we are scanning
 	 */
@@ -264,7 +264,7 @@ public abstract class Validator extends ASTVisitor {
 	 */
 	protected void addProblem(IApiProblem problem) {
 		if (fProblems == null) {
-			fProblems = new ArrayList<IApiProblem>();
+			fProblems = new ArrayList<>();
 		}
 		fProblems.add(problem);
 	}

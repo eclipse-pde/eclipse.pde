@@ -138,7 +138,7 @@ public class ReferenceAnalyzer {
 	/**
 	 * List of references to consider/resolve.
 	 */
-	List<IReference> fReferences = new LinkedList<IReference>();
+	List<IReference> fReferences = new LinkedList<>();
 
 	/**
 	 * Problem detectors indexed by the log base 2 of each reference kind they
@@ -256,7 +256,7 @@ public class ReferenceAnalyzer {
 				return EMPTY_RESULT;
 			}
 			// 3. create problems
-			List<IApiProblem> allProblems = new LinkedList<IApiProblem>();
+			List<IApiProblem> allProblems = new LinkedList<>();
 			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
 			for (int i = 0; i < detectors.length; i++) {
 				IApiProblemDetector detector = detectors[i];

@@ -37,14 +37,14 @@ class MissingRefParser extends UseScanParser {
 
 	class MissingRefProblemHandler extends DefaultHandler {
 
-		List<IApiProblem> problems = new ArrayList<IApiProblem>();
+		List<IApiProblem> problems = new ArrayList<>();
 		private String typename;
 		private int linenumber;
 		private int charstart;
 		private int charend;
 		private int id;
-		private List<String> messageargs = new ArrayList<String>();
-		private Map<String, String> extraargs = new HashMap<String, String>();
+		private List<String> messageargs = new ArrayList<>();
+		private Map<String, String> extraargs = new HashMap<>();
 
 		@Override
 		public void startDocument() throws SAXException {

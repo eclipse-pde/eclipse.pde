@@ -100,7 +100,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		if (!fNeedsSaving) {
 			return;
 		}
-		final HashMap<IResource, Map<String, Set<IApiProblemFilter>>> filters = new HashMap<IResource, Map<String, Set<IApiProblemFilter>>>(fFilterMap);
+		final HashMap<IResource, Map<String, Set<IApiProblemFilter>>> filters = new HashMap<>(fFilterMap);
 		WorkspaceJob job = new WorkspaceJob(Util.EMPTY_STRING) {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
@@ -204,14 +204,14 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			}
 			Set<IApiProblemFilter> pfilters = null;
 			if (pTypeNames == null) {
-				pTypeNames = new HashMap<String, Set<IApiProblemFilter>>();
-				pfilters = new HashSet<IApiProblemFilter>();
+				pTypeNames = new HashMap<>();
+				pfilters = new HashSet<>();
 				pTypeNames.put(typeName, pfilters);
 				fFilterMap.put(resource, pTypeNames);
 			} else {
 				pfilters = pTypeNames.get(typeName);
 				if (pfilters == null) {
-					pfilters = new HashSet<IApiProblemFilter>();
+					pfilters = new HashSet<>();
 					pTypeNames.put(typeName, pfilters);
 				}
 			}
@@ -258,7 +258,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		if (pTypeNames == null) {
 			return FilterStore.NO_FILTERS;
 		}
-		List<IApiProblemFilter> allFilters = new ArrayList<IApiProblemFilter>();
+		List<IApiProblemFilter> allFilters = new ArrayList<>();
 		for (Iterator<Set<IApiProblemFilter>> iterator = pTypeNames.values().iterator(); iterator.hasNext();) {
 			Set<IApiProblemFilter> values = iterator.next();
 			allFilters.addAll(values);
@@ -428,7 +428,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		root.setAttribute(IApiXmlConstants.ATTR_ID, fProject.getElementName());
 		root.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_FILTER_STORE_CURRENT_VERSION);
 		Set<Entry<IResource, Map<String, Set<IApiProblemFilter>>>> allFiltersEntrySet = filtermap.entrySet();
-		List<Entry<IResource, Map<String, Set<IApiProblemFilter>>>> allFiltersEntries = new ArrayList<Entry<IResource, Map<String, Set<IApiProblemFilter>>>>(allFiltersEntrySet.size());
+		List<Entry<IResource, Map<String, Set<IApiProblemFilter>>>> allFiltersEntries = new ArrayList<>(allFiltersEntrySet.size());
 		allFiltersEntries.addAll(allFiltersEntrySet);
 		Collections.sort(allFiltersEntries, new Comparator<Entry<IResource, Map<String, Set<IApiProblemFilter>>>>() {
 			@Override
@@ -447,7 +447,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 				continue;
 			}
 			Set<Entry<String, Set<IApiProblemFilter>>> allTypeNamesEntriesSet = pTypeNames.entrySet();
-			List<Entry<String, Set<IApiProblemFilter>>> allTypeNamesEntries = new ArrayList<Entry<String, Set<IApiProblemFilter>>>(allTypeNamesEntriesSet.size());
+			List<Entry<String, Set<IApiProblemFilter>>> allTypeNamesEntries = new ArrayList<>(allTypeNamesEntriesSet.size());
 			allTypeNamesEntries.addAll(allTypeNamesEntriesSet);
 			Collections.sort(allTypeNamesEntries, new Comparator<Entry<String, Set<IApiProblemFilter>>>() {
 				@Override
@@ -474,7 +474,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 				}
 				root.appendChild(relement);
 				typeName = null;
-				List<IApiProblemFilter> filtersList = new ArrayList<IApiProblemFilter>(filters.size());
+				List<IApiProblemFilter> filtersList = new ArrayList<>(filters.size());
 				filtersList.addAll(filters);
 				Collections.sort(filtersList, new Comparator<IApiProblemFilter>() {
 					@Override
@@ -547,7 +547,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		if (ApiPlugin.DEBUG_FILTER_STORE) {
 			System.out.println("initializing api filter map for project [" + fProject.getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		fFilterMap = new HashMap<IResource, Map<String, Set<IApiProblemFilter>>>(5);
+		fFilterMap = new HashMap<>(5);
 		IPath filepath = getFilterFilePath(true);
 		IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(filepath, true);
 		if (file == null) {
@@ -609,14 +609,14 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 				typeName = GLOBAL;
 			}
 			if (pTypeNames == null) {
-				filters = new HashSet<IApiProblemFilter>();
-				pTypeNames = new HashMap<String, Set<IApiProblemFilter>>();
+				filters = new HashSet<>();
+				pTypeNames = new HashMap<>();
 				pTypeNames.put(typeName, filters);
 				fFilterMap.put(resource, pTypeNames);
 			} else {
 				filters = pTypeNames.get(typeName);
 				if (filters == null) {
-					filters = new HashSet<IApiProblemFilter>();
+					filters = new HashSet<>();
 					pTypeNames.put(typeName, filters);
 				}
 			}
@@ -665,12 +665,12 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 */
 	public synchronized void recordFilterUsage() {
 		initializeApiFilters();
-		fUnusedFilters = new HashMap<IResource, Set<IApiProblemFilter>>();
+		fUnusedFilters = new HashMap<>();
 		Map<String, Set<IApiProblemFilter>> types = null;
 		Set<IApiProblemFilter> values = null;
 		for (IResource resource : fFilterMap.keySet()) {
 			types = fFilterMap.get(resource);
-			values = new HashSet<IApiProblemFilter>();
+			values = new HashSet<>();
 			fUnusedFilters.put(resource, values);
 			for (Entry<String, Set<IApiProblemFilter>> entry : types.entrySet()) {
 				values.addAll(entry.getValue());
@@ -710,7 +710,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 */
 	public IApiProblemFilter[] getUnusedFilters(IResource resource, String typeName, int[] categories) {
 		if (fUnusedFilters != null) {
-			Set<IApiProblemFilter> unused = new HashSet<IApiProblemFilter>();
+			Set<IApiProblemFilter> unused = new HashSet<>();
 			Set<IApiProblemFilter> set = null;
 			if (resource != null) {
 				// add any unused filters for the resource

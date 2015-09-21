@@ -189,7 +189,7 @@ public class ClassFileComparator {
 			return;
 		}
 		if (superclassList2 != null) {
-			superclassNames2 = new HashSet<String>();
+			superclassNames2 = new HashSet<>();
 			Iterator<IApiType> iterator = superclassList2.iterator();
 			while (iterator.hasNext()) {
 				superclassNames2.add(iterator.next().getName());
@@ -307,7 +307,7 @@ public class ClassFileComparator {
 		} else if (superinterfacesSet2 == null) {
 			this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
 		} else {
-			Set<String> names2 = new HashSet<String>();
+			Set<String> names2 = new HashSet<>();
 			for (Iterator<IApiType> iterator = superinterfacesSet2.iterator(); iterator.hasNext();) {
 				names2.add(iterator.next().getName());
 			}
@@ -376,7 +376,7 @@ public class ClassFileComparator {
 	private void checkTypeMembers() throws CoreException {
 		IApiType[] typeMembers = this.type1.getMemberTypes();
 		IApiType[] typeMembers2 = this.type2.getMemberTypes();
-		List<String> added = new ArrayList<String>(typeMembers2.length);
+		List<String> added = new ArrayList<>(typeMembers2.length);
 		for (int i = 0; i < typeMembers2.length; i++) {
 			added.add(typeMembers2[i].getName());
 		}
@@ -414,7 +414,7 @@ public class ClassFileComparator {
 				return;
 			}
 			// check removed or added type members
-			List<IApiType> removedTypeMembers = new ArrayList<IApiType>();
+			List<IApiType> removedTypeMembers = new ArrayList<>();
 			loop: for (int i = 0; i < typeMembers.length; i++) {
 				IApiType typeMember = typeMembers[i];
 				IApiType typeMember2 = this.type2.getMemberType(typeMember.getSimpleName());
@@ -999,7 +999,7 @@ public class ClassFileComparator {
 			// checks fields
 			IApiField[] fields1 = this.type1.getFields();
 			IApiField[] fields2 = this.type2.getFields();
-			Set<String> addedFields = new HashSet<String>(fields2.length);
+			Set<String> addedFields = new HashSet<>(fields2.length);
 			for (int i = 0; i < fields2.length; i++) {
 				addedFields.add(fields2[i].getName());
 			}
@@ -1016,7 +1016,7 @@ public class ClassFileComparator {
 			// checks methods
 			IApiMethod[] methods1 = this.type1.getMethods();
 			IApiMethod[] methods2 = this.type2.getMethods();
-			Set<IMemberDescriptor> addedMethods = new HashSet<IMemberDescriptor>(methods2.length);
+			Set<IMemberDescriptor> addedMethods = new HashSet<>(methods2.length);
 			for (int i = 0; i < methods2.length; i++) {
 				if (!methods2[i].isSynthetic()) {
 					addedMethods.add(methods2[i].getHandle());
@@ -1593,7 +1593,7 @@ public class ClassFileComparator {
 		String[] names1 = method.getExceptionNames();
 		List<String> list1 = null;
 		if (names1 != null) {
-			list1 = new ArrayList<String>(names1.length);
+			list1 = new ArrayList<>(names1.length);
 			for (int i = 0; i < names1.length; i++) {
 				list1.add(names1[i]);
 			}
@@ -1601,7 +1601,7 @@ public class ClassFileComparator {
 		String[] names2 = method2.getExceptionNames();
 		List<String> list2 = null;
 		if (names2 != null) {
-			list2 = new ArrayList<String>(names2.length);
+			list2 = new ArrayList<>(names2.length);
 			for (int i = 0; i < names2.length; i++) {
 				list2.add(names2[i]);
 			}
@@ -1629,7 +1629,7 @@ public class ClassFileComparator {
 				}
 			} else {
 				// check if the exceptions are consistent for both descriptors
-				List<String> removedExceptions = new ArrayList<String>();
+				List<String> removedExceptions = new ArrayList<>();
 				for (Iterator<String> iterator = list1.iterator(); iterator.hasNext();) {
 					String exceptionName = iterator.next().replace('/', '.');
 					if (!list2.remove(exceptionName)) {
@@ -1842,7 +1842,7 @@ public class ClassFileComparator {
 	 *         <code>null</code>
 	 */
 	private Set<IApiType> getInterfacesSet(IApiType type) {
-		HashSet<IApiType> set = new HashSet<IApiType>();
+		HashSet<IApiType> set = new HashSet<>();
 		this.status = null;
 		collectAllInterfaces(type, set);
 		if (set.isEmpty()) {
@@ -1890,7 +1890,7 @@ public class ClassFileComparator {
 		if (Util.isJavaLangObject(superName) && !includeObject) {
 			return null;
 		}
-		List<IApiType> list = new ArrayList<IApiType>();
+		List<IApiType> list = new ArrayList<>();
 		try {
 			while (superName != null && (!Util.isJavaLangObject(superName) || includeObject)) {
 				superClass = superClass.getSuperclass();

@@ -80,7 +80,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		public ClassFileSignatureVisitor() {
 			super(Opcodes.ASM5);
-			this.references = new ArrayList<Reference>();
+			this.references = new ArrayList<>();
 		}
 
 		/**
@@ -248,7 +248,7 @@ public class ReferenceExtractor extends ClassVisitor {
 			this.argumentcount = argumentcount;
 			this.linePositionTracker = new LinePositionTracker();
 			this.lastLineNumber = -1;
-			this.labelsToLocalMarkers = new HashMap<Label, List<LocalLineNumberMarker>>();
+			this.labelsToLocalMarkers = new HashMap<>();
 			this.methodName = name;
 		}
 
@@ -332,7 +332,7 @@ public class ReferenceExtractor extends ClassVisitor {
 				if (list != null) {
 					list.add(this.localVariableMarker);
 				} else {
-					list = new ArrayList<LocalLineNumberMarker>();
+					list = new ArrayList<>();
 					list.add(this.localVariableMarker);
 					this.labelsToLocalMarkers.put(label, list);
 				}
@@ -653,8 +653,8 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * @since 1.1
 	 */
 	static class FieldTracker {
-		HashMap<String, List<Reference>> accessors = new HashMap<String, List<Reference>>();
-		ArrayList<Reference> fields = new ArrayList<Reference>();
+		HashMap<String, List<Reference>> accessors = new HashMap<>();
+		ArrayList<Reference> fields = new ArrayList<>();
 		ReferenceExtractor extractor = null;
 
 		/**
@@ -685,7 +685,7 @@ public class ReferenceExtractor extends ClassVisitor {
 				String key = ref.getReferencedMemberName();
 				List<Reference> refs = accessors.get(key);
 				if (refs == null) {
-					refs = new ArrayList<Reference>();
+					refs = new ArrayList<>();
 					accessors.put(key, refs);
 				}
 				refs.add(ref);
@@ -722,10 +722,10 @@ public class ReferenceExtractor extends ClassVisitor {
 		HashMap<Label, Integer> lineMap;
 
 		public LinePositionTracker() {
-			this.labelsAndLocations = new ArrayList<Object>();
-			this.lineInfos = new TreeSet<LineInfo>();
-			this.catchLabelInfos = new ArrayList<LabelInfo>();
-			this.lineMap = new HashMap<Label, Integer>();
+			this.labelsAndLocations = new ArrayList<>();
+			this.lineInfos = new TreeSet<>();
+			this.catchLabelInfos = new ArrayList<>();
+			this.lineMap = new HashMap<>();
 		}
 
 		void addLocation(Reference location) {
@@ -755,7 +755,7 @@ public class ReferenceExtractor extends ClassVisitor {
 			LineInfo firstLineInfo = lineInfosIterator.next();
 			int currentLineNumber = firstLineInfo.line;
 
-			List<LabelInfo> remainingCatchLabelInfos = new ArrayList<LabelInfo>();
+			List<LabelInfo> remainingCatchLabelInfos = new ArrayList<>();
 			for (Iterator<LabelInfo> iterator = this.catchLabelInfos.iterator(); iterator.hasNext();) {
 				LabelInfo catchLabelInfo = iterator.next();
 				Integer lineValue = this.lineMap.get(catchLabelInfo.label);
@@ -766,7 +766,7 @@ public class ReferenceExtractor extends ClassVisitor {
 				}
 			}
 			// Iterate over List of Labels and SourceLocations.
-			List<Object> computedEntries = new ArrayList<Object>();
+			List<Object> computedEntries = new ArrayList<>();
 			for (Iterator<Object> iterator = this.labelsAndLocations.iterator(); iterator.hasNext();) {
 				Object current = iterator.next();
 				if (current instanceof Label) {
@@ -788,7 +788,7 @@ public class ReferenceExtractor extends ClassVisitor {
 				if (current instanceof Label) {
 					// try to set the line number for remaining catch labels
 					if (remainingCatchLabelInfos != null) {
-						remaingEntriesTemp = new ArrayList<LabelInfo>();
+						remaingEntriesTemp = new ArrayList<>();
 						loop: for (Iterator<LabelInfo> catchLabelInfosIterator = remainingCatchLabelInfos.iterator(); catchLabelInfosIterator.hasNext();) {
 							LabelInfo catchLabelInfo = catchLabelInfosIterator.next();
 							if (!current.equals(catchLabelInfo.label)) {
@@ -916,19 +916,19 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * descriptor is pushed onto the stack. When a member is exited, the stack
 	 * is popped.
 	 */
-	Stack<IApiMember> fMemberStack = new Stack<IApiMember>();
+	Stack<IApiMember> fMemberStack = new Stack<>();
 
 	/**
 	 * Stack of super types *names* (String) being visited. When a type is
 	 * entered, its super type is pushed onto the stack. When a type is exited,
 	 * the stack is popped.
 	 */
-	Stack<String> fSuperStack = new Stack<String>();
+	Stack<String> fSuperStack = new Stack<>();
 
 	/**
 	 * Mapping of anonymous type names to their reference
 	 */
-	HashMap<String, List<Reference>> fAnonymousTypes = new HashMap<String, List<Reference>>();
+	HashMap<String, List<Reference>> fAnonymousTypes = new HashMap<>();
 
 	/**
 	 * Whether to extract references to elements within the classfile being
@@ -1188,7 +1188,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		} else {
 			reader.acceptType(this.signaturevisitor);
 		}
-		List<Reference> result = new ArrayList<Reference>();
+		List<Reference> result = new ArrayList<>();
 		result.addAll(this.signaturevisitor.references);
 		this.collector.addAll(this.signaturevisitor.references);
 		this.signaturevisitor.reset();
@@ -1319,7 +1319,7 @@ public class ReferenceExtractor extends ClassVisitor {
 					// visit the class files for the dependent anonymous and
 					// local inner types
 					// set a line number for all references with no line numbers
-					List<Reference> allRefs = new ArrayList<Reference>();
+					List<Reference> allRefs = new ArrayList<>();
 					for (Reference reference : refs) {
 						if (reference.getLineNumber() < 0) {
 							allRefs.add(reference);
@@ -1344,7 +1344,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * @throws CoreException
 	 */
 	private Set<Reference> processInnerClass(IApiType type, int refkinds) throws CoreException {
-		HashSet<Reference> refs = new HashSet<Reference>();
+		HashSet<Reference> refs = new HashSet<>();
 		ReferenceExtractor extractor = new ReferenceExtractor(type, refs, refkinds, this.fieldtracker);
 		ClassReader reader = new ClassReader(((AbstractApiTypeRoot) type.getTypeRoot()).getContents());
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);

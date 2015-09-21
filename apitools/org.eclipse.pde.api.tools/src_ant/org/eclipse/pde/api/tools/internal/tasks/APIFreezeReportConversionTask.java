@@ -60,8 +60,8 @@ public class APIFreezeReportConversionTask extends Task {
 		private boolean isResolverSection;
 
 		public ConverterDefaultHandler(boolean debug) {
-			this.map = new HashMap<String, List<Entry>>();
-			this.resolverErrors = new HashMap<String, List<String>>();
+			this.map = new HashMap<>();
+			this.resolverErrors = new HashMap<>();
 			this.debug = debug;
 		}
 
@@ -75,7 +75,7 @@ public class APIFreezeReportConversionTask extends Task {
 				if (list != null) {
 					list.add(entry);
 				} else {
-					ArrayList<Entry> value = new ArrayList<Entry>();
+					ArrayList<Entry> value = new ArrayList<>();
 					value.add(entry);
 					this.map.put(componentID, value);
 				}
@@ -114,7 +114,7 @@ public class APIFreezeReportConversionTask extends Task {
 				} else if (IApiXmlConstants.ELEMENT_RESOLVER_ERROR.equals(name)) {
 					List<String> errors = resolverErrors.get(componentID);
 					if (errors == null) {
-						errors = new ArrayList<String>();
+						errors = new ArrayList<>();
 						resolverErrors.put(componentID, errors);
 					}
 					String message = attributes.getValue(IApiXmlConstants.ATTR_MESSAGE);
@@ -161,7 +161,7 @@ public class APIFreezeReportConversionTask extends Task {
 				this.kind = attributes.getValue(IApiXmlConstants.ATTR_KIND);
 			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
 				if (this.argumentsList == null) {
-					this.argumentsList = new ArrayList<String>();
+					this.argumentsList = new ArrayList<>();
 				} else {
 					this.argumentsList.clear();
 				}
@@ -326,7 +326,7 @@ public class APIFreezeReportConversionTask extends Task {
 
 	private void dumpEntries(Map<String, List<Entry>> entries, Map<String, List<String>> resolverErrors, StringBuffer buffer) {
 		dumpHeader(buffer);
-		List<Map.Entry<String, List<Entry>>> allEntries = new ArrayList<Map.Entry<String, List<Entry>>>();
+		List<Map.Entry<String, List<Entry>>> allEntries = new ArrayList<>();
 		for (Map.Entry<String, List<Entry>> entry : entries.entrySet()) {
 			allEntries.add(entry);
 		}

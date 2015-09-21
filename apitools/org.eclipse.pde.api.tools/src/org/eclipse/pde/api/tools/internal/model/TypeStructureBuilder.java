@@ -437,7 +437,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(contents));
 		ApiType type = null;
 		try {
-			Map<Integer, String> pool = new HashMap<Integer, String>();
+			Map<Integer, String> pool = new HashMap<>();
 			short currentVersion = inputStream.readShort(); // read file version
 															// (for now there is
 															// only one version)

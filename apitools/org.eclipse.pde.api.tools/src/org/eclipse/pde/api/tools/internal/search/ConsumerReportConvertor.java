@@ -57,7 +57,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		 * Set of {@link IComponentDescriptor}s representing the consumers of
 		 * references
 		 */
-		Set<IComponentDescriptor> consumers = new HashSet<IComponentDescriptor>();
+		Set<IComponentDescriptor> consumers = new HashSet<>();
 
 		/*
 		 * (non-Javadoc)
@@ -116,7 +116,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 */
 	class ConsumerReportVisitor extends UseScanVisitor {
 		Consumer consumer;
-		Map<String, Producer> producers = new HashMap<String, Producer>();
+		Map<String, Producer> producers = new HashMap<>();
 		private IComponentDescriptor consumerDescriptor;
 		private Producer currentProducer;
 		private Type2 currenttype = null;
@@ -126,7 +126,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		 * Cache for type descriptions, maps enclosing descriptors to Type
 		 * objects
 		 */
-		HashMap<IReferenceTypeDescriptor, Type2> keys = new HashMap<IReferenceTypeDescriptor, Type2>();
+		HashMap<IReferenceTypeDescriptor, Type2> keys = new HashMap<>();
 
 		/**
 		 * Constructor
@@ -300,7 +300,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			String refname = org.eclipse.pde.api.tools.internal.builder.Reference.getReferenceText(refKind);
 			List<Reference> refs = this.currentmember.children.get(refname);
 			if (refs == null) {
-				refs = new ArrayList<Reference>();
+				refs = new ArrayList<>();
 				this.currentmember.children.put(refname, refs);
 			}
 			refs.add(new Reference(fromMember, lineNumber, visibility, formatMessages(reference.getProblemMessages())));
@@ -504,7 +504,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 
 	class Producer {
 		String name;
-		Map<IReferenceTypeDescriptor, Type2> types = new HashMap<IReferenceTypeDescriptor, Type2>();
+		Map<IReferenceTypeDescriptor, Type2> types = new HashMap<>();
 		CountGroup counts = new CountGroup();
 	}
 
@@ -513,7 +513,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			super(desc);
 		}
 
-		Map<IMemberDescriptor, Member> referencingMembers = new HashMap<IMemberDescriptor, Member>();
+		Map<IMemberDescriptor, Member> referencingMembers = new HashMap<>();
 	}
 
 	/**
@@ -543,7 +543,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		ListConsumersVisitor listVisitor = new ListConsumersVisitor();
 		UseScanParser lparser = new UseScanParser();
 		lparser.parse(getXmlLocation(), subMon.newChild(5), listVisitor);
-		List<Consumer> consumerReports = new ArrayList<Consumer>();
+		List<Consumer> consumerReports = new ArrayList<>();
 
 		ConsumerReportVisitor visitor = null;
 		for (IComponentDescriptor consumer : listVisitor.consumers) {
@@ -691,7 +691,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(OPEN_BODY);
 			buffer.append(OPEN_H3).append(getConsumerTitle(consumer.name)).append(CLOSE_H3);
 
-			List<String> producerNames = new ArrayList<String>();
+			List<String> producerNames = new ArrayList<>();
 			producerNames.addAll(producers.keySet());
 			Collections.sort(producerNames, compare);
 
@@ -762,7 +762,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			}
 			buffer.append(getReferencesTableHeader(SearchMessages.ConsumerReportConvertor_TypeListHeader, SearchMessages.UseReportConverter_referenced_type, false));
 
-			List<IReferenceTypeDescriptor> producerTypes = new ArrayList<IReferenceTypeDescriptor>();
+			List<IReferenceTypeDescriptor> producerTypes = new ArrayList<>();
 			producerTypes.addAll(producer.types.keySet());
 			Collections.sort(producerTypes, compare);
 

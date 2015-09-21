@@ -31,7 +31,7 @@ class TypeParameterDescriptor {
 
 	public void addInterfaceBound(String bound) {
 		if (this.interfaceBounds == null) {
-			this.interfaceBounds = new ArrayList<String>();
+			this.interfaceBounds = new ArrayList<>();
 		}
 		this.interfaceBounds.add(bound);
 	}

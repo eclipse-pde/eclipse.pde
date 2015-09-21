@@ -117,7 +117,7 @@ public class Reference implements IReference {
 			return false;
 		}
 		if (fProblems == null) {
-			fProblems = new ArrayList<IApiProblem>(2);
+			fProblems = new ArrayList<>(2);
 		}
 		if (fProblems.contains(problem)) {
 			return false;

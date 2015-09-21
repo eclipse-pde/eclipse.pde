@@ -175,7 +175,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 						}
 					});
 					if (files != null) {
-						List<LocalApiTypeRoot> classFiles = new ArrayList<LocalApiTypeRoot>();
+						List<LocalApiTypeRoot> classFiles = new ArrayList<>();
 						for (int j = 0; j < files.length; j++) {
 							String name = files[j].getName();
 							String typeName = name.substring(0, name.length() - 6);
@@ -254,7 +254,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	public String[] getPackageNames() throws CoreException {
 		init();
 		if (fPackageNames == null) {
-			List<String> names = new ArrayList<String>(fPackages.keySet());
+			List<String> names = new ArrayList<>(fPackages.keySet());
 			String[] result = new String[names.size()];
 			names.toArray(result);
 			Arrays.sort(result);
@@ -268,7 +268,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	 */
 	private synchronized void init() {
 		if (fPackages == null) {
-			fPackages = new HashMap<String, String>();
+			fPackages = new HashMap<>();
 			processDirectory(Util.DEFAULT_PACKAGE_NAME, new File(getName()));
 		}
 	}
@@ -284,7 +284,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		File[] files = dir.listFiles();
 		if (files != null) {
 			boolean hasClassFiles = false;
-			List<File> dirs = new ArrayList<File>();
+			List<File> dirs = new ArrayList<>();
 			for (int i = 0; i < files.length; i++) {
 				File file = files[i];
 				if (file.isDirectory()) {

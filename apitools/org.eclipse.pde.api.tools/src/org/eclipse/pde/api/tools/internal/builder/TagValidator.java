@@ -64,7 +64,7 @@ public class TagValidator extends Validator {
 	/**
 	 * A collection of annotation names so we can detect multiple usage
 	 */
-	private Set<String> fProcessedAnnotations = new HashSet<String>();
+	private Set<String> fProcessedAnnotations = new HashSet<>();
 
 	/**
 	 * Constructor
@@ -148,7 +148,7 @@ public class TagValidator extends Validator {
 			case ASTNode.ENUM_DECLARATION: {
 				Item item = getItem();
 				Set<String> supported = getSupportedTagNames(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
-				HashSet<String> processed = new HashSet<String>();
+				HashSet<String> processed = new HashSet<>();
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
 					if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
@@ -179,7 +179,7 @@ public class TagValidator extends Validator {
 			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
 				Item item = getItem();
 				Set<String> supported = getSupportedTagNames(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE);
-				HashSet<String> processed = new HashSet<String>();
+				HashSet<String> processed = new HashSet<>();
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
 					if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
@@ -230,7 +230,7 @@ public class TagValidator extends Validator {
 	 * @since 1.0.400
 	 */
 	void processTypeNode(TypeDeclaration type, List<TagElement> tags) {
-		HashSet<String> processed = new HashSet<String>();
+		HashSet<String> processed = new HashSet<>();
 		Item item = getItem();
 		for (TagElement tag : tags) {
 			String tagname = tag.getTagName();
@@ -276,7 +276,7 @@ public class TagValidator extends Validator {
 	 * @since 1.0.400
 	 */
 	void processFieldNode(FieldDeclaration field, List<TagElement> tags) {
-		HashSet<String> processed = new HashSet<String>();
+		HashSet<String> processed = new HashSet<>();
 		Item item = getItem();
 		for (TagElement tag : tags) {
 			String tagname = tag.getTagName();
@@ -349,7 +349,7 @@ public class TagValidator extends Validator {
 		boolean isstatic = Flags.isStatic(mods);
 		Item item = getItem();
 		Set<String> supportedtags = getSupportedTagNames(pkind, isconstructor ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
-		HashSet<String> processed = new HashSet<String>();
+		HashSet<String> processed = new HashSet<>();
 		for (TagElement tag : tags) {
 			String tagname = tag.getTagName();
 			if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
@@ -433,7 +433,7 @@ public class TagValidator extends Validator {
 	Set<String> getSupportedTagNames(int type, int member) {
 		IApiJavadocTag[] tags = ApiPlugin.getJavadocTagManager().getTagsForType(type, member);
 		if (tags.length > 0) {
-			HashSet<String> valid = new HashSet<String>(tags.length, 1);
+			HashSet<String> valid = new HashSet<>(tags.length, 1);
 			for (int i = 0; i < tags.length; i++) {
 				valid.add(tags[i].getTagName());
 			}

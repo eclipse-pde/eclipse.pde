@@ -516,7 +516,7 @@ public final class Signatures {
 	 * @return a listing of signatures for the specified parameters
 	 */
 	private static List<String> getParametersTypeNames(List<SingleVariableDeclaration> rawparams) {
-		List<String> rparams = new ArrayList<String>(rawparams.size());
+		List<String> rparams = new ArrayList<>(rawparams.size());
 		String pname = null;
 		for (SingleVariableDeclaration param : rawparams) {
 			pname = Signatures.getTypeSignature(getType(param));

@@ -66,7 +66,7 @@ public final class ApiSearchEngine {
 		 * Constructor
 		 */
 		public ReferenceExtractor(IApiSearchRequestor requestor, IApiSearchReporter reporter, IApiElement element, IProgressMonitor monitor) {
-			collector = new ArrayList<IReference>();
+			collector = new ArrayList<>();
 			this.requestor = requestor;
 			this.reporter = reporter;
 			this.element = element;
@@ -183,7 +183,7 @@ public final class ApiSearchEngine {
 	 * @throws CoreException
 	 */
 	List<IReference> acceptReferences(IApiSearchRequestor requestor, IApiType type, List<IReference> references, IProgressMonitor monitor) throws CoreException {
-		ArrayList<IReference> refs = new ArrayList<IReference>();
+		ArrayList<IReference> refs = new ArrayList<>();
 		IReference ref = null;
 		SubMonitor localmonitor = SubMonitor.convert(monitor, references.size());
 		IApiMember member = null;

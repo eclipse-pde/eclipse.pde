@@ -94,8 +94,8 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 		Element plugin = fDoc.createElement(IApiXmlConstants.ELEMENT_PLUGIN);
 		plugin.setAttribute(IApiXmlConstants.ATTR_ID, componentId);
 		fComponent.appendChild(plugin);
-		fVisitedPackages = new HashSet<String>();
-		fTypeStack = new Stack<Element>();
+		fVisitedPackages = new HashSet<>();
+		fTypeStack = new Stack<>();
 	}
 
 	/**

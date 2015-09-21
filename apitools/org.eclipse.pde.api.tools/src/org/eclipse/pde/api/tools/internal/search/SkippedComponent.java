@@ -152,7 +152,7 @@ public class SkippedComponent implements IApiElement {
 	 * @return the resolved leaf set of problem messages
 	 */
 	private String[] resolveRootErrors(ResolverError[] rerrors) {
-		TreeSet<String> collector = new TreeSet<String>(new Comparator<Object>() {
+		TreeSet<String> collector = new TreeSet<>(new Comparator<Object>() {
 			@Override
 			public int compare(Object o1, Object o2) {
 				return ((String) o1).compareTo((String) o2);

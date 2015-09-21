@@ -395,7 +395,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 						}
 					}
 					if (this.referenceEEs == null) {
-						this.referenceEEs = new HashMap<IReference, Integer>(3);
+						this.referenceEEs = new HashMap<>(3);
 					}
 					this.referenceEEs.put(reference, new Integer(eeValue));
 					return true;
@@ -476,7 +476,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	@Override
 	public List<IApiProblem> createProblems() {
 		List<IReference> references = getRetainedReferences();
-		List<IApiProblem> problems = new LinkedList<IApiProblem>();
+		List<IApiProblem> problems = new LinkedList<>();
 		for (IReference reference : references) {
 			if (isProblem(reference)) {
 				try {

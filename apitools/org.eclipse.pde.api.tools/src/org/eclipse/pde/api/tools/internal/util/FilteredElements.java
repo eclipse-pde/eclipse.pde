@@ -58,14 +58,14 @@ public class FilteredElements {
 
 	public void addPartialMatch(String componentid) {
 		if (this.partialMatches == null) {
-			this.partialMatches = new HashSet<String>();
+			this.partialMatches = new HashSet<>();
 		}
 		this.partialMatches.add(componentid);
 	}
 
 	public void addExactMatch(String match) {
 		if (this.exactMatches == null) {
-			this.exactMatches = new HashSet<String>();
+			this.exactMatches = new HashSet<>();
 		}
 		this.exactMatches.add(match);
 	}

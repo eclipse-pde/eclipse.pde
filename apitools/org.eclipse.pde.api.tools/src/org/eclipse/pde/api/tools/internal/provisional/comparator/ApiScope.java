@@ -91,7 +91,7 @@ public class ApiScope implements IApiScope {
 	@Override
 	public void addElement(IApiElement newelement) {
 		if (this.elements == null) {
-			this.elements = new ArrayList<IApiElement>();
+			this.elements = new ArrayList<>();
 		}
 		this.elements.add(newelement);
 	}

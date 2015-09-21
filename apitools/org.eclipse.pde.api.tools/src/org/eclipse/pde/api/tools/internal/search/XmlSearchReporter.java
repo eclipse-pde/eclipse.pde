@@ -92,9 +92,9 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		}
 		// Use a hashset for counting to remove any duplicate references that
 		// the writer would remove
-		HashSet<IReferenceDescriptor> writtenReferences = new HashSet<IReferenceDescriptor>();
+		HashSet<IReferenceDescriptor> writtenReferences = new HashSet<>();
 		XmlReferenceDescriptorWriter writer = new XmlReferenceDescriptorWriter(fLocation);
-		List<IReferenceDescriptor> descriptors = new ArrayList<IReferenceDescriptor>(references.length + 1);
+		List<IReferenceDescriptor> descriptors = new ArrayList<>(references.length + 1);
 		for (int i = 0; i < references.length; i++) {
 			Reference reference = (Reference) references[i];
 			try {

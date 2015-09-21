@@ -45,11 +45,11 @@ public final class ReferenceResolver {
 	public static void resolveReferences(List<IReference> references, IProgressMonitor monitor) throws CoreException {
 		// sort references by target type for 'shared' resolution
 		int refcount = references.size();
-		Map<String, List<IReference>> sigtoref = new HashMap<String, List<IReference>>(refcount);
+		Map<String, List<IReference>> sigtoref = new HashMap<>(refcount);
 
 		List<IReference> refs = null;
 		String key = null;
-		List<Reference> methodDecls = new ArrayList<Reference>(refcount);
+		List<Reference> methodDecls = new ArrayList<>(refcount);
 		long start = System.currentTimeMillis();
 		for (IReference ref : references) {
 			if (ref.getReferenceKind() == IReference.REF_OVERRIDE) {
@@ -58,7 +58,7 @@ public final class ReferenceResolver {
 				key = createSignatureKey(ref);
 				refs = sigtoref.get(key);
 				if (refs == null) {
-					refs = new ArrayList<IReference>(20);
+					refs = new ArrayList<>(20);
 					sigtoref.put(key, refs);
 				}
 				refs.add(ref);

@@ -34,14 +34,14 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	 * Map of {@link org.eclipse.pde.api.tools.internal.model.MethodKey} to
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor}
 	 */
-	private Map<MethodKey, IMethodDescriptor> fIllegalMethods = new HashMap<MethodKey, IMethodDescriptor>();
+	private Map<MethodKey, IMethodDescriptor> fIllegalMethods = new HashMap<>();
 
 	/**
 	 * Map of
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor}
 	 * to associated component IDs
 	 */
-	private Map<IMethodDescriptor, String> fMethodComponents = new HashMap<IMethodDescriptor, String>();
+	private Map<IMethodDescriptor, String> fMethodComponents = new HashMap<>();
 
 	/**
 	 * Adds the given type as not to be extended.

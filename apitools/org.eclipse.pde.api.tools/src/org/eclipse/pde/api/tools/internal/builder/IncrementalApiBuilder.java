@@ -104,7 +104,7 @@ public class IncrementalApiBuilder {
 	 * Visits a resource delta to collect changes that need to be built
 	 */
 	class ResourceDeltaVisitor implements IResourceDeltaVisitor {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		boolean buildpathChanged = false;
 
 		/**
@@ -230,7 +230,7 @@ public class IncrementalApiBuilder {
 			String[] projectNames = buildstate.getReexportedComponents();
 			HashSet<IProject> depprojects = null;
 			if (projectNames.length != 0) {
-				depprojects = new HashSet<IProject>();
+				depprojects = new HashSet<>();
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				IProject pj = null;
 				for (int i = 0, max = projectNames.length; i < max; i++) {

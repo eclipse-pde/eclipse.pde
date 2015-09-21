@@ -343,7 +343,7 @@ public final class Util {
 	 * @return
 	 */
 	public static List<IDelta> collectAllDeltas(IDelta delta) {
-		final List<IDelta> list = new ArrayList<IDelta>();
+		final List<IDelta> list = new ArrayList<>();
 		delta.accept(new DeltaVisitor() {
 			@Override
 			public void endVisit(IDelta localDelta) {
@@ -384,7 +384,7 @@ public final class Util {
 	 */
 	public static IProject[] getApiProjects() {
 		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		ArrayList<IProject> temp = new ArrayList<IProject>();
+		ArrayList<IProject> temp = new ArrayList<>();
 		IProject project = null;
 		for (int i = 0, max = allProjects.length; i < max; i++) {
 			project = allProjects[i];
@@ -414,7 +414,7 @@ public final class Util {
 	 */
 	public static IProject[] getApiProjectsMinSourceLevel(String sourcelevel) {
 		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		ArrayList<IProject> temp = new ArrayList<IProject>();
+		ArrayList<IProject> temp = new ArrayList<>();
 		IProject project = null;
 		for (int i = 0, max = allProjects.length; i < max; i++) {
 			project = allProjects[i];
@@ -561,7 +561,7 @@ public final class Util {
 	 * @return the list of files from within the given root
 	 */
 	public static File[] getAllFiles(File root, FileFilter fileFilter) {
-		ArrayList<File> files = new ArrayList<File>();
+		ArrayList<File> files = new ArrayList<>();
 		if (root.isDirectory()) {
 			collectAllFiles(root, files, fileFilter);
 			File[] result = new File[files.size()];
@@ -1307,7 +1307,7 @@ public final class Util {
 						selector, descriptor })));
 				return null;
 			}
-			List<IMethod> list = new ArrayList<IMethod>();
+			List<IMethod> list = new ArrayList<>();
 			for (int i = 0, max = methods.length; i < max; i++) {
 				IMethod method2 = methods[i];
 				if (selector.equals(method2.getElementName())) {
@@ -2025,7 +2025,7 @@ public final class Util {
 				};
 			}
 			String[] jarsNames = null;
-			ArrayList<String> paths = new ArrayList<String>();
+			ArrayList<String> paths = new ArrayList<>();
 			if ("DRLVM".equals(vmName)) { //$NON-NLS-1$
 				FilenameFilter jarFilter = new FilenameFilter() {
 					@Override
@@ -2207,7 +2207,7 @@ public final class Util {
 	 * @return a new {@link HashSet} of the string array
 	 */
 	public static Set<String> convertAsSet(String[] values) {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		if (values != null && values.length != 0) {
 			for (int i = 0, max = values.length; i < max; i++) {
 				set.add(values[i]);
@@ -2387,7 +2387,7 @@ public final class Util {
 						IApiComponent reexportedComponent = baseline.getApiComponent(id);
 						if (reexportedComponent != null) {
 							if (reexportedComponents == null) {
-								reexportedComponents = new ArrayList<IApiComponent>();
+								reexportedComponents = new ArrayList<>();
 							}
 							reexportedComponents.add(reexportedComponent);
 						}

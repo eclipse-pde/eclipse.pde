@@ -246,8 +246,8 @@ public class ProjectComponent extends BundleComponent {
 		// first populate build.properties cache so we can create class file
 		// containers
 		// from bundle classpath entries
-		fPathToOutputContainers = new HashMap<String, IApiTypeContainer>(4);
-		fOutputLocationToContainer = new HashMap<IPath, IApiTypeContainer>(4);
+		fPathToOutputContainers = new HashMap<>(4);
+		fOutputLocationToContainer = new HashMap<>(4);
 		if (fProject.exists() && fProject.getProject().isOpen()) {
 			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
 			if (model != null) {
@@ -261,7 +261,7 @@ public class ProjectComponent extends BundleComponent {
 							// hack : add the current output location for each
 							// classpath entries
 							IClasspathEntry[] classpathEntries = fProject.getRawClasspath();
-							List<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>();
+							List<IApiTypeContainer> containers = new ArrayList<>();
 							for (int i = 0; i < classpathEntries.length; i++) {
 								IClasspathEntry classpathEntry = classpathEntries[i];
 								switch (classpathEntry.getEntryKind()) {
@@ -331,7 +331,7 @@ public class ProjectComponent extends BundleComponent {
 				IApiTypeContainer existingContainer = this.fPathToOutputContainers.get(jar);
 				if (existingContainer != null) {
 					// concat both containers
-					List<IApiTypeContainer> allContainers = new ArrayList<IApiTypeContainer>();
+					List<IApiTypeContainer> allContainers = new ArrayList<>();
 					allContainers.add(existingContainer);
 					allContainers.add(container);
 					IApiTypeContainer apiTypeContainer = new CompositeApiTypeContainer(this, allContainers);
@@ -341,7 +341,7 @@ public class ProjectComponent extends BundleComponent {
 				}
 			}
 		} else {
-			List<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>();
+			List<IApiTypeContainer> containers = new ArrayList<>();
 			for (int j = 0; j < tokens.length; j++) {
 				String currentToken = tokens[j];
 				IApiTypeContainer container = getApiTypeContainer(currentToken, this);

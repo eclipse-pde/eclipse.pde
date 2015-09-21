@@ -27,7 +27,7 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 	Map<String, List<IReferenceDescriptor>> fReferencesMap;
 
 	public UseScanReferences() {
-		fReferencesMap = new HashMap<String, List<IReferenceDescriptor>>();
+		fReferencesMap = new HashMap<>();
 	}
 
 	/*
@@ -41,7 +41,7 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 	public void add(String type, IReferenceDescriptor refDesc) {
 		List<IReferenceDescriptor> refDescList = fReferencesMap.get(type);
 		if (refDescList == null) {
-			refDescList = new ArrayList<IReferenceDescriptor>();
+			refDescList = new ArrayList<>();
 			fReferencesMap.put(type, refDescList);
 		}
 		if (!refDescList.contains(refDesc)) {
@@ -71,7 +71,7 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 			return new IReferenceDescriptor[0];
 		}
 
-		List<IReferenceDescriptor> referenceDescriptorList = new ArrayList<IReferenceDescriptor>();
+		List<IReferenceDescriptor> referenceDescriptorList = new ArrayList<>();
 		for (int i = 0; i < types.length; i++) {
 			List<IReferenceDescriptor> refDescs = fReferencesMap.get(types[i]);
 			if (refDescs == null || refDescs.size() == 0) {
@@ -90,7 +90,7 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 	 */
 	@Override
 	public IReferenceDescriptor[] getAllExternalDependencies() {
-		List<IReferenceDescriptor> allRefDescs = new ArrayList<IReferenceDescriptor>();
+		List<IReferenceDescriptor> allRefDescs = new ArrayList<>();
 		for (List<IReferenceDescriptor> refDescList : fReferencesMap.values()) {
 			allRefDescs.addAll(refDescList);
 		}

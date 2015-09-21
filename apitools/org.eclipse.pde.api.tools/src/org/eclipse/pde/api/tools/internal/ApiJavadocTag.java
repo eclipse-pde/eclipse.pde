@@ -91,7 +91,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	@Override
 	public void setApplicableTo(int type, int member, String comment) {
 		if (fTagItems == null) {
-			fTagItems = new HashMap<Integer, String>(6);
+			fTagItems = new HashMap<>(6);
 		}
 		fTagItems.put(getTagKey(type, member), comment);
 	}

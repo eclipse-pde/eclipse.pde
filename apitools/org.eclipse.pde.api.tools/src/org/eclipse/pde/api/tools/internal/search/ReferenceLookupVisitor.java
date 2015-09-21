@@ -55,8 +55,8 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	private IMemberDescriptor targetMember;
 	private IReferenceTypeDescriptor targetType;
 	private IApiType currType;
-	private List<IComponentDescriptor> missingComponents = new ArrayList<IComponentDescriptor>();
-	private List<IComponentDescriptor> skippedComponents = new ArrayList<IComponentDescriptor>();
+	private List<IComponentDescriptor> missingComponents = new ArrayList<>();
+	private List<IComponentDescriptor> skippedComponents = new ArrayList<>();
 	private String location;
 	private List<IReferenceDescriptor> unresolved = null;
 	private String analysisScope = null;
@@ -85,7 +85,7 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	 */
 	@Override
 	public boolean visitComponent(IComponentDescriptor target) {
-		unresolved = new ArrayList<IReferenceDescriptor>();
+		unresolved = new ArrayList<>();
 		targetComponent = target;
 		skipped = false;
 		String id = targetComponent.getId();

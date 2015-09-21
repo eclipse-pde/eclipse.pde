@@ -45,7 +45,7 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 
 	public static IApiComponent getStubApiComponent(int eeValue) {
 		if (AllSystemLibraryApiComponents == null) {
-			AllSystemLibraryApiComponents = new HashMap<String, IApiComponent>();
+			AllSystemLibraryApiComponents = new HashMap<>();
 		}
 		String name = ProfileModifiers.getName(eeValue);
 		IApiComponent component = AllSystemLibraryApiComponents.get(name);
@@ -107,7 +107,7 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 	 *         <code>null</code>
 	 */
 	public static String[] getInstalledMetadata() {
-		List<String> allEEs = new ArrayList<String>();
+		List<String> allEEs = new ArrayList<>();
 		int[] allEEsValues = ProfileModifiers.getAllIds();
 		String name = null;
 		File stubFile = null;
@@ -188,7 +188,7 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 	 */
 	@Override
 	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
-		List<IApiTypeContainer> libs = new ArrayList<IApiTypeContainer>(fLibraries.length);
+		List<IApiTypeContainer> libs = new ArrayList<>(fLibraries.length);
 		for (int i = 0; i < fLibraries.length; i++) {
 			LibraryLocation lib = fLibraries[i];
 			libs.add(new StubArchiveApiTypeContainer(this, lib.getSystemLibraryPath().toOSString()));

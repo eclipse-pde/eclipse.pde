@@ -149,7 +149,7 @@ public class ApiProblemFactory {
 					if (match) {
 						// record the matching substring and proceed
 						if (matches == null) {
-							matches = new ArrayList<String>();
+							matches = new ArrayList<>();
 						}
 						matches.add(messageArguments.substring(start, i));
 						start = i + delimiterLength;
@@ -454,7 +454,7 @@ public class ApiProblemFactory {
 			System.out.println("Missing resource : " + bundleName.replace('.', '/') + ".properties for locale " + loc); //$NON-NLS-1$//$NON-NLS-2$
 			throw e;
 		}
-		Hashtable<Comparable<? extends Object>, String> templates = new Hashtable<Comparable<? extends Object>, String>(700);
+		Hashtable<Comparable<? extends Object>, String> templates = new Hashtable<>(700);
 		Enumeration<String> keys = bundle.getKeys();
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();

@@ -272,9 +272,9 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	private synchronized void initializeStateCache() {
 		long time = System.currentTimeMillis();
 		if (baselinecache == null) {
-			handlecache = new HashMap<String, String>(8);
-			hasinfos = new HashSet<String>(8);
-			baselinecache = new HashMap<String, IApiBaseline>(8);
+			handlecache = new HashMap<>(8);
+			hasinfos = new HashSet<>(8);
+			baselinecache = new HashMap<>(8);
 			if (!ApiPlugin.isRunningInFramework()) {
 				return;
 			}
@@ -455,7 +455,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				}
 				// un-pooled components
 				NodeList children = root.getElementsByTagName(IApiXmlConstants.ELEMENT_APICOMPONENT);
-				List<IApiComponent> components = new ArrayList<IApiComponent>();
+				List<IApiComponent> components = new ArrayList<>();
 				for (int j = 0; j < children.getLength(); j++) {
 					Element componentNode = (Element) children.item(j);
 					// this also contains components in pools, so don't process
@@ -698,7 +698,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			baseline = new WorkspaceBaseline();
 			// populate it with only projects that are API aware
 			Set<String> ids = DependencyManager.getSelfandDependencies(PluginRegistry.getWorkspaceModels(), null);
-			List<IApiComponent> componentsList = new ArrayList<IApiComponent>(ids.size());
+			List<IApiComponent> componentsList = new ArrayList<>(ids.size());
 			IApiComponent apiComponent = null;
 			IPluginModelBase model = null;
 			for (String id : ids) {

@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IProject;
  */
 public class BuildStamps {
 
-	private static Map<IProject, long[]> fStamps = new HashMap<IProject, long[]>();
+	private static Map<IProject, long[]> fStamps = new HashMap<>();
 
 	/**
 	 * Returns the current build time stamp for the given project.

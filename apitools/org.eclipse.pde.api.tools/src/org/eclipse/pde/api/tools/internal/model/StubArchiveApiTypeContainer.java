@@ -186,12 +186,12 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		if (visitor.visit(this)) {
 			init();
-			List<String> packages = new ArrayList<String>(fPackages.keySet());
+			List<String> packages = new ArrayList<>(fPackages.keySet());
 			Collections.sort(packages);
 			for (String pkg : packages) {
 				if (visitor.visitPackage(pkg)) {
-					List<String> types = new ArrayList<String>(fPackages.get(pkg));
-					List<ArchiveApiTypeRoot> classFiles = new ArrayList<ArchiveApiTypeRoot>(types.size());
+					List<String> types = new ArrayList<>(fPackages.get(pkg));
+					List<ArchiveApiTypeRoot> classFiles = new ArrayList<>(types.size());
 					for (String entryName : types) {
 						classFiles.add(new ArchiveApiTypeRoot(this, entryName));
 					}
@@ -279,7 +279,7 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 	private synchronized void init() throws CoreException {
 		ZipFile zipFile = open();
 		if (fPackages == null) {
-			fPackages = new HashMap<String, Set<String>>();
+			fPackages = new HashMap<>();
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
@@ -291,7 +291,7 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 				}
 				Set<String> fileNames = fPackages.get(pkg);
 				if (fileNames == null) {
-					fileNames = new HashSet<String>();
+					fileNames = new HashSet<>();
 					fPackages.put(pkg, fileNames);
 				}
 				fileNames.add(name);

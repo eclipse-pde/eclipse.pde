@@ -39,7 +39,7 @@ public abstract class ElementDescriptorImpl implements IElementDescriptor, Compa
 	 */
 	@Override
 	public IElementDescriptor[] getPath() {
-		List<IElementDescriptor> list = new ArrayList<IElementDescriptor>();
+		List<IElementDescriptor> list = new ArrayList<>();
 		IElementDescriptor element = this;
 		while (element != null) {
 			list.add(0, element);

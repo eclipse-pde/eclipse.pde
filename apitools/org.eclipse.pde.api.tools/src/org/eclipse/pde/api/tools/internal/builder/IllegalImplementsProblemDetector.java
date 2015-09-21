@@ -36,7 +36,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	 * Map of directly implemented interfaces to implement restricted
 	 * super-interfaces
 	 */
-	private HashMap<String, IApiType> fRestrictedInterfaces = new HashMap<String, IApiType>();
+	private HashMap<String, IApiType> fRestrictedInterfaces = new HashMap<>();
 
 	/*
 	 * (non-Javadoc)

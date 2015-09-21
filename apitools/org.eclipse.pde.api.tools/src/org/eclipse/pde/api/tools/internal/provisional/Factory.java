@@ -157,7 +157,7 @@ public class Factory {
 	 * @throws CoreException if the baseline of the given components is disposed
 	 */
 	public static IApiTypeContainer newScope(IApiComponent[] components) throws CoreException {
-		LinkedList<IApiTypeContainer> compList = new LinkedList<IApiTypeContainer>();
+		LinkedList<IApiTypeContainer> compList = new LinkedList<>();
 		for (int i = 0; i < components.length; i++) {
 			compList.add(components[i]);
 		}

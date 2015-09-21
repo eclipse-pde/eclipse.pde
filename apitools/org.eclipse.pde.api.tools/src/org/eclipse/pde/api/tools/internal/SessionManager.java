@@ -26,8 +26,8 @@ import org.eclipse.pde.api.tools.internal.provisional.ISessionManager;
 public class SessionManager implements ISessionManager {
 
 	// use a list so that we can preserve the order
-	private List<ISession> sessions = new ArrayList<ISession>();
-	private Set<ISessionListener> listeners = new HashSet<ISessionListener>();
+	private List<ISession> sessions = new ArrayList<>();
+	private Set<ISessionListener> listeners = new HashSet<>();
 	private ISession activeSession;
 
 	@Override

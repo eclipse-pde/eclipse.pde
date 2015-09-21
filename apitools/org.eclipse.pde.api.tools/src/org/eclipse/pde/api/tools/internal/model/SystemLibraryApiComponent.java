@@ -126,7 +126,7 @@ public class SystemLibraryApiComponent extends Component {
 	 */
 	@Override
 	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
-		List<IApiTypeContainer> libs = new ArrayList<IApiTypeContainer>(fLibraries.length);
+		List<IApiTypeContainer> libs = new ArrayList<>(fLibraries.length);
 		for (int i = 0; i < fLibraries.length; i++) {
 			LibraryLocation lib = fLibraries[i];
 			libs.add(new ArchiveApiTypeContainer(this, lib.getSystemLibraryPath().toOSString()));

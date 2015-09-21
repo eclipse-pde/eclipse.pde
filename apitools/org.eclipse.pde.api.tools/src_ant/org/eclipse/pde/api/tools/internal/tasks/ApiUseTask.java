@@ -313,8 +313,8 @@ public final class ApiUseTask extends CommonUtilsTask {
 		IApiSearchReporter reporter = new XmlSearchReporter(this.reportLocation, this.debug);
 
 		try {
-			Set<String> ids = new HashSet<String>();
-			TreeSet<IApiComponent> scope = new TreeSet<IApiComponent>(Util.componentsorter);
+			Set<String> ids = new HashSet<>();
+			TreeSet<IApiComponent> scope = new TreeSet<>(Util.componentsorter);
 			getContext(baseline, ids, scope);
 			ApiSearchEngine engine = new ApiSearchEngine();
 			UseSearchRequestor requestor = new UseSearchRequestor(ids, scope.toArray(new IApiElement[scope.size()]), getSearchFlags());
@@ -399,7 +399,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 		}
 
 		IApiComponent[] components = baseline.getApiComponents();
-		this.notsearched = new TreeSet<SkippedComponent>(Util.componentsorter);
+		this.notsearched = new TreeSet<>(Util.componentsorter);
 		Pattern refPattern = null, scopePattern = null;
 		if (this.referencepattern != null) {
 			refPattern = Pattern.compile(this.referencepattern);

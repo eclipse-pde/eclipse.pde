@@ -75,7 +75,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	/**
 	 * Cache of non-API package names visited
 	 */
-	private Set<String> fNonApiPackageNames = new HashSet<String>();
+	private Set<String> fNonApiPackageNames = new HashSet<>();
 
 	/**
 	 * The owning {@link IApiComponent} of this builder
@@ -97,7 +97,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 * 
 	 * @since 1.0.400
 	 */
-	Set<IElementDescriptor> fRestrictedTypes = new HashSet<IElementDescriptor>();
+	Set<IElementDescriptor> fRestrictedTypes = new HashSet<>();
 
 	/**
 	 * Build problem detectors for a component.
@@ -213,7 +213,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 * when an owning component is set
 	 */
 	private void initializeDetectors(IApiComponent component) {
-		fDetectors = new ArrayList<IApiProblemDetector>();
+		fDetectors = new ArrayList<>();
 		IProject project = getProject(component);
 		if ((fKindMask & K_USE) > 0) {
 			addUseDetectors(fDetectors, project);

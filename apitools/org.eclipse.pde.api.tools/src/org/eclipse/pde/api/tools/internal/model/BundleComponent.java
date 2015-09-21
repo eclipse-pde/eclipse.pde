@@ -223,7 +223,7 @@ public class BundleComponent extends Component {
 	 */
 	protected synchronized void doManifestCompaction() {
 		Map<String, String> temp = fManifest;
-		fManifest = new Hashtable<String, String>(MANIFEST_HEADERS.length, 1);
+		fManifest = new Hashtable<>(MANIFEST_HEADERS.length, 1);
 		for (int i = 0; i < MANIFEST_HEADERS.length; i++) {
 			String header = MANIFEST_HEADERS[i];
 			String value = temp.get(header);
@@ -335,7 +335,7 @@ public class BundleComponent extends Component {
 			return bundle;
 		}
 		StateObjectFactory factory = StateObjectFactory.defaultFactory;
-		Hashtable<String, String> dictionaryManifest = new Hashtable<String, String>(manifest);
+		Hashtable<String, String> dictionaryManifest = new Hashtable<>(manifest);
 		bundle = factory.createBundleDescription(state, dictionaryManifest, fLocation, id);
 		state.addBundle(bundle);
 		return bundle;
@@ -388,7 +388,7 @@ public class BundleComponent extends Component {
 			return createLocalApiDescription();
 		}
 		// build a composite description
-		ArrayList<IApiDescription> descriptions = new ArrayList<IApiDescription>(fragments.length);
+		ArrayList<IApiDescription> descriptions = new ArrayList<>(fragments.length);
 		descriptions.add(createLocalApiDescription());
 		IApiComponent component = null;
 		for (int i = 0; i < fragments.length; i++) {
@@ -436,7 +436,7 @@ public class BundleComponent extends Component {
 	 * @throws CoreException
 	 */
 	protected Set<String> getLocalPackageNames() throws CoreException {
-		Set<String> names = new HashSet<String>();
+		Set<String> names = new HashSet<>();
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		IApiComponent comp = null;
 		for (int i = 0; i < containers.length; i++) {
@@ -471,7 +471,7 @@ public class BundleComponent extends Component {
 		}
 		// then process exported packages that originate from this bundle
 		// considering host and fragment package exports
-		List<ExportPackageDescription> supplied = new ArrayList<ExportPackageDescription>();
+		List<ExportPackageDescription> supplied = new ArrayList<>();
 		ExportPackageDescription[] exportPackages = bundle.getExportPackages();
 		addSuppliedPackages(packages, supplied, exportPackages);
 		HostSpecification host = bundle.getHost();
@@ -565,8 +565,8 @@ public class BundleComponent extends Component {
 	 */
 	@Override
 	protected synchronized List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
-		List<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>(5);
-		List<IApiComponent> all = new ArrayList<IApiComponent>();
+		List<IApiTypeContainer> containers = new ArrayList<>(5);
+		List<IApiComponent> all = new ArrayList<>();
 		// build the classpath from bundle and all fragments
 		all.add(this);
 		boolean considerFragments = true;
@@ -592,7 +592,7 @@ public class BundleComponent extends Component {
 			}
 		}
 		Iterator<IApiComponent> iterator = all.iterator();
-		Set<String> entryNames = new HashSet<String>(5);
+		Set<String> entryNames = new HashSet<>(5);
 		BundleComponent other = null;
 		while (iterator.hasNext()) {
 			BundleComponent component = (BundleComponent) iterator.next();

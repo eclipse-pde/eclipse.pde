@@ -43,7 +43,7 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 		super();
 		this.excludedElements = excludedElements;
 		this.includedElements = includedElements;
-		this.nonExcludedElements = new ArrayList<String>();
+		this.nonExcludedElements = new ArrayList<>();
 		this.flags = flags;
 	}
 

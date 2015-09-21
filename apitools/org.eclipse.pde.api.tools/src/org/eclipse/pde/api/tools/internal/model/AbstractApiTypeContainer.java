@@ -152,7 +152,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	 */
 	@Override
 	public String[] getPackageNames() throws CoreException {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		for (int i = 0, max = containers.length; i < max; i++) {
 			String[] packageNames = containers[i].getPackageNames();
@@ -190,7 +190,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		if (fApiTypeContainers == null) {
 			fApiTypeContainers = createApiTypeContainers();
 		}
-		List<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>();
+		List<IApiTypeContainer> containers = new ArrayList<>();
 		String origin = null;
 		IApiTypeContainer container = null;
 		for (Iterator<IApiTypeContainer> iterator = fApiTypeContainers.iterator(); iterator.hasNext();) {
@@ -225,7 +225,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 			}
 			fApiTypeContainers.clear();
 		} else {
-			fApiTypeContainers = new ArrayList<IApiTypeContainer>(containers.length);
+			fApiTypeContainers = new ArrayList<>(containers.length);
 		}
 		for (int i = 0; i < containers.length; i++) {
 			fApiTypeContainers.add(containers[i]);

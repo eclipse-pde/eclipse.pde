@@ -54,7 +54,7 @@ public class APIDeprecationReportConversionTask extends Task {
 		private int elementType;
 
 		public ConverterDefaultHandler(boolean debug) {
-			this.map = new HashMap<String, List<Entry>>();
+			this.map = new HashMap<>();
 			this.debug = debug;
 		}
 
@@ -66,7 +66,7 @@ public class APIDeprecationReportConversionTask extends Task {
 				if (list != null) {
 					list.add(entry);
 				} else {
-					ArrayList<Entry> value = new ArrayList<Entry>();
+					ArrayList<Entry> value = new ArrayList<>();
 					value.add(entry);
 					this.map.put(componentID, value);
 				}
@@ -123,7 +123,7 @@ public class APIDeprecationReportConversionTask extends Task {
 				this.kind = attributes.getValue(IApiXmlConstants.ATTR_KIND);
 			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
 				if (this.argumentsList == null) {
-					this.argumentsList = new ArrayList<String>();
+					this.argumentsList = new ArrayList<>();
 				} else {
 					this.argumentsList.clear();
 				}
@@ -228,7 +228,7 @@ public class APIDeprecationReportConversionTask extends Task {
 
 	private void dumpEntries(Map<String, List<Entry>> entries, StringBuffer buffer) {
 		dumpHeader(buffer);
-		List<Map.Entry<String, List<Entry>>> allEntries = new ArrayList<Map.Entry<String, List<Entry>>>();
+		List<Map.Entry<String, List<Entry>>> allEntries = new ArrayList<>();
 		for (Map.Entry<String, List<Entry>> entry : entries.entrySet()) {
 			allEntries.add(entry);
 		}

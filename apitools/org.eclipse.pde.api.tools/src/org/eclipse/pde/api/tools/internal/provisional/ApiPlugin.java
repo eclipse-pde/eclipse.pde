@@ -345,7 +345,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * A set of listeners that want to participate in the saving life-cycle of
 	 * the workbench via this plug-in
 	 */
-	private HashSet<ISaveParticipant> savelisteners = new HashSet<ISaveParticipant>();
+	private HashSet<ISaveParticipant> savelisteners = new HashSet<>();
 
 	/**
 	 * This is used to log resolution errors only once per session
@@ -592,7 +592,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	public void start(BundleContext context) throws Exception {
 		try {
 			super.start(context);
-			Hashtable<String, String> props = new Hashtable<String, String>(2);
+			Hashtable<String, String> props = new Hashtable<>(2);
 			props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, PLUGIN_ID);
 			context.registerService(DebugOptionsListener.class.getName(), this, props);
 		} finally {
@@ -634,7 +634,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		}
 
 		// Break the list into a set we can search
-		Set<NameVersionDescriptor> knownFragments = new HashSet<NameVersionDescriptor>();
+		Set<NameVersionDescriptor> knownFragments = new HashSet<>();
 		StringTokenizer tokenizer = new StringTokenizer(knownFragmentsList, ";"); //$NON-NLS-1$
 		String name = null;
 		while (tokenizer.hasMoreTokens()) {
@@ -775,7 +775,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 */
 	IEclipsePreferences[] getPreferences(IScopeContext[] context) {
 		if (context != null) {
-			ArrayList<IEclipsePreferences> nodes = new ArrayList<IEclipsePreferences>(context.length);
+			ArrayList<IEclipsePreferences> nodes = new ArrayList<>(context.length);
 			IEclipsePreferences node = null;
 			for (int i = 0; i < context.length; i++) {
 				node = context[i].getNode(PLUGIN_ID);

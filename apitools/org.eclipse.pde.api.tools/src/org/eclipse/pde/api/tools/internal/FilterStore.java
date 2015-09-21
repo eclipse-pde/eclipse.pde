@@ -96,7 +96,7 @@ public class FilterStore implements IApiFilterStore {
 			// the global set
 			Set<IApiProblemFilter> globalFilters = fFilterMap.get(GLOBAL);
 			if (globalFilters == null) {
-				globalFilters = new HashSet<IApiProblemFilter>();
+				globalFilters = new HashSet<>();
 				fFilterMap.put(GLOBAL, globalFilters);
 			}
 			for (int i = 0; i < filters.length; i++) {
@@ -172,7 +172,7 @@ public class FilterStore implements IApiFilterStore {
 	 */
 	protected synchronized void initializeApiFilters() {
 		if (fFilterMap == null) {
-			fFilterMap = new HashMap<String, Set<IApiProblemFilter>>(5);
+			fFilterMap = new HashMap<>(5);
 			ZipFile jarFile = null;
 			InputStream filterstream = null;
 			File loc = new File(fComponent.getLocation());
@@ -378,8 +378,8 @@ public class FilterStore implements IApiFilterStore {
 			return;
 		}
 		NodeList resources = root.getElementsByTagName(IApiXmlConstants.ELEMENT_RESOURCE);
-		ArrayList<IApiProblem> newfilters = new ArrayList<IApiProblem>();
-		ArrayList<String> comments = new ArrayList<String>();
+		ArrayList<IApiProblem> newfilters = new ArrayList<>();
+		ArrayList<String> comments = new ArrayList<>();
 		for (int i = 0; i < resources.getLength(); i++) {
 			Element element = (Element) resources.item(i);
 			String typeName = element.getAttribute(IApiXmlConstants.ATTR_TYPE);
@@ -439,7 +439,7 @@ public class FilterStore implements IApiFilterStore {
 		// to GLOBAL
 		Set<IApiProblemFilter> globalFilters = fFilterMap.get(GLOBAL);
 		if (globalFilters == null) {
-			globalFilters = new HashSet<IApiProblemFilter>();
+			globalFilters = new HashSet<>();
 			fFilterMap.put(GLOBAL, globalFilters);
 		}
 

@@ -486,7 +486,7 @@ public class ProjectApiDescription extends ApiDescription {
 				try {
 					IPackageDescriptor pkg = (IPackageDescriptor) element;
 					IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
-					List<IPackageFragment> fragments = new ArrayList<IPackageFragment>(1);
+					List<IPackageFragment> fragments = new ArrayList<>(1);
 					for (int i = 0; i < roots.length; i++) {
 						IPackageFragmentRoot root = roots[i];
 						IClasspathEntry entry = root.getRawClasspathEntry();
@@ -633,7 +633,7 @@ public class ProjectApiDescription extends ApiDescription {
 				if (fManifestFile.exists()) {
 					try {
 						IPackageFragment[] fragments = getLocalPackageFragments();
-						Set<String> names = new HashSet<String>();
+						Set<String> names = new HashSet<>();
 						for (int i = 0; i < fragments.length; i++) {
 							names.add(fragments[i].getElementName());
 						}
@@ -691,7 +691,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @return all package fragments that originate from this project
 	 */
 	private IPackageFragment[] getLocalPackageFragments() {
-		List<IJavaElement> local = new ArrayList<IJavaElement>();
+		List<IJavaElement> local = new ArrayList<>();
 		try {
 			IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {

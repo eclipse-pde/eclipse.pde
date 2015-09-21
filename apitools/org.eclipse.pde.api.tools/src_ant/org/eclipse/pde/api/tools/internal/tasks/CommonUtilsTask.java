@@ -218,7 +218,7 @@ public abstract class CommonUtilsTask extends Task {
 			return null;
 		}
 		String[] strings = patterns.split(","); //$NON-NLS-1$
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (int i = 0; i < strings.length; i++) {
 			String pattern = strings[i].trim();
 			if (pattern.length() > 0) {

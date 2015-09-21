@@ -104,7 +104,7 @@ public class ApiDescription implements IApiDescription {
 		protected IElementDescriptor element = null;
 		protected int visibility, restrictions;
 		protected ManifestNode parent = null;
-		protected HashMap<IElementDescriptor, ManifestNode> children = new HashMap<IElementDescriptor, ManifestNode>(1);
+		protected HashMap<IElementDescriptor, ManifestNode> children = new HashMap<>(1);
 
 		public ManifestNode(ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
 			this.element = element;
@@ -275,7 +275,7 @@ public class ApiDescription implements IApiDescription {
 	 * HashMap<IElementDescriptor(package), ManifestNode(package)>
 	 * </pre>
 	 */
-	protected HashMap<IElementDescriptor, ManifestNode> fPackageMap = new HashMap<IElementDescriptor, ManifestNode>();
+	protected HashMap<IElementDescriptor, ManifestNode> fPackageMap = new HashMap<>();
 
 	/**
 	 * This map holds the mapping of special access kinds for packages and has
@@ -285,7 +285,7 @@ public class ApiDescription implements IApiDescription {
 	 * HashMap<IPackageDescriptor(package), HashMap<IElementDescriptor(component), IApiAccess>>
 	 * </pre>
 	 */
-	protected HashMap<IPackageDescriptor, HashMap<IElementDescriptor, IApiAccess>> fAccessMap = new HashMap<IPackageDescriptor, HashMap<IElementDescriptor, IApiAccess>>();
+	protected HashMap<IPackageDescriptor, HashMap<IElementDescriptor, IApiAccess>> fAccessMap = new HashMap<>();
 
 	private float fEmbeddedVersion = 0.0f;
 
@@ -319,7 +319,7 @@ public class ApiDescription implements IApiDescription {
 	 * @param monitor
 	 */
 	protected void visitChildren(ApiDescriptionVisitor visitor, Map<IElementDescriptor, ManifestNode> childrenMap, IProgressMonitor monitor) {
-		List<IElementDescriptor> elements = new ArrayList<IElementDescriptor>(childrenMap.keySet());
+		List<IElementDescriptor> elements = new ArrayList<>(childrenMap.keySet());
 		Collections.sort(elements, fgComparator);
 		Iterator<IElementDescriptor> iterator = elements.iterator();
 		while (iterator.hasNext()) {
@@ -748,11 +748,11 @@ public class ApiDescription implements IApiDescription {
 	public void setAccessLevel(IElementDescriptor element, IPackageDescriptor pelement, int access) {
 		if (element != null && pelement != null && access != IApiAccess.NORMAL) {
 			if (fAccessMap == null) {
-				fAccessMap = new HashMap<IPackageDescriptor, HashMap<IElementDescriptor, IApiAccess>>();
+				fAccessMap = new HashMap<>();
 			}
 			HashMap<IElementDescriptor, IApiAccess> map = fAccessMap.get(pelement);
 			if (map == null) {
-				map = new HashMap<IElementDescriptor, IApiAccess>();
+				map = new HashMap<>();
 				fAccessMap.put(pelement, map);
 			}
 			map.put(element, new ApiAccess(access));

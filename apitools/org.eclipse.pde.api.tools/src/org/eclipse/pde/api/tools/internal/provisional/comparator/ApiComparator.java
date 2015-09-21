@@ -108,7 +108,7 @@ public class ApiComparator {
 			}
 			IApiComponent[] apiComponents = referenceBaseline.getApiComponents();
 			IApiComponent[] apiComponents2 = baseline.getApiComponents();
-			Set<String> apiComponentsIds = new HashSet<String>();
+			Set<String> apiComponentsIds = new HashSet<>();
 			final Delta globalDelta = new Delta();
 			for (int i = 0, max = apiComponents.length; i < max; i++) {
 				Util.updateMonitor(localmonitor);
@@ -551,7 +551,7 @@ public class ApiComparator {
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
 		try {
-			final Set<IDelta> deltas = new HashSet<IDelta>();
+			final Set<IDelta> deltas = new HashSet<>();
 			final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers, continueOnResolverError, localmonitor.newChild(1));
 			scope.accept(visitor);
 
@@ -637,7 +637,7 @@ public class ApiComparator {
 	 * @throws CoreException
 	 */
 	private static IDelta internalCompare(final IApiComponent component, final IApiComponent component2, final IApiBaseline referenceBaseline, final IApiBaseline baseline, final int visibilityModifiers, final Delta globalDelta, final IProgressMonitor monitor) throws CoreException {
-		final Set<String> typeRootBaseLineNames = new HashSet<String>();
+		final Set<String> typeRootBaseLineNames = new HashSet<>();
 		final String id = component.getSymbolicName();
 		IApiTypeContainer[] typeRootContainers = null;
 		IApiTypeContainer[] typeRootContainers2 = null;

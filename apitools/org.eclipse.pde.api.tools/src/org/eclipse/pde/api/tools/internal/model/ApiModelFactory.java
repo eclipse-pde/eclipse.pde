@@ -273,7 +273,7 @@ public class ApiModelFactory {
 				container.resolve(definition, subMonitor.newChild(30));
 				Util.updateMonitor(subMonitor, 1);
 				TargetBundle[] bundles = container.getBundles();
-				List<IApiComponent> components = new ArrayList<IApiComponent>();
+				List<IApiComponent> components = new ArrayList<>();
 				if (bundles.length > 0) {
 					subMonitor.setWorkRemaining(bundles.length);
 					for (int i = 0; i < bundles.length; i++) {
@@ -297,7 +297,7 @@ public class ApiModelFactory {
 					if (files == null) {
 						return NO_COMPONENTS;
 					}
-					List<IApiComponent> components = new ArrayList<IApiComponent>();
+					List<IApiComponent> components = new ArrayList<>();
 					for (int i = 0; i < files.length; i++) {
 						File bundle = files[i];
 						IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
@@ -329,7 +329,7 @@ public class ApiModelFactory {
 			}
 			Util.updateMonitor(subMonitor, 1);
 			TargetBundle[] bundles = definition.getBundles();
-			List<IApiComponent> components = new ArrayList<IApiComponent>();
+			List<IApiComponent> components = new ArrayList<>();
 			if (bundles.length > 0) {
 				subMonitor.setWorkRemaining(bundles.length);
 				for (int i = 0; i < bundles.length; i++) {
