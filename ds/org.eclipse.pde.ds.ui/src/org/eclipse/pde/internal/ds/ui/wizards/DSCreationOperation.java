@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.IBaseModel;
@@ -76,41 +76,34 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-		monitor.beginTask(Messages.DSCreationOperation_title, 3);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.DSCreationOperation_title, 3);
 		createContent();
-		monitor.worked(1);
+		subMonitor.worked(1);
 		openFile();
 		if (PDE.hasPluginNature(fFile.getProject())) {
-		writeManifest(fFile.getProject(), new SubProgressMonitor(
-				monitor, 1));
-		writeBuildProperties(fFile.getProject(), new SubProgressMonitor(
-				monitor, 1));
+			writeManifest(fFile.getProject(), subMonitor.newChild(1));
+			writeBuildProperties(fFile.getProject(), subMonitor.newChild(1));
 		}
-		monitor.done();
+		subMonitor.setWorkRemaining(0);
 	}
 
-	private void writeManifest(IProject project,
-			SubProgressMonitor monitor) {
+	private void writeManifest(IProject project, IProgressMonitor monitor) {
 
 		PDEModelUtility.modifyModel(new ModelModification(project) {
-
 			@Override
-			protected void modifyModel(IBaseModel model,
-					IProgressMonitor monitor) throws CoreException {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 
-				if (model instanceof IBundlePluginModelBase)
+				if (model instanceof IBundlePluginModelBase) {
 					updateManifest((IBundlePluginModelBase) model, monitor);
+				}
 			}
 		}, monitor);
-		monitor.done();
 
 	}
 
-	private void writeBuildProperties(final IProject project,
-			SubProgressMonitor monitor) {
+	private void writeBuildProperties(final IProject project, IProgressMonitor monitor) {
 
-		PDEModelUtility.modifyModel(new ModelModification(PDEProject
-				.getBuildProperties(project)) {
+		PDEModelUtility.modifyModel(new ModelModification(PDEProject.getBuildProperties(project)) {
 			@Override
 			protected void modifyModel(IBaseModel model,
 					IProgressMonitor monitor) throws CoreException {
@@ -135,8 +128,6 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 				}
 			}
 		}, null);
-
-		monitor.done();
 
 	}
 
