@@ -233,17 +233,14 @@ public class MissingRefReportConverter extends UseReportConverter {
 	private File htmlIndex = null;
 	Report currentreport = null;
 
-	static final Comparator<Object> missingcompare = new Comparator<Object>() {
-		@Override
-		public int compare(Object o1, Object o2) {
-			if (o1 instanceof String && o2 instanceof String) {
-				return ((String) o1).compareTo((String) o2);
-			}
-			if (o1 instanceof ApiProblem && o2 instanceof ApiProblem) {
-				return ((ApiProblem) o1).getMessage().compareTo(((ApiProblem) o2).getMessage());
-			}
-			return 0;
+	static final Comparator<Object> missingcompare = (o1, o2) -> {
+		if (o1 instanceof String && o2 instanceof String) {
+			return ((String) o1).compareTo((String) o2);
 		}
+		if (o1 instanceof ApiProblem && o2 instanceof ApiProblem) {
+			return ((ApiProblem) o1).getMessage().compareTo(((ApiProblem) o2).getMessage());
+		}
+		return 0;
 	};
 
 	/**
@@ -356,12 +353,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 	 */
 	@Override
 	protected void writeIndexPage(List<?> result) throws Exception {
-		Collections.sort(result, new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				return ((Report) o1).name.compareTo(((Report) o2).name);
-			}
-		});
+		Collections.sort(result, (o1, o2) -> ((Report) o1).name.compareTo(((Report) o2).name));
 
 		PrintWriter writer = null;
 		try {

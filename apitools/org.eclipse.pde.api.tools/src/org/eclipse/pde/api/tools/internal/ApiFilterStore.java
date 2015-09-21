@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -430,15 +429,12 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		Set<Entry<IResource, Map<String, Set<IApiProblemFilter>>>> allFiltersEntrySet = filtermap.entrySet();
 		List<Entry<IResource, Map<String, Set<IApiProblemFilter>>>> allFiltersEntries = new ArrayList<>(allFiltersEntrySet.size());
 		allFiltersEntries.addAll(allFiltersEntrySet);
-		Collections.sort(allFiltersEntries, new Comparator<Entry<IResource, Map<String, Set<IApiProblemFilter>>>>() {
-			@Override
-			public int compare(Entry<IResource, Map<String, Set<IApiProblemFilter>>> o1, Entry<IResource, Map<String, Set<IApiProblemFilter>>> o2) {
-				Entry<IResource, Map<String, Set<IApiProblemFilter>>> entry1 = o1;
-				Entry<IResource, Map<String, Set<IApiProblemFilter>>> entry2 = o2;
-				String path1 = entry1.getKey().getFullPath().toOSString();
-				String path2 = entry2.getKey().getFullPath().toOSString();
-				return path1.compareTo(path2);
-			}
+		Collections.sort(allFiltersEntries, (o1, o2) -> {
+			Entry<IResource, Map<String, Set<IApiProblemFilter>>> entry1 = o1;
+			Entry<IResource, Map<String, Set<IApiProblemFilter>>> entry2 = o2;
+			String path1 = entry1.getKey().getFullPath().toOSString();
+			String path2 = entry2.getKey().getFullPath().toOSString();
+			return path1.compareTo(path2);
 		});
 		for (Entry<IResource, Map<String, Set<IApiProblemFilter>>> allFiltersEntry : allFiltersEntries) {
 			IResource resource = allFiltersEntry.getKey();
@@ -449,15 +445,12 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			Set<Entry<String, Set<IApiProblemFilter>>> allTypeNamesEntriesSet = pTypeNames.entrySet();
 			List<Entry<String, Set<IApiProblemFilter>>> allTypeNamesEntries = new ArrayList<>(allTypeNamesEntriesSet.size());
 			allTypeNamesEntries.addAll(allTypeNamesEntriesSet);
-			Collections.sort(allTypeNamesEntries, new Comparator<Entry<String, Set<IApiProblemFilter>>>() {
-				@Override
-				public int compare(Entry<String, Set<IApiProblemFilter>> o1, Entry<String, Set<IApiProblemFilter>> o2) {
-					Entry<String, Set<IApiProblemFilter>> entry1 = o1;
-					Entry<String, Set<IApiProblemFilter>> entry2 = o2;
-					String typeName1 = entry1.getKey();
-					String typeName2 = entry2.getKey();
-					return typeName1.compareTo(typeName2);
-				}
+			Collections.sort(allTypeNamesEntries, (o1, o2) -> {
+				Entry<String, Set<IApiProblemFilter>> entry1 = o1;
+				Entry<String, Set<IApiProblemFilter>> entry2 = o2;
+				String typeName1 = entry1.getKey();
+				String typeName2 = entry2.getKey();
+				return typeName1.compareTo(typeName2);
 			});
 			for (Entry<String, Set<IApiProblemFilter>> entry : allTypeNamesEntries) {
 				String typeName = entry.getKey();
@@ -476,33 +469,30 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 				typeName = null;
 				List<IApiProblemFilter> filtersList = new ArrayList<>(filters.size());
 				filtersList.addAll(filters);
-				Collections.sort(filtersList, new Comparator<IApiProblemFilter>() {
-					@Override
-					public int compare(IApiProblemFilter o1, IApiProblemFilter o2) {
-						IApiProblem p1 = o1.getUnderlyingProblem();
-						IApiProblem p2 = o2.getUnderlyingProblem();
-						int problem1Id = p1.getId();
-						int problem2Id = p2.getId();
-						int ids = problem1Id - problem2Id;
-						if (ids == 0) {
-							// if we have the same identifiers further sort by
-							// message
-							// arguments
-							// https://bugs.eclipse.org/bugs/show_bug.cgi?id=304509
-							String[] args1 = p1.getMessageArguments();
-							String[] args2 = p2.getMessageArguments();
-							int length = (args1.length < args2.length ? args1.length : args2.length);
-							for (int i = 0; i < length; i++) {
-								int args = args1[i].compareTo(args2[i]);
-								if (args != 0) {
-									// return when they are not equal
-									return args;
-								}
+				Collections.sort(filtersList, (o1, o2) -> {
+					IApiProblem p1 = o1.getUnderlyingProblem();
+					IApiProblem p2 = o2.getUnderlyingProblem();
+					int problem1Id = p1.getId();
+					int problem2Id = p2.getId();
+					int ids = problem1Id - problem2Id;
+					if (ids == 0) {
+						// if we have the same identifiers further sort by
+						// message
+						// arguments
+						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=304509
+						String[] args1 = p1.getMessageArguments();
+						String[] args2 = p2.getMessageArguments();
+						int length = (args1.length < args2.length ? args1.length : args2.length);
+						for (int i = 0; i < length; i++) {
+							int args = args1[i].compareTo(args2[i]);
+							if (args != 0) {
+								// return when they are not equal
+								return args;
 							}
-							return args1.length - args2.length;
 						}
-						return ids;
+						return args1.length - args2.length;
 					}
+					return ids;
 				});
 				for (IApiProblemFilter filter : filtersList) {
 					IApiProblem problem = filter.getUnderlyingProblem();

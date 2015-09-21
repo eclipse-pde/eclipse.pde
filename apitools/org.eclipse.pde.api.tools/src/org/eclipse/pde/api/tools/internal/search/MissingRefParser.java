@@ -94,12 +94,7 @@ class MissingRefParser extends UseScanParser {
 		}
 	}
 
-	static final FileFilter filter = new FileFilter() {
-		@Override
-		public boolean accept(File pathname) {
-			return pathname.isFile() && pathname.getName().endsWith(".xml"); //$NON-NLS-1$
-		}
-	};
+	static final FileFilter filter = pathname -> pathname.isFile() && pathname.getName().endsWith(".xml"); //$NON-NLS-1$
 
 	/**
 	 * @param xmlLocation

@@ -168,12 +168,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 					if (!dir.exists()) {
 						continue;
 					}
-					File[] files = dir.listFiles(new FileFilter() {
-						@Override
-						public boolean accept(File file) {
-							return file.isFile() && file.getName().endsWith(Util.DOT_CLASS_SUFFIX);
-						}
-					});
+					File[] files = dir.listFiles((FileFilter) file -> file.isFile() && file.getName().endsWith(Util.DOT_CLASS_SUFFIX));
 					if (files != null) {
 						List<LocalApiTypeRoot> classFiles = new ArrayList<>();
 						for (int j = 0; j < files.length; j++) {

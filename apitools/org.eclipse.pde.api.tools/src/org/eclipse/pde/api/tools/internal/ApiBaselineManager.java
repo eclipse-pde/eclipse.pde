@@ -278,12 +278,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			if (!ApiPlugin.isRunningInFramework()) {
 				return;
 			}
-			File[] baselines = savelocation.toFile().listFiles(new FileFilter() {
-				@Override
-				public boolean accept(File pathname) {
-					return pathname.getName().endsWith(BASELINE_FILE_EXTENSION);
-				}
-			});
+			File[] baselines = savelocation.toFile().listFiles((FileFilter) pathname -> pathname.getName().endsWith(BASELINE_FILE_EXTENSION));
 			if (baselines != null) {
 				IApiBaseline newbaseline = null;
 				for (int i = 0; i < baselines.length; i++) {

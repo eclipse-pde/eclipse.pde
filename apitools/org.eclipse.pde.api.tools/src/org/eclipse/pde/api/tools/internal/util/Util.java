@@ -2027,12 +2027,7 @@ public final class Util {
 			String[] jarsNames = null;
 			ArrayList<String> paths = new ArrayList<>();
 			if ("DRLVM".equals(vmName)) { //$NON-NLS-1$
-				FilenameFilter jarFilter = new FilenameFilter() {
-					@Override
-					public boolean accept(File dir, String name) {
-						return name.endsWith(DOT_JAR) & !name.endsWith("-src.jar"); //$NON-NLS-1$
-					}
-				};
+				FilenameFilter jarFilter = (dir, name) -> name.endsWith(DOT_JAR) & !name.endsWith("-src.jar"); //$NON-NLS-1$
 				jarsNames = new File(jreDir + "/lib/boot/").list(jarFilter); //$NON-NLS-1$
 				addJarEntries(jreDir + "/lib/boot/", jarsNames, paths); //$NON-NLS-1$
 			} else {
@@ -2437,20 +2432,17 @@ public final class Util {
 	/**
 	 * Default comparator that orders {@link IApiComponent} by their ID
 	 */
-	public static final Comparator<Object> componentsorter = new Comparator<Object>() {
-		@Override
-		public int compare(Object o1, Object o2) {
-			if (o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
-				return ((IApiComponent) o1).getSymbolicName().compareTo(((IApiComponent) o2).getSymbolicName());
-			}
-			if (o1 instanceof SkippedComponent && o2 instanceof SkippedComponent) {
-				return ((SkippedComponent) o1).getComponentId().compareTo(((SkippedComponent) o2).getComponentId());
-			}
-			if (o1 instanceof String && o2 instanceof String) {
-				return ((String) o1).compareTo((String) o2);
-			}
-			return -1;
+	public static final Comparator<Object> componentsorter = (o1, o2) -> {
+		if (o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
+			return ((IApiComponent) o1).getSymbolicName().compareTo(((IApiComponent) o2).getSymbolicName());
 		}
+		if (o1 instanceof SkippedComponent && o2 instanceof SkippedComponent) {
+			return ((SkippedComponent) o1).getComponentId().compareTo(((SkippedComponent) o2).getComponentId());
+		}
+		if (o1 instanceof String && o2 instanceof String) {
+			return ((String) o1).compareTo((String) o2);
+		}
+		return -1;
 	};
 
 	/**
@@ -2555,14 +2547,11 @@ public final class Util {
 	/**
 	 * Default comparator that orders {@link File}s by their name
 	 */
-	public static final Comparator<Object> filesorter = new Comparator<Object>() {
-		@Override
-		public int compare(Object o1, Object o2) {
-			if (o1 instanceof File && o2 instanceof File) {
-				return ((File) o1).getName().compareTo(((File) o2).getName());
-			}
-			return 0;
+	public static final Comparator<Object> filesorter = (o1, o2) -> {
+		if (o1 instanceof File && o2 instanceof File) {
+			return ((File) o1).getName().compareTo(((File) o2).getName());
 		}
+		return 0;
 	};
 
 	/**

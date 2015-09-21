@@ -275,12 +275,7 @@ public class UseScanParser {
 									// xml files in the directory and process
 									// them to find members
 									localmonitor.subTask(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] { origins[j].getName() }));
-									xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
-										@Override
-										public boolean accept(File pathname) {
-											return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$
-										}
-									});
+									xmlfiles = Util.getAllFiles(origins[j], pathname -> pathname.isDirectory() || pathname.getName().endsWith(".xml")); //$NON-NLS-1$
 									if (xmlfiles != null && xmlfiles.length > 0) {
 										xmlfiles = sort(xmlfiles); // sort to
 																	// visit in
@@ -383,12 +378,7 @@ public class UseScanParser {
 	 * @return
 	 */
 	File[] getDirectories(File file) {
-		File[] directories = file.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.isDirectory() && !pathname.isHidden();
-			}
-		});
+		File[] directories = file.listFiles((FileFilter) pathname -> pathname.isDirectory() && !pathname.isHidden());
 		return directories;
 	}
 

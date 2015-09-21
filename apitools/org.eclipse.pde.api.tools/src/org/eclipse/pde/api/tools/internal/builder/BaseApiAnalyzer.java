@@ -658,18 +658,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	void removeUnusedProblemFilters(final IApiFilterStore store, final List<IApiProblemFilter> filterlist, final IProgressMonitor monitor) throws CoreException {
 		if (filterlist.size() > 0) {
-			IWorkspaceRunnable runner = new IWorkspaceRunnable() {
-				/*
-				 * (non-Javadoc)
-				 * @see
-				 * org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse
-				 * .core.runtime.IProgressMonitor)
-				 */
-				@Override
-				public void run(IProgressMonitor lmonitor) throws CoreException {
-					store.removeFilters(filterlist.toArray(new IApiProblemFilter[filterlist.size()]));
-				}
-			};
+			IWorkspaceRunnable runner = lmonitor -> store.removeFilters(filterlist.toArray(new IApiProblemFilter[filterlist.size()]));
 			ResourcesPlugin.getWorkspace().run(runner, null, IWorkspace.AVOID_UPDATE, monitor);
 		}
 	}

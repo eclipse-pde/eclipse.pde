@@ -90,14 +90,11 @@ public class UseScanManager {
 	/**
 	 * {@link FileFilter} for finding use scan directories
 	 */
-	static FileFilter USESCAN_FILTER = new FileFilter() {
-		@Override
-		public boolean accept(File pathname) {
-			if (NAME_REGEX.matcher(pathname.getName()).matches()) {
-				throw new RuntimeException(pathname.getName());
-			}
-			return false;
+	static FileFilter USESCAN_FILTER = pathname -> {
+		if (NAME_REGEX.matcher(pathname.getName()).matches()) {
+			throw new RuntimeException(pathname.getName());
 		}
+		return false;
 	};
 
 	// Singleton

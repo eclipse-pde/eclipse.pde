@@ -102,12 +102,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * 
 	 * @since 1.0.3
 	 */
-	static final Comparator<ManifestElement> fgManifestElementComparator = new Comparator<ManifestElement>() {
-		@Override
-		public int compare(ManifestElement o1, ManifestElement o2) {
-			return o1.getValue().compareTo(o2.getValue());
-		}
-	};
+	static final Comparator<ManifestElement> fgManifestElementComparator = (o1, o2) -> o1.getValue().compareTo(o2.getValue());
 
 	/**
 	 * Array of header names that we care about when a manifest delta is

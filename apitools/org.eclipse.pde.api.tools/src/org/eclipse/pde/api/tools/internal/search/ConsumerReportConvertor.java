@@ -17,7 +17,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -578,12 +577,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 */
 	@Override
 	protected void writeIndexPage(List<?> scanResult) throws Exception {
-		Collections.sort(scanResult, new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				return ((Consumer) o1).name.compareTo(((Consumer) o2).name);
-			}
-		});
+		Collections.sort(scanResult, (o1, o2) -> ((Consumer) o1).name.compareTo(((Consumer) o2).name));
 
 		PrintWriter writer = null;
 		try {

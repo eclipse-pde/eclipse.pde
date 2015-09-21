@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
-import java.util.Comparator;
 import java.util.TreeSet;
 
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -152,12 +151,7 @@ public class SkippedComponent implements IApiElement {
 	 * @return the resolved leaf set of problem messages
 	 */
 	private String[] resolveRootErrors(ResolverError[] rerrors) {
-		TreeSet<String> collector = new TreeSet<>(new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				return ((String) o1).compareTo((String) o2);
-			}
-		});
+		TreeSet<String> collector = new TreeSet<>((o1, o2) -> (o1).compareTo(o2));
 		ResolverError error = null;
 		VersionConstraint[] constraints = null;
 		BundleDescription[] bundle = new BundleDescription[1];
