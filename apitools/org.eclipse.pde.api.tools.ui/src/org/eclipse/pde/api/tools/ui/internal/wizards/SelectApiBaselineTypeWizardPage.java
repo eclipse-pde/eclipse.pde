@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 public class SelectApiBaselineTypeWizardPage extends WizardPage {
+	private TargetBasedApiBaselineWizardPage targetPage;
+	private DirectoryBasedApiBaselineWizardPage directoryPage;
 
 	protected SelectApiBaselineTypeWizardPage() {
 		super(WizardMessages.ApiProfileWizardPage_1);
@@ -87,11 +89,18 @@ public class SelectApiBaselineTypeWizardPage extends WizardPage {
 	public IWizardPage getNextPage() {
 		IWizardPage next = null;
 		if (locationIsTarget.getSelection()) {
-			next = new TargetBasedApiBaselineWizardPage(null);
+			if (targetPage == null) {
+				targetPage = new TargetBasedApiBaselineWizardPage(null);
+				((Wizard) getWizard()).addPage(targetPage);
+			}
+			next = targetPage;
 		} else if (locationIsDirectory.getSelection()) {
-			next = new DirectoryBasedApiBaselineWizardPage(null);
+			if (directoryPage == null) {
+				directoryPage = new DirectoryBasedApiBaselineWizardPage(null);
+				((Wizard) getWizard()).addPage(directoryPage);
+			}
+			next = directoryPage;
 		}
-		((Wizard) getWizard()).addPage(next);
 		return next;
 	}
 
