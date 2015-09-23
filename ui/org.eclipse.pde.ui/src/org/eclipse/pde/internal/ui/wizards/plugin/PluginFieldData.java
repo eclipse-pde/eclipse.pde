@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 
 	private String fClassname;
 	private boolean fIsUIPlugin = true;
-	private boolean fDoGenerateClass = true;
+	private boolean fDoGenerateActivator = false;
 	private boolean fRCPAppPlugin = false;
 	private boolean fSetupAPITooling = false;
 	private boolean fE4Plugin = false;
@@ -53,12 +53,12 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	}
 
 	public void setDoGenerateClass(boolean doGenerate) {
-		fDoGenerateClass = doGenerate;
+		fDoGenerateActivator = doGenerate;
 	}
 
 	@Override
 	public boolean doGenerateClass() {
-		return fDoGenerateClass;
+		return fDoGenerateActivator;
 	}
 
 	public void setRCPApplicationPlugin(boolean isRCPAppPlugin) {

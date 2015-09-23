@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,9 @@ import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
@@ -56,7 +57,7 @@ public class PluginContentPage extends ContentPage {
 	/**
 	 * Dialog settings constants
 	 */
-	private final static String S_GENERATE_ACTIVATOR = "generateActivator"; //$NON-NLS-1$
+	private final static String S_GENERATE_ACTIVATOR = "generatePluginActivator"; //$NON-NLS-1$
 	private final static String S_UI_PLUGIN = "uiPlugin"; //$NON-NLS-1$
 	private final static String S_RCP_PLUGIN = "rcpPlugin"; //$NON-NLS-1$
 	private final static String S_API_ANALYSIS = "apiAnalysis"; //$NON-NLS-1$
@@ -193,7 +194,10 @@ public class PluginContentPage extends ContentPage {
 
 		IDialogSettings settings = getDialogSettings();
 
-		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null, (settings != null) ? !settings.getBoolean(S_GENERATE_ACTIVATOR) : true, 2);
+		boolean generateActivator = settings == null ? null : settings.getBoolean(S_GENERATE_ACTIVATOR);
+
+		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null,
+				generateActivator, 2);
 		fGenerateActivator.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -379,7 +383,7 @@ public class PluginContentPage extends ContentPage {
 	public void saveSettings(IDialogSettings settings) {
 		super.saveSettings(settings);
 		if (fGenerateActivator.isEnabled()) {
-			settings.put(S_GENERATE_ACTIVATOR, !fGenerateActivator.getSelection());
+			settings.put(S_GENERATE_ACTIVATOR, fGenerateActivator.getSelection());
 		}
 		if (fUIPlugin.isEnabled()) {
 			settings.put(S_UI_PLUGIN, !fUIPlugin.getSelection());
