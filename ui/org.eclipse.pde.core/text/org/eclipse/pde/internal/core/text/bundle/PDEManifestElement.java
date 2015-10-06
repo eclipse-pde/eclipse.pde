@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -175,6 +175,9 @@ public class PDEManifestElement extends BundleObject {
 			while (attKeys.hasMoreElements()) {
 				String attKey = (String) attKeys.nextElement();
 				String[] values = ManifestElement.getArrayFromList(manifestElement.getAttribute(attKey));
+				//empty string in attribute, go with default behavior of attribute
+				if (values == null)
+					continue;
 				for (int i = 0; i < values.length; i++)
 					addAttribute(attKey, values[i]);
 			}
