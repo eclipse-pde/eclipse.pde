@@ -318,15 +318,13 @@ public class UseScanManager {
 		if (file.exists() && Util.isArchive(fname)) {
 			Enumeration<? extends ZipEntry> entries = null;
 			if (fname.endsWith(Util.DOT_JAR)) {
-				try {
-					JarFile jfile = new JarFile(file);
+				try (JarFile jfile = new JarFile(file)) {
 					entries = jfile.entries();
 				} catch (IOException ioe) {
 					return false;
 				}
 			} else if (fname.endsWith(Util.DOT_ZIP)) {
-				try {
-					ZipFile zfile = new ZipFile(file);
+				try (ZipFile zfile = new ZipFile(file)) {
 					entries = zfile.entries();
 				} catch (IOException e) {
 					return false;
