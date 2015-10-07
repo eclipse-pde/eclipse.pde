@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1015,6 +1015,18 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 		String ltypename = getTypeName(reference.getMember());
 		return ApiProblemFactory.newApiUsageProblem(null, ltypename, getQualifiedMessageArgs(reference), new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID) }, lineNumber, IApiProblem.NO_CHARRANGE, IApiProblem.NO_CHARRANGE, getElementType(reference), getProblemKind(), getProblemFlags(reference));
+	}
+
+	/**
+	 * @param reference
+	 * @return the API problem if problem or null
+	 * @throws CoreException
+	 */
+	public IApiProblem checkAndCreateProblem(IReference reference) throws CoreException {
+		if (isProblem(reference) == false) {
+			return null;
+		}
+		return createProblem(reference);
 	}
 
 }

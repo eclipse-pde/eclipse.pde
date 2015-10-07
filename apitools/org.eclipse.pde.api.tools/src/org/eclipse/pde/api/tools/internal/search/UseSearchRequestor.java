@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -271,8 +271,8 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 				Reference ref = (Reference) reference;
 				ref.setFlags(IReference.F_ILLEGAL);
 				try {
-					IApiProblem pb = ((AbstractProblemDetector) detectors[i]).createProblem(reference);
-					if (!isFiltered(pb)) {
+					IApiProblem pb = ((AbstractProblemDetector) detectors[i]).checkAndCreateProblem(reference);
+					if (pb != null && !isFiltered(pb)) {
 						ref.addProblems(pb);
 					} else {
 						return false;
