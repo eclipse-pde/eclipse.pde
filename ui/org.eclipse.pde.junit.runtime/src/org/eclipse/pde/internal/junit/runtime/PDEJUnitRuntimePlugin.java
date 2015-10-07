@@ -60,7 +60,7 @@ public class PDEJUnitRuntimePlugin implements BundleActivator {
 	 */
 	private BundleContext bundleContext;
 
-	private ServiceTracker testableTracker = null;
+	private ServiceTracker<Object, Object> testableTracker = null;
 
 	public PDEJUnitRuntimePlugin() {
 		super();
@@ -105,7 +105,7 @@ public class PDEJUnitRuntimePlugin implements BundleActivator {
 		if (bundleContext == null)
 			return null;
 		if (testableTracker == null) {
-			testableTracker = new ServiceTracker(bundleContext, TESTABLE_OBJECT_SERVICE_NAME, null);
+			testableTracker = new ServiceTracker<Object, Object>(bundleContext, TESTABLE_OBJECT_SERVICE_NAME, null);
 			testableTracker.open();
 		}
 		return testableTracker.getService();
