@@ -35,7 +35,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		}
 
 		@Override
-		protected Class findClass(String name) throws ClassNotFoundException {
+		protected Class<?> findClass(String name) throws ClassNotFoundException {
 			return bundle.loadClass(name);
 		}
 
@@ -44,6 +44,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			return bundle.getResource(name);
 		}
 
+		@SuppressWarnings({"rawtypes", "unchecked"})
 		@Override
 		protected Enumeration findResources(String name) throws IOException {
 			return bundle.getResources(name);
@@ -106,7 +107,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	}
 
 	@Override
-	protected Class loadTestLoaderClass(String className) throws ClassNotFoundException {
+	protected Class<?> loadTestLoaderClass(String className) throws ClassNotFoundException {
 		return fLoaderClassLoader.loadClass(className);
 	}
 
