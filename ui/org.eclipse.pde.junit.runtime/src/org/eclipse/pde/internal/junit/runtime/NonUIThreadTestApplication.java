@@ -67,7 +67,7 @@ public class NonUIThreadTestApplication implements IApplication {
 		Object testableObject = PDEJUnitRuntimePlugin.getDefault().getTestableObject();
 		if (testableObject == null) {
 			try {
-				Class platformUIClass = Class.forName("org.eclipse.ui.PlatformUI", true, getClass().getClassLoader()); //$NON-NLS-1$
+				Class<?> platformUIClass = Class.forName("org.eclipse.ui.PlatformUI", true, getClass().getClassLoader()); //$NON-NLS-1$
 				testableObject = platformUIClass.getMethod("getTestableObject", null).invoke(null, null); //$NON-NLS-1$
 			} catch (ClassNotFoundException e) {
 				// PlatformUI is not available
