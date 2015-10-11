@@ -9,6 +9,7 @@
     
      Contributors:
          IBM Corporation - initial API and implementation
+         Lars Vogel <Lars.Vogel@vogella.com> - Bug 
  -->
 
 <plugin>
@@ -404,27 +405,7 @@
             class="org.eclipse.pde.internal.ui.samples.SampleEditor"
             id="org.eclipse.pde.ui.sampleEditor">
       </editor>
-<!--      <editor
-            class="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditor"
-            contributorClass="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditorContributor"
-            icon="$nl$/icons/obj16/cheatsheet_obj.png"
-            id="org.eclipse.pde.ui.simpleCheatSheetEditor"
-            name="%simple.cheat.sheat.editor.name">
-         <contentTypeBinding
-               contentTypeId="org.eclipse.pde.simpleCheatSheet">
-         </contentTypeBinding>
-      </editor>
       <editor
-            class="org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSEditor"
-            contributorClass="org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSEditorContributor"
-            icon="$nl$/icons/obj16/cheatsheet_obj.png"
-            id="org.eclipse.pde.ui.compositeCheatSheetEditor"
-            name="%composite.cheat.sheat.editor.name">
-         <contentTypeBinding
-               contentTypeId="org.eclipse.pde.compositeCheatSheet">
-         </contentTypeBinding>
-      </editor>
--->      <editor
             default="false"
             icon="$nl$/icons/obj16/discovery.png"
             id="org.eclipse.pde.ui.schemaPreviewLauncher"
@@ -445,29 +426,7 @@
                contentTypeId="org.eclipse.pde.categoryManifest">
          </contentTypeBinding>
       </editor>
-<!--      <editor
-            class="org.eclipse.pde.internal.ui.editor.toc.TocEditor"
-            contributorClass="org.eclipse.pde.internal.ui.editor.toc.TocEditorContributor"
-            default="true"
-            icon="$nl$/icons/obj16/toc_obj.png"
-            id="org.eclipse.pde.ui.tocEditor"
-            name="%toc.editor">
-         <contentTypeBinding
-               contentTypeId="org.eclipse.pde.tocFile">
-         </contentTypeBinding>
-      </editor>
-      <editor
-            class="org.eclipse.pde.internal.ui.editor.ctxhelp.CtxHelpEditor"
-            contributorClass="org.eclipse.pde.internal.ui.editor.toc.TocEditorContributor"
-            default="true"
-            icon="$nl$/icons/obj16/toc_obj.png"
-            id="org.eclipse.pde.ui.ctxHelpEditor"
-            name="%ctxhelp.editor">
-         <contentTypeBinding
-               contentTypeId="org.eclipse.pde.ctxHelpFile">
-         </contentTypeBinding>
-      </editor>
--->   </extension>
+   </extension>
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -1985,30 +1944,6 @@
                    style="push">
              </command>
           </menuContribution>
-          <!--
-          <menuContribution
-                locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-                <toolbar
-                      id="org.eclipse.search.searchActionSet">
-                   <command
-                         commandId="org.eclipse.pde.ui.OpenPluginArtifact"
-                         icon="$nl$/icons/obj16/open_artifact_obj.png"
-                         label="Open Plug-in Artifact">
-                      <visibleWhen>
-                         <with
-                               variable="activeContexts">
-                            <iterate
-                                  operator="or">
-                               <equals
-                                     value="org.eclipse.pde.ui.SearchActionSet">
-                               </equals>
-                            </iterate>
-                         </with>
-                      </visibleWhen>
-                   </command>
-                </toolbar>
-          </menuContribution>
-          -->
        </extension>
            <extension
           point="org.eclipse.ui.ide.markerSupport">
