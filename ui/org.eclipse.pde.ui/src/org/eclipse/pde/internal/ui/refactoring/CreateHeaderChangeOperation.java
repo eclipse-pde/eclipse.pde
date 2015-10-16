@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
@@ -59,9 +60,9 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 	}
 
 	protected TextFileChange updateBundleHeader(IFile manifest, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", 2); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
 		try {
-			IBundle bundle = BundleManifestChange.getBundle(manifest, new SubProgressMonitor(monitor, 1));
+			IBundle bundle = BundleManifestChange.getBundle(manifest, subMonitor.newChild(1));
 			if (bundle != null) {
 				BundleTextChangeListener listener = createListener(bundle);
 				if (listener != null) {
@@ -97,8 +98,8 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 		} catch (CoreException e) {
 		} catch (BadLocationException e) {
 		} finally {
-			FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE, new SubProgressMonitor(monitor, 1));
-			monitor.done();
+			FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE,
+					subMonitor.newChild(1));
 		}
 		return null;
 	}

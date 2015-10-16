@@ -8,11 +8,9 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sonatype, Inc. - ongoing development
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
-
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 
 import java.io.File;
 import java.net.URI;
@@ -83,13 +81,14 @@ public class RuntimeInstallJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			ProvisioningSession session = ui.getSession();
-			monitor.beginTask(PDEUIMessages.RuntimeInstallJob_Job_name_installing, 12 + (2 * fInfo.items.length));
+			SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.RuntimeInstallJob_Job_name_installing,
+					12 + (2 * fInfo.items.length));
 
 			// p2 needs to know about the generated repos
 			URI destination = new File(fInfo.destinationDirectory).toURI();
-			ui.loadArtifactRepository(destination, false, new SubProgressMonitor(monitor, 1));
+			ui.loadArtifactRepository(destination, false, subMonitor.newChild(1));
 
-			IMetadataRepository metaRepo = ui.loadMetadataRepository(destination, false, new SubProgressMonitor(monitor, 1));
+			IMetadataRepository metaRepo = ui.loadMetadataRepository(destination, false, subMonitor.newChild(1));
 
 			IProfileRegistry profileRegistry = (IProfileRegistry) session.getProvisioningAgent().getService(IProfileRegistry.SERVICE_NAME);
 			if (profileRegistry == null) {
@@ -102,10 +101,11 @@ public class RuntimeInstallJob extends Job {
 
 			List<IInstallableUnit> toInstall = new ArrayList<>();
 			for (int i = 0; i < fInfo.items.length; i++) {
-				if (monitor.isCanceled()) {
+				if (subMonitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				monitor.subTask(NLS.bind(PDEUIMessages.RuntimeInstallJob_Creating_installable_unit, fInfo.items[i].toString()));
+				subMonitor.subTask(
+						NLS.bind(PDEUIMessages.RuntimeInstallJob_Creating_installable_unit, fInfo.items[i].toString()));
 
 				//Get the installable unit from the repo
 				String id = null;
@@ -135,40 +135,37 @@ public class RuntimeInstallJob extends Job {
 				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.iterator().next();
 
 				// Find out if the profile already has that iu installed
-				queryMatches = profile.query(QueryUtil.createIUQuery(id), new SubProgressMonitor(monitor, 0));
+				queryMatches = profile.query(QueryUtil.createIUQuery(id), subMonitor.newChild(1));
 				if (queryMatches.isEmpty()) {
 					// Just install the new iu into the profile
 					toInstall.add(iuToInstall);
 				} else {
 					// There is an existing iu that we need to replace using an installable unit patch
 					IInstallableUnit existingIU = (IInstallableUnit) queryMatches.iterator().next();
-					toInstall.add(createInstallableUnitPatch(existingIU, newVersion, profile, monitor));
+					toInstall.add(createInstallableUnitPatch(existingIU, newVersion, profile, subMonitor.newChild(1)));
 				}
-				monitor.worked(2);
-
+				subMonitor.worked(2);
 			}
 
 			if (toInstall.size() > 0) {
 				InstallOperation operation = ui.getInstallOperation(toInstall, new URI[] {destination});
-				operation.resolveModal(new SubProgressMonitor(monitor, 5));
+				operation.resolveModal(subMonitor.newChild(5));
 				IStatus status = operation.getResolutionResult();
 				if (status.getSeverity() == IStatus.CANCEL || !(status.isOK() || status.getSeverity() == IStatus.INFO)) {
 					return status;
 				}
 				ProvisioningJob job = operation.getProvisioningJob(null);
-				status = job.runModal(new SubProgressMonitor(monitor, 5));
+				status = job.runModal(subMonitor.newChild(5));
 				return status;
 			}
 
-			if (monitor.isCanceled()) {
+			if (subMonitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 			return Status.OK_STATUS;
 
 		} catch (ProvisionException e) {
 			return e.getStatus();
-		} finally {
-			monitor.done();
 		}
 	}
 

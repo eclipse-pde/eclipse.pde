@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
@@ -15,8 +16,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.List;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -561,7 +562,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					TargetBundle bundle = allBundles[i];
 					try {
 						if (bundle.getStatus().isOK()) {
-							all.add(new File(bundle.getBundleInfo().getLocation()).toURL());
+							all.add(new File(bundle.getBundleInfo().getLocation()).toURI().toURL());
 							if (bundle.isSourceBundle()) {
 								sourceMap.put(new SourceLocationKey(bundle.getBundleInfo().getSymbolicName(), new Version(bundle.getBundleInfo().getVersion())), bundle);
 							}
@@ -591,10 +592,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					throw new InvocationTargetException(e);
 				}
 				canceled = subMon.isCanceled();
-				subMon.done();
-				if (monitor != null) {
-					monitor.done();
-				}
 			}
 		};
 		try {

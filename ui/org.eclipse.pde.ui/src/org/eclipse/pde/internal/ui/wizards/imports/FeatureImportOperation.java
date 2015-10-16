@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
@@ -70,27 +71,22 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 	 */
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.FeatureImportWizard_operation_creating,
+				fModels.length);
+		MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK,
+				PDEUIMessages.FeatureImportWizard_operation_multiProblem, null);
+		for (int i = 0; i < fModels.length; i++) {
+			try {
+				createProject(fModels[i], subMonitor.newChild(1));
+			} catch (CoreException e) {
+				multiStatus.merge(e.getStatus());
+			}
+			if (subMonitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 		}
-		monitor.beginTask(PDEUIMessages.FeatureImportWizard_operation_creating, fModels.length);
-		try {
-			MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.FeatureImportWizard_operation_multiProblem, null);
-			for (int i = 0; i < fModels.length; i++) {
-				try {
-					createProject(fModels[i], new SubProgressMonitor(monitor, 1));
-				} catch (CoreException e) {
-					multiStatus.merge(e.getStatus());
-				}
-				if (monitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
-			}
-			if (!multiStatus.isOK()) {
-				throw new CoreException(multiStatus);
-			}
-		} finally {
-			monitor.done();
+		if (!multiStatus.isOK()) {
+			throw new CoreException(multiStatus);
 		}
 	}
 
@@ -106,54 +102,51 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 
 		}
 
-		String task = NLS.bind(PDEUIMessages.FeatureImportWizard_operation_creating2, name);
-		monitor.beginTask(task, 9);
-		try {
-			IProject project = fRoot.getProject(name);
+		SubMonitor subMonitor = SubMonitor.convert(monitor,
+				NLS.bind(PDEUIMessages.FeatureImportWizard_operation_creating2, name), 9);
+		IProject project = fRoot.getProject(name);
 
-			if (project.exists() || new File(project.getParent().getLocation().toFile(), name).exists()) {
-				if (queryReplace(project)) {
-					if (!project.exists())
-						project.create(new SubProgressMonitor(monitor, 1));
-					project.delete(true, true, new SubProgressMonitor(monitor, 1));
-					try {
-						RepositoryProvider.unmap(project);
-					} catch (TeamException e) {
-					}
-				} else {
-					return;
+		if (project.exists() || new File(project.getParent().getLocation().toFile(), name).exists()) {
+			if (queryReplace(project)) {
+				if (!project.exists()) {
+					project.create(subMonitor.newChild(1));
+				}
+				project.delete(true, true, subMonitor.newChild(1));
+				try {
+					RepositoryProvider.unmap(project);
+				} catch (TeamException e) {
 				}
 			} else {
-				monitor.worked(1);
+				return;
 			}
+		}
+		subMonitor.setWorkRemaining(7);
 
-			IProjectDescription description = PDEPlugin.getWorkspace().newProjectDescription(name);
-			if (fTargetPath != null)
-				description.setLocation(fTargetPath.append(name));
+		IProjectDescription description = PDEPlugin.getWorkspace().newProjectDescription(name);
+		if (fTargetPath != null)
+			description.setLocation(fTargetPath.append(name));
 
-			project.create(description, new SubProgressMonitor(monitor, 1));
-			if (!project.isOpen()) {
-				project.open(null);
-			}
-			File featureDir = new File(model.getInstallLocation());
+		project.create(description, subMonitor.newChild(1));
+		if (!project.isOpen()) {
+			project.open(null);
+		}
+		File featureDir = new File(model.getInstallLocation());
 
-			importContent(featureDir, project.getFullPath(), FileSystemStructureProvider.INSTANCE, null, new SubProgressMonitor(monitor, 1));
-			IFolder folder = project.getFolder("META-INF"); //$NON-NLS-1$
-			if (folder.exists()) {
-				folder.delete(true, null);
-			}
-			if (fBinary) {
-				// Mark this project so that we can show image overlay
-				// using the label decorator
-				project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, PDECore.BINARY_PROJECT_VALUE);
-			}
-			createBuildProperties(project);
-			setProjectNatures(project, model, monitor);
-			if (project.hasNature(JavaCore.NATURE_ID))
-				setClasspath(project, model, monitor);
-
-		} finally {
-			monitor.done();
+		importContent(featureDir, project.getFullPath(), FileSystemStructureProvider.INSTANCE, null,
+				subMonitor.newChild(1));
+		IFolder folder = project.getFolder("META-INF"); //$NON-NLS-1$
+		if (folder.exists()) {
+			folder.delete(true, null);
+		}
+		if (fBinary) {
+			// Mark this project so that we can show image overlay
+			// using the label decorator
+			project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, PDECore.BINARY_PROJECT_VALUE);
+		}
+		createBuildProperties(project);
+		setProjectNatures(project, model, subMonitor.newChild(1));
+		if (project.hasNature(JavaCore.NATURE_ID)) {
+			setClasspath(project, model, subMonitor.newChild(4));
 		}
 	}
 
@@ -194,17 +187,20 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		return true;
 	}
 
-	private void setProjectNatures(IProject project, IFeatureModel model, IProgressMonitor monitor) throws CoreException {
+	private void setProjectNatures(IProject project, IFeatureModel model, SubMonitor subMonitor) throws CoreException {
 		IProjectDescription desc = project.getDescription();
 		if (needsJavaNature(model)) {
 			desc.setNatureIds(new String[] {JavaCore.NATURE_ID, PDE.FEATURE_NATURE});
 		} else {
 			desc.setNatureIds(new String[] {PDE.FEATURE_NATURE});
 		}
-		project.setDescription(desc, new SubProgressMonitor(monitor, 1));
+		subMonitor.setWorkRemaining(1);
+		project.setDescription(desc, subMonitor.newChild(1));
 	}
 
-	private void setClasspath(IProject project, IFeatureModel model, IProgressMonitor monitor) throws JavaModelException {
+	private void setClasspath(IProject project, IFeatureModel model, IProgressMonitor monitor)
+			throws JavaModelException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor);
 		IJavaProject jProject = JavaCore.create(project);
 
 		IClasspathEntry jreCPEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
@@ -212,7 +208,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		String libName = model.getFeature().getInstallHandler().getLibrary();
 		IClasspathEntry handlerCPEntry = JavaCore.newLibraryEntry(project.getFullPath().append(libName), null, null);
 
-		jProject.setRawClasspath(new IClasspathEntry[] {jreCPEntry, handlerCPEntry}, monitor);
+		jProject.setRawClasspath(new IClasspathEntry[] { jreCPEntry, handlerCPEntry }, subMonitor);
 	}
 
 	private boolean needsJavaNature(IFeatureModel model) {

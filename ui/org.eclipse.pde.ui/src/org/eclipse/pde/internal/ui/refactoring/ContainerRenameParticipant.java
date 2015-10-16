@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
@@ -67,11 +68,11 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 	protected Change createManifestChange(IProgressMonitor monitor) throws CoreException {
 		IFile manifest = PDEProject.getManifest(fProject);
 		if (manifest.exists()) {
-			monitor.beginTask("", 4); //$NON-NLS-1$
+			SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
 			try {
 				String newText = fElements.get(fProject);
 				CompositeChange result = new CompositeChange(PDEUIMessages.ContainerRenameParticipant_renameBundleId);
-				IBundle bundle = BundleManifestChange.getBundle(manifest, new SubProgressMonitor(monitor, 1));
+				IBundle bundle = BundleManifestChange.getBundle(manifest, subMonitor.newChild(1));
 				if (bundle != null) {
 					BundleTextChangeListener listener = new BundleTextChangeListener(((BundleModel) bundle.getModel()).getDocument());
 					bundle.getModel().addModelChangedListener(listener);
@@ -105,7 +106,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 
 						// find all the references to the changing Bundle-SymbolicName and update all references to it
 						FindReferenceOperation op = new FindReferenceOperation(PluginRegistry.findModel(fProject).getBundleDescription(), newId);
-						op.run(new SubProgressMonitor(monitor, 2));
+						op.run(subMonitor.newChild(2));
 						result.addAll(op.getChanges());
 						return result;
 					}
@@ -114,8 +115,8 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 			} catch (MalformedTreeException e) {
 			} catch (BadLocationException e) {
 			} finally {
-				FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE, new SubProgressMonitor(monitor, 1));
-				monitor.done();
+				FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE,
+						subMonitor.newChild(1));
 			}
 		}
 		return null;

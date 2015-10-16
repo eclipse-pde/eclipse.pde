@@ -10,6 +10,7 @@
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 230248
  *     Code 9 Corporation - onging enhancements
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 449348
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - Bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
@@ -358,12 +359,13 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		FeatureModelManager fManager = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] fModels = fManager.getModels();
 
-		progressMonitor.beginTask(PDEUIMessages.FilteredPluginArtifactsSelectionDialog_searching, models.length + fModels.length);
+		SubMonitor subMonitor = SubMonitor.convert(progressMonitor,
+				PDEUIMessages.FilteredPluginArtifactsSelectionDialog_searching, models.length * 2 + fModels.length);
 
 		// cycle through all the features first
 		for (int i = 0; i < fModels.length; i++) {
 			contentProvider.add(fModels[i], itemsFilter);
-			progressMonitor.worked(1);
+			subMonitor.worked(1);
 		}
 
 		// cycle through all the models and grab entries
@@ -372,36 +374,34 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			IPluginExtensionPoint[] eps = model.getPluginBase().getExtensionPoints();
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			int length = eps.length + extensions.length;
-			SubProgressMonitor subMonitor = new SubProgressMonitor(progressMonitor, length);
+			SubMonitor subMonitor2 = subMonitor.newChild(1).setWorkRemaining(length);
 			for (int j = 0; j < eps.length; j++) {
 				contentProvider.add(eps[j], itemsFilter);
-				subMonitor.worked(1);
+				subMonitor2.worked(1);
 			}
 			for (int j = 0; j < extensions.length; j++) {
 				contentProvider.add(extensions[j], itemsFilter);
-				subMonitor.worked(1);
+				subMonitor2.worked(1);
 			}
-			subMonitor.done();
 
+			subMonitor2 = subMonitor.newChild(1);
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
 				ExportPackageDescription[] epds = desc.getExportPackages();
-				SubProgressMonitor subMonitor2 = new SubProgressMonitor(progressMonitor, epds.length);
+				subMonitor2.setWorkRemaining(epds.length);
 				for (int j = 0; j < epds.length; j++) {
 					ExportPackageDescription epd = epds[j];
 					// ensure we don't get EE packages
 					int ee = ((Integer) epd.getDirective("x-equinox-ee")).intValue(); //$NON-NLS-1$
-					if (ee < 0)
+					if (ee < 0) {
 						contentProvider.add(epd, itemsFilter);
+					}
 					subMonitor2.worked(1);
 				}
-				subMonitor2.done();
 			}
 
 			contentProvider.add(models[i], itemsFilter);
-			progressMonitor.worked(1);
 		}
-		progressMonitor.done();
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
+*******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
 import java.io.*;
@@ -34,6 +35,7 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.osgi.framework.*;
@@ -64,27 +66,26 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 
 	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_mainTask, 100);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.AddNewDependenciesOperation_mainTask, 100);
 		final IBundle bundle = fBase.getBundleModel().getBundle();
 		final Set<String> ignorePkgs = new HashSet<>();
 		final String[] secDeps = findSecondaryBundles(bundle, ignorePkgs);
 		if (secDeps == null || secDeps.length == 0) {
-			monitor.done();
 			return;
 		}
-		monitor.worked(4);
+		subMonitor.worked(4);
 		findImportPackages(bundle, ignorePkgs);
-		monitor.worked(2);
+		subMonitor.worked(2);
 		addProjectPackages(bundle, ignorePkgs);
-		monitor.worked(4);
+		subMonitor.worked(4);
 
 		final Map<ExportPackageDescription, String> additionalDeps = new HashMap<>();
-		monitor.subTask(PDEUIMessages.AddNewDependenciesOperation_searchProject);
+		subMonitor.subTask(PDEUIMessages.AddNewDependenciesOperation_searchProject);
 
 		boolean useRequireBundle = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID).getBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, true);
-		findSecondaryDependencies(secDeps, ignorePkgs, additionalDeps, bundle, useRequireBundle, new SubProgressMonitor(monitor, 80));
-		handleNewDependencies(additionalDeps, useRequireBundle, new SubProgressMonitor(monitor, 10));
-		monitor.done();
+		findSecondaryDependencies(secDeps, ignorePkgs, additionalDeps, bundle, useRequireBundle,
+				subMonitor.newChild(80));
+		handleNewDependencies(additionalDeps, useRequireBundle, subMonitor.newChild(10));
 	}
 
 	public boolean foundNewDependencies() {
@@ -234,18 +235,22 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		SearchEngine engine = new SearchEngine();
 		if (ignorePkgs == null)
 			ignorePkgs = new HashSet<>(2);
-		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_searchProject, secDeps.length);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.AddNewDependenciesOperation_searchProject,
+				secDeps.length);
 		for (int j = 0; j < secDeps.length; j++) {
 			try {
-				if (monitor.isCanceled())
+				SubMonitor iterationMonitor = subMonitor.newChild(1);
+				if (iterationMonitor.isCanceled()) {
 					return;
-				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+				}
 				String pluginId = secDeps[j];
 				IPluginModelBase base = PluginRegistry.findModel(secDeps[j]);
 				if (base != null) {
 					ExportPackageDescription[] exported = findExportedPackages(base.getBundleDescription());
 					IJavaSearchScope searchScope = PluginJavaSearchUtil.createSeachScope(jProject);
-					subMonitor.beginTask(NLS.bind(PDEUIMessages.AddNewDependenciesOperation_searchForDependency, pluginId), exported.length);
+					iterationMonitor.beginTask(
+							NLS.bind(PDEUIMessages.AddNewDependenciesOperation_searchForDependency, pluginId),
+							exported.length);
 					for (int i = 0; i < exported.length; i++) {
 						String pkgName = exported[i].getName();
 						if (!ignorePkgs.contains(pkgName)) {
@@ -262,12 +267,11 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 								}
 							}
 						}
-						subMonitor.worked(1);
+						iterationMonitor.worked(1);
 					}
 				}
-				subMonitor.done();
 			} catch (CoreException e) {
-				monitor.done();
+				PDEPlugin.logException(e);
 			}
 		}
 	}
@@ -335,7 +339,6 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	protected void handleNewDependencies(final Map<ExportPackageDescription, String> additionalDeps, final boolean useRequireBundle, IProgressMonitor monitor) {
 		if (!additionalDeps.isEmpty())
 			addDependencies(additionalDeps, useRequireBundle);
-		monitor.done();
 	}
 
 	protected void addDependencies(final Map<ExportPackageDescription, String> depsToAdd, boolean useRequireBundle) {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
@@ -70,31 +71,32 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		IJavaProject jp = JavaCore.create(fProject);
 		HashMap<String, HashSet<String>> pkgsAndUses = new HashMap<>();
 		IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, Collections.EMPTY_SET, false);
-		monitor.beginTask("", frags.length * 2); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, frags.length * 2);
 		for (int i = 0; i < frags.length; i++) {
-			if (monitor.isCanceled()) {
+			SubMonitor iterationMonitor = subMonitor.newChild(2);
+			if (iterationMonitor.isCanceled()) {
 				return pkgsAndUses;
 			}
-			monitor.subTask(NLS.bind(PDEUIMessages.CalculateUsesOperation_calculatingDirective, frags[i].getElementName()));
+			iterationMonitor.subTask(
+					NLS.bind(PDEUIMessages.CalculateUsesOperation_calculatingDirective, frags[i].getElementName()));
 			if (packages.contains(frags[i].getElementName())) {
 				HashSet<String> pkgs = new HashSet<>();
 				pkgsAndUses.put(frags[i].getElementName(), pkgs);
 				try {
-					findReferences(frags[i].getCompilationUnits(), pkgs, new SubProgressMonitor(monitor, 1), false);
-					findReferences(frags[i].getClassFiles(), pkgs, new SubProgressMonitor(monitor, 1), true);
+					findReferences(frags[i].getCompilationUnits(), pkgs, iterationMonitor.newChild(1), false);
+					findReferences(frags[i].getClassFiles(), pkgs, iterationMonitor.newChild(1), true);
 				} catch (JavaModelException e) {
 				}
-			} else
-				monitor.worked(2);
+			}
 		}
 		return pkgsAndUses;
 	}
 
 	protected void findReferences(ITypeRoot[] roots, Set<String> pkgs, IProgressMonitor monitor, boolean binary) throws JavaModelException {
-		monitor.beginTask("", roots.length); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, roots.length);
 		for (int i = 0; i < roots.length; i++) {
 			findReferences(roots[i].findPrimaryType(), pkgs, binary);
-			monitor.worked(1);
+			subMonitor.worked(1);
 		}
 	}
 

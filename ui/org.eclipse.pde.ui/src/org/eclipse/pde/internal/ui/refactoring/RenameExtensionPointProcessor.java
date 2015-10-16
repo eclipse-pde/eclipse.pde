@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
@@ -48,10 +49,10 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenameExtensionPointProcessor_changeTitle, new Object[] {fInfo.getCurrentValue(), fInfo.getNewValue()}));
-		pm.beginTask("", 2); //$NON-NLS-1$
-		changeExtensionPoint(change, new SubProgressMonitor(pm, 1));
+		SubMonitor subMonitor = SubMonitor.convert(pm, 2);
+		changeExtensionPoint(change, subMonitor.newChild(1));
 		if (fInfo.isUpdateReferences())
-			findReferences(change, new SubProgressMonitor(pm, 1));
+			findReferences(change, subMonitor.newChild(1));
 		return change;
 	}
 
@@ -89,11 +90,13 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 	private void findReferences(CompositeChange compositeChange, IProgressMonitor monitor) {
 		String pointId = getId();
 		IPluginModelBase[] bases = PDECore.getDefault().getExtensionsRegistry().findExtensionPlugins(pointId, true);
-		monitor.beginTask("", bases.length); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, bases.length);
 		for (int i = 0; i < bases.length; i++) {
 			IFile file = getModificationFile(bases[i]);
-			if (file != null)
-				compositeChange.addAll(PDEModelUtility.changesForModelModication(getExtensionModification(file), new SubProgressMonitor(monitor, 1)));
+			if (file != null) {
+				compositeChange.addAll(PDEModelUtility.changesForModelModication(getExtensionModification(file), subMonitor.newChild(1)));
+			}
+			subMonitor.setWorkRemaining(bases.length - i);
 		}
 	}
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
@@ -239,7 +240,7 @@ public class TargetContentsGroup {
 			@Override
 			public Image getImage(Object element) {
 				if (element instanceof ITargetLocation) {
-					ILabelProvider provider = (ILabelProvider) Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
+					ILabelProvider provider = Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
 					if (provider != null) {
 						return provider.getImage(element);
 					}
@@ -250,7 +251,7 @@ public class TargetContentsGroup {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof ITargetLocation) {
-					ILabelProvider provider = (ILabelProvider) Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
+					ILabelProvider provider = Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
 					if (provider != null) {
 						return provider.getText(element);
 					}
@@ -743,74 +744,76 @@ public class TargetContentsGroup {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor monitor) {
-				try {
-					monitor.beginTask(Messages.TargetContentsGroup_5, 150);
+				SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetContentsGroup_5, 150);
 
-					// Get all the bundle locations
-					List<URL> allLocations = new ArrayList<>(allBundles.size());
-					for (Iterator<TargetBundle> iterator = allBundles.iterator(); iterator.hasNext();) {
-						TargetBundle current = iterator.next();
-						try {
-							// Some bundles, such as those with errors, may not have locations
-							URI location = current.getBundleInfo().getLocation();
-							if (location != null) {
-								allLocations.add(new File(location).toURL());
-							}
-						} catch (MalformedURLException e) {
-							PDEPlugin.log(e);
-							monitor.setCanceled(true);
-							return;
+				// Get all the bundle locations
+				List<URL> allLocations = new ArrayList<>(allBundles.size());
+				for (Iterator<TargetBundle> iterator = allBundles.iterator(); iterator.hasNext();) {
+					TargetBundle current = iterator.next();
+					try {
+						// Some bundles, such as those with errors, may not have
+						// locations
+						URI location = current.getBundleInfo().getLocation();
+						if (location != null) {
+							allLocations.add(new File(location).toURI().toURL());
 						}
-					}
-					if (monitor.isCanceled()) {
+					} catch (MalformedURLException e) {
+						PDEPlugin.log(e);
 						return;
 					}
-					monitor.worked(20);
-
-					// Create a PDE State containing all of the target bundles
-					PDEState state = new PDEState(allLocations.toArray(new URL[allLocations.size()]), true, false, new SubProgressMonitor(monitor, 50));
-					if (monitor.isCanceled()) {
-						return;
-					}
-
-					// Figure out which of the models have been checked
-					IPluginModelBase[] models = state.getTargetModels();
-					List<IPluginModelBase> checkedModels = new ArrayList<>(checkedBundles.length);
-					for (int i = 0; i < checkedBundles.length; i++) {
-						if (checkedBundles[i] instanceof TargetBundle) {
-							BundleInfo bundle = ((TargetBundle) checkedBundles[i]).getBundleInfo();
-							for (int j = 0; j < models.length; j++) {
-								if (models[j].getBundleDescription().getSymbolicName().equals(bundle.getSymbolicName()) && models[j].getBundleDescription().getVersion().toString().equals(bundle.getVersion())) {
-									checkedModels.add(models[j]);
-									break;
-								}
-							}
-						}
-					}
-					monitor.worked(20);
-					if (monitor.isCanceled()) {
-						return;
-					}
-
-					// Get implicit dependencies as a list of strings
-					// This is wasteful since the dependency calculation puts them back into BundleInfos
-					NameVersionDescriptor[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
-					List<String> implicitIDs = new ArrayList<>();
-					if (implicitDependencies != null) {
-						for (int i = 0; i < implicitDependencies.length; i++) {
-							implicitIDs.add(implicitDependencies[i].getId());
-						}
-					}
-					monitor.worked(10);
-
-					// Get all dependency bundles
-					// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-					dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(), implicitIDs.toArray(new String[implicitIDs.size()]), state.getState(), new String[] {"org.eclipse.ui.workbench.compatibility"})); //$NON-NLS-1$
-					monitor.worked(50);
-
-				} finally {
-					monitor.done();
 				}
+				if (subMonitor.isCanceled()) {
+					return;
+				}
+				subMonitor.worked(20);
+
+				// Create a PDE State containing all of the target bundles
+				PDEState state = new PDEState(allLocations.toArray(new URL[allLocations.size()]), true, false,
+						subMonitor.newChild(50));
+				if (subMonitor.isCanceled()) {
+					return;
+				}
+
+				// Figure out which of the models have been checked
+				IPluginModelBase[] models = state.getTargetModels();
+				List<IPluginModelBase> checkedModels = new ArrayList<>(checkedBundles.length);
+				for (int i = 0; i < checkedBundles.length; i++) {
+					if (checkedBundles[i] instanceof TargetBundle) {
+						BundleInfo bundle = ((TargetBundle) checkedBundles[i]).getBundleInfo();
+						for (int j = 0; j < models.length; j++) {
+							if (models[j].getBundleDescription().getSymbolicName().equals(bundle.getSymbolicName())
+									&& models[j].getBundleDescription().getVersion().toString()
+											.equals(bundle.getVersion())) {
+								checkedModels.add(models[j]);
+								break;
+							}
+						}
+					}
+				}
+				subMonitor.worked(20);
+				if (subMonitor.isCanceled()) {
+					return;
+				}
+
+				// Get implicit dependencies as a list of strings
+				// This is wasteful since the dependency calculation puts them
+				// back into BundleInfos
+				NameVersionDescriptor[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
+				List<String> implicitIDs = new ArrayList<>();
+				if (implicitDependencies != null) {
+					for (int i = 0; i < implicitDependencies.length; i++) {
+						implicitIDs.add(implicitDependencies[i].getId());
+					}
+				}
+				subMonitor.worked(10);
+
+				// Get all dependency bundles
+				// exclude "org.eclipse.ui.workbench.compatibility" - it is only
+				// needed for pre-3.0 bundles
+				dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(),
+						implicitIDs.toArray(new String[implicitIDs.size()]), state.getState(),
+						new String[] { "org.eclipse.ui.workbench.compatibility" })); //$NON-NLS-1$
+				subMonitor.worked(50);
 			}
 		};
 		try {

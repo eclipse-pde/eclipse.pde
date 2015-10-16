@@ -223,7 +223,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private List<ITargetDefinition> fTargets = new ArrayList<>();
 
 	/**
-	 * Removed definitions (to be removed on apply)
+	 * Removed definitions (to be removed on apply) 
 	 */
 	private List<ITargetDefinition> fRemoved = new ArrayList<>();
 
@@ -646,7 +646,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 
 	/**
-	 * Updates the details text box with information about the currently selected target
+	 * Updates the details text box with information about the currently selected target 
 	 */
 	protected void updateDetails() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
@@ -666,7 +666,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	/**
 	 * Returns the target platform service or <code>null</code> if the service could
 	 * not be acquired.
-	 *
+	 * 
 	 * @return target platform service or <code>null</code>
 	 */
 	private ITargetPlatformService getTargetService() {

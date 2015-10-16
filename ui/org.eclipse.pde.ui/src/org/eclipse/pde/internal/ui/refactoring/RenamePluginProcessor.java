@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
@@ -103,17 +104,17 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenamePluginProcessor_changeTitle, new Object[] {fInfo.getCurrentValue(), fInfo.getNewValue()}));
-		pm.beginTask("", getTotalWork()); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(pm, getTotalWork());
 		// update manifest with new Id
 		CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(fInfo.getBase(), Constants.BUNDLE_SYMBOLICNAME, fInfo.getCurrentValue(), fInfo.getNewValue());
-		op.run(new SubProgressMonitor(pm, 1));
+		op.run(subMonitor.newChild(1));
 		change.add(op.getChange());
 
 		if (fInfo.isRenameProject()) {
-			change.add(createProjectChange(new SubProgressMonitor(pm, 1)));
+			change.add(createProjectChange(subMonitor.newChild( 1)));
 		}
 		if (fInfo.isUpdateReferences())
-			change.addAll(createReferenceChanges(new SubProgressMonitor(pm, 2)));
+			change.addAll(createReferenceChanges(subMonitor.newChild(2)));
 		return change;
 	}
 

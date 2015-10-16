@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.samples;
 
@@ -61,15 +62,17 @@ public class SampleOperation implements IRunnableWithProgress {
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
-			IWorkspaceRunnable op = new IWorkspaceRunnable() {
+			ICoreRunnable op = new ICoreRunnable() {
 				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IConfigurationElement[] projects = sample.getChildren("project"); //$NON-NLS-1$
-					monitor.beginTask(PDEUIMessages.SampleOperation_creating, 4 * projects.length);
+					SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.SampleOperation_creating,
+							projects.length);
 					createdProjects = new IProject[projects.length];
 					try {
 						for (int i = 0; i < projects.length; i++) {
-							IFile file = importProject(projectNames[i], projects[i], new SubProgressMonitor(monitor, 4));
+							IFile file = importProject(projectNames[i], projects[i],
+									subMonitor.newChild(1));
 							if (file != null && sampleManifest == null)
 								sampleManifest = file;
 							if (file != null) {
@@ -91,8 +94,6 @@ public class SampleOperation implements IRunnableWithProgress {
 			throw new InvocationTargetException(e);
 		} catch (OperationCanceledException e) {
 			throw e;
-		} finally {
-			monitor.done();
 		}
 	}
 
@@ -110,6 +111,8 @@ public class SampleOperation implements IRunnableWithProgress {
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject(name);
 		boolean skip = false;
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, name, 5);
 		if (project.exists()) {
 			if (!yesToAll) {
 				String returnId = query.queryOverwrite(project.getFullPath().toString());
@@ -126,23 +129,24 @@ public class SampleOperation implements IRunnableWithProgress {
 				}
 			}
 			if (!skip) {
-				project.delete(true, true, new SubProgressMonitor(monitor, 1));
+				project.delete(true, true, subMonitor.newChild(1));
 				project = root.getProject(name);
-			} else
-				monitor.worked(1);
+			} else {
+				subMonitor.worked(1);
+			}
 		}
 		if (skip) {
-			monitor.worked(3);
+			subMonitor.worked(4);
 			IFile manifest = project.getFile(SAMPLE_PROPERTIES);
 			return manifest;
 		}
 
-		project.create(new SubProgressMonitor(monitor, 1));
-		project.open(new NullProgressMonitor());
+		project.create(subMonitor.newChild(1));
+		project.open(subMonitor.newChild(1));
 		Bundle bundle = Platform.getBundle(sample.getNamespaceIdentifier());
 		ZipFile zipFile = getZipFileFromPluginDir(path, bundle);
-		importFilesFromZip(zipFile, project.getFullPath(), new SubProgressMonitor(monitor, 1));
-		return createSampleManifest(project, config, new SubProgressMonitor(monitor, 1));
+		importFilesFromZip(zipFile, project.getFullPath(), subMonitor.newChild(1));
+		return createSampleManifest(project, config, subMonitor.newChild(1));
 	}
 
 	private IFile createSampleManifest(IProject project, IConfigurationElement config, IProgressMonitor monitor) throws CoreException {

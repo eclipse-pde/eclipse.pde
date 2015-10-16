@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 252329
  *     David Green <dgreen99@gmail.com> - bug 275240
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
@@ -74,20 +75,22 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 			 * workspace, but only those selected.
 			 */
 			if (fExternalizeSelectedPluginsOnly) {
-				monitor.beginTask(PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, fSelectedModels.size());
+				SubMonitor subMonitor = SubMonitor.convert(monitor,
+						PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, fSelectedModels.size());
 				Iterator<Object> iterator = fSelectedModels.iterator();
 				while (iterator.hasNext() && !fCanceled) {
 					IProject project = (IProject) iterator.next();
 					if (!WorkspaceModelManager.isBinaryProject(project))
-						getUnExternalizedStrings(project, new SubProgressMonitor(monitor, 1));
+						getUnExternalizedStrings(project, subMonitor.newChild(1));
 				}
 			} else {
 				IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
-				monitor.beginTask(PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, pluginModels.length);
+				SubMonitor subMonitor = SubMonitor.convert(monitor,
+						PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, pluginModels.length);
 				for (int i = 0; i < pluginModels.length && !fCanceled; i++) {
 					IProject project = pluginModels[i].getUnderlyingResource().getProject();
 					if (!WorkspaceModelManager.isBinaryProject(project))
-						getUnExternalizedStrings(project, new SubProgressMonitor(monitor, 1));
+						getUnExternalizedStrings(project, subMonitor.newChild(1));
 				}
 			}
 		}
@@ -114,7 +117,6 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 				}
 			}
 		}, monitor);
-		monitor.done();
 	}
 
 	/**

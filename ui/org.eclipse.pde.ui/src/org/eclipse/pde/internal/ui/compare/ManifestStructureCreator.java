@@ -7,7 +7,8 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
+*******************************************************************************/
 package org.eclipse.pde.internal.ui.compare;
 
 import java.io.*;
@@ -83,37 +84,38 @@ public class ManifestStructureCreator extends StructureCreator {
 		args[0] = 0; // here we return the line number
 		args[1] = 0; // and here the offset of the first character of the line
 
-		try {
-			String id = "Manifest"; //$NON-NLS-1$
-			ManifestNode parent = new ManifestNode(root, 0, id, doc, 0, doc.getLength());
-			monitor = beginWork(monitor);
-			StringBuffer headerBuffer = new StringBuffer();
-			int headerStart = 0;
-			while (true) {
-				lineStart = args[1]; // start of current line
-				String line = readLine(args, doc);
-				if (line == null)
-					return;
+		String id = "Manifest"; //$NON-NLS-1$
+		ManifestNode parent = new ManifestNode(root, 0, id, doc, 0, doc.getLength());
+		monitor = beginWork(monitor);
+		StringBuffer headerBuffer = new StringBuffer();
+		int headerStart = 0;
+		while (true) {
+			lineStart = args[1]; // start of current line
+			String line = readLine(args, doc);
+			if (line == null)
+				return;
 
-				if (line.length() <= 0) {
-					saveNode(parent, doc, headerBuffer.toString(), headerStart); // empty line, save buffer to node
-					continue;
-				}
-				if (line.charAt(0) == ' ') {
-					if (headerBuffer.length() > 0)
-						headerBuffer.append(line);
-					continue;
-				}
-
-				// save old buffer and start loading again
-				saveNode(parent, doc, headerBuffer.toString(), headerStart);
-
-				headerStart = lineStart;
-				headerBuffer.replace(0, headerBuffer.length(), line);
-				worked(monitor);
+			if (line.length() <= 0) {
+				saveNode(parent, doc, headerBuffer.toString(), headerStart); // empty
+																				// line,
+																				// save
+																				// buffer
+																				// to
+																				// node
+				continue;
 			}
-		} finally {
-			monitor.done();
+			if (line.charAt(0) == ' ') {
+				if (headerBuffer.length() > 0)
+					headerBuffer.append(line);
+				continue;
+			}
+
+			// save old buffer and start loading again
+			saveNode(parent, doc, headerBuffer.toString(), headerStart);
+
+			headerStart = lineStart;
+			headerBuffer.replace(0, headerBuffer.length(), line);
+			worked(monitor);
 		}
 	}
 
@@ -124,9 +126,7 @@ public class ManifestStructureCreator extends StructureCreator {
 	}
 
 	private IProgressMonitor beginWork(IProgressMonitor monitor) {
-		if (monitor == null)
-			return new NullProgressMonitor();
-		return new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
+		return SubMonitor.convert(monitor);
 	}
 
 	private void saveNode(DocumentRangeNode root, IDocument doc, String header, int start) {

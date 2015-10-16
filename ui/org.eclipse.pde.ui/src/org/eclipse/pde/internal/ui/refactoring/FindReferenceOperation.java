@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
@@ -35,12 +36,11 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 	public void run(IProgressMonitor monitor) throws CoreException {
 		ArrayList<TextFileChange> list = new ArrayList<>();
 		if (fDesc != null) {
-			monitor.beginTask("", 3); //$NON-NLS-1$
-			findRequireBundleReferences(list, new SubProgressMonitor(monitor, 1));
-			findFragmentReferences(list, new SubProgressMonitor(monitor, 1));
-			findXFriendReferences(list, new SubProgressMonitor(monitor, 1));
+			SubMonitor subMonitor = SubMonitor.convert(monitor, 3);
+			findRequireBundleReferences(list, subMonitor.newChild(1));
+			findFragmentReferences(list, subMonitor.newChild(1));
+			findXFriendReferences(list, subMonitor.newChild(1));
 		}
-		monitor.done();
 		fChanges = list.toArray(new Change[list.size()]);
 	}
 
@@ -51,40 +51,39 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 	private void findRequireBundleReferences(ArrayList<TextFileChange> changes, IProgressMonitor monitor) throws CoreException {
 		String oldId = fDesc.getSymbolicName();
 		BundleDescription[] dependents = fDesc.getDependents();
-		monitor.beginTask("", dependents.length); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, dependents.length);
 		for (int i = 0; i < dependents.length; i++) {
 			BundleSpecification[] requires = dependents[i].getRequiredBundles();
-			boolean found = false;
+			SubMonitor iterationMonitor = subMonitor.newChild(1);
 			for (int j = 0; j < requires.length; j++) {
 				if (requires[j].getName().equals(oldId)) {
 					CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(PluginRegistry.findModel(dependents[i]), Constants.REQUIRE_BUNDLE, oldId, fNewId);
-					op.run(new SubProgressMonitor(monitor, 1));
+					op.run(iterationMonitor);
 					TextFileChange change = op.getChange();
-					if (change != null)
+					if (change != null) {
 						changes.add(change);
-					found = true;
+					}
 					break;
 				}
 			}
-			if (!found)
-				monitor.worked(1);
 		}
 	}
 
 	private void findFragmentReferences(ArrayList<TextFileChange> changes, IProgressMonitor monitor) throws CoreException {
 		BundleDescription[] fragments = fDesc.getFragments();
-		monitor.beginTask("", fragments.length); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, fragments.length);
 		String id = fDesc.getSymbolicName();
 		for (int i = 0; i < fragments.length; i++) {
 			IPluginModelBase base = PluginRegistry.findModel(fragments[i]);
+			SubMonitor iterationMonitor = subMonitor.newChild(1);
 			if (base instanceof IFragmentModel && id.equals(((IFragmentModel) (base)).getFragment().getPluginId())) {
 				CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(base, Constants.FRAGMENT_HOST, id, fNewId);
-				op.run(new SubProgressMonitor(monitor, 1));
+				op.run(iterationMonitor);
 				TextFileChange change = op.getChange();
-				if (change != null)
+				if (change != null) {
 					changes.add(change);
-			} else
-				monitor.worked(1);
+				}
+			}
 		}
 	}
 
@@ -92,14 +91,15 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		ExportPackageDescription[] pkgs = helper.getVisiblePackages(fDesc);
 		String id = fDesc.getSymbolicName();
-		monitor.beginTask("", pkgs.length); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, pkgs.length);
 		for (int i = 0; i < pkgs.length; i++) {
+			SubMonitor iterationMonitor = subMonitor.newChild(1);
 			String[] friends = (String[]) pkgs[i].getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
 			if (friends != null)
 				for (int j = 0; j < friends.length; j++) {
 					if (friends[j].equals(id)) {
 						CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(PluginRegistry.findModel(pkgs[i].getExporter()), Constants.EXPORT_PACKAGE, id, fNewId);
-						op.run(new SubProgressMonitor(monitor, 1));
+						op.run(iterationMonitor);
 						TextFileChange change = op.getChange();
 						if (change != null)
 							changes.add(change);

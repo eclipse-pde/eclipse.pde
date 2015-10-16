@@ -10,6 +10,7 @@
  *     Joern Dinkla <devnull@dinkla.com> - bug 210264
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 114080
  *     EclipseSource Corporation - ongoing enhancements
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 

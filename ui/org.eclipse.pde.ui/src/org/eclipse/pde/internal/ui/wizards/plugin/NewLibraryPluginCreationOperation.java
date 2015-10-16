@@ -10,6 +10,7 @@
  *     Code 9 Corporation - ongoing enhancements
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 109440
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 248852, bug 247553
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -98,28 +99,28 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		super.adjustManifests(monitor, project, base);
 		int units = fData.doFindDependencies() ? 4 : 2;
 		units += fData.isUpdateReferences() ? 1 : 0;
-		monitor.beginTask(new String(), units);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, units);
 		IBundle bundle = (base instanceof BundlePluginBase) ? ((BundlePluginBase) base).getBundle() : null;
 		if (bundle != null) {
 			adjustExportRoot(project, bundle);
-			monitor.worked(1);
+			subMonitor.worked(1);
 			addExportedPackages(project, bundle);
-			monitor.worked(1);
+			subMonitor.worked(1);
 			if (fData.doFindDependencies()) {
-				addDependencies(project, base.getModel(), new SubProgressMonitor(monitor, 2));
+				addDependencies(project, base.getModel(), subMonitor.newChild(2));
 			}
 			if (fData.isUpdateReferences()) {
-				updateReferences(monitor, project);
-				monitor.worked(1);
+				updateReferences(subMonitor.newChild(1), project);
 			}
 		}
-		monitor.done();
 	}
 
 	protected void updateReferences(IProgressMonitor monitor, IProject project) throws JavaModelException {
 		IJavaProject currentProject = JavaCore.create(project);
 		IPluginModelBase[] pluginstoUpdate = fData.getPluginsToUpdate();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, pluginstoUpdate.length);
 		for (int i = 0; i < pluginstoUpdate.length; ++i) {
+			SubMonitor iterationMonitor = subMonitor.newChild(1).setWorkRemaining(2);
 			IProject proj = pluginstoUpdate[i].getUnderlyingResource().getProject();
 			if (currentProject.getProject().equals(proj))
 				continue;
@@ -127,10 +128,11 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			IClasspathEntry[] cp = javaProject.getRawClasspath();
 			IClasspathEntry[] updated = getUpdatedClasspath(cp, currentProject);
 			if (updated != null) {
-				javaProject.setRawClasspath(updated, monitor);
+				javaProject.setRawClasspath(updated, iterationMonitor.newChild(1));
 			}
+			iterationMonitor.setWorkRemaining(1);
 			try {
-				updateRequiredPlugins(javaProject, monitor, pluginstoUpdate[i]);
+				updateRequiredPlugins(javaProject, iterationMonitor.newChild(1), pluginstoUpdate[i]);
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			}
@@ -170,9 +172,11 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			manifest.getMainAttributes().putValue(Constants.REQUIRE_BUNDLE, sb.toString());
 			ByteArrayOutputStream content = new ByteArrayOutputStream();
 			manifest.write(content);
-			file.setContents(new ByteArrayInputStream(content.toByteArray()), true, false, monitor);
+			SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
+			file.setContents(new ByteArrayInputStream(content.toByteArray()), true, false, subMonitor.newChild(1));
 			// now update .classpath
-			javaProject.setRawClasspath(classpath.toArray(new IClasspathEntry[classpath.size()]), monitor);
+			javaProject.setRawClasspath(classpath.toArray(new IClasspathEntry[classpath.size()]),
+					subMonitor.newChild(1));
 //			ClasspathComputer.setClasspath(javaProject.getProject(), model);
 		} catch (IOException e) {
 		} catch (CoreException e) {
@@ -275,27 +279,29 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 	protected void createContents(IProgressMonitor monitor, IProject project) throws CoreException, JavaModelException, InvocationTargetException, InterruptedException {
 		// copy jars
 		String[] paths = fData.getLibraryPaths();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, paths.length + 2);
 		for (int i = paths.length - 1; i >= 0; i--) {
 			File jarFile = new File(paths[i]);
 			if (fData.isUnzipLibraries()) {
-				importJar(jarFile, project, monitor);
+				importJar(jarFile, project, subMonitor.newChild(1));
 			} else {
-				addJar(jarFile, project, monitor);
+				addJar(jarFile, project, subMonitor);
 			}
-			monitor.worked(1);
 		}
 
 		// delete manifest.mf imported from libraries
 		IFile importedManifest = PDEProject.getManifest(project);
 		if (importedManifest.exists()) {
-			importedManifest.delete(true, false, monitor);
+			importedManifest.delete(true, false, subMonitor.newChild(1));
+			subMonitor.setWorkRemaining(1);
 			if (!fData.hasBundleStructure()) {
 				IFolder meta_inf = project.getFolder("META-INF"); //$NON-NLS-1$
 				if (meta_inf.members().length == 0) {
-					meta_inf.delete(true, false, monitor);
+					meta_inf.delete(true, false, subMonitor.newChild(1));
 				}
 			}
 		}
+		subMonitor.setWorkRemaining(0);
 	}
 
 	@Override
@@ -523,7 +529,6 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 	private void addDependencies(IProject project, ISharedPluginModel model, IProgressMonitor monitor) {
 		if (!(model instanceof IBundlePluginModelBase)) {
-			monitor.done();
 			return;
 		}
 		final boolean unzip = fData.isUnzipLibraries();

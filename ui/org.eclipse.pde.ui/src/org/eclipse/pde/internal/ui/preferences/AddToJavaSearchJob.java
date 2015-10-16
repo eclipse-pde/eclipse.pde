@@ -7,11 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
-
-import org.eclipse.pde.core.target.TargetBundle;
-import org.eclipse.pde.core.target.ITargetDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +18,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -102,65 +102,61 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		int ticks = fTargetDefinition != null ? 100 : 25;
 		SubMonitor subMon = SubMonitor.convert(monitor, ticks);
-		try {
-			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
+		if (subMon.isCanceled()) {
+			return Status.CANCEL_STATUS;
+		}
 
-			SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
+		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 
-			// If synching with a target, clear the project and check that the target is resolved
-			if (fTargetDefinition != null) {
+		// If synching with a target, clear the project and check that the
+		// target is resolved
+		if (fTargetDefinition != null) {
 
-				manager.removeAllFromJavaSearch();
+			manager.removeAllFromJavaSearch();
 
-				if (!fTargetDefinition.isResolved()) {
-					IStatus status = fTargetDefinition.resolve(subMon.newChild(50));
-					if (!status.isOK()) {
-						return status;
-					}
-					subMon.subTask(""); //$NON-NLS-1$
-				} else {
-					subMon.worked(50);
+			if (!fTargetDefinition.isResolved()) {
+				IStatus status = fTargetDefinition.resolve(subMon.newChild(50));
+				if (!status.isOK()) {
+					return status;
 				}
-
-				if (monitor.isCanceled()) {
-					return Status.CANCEL_STATUS;
-				}
-
-				TargetBundle[] bundles = fTargetDefinition.getBundles();
-				fAdd = true;
-				List<IPluginModelBase> models = new ArrayList<>(bundles.length);
-				for (int index = 0; index < bundles.length; index++) {
-					IPluginModelBase model = PluginRegistry.findModel(bundles[index].getBundleInfo().getSymbolicName());
-					if (model != null) {
-						models.add(model);
-					}
-				}
-				subMon.worked(25);
-				fBundles = models.toArray(new IPluginModelBase[models.size()]);
-			}
-
-			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
-
-			if (fAdd) {
-				manager.addToJavaSearch(fBundles);
+				subMon.subTask(""); //$NON-NLS-1$
 			} else {
-				if (fBundles != null) {
-					manager.removeFromJavaSearch(fBundles);
-				} else {
-					manager.removeAllFromJavaSearch();
+				subMon.worked(50);
+			}
+
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+
+			TargetBundle[] bundles = fTargetDefinition.getBundles();
+			fAdd = true;
+			List<IPluginModelBase> models = new ArrayList<>(bundles.length);
+			for (int index = 0; index < bundles.length; index++) {
+				IPluginModelBase model = PluginRegistry.findModel(bundles[index].getBundleInfo().getSymbolicName());
+				if (model != null) {
+					models.add(model);
 				}
 			}
 			subMon.worked(25);
-
-			return Status.OK_STATUS;
-
-		} finally {
-			monitor.done();
+			fBundles = models.toArray(new IPluginModelBase[models.size()]);
 		}
+
+		if (subMon.isCanceled()) {
+			return Status.CANCEL_STATUS;
+		}
+
+		if (fAdd) {
+			manager.addToJavaSearch(fBundles);
+		} else {
+			if (fBundles != null) {
+				manager.removeFromJavaSearch(fBundles);
+			} else {
+				manager.removeAllFromJavaSearch();
+			}
+		}
+		subMon.worked(25);
+
+		return Status.OK_STATUS;
 	}
 
 	@Override

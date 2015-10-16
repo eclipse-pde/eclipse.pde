@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
@@ -67,12 +68,14 @@ public class DependencyExtentOperation {
 
 	public void execute(IProgressMonitor monitor) {
 		IPluginModelBase[] plugins = PluginJavaSearchUtil.getPluginImports(fImportID);
-		monitor.beginTask(PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10); //$NON-NLS-1$//$NON-NLS-2$
-		checkForJavaDependencies(plugins, new SubProgressMonitor(monitor, 9));
+		SubMonitor subMonitor = SubMonitor.convert(monitor,
+				PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10); //$NON-NLS-1$//$NON-NLS-2$
+		checkForJavaDependencies(plugins, subMonitor.newChild(9));
+		subMonitor.setWorkRemaining(plugins.length);
 		for (int i = 0; i < plugins.length; i++) {
 			checkForExtensionPointsUsed(plugins[i]);
+			subMonitor.worked(1);
 		}
-		monitor.done();
 	}
 
 	private void checkForExtensionPointsUsed(IPluginModelBase model) {
@@ -132,8 +135,6 @@ public class DependencyExtentOperation {
 				monitor.worked(1);
 			}
 		} catch (CoreException e) {
-		} finally {
-			monitor.done();
 		}
 	}
 

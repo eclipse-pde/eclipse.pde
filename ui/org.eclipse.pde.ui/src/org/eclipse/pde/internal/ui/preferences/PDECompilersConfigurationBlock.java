@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - on going enhancements and maintenance
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
@@ -908,33 +909,32 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 					} else {
 						projects = new IProject[] {fProject};
 					}
-					monitor.beginTask("", projects.length * 2); //$NON-NLS-1$
+					SubMonitor subMonitor = SubMonitor.convert(monitor, projects.length * 2);
 					for (int i = 0; i < projects.length; i++) {
+						SubMonitor iterationMonitor = subMonitor.newChild(2).setWorkRemaining(2);
 						IProject projectToBuild = projects[i];
 						if (!projectToBuild.isOpen())
 							continue;
 						if (projectToBuild.hasNature(PDE.PLUGIN_NATURE)) {
-							if (fBuilders.contains(PDE.MANIFEST_BUILDER_ID))
-								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.MANIFEST_BUILDER_ID, null, new SubProgressMonitor(monitor, 1));
-							else
-								monitor.worked(1);
-							if (fBuilders.contains(PDE.SCHEMA_BUILDER_ID))
-								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.SCHEMA_BUILDER_ID, null, new SubProgressMonitor(monitor, 1));
-							else
-								monitor.worked(1);
+							if (fBuilders.contains(PDE.MANIFEST_BUILDER_ID)) {
+								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.MANIFEST_BUILDER_ID,
+										null, iterationMonitor.newChild(1));
+							}
+							if (fBuilders.contains(PDE.SCHEMA_BUILDER_ID)) {
+								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.SCHEMA_BUILDER_ID, null,
+										iterationMonitor.newChild(1));
+							}
 						} else if (projectToBuild.hasNature(PDE.FEATURE_NATURE)) {
-							if (fBuilders.contains(PDE.FEATURE_BUILDER_ID))
-								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.FEATURE_BUILDER_ID, null, new SubProgressMonitor(monitor, 2));
-						} else {
-							monitor.worked(2);
+							if (fBuilders.contains(PDE.FEATURE_BUILDER_ID)) {
+								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.FEATURE_BUILDER_ID, null,
+										iterationMonitor.newChild(2));
+							}
 						}
 					}
 				} catch (CoreException e) {
 					return e.getStatus();
 				} catch (OperationCanceledException e) {
 					return Status.CANCEL_STATUS;
-				} finally {
-					monitor.done();
 				}
 				return Status.OK_STATUS;
 			}

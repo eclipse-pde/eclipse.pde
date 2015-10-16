@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -38,10 +39,11 @@ public class AddNewBinaryDependenciesOperation extends AddNewDependenciesOperati
 
 	@Override
 	protected void findSecondaryDependencies(String[] secDeps, Set<String> ignorePkgs, Map<ExportPackageDescription, String> additionalDeps, IBundle bundle, boolean useRequireBundle, IProgressMonitor monitor) {
-		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_searchProject, 100);
-		Set<?> projectPkgs = PackageFinder.findPackagesInClassFiles(fClassFiles, new SubProgressMonitor(monitor, 75));
+		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.AddNewDependenciesOperation_searchProject,
+				100);
+		Set<?> projectPkgs = PackageFinder.findPackagesInClassFiles(fClassFiles, subMonitor.newChild(75));
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IProgressMonitor searchMonitor = new SubProgressMonitor(monitor, 25);
+		IProgressMonitor searchMonitor = subMonitor.newChild(25);
 		searchMonitor.beginTask("", secDeps.length); //$NON-NLS-1$
 		for (int i = 0; i < secDeps.length; i++) {
 			IPluginModelBase base = manager.findModel(secDeps[i]);

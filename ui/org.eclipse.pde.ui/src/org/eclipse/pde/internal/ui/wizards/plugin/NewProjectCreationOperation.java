@@ -10,6 +10,7 @@
  *     Brock Janiczak <brockj@tpg.com.au> - bug 201044
  *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 179213
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 247553
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -264,20 +265,21 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 
+		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.NewProjectCreationOperation_creating,
+				getNumberOfWorkUnits());
+
 		// start task
-		monitor.beginTask(PDEUIMessages.NewProjectCreationOperation_creating, getNumberOfWorkUnits());
-		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_project);
+		subMonitor.subTask(PDEUIMessages.NewProjectCreationOperation_project);
 
 		// create project
 		IProject project = createProject();
-		monitor.worked(1);
-		createContents(monitor, project);
+		createContents(subMonitor.newChild(1), project);
 
 		// set classpath if project has a Java nature
 		if (project.hasNature(JavaCore.NATURE_ID)) {
-			monitor.subTask(PDEUIMessages.NewProjectCreationOperation_setClasspath);
+			subMonitor.subTask(PDEUIMessages.NewProjectCreationOperation_setClasspath);
 			setClasspath(project, fData);
-			monitor.worked(1);
+			subMonitor.worked(1);
 		}
 
 		if (fData instanceof PluginFieldData) {
@@ -285,7 +287,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 			// generate top-level Java class if that option is selected
 			if (data.doGenerateClass()) {
-				generateTopLevelPluginClass(project, new SubProgressMonitor(monitor, 1));
+				generateTopLevelPluginClass(project, subMonitor.newChild(1));
 			}
 
 			// add API Tools nature if requested
@@ -295,19 +297,19 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 		}
 		// generate the manifest file
-		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile);
+		subMonitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile);
 		createManifest(project);
-		monitor.worked(1);
+		subMonitor.worked(1);
 
 		// generate the build.properties file
-		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_buildPropertiesFile);
+		subMonitor.subTask(PDEUIMessages.NewProjectCreationOperation_buildPropertiesFile);
 		createBuildPropertiesFile(project);
-		monitor.worked(1);
+		subMonitor.worked(1);
 
 		// generate content contributed by template wizards
 		boolean contentWizardResult = true;
 		if (fContentWizard != null) {
-			contentWizardResult = fContentWizard.performFinish(project, fModel, new SubProgressMonitor(monitor, 1));
+			contentWizardResult = fContentWizard.performFinish(project, fModel, subMonitor.newChild(1));
 		}
 
 		if (fData instanceof AbstractFieldData) {
@@ -329,12 +331,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 
 		if (fData.hasBundleStructure() && fModel instanceof WorkspaceBundlePluginModelBase) {
-			adjustManifests(new SubProgressMonitor(monitor, 1), project, fModel.getPluginBase());
+			adjustManifests(subMonitor.newChild(1), project, fModel.getPluginBase());
 		}
 
 		fModel.save();
 		openFile((IFile) fModel.getUnderlyingResource());
-		monitor.worked(1);
+		subMonitor.worked(1);
 
 		fResult = contentWizardResult;
 	}
@@ -378,7 +380,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		PluginFieldData data = (PluginFieldData) fData;
 		fGenerator = new PluginClassCodeGenerator(project, data.getClassname(), data, fContentWizard != null);
 		fGenerator.generate(monitor);
-		monitor.done();
 	}
 
 	private IClasspathEntry[] getClassPathEntries(IJavaProject project, IFieldData data) {
