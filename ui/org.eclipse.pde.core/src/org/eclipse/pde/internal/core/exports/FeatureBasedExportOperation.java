@@ -47,8 +47,8 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 			if (fInfo.useJarFormat) {
 				createPostProcessingFiles();
 			}
-			IStatus status = testBuildWorkspaceBeforeExport(subMonitor.newChild(10));
-			doExport(featureID, null, fFeatureLocation, config, subMonitor.newChild(20));
+			IStatus status = testBuildWorkspaceBeforeExport(subMonitor.split(10));
+			doExport(featureID, null, fFeatureLocation, config, subMonitor.split(20));
 			if (subMonitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -68,7 +68,7 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 						PDECore.log(e);
 					}
 			}
-			cleanup(null, subMonitor.newChild(3));
+			cleanup(null, subMonitor.split(3));
 		}
 	}
 

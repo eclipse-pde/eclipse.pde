@@ -94,14 +94,14 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		SubMonitor subMonitor = SubMonitor.convert(monitor,
 				PDEUIMessages.UpdateSplashProgressAction_msgProgressCustomizingSplash, 1);
 		// Perform the operation
-		update(subMonitor.newChild(1));
+		update(subMonitor.split(1));
 	}
 
 	private void update(IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
 		// Find the product extension
 		IPluginExtension productExtension = findProductExtension();
-		subMonitor.newChild(1);
+		subMonitor.split(1);
 		// Ensure product extension exists
 		if (productExtension == null) {
 			// Something is seriously wrong
@@ -109,7 +109,7 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		}
 		// Find the product element
 		IPluginElement productElement = findProductElement(productExtension);
-		subMonitor.newChild(1);
+		subMonitor.split(1);
 		// Ensure product element exists
 		if (productElement == null) {
 			// Something is seriously wrong
@@ -117,12 +117,12 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		}
 		// Find the preference customization property
 		IPluginElement propertyElement = findPrefCustPropertyElement(productElement);
-		subMonitor.newChild(1);
+		subMonitor.split(1);
 		if ((propertyElement == null) && fShowProgress) {
 			// Operation: Add progress
 			// The preference customization property does not exist
 			// Create it
-			addPreferenceCustomizationElement(productElement, subMonitor.newChild(1));
+			addPreferenceCustomizationElement(productElement, subMonitor.split(1));
 		} else if (propertyElement == null) {
 			// Operation: Remove progress
 			// The preference customization property does not exist
@@ -132,12 +132,12 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 			// Its values will be loaded.
 			// Therefore, since it is possible for a the show progress on
 			// startup key to be present and true, make it false
-			updateDefaultPluginCustomizationFile(subMonitor.newChild(1));
+			updateDefaultPluginCustomizationFile(subMonitor.split(1));
 		} else {
 			// Operations: Add progress, Remove progress
 			// The preference customization property exists
 			// Update it
-			updatePreferenceCustomizationElement(propertyElement, subMonitor.newChild(1));
+			updatePreferenceCustomizationElement(propertyElement, subMonitor.split(1));
 		}
 	}
 
@@ -262,7 +262,7 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		LocationKind kind = LocationKind.IFILE;
 		// Connect to the text file buffer manager
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 3);
-		getTextFileBufferManager().connect(path, kind, subMonitor.newChild(1));
+		getTextFileBufferManager().connect(path, kind, subMonitor.split(1));
 		try {
 			// Create the plugin customization model
 			BuildModel pluginCustomModel = getBuildModel(file);
@@ -281,14 +281,14 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 				updateShowProgressEntry(showProgressEntry);
 			}
 			// Save plugin customization file changes
-			savePluginCustomFileChanges(pluginCustomModel, subMonitor.newChild(1));
+			savePluginCustomFileChanges(pluginCustomModel, subMonitor.split(1));
 		} catch (MalformedTreeException e) {
 			throw createCoreException(PDEUIMessages.UpdateSplashProgressAction_msgErrorCustomFileSaveFailed, e);
 		} catch (BadLocationException e) {
 			throw createCoreException(PDEUIMessages.UpdateSplashProgressAction_msgErrorCustomFileSaveFailed, e);
 		} finally {
 			// Disconnect from the text file buffer manager
-			getTextFileBufferManager().disconnect(path, kind, subMonitor.newChild(1));
+			getTextFileBufferManager().disconnect(path, kind, subMonitor.split(1));
 		}
 	}
 
@@ -322,7 +322,7 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 			return;
 		}
 		// Perform the actual save
-		fTextFileBuffer.commit(subMonitor.newChild(1), true);
+		fTextFileBuffer.commit(subMonitor.split(1), true);
 	}
 
 	private String getBooleanValue(boolean value) {
@@ -431,9 +431,9 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		if (isFileExist(resource)) {
 			// File exists in the project
 			// Update it
-			updatePluginCustomizationFile((IFile) resource, subMonitor.newChild(1));
+			updatePluginCustomizationFile((IFile) resource, subMonitor.split(1));
 		} else {
-			subMonitor.newChild(1);
+			subMonitor.split(1);
 			// File does not exist in the project
 			// Create the plugin customization ini file
 			createPluginCustomizationFile();
@@ -447,7 +447,7 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		if (isFileExist(resource)) {
 			// File exists in the project
 			// Update it
-			updatePluginCustomizationFile((IFile) resource, subMonitor.newChild(1));
+			updatePluginCustomizationFile((IFile) resource, subMonitor.split(1));
 		}
 	}
 

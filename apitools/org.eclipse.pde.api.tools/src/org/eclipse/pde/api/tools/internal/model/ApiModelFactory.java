@@ -270,7 +270,7 @@ public class ApiModelFactory {
 				ITargetLocation container = service.newProfileLocation(installLocation, null);
 				ITargetDefinition definition = service.newTarget();
 				subMonitor.subTask(Messages.resolving_target_definition);
-				container.resolve(definition, subMonitor.newChild(30));
+				container.resolve(definition, subMonitor.split(30));
 				Util.updateMonitor(subMonitor, 1);
 				TargetBundle[] bundles = container.getBundles();
 				List<IApiComponent> components = new ArrayList<>();
@@ -323,7 +323,7 @@ public class ApiModelFactory {
 
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.configuring_baseline, 50);
 		try {
-			IStatus result = definition.resolve(subMonitor.newChild(30));
+			IStatus result = definition.resolve(subMonitor.split(30));
 			if (!result.isOK()) {
 				throw new CoreException(result);
 			}

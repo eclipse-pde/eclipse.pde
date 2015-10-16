@@ -380,12 +380,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, autoValidate ? 3 : 4);
 		if (autoValidate)
-			validatePluginDependencies(configuration, subMonitor.newChild(1));
-		validateProjectDependencies(configuration, subMonitor.newChild(1));
+			validatePluginDependencies(configuration, subMonitor.split(1));
+		validateProjectDependencies(configuration, subMonitor.split(1));
 		LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
-		clear(configuration, subMonitor.newChild(1));
+		clear(configuration, subMonitor.split(1));
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigurationDirectory(configuration).toString());
-		synchronizeManifests(configuration, subMonitor.newChild(1));
+		synchronizeManifests(configuration, subMonitor.split(1));
 	}
 
 	private String[] getRequiredPlugins(ILaunchConfiguration configuration) {

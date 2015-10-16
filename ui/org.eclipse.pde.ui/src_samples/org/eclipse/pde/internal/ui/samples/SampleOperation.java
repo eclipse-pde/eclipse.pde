@@ -72,7 +72,7 @@ public class SampleOperation implements IRunnableWithProgress {
 					try {
 						for (int i = 0; i < projects.length; i++) {
 							IFile file = importProject(projectNames[i], projects[i],
-									subMonitor.newChild(1));
+									subMonitor.split(1));
 							if (file != null && sampleManifest == null)
 								sampleManifest = file;
 							if (file != null) {
@@ -129,7 +129,7 @@ public class SampleOperation implements IRunnableWithProgress {
 				}
 			}
 			if (!skip) {
-				project.delete(true, true, subMonitor.newChild(1));
+				project.delete(true, true, subMonitor.split(1));
 				project = root.getProject(name);
 			} else {
 				subMonitor.worked(1);
@@ -141,12 +141,12 @@ public class SampleOperation implements IRunnableWithProgress {
 			return manifest;
 		}
 
-		project.create(subMonitor.newChild(1));
-		project.open(subMonitor.newChild(1));
+		project.create(subMonitor.split(1));
+		project.open(subMonitor.split(1));
 		Bundle bundle = Platform.getBundle(sample.getNamespaceIdentifier());
 		ZipFile zipFile = getZipFileFromPluginDir(path, bundle);
-		importFilesFromZip(zipFile, project.getFullPath(), subMonitor.newChild(1));
-		return createSampleManifest(project, config, subMonitor.newChild(1));
+		importFilesFromZip(zipFile, project.getFullPath(), subMonitor.split(1));
+		return createSampleManifest(project, config, subMonitor.split(1));
 	}
 
 	private IFile createSampleManifest(IProject project, IConfigurationElement config, IProgressMonitor monitor) throws CoreException {

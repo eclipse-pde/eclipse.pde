@@ -37,9 +37,9 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		ArrayList<TextFileChange> list = new ArrayList<>();
 		if (fDesc != null) {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 3);
-			findRequireBundleReferences(list, subMonitor.newChild(1));
-			findFragmentReferences(list, subMonitor.newChild(1));
-			findXFriendReferences(list, subMonitor.newChild(1));
+			findRequireBundleReferences(list, subMonitor.split(1));
+			findFragmentReferences(list, subMonitor.split(1));
+			findXFriendReferences(list, subMonitor.split(1));
 		}
 		fChanges = list.toArray(new Change[list.size()]);
 	}
@@ -54,7 +54,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, dependents.length);
 		for (int i = 0; i < dependents.length; i++) {
 			BundleSpecification[] requires = dependents[i].getRequiredBundles();
-			SubMonitor iterationMonitor = subMonitor.newChild(1);
+			SubMonitor iterationMonitor = subMonitor.split(1);
 			for (int j = 0; j < requires.length; j++) {
 				if (requires[j].getName().equals(oldId)) {
 					CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(PluginRegistry.findModel(dependents[i]), Constants.REQUIRE_BUNDLE, oldId, fNewId);
@@ -75,7 +75,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		String id = fDesc.getSymbolicName();
 		for (int i = 0; i < fragments.length; i++) {
 			IPluginModelBase base = PluginRegistry.findModel(fragments[i]);
-			SubMonitor iterationMonitor = subMonitor.newChild(1);
+			SubMonitor iterationMonitor = subMonitor.split(1);
 			if (base instanceof IFragmentModel && id.equals(((IFragmentModel) (base)).getFragment().getPluginId())) {
 				CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(base, Constants.FRAGMENT_HOST, id, fNewId);
 				op.run(iterationMonitor);
@@ -93,7 +93,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		String id = fDesc.getSymbolicName();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, pkgs.length);
 		for (int i = 0; i < pkgs.length; i++) {
-			SubMonitor iterationMonitor = subMonitor.newChild(1);
+			SubMonitor iterationMonitor = subMonitor.split(1);
 			String[] friends = (String[]) pkgs[i].getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
 			if (friends != null)
 				for (int j = 0; j < friends.length; j++) {

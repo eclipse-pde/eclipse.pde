@@ -75,8 +75,8 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 		SubMonitor subMonitor = SubMonitor.convert(monitor, resolveBundlesWork + resolveFeaturesWork);
 		try {
 			fResolutionStatus = Status.OK_STATUS;
-			fBundles = resolveBundles(definition, subMonitor.newChild(resolveBundlesWork));
-			fFeatures = resolveFeatures(definition, subMonitor.newChild(resolveFeaturesWork));
+			fBundles = resolveBundles(definition, subMonitor.split(resolveBundlesWork));
+			fFeatures = resolveFeatures(definition, subMonitor.split(resolveFeaturesWork));
 			if (subMonitor.isCanceled()) {
 				fBundles = null;
 				fResolutionStatus = Status.CANCEL_STATUS;

@@ -187,7 +187,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK,
 				PDEUIMessages.ImportWizard_operation_multiProblem, null);
 
-		deleteConflictingProjects(multiStatus, subMonitor.newChild(2));
+		deleteConflictingProjects(multiStatus, subMonitor.split(2));
 		if (subMonitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
@@ -202,7 +202,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				ScmUrlImportDescription[] descriptions = entry.getValue();
 				if (descriptions.length == 0)
 					continue;
-				IProject[] importedProjects = importer.performImport(descriptions, subMonitor.newChild(1));
+				IProject[] importedProjects = importer.performImport(descriptions, subMonitor.split(1));
 				if (importedProjects != null && importedProjects.length == descriptions.length)
 					continue;
 
@@ -243,13 +243,13 @@ public class PluginImportOperation extends WorkspaceJob {
 				subMonitor.setTaskName(NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin,
 						fModels[i].getPluginBase().getId()));
 				try {
-					importPlugin(fModels[i], fImportType, subMonitor.newChild(1));
+					importPlugin(fModels[i], fImportType, subMonitor.split(1));
 				} catch (CoreException e) {
 					multiStatus.merge(e.getStatus());
 				}
 				if (subMonitor.isCanceled()) {
 					try {
-						setClasspaths(subMonitor.newChild(1));
+						setClasspaths(subMonitor.split(1));
 					} catch (JavaModelException e) {
 						/* Do nothing as we are already cancelled */
 					}
@@ -258,7 +258,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 			subMonitor.setTaskName(PDEUIMessages.PluginImportOperation_Set_up_classpaths);
 			try {
-				setClasspaths(subMonitor.newChild(1));
+				setClasspaths(subMonitor.split(1));
 			} catch (JavaModelException e) {
 				multiStatus.merge(e.getStatus());
 			}
@@ -400,7 +400,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			IProject project = keys.nextElement();
 			IClasspathEntry[] classpath = fProjectClasspaths.get(project);
 			subMonitor.subTask(project.getName());
-			JavaCore.create(project).setRawClasspath(classpath, subMonitor.newChild(1));
+			JavaCore.create(project).setRawClasspath(classpath, subMonitor.split(1));
 		}
 	}
 
@@ -417,7 +417,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 5);
 
 		// Create the project or ask to overwrite if project exists
-		IProject project = createProject(model, subMonitor.newChild(1));
+		IProject project = createProject(model, subMonitor.split(1));
 		if (project == null) {
 			return;
 		}
@@ -434,7 +434,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				File projectFile = new File(location, ".project"); //$NON-NLS-1$
 				if (classpathFile.exists() && classpathFile.isFile() && projectFile.exists() && projectFile.isFile()) {
 					PluginImportHelper.importContent(location, project.getFullPath(),
-							FileSystemStructureProvider.INSTANCE, null, subMonitor.newChild(4));
+							FileSystemStructureProvider.INSTANCE, null, subMonitor.split(4));
 					return;
 				}
 			}
@@ -443,11 +443,11 @@ public class PluginImportOperation extends WorkspaceJob {
 		// Perform the import
 		Map<String, IPath> sourceMap = null;
 		if (importType == IMPORT_BINARY || (importType == IMPORT_WITH_SOURCE && !canFindSource(model))) {
-			sourceMap = importAsBinary(project, model, subMonitor.newChild(4));
+			sourceMap = importAsBinary(project, model, subMonitor.split(4));
 		} else if (importType == IMPORT_BINARY_WITH_LINKS) {
-			sourceMap = importAsBinaryWithLinks(project, model, subMonitor.newChild(4));
+			sourceMap = importAsBinaryWithLinks(project, model, subMonitor.split(4));
 		} else if (importType == IMPORT_WITH_SOURCE) {
-			importAsSource(project, model, subMonitor.newChild(4));
+			importAsSource(project, model, subMonitor.split(4));
 		}
 
 		setProjectNatures(project, model);
@@ -471,22 +471,22 @@ public class PluginImportOperation extends WorkspaceJob {
 		// Import the plug-in content
 		File srcFile = new File(model.getInstallLocation());
 		if (isJARd(model)) {
-			PluginImportHelper.copyArchive(srcFile, project.getFile(srcFile.getName()), subMonitor.newChild(1));
+			PluginImportHelper.copyArchive(srcFile, project.getFile(srcFile.getName()), subMonitor.split(1));
 		} else {
 			PluginImportHelper.importContent(new File(model.getInstallLocation()), project.getFullPath(),
-					FileSystemStructureProvider.INSTANCE, null, subMonitor.newChild(1));
+					FileSystemStructureProvider.INSTANCE, null, subMonitor.split(1));
 		}
 
 		// Import source from known source locations
-		Map<String, IPath> sourceMap = importSourceArchives(project, model, IMPORT_BINARY, subMonitor.newChild(1));
+		Map<String, IPath> sourceMap = importSourceArchives(project, model, IMPORT_BINARY, subMonitor.split(1));
 
 		// Import additional source files such as schema files for easy access,
 		// see bug 139161
-		importAdditionalSourceFiles(project, model, subMonitor.newChild(1));
+		importAdditionalSourceFiles(project, model, subMonitor.split(1));
 
 		// Extract the required bundle files and modify the imported manifest to
 		// have the correct classpath
-		importRequiredPluginFiles(project, model, subMonitor.newChild(1));
+		importRequiredPluginFiles(project, model, subMonitor.split(1));
 		modifyBundleClasspathHeader(project, model);
 
 		// Mark the project as binary
@@ -511,23 +511,23 @@ public class PluginImportOperation extends WorkspaceJob {
 		File srcFile = new File(model.getInstallLocation());
 		if (srcFile.isFile()) {
 			IFile dstFile = project.getFile(new Path(srcFile.getName()));
-			dstFile.createLink(srcFile.toURI(), IResource.NONE, subMonitor.newChild(1));
+			dstFile.createLink(srcFile.toURI(), IResource.NONE, subMonitor.split(1));
 		} else {
 			IFolder dstFile = project.getFolder(new Path(srcFile.getName()));
-			dstFile.createLink(srcFile.toURI(), IResource.NONE, subMonitor.newChild(1));
+			dstFile.createLink(srcFile.toURI(), IResource.NONE, subMonitor.split(1));
 		}
 
 		// Link source from known source locations
 		Map<String, IPath> sourceMap = importSourceArchives(project, model, IMPORT_BINARY_WITH_LINKS,
-				subMonitor.newChild(1));
+				subMonitor.split(1));
 
 		// Import additional source files such as schema files for easy access,
 		// see bug 139161
-		importAdditionalSourceFiles(project, model, subMonitor.newChild(1));
+		importAdditionalSourceFiles(project, model, subMonitor.split(1));
 
 		// Extract the required bundle files and modify the imported manifest to
 		// have the correct classpath
-		importRequiredPluginFiles(project, model, subMonitor.newChild(1));
+		importRequiredPluginFiles(project, model, subMonitor.split(1));
 		modifyBundleClasspathHeader(project, model);
 
 		// Mark the project as binary
@@ -553,19 +553,19 @@ public class PluginImportOperation extends WorkspaceJob {
 			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(PDEProject.getBuildProperties(project));
 			Map<IPath, IPath> packageLocations = new HashMap<>(); // maps package path to a src folder
 			boolean sourceFound = extractSourceFolders(project, model, buildModel, packageLocations,
-					subMonitor.newChild(1));
+					subMonitor.split(1));
 			// If no source was found previously, check if there was a source folder (src) inside the binary plug-in
 			if (!sourceFound) {
 				sourceFound = handleInternalSource(model, buildModel, packageLocations);
 			}
 
 			// Extract additional non-java files from the source bundles
-			importAdditionalSourceFiles(project, model, subMonitor.newChild(1));
+			importAdditionalSourceFiles(project, model, subMonitor.split(1));
 
 			// Extract the binary plug-in (for non-class files)
 			// Use the package locations map to put files that belong in the package directory structure into the proper source directory
 			if (isJARd(model)) {
-				SubMonitor iterationMonitor = subMonitor.newChild(1);
+				SubMonitor iterationMonitor = subMonitor.split(1);
 				ZipFile zip = null;
 				try {
 					zip = new ZipFile(new File(model.getInstallLocation()));
@@ -586,7 +586,7 @@ public class PluginImportOperation extends WorkspaceJob {
 					}
 				}
 			} else {
-				SubMonitor iterationMonitor = subMonitor.newChild(1);
+				SubMonitor iterationMonitor = subMonitor.split(1);
 				Map<IPath, List<Object>> collected = new HashMap<>();
 				File srcFile = new File(model.getInstallLocation());
 				PluginImportHelper.collectBinaryFiles(FileSystemStructureProvider.INSTANCE, srcFile, packageLocations, collected);
@@ -865,10 +865,10 @@ public class PluginImportOperation extends WorkspaceJob {
 					if (project.findMember(dstPath) == null) {
 						if (mode == IMPORT_BINARY) {
 							PluginImportHelper.copyArchive(new File(srcPath.toOSString()), project.getFile(dstPath),
-									subMonitor.newChild(1));
+									subMonitor.split(1));
 						} else if (mode == IMPORT_BINARY_WITH_LINKS) {
 							IFile dstFile = project.getFile(dstPath);
-							dstFile.createLink(srcPath, IResource.NONE, subMonitor.newChild(1));
+							dstFile.createLink(srcPath, IResource.NONE, subMonitor.split(1));
 						}
 					}
 				}
@@ -916,7 +916,7 @@ public class PluginImportOperation extends WorkspaceJob {
 							}
 							Set<IPath> collectedPackages = new HashSet<>();
 							PluginImportHelper.extractJavaSourceFromArchive(srcFile, excludeFolders,
-									destination.getFullPath(), collectedPackages, subMonitor.newChild(1));
+									destination.getFullPath(), collectedPackages, subMonitor.split(1));
 							addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 							addPackageEntries(collectedPackages, new Path(DEFAULT_SOURCE_DIR), packageLocations);
 
@@ -926,7 +926,7 @@ public class PluginImportOperation extends WorkspaceJob {
 						if (!project.getFolder(sourceDir).exists()) {
 							Set<IPath> collectedPackages = new HashSet<>();
 							PluginImportHelper.extractFolderFromArchive(srcFile, sourceDir, project.getFullPath(),
-									collectedPackages, subMonitor.newChild(1));
+									collectedPackages, subMonitor.split(1));
 							addBuildEntry(buildModel, "source." + libraries[i], sourceDir.toString()); //$NON-NLS-1$
 							addPackageEntries(collectedPackages, sourceDir, packageLocations);
 						}
@@ -948,7 +948,7 @@ public class PluginImportOperation extends WorkspaceJob {
 					if (!destination.exists()) {
 						Set<IPath> collectedPackages = new HashSet<>();
 						PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(),
-								collectedPackages, subMonitor.newChild(1));
+								collectedPackages, subMonitor.split(1));
 						addBuildEntry(buildModel, "source." + libraries[i], dstPath.toString()); //$NON-NLS-1$
 						addPackageEntries(collectedPackages, dstPath, packageLocations);
 					}

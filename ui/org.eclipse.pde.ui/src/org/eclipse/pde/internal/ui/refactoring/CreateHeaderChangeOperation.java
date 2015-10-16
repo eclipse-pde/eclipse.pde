@@ -62,7 +62,7 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 	protected TextFileChange updateBundleHeader(IFile manifest, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
 		try {
-			IBundle bundle = BundleManifestChange.getBundle(manifest, subMonitor.newChild(1));
+			IBundle bundle = BundleManifestChange.getBundle(manifest, subMonitor.split(1));
 			if (bundle != null) {
 				BundleTextChangeListener listener = createListener(bundle);
 				if (listener != null) {
@@ -99,7 +99,7 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 		} catch (BadLocationException e) {
 		} finally {
 			FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE,
-					subMonitor.newChild(1));
+					subMonitor.split(1));
 		}
 		return null;
 	}

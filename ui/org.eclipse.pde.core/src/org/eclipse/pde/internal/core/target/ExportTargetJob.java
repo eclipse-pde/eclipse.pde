@@ -201,7 +201,7 @@ public class ExportTargetJob extends Job {
 		if (source.fetchInfo().isDirectory()) {
 			destination.mkdir(EFS.NONE, new NullProgressMonitor());
 		}
-		source.copy(destination, EFS.OVERWRITE, subMonitor.newChild(1));
+		source.copy(destination, EFS.OVERWRITE, subMonitor.split(1));
 		return Status.OK_STATUS;
 	}
 

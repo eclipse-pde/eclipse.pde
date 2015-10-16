@@ -73,7 +73,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, Collections.EMPTY_SET, false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, frags.length * 2);
 		for (int i = 0; i < frags.length; i++) {
-			SubMonitor iterationMonitor = subMonitor.newChild(2);
+			SubMonitor iterationMonitor = subMonitor.split(2);
 			if (iterationMonitor.isCanceled()) {
 				return pkgsAndUses;
 			}

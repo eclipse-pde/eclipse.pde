@@ -84,8 +84,8 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 
 		boolean useRequireBundle = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID).getBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, true);
 		findSecondaryDependencies(secDeps, ignorePkgs, additionalDeps, bundle, useRequireBundle,
-				subMonitor.newChild(80));
-		handleNewDependencies(additionalDeps, useRequireBundle, subMonitor.newChild(10));
+				subMonitor.split(80));
+		handleNewDependencies(additionalDeps, useRequireBundle, subMonitor.split(10));
 	}
 
 	public boolean foundNewDependencies() {
@@ -239,7 +239,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 				secDeps.length);
 		for (int j = 0; j < secDeps.length; j++) {
 			try {
-				SubMonitor iterationMonitor = subMonitor.newChild(1);
+				SubMonitor iterationMonitor = subMonitor.split(1);
 				if (iterationMonitor.isCanceled()) {
 					return;
 				}

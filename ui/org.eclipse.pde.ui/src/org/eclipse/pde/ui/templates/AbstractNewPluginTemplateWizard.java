@@ -98,7 +98,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 			
 			SubMonitor subMonitor = SubMonitor.convert(monitor, sections.length);
 			for (int i = 0; i < sections.length; i++) {
-				sections[i].execute(project, model, subMonitor.newChild(1));
+				sections[i].execute(project, model, subMonitor.split(1));
 			}
 			//No reason to do this any more with the new editors
 			//saveTemplateFile(project, null);

@@ -50,9 +50,9 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenameExtensionPointProcessor_changeTitle, new Object[] {fInfo.getCurrentValue(), fInfo.getNewValue()}));
 		SubMonitor subMonitor = SubMonitor.convert(pm, 2);
-		changeExtensionPoint(change, subMonitor.newChild(1));
+		changeExtensionPoint(change, subMonitor.split(1));
 		if (fInfo.isUpdateReferences())
-			findReferences(change, subMonitor.newChild(1));
+			findReferences(change, subMonitor.split(1));
 		return change;
 	}
 
@@ -94,7 +94,7 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 		for (int i = 0; i < bases.length; i++) {
 			IFile file = getModificationFile(bases[i]);
 			if (file != null) {
-				compositeChange.addAll(PDEModelUtility.changesForModelModication(getExtensionModification(file), subMonitor.newChild(1)));
+				compositeChange.addAll(PDEModelUtility.changesForModelModication(getExtensionModification(file), subMonitor.split(1)));
 			}
 			subMonitor.setWorkRemaining(bases.length - i);
 		}

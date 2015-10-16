@@ -41,9 +41,9 @@ public class AddNewBinaryDependenciesOperation extends AddNewDependenciesOperati
 	protected void findSecondaryDependencies(String[] secDeps, Set<String> ignorePkgs, Map<ExportPackageDescription, String> additionalDeps, IBundle bundle, boolean useRequireBundle, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.AddNewDependenciesOperation_searchProject,
 				100);
-		Set<?> projectPkgs = PackageFinder.findPackagesInClassFiles(fClassFiles, subMonitor.newChild(75));
+		Set<?> projectPkgs = PackageFinder.findPackagesInClassFiles(fClassFiles, subMonitor.split(75));
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IProgressMonitor searchMonitor = subMonitor.newChild(25);
+		IProgressMonitor searchMonitor = subMonitor.split(25);
 		searchMonitor.beginTask("", secDeps.length); //$NON-NLS-1$
 		for (int i = 0; i < secDeps.length; i++) {
 			IPluginModelBase base = manager.findModel(secDeps[i]);

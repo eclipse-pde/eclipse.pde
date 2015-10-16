@@ -82,7 +82,7 @@ public class FeatureExportOperation extends Job {
 				configurations = new String[][] {null};
 			SubMonitor subMonitor = SubMonitor.convert(monitor, "Exporting...", (fInfo.items.length * 23) + 5 + 10); //$NON-NLS-1$
 
-			IStatus status = testBuildWorkspaceBeforeExport(subMonitor.newChild(10));
+			IStatus status = testBuildWorkspaceBeforeExport(subMonitor.split(10));
 
 			if (fInfo.exportSource && fInfo.exportSourceBundle) {
 				// create a feature to contain all plug-ins and features depth first
@@ -96,18 +96,18 @@ public class FeatureExportOperation extends Job {
 				stream = new BufferedInputStream(new FileInputStream(new File(fFeatureLocation + File.separator + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)));
 				model.load(stream, true);
 				stream.close();
-				doExport(model, null, subMonitor.newChild(20));
+				doExport(model, null, subMonitor.split(20));
 
 			} else {
 				for (int j = 0; j < fInfo.items.length; j++) {
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
 					try {
-						doExport((IFeatureModel) fInfo.items[j], configurations, subMonitor.newChild(20));
+						doExport((IFeatureModel) fInfo.items[j], configurations, subMonitor.split(20));
 					} catch (CoreException e) {
 						return e.getStatus();
 					} finally {
-						cleanup(null, subMonitor.newChild(3));
+						cleanup(null, subMonitor.split(3));
 					}
 				}
 			}
@@ -182,7 +182,7 @@ public class FeatureExportOperation extends Job {
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
 			runner.setExecutionTargets(targets);
-			runner.run(subMonitor.newChild(1));
+			runner.run(subMonitor.split(1));
 		} catch (FactoryConfigurationError e) {
 		} catch (ParserConfigurationException e) {
 		} catch (CoreException e) {
@@ -257,14 +257,14 @@ public class FeatureExportOperation extends Job {
 		subMonitor.worked(1);
 		subMonitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningBuildScript);
 		// compile the classes
-		runScript(featureLocation + IPath.SEPARATOR + "compile." + featureID + ".xml", new String[] {"main"}, properties, subMonitor.newChild(1)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		runScript(featureLocation + IPath.SEPARATOR + "compile." + featureID + ".xml", new String[] {"main"}, properties, subMonitor.split(1)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		// grab the source if needed
 		if (fInfo.exportSource && !fInfo.exportSourceBundle)
-			runScript(getBuildScriptName(featureLocation), new String[] {"build.sources"}, properties, subMonitor.newChild(1)); //$NON-NLS-1$
+			runScript(getBuildScriptName(featureLocation), new String[] {"build.sources"}, properties, subMonitor.split(1)); //$NON-NLS-1$
 
 		if (publishingP2Metadata()) {
 			subMonitor.setTaskName(PDECoreMessages.FeatureExportOperation_publishingMetadata);
-			runScript(getAssembleP2ScriptName(featureID, featureLocation), new String[] {"main"}, properties, subMonitor.newChild(2)); //$NON-NLS-1$
+			runScript(getAssembleP2ScriptName(featureID, featureLocation), new String[] {"main"}, properties, subMonitor.split(2)); //$NON-NLS-1$
 
 			//metadata implies groups if we aren't exporting products
 			if (groupedConfigurations()) {
@@ -277,16 +277,16 @@ public class FeatureExportOperation extends Job {
 		for (int i = 0; i < configs.length; i++) {
 			setArchiveLocation(properties, configs[i][0], configs[i][1], configs[i][2]);
 			runScript(getAssemblyScriptName(featureID, configs[i][0], configs[i][1], configs[i][2], featureLocation), new String[] {"main"}, //$NON-NLS-1$
-					properties, subMonitor.newChild(2));
+					properties, subMonitor.split(2));
 		}
 
 		subMonitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningPackagerScript);
 		for (int i = 0; i < configs.length; i++) {
 			setArchiveLocation(properties, configs[i][0], configs[i][1], configs[i][2]);
-			runScript(getPackagerScriptName(featureID, configs[i][0], configs[i][1], configs[i][2], featureLocation), null, properties, subMonitor.newChild(2));
+			runScript(getPackagerScriptName(featureID, configs[i][0], configs[i][1], configs[i][2], featureLocation), null, properties, subMonitor.split(2));
 		}
 		properties.put("destination.temp.folder", fBuildTempLocation + "/pde.logs"); //$NON-NLS-1$ //$NON-NLS-2$
-		runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, subMonitor.newChild(2)); //$NON-NLS-1$				
+		runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, subMonitor.split(2)); //$NON-NLS-1$				
 	}
 
 	protected boolean groupedConfigurations() {
@@ -843,7 +843,7 @@ public class FeatureExportOperation extends Job {
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
 			runner.setExecutionTargets(targets);
-			runner.run(subMonitor.newChild(1));
+			runner.run(subMonitor.split(1));
 		} catch (FactoryConfigurationError e) {
 		} catch (ParserConfigurationException e) {
 		} catch (CoreException e) {
@@ -1147,7 +1147,7 @@ public class FeatureExportOperation extends Job {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 50);
 
 		if (fInfo.useWorkspaceCompiledClasses) {
-			getWorkspaceExportHelper().buildBeforeExport(fInfo.items, subMonitor.newChild(45));
+			getWorkspaceExportHelper().buildBeforeExport(fInfo.items, subMonitor.split(45));
 			Set<?> errors = getWorkspaceExportHelper().checkForErrors(fInfo.items);
 			subMonitor.worked(5);
 			if (!errors.isEmpty()) {

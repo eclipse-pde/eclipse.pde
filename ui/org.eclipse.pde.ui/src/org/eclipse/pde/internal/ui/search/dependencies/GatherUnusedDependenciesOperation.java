@@ -82,7 +82,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		for (int i = 0; i < imports.length; i++) {
 			if (subMonitor.isCanceled())
 				break;
-			if (isUnused(imports[i], subMonitor.newChild(3))) {
+			if (isUnused(imports[i], subMonitor.split(3))) {
 				fList.add(imports[i]);
 			} else
 				usedPlugins.put(imports[i].getId(), imports[i]);
@@ -94,7 +94,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			for (int i = 0; i < packages.length; i++) {
 				if (subMonitor.isCanceled())
 					break;
-				if (isUnused(packages[i], exportedPackages, subMonitor.newChild(1))) {
+				if (isUnused(packages[i], exportedPackages, subMonitor.split(1))) {
 					fList.add(packages[i]);
 					updateMonitor(subMonitor, fList.size());
 				} else
@@ -138,7 +138,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 
 			SubMonitor subMonitor = SubMonitor.convert(monitor, packageFragments.length * 2);
 			for (int i = 0; i < packageFragments.length; i++) {
-				SubMonitor iterationMonitor = subMonitor.newChild(2);
+				SubMonitor iterationMonitor = subMonitor.split(2);
 				IPackageFragment pkgFragment = packageFragments[i];
 				if (pkgFragment.hasChildren()) {
 					Requestor requestor = new Requestor();
@@ -172,7 +172,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 				types = new IType[] { ((IClassFile) children[j]).getType() };
 			}
 			if (types != null) {
-				SubMonitor iterationMonitor = subMonitor.newChild(1).setWorkRemaining(types.length);
+				SubMonitor iterationMonitor = subMonitor.split(1).setWorkRemaining(types.length);
 				for (int t = 0; t < types.length; t++) {
 					requestor = new Requestor();
 					engine.search(SearchPattern.createPattern(types[t], IJavaSearchConstants.REFERENCES),
@@ -207,7 +207,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 					SearchPattern.createPattern(packageName, IJavaSearchConstants.PACKAGE,
 							IJavaSearchConstants.REFERENCES, SearchPattern.R_EXACT_MATCH),
 					new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope, requestor,
-					subMonitor.newChild(1));
+					subMonitor.split(1));
 
 			if (requestor.foundMatches())
 				return true;

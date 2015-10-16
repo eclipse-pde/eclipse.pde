@@ -70,7 +70,7 @@ public class DependencyExtentOperation {
 		IPluginModelBase[] plugins = PluginJavaSearchUtil.getPluginImports(fImportID);
 		SubMonitor subMonitor = SubMonitor.convert(monitor,
 				PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10); //$NON-NLS-1$//$NON-NLS-2$
-		checkForJavaDependencies(plugins, subMonitor.newChild(9));
+		checkForJavaDependencies(plugins, subMonitor.split(9));
 		subMonitor.setWorkRemaining(plugins.length);
 		for (int i = 0; i < plugins.length; i++) {
 			checkForExtensionPointsUsed(plugins[i]);

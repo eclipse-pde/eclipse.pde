@@ -107,10 +107,10 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			addExportedPackages(project, bundle);
 			subMonitor.worked(1);
 			if (fData.doFindDependencies()) {
-				addDependencies(project, base.getModel(), subMonitor.newChild(2));
+				addDependencies(project, base.getModel(), subMonitor.split(2));
 			}
 			if (fData.isUpdateReferences()) {
-				updateReferences(subMonitor.newChild(1), project);
+				updateReferences(subMonitor.split(1), project);
 			}
 		}
 	}
@@ -120,7 +120,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		IPluginModelBase[] pluginstoUpdate = fData.getPluginsToUpdate();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, pluginstoUpdate.length);
 		for (int i = 0; i < pluginstoUpdate.length; ++i) {
-			SubMonitor iterationMonitor = subMonitor.newChild(1).setWorkRemaining(2);
+			SubMonitor iterationMonitor = subMonitor.split(1).setWorkRemaining(2);
 			IProject proj = pluginstoUpdate[i].getUnderlyingResource().getProject();
 			if (currentProject.getProject().equals(proj))
 				continue;
@@ -173,10 +173,10 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			ByteArrayOutputStream content = new ByteArrayOutputStream();
 			manifest.write(content);
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
-			file.setContents(new ByteArrayInputStream(content.toByteArray()), true, false, subMonitor.newChild(1));
+			file.setContents(new ByteArrayInputStream(content.toByteArray()), true, false, subMonitor.split(1));
 			// now update .classpath
 			javaProject.setRawClasspath(classpath.toArray(new IClasspathEntry[classpath.size()]),
-					subMonitor.newChild(1));
+					subMonitor.split(1));
 //			ClasspathComputer.setClasspath(javaProject.getProject(), model);
 		} catch (IOException e) {
 		} catch (CoreException e) {
@@ -283,7 +283,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		for (int i = paths.length - 1; i >= 0; i--) {
 			File jarFile = new File(paths[i]);
 			if (fData.isUnzipLibraries()) {
-				importJar(jarFile, project, subMonitor.newChild(1));
+				importJar(jarFile, project, subMonitor.split(1));
 			} else {
 				addJar(jarFile, project, subMonitor);
 			}
@@ -292,12 +292,12 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		// delete manifest.mf imported from libraries
 		IFile importedManifest = PDEProject.getManifest(project);
 		if (importedManifest.exists()) {
-			importedManifest.delete(true, false, subMonitor.newChild(1));
+			importedManifest.delete(true, false, subMonitor.split(1));
 			subMonitor.setWorkRemaining(1);
 			if (!fData.hasBundleStructure()) {
 				IFolder meta_inf = project.getFolder("META-INF"); //$NON-NLS-1$
 				if (meta_inf.members().length == 0) {
-					meta_inf.delete(true, false, subMonitor.newChild(1));
+					meta_inf.delete(true, false, subMonitor.split(1));
 				}
 			}
 		}

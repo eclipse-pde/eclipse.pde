@@ -72,7 +72,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 			try {
 				String newText = fElements.get(fProject);
 				CompositeChange result = new CompositeChange(PDEUIMessages.ContainerRenameParticipant_renameBundleId);
-				IBundle bundle = BundleManifestChange.getBundle(manifest, subMonitor.newChild(1));
+				IBundle bundle = BundleManifestChange.getBundle(manifest, subMonitor.split(1));
 				if (bundle != null) {
 					BundleTextChangeListener listener = new BundleTextChangeListener(((BundleModel) bundle.getModel()).getDocument());
 					bundle.getModel().addModelChangedListener(listener);
@@ -106,7 +106,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 
 						// find all the references to the changing Bundle-SymbolicName and update all references to it
 						FindReferenceOperation op = new FindReferenceOperation(PluginRegistry.findModel(fProject).getBundleDescription(), newId);
-						op.run(subMonitor.newChild(2));
+						op.run(subMonitor.split(2));
 						result.addAll(op.getChanges());
 						return result;
 					}
@@ -116,7 +116,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 			} catch (BadLocationException e) {
 			} finally {
 				FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE,
-						subMonitor.newChild(1));
+						subMonitor.split(1));
 			}
 		}
 		return null;

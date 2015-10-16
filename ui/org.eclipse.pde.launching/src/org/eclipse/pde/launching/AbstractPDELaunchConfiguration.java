@@ -54,7 +54,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			fConfigDir = null;
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
 			try {
-				preLaunchCheck(configuration, launch, subMonitor.newChild(2));
+				preLaunchCheck(configuration, launch, subMonitor.split(2));
 			} catch (CoreException e) {
 				if (e.getStatus().getSeverity() == IStatus.CANCEL) {
 					subMonitor.setCanceled(true);
@@ -76,7 +76,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			manageLaunch(launch);
 			IVMRunner runner = getVMRunner(configuration, mode);
 			if (runner != null)
-				runner.run(runnerConfig, launch, subMonitor.newChild(1));
+				runner.run(runnerConfig, launch, subMonitor.split(1));
 			else
 				subMonitor.setCanceled(true);
 
@@ -288,12 +288,12 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "", autoValidate ? 3 : 4); //$NON-NLS-1$
 		if (autoValidate)
-			validatePluginDependencies(configuration, subMonitor.newChild(1));
-		validateProjectDependencies(configuration, subMonitor.newChild(1));
+			validatePluginDependencies(configuration, subMonitor.split(1));
+		validateProjectDependencies(configuration, subMonitor.split(1));
 		LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
-		clear(configuration, subMonitor.newChild(1));
+		clear(configuration, subMonitor.split(1));
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
-		synchronizeManifests(configuration, subMonitor.newChild(1));
+		synchronizeManifests(configuration, subMonitor.split(1));
 	}
 
 	/**

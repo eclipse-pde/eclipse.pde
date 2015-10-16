@@ -81,8 +81,8 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 		subMonitor.worked(1);
 		openFile();
 		if (PDE.hasPluginNature(fFile.getProject())) {
-			writeManifest(fFile.getProject(), subMonitor.newChild(1));
-			writeBuildProperties(fFile.getProject(), subMonitor.newChild(1));
+			writeManifest(fFile.getProject(), subMonitor.split(1));
+			writeBuildProperties(fFile.getProject(), subMonitor.split(1));
 		}
 		subMonitor.setWorkRemaining(0);
 	}

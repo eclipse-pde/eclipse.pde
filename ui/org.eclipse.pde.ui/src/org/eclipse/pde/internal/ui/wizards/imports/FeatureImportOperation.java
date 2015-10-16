@@ -77,7 +77,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 				PDEUIMessages.FeatureImportWizard_operation_multiProblem, null);
 		for (int i = 0; i < fModels.length; i++) {
 			try {
-				createProject(fModels[i], subMonitor.newChild(1));
+				createProject(fModels[i], subMonitor.split(1));
 			} catch (CoreException e) {
 				multiStatus.merge(e.getStatus());
 			}
@@ -109,9 +109,9 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		if (project.exists() || new File(project.getParent().getLocation().toFile(), name).exists()) {
 			if (queryReplace(project)) {
 				if (!project.exists()) {
-					project.create(subMonitor.newChild(1));
+					project.create(subMonitor.split(1));
 				}
-				project.delete(true, true, subMonitor.newChild(1));
+				project.delete(true, true, subMonitor.split(1));
 				try {
 					RepositoryProvider.unmap(project);
 				} catch (TeamException e) {
@@ -126,14 +126,14 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		if (fTargetPath != null)
 			description.setLocation(fTargetPath.append(name));
 
-		project.create(description, subMonitor.newChild(1));
+		project.create(description, subMonitor.split(1));
 		if (!project.isOpen()) {
 			project.open(null);
 		}
 		File featureDir = new File(model.getInstallLocation());
 
 		importContent(featureDir, project.getFullPath(), FileSystemStructureProvider.INSTANCE, null,
-				subMonitor.newChild(1));
+				subMonitor.split(1));
 		IFolder folder = project.getFolder("META-INF"); //$NON-NLS-1$
 		if (folder.exists()) {
 			folder.delete(true, null);
@@ -144,9 +144,9 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, PDECore.BINARY_PROJECT_VALUE);
 		}
 		createBuildProperties(project);
-		setProjectNatures(project, model, subMonitor.newChild(1));
+		setProjectNatures(project, model, subMonitor.split(1));
 		if (project.hasNature(JavaCore.NATURE_ID)) {
-			setClasspath(project, model, subMonitor.newChild(4));
+			setClasspath(project, model, subMonitor.split(4));
 		}
 	}
 
@@ -195,7 +195,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			desc.setNatureIds(new String[] {PDE.FEATURE_NATURE});
 		}
 		subMonitor.setWorkRemaining(1);
-		project.setDescription(desc, subMonitor.newChild(1));
+		project.setDescription(desc, subMonitor.split(1));
 	}
 
 	private void setClasspath(IProject project, IFeatureModel model, IProgressMonitor monitor)

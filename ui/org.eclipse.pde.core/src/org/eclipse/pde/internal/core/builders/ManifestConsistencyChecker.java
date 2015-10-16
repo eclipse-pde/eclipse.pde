@@ -210,7 +210,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void validateProject(int type, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDECoreMessages.ManifestConsistencyChecker_builderTaskName, getWorkAmount(type));
 		if ((type & STRUCTURE) != 0) {
-			validateProjectStructure(type, subMonitor.newChild(1));
+			validateProjectStructure(type, subMonitor.split(1));
 		}
 
 		if ((type & MANIFEST | EXTENSIONS) != 0) {
@@ -224,11 +224,11 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			} else if ((type & MANIFEST) != 0) {
 				IFile manifestFile = PDEProject.getManifest(project);
 				if (manifestFile.exists())
-					validateManifestFile(manifestFile, subMonitor.newChild(1));
+					validateManifestFile(manifestFile, subMonitor.split(1));
 			}
 		}
 		if ((type & BUILD) != 0) {
-			validateBuildProperties(subMonitor.newChild(1));
+			validateBuildProperties(subMonitor.split(1));
 		}
 	}
 

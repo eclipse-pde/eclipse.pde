@@ -896,7 +896,7 @@ public class P2TargetUtils {
 		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		for (int i = 0; i < repoCount; ++i) {
 			try {
-				result.add(manager.loadRepository(repos[i], subMonitor.newChild(1)));
+				result.add(manager.loadRepository(repos[i], subMonitor.split(1)));
 			} catch (ProvisionException e) {
 				repoStatus.add(e.getStatus());
 			}
@@ -923,7 +923,7 @@ public class P2TargetUtils {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 220);
 
 		// Get the root IUs for every relevant container in the target definition
-		IInstallableUnit[] units = getRootIUs(target, subMonitor.newChild(20));
+		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(20));
 		if (subMonitor.isCanceled()) {
 			return;
 		}
@@ -948,7 +948,7 @@ public class P2TargetUtils {
 			return;
 		}
 
-		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor.newChild(20));
+		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor.split(20));
 		IStatus status = plan.getStatus();
 		if (!status.isOK()) {
 			throw new CoreException(status);
@@ -968,7 +968,7 @@ public class P2TargetUtils {
 		// execute the provisioning plan
 		IPhaseSet phases = createPhaseSet();
 		IEngine engine = getEngine();
-		IStatus result = engine.perform(plan, phases, subMonitor.newChild(100));
+		IStatus result = engine.perform(plan, phases, subMonitor.split(100));
 		if (subMonitor.isCanceled()) {
 			return;
 		}
@@ -979,7 +979,7 @@ public class P2TargetUtils {
 		// Now that we have a plan with all the binary and explicit bundles, do a second pass and add
 		// in all the source.
 		try {
-			planInSourceBundles(fProfile, context, subMonitor.newChild(60));
+			planInSourceBundles(fProfile, context, subMonitor.split(60));
 		} catch (CoreException e) {
 			// XXX Review required: is adding in the source critical or optional?
 			// We failed adding in the source so remove the intermediate profile and rethrow
@@ -1053,7 +1053,7 @@ public class P2TargetUtils {
 		if (currentSourceIU != null)
 			request.remove(currentSourceIU);
 		request.add(sourceIU);
-		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor.newChild(25));
+		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor.split(25));
 		IStatus status = plan.getStatus();
 		if (!status.isOK()) {
 			throw new CoreException(status);
@@ -1068,7 +1068,7 @@ public class P2TargetUtils {
 		IEngine engine = getEngine();
 		plan.setProfileProperty(PROP_PROVISION_MODE, TargetDefinitionPersistenceHelper.MODE_PLANNER);
 		plan.setProfileProperty(PROP_ALL_ENVIRONMENTS, Boolean.toString(false));
-		IStatus result = engine.perform(plan, phases, subMonitor.newChild(75));
+		IStatus result = engine.perform(plan, phases, subMonitor.split(75));
 
 		if (subMonitor.isCanceled()) {
 			return;
@@ -1132,7 +1132,7 @@ public class P2TargetUtils {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 110);
 
 		// resolve IUs
-		IInstallableUnit[] units = getRootIUs(target, subMonitor.newChild(10));
+		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(10));
 		if (subMonitor.isCanceled()) {
 			return;
 		}
@@ -1142,10 +1142,10 @@ public class P2TargetUtils {
 		if (repoCount == 0) {
 			return;
 		}
-		IQueryable<IInstallableUnit> allMetadata = getQueryableMetadata(repositories, subMonitor.newChild(10));
+		IQueryable<IInstallableUnit> allMetadata = getQueryableMetadata(repositories, subMonitor.split(10));
 
 		// do an initial slice to add everything the user requested
-		IQueryResult<IInstallableUnit> queryResult = slice(units, allMetadata, target, subMonitor.newChild(10));
+		IQueryResult<IInstallableUnit> queryResult = slice(units, allMetadata, target, subMonitor.split(10));
 		if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
 			return;
 		}
@@ -1159,7 +1159,7 @@ public class P2TargetUtils {
 			System.arraycopy(units, 0, units2, 0, units.length);
 			units2[units.length] = sourceIU;
 
-			queryResult = slice(units2, allMetadata, target, subMonitor.newChild(10));
+			queryResult = slice(units2, allMetadata, target, subMonitor.split(10));
 			if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
 				return;
 			}
@@ -1196,7 +1196,7 @@ public class P2TargetUtils {
 
 		// execute the provisioning plan
 		IPhaseSet phases = createPhaseSet();
-		IStatus result = engine.perform(plan, phases, subMonitor.newChild(60));
+		IStatus result = engine.perform(plan, phases, subMonitor.split(60));
 		if (!result.isOK()) {
 			throw new CoreException(result);
 		}
@@ -1228,7 +1228,7 @@ public class P2TargetUtils {
 			props.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
-		IQueryable<IInstallableUnit> slice = slicer.slice(units, subMonitor.newChild(50));
+		IQueryable<IInstallableUnit> slice = slicer.slice(units, subMonitor.split(50));
 		IStatus sliceStatus = slicer.getStatus();
 		// If the slicer encounters an error, stop the operation
 		if (sliceStatus.getSeverity() == IStatus.ERROR) {
@@ -1238,7 +1238,7 @@ public class P2TargetUtils {
 		// Collect the IUs from the sliced
 		IQueryResult<IInstallableUnit> queryResult = null;
 		if (slice != null)
-			queryResult = slice.query(QueryUtil.createIUAnyQuery(), subMonitor.newChild(50));
+			queryResult = slice.query(QueryUtil.createIUAnyQuery(), subMonitor.split(50));
 
 		// If the slicer encounters a non-error status, only report it if the slice returned no IU results
 		// It would be better to inform the user, but we do not want to stop the location from resolving (bug 350772)
@@ -1369,7 +1369,7 @@ public class P2TargetUtils {
 			if (container instanceof IUBundleContainer) {
 				try {
 					IUBundleContainer iuContainer = (IUBundleContainer) container;
-					Collections.addAll(result, iuContainer.getRootIUs(definition, subMonitor.newChild(10)));
+					Collections.addAll(result, iuContainer.getRootIUs(definition, subMonitor.split(10)));
 				} catch (CoreException e) {
 					status.add(e.getStatus());
 				}

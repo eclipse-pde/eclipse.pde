@@ -168,7 +168,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 				subMonitor.worked(1);
 			} else {
 				// find possible types in the global packages
-				validPackages = findValidPackagesContainingSimpleType(typeName, importPkgs, packagesToExport, subMonitor.newChild(1));
+				validPackages = findValidPackagesContainingSimpleType(typeName, importPkgs, packagesToExport, subMonitor.split(1));
 			}
 		}
 		return validPackages;
@@ -231,7 +231,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			};
 
 			SearchPattern typePattern = SearchPattern.createPattern(aTypeName, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE);
-			new SearchEngine().search(typePattern, new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, searchScope, requestor, subMonitor.newChild(1));
+			new SearchEngine().search(typePattern, new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, searchScope, requestor, subMonitor.split(1));
 
 			if (!packages.isEmpty()) {
 				// transform to ExportPackageDescriptions

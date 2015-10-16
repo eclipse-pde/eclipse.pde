@@ -107,14 +107,14 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		SubMonitor subMonitor = SubMonitor.convert(pm, getTotalWork());
 		// update manifest with new Id
 		CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(fInfo.getBase(), Constants.BUNDLE_SYMBOLICNAME, fInfo.getCurrentValue(), fInfo.getNewValue());
-		op.run(subMonitor.newChild(1));
+		op.run(subMonitor.split(1));
 		change.add(op.getChange());
 
 		if (fInfo.isRenameProject()) {
-			change.add(createProjectChange(subMonitor.newChild( 1)));
+			change.add(createProjectChange(subMonitor.split( 1)));
 		}
 		if (fInfo.isUpdateReferences())
-			change.addAll(createReferenceChanges(subMonitor.newChild(2)));
+			change.addAll(createReferenceChanges(subMonitor.split(2)));
 		return change;
 	}
 

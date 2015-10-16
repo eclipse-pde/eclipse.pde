@@ -240,7 +240,7 @@ public class TargetDefinition implements ITargetDefinition {
 					if (synchronizer != null && !seen.contains(synchronizer)) {
 						seen.add(synchronizer);
 						try {
-							synchronizer.synchronize(this, subMonitor.newChild(4));
+							synchronizer.synchronize(this, subMonitor.split(4));
 						} catch (CoreException e) {
 							status.add(e.getStatus());
 						}
@@ -257,7 +257,7 @@ public class TargetDefinition implements ITargetDefinition {
 						return Status.CANCEL_STATUS;
 					}
 					subMonitor.subTask(Messages.TargetDefinition_4);
-					IStatus s = containers[i].resolve(this, subMonitor.newChild(6));
+					IStatus s = containers[i].resolve(this, subMonitor.split(6));
 					if (!s.isOK()) {
 						status.add(s);
 					}

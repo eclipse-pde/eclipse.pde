@@ -91,7 +91,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 
 		SubMonitor subMonitor = SubMonitor.convert(pm, PDEUIMessages.OrganizeManifestJob_taskName, fProjectList.size());
 		for (Iterator<?> i = fProjectList.iterator(); i.hasNext() && !pm.isCanceled();) {
-			CompositeChange projectChange = cleanProject((IProject) i.next(), subMonitor.newChild(1));
+			CompositeChange projectChange = cleanProject((IProject) i.next(), subMonitor.split(1));
 			if (projectChange.getChildren().length > 0)
 				change.add(projectChange);
 		}
@@ -179,7 +179,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			// CalculateUsesOperation, for each package it scans
 			if (!subMonitor.isCanceled()) {
 				CalculateUsesOperation op = new CalculateUsesOperation(fCurrentProject, modelBase);
-				op.run(subMonitor.newChild(2));
+				op.run(subMonitor.split(2));
 			}
 		}
 
@@ -187,14 +187,14 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_additionalDeps, projectName));
 			if (!subMonitor.isCanceled()) {
 				AddNewDependenciesOperation op = new AddNewDependenciesOperation(fCurrentProject, modelBase);
-				op.run(subMonitor.newChild(4));
+				op.run(subMonitor.split(4));
 			}
 		}
 
 		if (fUnusedDependencies) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_unusedDeps, projectName));
 			if (!subMonitor.isCanceled()) {
-				SubMonitor submon = subMonitor.newChild(4);
+				SubMonitor submon = subMonitor.split(4);
 				GatherUnusedDependenciesOperation udo = new GatherUnusedDependenciesOperation(modelBase);
 				udo.run(submon);
 				GatherUnusedDependenciesOperation.removeDependencies(modelBase, udo.getList().toArray());

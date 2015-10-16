@@ -102,7 +102,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 			createFeature(featureID, fFeatureLocation, configurations, fProduct.includeLaunchers());
 			createBuildPropertiesFile(fFeatureLocation, configurations);
-			doExport(featureID, null, fFeatureLocation, configurations, subMonitor.newChild(8));
+			doExport(featureID, null, fFeatureLocation, configurations, subMonitor.split(8));
 		} catch (IOException e) {
 			PDECore.log(e);
 		} catch (InvocationTargetException e) {
@@ -120,7 +120,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 					PDECore.log(e);
 				}
 			}
-			cleanup(null, subMonitor.newChild(1));
+			cleanup(null, subMonitor.split(1));
 		}
 
 		if (hasAntErrors()) {

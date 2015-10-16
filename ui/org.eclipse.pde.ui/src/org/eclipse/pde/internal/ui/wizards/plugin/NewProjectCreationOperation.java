@@ -273,7 +273,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 		// create project
 		IProject project = createProject();
-		createContents(subMonitor.newChild(1), project);
+		createContents(subMonitor.split(1), project);
 
 		// set classpath if project has a Java nature
 		if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -287,7 +287,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 			// generate top-level Java class if that option is selected
 			if (data.doGenerateClass()) {
-				generateTopLevelPluginClass(project, subMonitor.newChild(1));
+				generateTopLevelPluginClass(project, subMonitor.split(1));
 			}
 
 			// add API Tools nature if requested
@@ -309,7 +309,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		// generate content contributed by template wizards
 		boolean contentWizardResult = true;
 		if (fContentWizard != null) {
-			contentWizardResult = fContentWizard.performFinish(project, fModel, subMonitor.newChild(1));
+			contentWizardResult = fContentWizard.performFinish(project, fModel, subMonitor.split(1));
 		}
 
 		if (fData instanceof AbstractFieldData) {
@@ -331,7 +331,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 
 		if (fData.hasBundleStructure() && fModel instanceof WorkspaceBundlePluginModelBase) {
-			adjustManifests(subMonitor.newChild(1), project, fModel.getPluginBase());
+			adjustManifests(subMonitor.split(1), project, fModel.getPluginBase());
 		}
 
 		fModel.save();

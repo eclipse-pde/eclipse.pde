@@ -81,7 +81,7 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 				while (iterator.hasNext() && !fCanceled) {
 					IProject project = (IProject) iterator.next();
 					if (!WorkspaceModelManager.isBinaryProject(project))
-						getUnExternalizedStrings(project, subMonitor.newChild(1));
+						getUnExternalizedStrings(project, subMonitor.split(1));
 				}
 			} else {
 				IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
@@ -90,7 +90,7 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 				for (int i = 0; i < pluginModels.length && !fCanceled; i++) {
 					IProject project = pluginModels[i].getUnderlyingResource().getProject();
 					if (!WorkspaceModelManager.isBinaryProject(project))
-						getUnExternalizedStrings(project, subMonitor.newChild(1));
+						getUnExternalizedStrings(project, subMonitor.split(1));
 				}
 			}
 		}

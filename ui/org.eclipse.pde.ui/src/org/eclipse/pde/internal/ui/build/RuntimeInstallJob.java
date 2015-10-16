@@ -86,9 +86,9 @@ public class RuntimeInstallJob extends Job {
 
 			// p2 needs to know about the generated repos
 			URI destination = new File(fInfo.destinationDirectory).toURI();
-			ui.loadArtifactRepository(destination, false, subMonitor.newChild(1));
+			ui.loadArtifactRepository(destination, false, subMonitor.split(1));
 
-			IMetadataRepository metaRepo = ui.loadMetadataRepository(destination, false, subMonitor.newChild(1));
+			IMetadataRepository metaRepo = ui.loadMetadataRepository(destination, false, subMonitor.split(1));
 
 			IProfileRegistry profileRegistry = (IProfileRegistry) session.getProvisioningAgent().getService(IProfileRegistry.SERVICE_NAME);
 			if (profileRegistry == null) {
@@ -135,27 +135,27 @@ public class RuntimeInstallJob extends Job {
 				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.iterator().next();
 
 				// Find out if the profile already has that iu installed
-				queryMatches = profile.query(QueryUtil.createIUQuery(id), subMonitor.newChild(1));
+				queryMatches = profile.query(QueryUtil.createIUQuery(id), subMonitor.split(1));
 				if (queryMatches.isEmpty()) {
 					// Just install the new iu into the profile
 					toInstall.add(iuToInstall);
 				} else {
 					// There is an existing iu that we need to replace using an installable unit patch
 					IInstallableUnit existingIU = (IInstallableUnit) queryMatches.iterator().next();
-					toInstall.add(createInstallableUnitPatch(existingIU, newVersion, profile, subMonitor.newChild(1)));
+					toInstall.add(createInstallableUnitPatch(existingIU, newVersion, profile, subMonitor.split(1)));
 				}
 				subMonitor.worked(2);
 			}
 
 			if (toInstall.size() > 0) {
 				InstallOperation operation = ui.getInstallOperation(toInstall, new URI[] {destination});
-				operation.resolveModal(subMonitor.newChild(5));
+				operation.resolveModal(subMonitor.split(5));
 				IStatus status = operation.getResolutionResult();
 				if (status.getSeverity() == IStatus.CANCEL || !(status.isOK() || status.getSeverity() == IStatus.INFO)) {
 					return status;
 				}
 				ProvisioningJob job = operation.getProvisioningJob(null);
-				status = job.runModal(subMonitor.newChild(5));
+				status = job.runModal(subMonitor.split(5));
 				return status;
 			}
 

@@ -769,7 +769,7 @@ public class TargetContentsGroup {
 
 				// Create a PDE State containing all of the target bundles
 				PDEState state = new PDEState(allLocations.toArray(new URL[allLocations.size()]), true, false,
-						subMonitor.newChild(50));
+						subMonitor.split(50));
 				if (subMonitor.isCanceled()) {
 					return;
 				}

@@ -374,7 +374,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			IPluginExtensionPoint[] eps = model.getPluginBase().getExtensionPoints();
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			int length = eps.length + extensions.length;
-			SubMonitor subMonitor2 = subMonitor.newChild(1).setWorkRemaining(length);
+			SubMonitor subMonitor2 = subMonitor.split(1).setWorkRemaining(length);
 			for (int j = 0; j < eps.length; j++) {
 				contentProvider.add(eps[j], itemsFilter);
 				subMonitor2.worked(1);
@@ -384,7 +384,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 				subMonitor2.worked(1);
 			}
 
-			subMonitor2 = subMonitor.newChild(1);
+			subMonitor2 = subMonitor.split(1);
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
 				ExportPackageDescription[] epds = desc.getExportPackages();

@@ -380,12 +380,12 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.SearchablePluginsManager_createProjectTaskName, SearchablePluginsManager.PROXY_PROJECT_NAME), 5);
 
-		project.create(subMonitor.newChild(1));
-		project.open(subMonitor.newChild(1));
-		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, subMonitor.newChild(1));
+		project.create(subMonitor.split(1));
+		project.open(subMonitor.split(1));
+		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, subMonitor.split(1));
 		IJavaProject jProject = JavaCore.create(project);
-		jProject.setOutputLocation(project.getFullPath(), subMonitor.newChild(1));
-		computeClasspath(jProject, subMonitor.newChild(1));
+		jProject.setOutputLocation(project.getFullPath(), subMonitor.split(1));
+		computeClasspath(jProject, subMonitor.split(1));
 		return project;
 	}
 

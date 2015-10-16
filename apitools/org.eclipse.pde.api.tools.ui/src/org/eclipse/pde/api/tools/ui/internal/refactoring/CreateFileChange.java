@@ -128,15 +128,15 @@ public class CreateFileChange extends ResourceChange {
 			SubMonitor subMonitor = SubMonitor.convert(pm, RefactoringMessages.CreateFileChange_3, 3);
 
 			initializeEncoding();
-			IFile file = getOldFile(subMonitor.newChild(1));
+			IFile file = getOldFile(subMonitor.split(1));
 			try {
 				is = new ByteArrayInputStream(fSource.getBytes(fEncoding));
-				file.create(is, false, subMonitor.newChild(1));
+				file.create(is, false, subMonitor.split(1));
 				if (fStampToRestore != IResource.NULL_STAMP) {
 					file.revertModificationStamp(fStampToRestore);
 				}
 				if (fExplicitEncoding) {
-					file.setCharset(fEncoding, subMonitor.newChild(1));
+					file.setCharset(fEncoding, subMonitor.split(1));
 				} else {
 					subMonitor.worked(1);
 				}

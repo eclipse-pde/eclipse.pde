@@ -911,7 +911,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 					}
 					SubMonitor subMonitor = SubMonitor.convert(monitor, projects.length * 2);
 					for (int i = 0; i < projects.length; i++) {
-						SubMonitor iterationMonitor = subMonitor.newChild(2).setWorkRemaining(2);
+						SubMonitor iterationMonitor = subMonitor.split(2).setWorkRemaining(2);
 						IProject projectToBuild = projects[i];
 						if (!projectToBuild.isOpen())
 							continue;
