@@ -783,7 +783,7 @@ public class UseReportConverter extends HTMLConvertor {
 				start = System.currentTimeMillis();
 			}
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_parsing_use_scan);
-			List<?> result = parse(localmonitor.newChild(5));
+			List<?> result = parse(localmonitor.split(5));
 			Util.updateMonitor(localmonitor, 1);
 			if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 				System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$

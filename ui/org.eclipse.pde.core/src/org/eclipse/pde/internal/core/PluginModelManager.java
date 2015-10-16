@@ -541,7 +541,7 @@ public class PluginModelManager implements IModelProviderListener {
 
 		long startTargetModels = System.currentTimeMillis();
 		// Target models
-		URL[] externalUrls = getExternalBundles(subMon.newChild(40));
+		URL[] externalUrls = getExternalBundles(subMon.split(40));
 		if (subMon.isCanceled()) {
 			// If target resolution is cancelled, externalUrls will be empty. Log warning so user knows how to reload the target.
 			if (PDECore.DEBUG_MODEL) {
@@ -552,7 +552,7 @@ public class PluginModelManager implements IModelProviderListener {
 			fCancelled = true;
 		}
 
-		fState = new PDEState(externalUrls, true, true, subMon.newChild(15));
+		fState = new PDEState(externalUrls, true, true, subMon.split(15));
 		fExternalManager.setModels(fState.getTargetModels());
 		addToTable(entries, fExternalManager.getAllModels());
 

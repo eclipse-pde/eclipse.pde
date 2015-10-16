@@ -144,13 +144,13 @@ public class LauncherUtils {
 					if (configuration.getAttribute(IPDEConstants.DOCLEARLOG, false)) {
 						LauncherUtils.clearWorkspaceLog(workspace);
 					} else {
-						CoreUtility.deleteContent(workspaceFile, subMon.newChild(90));
+						CoreUtility.deleteContent(workspaceFile, subMon.split(90));
 					}
 				}
 			} else if (configuration.getAttribute(IPDEConstants.DOCLEARLOG, false)) {
 				LauncherUtils.clearWorkspaceLog(workspace);
 			} else {
-				CoreUtility.deleteContent(workspaceFile, subMon.newChild(90));
+				CoreUtility.deleteContent(workspaceFile, subMon.split(90));
 			}
 		}
 

@@ -361,22 +361,22 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					if (ApiPlugin.DEBUG_BUILDER) {
 						System.out.println("ApiAnalysisBuilder: Performing full build as requested"); //$NON-NLS-1$
 					}
-					buildAll(baseline, wbaseline, localMonitor.newChild(1));
+					buildAll(baseline, wbaseline, localMonitor.split(1));
 					break;
 				}
 				case AUTO_BUILD:
 				case INCREMENTAL_BUILD: {
 					this.buildstate = BuildState.getLastBuiltState(currentproject);
 					if (this.buildstate == null) {
-						buildAll(baseline, wbaseline, localMonitor.newChild(1));
+						buildAll(baseline, wbaseline, localMonitor.split(1));
 						break;
 					} else if (worthDoingFullBuild(projects)) {
-						buildAll(baseline, wbaseline, localMonitor.newChild(1));
+						buildAll(baseline, wbaseline, localMonitor.split(1));
 						break;
 					} else {
 						IResourceDelta[] deltas = getDeltas(projects);
 						if (deltas.length < 1) {
-							buildAll(baseline, wbaseline, localMonitor.newChild(1));
+							buildAll(baseline, wbaseline, localMonitor.split(1));
 						} else {
 							IResourceDelta filters = null;
 							boolean full = false;
@@ -410,16 +410,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								if (ApiPlugin.DEBUG_BUILDER) {
 									System.out.println("ApiAnalysisBuilder: Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
 								}
-								buildAll(baseline, wbaseline, localMonitor.newChild(1));
+								buildAll(baseline, wbaseline, localMonitor.split(1));
 							} else {
-								State state = (State) JavaModelManager.getJavaModelManager().getLastBuiltState(this.currentproject, localMonitor.newChild(1));
+								State state = (State) JavaModelManager.getJavaModelManager().getLastBuiltState(this.currentproject, localMonitor.split(1));
 								if (state == null) {
-									buildAll(baseline, wbaseline, localMonitor.newChild(1));
+									buildAll(baseline, wbaseline, localMonitor.split(1));
 									break;
 								}
 								BuildState.setLastBuiltState(this.currentproject, null);
 								IncrementalApiBuilder builder = new IncrementalApiBuilder(this);
-								builder.build(baseline, wbaseline, deltas, state, this.buildstate, localMonitor.newChild(1));
+								builder.build(baseline, wbaseline, deltas, state, this.buildstate, localMonitor.split(1));
 							}
 						}
 					}
@@ -746,7 +746,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				// Compatibility checks
 				IApiComponent apiComponent = wbaseline.getApiComponent(id);
 				if (apiComponent != null) {
-					getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, new BuildContext(), localMonitor.newChild(1));
+					getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, new BuildContext(), localMonitor.split(1));
 					Util.updateMonitor(localMonitor, 1);
 					createMarkers();
 					Util.updateMonitor(localMonitor, 1);

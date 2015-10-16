@@ -431,7 +431,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		SubMonitor subMon = SubMonitor.convert(monitor, 50);
 
 		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.newChild(25))) {
+		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.split(25))) {
 			throw new CoreException(Status.CANCEL_STATUS);
 		}
 
@@ -442,7 +442,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 		// clear config area, if necessary
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
-			CoreUtility.deleteContent(getConfigurationDirectory(configuration), subMon.newChild(25));
+			CoreUtility.deleteContent(getConfigurationDirectory(configuration), subMon.split(25));
 
 		subMon.done();
 	}

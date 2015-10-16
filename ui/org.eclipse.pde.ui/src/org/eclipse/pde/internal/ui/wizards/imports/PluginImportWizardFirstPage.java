@@ -548,7 +548,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				SubMonitor subMon = SubMonitor.convert(monitor);
 				subMon.beginTask(PDEUIMessages.PluginImportWizardFirstPage_1, 100);
 				if (!target.isResolved()) {
-					target.resolve(subMon.newChild(50));
+					target.resolve(subMon.split(50));
 				}
 				subMon.setWorkRemaining(50);
 				if (subMon.isCanceled()) {
@@ -573,7 +573,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 						return;
 					}
 				}
-				state = new PDEState(all.toArray(new URL[0]), false, false, subMon.newChild(30));
+				state = new PDEState(all.toArray(new URL[0]), false, false, subMon.split(30));
 				models = state.getTargetModels();
 				List<IPluginModelBase> sourceModels = new ArrayList<>();
 				List<TargetBundle> sourceBundles = new ArrayList<>();
@@ -587,7 +587,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				}
 				alternateSource = new AlternateSourceLocations(sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), sourceBundles.toArray(new TargetBundle[sourceBundles.size()]));
 				try {
-					buildImportDescriptions(subMon.newChild(20), type);
+					buildImportDescriptions(subMon.split(20), type);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}

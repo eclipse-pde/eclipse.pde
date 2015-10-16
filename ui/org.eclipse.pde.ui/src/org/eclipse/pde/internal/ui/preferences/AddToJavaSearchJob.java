@@ -115,7 +115,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 			manager.removeAllFromJavaSearch();
 
 			if (!fTargetDefinition.isResolved()) {
-				IStatus status = fTargetDefinition.resolve(subMon.newChild(50));
+				IStatus status = fTargetDefinition.resolve(subMon.split(50));
 				if (!status.isOK()) {
 					return status;
 				}

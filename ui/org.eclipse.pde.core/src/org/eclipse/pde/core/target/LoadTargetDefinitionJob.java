@@ -107,7 +107,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			}
 
 			if (!fTarget.isResolved()) {
-				fTarget.resolve(subMon.newChild(20));
+				fTarget.resolve(subMon.split(20));
 			}
 			subMon.setWorkRemaining(20);
 			if (subMon.isCanceled()) {
@@ -130,18 +130,18 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				return Status.CANCEL_STATUS;
 			}
 
-			clearDeprecatedPreferences(preferences, subMon.newChild(3));
+			clearDeprecatedPreferences(preferences, subMon.split(3));
 			if (subMon.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
-			loadJRE(subMon.newChild(3));
+			loadJRE(subMon.split(3));
 			if (subMon.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
 			PDECore.getDefault().getPreferencesManager().savePluginPreferences();
-			resetPlatform(subMon.newChild(14));
+			resetPlatform(subMon.split(14));
 			if (subMon.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}

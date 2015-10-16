@@ -918,16 +918,16 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 						if (projectToBuild.hasNature(PDE.PLUGIN_NATURE)) {
 							if (fBuilders.contains(PDE.MANIFEST_BUILDER_ID)) {
 								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.MANIFEST_BUILDER_ID,
-										null, iterationMonitor.newChild(1));
+										null, iterationMonitor.split(1));
 							}
 							if (fBuilders.contains(PDE.SCHEMA_BUILDER_ID)) {
 								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.SCHEMA_BUILDER_ID, null,
-										iterationMonitor.newChild(1));
+										iterationMonitor.split(1));
 							}
 						} else if (projectToBuild.hasNature(PDE.FEATURE_NATURE)) {
 							if (fBuilders.contains(PDE.FEATURE_BUILDER_ID)) {
 								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.FEATURE_BUILDER_ID, null,
-										iterationMonitor.newChild(2));
+										iterationMonitor.split(2));
 							}
 						}
 					}

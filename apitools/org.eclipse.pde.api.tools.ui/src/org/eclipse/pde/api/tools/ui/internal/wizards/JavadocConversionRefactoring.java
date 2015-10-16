@@ -204,7 +204,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 			}
 			// collect the changes for the conversion
 			try {
-				createChanges(pchange, JavaCore.create(project), removeTags, localmonitor.newChild(100));
+				createChanges(pchange, JavaCore.create(project), removeTags, localmonitor.split(100));
 			} catch (CoreException e) {
 				ApiUIPlugin.log(e);
 			}
@@ -233,7 +233,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 	RefactoringStatus createChanges(CompositeChange projectchange, IJavaProject project, boolean remove, SubMonitor monitor) throws CoreException {
 		HashMap<IFile, Set<TextEdit>> map = new HashMap<IFile, Set<TextEdit>>();
 		// XXX visit all CU's -> all doc nodes -> create add annotations
-		RefactoringStatus status = collectAnnotationEdits(project, map, remove, monitor.newChild(75));
+		RefactoringStatus status = collectAnnotationEdits(project, map, remove, monitor.split(75));
 		if (status.isOK()) {
 			IFile file = null;
 			TextFileChange change = null;

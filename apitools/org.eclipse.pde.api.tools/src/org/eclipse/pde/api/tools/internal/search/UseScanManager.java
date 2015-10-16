@@ -146,7 +146,7 @@ public class UseScanManager {
 				Util.updateMonitor(localmonitor, 1);
 				return references.getExternalDependenciesTo(apiUseTypes);
 			} else {
-				fetch(apiComponent, null, references, localmonitor.newChild(8)); // full
+				fetch(apiComponent, null, references, localmonitor.split(8)); // full
 																					// build
 																					// has
 																					// been
@@ -223,7 +223,7 @@ public class UseScanManager {
 							}
 							throw new Exception(message);
 						}
-						parser.parse(locations[i], localmonitor.newChild(2), visitor);
+						parser.parse(locations[i], localmonitor.split(2), visitor);
 						Util.updateMonitor(localmonitor);
 					} catch (Exception e) {
 						ApiPlugin.log(e); // log the exception and continue with

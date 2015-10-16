@@ -83,8 +83,8 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 				HashSet<String> pkgs = new HashSet<>();
 				pkgsAndUses.put(frags[i].getElementName(), pkgs);
 				try {
-					findReferences(frags[i].getCompilationUnits(), pkgs, iterationMonitor.newChild(1), false);
-					findReferences(frags[i].getClassFiles(), pkgs, iterationMonitor.newChild(1), true);
+					findReferences(frags[i].getCompilationUnits(), pkgs, iterationMonitor.split(1), false);
+					findReferences(frags[i].getClassFiles(), pkgs, iterationMonitor.split(1), true);
 				} catch (JavaModelException e) {
 				}
 			}

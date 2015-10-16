@@ -101,7 +101,7 @@ public final class ApiSearchEngine {
 				if (type == null || !requestor.acceptMember(type)) {
 					return;
 				}
-				collector.addAll(acceptReferences(requestor, type, getResolvedReferences(requestor, type, monitor.newChild(1)), monitor.newChild(1)));
+				collector.addAll(acceptReferences(requestor, type, getResolvedReferences(requestor, type, monitor.split(1)), monitor.split(1)));
 			} catch (CoreException ce) {
 				ApiPlugin.log(ce);
 			}
@@ -163,8 +163,8 @@ public final class ApiSearchEngine {
 		String name = type.getSimpleName();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(SearchMessages.ApiSearchEngine_extracting_refs_from, new Object[] { (name == null ? SearchMessages.ApiSearchEngine_anonymous_type : name) }), 2);
 		try {
-			List<IReference> refs = type.extractReferences(requestor.getReferenceKinds(), localmonitor.newChild(1));
-			ReferenceResolver.resolveReferences(refs, localmonitor.newChild(1));
+			List<IReference> refs = type.extractReferences(requestor.getReferenceKinds(), localmonitor.split(1));
+			ReferenceResolver.resolveReferences(refs, localmonitor.split(1));
 			return refs;
 		} finally {
 			localmonitor.done();
@@ -233,7 +233,7 @@ public final class ApiSearchEngine {
 						reporter.reportResults(element, NO_REFERENCES);
 					}
 					IApiType type = (IApiType) element;
-					refs = acceptReferences(requestor, type, getResolvedReferences(requestor, type, localmonitor.newChild(1)), localmonitor.newChild(1));
+					refs = acceptReferences(requestor, type, getResolvedReferences(requestor, type, localmonitor.split(1)), localmonitor.split(1));
 					reporter.reportResults(element, refs.toArray(new IReference[refs.size()]));
 					break;
 				}
@@ -241,7 +241,7 @@ public final class ApiSearchEngine {
 					if (localmonitor.isCanceled()) {
 						reporter.reportResults(element, NO_REFERENCES);
 					}
-					ReferenceExtractor visitor = new ReferenceExtractor(requestor, reporter, element, localmonitor.newChild(1));
+					ReferenceExtractor visitor = new ReferenceExtractor(requestor, reporter, element, localmonitor.split(1));
 					IApiComponent comp = (IApiComponent) element;
 					comp.accept(visitor);
 					comp.close();
@@ -256,7 +256,7 @@ public final class ApiSearchEngine {
 					IApiMember member = (IApiMember) element;
 					IApiType type = member.getEnclosingType();
 					if (type != null) {
-						refs = acceptReferences(requestor, type, getResolvedReferences(requestor, type, localmonitor.newChild(1)), localmonitor.newChild(1));
+						refs = acceptReferences(requestor, type, getResolvedReferences(requestor, type, localmonitor.split(1)), localmonitor.split(1));
 					}
 					if (refs != null) {
 						reporter.reportResults(element, refs.toArray(new IReference[refs.size()]));
@@ -310,7 +310,7 @@ public final class ApiSearchEngine {
 						loopstart = System.currentTimeMillis();
 						System.out.println("Searching " + scopeelements[i].getApiComponent().getSymbolicName() + "..."); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					searchReferences(requestor, scopeelements[i], reporter, localmonitor.newChild(1));
+					searchReferences(requestor, scopeelements[i], reporter, localmonitor.split(1));
 					localmonitor.setTaskName(taskname);
 					if (localmonitor.isCanceled()) {
 						reporter.reportResults(scopeelements[i], NO_REFERENCES);

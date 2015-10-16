@@ -91,7 +91,7 @@ public class UpdateTargetJob extends Job {
 			// TODO Custom code for IUBundleContainers with children selected
 			if (location instanceof IUBundleContainer && !children.isEmpty()) {
 				try {
-					boolean result = ((IUBundleContainer) location).update(children, progress.newChild(100));
+					boolean result = ((IUBundleContainer) location).update(children, progress.split(100));
 					if (result) {
 						noChange = false;
 					}
@@ -102,7 +102,7 @@ public class UpdateTargetJob extends Job {
 				ITargetLocationUpdater provider = (ITargetLocationUpdater) Platform.getAdapterManager().getAdapter(location, ITargetLocationUpdater.class);
 				if (provider != null) {
 					if (provider.canUpdate(fTarget, location)) {
-						IStatus result = provider.update(fTarget, location, progress.newChild(100));
+						IStatus result = provider.update(fTarget, location, progress.split(100));
 						if (result.isOK() && result.getCode() != ITargetLocationUpdater.STATUS_CODE_NO_CHANGE) {
 							noChange = false;
 						} else if (!result.isOK()) {

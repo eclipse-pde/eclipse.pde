@@ -344,14 +344,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	public synchronized boolean update(Set<Object> toUpdate, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
-		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(fRepos, progress.newChild(30));
+		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(fRepos, progress.split(30));
 		boolean updated = false;
-		SubMonitor loopProgress = progress.newChild(70).setWorkRemaining(fIds.length);
+		SubMonitor loopProgress = progress.split(70).setWorkRemaining(fIds.length);
 		for (int i = 0; i < fIds.length; i++) {
 			if (!toUpdate.isEmpty() && !toUpdate.contains(fIds[i]))
 				continue;
 			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[i]));
-			IQueryResult<IInstallableUnit> queryResult = source.query(query, loopProgress.newChild(1));
+			IQueryResult<IInstallableUnit> queryResult = source.query(query, loopProgress.split(1));
 			Iterator<IInstallableUnit> it = queryResult.iterator();
 			// bail if the feature is no longer available.
 			if (!it.hasNext())

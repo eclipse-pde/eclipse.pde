@@ -165,7 +165,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		SubMonitor subMon = SubMonitor.convert(monitor, 50);
 
 		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.newChild(25)))
+		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.split(25)))
 			throw new CoreException(Status.CANCEL_STATUS);
 
 		subMon.setWorkRemaining(25);
@@ -175,7 +175,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 		// clear config area, if necessary
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
-			CoreUtility.deleteContent(getConfigDir(configuration), subMon.newChild(25));
+			CoreUtility.deleteContent(getConfigDir(configuration), subMon.split(25));
 
 		subMon.done();
 	}

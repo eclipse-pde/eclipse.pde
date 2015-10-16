@@ -108,10 +108,10 @@ public class ApiUseScanJob extends Job {
 				localmonitor.setTaskName(Messages.ApiUseScanJob_preparing_for_scan);
 				localmonitor.setWorkRemaining((isSpecified(ApiUseLaunchDelegate.CREATE_HTML) ? 14 : 13));
 				// create baseline
-				IApiBaseline baseline = createApiBaseline(kind, localmonitor.newChild(1));
+				IApiBaseline baseline = createApiBaseline(kind, localmonitor.split(1));
 				Set<String> ids = new HashSet<String>();
 				TreeSet<IApiComponent> scope = new TreeSet<IApiComponent>(Util.componentsorter);
-				getContext(baseline, ids, scope, localmonitor.newChild(2));
+				getContext(baseline, ids, scope, localmonitor.split(2));
 				int kinds = 0;
 				if (isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES)) {
 					kinds |= IApiSearchRequestor.INCLUDE_API;
@@ -147,13 +147,13 @@ public class ApiUseScanJob extends Job {
 				xmlPath = rootpath.append("xml").toOSString(); //$NON-NLS-1$
 				if (isSpecified(ApiUseLaunchDelegate.CLEAN_XML)) {
 					localmonitor.setTaskName(Messages.ApiUseScanJob_cleaning_xml_loc);
-					scrubReportLocation(new File(xmlPath), localmonitor.newChild(1));
+					scrubReportLocation(new File(xmlPath), localmonitor.split(1));
 				}
 				UseMetadata data = new UseMetadata(kinds, this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String) null), this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String) null), baseline.getLocation(), xmlPath, sapi, sinternal, sjars, this.configuration.getAttribute(ApiUseLaunchDelegate.FILTER_ROOT, (String) null), DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()), this.configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, (String) null));
 				IApiSearchReporter reporter = new XmlSearchReporter(xmlPath, false);
 				try {
 					ApiSearchEngine engine = new ApiSearchEngine();
-					engine.search(baseline, requestor, reporter, localmonitor.newChild(6));
+					engine.search(baseline, requestor, reporter, localmonitor.split(6));
 				} finally {
 					reporter.reportNotSearched(ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
 					reporter.reportMetadata(data);
@@ -184,7 +184,7 @@ public class ApiUseScanJob extends Job {
 					reportType = ApiUseLaunchDelegate.REPORT_KIND_CONSUMER;
 				}
 
-				performReportCreation(reportType, isSpecified(ApiUseLaunchDelegate.CLEAN_HTML), htmlPath, xmlPath, isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT), getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, (List<String>) null)), getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, (List<String>) null)), localmonitor.newChild(10));
+				performReportCreation(reportType, isSpecified(ApiUseLaunchDelegate.CLEAN_HTML), htmlPath, xmlPath, isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT), getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, (List<String>) null)), getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, (List<String>) null)), localmonitor.split(10));
 			}
 
 		} catch (CoreException e) {
@@ -374,7 +374,7 @@ public class ApiUseScanJob extends Job {
 	void performReportCreation(int reportType, boolean cleanh, String hlocation, String rlocation, boolean openhtml, String[] topatterns, String[] frompatterns, IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_creating_html_reports, 10);
 		if (cleanh) {
-			cleanReportLocation(hlocation, localmonitor.newChild(5));
+			cleanReportLocation(hlocation, localmonitor.split(5));
 		}
 		try {
 			UseReportConverter converter = null;
@@ -384,7 +384,7 @@ public class ApiUseScanJob extends Job {
 				converter = new UseReportConverter(hlocation, rlocation, topatterns, frompatterns);
 			}
 
-			converter.convert(null, localmonitor.newChild(5));
+			converter.convert(null, localmonitor.split(5));
 			if (openhtml) {
 				final File index = converter.getReportIndex();
 				if (index != null) {
@@ -462,7 +462,7 @@ public class ApiUseScanJob extends Job {
 	 */
 	private IApiBaseline createBaseline(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_reading_target, 10);
-		definition.resolve(localmonitor.newChild(2));
+		definition.resolve(localmonitor.split(2));
 		Util.updateMonitor(localmonitor, 1);
 		TargetBundle[] bundles = definition.getBundles();
 		List<IApiComponent> components = new ArrayList<IApiComponent>();

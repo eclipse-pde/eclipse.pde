@@ -149,7 +149,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 				try {
 					resource = iter.next();
 					pjs.add(resource.getProject());
-					(resource).touch(localmonitor.newChild(1));
+					(resource).touch(localmonitor.split(1));
 				} catch (CoreException ce) {
 				}
 			}

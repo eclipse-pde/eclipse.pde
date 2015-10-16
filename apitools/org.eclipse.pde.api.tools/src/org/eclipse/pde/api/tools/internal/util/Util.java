@@ -232,7 +232,7 @@ public final class Util {
 						if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 							currentProject.touch(null);
 						} else {
-							currentProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localmonitor.newChild(1));
+							currentProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localmonitor.split(1));
 						}
 					}
 				}

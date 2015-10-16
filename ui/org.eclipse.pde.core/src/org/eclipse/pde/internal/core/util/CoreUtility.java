@@ -123,7 +123,7 @@ public class CoreUtility {
 						if (subMon.isCanceled()) {
 							return;
 						}
-						deleteContent(children[i], subMon.newChild(10));
+						deleteContent(children[i], subMon.split(10));
 					}
 				}
 			}

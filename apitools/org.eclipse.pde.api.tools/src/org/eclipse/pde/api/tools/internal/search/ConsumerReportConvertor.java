@@ -541,7 +541,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);
 		ListConsumersVisitor listVisitor = new ListConsumersVisitor();
 		UseScanParser lparser = new UseScanParser();
-		lparser.parse(getXmlLocation(), subMon.newChild(5), listVisitor);
+		lparser.parse(getXmlLocation(), subMon.split(5), listVisitor);
 		List<Consumer> consumerReports = new ArrayList<>();
 
 		ConsumerReportVisitor visitor = null;

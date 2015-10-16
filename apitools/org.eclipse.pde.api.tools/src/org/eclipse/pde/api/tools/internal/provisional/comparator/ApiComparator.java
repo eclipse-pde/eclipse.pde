@@ -131,7 +131,7 @@ public class ApiComparator {
 						if (!versionString.equals(versionString2) || force) {
 							long time = System.currentTimeMillis();
 							try {
-								delta = compare(apiComponent, apiComponent2, referenceBaseline, baseline, visibilityModifiers, localmonitor.newChild(1));
+								delta = compare(apiComponent, apiComponent2, referenceBaseline, baseline, visibilityModifiers, localmonitor.split(1));
 							} finally {
 								if (ApiPlugin.DEBUG_API_COMPARATOR) {
 									System.out.println("Time spent for " + id + " " + versionString + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -205,7 +205,7 @@ public class ApiComparator {
 					if (!component.getVersion().equals(apiComponent2.getVersion()) || force) {
 						long time = System.currentTimeMillis();
 						try {
-							delta = compare(apiComponent2, component, visibilityModifiers, localmonitor.newChild(1));
+							delta = compare(apiComponent2, component, visibilityModifiers, localmonitor.split(1));
 						} finally {
 							if (ApiPlugin.DEBUG_API_COMPARATOR) {
 								System.out.println("Time spent for " + id + " " + component.getVersion() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -285,7 +285,7 @@ public class ApiComparator {
 						currentEE,
 						Util.getComponentVersionsId(referenceComponent) }));
 			}
-			return internalCompare(referenceComponent, component2, referenceBaseline, baseline, visibilityModifiers, globalDelta, localmonitor.newChild(1));
+			return internalCompare(referenceComponent, component2, referenceBaseline, baseline, visibilityModifiers, globalDelta, localmonitor.split(1));
 		} catch (CoreException e) {
 			// null means an error case
 			return null;
@@ -428,7 +428,7 @@ public class ApiComparator {
 			}
 			Util.updateMonitor(localmonitor, 1);
 			ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, component2, referenceBaseline, baseline, visibilityModifiers);
-			IDelta delta = comparator.getDelta(localmonitor.newChild(1));
+			IDelta delta = comparator.getDelta(localmonitor.split(1));
 			if (ApiPlugin.DEBUG_API_COMPARATOR) {
 				IStatus status = comparator.getStatus();
 				if (status != null) {
@@ -552,7 +552,7 @@ public class ApiComparator {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
 		try {
 			final Set<IDelta> deltas = new HashSet<>();
-			final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers, continueOnResolverError, localmonitor.newChild(1));
+			final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers, continueOnResolverError, localmonitor.split(1));
 			scope.accept(visitor);
 
 			// If set to continue on error, return whatever deltas were
@@ -773,7 +773,7 @@ public class ApiComparator {
 									}
 									typeRootBaseLineNames.add(typeName);
 									ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, provider, referenceBaseline, baseline, visibilityModifiers);
-									IDelta delta = comparator.getDelta(localmonitor.newChild(1));
+									IDelta delta = comparator.getDelta(localmonitor.split(1));
 									if (ApiPlugin.DEBUG_API_COMPARATOR) {
 										IStatus status = comparator.getStatus();
 										if (status != null) {

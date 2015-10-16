@@ -252,7 +252,7 @@ public class IncrementalApiBuilder {
 				deltas[i].accept(visitor);
 			}
 			buildContext(project, state, visitor.changes, depprojects);
-			build(project, baseline, wbaseline, state, buildstate, localmonitor.newChild(1));
+			build(project, baseline, wbaseline, state, buildstate, localmonitor.split(1));
 		} catch (OperationCanceledException oce) {
 			// do nothing, but don't forward it
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
@@ -292,9 +292,9 @@ public class IncrementalApiBuilder {
 					if (comp == null) {
 						return;
 					}
-					extClean(project, buildstate, localmonitor.newChild(1));
+					extClean(project, buildstate, localmonitor.split(1));
 					Util.updateMonitor(localmonitor, 1);
-					this.builder.getAnalyzer().analyzeComponent(buildstate, null, null, baseline, comp, this.context, localmonitor.newChild(1));
+					this.builder.getAnalyzer().analyzeComponent(buildstate, null, null, baseline, comp, this.context, localmonitor.split(1));
 					Util.updateMonitor(localmonitor, 1);
 					this.builder.createMarkers();
 					Util.updateMonitor(localmonitor, 1);

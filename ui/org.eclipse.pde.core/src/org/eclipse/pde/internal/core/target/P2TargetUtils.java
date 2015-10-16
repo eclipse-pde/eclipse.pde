@@ -731,7 +731,7 @@ public class P2TargetUtils {
 		if (fProfile != null && checkProfile(target)) {
 			// always push the changes to the target because there can be many target objects
 			// for the same synchronizer (doh!)
-			notify(target, progress.newChild(25));
+			notify(target, progress.split(25));
 			return;
 		}
 
@@ -747,12 +747,12 @@ public class P2TargetUtils {
 		try {
 			// Now resolve the profile and refresh the relate IU containers
 			if (getIncludeAllRequired())
-				resolveWithPlanner(target, progress.newChild(60));
+				resolveWithPlanner(target, progress.split(60));
 			else
-				resolveWithSlicer(target, progress.newChild(60));
+				resolveWithSlicer(target, progress.split(60));
 
 			// If we are updating a profile then delete the old snapshot on success.
-			notify(target, progress.newChild(15));
+			notify(target, progress.split(15));
 		} catch (CoreException e) {
 			// There was at least one problem getting the contents, delete the profile so we don't cache in a bad state, Bug 439034
 			// TODO ALL we really want to delete is the sequence property, so that checkProfile will compare settings and contents

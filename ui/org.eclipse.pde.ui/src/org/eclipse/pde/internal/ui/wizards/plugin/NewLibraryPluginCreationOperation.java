@@ -128,11 +128,11 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			IClasspathEntry[] cp = javaProject.getRawClasspath();
 			IClasspathEntry[] updated = getUpdatedClasspath(cp, currentProject);
 			if (updated != null) {
-				javaProject.setRawClasspath(updated, iterationMonitor.newChild(1));
+				javaProject.setRawClasspath(updated, iterationMonitor.split(1));
 			}
 			iterationMonitor.setWorkRemaining(1);
 			try {
-				updateRequiredPlugins(javaProject, iterationMonitor.newChild(1), pluginstoUpdate[i]);
+				updateRequiredPlugins(javaProject, iterationMonitor.split(1), pluginstoUpdate[i]);
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			}

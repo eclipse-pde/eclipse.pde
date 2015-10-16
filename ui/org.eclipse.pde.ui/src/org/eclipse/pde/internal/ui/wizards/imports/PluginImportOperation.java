@@ -578,7 +578,7 @@ public class PluginImportOperation extends WorkspaceJob {
 						IPath destination = project.getFullPath();
 						destination = destination.append(currentDestination);
 						PluginImportHelper.importContent(provider.getRoot(), destination, provider,
-								collected.get(currentDestination), iterationMonitor.newChild(1));
+								collected.get(currentDestination), iterationMonitor.split(1));
 					}
 				} finally {
 					if (zip != null) {
@@ -596,7 +596,7 @@ public class PluginImportOperation extends WorkspaceJob {
 					IPath destination = project.getFullPath();
 					destination = destination.append(currentDestination);
 					PluginImportHelper.importContent(srcFile, destination, FileSystemStructureProvider.INSTANCE,
-							collected.get(currentDestination), iterationMonitor.newChild(1));
+							collected.get(currentDestination), iterationMonitor.split(1));
 				}
 			}
 

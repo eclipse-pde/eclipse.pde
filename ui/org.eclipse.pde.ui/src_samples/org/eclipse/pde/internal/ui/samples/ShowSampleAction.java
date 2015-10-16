@@ -176,8 +176,8 @@ public class ShowSampleAction extends Action implements IIntroAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					SubMonitor sub = SubMonitor.convert(monitor, PDEUIMessages.ShowSampleAction_installing, 100);
-					InstallOperation operation = createInstallOperation(sub.newChild(10));
-					operation.resolveModal(sub.newChild(20));
+					InstallOperation operation = createInstallOperation(sub.split(10));
+					operation.resolveModal(sub.split(20));
 					IStatus status = operation.getResolutionResult();
 					if (status.getSeverity() == IStatus.CANCEL) {
 						throw new InterruptedException();
@@ -185,7 +185,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 						throw new CoreException(status);
 					}
 					ProvisioningJob job = operation.getProvisioningJob(null);
-					status = job.runModal(sub.newChild(70));
+					status = job.runModal(sub.split(70));
 					if (!(status.isOK() || status.getSeverity() == IStatus.INFO)) {
 						throw new CoreException(status);
 					}
@@ -211,8 +211,8 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 * to be installed.
 	 */
 	protected Collection<IInstallableUnit> findSampleIUs(URI location, SubMonitor monitor) throws ProvisionException {
-		IMetadataRepository repository = provUI.loadMetadataRepository(location, false, monitor.newChild(5));
-		IQueryResult<IInstallableUnit> allSamples = repository.query(getSampleFeatureQuery(), monitor.newChild(5));
+		IMetadataRepository repository = provUI.loadMetadataRepository(location, false, monitor.split(5));
+		IQueryResult<IInstallableUnit> allSamples = repository.query(getSampleFeatureQuery(), monitor.split(5));
 		if (allSamples.isEmpty()) {
 			throw new ProvisionException(NLS.bind(PDEUIMessages.ShowSampleAction_NoSamplesFound, location.toString()));
 		}
