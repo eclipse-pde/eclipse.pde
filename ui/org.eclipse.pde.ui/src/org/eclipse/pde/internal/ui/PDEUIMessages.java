@@ -2382,10 +2382,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String UpdateActivationResolution_lazyStart_label;
 
-	public static String UpdateActivationResolution_bundleActivationPolicyAdd_desc;
-
-	public static String UpdateActivationResolution_bundleActivationPolicyAdd_label;
-
 	public static String AddSingleon_dir_label;
 
 	public static String AddSingleon_att_label;
