@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
@@ -94,18 +95,18 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	public boolean performFinish(IProject project, IPluginModelBase model, IProgressMonitor monitor) {
 		try {
 			ITemplateSection[] sections = getTemplateSections();
-			monitor.beginTask("", sections.length); //$NON-NLS-1$
+			
+			SubMonitor subMonitor = SubMonitor.convert(monitor, sections.length);
 			for (int i = 0; i < sections.length; i++) {
-				sections[i].execute(project, model, new SubProgressMonitor(monitor, 1));
+				sections[i].execute(project, model, subMonitor.newChild(1));
 			}
 			//No reason to do this any more with the new editors
 			//saveTemplateFile(project, null);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 			return false;
-		} finally {
-			monitor.done();
 		}
+
 		return true;
 	}
 
