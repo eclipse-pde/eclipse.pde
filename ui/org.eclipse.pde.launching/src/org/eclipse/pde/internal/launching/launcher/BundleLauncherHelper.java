@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,6 +177,7 @@ public class BundleLauncherHelper {
 
 			//remove conflicting duplicates - if they have same version or both are singleton
 			HashMap<String, IPluginModelBase> pluginMap = new HashMap<String, IPluginModelBase>();
+			Set<IPluginModelBase> pluginSet = new HashSet<IPluginModelBase>();
 			List<IPluginModelBase> workspaceModels = null;
 			for (Iterator<IPluginModelBase> iterator = launchPlugins.iterator(); iterator.hasNext();) {
 				IPluginModelBase model = iterator.next();
@@ -187,16 +188,17 @@ public class BundleLauncherHelper {
 						if (workspaceModels == null)
 							workspaceModels = Arrays.asList(PluginRegistry.getWorkspaceModels());
 						if (!workspaceModels.contains(existing)) { //if existing model is external
-							pluginMap.put(id, model); // launch the workspace model
+							pluginSet.add(model);// launch the workspace model
 							continue;
 						}
 					}
 				}
-				pluginMap.put(id, model);
+				pluginSet.add(model);
 			}
+			pluginMap.clear();
 
 			// Create the start levels for the selected plugins and add them to the map
-			for (Iterator<IPluginModelBase> iterator = pluginMap.values().iterator(); iterator.hasNext();) {
+			for (Iterator<IPluginModelBase> iterator = pluginSet.iterator(); iterator.hasNext();) {
 				IPluginModelBase model = iterator.next();
 				addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
 			}
