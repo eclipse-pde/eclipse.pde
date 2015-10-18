@@ -54,7 +54,6 @@
 
   <modules>
     <module>org.eclipse.pde.build</module>
-    <module>org.eclipse.pde.build.feature</module>
     <module>org.eclipse.pde.build.tests</module>
   </modules>
 </project>
