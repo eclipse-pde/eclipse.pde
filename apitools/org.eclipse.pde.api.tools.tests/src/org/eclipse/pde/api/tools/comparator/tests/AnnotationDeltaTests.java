@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
  * Delta tests for annotation
  */
 public class AnnotationDeltaTests extends DeltaTestSetup {
-	
+
 	public static Test suite() {
 		return new TestSuite(AnnotationDeltaTests.class);
 //		TestSuite suite = new TestSuite(AnnotationDeltaTests.class.getName());
@@ -62,7 +62,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * remove element to annotation type
 	 */
@@ -259,7 +259,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Changed default values
 	 */

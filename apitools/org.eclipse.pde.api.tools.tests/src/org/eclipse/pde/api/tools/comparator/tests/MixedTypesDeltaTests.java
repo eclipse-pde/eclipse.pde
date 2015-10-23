@@ -24,7 +24,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
  * Delta tests for mixed types (conversion from interface to other types, and so on)
  */
 public class MixedTypesDeltaTests extends DeltaTestSetup {
-	
+
 	public static Test suite() {
 		return new TestSuite(MixedTypesDeltaTests.class);
 //		TestSuite suite = new TestSuite(MixedTypesDeltaTests.class.getName());
@@ -106,7 +106,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * From class to interface
 	 */
@@ -172,7 +172,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * From annotation to class
 	 */
@@ -216,7 +216,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * From annotation to interface
 	 */
@@ -238,7 +238,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * From enum to interface
 	 */
@@ -260,7 +260,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * From enum to class
 	 */

@@ -41,14 +41,14 @@ import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 
 /**
  * Base class for performance tests
- * 
+ *
  * @since 1.0
  */
 public abstract class PerformanceTest extends ApiBuilderTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public PerformanceTest(String name) {
@@ -96,7 +96,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
@@ -173,7 +173,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	/**
 	 * Performs a clean and full build on the projects in the workspace computed
 	 * ordering
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	protected void orderedBuild(IProject[] projects) throws CoreException {
@@ -185,7 +185,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 
 	/**
 	 * Creates the API baseline for this test.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	protected void createBaseline() throws Exception {
@@ -226,7 +226,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	/**
 	 * Creates the workspace by importing projects from the source zip. This is
 	 * the initial state of the workspace.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	protected void createInitialWorkspace() throws Exception {
@@ -277,7 +277,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 
 	/**
 	 * Recursively deletes directories and all files in it.
-	 * 
+	 *
 	 * @param dir
 	 */
 	protected void deleteDir(File dir) {
@@ -295,7 +295,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * Returns the a string of the absolute path in the local file system to an
 	 * archive of the API baseline to use for this test or <code>null</code> if
 	 * none. Subclasses must override if they need a baseline.
-	 * 
+	 *
 	 * @return absolute path in the local file system to an archive of the API
 	 *         baseline to use for this test or <code>null</code>
 	 */
@@ -307,7 +307,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * Returns the a string of the absolute path in the local file system to an
 	 * archive of the source workspace to use for this test or <code>null</code>
 	 * if none. Subclasses must override if they need to populate a workspace.
-	 * 
+	 *
 	 * @return absolute path in the local file system to an archive of the
 	 *         source workspace to use for this test or <code>null</code>
 	 */
@@ -329,7 +329,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * workspace path) location is updated with a corresponding file from test
 	 * data. A build is performed and problems are compared against the expected
 	 * problems for the associated resource.
-	 * 
+	 *
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
@@ -351,7 +351,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * workspace path) location is updated with a corresponding file from test
 	 * data. A build is performed and problems are compared against the expected
 	 * problems for the associated resource.
-	 * 
+	 *
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
@@ -372,7 +372,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * Performs a compatibility test. The workspace file at the specified (full
 	 * workspace path) location is deleted. A build is performed and problems
 	 * are compared against the expected problems for the associated resource.
-	 * 
+	 *
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
@@ -393,7 +393,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * Performs a compatibility test. The workspace file at the specified (full
 	 * workspace path) location is created. A build is performed and problems
 	 * are compared against the expected problems for the associated resource.
-	 * 
+	 *
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build

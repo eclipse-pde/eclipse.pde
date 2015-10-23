@@ -35,23 +35,23 @@ public class InvalidJava8InterfaceAnnotationTests extends InvalidInterfaceAnnota
 	protected IPath getTestSourcePath() {
 		return new Path("annotations").append("java8").append("interface"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	@Override
 	protected String getTestingProjectName() {
 		return "java8tags"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the test for this class
 	 */
 	public static Test suite() {
 		return buildTestSuite(InvalidJava8InterfaceAnnotationTests.class);
 	}
-	
+
 	public void testInvalidTagOnNonDefaultInterfaceMethodI() {
 		x1(true);
 	}
-	
+
 	public void testInvalidTagOnNonDefaultInterfaceMethodF() {
 		x1(false);
 	}

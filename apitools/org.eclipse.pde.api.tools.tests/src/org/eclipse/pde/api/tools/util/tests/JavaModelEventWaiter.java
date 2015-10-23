@@ -29,7 +29,7 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 	int fDDetails = -1;
 	int fElementType = -1;
 	String fElementName = null;
-	
+
 	/**
 	 * Constructor
 	 * @param elementname
@@ -44,7 +44,7 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 		fElementType = elementtype;
 		JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
 	 */
@@ -56,7 +56,7 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 			unregister();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.util.tests.AbstractApiEventWaiter#unregister()
 	 */
@@ -64,7 +64,7 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 	public void unregister() {
 		JavaCore.removeElementChangedListener(this);
 	}
-	
+
 	/**
 	 * Returns if we care about the given event or not
 	 * @param event
@@ -72,7 +72,7 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 	 */
 	protected boolean accept(ElementChangedEvent event) {
 		if(event.getSource() instanceof IJavaElementDelta) {
-			IJavaElementDelta delta = (IJavaElementDelta) event.getSource(); 
+			IJavaElementDelta delta = (IJavaElementDelta) event.getSource();
 			IJavaElementDelta[] deltas = delta.getAffectedChildren();
 			if(deltas.length == 0) {
 				deltas = new IJavaElementDelta[] {delta};
@@ -81,7 +81,7 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Processes the listing of deltas of interest
 	 * @param deltas

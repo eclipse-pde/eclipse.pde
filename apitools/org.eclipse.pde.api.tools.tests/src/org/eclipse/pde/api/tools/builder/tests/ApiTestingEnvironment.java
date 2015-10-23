@@ -43,7 +43,7 @@ import org.eclipse.pde.internal.core.natures.PDE;
 /**
  * Environment used to test the {@link ApiAnalysisBuilder}. This environment
  * emulates a typical workbench environment
- * 
+ *
  * @since 1.0.0
  */
 public class ApiTestingEnvironment extends TestingEnvironment {
@@ -81,7 +81,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Sets the given compliance on the given project.
-	 * 
+	 *
 	 * @param project
 	 * @param compliance
 	 */
@@ -122,7 +122,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Creates a new plug-in project with the given name. If a project with the
 	 * same name already exists in the testing workspace it will be deleted and
 	 * new project created.
-	 * 
+	 *
 	 * @param projectName
 	 * @return the newly created {@link IJavaProject} or <code>null</code> if
 	 *         there is an exception creating the project
@@ -147,7 +147,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Performs a clean build on the project using the builder with the given
 	 * builder id
-	 * 
+	 *
 	 * @param project
 	 * @param builderid
 	 */
@@ -161,7 +161,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Incrementally builds the given project using the builder with the given
 	 * builder id
-	 * 
+	 *
 	 * @param project
 	 * @param builderid
 	 */
@@ -175,7 +175,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Performs a full build on the given project using the builder with the
 	 * given builder id
-	 * 
+	 *
 	 * @param project
 	 * @param builderid
 	 */
@@ -189,11 +189,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * returns all of the usage markers for the specified resource and its
 	 * children
-	 * 
+	 *
 	 * @param resource
 	 * @return all API usage problem markers
 	 * @throws CoreException
-	 * 
+	 *
 	 * @see {@link IApiMarkerConstants#API_USAGE_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllUsageMarkers(IResource resource) throws CoreException {
@@ -209,7 +209,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * returns all of the usage markers for the specified resource and its
 	 * children
-	 * 
+	 *
 	 * @param resource
 	 * @return all JDT problem markers that are on the resource backing the
 	 *         given path
@@ -222,7 +222,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * returns all of the usage markers for the specified resource and its
 	 * children
-	 * 
+	 *
 	 * @param resource
 	 * @return all JDT problem markers on the given {@link IResource}
 	 * @throws CoreException
@@ -252,11 +252,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the unsupported Javadoc tag markers on the specified
 	 * resource and all of its children.
-	 * 
+	 *
 	 * @param resource
 	 * @return all unsupported tag problem markers
 	 * @throws CoreException
-	 * 
+	 *
 	 * @see {@link IApiMarkerConstants#UNSUPPORTED_TAG_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllUnsupportedTagMarkers(IResource resource) throws CoreException {
@@ -272,7 +272,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the unsupported annotation markers on the given resource
 	 * and all of its children
-	 * 
+	 *
 	 * @param resource
 	 * @return all unsupported annotation markers
 	 * @throws CoreException
@@ -291,11 +291,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the compatibility markers on the given resource and its
 	 * children
-	 * 
+	 *
 	 * @param resource
 	 * @return all compatibility problem markers
 	 * @throws CoreException
-	 * 
+	 *
 	 * @see {@link IApiMarkerConstants#COMPATIBILITY_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllCompatibilityMarkers(IResource resource) throws CoreException {
@@ -311,11 +311,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the API profile markers on the given resource and its
 	 * children
-	 * 
+	 *
 	 * @param resource
 	 * @return all API baseline problem markers
 	 * @throws CoreException
-	 * 
+	 *
 	 * @see {@link IApiMarkerConstants#DEFAULT_API_BASELINE_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllApiBaselineMarkers(IResource resource) throws CoreException {
@@ -331,11 +331,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the since tag markers on the given resource and its
 	 * children
-	 * 
+	 *
 	 * @param resource
 	 * @return all since tag problem markers
 	 * @throws CoreException
-	 * 
+	 *
 	 * @see {@link IApiMarkerConstants#SINCE_TAGS_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllSinceTagMarkers(IResource resource) throws CoreException {
@@ -350,11 +350,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Returns all of the version markers on the given resource and its children
-	 * 
+	 *
 	 * @param resource
 	 * @return all version problem markers
 	 * @throws CoreException
-	 * 
+	 *
 	 * @see {@link IApiMarkerConstants#VERSION_NUMBERING_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllVersionMarkers(IResource resource) throws CoreException {
@@ -370,11 +370,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the unused API problem filters markers on the given
 	 * resource to infinite depth
-	 * 
+	 *
 	 * @param resource
 	 * @return all unused problem filter markers
 	 * @throws CoreException
-	 * 
+	 *
 	 * @see {@link IApiMarkerConstants#UNUSED_FILTER_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllUnusedApiProblemFilterMarkers(IResource resource) throws CoreException {
@@ -389,7 +389,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Returns all of the markers from the testing workspace
-	 * 
+	 *
 	 * @return all {@link IMarker}s currently set in the workspace
 	 */
 	public IMarker[] getMarkers() {
@@ -398,7 +398,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Returns the collection of API problem markers for the given element
-	 * 
+	 *
 	 * @param root
 	 * @return the array of {@link IMarker}s found on the resource that
 	 *         corresponds to the given path
@@ -409,7 +409,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Return all problems with the specified element.
-	 * 
+	 *
 	 * @param path
 	 * @param additionalMarkerType
 	 * @return the array of {@link IMarker}s found on the resource that
@@ -441,7 +441,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Looks up the {@link IResource} in the workspace from the given path
-	 * 
+	 *
 	 * @param path
 	 * @return the {@link IResource} handle for the given path
 	 */
@@ -464,7 +464,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Adds the array of objects to the given list
-	 * 
+	 *
 	 * @param list
 	 * @param objects
 	 */
@@ -487,7 +487,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Returns the current workspace {@link IApiProfile}
-	 * 
+	 *
 	 * @return the workspace baseline
 	 */
 	protected IApiBaseline getWorkspaceProfile() {
@@ -544,7 +544,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Completely deletes the workspace
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	void deleteWorkspace() {
@@ -563,7 +563,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Sets the default revert source path to the given path.
-	 * 
+	 *
 	 * @param path
 	 */
 	public void setRevertSourcePath(IPath path) {
@@ -580,7 +580,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Reverts changes in the workspace - added, removed, changed files
-	 * 
+	 *
 	 * @throws Exception if something happens trying to revert the workspace
 	 *             contents
 	 */
@@ -613,7 +613,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Deletes the workspace file at the specified location (full path).
-	 * 
+	 *
 	 * @param workspaceLocation
 	 * @throws Exception
 	 */
@@ -632,7 +632,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Updates the contents of a workspace file at the specified location (full
 	 * path), with the contents of a local file at the given replacement
 	 * location (absolute path).
-	 * 
+	 *
 	 * @param workspaceLocation
 	 * @param replacementLocation
 	 * @throws Exception
@@ -655,7 +655,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Updates the contents of a workspace file at the specified location (full
 	 * path), with the contents of a local file at the given replacement
 	 * location (absolute path).
-	 * 
+	 *
 	 * @param workspaceLocation
 	 * @param replacementLocation
 	 * @throws Exception
@@ -676,7 +676,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Notes a file was added during the test, to be undone
-	 * 
+	 *
 	 * @param path
 	 */
 	public void added(IPath path) {
@@ -708,7 +708,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * they should be built. This method calls out to
 	 * {@link org.eclipse.core.resources.IWorkspace#computeProjectOrder(IProject[])}
 	 * , which can slow down testing with successive calls.
-	 * 
+	 *
 	 * @return a build-ordered listing of the workspace projects
 	 */
 	public IProject[] getProjectBuildOrder() {
@@ -728,7 +728,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Sets whether to revert the workspace rather than reset.
-	 * 
+	 *
 	 * @param revert
 	 */
 	public void setRevert(boolean revert) {

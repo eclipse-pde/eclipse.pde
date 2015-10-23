@@ -23,14 +23,14 @@ import org.eclipse.test.performance.Dimension;
 
 /**
  * Performance tests for API descriptions
- * 
+ *
  * @since 1.0
  */
 public class ApiDescriptionTests extends PerformanceTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public ApiDescriptionTests(String name) {
@@ -57,7 +57,7 @@ public class ApiDescriptionTests extends PerformanceTest {
 	/**
 	 * Tests a clean and visit jdt-ui source project. Populates the entire API
 	 * description.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testCleanVisit() throws Exception {

@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests Java 5 method accesses
- * 
+ *
  * @since 1.0.1
  */
 public class Java5MethodUsageTests extends MethodUsageTests {
@@ -25,7 +25,7 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	protected static final String GENERIC_METHOD_CLASS_NAME = "GenericMethodUsageClass<T>"; //$NON-NLS-1$
 	protected static final String GENERIC_METHOD_CLASS_NAME2 = "GenericMethodUsageClass2"; //$NON-NLS-1$
 	protected static final String METHOD_ENUM_NAME = "MethodUsageEnum"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -40,7 +40,7 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	public static Test suite() {
 		return buildTestSuite(Java5MethodUsageTests.class);
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
 	 */
@@ -53,12 +53,12 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	public void testMethodUsageTests1F() {
 		x1(false);
 	}
-		
+
 	@Override
 	public void testMethodUsageTests1I() {
 		x1(true);
 	}
-	
+
 	/**
 	 * Tests that accessing restricted enum methods are properly reported
 	 */
@@ -106,7 +106,7 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	public void testMethodUsageTests2F() {
 		x2(false);
 	}
-	
+
 	@Override
 	public void testMethodUsageTests2I() {
 		x2(true);
@@ -155,7 +155,7 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	public void testMethodUsageTests3I() {
 		x3(true);
 	}
-	
+
 	/**
 	 * Tests that accessing restricted methods that has a generic type as a parameter
 	 * are properly reported

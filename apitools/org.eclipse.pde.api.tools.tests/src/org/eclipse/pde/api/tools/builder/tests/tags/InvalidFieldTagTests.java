@@ -25,14 +25,14 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests unsupported javadoc tags on fields in classes, interfaces, enums and
  * annotations
- * 
+ *
  * @since 1.0
  */
 public class InvalidFieldTagTests extends TagTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidFieldTagTests(String name) {
@@ -85,7 +85,7 @@ public class InvalidFieldTagTests extends TagTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {

@@ -20,7 +20,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests that unsupported Javadoc tags on interfaces are reported properly
- * 
+ *
  * @since 1.0
  */
 public class InvalidInterfaceTagTests extends TagTest {
@@ -32,7 +32,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	public InvalidInterfaceTagTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -47,27 +47,27 @@ public class InvalidInterfaceTagTests extends TagTest {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.TagTest#getDefaultProblemId()
 	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(
-				IApiProblem.CATEGORY_USAGE, 
-				IElementDescriptor.TYPE, 
-				IApiProblem.UNSUPPORTED_TAG_USE, 
+				IApiProblem.CATEGORY_USAGE,
+				IElementDescriptor.TYPE,
+				IApiProblem.UNSUPPORTED_TAG_USE,
 				IApiProblem.NO_FLAGS);
 	}
-	
+
 	public void testInvalidInterfaceTag1I() {
 		x1(true);
 	}
-	
+
 	public void testInvalidInterfaceTag1F() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests having an @noreference tag on a variety of inner / outer / top-level interfaces in package a.b.c
 	 */
@@ -78,11 +78,11 @@ public class InvalidInterfaceTagTests extends TagTest {
 		});
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidInterfaceTag2I() {
 		x2(true);
 	}
-	
+
 	public void testInvalidInterfaceTag2F() {
 		x2(false);
 	}
@@ -93,7 +93,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	private void x2(boolean inc) {
 		/*setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_an_interface}	
+				{"@noreference", BuilderMessages.TagValidator_an_interface}
 		});*/
 		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
@@ -101,11 +101,11 @@ public class InvalidInterfaceTagTests extends TagTest {
 	public void testInvalidInterfaceTag3I() {
 		x3(true);
 	}
-	
+
 	public void testInvalidInterfaceTag3F() {
 		x3(false);
 	}
-	
+
 	/**
 	 * Tests having an @nooverride tag on a variety of inner / outer / top-level interfaces in package a.b.c
 	 */
@@ -119,15 +119,15 @@ public class InvalidInterfaceTagTests extends TagTest {
 		});
 		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidInterfaceTag4I() {
 		x4(true);
 	}
-	
+
 	public void testInvalidInterfaceTag4F() {
 		x4(false);
 	}
-	
+
 	/**
 	 * Tests having an @nooverride tag on an interface in the default package
 	 */
@@ -142,7 +142,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	public void testInvalidInterfaceTag5I() {
 		x5(true);
 	}
-	
+
 	public void testInvalidInterfaceTag5F() {
 		x5(false);
 	}
@@ -160,7 +160,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 		});
 		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidInterfaceTag6I() {
 		x6(true);
 	}

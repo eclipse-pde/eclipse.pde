@@ -34,7 +34,7 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 	public static Test suite() {
 		return buildTestSuite(ValidAnnotationTagTests.class);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
@@ -42,7 +42,7 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
 	 */
@@ -50,16 +50,16 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_5;
 	}
-	
-	
+
+
 	public void testInvalidAnnotationTag1I() {
 		x1(true);
 	}
-	
+
 	public void testInvalidAnnotationTag1F() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests having an @noreference tag on a variety of annotations in package a.b.c
 	 */
@@ -67,8 +67,8 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 		String typename = "test1.java";  //$NON-NLS-1$
 		deployTagTest(typename, inc, false);
 	}
-	
-	
+
+
 	public void testInvalidAnnotationTag2I() {
 		x2(true);
 	}
@@ -76,7 +76,7 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 	public void testInvalidAnnotationTag2F() {
 		x2(false);
 	}
-	
+
 	/**
 	 * Tests having an @noreference tag on an annotation in the default package
 	 */
@@ -84,7 +84,7 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 		String typename = "test2.java";  //$NON-NLS-1$
 		deployTagTest(typename, inc, true);
 	}
-	
+
 	@Override
 	public void testInvalidAnnotationTag3I() {
 		x3(true);
@@ -94,7 +94,7 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 	public void testInvalidAnnotationTag3F() {
 		x3(false);
 	}
-	
+
 	/**
 	 * Tests having a bunch tags on member annotation elements
 	 */
@@ -102,5 +102,5 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 		String typename = "test2.java";  //$NON-NLS-1$
 		deployTagTest(typename, inc, true);
 	}
-	
+
 }

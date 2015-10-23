@@ -21,11 +21,11 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder correctly reports compatibility problems
  * related to members in interfaces.
- * 
+ *
  * @since 1.0
  */
 public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTests {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,7 +35,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.interfaces.members."; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,7 +51,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("members"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -66,11 +66,11 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	protected String getTestingProjectName() {
 		return "intercompat"; //$NON-NLS-1$
 	}
-	
+
 	public void testAddSuperInterfaceAI() throws Exception {
 		xAddSuperInterfaceA(true);
 	}
-	
+
 	public void testAddSuperInterfaceAF() throws Exception {
 		xAddSuperInterfaceA(false);
 	}
@@ -93,15 +93,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFieldI() throws Exception {
 		xAddField(true);
-	}	
-	
+	}
+
 	public void testAddFieldF() throws Exception {
 		xAddField(false);
 	}
-	
+
 	/**
 	 * Tests adding a field to a noimplement interface
 	 */
@@ -110,11 +110,11 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFieldNoImplementI() throws Exception {
 		xAddFieldNoImplement(true);
-	}	
-	
+	}
+
 	public void testAddFieldNoImplementF() throws Exception {
 		xAddFieldNoImplement(false);
 	}
@@ -137,15 +137,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFieldNoExtendI() throws Exception {
 		xAddFieldNoExtend(true);
-	}	
-	
+	}
+
 	public void testAddFieldNoExtendF() throws Exception {
 		xAddFieldNoExtend(false);
 	}
-	
+
 	/**
 	 * Tests adding a field to a noextend / noimplement interface
 	 */
@@ -154,15 +154,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		//expecting no problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFieldNoExtendNoImplementI() throws Exception {
 		xAddFieldNoExtendNoImplement(true);
-	}	
-	
+	}
+
 	public void testAddFieldNoExtendNoImplementF() throws Exception {
 		xAddFieldNoExtendNoImplement(false);
 	}
-	
+
 	/**
 	 * Tests adding a method to an interface
 	 */
@@ -181,15 +181,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddMethodI() throws Exception {
 		xAddMethod(true);
-	}	
-	
+	}
+
 	public void testAddMethodF() throws Exception {
 		xAddMethod(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests adding a method to a noimplement interface
 	 */
@@ -198,11 +198,11 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddMethodNoImplementI() throws Exception {
 		xAddMethodNoImplement(true);
-	}	
-	
+	}
+
 	public void testAddMethodNoImplementF() throws Exception {
 		xAddMethodNoImplement(false);
 	}
@@ -225,15 +225,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddMethodNoExtendI() throws Exception {
 		xAddMethodNoExtend(true);
-	}	
-	
+	}
+
 	public void testAddMethodNoExtendF() throws Exception {
 		xAddMethodNoExtend(false);
 	}
-	
+
 	/**
 	 * Tests adding a method to a noimplement interface
 	 */
@@ -242,15 +242,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		//expecting no problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddMethodNoExtendNoImplementI() throws Exception {
 		xAddMethodNoExtendNoImplement(true);
-	}	
-	
+	}
+
 	public void testAddMethodNoExtendNoImplementF() throws Exception {
 		xAddMethodNoExtendNoImplement(false);
 	}
-	
+
 	/**
 	 * Tests adding a  member type to an interface
 	 */
@@ -263,7 +263,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	public void testAddMemberTypeI() throws Exception {
 		xAddMemberType(true);
 	}
-	
+
 	public void testAddMemberTypeF() throws Exception {
 		xAddMemberType(false);
 	}
@@ -276,15 +276,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddMemberTypeNoImplementI() throws Exception {
 		xAddMemberTypeNoImplement(true);
-	}	
-	
+	}
+
 	public void testAddMemberTypeNoImplementF() throws Exception {
 		xAddMemberTypeNoImplement(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests removing a field from an interface
 	 */
@@ -303,15 +303,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveFieldI() throws Exception {
 		xRemoveField(true);
-	}	
-	
+	}
+
 	public void testRemoveFieldF() throws Exception {
 		xRemoveField(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests removing a method from an interface
 	 */
@@ -330,15 +330,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveMethodI() throws Exception {
 		xRemoveMethod(true);
-	}	
-	
+	}
+
 	public void testRemoveMethodF() throws Exception {
 		xRemoveMethod(false);
 	}
-	
+
 	/**
 	 * Tests removing a member type from an interface
 	 */
@@ -357,15 +357,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveMemberTypeI() throws Exception {
 		xRemoveMemberType(true);
 	}
-	
+
 	public void testRemoveMemberTypeF() throws Exception {
 		xRemoveMemberType(false);
 	}
-	
+
 	/**
 	 * Tests adding a super interface
 	 */
@@ -396,15 +396,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddSuperInterfaceANoImplementI() throws Exception {
 		xAddSuperInterfaceANoImplement(true);
-	}	
-	
+	}
+
 	public void testAddSuperInterfaceANoImplementF() throws Exception {
 		xAddSuperInterfaceANoImplement(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests adding a super interface to a noimplement interface
 	 */
@@ -426,15 +426,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddSuperInterfaceANoExtendI() throws Exception {
 		xAddSuperInterfaceANoExtend(true);
-	}	
-	
+	}
+
 	public void testAddSuperInterfaceANoExtendF() throws Exception {
 		xAddSuperInterfaceANoExtend(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests adding a super interface to a noimplement interface
 	 */
@@ -443,15 +443,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddSuperInterfaceANoExtendNoImplementI() throws Exception {
 		xAddSuperInterfaceANoExtendNoImplement(true);
-	}	
-	
+	}
+
 	public void testAddSuperInterfaceANoExtendNoImplementF() throws Exception {
 		xAddSuperInterfaceANoExtendNoImplement(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests removing a super interface
 	 */
@@ -470,15 +470,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testReduceSuperInterfaceABtoAI() throws Exception {
 		xReduceSuperInterfaceABtoA(true);
-	}	
-	
+	}
+
 	public void testReduceSuperInterfaceABtoAF() throws Exception {
 		xReduceSuperInterfaceABtoA(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests removing all super interfaces
 	 */
@@ -497,15 +497,15 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testReduceSuperInterfaceABtoEmptyI() throws Exception {
 		xReduceSuperInterfaceABtoEmpty(true);
 	}
-	
+
 	public void testReduceSuperInterfaceABtoEmptyF() throws Exception {
 		xReduceSuperInterfaceABtoEmpty(false);
 	}
-	
+
 	/**
 	 * Tests adding a method to a noimplement interface
 	 */
@@ -526,11 +526,11 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddMethodNoImplement2I() throws Exception {
 		xAddMethodNoImplement2(true);
 	}
-	
+
 	public void testAddMethodNoImplement2F() throws Exception {
 		xAddMethodNoImplement2(false);
 	}

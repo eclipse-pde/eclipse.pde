@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -43,14 +43,14 @@ import junit.framework.TestSuite;
 
 /**
  * Test suite for all of the API tools test
- * 
+ *
  * The API Baseline Tests should be run as JUnit tests, not JUnit Plug-in Tests.
  * This means that there is no OSGi environment available. The vm argument
  * requiredBundles must be set to a valid baseline. In addition, rather than use
  * the EE profiles provided by OSGi, the baseline will resolve using EEs found
  * in the org.eclipse.pde.api.tools.internal.util.profiles inside the
  * org.eclipse.pde.api.tools bundle. "-DrequiredBundles=${eclipse_home}/plugins"
- * 
+ *
  * @since 1.0.0
  */
 public class ApiToolsTestSuite extends TestSuite {
@@ -63,7 +63,7 @@ public class ApiToolsTestSuite extends TestSuite {
 	public static Test suite() {
 		return new ApiToolsTestSuite();
 	}
-	
+
 	/**
 	 * Constructor
 	 */
@@ -95,5 +95,5 @@ public class ApiToolsTestSuite extends TestSuite {
 		addTest(new TestSuite(BadClassfileTests.class));
 		addTest(new TestSuite(CRCTests.class));
 		addTest(new AllDeltaTests());
-	}	
+	}
 }

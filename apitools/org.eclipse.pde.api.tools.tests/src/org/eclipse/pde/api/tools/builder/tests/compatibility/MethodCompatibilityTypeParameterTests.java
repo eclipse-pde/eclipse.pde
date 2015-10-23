@@ -21,11 +21,11 @@ import junit.framework.Test;
 /**
  * Tests that the builder correctly reports compatibility problems related to
  * method type parameters and varargs.
- * 
+ *
  * @since 1.0
  */
 public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTests {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,7 +35,7 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.methods.typeparameters."; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,7 +51,7 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("typeparameters"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -65,8 +65,8 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 	@Override
 	protected String getTestingProjectName() {
 		return "classcompat"; //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Tests adding the first type parameter to a method -- a compatible change.
 	 */
@@ -101,15 +101,15 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddTypeParameterI() throws Exception {
 		xAddTypeParameter(true);
-	}	
-	
+	}
+
 	public void testAddTypeParameterF() throws Exception {
 		xAddTypeParameter(false);
 	}
-	
+
 	/**
 	 * Tests removing a type parameter from a method
 	 */
@@ -128,15 +128,15 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveTypeParameterI() throws Exception {
 		xRemoveTypeParameter(true);
-	}	
-	
+	}
+
 	public void testRemoveTypeParameterF() throws Exception {
 		xRemoveTypeParameter(false);
 	}
-	
+
 	/**
 	 * Tests converting variable arguments to an array
 	 */
@@ -155,15 +155,15 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testVarArgsToArrayI() throws Exception {
 		xVarArgsToArray(true);
-	}	
-	
+	}
+
 	public void testVarArgsToArrayF() throws Exception {
 		xVarArgsToArray(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests converting an array to variable arguments
 	 */
@@ -172,12 +172,12 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		// no problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testArrayToVarArgsI() throws Exception {
 		xArrayToVarArgs(true);
-	}	
-	
+	}
+
 	public void testArrayToVarArgsF() throws Exception {
 		xArrayToVarArgs(false);
-	}	
+	}
 }

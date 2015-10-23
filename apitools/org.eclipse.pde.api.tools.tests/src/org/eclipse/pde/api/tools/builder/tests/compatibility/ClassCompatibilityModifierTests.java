@@ -21,11 +21,11 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder correctly reports compatibility problems
  * related class hierarchies.
- * 
+ *
  * @since 1.0
  */
 public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,7 +35,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.modifiers."; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,7 +51,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("modifiers"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -63,7 +63,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	/**
 	 * Returns a problem id for a compatibility change to a class based on the
 	 * specified flags.
-	 * 
+	 *
 	 * @param flags
 	 * @return problem id
 	 */
@@ -82,7 +82,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	protected String getTestingProjectName() {
 		return "classcompat"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests making a non-final class final
 	 */
@@ -97,15 +97,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalI() throws Exception {
 		xAddFinal(true);
-	}	
-	
+	}
+
 	public void testAddFinalF() throws Exception {
 		xAddFinal(false);
 	}
-	
+
 	/**
 	 * Tests making a non-final class with a noextend tag final
 	 */
@@ -114,15 +114,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalNoExtendI() throws Exception {
 		xAddFinalNoExtend(true);
-	}	
-	
+	}
+
 	public void testAddFinalNoExtendF() throws Exception {
 		xAddFinalNoExtend(false);
 	}
-	
+
 	/**
 	 * Tests making a non-final class with a no-extend tag final while removing the no-extend tag
 	 */
@@ -131,15 +131,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalRemoveNoExtendI() throws Exception {
 		xAddFinalRemoveNoExtend(true);
-	}	
-	
+	}
+
 	public void testAddFinalRemoveNoExtendF() throws Exception {
 		xAddFinalRemoveNoExtend(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a non-final class final that has the noinstantiate tag
 	 */
@@ -154,15 +154,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalNoInstantiateI() throws Exception {
 		xAddFinalNoInstantiate(true);
-	}	
-	
+	}
+
 	public void testAddFinalNoInstantiateF() throws Exception {
 		xAddFinalNoInstantiate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a non-final class final that has the noinstantiate and
 	 * noextend tag
@@ -172,15 +172,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalNoExtendNoInstantiateI() throws Exception {
 		xAddFinalNoExtendNoInstantiate(true);
-	}	
-	
+	}
+
 	public void testAddFinalNoExtendNoInstantiateF() throws Exception {
 		xAddFinalNoExtendNoInstantiate(false);
 	}
-	
+
 	/**
 	 * Tests making a final class non-final
 	 */
@@ -189,15 +189,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		// no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveFinalI() throws Exception {
 		xRemoveFinal(true);
-	}	
-	
+	}
+
 	public void testRemoveFinalF() throws Exception {
 		xRemoveFinal(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a final class non-final and adding the no-extend tag
 	 */
@@ -206,15 +206,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		// no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveFinalAddNoExtendI() throws Exception {
 		xRemoveFinalAddNoExtend(true);
-	}	
-	
+	}
+
 	public void testRemoveFinalAddNoExtendF() throws Exception {
 		xRemoveFinalAddNoExtend(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a non-abstract class abstract
 	 */
@@ -229,15 +229,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddAbstractI() throws Exception {
 		xAddAbstract(true);
-	}	
-	
+	}
+
 	public void testAddAbstractF() throws Exception {
 		xAddAbstract(false);
 	}
-	
+
 	/**
 	 * Tests making a non-abstract class with a noextend tag abstract
 	 */
@@ -252,15 +252,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddAbstractNoExtendI() throws Exception {
 		xAddAbstractNoExtend(true);
-	}	
-	
+	}
+
 	public void testAddAbstractNoExtendF() throws Exception {
 		xAddAbstractNoExtend(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a non-abstract class abstract that has the noinstantiate tag
 	 */
@@ -269,15 +269,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddAbstractNoInstantiateI() throws Exception {
 		xAddAbstractNoInstantiate(true);
-	}	
-	
+	}
+
 	public void testAddAbstractNoInstantiateF() throws Exception {
 		xAddAbstractNoInstantiate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a non-abstract class abstract that has the noinstantiate and
 	 * noextend tag
@@ -287,15 +287,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddAbstractNoExtendNoInstantiateI() throws Exception {
 		xAddAbstractNoExtendNoInstantiate(true);
-	}	
-	
+	}
+
 	public void testAddAbstractNoExtendNoInstantiateF() throws Exception {
 		xAddAbstractNoExtendNoInstantiate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a public class package protected
 	 */
@@ -314,15 +314,15 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPackageVisibilityI() throws Exception {
 		xPublicToPackageVisibility(true);
 	}
-	
+
 	public void testPublicToPackageVisibilityF() throws Exception {
 		xPublicToPackageVisibility(false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
@@ -331,5 +331,5 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		// NOT USED
 		return 0;
 	}
-	
+
 }

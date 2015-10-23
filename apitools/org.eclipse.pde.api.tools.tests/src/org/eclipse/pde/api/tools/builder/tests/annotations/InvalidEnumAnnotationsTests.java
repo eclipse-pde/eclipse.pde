@@ -20,14 +20,14 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests illegal use of annotations on enums
- * 
+ *
  * @since 1.0.400
  */
 public class InvalidEnumAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidEnumAnnotationsTests(String name) {

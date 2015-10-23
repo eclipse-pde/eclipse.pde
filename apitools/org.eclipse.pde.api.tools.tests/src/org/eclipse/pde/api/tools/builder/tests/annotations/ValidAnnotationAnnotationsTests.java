@@ -16,14 +16,14 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Tests tags that are valid on an annotation
- * 
+ *
  * @since 1.0.400
  */
 public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotationsTests {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public ValidAnnotationAnnotationsTests(String name) {
@@ -49,7 +49,7 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoReference1I() throws Exception {
@@ -59,7 +59,7 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoReference1F() throws Exception {
@@ -69,7 +69,7 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations in the default package
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoReference2I() throws Exception {
@@ -79,7 +79,7 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations in the default package
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoReference2F() throws Exception {
@@ -89,7 +89,7 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations and member types
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoReference3I() throws Exception {
@@ -99,7 +99,7 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations and member types
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoReference3F() throws Exception {

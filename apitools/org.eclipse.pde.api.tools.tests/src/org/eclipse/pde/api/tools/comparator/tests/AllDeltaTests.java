@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,8 +17,8 @@ import junit.framework.TestSuite;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
- * Test suite for all of the API tools test 
- * 
+ * Test suite for all of the API tools test
+ *
  * @since 1.0.0
  */
 public class AllDeltaTests extends TestSuite {
@@ -31,7 +31,7 @@ public class AllDeltaTests extends TestSuite {
 	public static Test suite() {
 		return new AllDeltaTests();
 	}
-	
+
 	/**
 	 * Constructor
 	 */

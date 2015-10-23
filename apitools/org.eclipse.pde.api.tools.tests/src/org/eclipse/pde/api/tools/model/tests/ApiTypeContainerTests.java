@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,26 +32,26 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 
 /**
  * Tests the class file containers
- * 
+ *
  * @since 1.0.0
  */
 public class ApiTypeContainerTests extends TestCase {
 
 	public static Test suite() {
 		return new TestSuite(ApiTypeContainerTests.class);
-	}	
-	
+	}
+
 	public ApiTypeContainerTests() {
 		super();
 	}
-	
+
 	public ApiTypeContainerTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Builds a sample archive on sample.jar
-	 * 
+	 *
 	 * @return sample archive
 	 */
 	protected IApiTypeContainer buildArchiveContainer() {
@@ -61,10 +61,10 @@ public class ApiTypeContainerTests extends TestCase {
 		assertTrue("Missing jar file", file.exists()); //$NON-NLS-1$
 		return new ArchiveApiTypeContainer(null, path.toOSString());
 	}
-	
+
 	/**
 	 * Builds a sample container on directory
-	 * 
+	 *
 	 * @return sample directory container
 	 */
 	protected IApiTypeContainer buildDirectoryContainer() {
@@ -73,29 +73,29 @@ public class ApiTypeContainerTests extends TestCase {
 		File file = path.toFile();
 		assertTrue("Missing bin directory", file.exists()); //$NON-NLS-1$
 		return new DirectoryApiTypeContainer(null, path.toOSString());
-	}	
-	
+	}
+
 	/**
 	 * Tests retrieving package names from an archive.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testArchivePackageNames() throws CoreException {
 		doTestPackageNames(buildArchiveContainer());
-	}	
-	
+	}
+
 	/**
 	 * Tests retrieving package names from an directory.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testDirectoryPackageNames() throws CoreException {
 		doTestPackageNames(buildDirectoryContainer());
-	}	
-	
+	}
+
 	/**
 	 * Tests retrieving package names.
-	 * 
+	 *
 	 * @param container class file container
 	 * @throws CoreException
 	 */
@@ -111,30 +111,30 @@ public class ApiTypeContainerTests extends TestCase {
 		}
 		assertTrue("Should be no left over packages", knownNames.isEmpty()); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests visiting packages in an archive.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testArchiveVistPackages() throws CoreException {
 		doTestVisitPackages(buildArchiveContainer());
 	}
-	
+
 	/**
 	 * Tests visiting packages in an directory.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testDirectoryVistPackages() throws CoreException {
 		doTestVisitPackages(buildDirectoryContainer());
 	}
-	
+
 	/**
 	 * Test visiting packages
-	 * 
+	 *
 	 * @param container class file container
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected void doTestVisitPackages(IApiTypeContainer container) throws CoreException {
 		final List<String> expectedPkgOrder = new ArrayList<String>();
@@ -165,28 +165,28 @@ public class ApiTypeContainerTests extends TestCase {
 		assertEquals("Visited wrong number of packages", expectedPkgOrder.size(), visit.size()); //$NON-NLS-1$
 		assertEquals("Visit order incorrect", expectedPkgOrder, visit); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests visiting class files in an archive.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testArchiveVisitClassFiles() throws CoreException {
 		doTestVisitClassFiles(buildArchiveContainer());
 	}
-	
+
 	/**
 	 * Tests visiting class files in a directory.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testDirectoryVisitClassFiles() throws CoreException {
 		doTestVisitClassFiles(buildDirectoryContainer());
-	}	
-	
+	}
+
 	/**
 	 * Test visiting class files
-	 * 
+	 *
 	 * @param container class file container
 	 * @throws CoreException
 	 */
@@ -228,7 +228,7 @@ public class ApiTypeContainerTests extends TestCase {
 				}
 				types.add(classFile.getTypeName());
 			}
-			
+
 			@Override
 			public void endVisitPackage(String packageName) {
 				assertTrue("Wrong end visit order", visit.get(visit.size() - 1).equals(packageName)); //$NON-NLS-1$

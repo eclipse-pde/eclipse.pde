@@ -17,13 +17,13 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Test class usage using generics
- * 
+ *
  * @since 1.0.0
  */
 public class Java5ClassUsageTests extends ClassUsageTests {
 
 	protected static final String GENERIC_CLASS_NAME = "GenericClassUsageClass"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -39,14 +39,14 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_5;
 	}
-	
+
 	/**
 	 * @return the test class for this suite
 	 */
 	public static Test suite() {
 		return buildTestSuite(Java5ClassUsageTests.class);
 	}
-	
+
 	/**
 	 * Tests that illegal anonymous extends are found in a field declaration in a generic method
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
@@ -62,17 +62,17 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	public void testAnonymousTypeGenericMethod1F() {
 		x1(false);
 	}
-	
+
 	public void testAnonymousTypeGenericMethod1I() {
 		x1(true);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Tests that illegal anonymous extends are found in a return statement in a generic method
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 * @param inc
@@ -87,17 +87,17 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	public void testAnonymousTypeGenericMethod2F() {
 		x2(false);
 	}
-	
+
 	public void testAnonymousTypeGenericMethod2I() {
 		x2(true);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Tests that illegal anonymous extends are found in a field declaration in a generic constructor method
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 * @param inc
@@ -112,15 +112,15 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	public void testAnonymousTypeGenericMethod3F() {
 		x3(false);
 	}
-	
+
 	public void testAnonymousTypeGenericMethod3I() {
 		x3(true);
 	}
-	
+
 	/**
 	 * Tests that illegal anonymous extends are found in a field declaration in a generic type
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
@@ -136,17 +136,17 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	public void testAnonymousTypeGenericField1F() {
 		x4(false);
 	}
-	
+
 	public void testAnonymousTypeGenericField1I() {
 		x4(true);
 	}
-	
+
 	/**
-	 * Tests that illegal local type extends are found in a generic constructor method 
+	 * Tests that illegal local type extends are found in a generic constructor method
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 * @param inc
 	 */
@@ -160,17 +160,17 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	public void testLocalTypeGeneicMethod1F() {
 		x5(false);
 	}
-	
+
 	public void testLocalTypeGeneircMethod1I() {
 		x5(true);
 	}
-	
+
 	/**
-	 * Tests that illegal local type extends are found in a generic method 
+	 * Tests that illegal local type extends are found in a generic method
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 * @param inc
 	 */
@@ -184,30 +184,30 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	public void testLocalTypeGeneicMethod2F() {
 		x6(false);
 	}
-	
+
 	public void testLocalTypeGeneircMethod2I() {
 		x6(true);
 	}
-	
+
 	public void testGenericInstantiate1F() {
 		x7(false);
 	}
-	
+
 	public void testGenericInstantiate1I() {
 		x7(true);
 	}
-	
+
 	/**
-	 * Tests that a problem is correctly created for an illegal instantiate when the 
+	 * Tests that a problem is correctly created for an illegal instantiate when the
 	 * constructor being called has generics i.e.
 	 * <pre>
 	 * <code>Clazz clazz = new Clazz&lt;String&gt;();</code>
 	 * </pre>
-	 * 
+	 *
 	 * @param inc
 	 */
 	private void x7(boolean inc) {
@@ -222,17 +222,17 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	@Override
 	public void testLocalClassExtends1F() {
 		x8(false);
 	}
-	
+
 	@Override
 	public void testLocalClassExtends1I() {
 		x8(true);
 	}
-	
+
 	/**
 	 * Tests that local types with the same name in different methods are correctly found
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=258101
@@ -258,29 +258,29 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		String typename = "testA7"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests an anonymous type defined in the return statement of a method illegally extending a
 	 * restricted type using a full build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testAnonymousClassExtends2F() {
 		x9(false);
 	}
-	
+
 	/**
 	 * Tests an anonymous type defined in the return statement of a method illegally extending a
 	 * restricted type using an incremental build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testAnonymousClassExtends2I() {
 		x9(true);
 	}
-	
+
 	private void x9(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
@@ -291,29 +291,29 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests an anonymous type defined in a method field illegally extending a
 	 * restricted type using a full build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testAnonymousClassExtends3F() {
 		x10(false);
 	}
-	
+
 	/**
 	 * Tests an anonymous type defined in a method field illegally extending a
 	 * restricted type using an incremental build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testAnonymousClassExtends3I() {
 		x10(true);
 	}
-	
+
 	private void x10(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
@@ -324,27 +324,27 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests a local type defined in a constructor illegally extending a
 	 * restricted type using a full build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	public void testAnonymousClassExtends5F() {
 		x11(false);
 	}
-	
+
 	/**
 	 * Tests a local type defined in a constructor illegally extending a
 	 * restricted type using an incremental build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	public void testAnonymousClassExtends5I() {
 		x11(true);
 	}
-	
+
 	private void x11(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
@@ -355,29 +355,29 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests a local anonymous field defined in a constructor illegally extending a
 	 * restricted type using a full build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testAnonymousClassExtends6F() {
 		x12(false);
 	}
-	
+
 	/**
 	 * Tests a local anonymous field defined in a constructor illegally extending a
 	 * restricted type using an incremental build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testAnonymousClassExtends6I() {
 		x12(true);
 	}
-	
+
 	private void x12(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
@@ -388,29 +388,29 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests a local anonymous field defined in a static initializer illegally extending a
 	 * restricted type using a full build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testAnonymousClassExtends7F() {
 		x17(false);
 	}
-	
+
 	/**
 	 * Tests a local anonymous field defined in a static initializer illegally extending a
 	 * restricted type using an incremental build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testAnonymousClassExtends7I() {
 		x17(true);
 	}
-	
+
 	private void x17(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
@@ -424,11 +424,11 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	public void testAnonymousClassExtendsGenericReturnF() {
 		x16(false);
 	}
-	
+
 	public void testAnonymousClassExtendsGenericReturnI() {
 		x16(true);
 	}
-	
+
 	/**
 	 * Tests that an anonymous declaration is detected extending a restricted type
 	 * within a method with a generic return type
@@ -444,29 +444,29 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests a local type defined in a constructor illegally extending a
 	 * restricted type using a full build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testLocalClassExtends3F() {
 		x13(false);
 	}
-	
+
 	/**
 	 * Tests a local type defined in a constructor illegally extending a
 	 * restricted type using an incremental build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testLocalClassExtends3I() {
 		x13(true);
 	}
-	
+
 	private void x13(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
@@ -477,29 +477,29 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests a local type defined in a constructor illegally extending a
 	 * restricted type using a full build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testLocalClassExtends2F() {
 		x14(false);
 	}
-	
+
 	/**
 	 * Tests a local type defined in a constructor illegally extending a
 	 * restricted type using an incremental build.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
 	public void testLocalClassExtends2I() {
 		x14(true);
 	}
-	
+
 	private void x14(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
@@ -510,17 +510,17 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	public void testLocalClassExtendsGenericReturnF() {
 		x15(false);
 	}
-	
+
 	public void testLocalClassExtendsGenericReturnI() {
 		x15(true);
 	}
-	
+
 	/**
-	 * Tests finding a problem with a local type extending a restricted type in a method 
+	 * Tests finding a problem with a local type extending a restricted type in a method
 	 * with a generic return type
 	 * @param inc
 	 */
@@ -534,11 +534,11 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
-	 * Tests that the correct markers are created and placed for classes with inner types 
+	 * Tests that the correct markers are created and placed for classes with inner types
 	 * that illegally implement interfaces
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
 	 * @throws Exception
@@ -547,11 +547,11 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	public void testLocalClassIllegalImplements1I() throws Exception {
 		x18(true);
 	}
-	
+
 	/**
-	 * Tests that the correct markers are created and placed for local types 
+	 * Tests that the correct markers are created and placed for local types
 	 * that illegally implement interfaces
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
 	 * @throws Exception
@@ -560,7 +560,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	public void testLocalClassIllegalImplements1F() throws Exception {
 		x18(false);
 	}
-	
+
 	private void x18(boolean inc) {
 		int localId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.LOCAL_TYPE);
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
@@ -580,12 +580,12 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
-	 * Tests that the correct markers are created and placed for local types 
+	 * Tests that the correct markers are created and placed for local types
 	 * that illegally implement interfaces, where there are more than one local type in the
 	 * compilation unit indirectly implementing the same interface via the same proxy interface
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
 	 * @throws Exception
@@ -594,12 +594,12 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	public void testLocalClassIllegaImplements2I() throws Exception {
 		x19(true);
 	}
-	
+
 	/**
-	 * Tests that the correct markers are created and placed for local types 
+	 * Tests that the correct markers are created and placed for local types
 	 * that illegally implement interfaces, where there are more than one local type in the
 	 * compilation unit indirectly implementing the same interface via the same proxy interface
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
 	 * @throws Exception
@@ -608,7 +608,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	public void testLocalClassIllegalImplements2F() throws Exception {
 		x19(false);
 	}
-	
+
 	private void x19(boolean inc) {
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
 		setExpectedProblemIds(new int[] {indId, indId});
@@ -623,11 +623,11 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		String typename = "testC12"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
-	 * Tests that the correct markers are created and placed for anonymous types 
+	 * Tests that the correct markers are created and placed for anonymous types
 	 * that illegally implement interfaces
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
 	 * @throws Exception
@@ -636,12 +636,12 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	public void testAnonymousClassIllegaImplements1I() throws Exception {
 		x20(true);
 	}
-	
+
 	/**
-	 * Tests that the correct markers are created and placed for local types 
+	 * Tests that the correct markers are created and placed for local types
 	 * that illegally implement interfaces, where there are more than one local type in the
 	 * compilation unit indirectly implementing the same interface via the same proxy interface
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
 	 * @throws Exception
@@ -650,7 +650,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	public void testAnonymousClassIllegalImplements1F() throws Exception {
 		x20(false);
 	}
-	
+
 	private void x20(boolean inc) {
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.ANONYMOUS_TYPE);
 		setExpectedProblemIds(new int[] {indId, indId});

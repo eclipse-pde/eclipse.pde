@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * General Search test, which contains utility methods, etc for search tests
- * 
+ *
  * @since 1.0.1
  */
 public abstract class SearchTest extends TestCase {
@@ -85,7 +85,7 @@ public abstract class SearchTest extends TestCase {
 	/**
 	 * Creates an {@link IApiBaseline} from all jar'd projects listed in the
 	 * '/test-search/baseline' directory
-	 * 
+	 *
 	 * @return a new {@link IApiBaseline}
 	 */
 	IApiBaseline createBaseline(final String name, final HashSet<String> projectnames) throws CoreException {
@@ -138,7 +138,7 @@ public abstract class SearchTest extends TestCase {
 	/**
 	 * Returns the populated exclude set or an empty list if the exclude file
 	 * location is <code>null</code>
-	 * 
+	 *
 	 * @param baseline
 	 * @param filename
 	 * @return the listing of excluded items
@@ -156,7 +156,7 @@ public abstract class SearchTest extends TestCase {
 
 	/**
 	 * reports a failure in the search framework back to the parent test
-	 * 
+	 *
 	 * @param message
 	 */
 	protected void reportFailure(String message) {

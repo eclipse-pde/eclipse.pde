@@ -19,11 +19,11 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests that the builder correctly finds and reports missing since tags
- * 
+ *
  * @since 1.0
  */
 public class InvalidSinceTagTests extends SinceTagTest {
-	
+
 
 	/**
 	 * Constructor
@@ -32,14 +32,14 @@ public class InvalidSinceTagTests extends SinceTagTest {
 	public InvalidSinceTagTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
 	public static Test suite() {
 		return buildTestSuite(InvalidSinceTagTests.class);
 	}
-	
+
 	protected void configureExpectedProblems(int elementType, String[] messageArgs) {
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
@@ -51,9 +51,9 @@ public class InvalidSinceTagTests extends SinceTagTest {
 			setExpectedProblemIds(ids);
 			String[][] args = new String[1][];
 			args[0] = messageArgs;
-			setExpectedMessageArgs(args);		
+			setExpectedMessageArgs(args);
 	}
-	
+
 	/**
 	 * Tests adding a field with a wrong since tag
 	 */
@@ -62,15 +62,15 @@ public class InvalidSinceTagTests extends SinceTagTest {
 		configureExpectedProblems(IDelta.FIELD_ELEMENT_TYPE, new String[]{"3.0", "1.0", "FIELD"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testInvalidFieldI() throws Exception {
 		xInvalidField(true);
 	}
-	
+
 	public void testInvalidFieldF() throws Exception {
 		xInvalidField(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests adding a method with a wrong since tag
 	 */
@@ -79,15 +79,15 @@ public class InvalidSinceTagTests extends SinceTagTest {
 		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, new String[]{"3.0", "1.0", "method()"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testInvalidMethodI() throws Exception {
 		xInvalidMethod(true);
 	}
-	
+
 	public void testInvalidMethodF() throws Exception {
 		xInvalidMethod(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests adding a member type with a wrong since tag
 	 */
@@ -96,15 +96,15 @@ public class InvalidSinceTagTests extends SinceTagTest {
 		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"3.0", "1.0", "MemberType"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testInvalidMemberTypeI() throws Exception {
 		xInvalidMemberType(true);
 	}
-	
+
 	public void testInvalidMemberTypeF() throws Exception {
 		xInvalidMemberType(false);
 	}
-	
+
 	/**
 	 * Tests adding a class with a wrong since tag
 	 */
@@ -113,12 +113,12 @@ public class InvalidSinceTagTests extends SinceTagTest {
 		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"3.0", "1.0", PACKAGE_PREFIX + "InvalidType"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		performCreationCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testInvalidTypeI() throws Exception {
 		xInvalidType(true);
 	}
-	
+
 	public void testInvalidTypeF() throws Exception {
 		xInvalidType(false);
-	}	
+	}
 }

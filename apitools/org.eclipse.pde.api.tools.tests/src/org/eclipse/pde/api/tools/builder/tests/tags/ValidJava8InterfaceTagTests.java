@@ -35,12 +35,12 @@ public class ValidJava8InterfaceTagTests extends
 	protected IPath getTestSourcePath() {
 		return new Path("tags").append("java8").append("interface").append("valid"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 	}
-	
+
 	@Override
 	protected String getTestingProjectName() {
 		return "java8tags"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the test for this class
 	 */
@@ -55,7 +55,7 @@ public class ValidJava8InterfaceTagTests extends
 	public void testNoOverrideOnDefaultF() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests the @nooverride tag on a default method
 	 */

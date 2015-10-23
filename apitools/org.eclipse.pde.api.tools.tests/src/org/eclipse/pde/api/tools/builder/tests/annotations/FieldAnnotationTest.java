@@ -25,14 +25,14 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests annotations being used on fields in classes, interfaces, enums and
  * annotations
- * 
+ *
  * @since 1.0.400
  */
 public abstract class FieldAnnotationTest extends AnnotationTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public FieldAnnotationTest(String name) {
@@ -71,7 +71,7 @@ public abstract class FieldAnnotationTest extends AnnotationTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {

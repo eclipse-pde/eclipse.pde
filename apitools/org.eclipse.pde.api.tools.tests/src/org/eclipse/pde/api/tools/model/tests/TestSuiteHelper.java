@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -60,7 +60,7 @@ import org.junit.Assert;
 
 /**
  * Helper methods to set up baselines, etc.
- * 
+ *
  * @since 1.0.0
  */
 public class TestSuiteHelper {
@@ -68,7 +68,7 @@ public class TestSuiteHelper {
 	/**
 	 * Computes the compile options to use. Currently this only changes if we
 	 * are running the tests on Java 8.
-	 * 
+	 *
 	 * @return the array of compiler options to use
 	 * @since 1.0.400
 	 */
@@ -86,7 +86,7 @@ public class TestSuiteHelper {
 
 	/**
 	 * Creates a baseline from all bundles in the specified directory.
-	 * 
+	 *
 	 * @param rootDirectory directory to collect bundles from
 	 * @return API baseline
 	 * @throws CoreException
@@ -119,7 +119,7 @@ public class TestSuiteHelper {
 
 	/**
 	 * Creates a testing API baseline
-	 * 
+	 *
 	 * @param testDirectory
 	 * @return
 	 * @throws CoreException
@@ -131,14 +131,14 @@ public class TestSuiteHelper {
 	/**
 	 * Creates a testing {@link IApiComponent} that has a testing baseline
 	 * created for it
-	 * 
+	 *
 	 * @param baselinename the name for the owning testing {@link IApiBaseline}
 	 *            or <code>null</code>
 	 * @param name the name for the component
 	 * @param id the id for the component
 	 * @param description an {@link IApiDescription} for the component or
 	 *            <code>null</code>
-	 * 
+	 *
 	 * @return a new {@link IApiComponent} for testing purposes only
 	 */
 	public static IApiComponent createTestingApiComponent(final String baselinename, final String name, final String id, final IApiDescription description) {
@@ -315,7 +315,7 @@ public class TestSuiteHelper {
 
 	/**
 	 * Creates a testing {@link IApiComponent}
-	 * 
+	 *
 	 * @param name
 	 * @param id
 	 * @param description
@@ -328,10 +328,10 @@ public class TestSuiteHelper {
 	/**
 	 * Creates a simple baseline from bundles in the specified directory of the
 	 * test plug-in project.
-	 * 
+	 *
 	 * @param baselineid the name for the testing baseline
 	 * @param testDirectory the dir the test baseline resides in
-	 * 
+	 *
 	 * @return Testing API baseline. If for some reason the testing directory is
 	 *         not available <code>null</code> is returned
 	 * @throws CoreException
@@ -379,7 +379,7 @@ public class TestSuiteHelper {
 	 * Attempts to locate OSGi execution environment baseline when not running
 	 * in an OSGi framework.
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 * @param ee execution environment description file
 	 * @return API baseline
@@ -391,7 +391,7 @@ public class TestSuiteHelper {
 
 	/**
 	 * Creates a new {@link IApiType} for testing
-	 * 
+	 *
 	 * @param componentid
 	 * @param name
 	 * @param sig
@@ -406,7 +406,7 @@ public class TestSuiteHelper {
 
 	/**
 	 * Gets the .ee file supplied to run tests based on system property.
-	 * 
+	 *
 	 * @return
 	 */
 	public static File getEEDescriptionFile() {
@@ -445,7 +445,7 @@ public class TestSuiteHelper {
 	 * Returns a file to the root of the specified bundle or <code>null</code>
 	 * if none. Searches for plug-ins based on the "requiredBundles" system
 	 * property.
-	 * 
+	 *
 	 * @param bundleName symbolic name
 	 * @return bundle root or <code>null</code>
 	 */
@@ -469,7 +469,7 @@ public class TestSuiteHelper {
 
 	/**
 	 * Adds all required components to the collection of components.
-	 * 
+	 *
 	 * @param done set of component id's that have already been collected
 	 * @param component component to add all prerequisites for
 	 * @param collection collection to add prerequisites to.
@@ -506,7 +506,7 @@ public class TestSuiteHelper {
 
 	/**
 	 * Compiles a single source file
-	 * 
+	 *
 	 * @param sourcename
 	 * @param destinationpath
 	 * @param compileroptions
@@ -545,7 +545,7 @@ public class TestSuiteHelper {
 	/**
 	 * Compiles all source files in the specified source paths to the specified
 	 * destination path, with the given compiler options
-	 * 
+	 *
 	 * @param sourceFilePaths
 	 * @param destinationPath
 	 * @param compilerOptions
@@ -611,7 +611,7 @@ public class TestSuiteHelper {
 
 	/**
 	 * Delete the file f and all sub-directories if f is a directory
-	 * 
+	 *
 	 * @param f the given file to delete
 	 * @return true if the file was successfully deleted, false otherwise
 	 */
@@ -627,9 +627,9 @@ public class TestSuiteHelper {
 	 * Copy file into the destination folder. If file is not a directory, it is
 	 * copied into the destination folder. If file is a directory, all its files
 	 * and subfolders are copied to the destination folder.
-	 * 
+	 *
 	 * <code>dest</code> has to be a directory.
-	 * 
+	 *
 	 * @param file the given file to copy
 	 * @param dest the given destination folder
 	 * @throws IllegalArgumentException if dest is not a directory or it doesn't

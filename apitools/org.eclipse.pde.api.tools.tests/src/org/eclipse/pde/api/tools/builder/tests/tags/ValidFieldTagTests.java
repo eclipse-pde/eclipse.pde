@@ -21,14 +21,14 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 
 /**
  * Tests valid tags on fields in classes, interfaces, enum and annotations
- * 
+ *
  * since 1.0
  */
 public class ValidFieldTagTests extends InvalidFieldTagTests {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public ValidFieldTagTests(String name) {
@@ -47,7 +47,7 @@ public class ValidFieldTagTests extends InvalidFieldTagTests {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {

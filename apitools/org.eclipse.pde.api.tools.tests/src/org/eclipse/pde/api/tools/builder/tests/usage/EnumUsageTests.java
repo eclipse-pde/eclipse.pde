@@ -17,7 +17,7 @@ import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Tests using restricted enums
- * 
+ *
  * @since 1.0.400
  */
 public class EnumUsageTests extends UsageTest {

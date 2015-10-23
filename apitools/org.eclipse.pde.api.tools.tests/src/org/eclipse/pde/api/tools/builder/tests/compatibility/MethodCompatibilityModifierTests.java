@@ -21,11 +21,11 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder correctly reports compatibility problems
  * related method modifiers and visibility.
- * 
+ *
  * @since 1.0
  */
 public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,7 +35,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.methods.modifiers."; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,7 +51,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("modifiers"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -70,7 +70,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	/**
 	 * Returns a problem id for a compatibility change to a class based on the
 	 * specified flags.
-	 * 
+	 *
 	 * @param flags
 	 * @return problem id
 	 */
@@ -80,12 +80,12 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 				IDelta.METHOD_ELEMENT_TYPE,
 				IDelta.CHANGED,
 				flags);
-	}	
+	}
 
 	/**
 	 * Returns a problem id for a compatibility addition to a class based on the
 	 * specified flags.
-	 * 
+	 *
 	 * @param flags
 	 * @return problem id
 	 */
@@ -111,7 +111,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddNoOverrideI() throws Exception {
 		xAddNoOverride(true);
 	}
@@ -130,12 +130,12 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 
 	public void testAddFinalI() throws Exception {
 		xAddFinal(true);
-	}	
-	
+	}
+
 	public void testAddFinalF() throws Exception {
 		xAddFinal(false);
 	}
-	
+
 	/**
 	 * Tests making a non-abstract method abstract
 	 */
@@ -150,15 +150,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddAbstractI() throws Exception {
 		xAddAbstract(true);
-	}	
-	
+	}
+
 	public void testAddAbstractF() throws Exception {
 		xAddAbstract(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a non-final no-override method final
 	 */
@@ -167,15 +167,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no problems expected since @nooverride
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalNoOverrideI() throws Exception {
 		xAddFinalNoOverride(true);
-	}	
-	
+	}
+
 	public void testAddFinalNoOverrideF() throws Exception {
 		xAddFinalNoOverride(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a non-final no-override method final, and remove the no-override tag.
 	 */
@@ -184,15 +184,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no problems expected since @nooverride
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalRemoveNoOverrideI() throws Exception {
 		xAddFinalRemoveNoOverride(true);
 	}
-	
+
 	public void testAddFinalRemoveNoOverrideF() throws Exception {
 		xAddFinalRemoveNoOverride(false);
 	}
-	
+
 	/**
 	 * Tests making a non-final method final in a no-extend class
 	 */
@@ -201,15 +201,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// should be no problems since @noextend
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalNoExtendI() throws Exception {
 		xAddFinalNoExtend(true);
-	}	
-	
+	}
+
 	public void testAddFinalNoExtendF() throws Exception {
 		xAddFinalNoExtend(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a non-static method static
 	 */
@@ -224,15 +224,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddStaticI() throws Exception {
 		xAddStatic(true);
-	}	
-	
+	}
+
 	public void testAddStaticF() throws Exception {
 		xAddStatic(false);
 	}
-	
+
 	/**
 	 * Tests making a non-static no-reference method static
 	 */
@@ -241,15 +241,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddStaticNoReferenceI() throws Exception {
 		xAddStaticNoReference(true);
 	}
-	
+
 	public void testAddStaticNoReferenceF() throws Exception {
 		xAddStaticNoReference(false);
 	}
-	
+
 	/**
 	 * Tests making a static method non-static
 	 */
@@ -264,15 +264,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveStaticI() throws Exception {
 		xRemoveStatic(true);
-	}	
-	
+	}
+
 	public void testRemoveStaticF() throws Exception {
 		xRemoveStatic(false);
 	}
-	
+
 	/**
 	 * Tests making a static no-reference field non-static
 	 */
@@ -281,15 +281,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveStaticNoReferenceI() throws Exception {
 		xRemoveStaticNoReference(true);
-	}	
-	
+	}
+
 	public void testRemoveStaticNoReferenceF() throws Exception {
 		xRemoveStaticNoReference(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a protected method to package protected
 	 */
@@ -304,15 +304,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPackageI() throws Exception {
 		xProtectedToPackage(true);
-	}	
-	
+	}
+
 	public void testProtectedToPackageF() throws Exception {
 		xProtectedToPackage(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a protected method to package protected when no-reference
 	 */
@@ -321,15 +321,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPackageNoReferenceI() throws Exception {
 		xProtectedToPackageNoReference(true);
-	}	
-	
+	}
+
 	public void testProtectedToPackageNoReferenceF() throws Exception {
 		xProtectedToPackageNoReference(false);
 	}
-	
+
 	/**
 	 * Tests changing a protected method to private
 	 */
@@ -344,15 +344,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPrivateI() throws Exception {
 		xProtectedToPrivate(true);
-	}	
-	
+	}
+
 	public void testProtectedToPrivateF() throws Exception {
 		xProtectedToPrivate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a protected method to private method in a no-extend class
 	 */
@@ -361,15 +361,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no expected errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPrivateNoExtendI() throws Exception {
 		xProtectedToPrivateNoExtend(true);
 	}
-	
+
 	public void testProtectedToPrivateNoExtendF() throws Exception {
 		xProtectedToPrivateNoExtend(false);
 	}
-	
+
 	/**
 	 * Tests changing a protected no-override method to private method
 	 */
@@ -384,15 +384,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPrivateNoOverrideI() throws Exception {
 		xProtectedToPrivateNoOverride(true);
-	}	
-	
+	}
+
 	public void testProtectedToPrivateNoOverrideF() throws Exception {
 		xProtectedToPrivateNoOverride(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a public method to package
 	 */
@@ -407,15 +407,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPackageI() throws Exception {
 		xPublicToPackage(true);
-	}	
-	
+	}
+
 	public void testPublicToPackageF() throws Exception {
 		xPublicToPackage(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a public method to private
 	 */
@@ -430,15 +430,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPrivateI() throws Exception {
 		xPublicToPrivate(true);
-	}	
-	
+	}
+
 	public void testPublicToPrivateF() throws Exception {
 		xPublicToPrivate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a private method to public, no-reference
 	 */
@@ -447,15 +447,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPrivateToPublicI() throws Exception {
 		xPrivateToPublic(true);
-	}	
-	
+	}
+
 	public void testPrivateToPublicF() throws Exception {
 		xPrivateToPublic(false);
-	}		
-	
+	}
+
 	/**
 	 * Tests changing a public method to private
 	 */
@@ -464,15 +464,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPrivateNoReferenceI() throws Exception {
 		xPublicToPrivateNoReference(true);
-	}	
-	
+	}
+
 	public void testPublicToPrivateNoReferenceF() throws Exception {
 		xPublicToPrivateNoReference(false);
 	}
-	
+
 	/**
 	 * Tests changing a public method to protected
 	 */
@@ -487,15 +487,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToProtectedI() throws Exception {
 		xPublicToProtected(true);
-	}	
-	
+	}
+
 	public void testPublicToProtectedF() throws Exception {
 		xPublicToProtected(false);
 	}
-	
+
 	/**
 	 * Tests adding no-override
 	 */
@@ -510,7 +510,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	/**
 	 * Tests adding no-override to a final method (no-op)
 	 */
@@ -519,7 +519,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	/**
 	 * Tests adding no-reference
 	 */
@@ -538,11 +538,11 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddNoReferenceI() throws Exception {
 		xAddNoReference(true);
 	}
-	
+
 	public void testAddNoReferenceF() throws Exception {
 		xAddNoReference(false);
 	}
@@ -562,7 +562,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveNoOverrideI() throws Exception {
 		xRemoveNoOverride(true);
 	}

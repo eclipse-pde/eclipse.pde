@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public Java8MethodConstRefUsageTests(String name) {
@@ -42,7 +42,7 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 
 	/**
 	 * Returns a standard method usage problem allowing the kind to be specified
-	 * 
+	 *
 	 * @param kind
 	 * @return problem id for the specified kind
 	 */
@@ -80,9 +80,9 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 		String[][] args = new String[][] {
 				{ "MethodReference", typename, "method1()" }, //$NON-NLS-1$ //$NON-NLS-2$
 				{ "MethodReference", typename, "method2()" }, //$NON-NLS-1$ //$NON-NLS-2$
-				{ "ConstructorReference()", typename, null }, //$NON-NLS-1$ 
+				{ "ConstructorReference()", typename, null }, //$NON-NLS-1$
 				{ "ConstructorReference(String)", typename, null }, //$NON-NLS-1$
-				{ "ConstructorReference(List<String>)", typename, null }, //$NON-NLS-1$ 
+				{ "ConstructorReference(List<String>)", typename, null }, //$NON-NLS-1$
 
 		};
 		setExpectedMessageArgs(args);
@@ -126,7 +126,7 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 				{ "MR", typename, "mrCompare2(String, String)" }, //$NON-NLS-1$ //$NON-NLS-2$
 				{ "MR", typename, "con(Supplier<T>)" } }; //$NON-NLS-1$ //$NON-NLS-2$
 
-		
+
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
 				new LineMapping(27, pids[0], args[0]),
@@ -169,7 +169,7 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 		String[][] args = new String[][] {
 				{ "MethodReferenceAnnotation", typename, "method1()" }, //$NON-NLS-1$ //$NON-NLS-2$
 				{ "MethodReferenceAnnotation", typename, "method2()" }, //$NON-NLS-1$ //$NON-NLS-2$
-				{ "ConstructorReferenceAnnotation()", typename, null }, //$NON-NLS-1$ 
+				{ "ConstructorReferenceAnnotation()", typename, null }, //$NON-NLS-1$
 				{ "ConstructorReferenceAnnotation(String)", typename, null }, //$NON-NLS-1$
 				{
 						"ConstructorReferenceAnnotation(List<String>)", typename, null } //$NON-NLS-1$

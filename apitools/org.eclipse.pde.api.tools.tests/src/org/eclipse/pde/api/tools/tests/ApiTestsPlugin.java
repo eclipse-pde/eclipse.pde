@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.Plugin;
  * Test Plug-in Class
  */
 public class ApiTestsPlugin extends Plugin {
-	
+
 	public static final String PLUGIN_ID = "org.eclipse.pde.api.tools.tests";//$NON-NLS-1$
 
 	private static ApiTestsPlugin fgDefault = null;
@@ -24,10 +24,10 @@ public class ApiTestsPlugin extends Plugin {
 	public ApiTestsPlugin() {
 		fgDefault = this;
 	}
-	
+
 	/**
 	 * Returns the test plug-in.
-	 * 
+	 *
 	 * @return the test plug-in
 	 */
 	public static ApiTestsPlugin getDefault() {

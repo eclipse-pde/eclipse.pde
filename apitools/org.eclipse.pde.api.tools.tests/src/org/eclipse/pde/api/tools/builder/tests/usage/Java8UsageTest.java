@@ -29,7 +29,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * General test for Java 8 usage
- * 
+ *
  * @since 1.0.600
  */
 public class Java8UsageTest extends ApiBuilderTest {
@@ -92,10 +92,10 @@ public class Java8UsageTest extends ApiBuilderTest {
 	 * Deploys a standard API usage test with the test project being created and
 	 * the given source is imported in the testing project into the given
 	 * project.
-	 * 
+	 *
 	 * This method assumes that the reference and testing project have been
 	 * imported into the workspace already.
-	 * 
+	 *
 	 * @param sourcename
 	 * @param inc if an incremental build should be done
 	 */
@@ -128,7 +128,7 @@ public class Java8UsageTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
@@ -169,7 +169,7 @@ public class Java8UsageTest extends ApiBuilderTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {

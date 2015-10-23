@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,7 +37,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 	public String getTestRoot() {
 		return "interface"; //$NON-NLS-1$
 	}
-	
+
 	public InterfaceDeltaTests(String name) {
 		super(name);
 	}
@@ -145,7 +145,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Delete type parameter
 	 */
@@ -258,7 +258,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add super interface
 	 */
@@ -280,7 +280,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Remove super interface
 	 */
@@ -302,7 +302,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Remove super interface
 	 */
@@ -392,7 +392,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Should not be compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Addition of a field in an interface that cannot be extended
 	 */
@@ -415,7 +415,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Should be compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Addition of a field in an interface that can be implemented
 	 */
@@ -466,7 +466,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Move method up in hierarchy with noextend only
 	 */
@@ -494,7 +494,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Move method up in hierarchy with noextend and noimplement
 	 */

@@ -19,7 +19,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests detection of duplicate annotations being used
- * 
+ *
  * @since 1.0.400
  */
 public class InvalidDuplicateAnnotationTests extends AnnotationTest {
@@ -28,7 +28,7 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidDuplicateAnnotationTests(String name) {
@@ -65,7 +65,7 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Must be called before a call {@link #getDefaultProblemId()}
-	 * 
+	 *
 	 * @param element
 	 * @param kind
 	 */

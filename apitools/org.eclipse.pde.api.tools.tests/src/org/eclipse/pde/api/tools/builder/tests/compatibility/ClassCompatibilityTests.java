@@ -22,7 +22,7 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 
 /**
  * Tests that the builder correctly reports compatibility problems for classes.
- * 
+ *
  * @since 1.0
  */
 public abstract class ClassCompatibilityTests extends CompatibilityTest {
@@ -34,7 +34,7 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
@@ -92,7 +92,7 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public ClassCompatibilityTests(String name) {

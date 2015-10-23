@@ -17,7 +17,7 @@ import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Tests valid annotations on interface default methods
- * 
+ *
  * @since 1.0.600
  */
 public class ValidDefaultMethodAnnotationTests extends MethodAnnotationTest {

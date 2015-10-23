@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests invalid javadoc tags on enum methods
- * 
+ *
  * @since 1.0
  */
 public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
@@ -38,7 +38,7 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_5;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
@@ -46,14 +46,14 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("enum"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the test for this class
 	 */
 	public static Test suite() {
 		return buildTestSuite(InvalidEnumMethodTagTests.class);
 	}
-	
+
 	public void testInvalidEnumMethodTag1I() {
 		x1(true);
 	}
@@ -61,7 +61,7 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidEnumMethodTag1F() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noextend tag on a variety of inner / outer enum methods
 	 */
@@ -77,15 +77,15 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidEnumMethodTag2I() {
 		x2(true);
 	}
-	
+
 	public void testInvalidEnumMethodTag2F() {
 		x2(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noextend tag on enum methods in the default package
 	 */
@@ -97,15 +97,15 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidEnumMethodTag3I() {
 		x3(true);
 	}
-	
+
 	public void testInvalidEnumMethodTag3F() {
 		x3(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer enum methods
 	 */
@@ -121,15 +121,15 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidEnumMethodTag4I() {
 		x4(true);
 	}
-	
+
 	public void testInvalidEnumMethodTag4F() {
 		x4(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noinstantiate tag on enum methods in the default package
 	 */
@@ -141,15 +141,15 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidEnumMethodTag5I() {
 		x5(true);
 	}
-	
+
 	public void testInvalidEnumMethodTag5F() {
 		x5(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noimplement tag on a variety of inner / outer enum methods
 	 */
@@ -169,11 +169,11 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidEnumMethodTag6I() {
 		x6(true);
 	}
-	
+
 	public void testInvalidEnumMethodTag6F() {
 		x6(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noimplement tag on enum methods in the default package
 	 */
@@ -185,15 +185,15 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test6.java", inc, true); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidEnumMethodTag7I() {
 		x7(true);
 	}
-	
+
 	public void testInvalidEnumMethodTag7F() {
 		x7(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride tag on a variety of inner / outer enum methods
 	 */
@@ -209,7 +209,7 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidEnumMethodTag8I() {
 		x8(true);
 	}
@@ -217,7 +217,7 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidEnumMethodTag8F() {
 		x8(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride tag on enum methods in the default package
 	 */
@@ -237,7 +237,7 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidEnumMethodTag9F() {
 		x9(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noimplement tag on private enum methods
 	 */

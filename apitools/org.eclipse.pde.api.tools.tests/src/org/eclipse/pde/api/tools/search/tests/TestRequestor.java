@@ -29,7 +29,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Test search requestor for the {@link SearchEngineTests}
- * 
+ *
  * @since 1.0.1
  */
 public class TestRequestor implements IApiSearchRequestor {
@@ -39,7 +39,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	private HashSet<String> excluded = new HashSet<String>();
 	private SearchTest test = null;
 	private IApiScope scope = null;
-	
+
 	/**
 	 * Constructor
 	 * @param
@@ -47,7 +47,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	public TestRequestor(SearchTest test) {
 		this.test = test;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent)
 	 */
@@ -63,7 +63,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	public boolean acceptContainer(IApiTypeContainer container) {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptMember(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember)
 	 */
@@ -86,7 +86,7 @@ public class TestRequestor implements IApiSearchRequestor {
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
@@ -166,11 +166,11 @@ public class TestRequestor implements IApiSearchRequestor {
 	 * @throws CoreException
 	 */
 	private boolean acceptComponent0(IApiComponent component) throws CoreException {
-		return component != null &&  
-				!this.excluded.contains(component.getSymbolicName()) && 
+		return component != null &&
+				!this.excluded.contains(component.getSymbolicName()) &&
 				isApiComponent(component);
 	}
-	
+
 	/**
 	 * Utility method to determine if the given {@link IApiComponent} represents a project that
 	 * is API tools enabled
@@ -186,7 +186,7 @@ public class TestRequestor implements IApiSearchRequestor {
 			return Util.isApiToolsComponent(component);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesAPI()
 	 */
@@ -194,7 +194,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	public boolean includesAPI() {
 		return (this.searchmask & INCLUDE_API) > 0;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesInternal()
 	 */
@@ -216,7 +216,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	void setScopeBaseline(IApiBaseline baseline) {
 		this.scopebaseline = baseline;
 	}
-	
+
 	/**
 	 * Sets the search kinds to use
 	 * @param searchmask
@@ -224,7 +224,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	void setSearchMask(int searchmask) {
 		this.searchmask = searchmask;
 	}
-	
+
 	/**
 	 * Sets the listing of excluded elements to use
 	 * @param excluded

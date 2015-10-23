@@ -19,14 +19,14 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests a variety of method usage where the callee is restricted in some way (API javadoc tagging)
- * 
+ *
  * @since 1.0
  */
 public class MethodUsageTests extends UsageTest {
-	
+
 	public static final String METHOD_CLASS_NAME = "MethodUsageClass"; //$NON-NLS-1$
 	public static final String METHOD_INTERFACE_NAME = "MethodUsageInterface"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -42,7 +42,7 @@ public class MethodUsageTests extends UsageTest {
 	protected int getDefaultProblemId() {
 		return -1;
 	}
-	
+
 	/**
 	 * Returns a standard method usage problem allowing the kind to be specified
 	 * @param kind
@@ -50,11 +50,11 @@ public class MethodUsageTests extends UsageTest {
 	 */
 	protected int getProblemId(int kind, int flags) {
 		return ApiProblemFactory.createProblemId(
-				IApiProblem.CATEGORY_USAGE, 
-				IElementDescriptor.METHOD, 
+				IApiProblem.CATEGORY_USAGE,
+				IElementDescriptor.METHOD,
 				kind, flags);
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#getTestSourcePath()
 	 */
@@ -66,7 +66,7 @@ public class MethodUsageTests extends UsageTest {
 	public static Test suite() {
 		return buildTestSuite(MethodUsageTests.class);
 	}
-	
+
 	/**
 	 * Tests that restricted methods called from a class instance are properly reported
 	 * using a full build
@@ -74,7 +74,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests1F() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests that restricted methods called from a class instance are properly reported
 	 * using an incremental build
@@ -82,7 +82,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests1I() {
 		x1(true);
 	}
-	
+
 	private void x1(boolean inc) {
 		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
@@ -113,7 +113,7 @@ public class MethodUsageTests extends UsageTest {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests that restricted methods extended from a class are properly reported
 	 * using a full build
@@ -121,7 +121,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests2F() {
 		x2(false);
 	}
-	
+
 	/**
 	 * Tests that restricted methods called from a class are properly reported
 	 * using an incremental build
@@ -129,7 +129,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests2I() {
 		x2(true);
 	}
-	
+
 	private void x2(boolean inc) {
 		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS),
@@ -154,7 +154,7 @@ public class MethodUsageTests extends UsageTest {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests that accessing restricted static methods from a class are properly reported
 	 * using a full build
@@ -162,7 +162,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests3F() {
 		x3(false);
 	}
-	
+
 	/**
 	 * Tests that accessing restricted static methods from a class are properly reported
 	 * using an incremental build
@@ -170,7 +170,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests3I() {
 		x3(true);
 	}
-	
+
 	private void x3(boolean inc) {
 		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
@@ -207,7 +207,7 @@ public class MethodUsageTests extends UsageTest {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests that accessing restricted static methods from an implementing class are properly reported
 	 * using a full build
@@ -215,7 +215,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests4F() {
 		x4(false);
 	}
-	
+
 	/**
 	 * Tests that accessing restricted interface methods from an implementing class are properly reported
 	 * using an incremental build
@@ -223,7 +223,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests4I() {
 		x4(true);
 	}
-	
+
 	private void x4(boolean inc) {
 		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
@@ -262,7 +262,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests5F() {
 		x5(false);
 	}
-	
+
 	/**
 	 * Tests that accessing restricted method from an anonymous class is properly reported
 	 * using a full build
@@ -293,7 +293,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests6F() {
 		x6(false);
 	}
-	
+
 	/**
 	 * Tests that accessing restricted method from a local class is properly reported
 	 * using a full build
@@ -324,7 +324,7 @@ public class MethodUsageTests extends UsageTest {
 	public void testMethodUsageTests7F() {
 		x7(false);
 	}
-	
+
 	/**
 	 * Tests that accessing restricted method from a local class is properly reported
 	 * using a full build

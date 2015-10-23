@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Tests that the builder correctly finds manifest version problems
- * 
+ *
  * @since 1.0
  */
 public class VersionTest extends CompatibilityTest {
@@ -57,7 +57,7 @@ public class VersionTest extends CompatibilityTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public VersionTest(String name) {

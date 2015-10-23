@@ -21,11 +21,11 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder correctly reports compatibility problems
  * related to member types.
- * 
+ *
  * @since 1.0
  */
 public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibilityTests {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,7 +35,7 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.interfaces.restrictions."; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,7 +51,7 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("restrictions"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -78,11 +78,11 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 	protected String getTestingProjectName() {
 		return "intercompat"; //$NON-NLS-1$
 	}
-	
+
 	public void testRemoveNoImplementI() throws Exception {
 		xRemoveNoImplement(true);
-	}	
-	
+	}
+
 	public void testRemoveNoImplementF() throws Exception {
 		xRemoveNoImplement(false);
 	}
@@ -97,8 +97,8 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 
 	public void testAddNoImplementI() throws Exception {
 		xAddNoImplement(true);
-	}	
-	
+	}
+
 	public void testAddNoImplementF() throws Exception {
 		xAddNoImplement(false);
 	}
@@ -116,21 +116,21 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	/**
-	 * Tests removing a noextend annotation using an incremental build 
+	 * Tests removing a noextend annotation using an incremental build
 	 */
 	public void testRemoveNoExtendI() {
 		xRemoveNoExtend(true);
 	}
-	
+
 	/**
 	 * Tests removing a noextend annotation using a full build
 	 */
 	public void testRemoveNoExtendF() {
 		xRemoveNoExtend(false);
 	}
-	
+
 	private void xRemoveNoExtend(boolean inc) {
 		try {
 			IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoExtend.java"); //$NON-NLS-1$
@@ -141,21 +141,21 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests adding a noextend annotation using an incremental build
 	 */
 	public void testAddNoExtendI() {
 		xAddNoExtend(true);
 	}
-	
+
 	/**
 	 * Tests adding a noextend annotation using a full build
 	 */
 	public void testAddNoExtendF() {
 		xAddNoExtend(false);
 	}
-	
+
 	private void xAddNoExtend(boolean inc) {
 		try {
 			IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoExtend.java"); //$NON-NLS-1$
@@ -172,21 +172,21 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests adding both noextend and noimplement annotations using an incremental build
 	 */
 	public void testAddNoExtendNoImplementI() {
 		xAddNoExtendNoImplement(true);
 	}
-	
+
 	/**
 	 * Tests adding both noextend and noimplement annotations using a full build
 	 */
 	public void testAddNoExtendNoImplementF() {
 		xAddNoExtendNoImplement(false);
 	}
-	
+
 	private void xAddNoExtendNoImplement(boolean inc) {
 		try {
 			IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoExtendNoImplement.java"); //$NON-NLS-1$
@@ -203,21 +203,21 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests removing both noextend and noimplement annotations using an incremental build
 	 */
 	public void testRemoveNoExtendNoImplementI() {
 		xRemoveNoExtendNoImplement(true);
 	}
-	
+
 	/**
 	 * Tests removing both noextend and noimplement annotations using a full build
 	 */
 	public void testRemoveNoExtendNoImplementF() {
 		xRemoveNoExtendNoImplement(false);
 	}
-	
+
 	private void xRemoveNoExtendNoImplement(boolean inc) {
 		try {
 			IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoExtendNoImplement.java"); //$NON-NLS-1$

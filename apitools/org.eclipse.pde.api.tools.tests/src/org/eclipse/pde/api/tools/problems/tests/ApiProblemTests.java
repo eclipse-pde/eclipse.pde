@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 
 /**
  * Tests aspects of a {@link ApiProblem} and {@link ApiProblemFactory}
- * 
+ *
  * @since 1.0.0
  */
 public class ApiProblemTests extends AbstractApiTest {
@@ -534,7 +534,7 @@ public class ApiProblemTests extends AbstractApiTest {
 
 	/**
 	 * Helper method to get a hash code for problem arguments
-	 * 
+	 *
 	 * @param arguments
 	 * @return
 	 */

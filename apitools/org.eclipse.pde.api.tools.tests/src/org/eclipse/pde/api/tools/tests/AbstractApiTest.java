@@ -40,7 +40,7 @@ import org.eclipse.pde.internal.core.natures.PDE;
 
 /**
  * Abstract class with commonly used methods for API Tools tests
- * 
+ *
  * @since 1.0.0
  */
 public class AbstractApiTest extends TestCase {
@@ -60,7 +60,7 @@ public class AbstractApiTest extends TestCase {
 	/**
 	 * Returns the {@link IJavaProject} with the given name. If this method is
 	 * called from a non-plugin unit test, <code>null</code> is always returned.
-	 * 
+	 *
 	 * @return the {@link IJavaProject} with the given name or <code>null</code>
 	 */
 	protected IJavaProject getTestingJavaProject(String name) {
@@ -77,7 +77,7 @@ public class AbstractApiTest extends TestCase {
 	/**
 	 * Returns the {@link IApiComponent} for the given project name or
 	 * <code>null</code> if it does not exist
-	 * 
+	 *
 	 * @param projectname the name of the project
 	 * @return the {@link IApiComponent} for the given project name or
 	 *         <code>null</code>
@@ -92,7 +92,7 @@ public class AbstractApiTest extends TestCase {
 
 	/**
 	 * Performs the given refactoring
-	 * 
+	 *
 	 * @param refactoring
 	 * @throws Exception
 	 */
@@ -126,7 +126,7 @@ public class AbstractApiTest extends TestCase {
 
 	/**
 	 * Creates a project with the given name and adds the default 'src' folder
-	 * 
+	 *
 	 * @param name
 	 * @param packages an optional list of packages to add to the project when
 	 *            it is created
@@ -167,7 +167,7 @@ public class AbstractApiTest extends TestCase {
 
 	/**
 	 * Deletes a project with the given name
-	 * 
+	 *
 	 * @param name
 	 */
 	protected void deleteProject(String name) {
@@ -193,7 +193,7 @@ public class AbstractApiTest extends TestCase {
 	/**
 	 * Returns a the project with the given name. The returned project has not
 	 * been checked for existence.
-	 * 
+	 *
 	 * @param name
 	 * @return the handle to the project with the given name.
 	 */
@@ -203,7 +203,7 @@ public class AbstractApiTest extends TestCase {
 
 	/**
 	 * Returns the workspace baseline.
-	 * 
+	 *
 	 * @return workspace baseline
 	 */
 	protected IApiBaseline getWorkspaceBaseline() {

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Waits for a resource changed event for a given path in a delta
- * 
+ *
  * @since 1.0.1
  */
 public class ResourceEventWaiter extends AbstractApiEventWaiter implements IResourceChangeListener {
@@ -27,7 +27,7 @@ public class ResourceEventWaiter extends AbstractApiEventWaiter implements IReso
 	private int kind = -1;
 	private int flags = -1;
 	private int type = -1;
-	
+
 	/**
 	 * Constructor
 	 * @param path the child path of he delta we are expecting to get an event for
@@ -42,7 +42,7 @@ public class ResourceEventWaiter extends AbstractApiEventWaiter implements IReso
 		this.flags = flags;
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */

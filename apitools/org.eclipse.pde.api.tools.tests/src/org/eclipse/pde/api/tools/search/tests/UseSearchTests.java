@@ -26,7 +26,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 /**
  * Tests the API use specific implementations of {@link IApiSearchReporter}
  * and {@link IApiSearchRequestor}
- * 
+ *
  * @since 1.0.1
  */
 public class UseSearchTests extends SearchTest {
@@ -35,7 +35,7 @@ public class UseSearchTests extends SearchTest {
 	static IPath XML_PATH = TMP_PATH.append("xml"); //$NON-NLS-1$
 	static IPath HTML_PATH = TMP_PATH.append("html"); //$NON-NLS-1$
 	final HashMap<String, HashSet<String>> usedprojects = new HashMap<String, HashSet<String>>();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.search.tests.SearchTest#tearDown()
 	 */
@@ -44,7 +44,7 @@ public class UseSearchTests extends SearchTest {
 		scrubReportLocation(TMP_PATH.toFile());
 		super.tearDown();
 	}
-	
+
 	/**
 	 * Asserts the the report was created with the correct folder structure
 	 * @param reportroot
@@ -81,7 +81,7 @@ public class UseSearchTests extends SearchTest {
 			assertTrue("All of the using projects should have been detected", names.size() == 0); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Cleans the location if it exists
 	 * @param file
@@ -100,7 +100,7 @@ public class UseSearchTests extends SearchTest {
 			file.delete();
 		}
 	}
-	
+
 	/**
 	 * Sets the projects that we are expecting to be using the given project
 	 * @param project the projects we are saying should be used
@@ -121,7 +121,7 @@ public class UseSearchTests extends SearchTest {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the default composite search reporter which has the {@link TestReporter}
 	 * and the {@link XMLApiSearchReporter} in it
@@ -135,9 +135,9 @@ public class UseSearchTests extends SearchTest {
 		reporters[1] = new XmlSearchReporter(XML_PATH.toOSString(), debug);
 		return new TestCompositeSearchReporter(this, reporters);
 	}
-	
+
 	/**
-	 * Tests that the XML reporter is generating XMl files at the correct location, 
+	 * Tests that the XML reporter is generating XMl files at the correct location,
 	 * with no components excluded from the search
 	 */
 	public void testSearchXmlReporterNoExclusions() {
@@ -146,12 +146,12 @@ public class UseSearchTests extends SearchTest {
 			TEST_REQUESTOR.setScopeBaseline(getTestBaseline());
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REPORTER.setExpectedReferences(
-					new String[] {P2_NAME, P3_NAME}, 
+					new String[] {P2_NAME, P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL, IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
-			TEST_REPORTER.setExpectedNotSearched(null);			
+			TEST_REPORTER.setExpectedNotSearched(null);
 			engine.search(getTestBaseline(), TEST_REQUESTOR, getCompositeReporter(XML_PATH.toOSString(), false), null);
 			setProjectsUsedBy(
-					new String[] {getProjectId(P1_NAME, DEFAULT_VERSION), getProjectId(P2_NAME, DEFAULT_VERSION)}, 
+					new String[] {getProjectId(P1_NAME, DEFAULT_VERSION), getProjectId(P2_NAME, DEFAULT_VERSION)},
 					new String[][] {{getProjectId(P2_NAME, DEFAULT_VERSION), getProjectId(P3_NAME, DEFAULT_VERSION)}, {getProjectId(P3_NAME, DEFAULT_VERSION)}});
 			assertXMLReport(XML_PATH);
 		}
@@ -159,9 +159,9 @@ public class UseSearchTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.toString()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
-	 * Tests that the XML reporter is generating XMl files at the correct location, 
+	 * Tests that the XML reporter is generating XMl files at the correct location,
 	 * with no components excluded from the search
 	 */
 	public void testSearchXmlReporterNoExclusionsWithDebug() {
@@ -170,12 +170,12 @@ public class UseSearchTests extends SearchTest {
 			TEST_REQUESTOR.setScopeBaseline(getTestBaseline());
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REPORTER.setExpectedReferences(
-					new String[] {P2_NAME, P3_NAME}, 
+					new String[] {P2_NAME, P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL, IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(null);
 			engine.search(getTestBaseline(), TEST_REQUESTOR, getCompositeReporter(XML_PATH.toOSString(), true), null);
 			setProjectsUsedBy(
-					new String[] {getProjectId(P1_NAME, DEFAULT_VERSION), getProjectId(P2_NAME, DEFAULT_VERSION)}, 
+					new String[] {getProjectId(P1_NAME, DEFAULT_VERSION), getProjectId(P2_NAME, DEFAULT_VERSION)},
 					new String[][] {{getProjectId(P2_NAME, DEFAULT_VERSION), getProjectId(P3_NAME, DEFAULT_VERSION)}, {getProjectId(P3_NAME, DEFAULT_VERSION)}});
 			assertXMLReport(XML_PATH);
 		}
@@ -183,7 +183,7 @@ public class UseSearchTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.toString()); //$NON-NLS-1$
 		}
 	}
-	
+
 	String getProjectId(String project, String version) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(project).append(" ").append('(').append(version).append(')'); //$NON-NLS-1$

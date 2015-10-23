@@ -31,7 +31,7 @@ import org.eclipse.test.performance.Dimension;
 /**
  * Test the performance of an incremental build of the Debug Core plug-in when a
  * source with many dependents has been changed
- * 
+ *
  * @since 1.0.0
  */
 public class IncrementalBuildTests extends PerformanceTest {
@@ -42,7 +42,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public IncrementalBuildTests(String name) {
@@ -61,7 +61,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
@@ -123,7 +123,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Returns the path the file that will be reverted
-	 * 
+	 *
 	 * @param filename
 	 * @return
 	 */
@@ -133,7 +133,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Gets the
-	 * 
+	 *
 	 * @param testname
 	 * @param filename
 	 * @return
@@ -155,7 +155,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * Tests the incremental build performance for a variety of problems in a
 	 * class that has many dependents - kind of a worst-case build scenario <br>
 	 * This test uses <code>org.eclipse.debug.core.Launch</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens, or if unexpected problems are
 	 *             found after a build
 	 */
@@ -173,7 +173,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for structural change to an API type.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void _testApiStructuralChange() throws Exception {
@@ -186,7 +186,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for non-structural change to an API type.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void _testApiNonStructuralChange() throws Exception {
@@ -199,7 +199,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for an API description change to an API type.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void _testApiDescriptionChange() throws Exception {
@@ -212,7 +212,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for structural change to an internal type.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void _testInternalStructuralChange() throws Exception {
@@ -225,7 +225,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for non-structural change to an internal type.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void _testInternalNonStructuralChange() throws Exception {
@@ -238,7 +238,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for an API description change to an internal type.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void _testInternalDescriptionChange() throws Exception {
@@ -253,7 +253,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * Tests the incremental build performance for a single compatibility
 	 * problem in an interface that has many dependents. <br>
 	 * This test uses <code>org.eclipse.debug.core.model.IDebugElement</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens, or if unexpected problems are
 	 *             found after a build
 	 */
@@ -269,7 +269,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * Tests the incremental build performance for a single compatibility
 	 * problem in a class that has many dependents. <br>
 	 * This tests uses <code>org.eclipse.debug.core.DebugException</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens, or if unexpected problems are
 	 *             found after a build
 	 */
@@ -285,7 +285,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * Tests the incremental build performance for a single usage problem in
 	 * source that has many dependents. <br>
 	 * This test uses <code>org.eclipse.debug.core.model.DebugElement</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens, or if unexpected problems are
 	 *             found after a build
 	 */
@@ -301,7 +301,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * Tests the incremental build performance for a single leak problem in
 	 * source that has many dependents. <br>
 	 * This test uses <code>org.eclipse.debug.core.model.Breakpoint</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens, or if unexpected problems are
 	 *             found after a build
 	 */
@@ -317,7 +317,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * Tests the incremental build performance for a single unsupported tag
 	 * problem in source that has many dependents. In this test is used. <br>
 	 * This test uses <code>org.eclipse.debug.core.model.RuntimeProcess</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens, or if unexpected problems are
 	 *             found after a build
 	 */
@@ -338,7 +338,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * Updates the workspace file and builds it incrementally. Overrides the
 	 * default implementation to also do an incremental build with the Java
 	 * builder after the file has been updated.
-	 * 
+	 *
 	 * @param project
 	 * @param workspaceLocation
 	 * @param replacementLocation
@@ -353,14 +353,14 @@ public class IncrementalBuildTests extends PerformanceTest {
 	/**
 	 * Deploys an incremental build tests with the given summary, changing the
 	 * type in the given project.
-	 * 
+	 *
 	 * @param summary human readable summary for the test
 	 * @param testname the name of the test, used to find the source
 	 * @param projectname the name of the project to deploy to incremental test
 	 *            to
 	 * @param typename the fully qualified name of the type to replace
 	 * @param problemids array of expected problem ids
-	 * 
+	 *
 	 * @throws Exception if something bad happens, or if unexpected problems are
 	 *             found after a build
 	 */

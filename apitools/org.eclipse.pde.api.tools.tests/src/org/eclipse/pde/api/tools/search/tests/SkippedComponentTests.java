@@ -18,15 +18,15 @@ import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 
 /**
  * Tests the {@link org.eclipse.pde.api.tools.internal.search.SkippedComponent} class
- * 
+ *
  * @since 1.0.1
  */
 public class SkippedComponentTests extends SearchTest {
-	
+
 	static final String SC_NAME = "l.m.n.P"; //$NON-NLS-1$
-	
+
 	IApiComponent TESTING_COMPONENT = null;
-	
+
 	IApiComponent getTestingComponent() {
 		if(TESTING_COMPONENT == null) {
 			try {
@@ -38,7 +38,7 @@ public class SkippedComponentTests extends SearchTest {
 		}
 		return TESTING_COMPONENT;
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#equals(Object)} method
 	 */
@@ -56,7 +56,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#hashCode()} method
 	 */
@@ -72,7 +72,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#getComponentId()} method
 	 */
@@ -90,7 +90,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#wasExcluded()} method
 	 */
@@ -107,7 +107,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#hasResolutionErrors()} method
 	 */
@@ -124,7 +124,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#getAncestor(int)} method
 	 */
@@ -139,7 +139,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#getApiComponent()} method
 	 */
@@ -154,7 +154,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#getName()} method
 	 */
@@ -169,7 +169,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#getParent()} method
 	 */
@@ -184,7 +184,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#getType()} method
 	 */
@@ -199,7 +199,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#getVersion()} method
 	 */
@@ -214,7 +214,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#getErrors()} method
 	 */
@@ -229,7 +229,7 @@ public class SkippedComponentTests extends SearchTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link SkippedComponent#getErrorDetails()} method
 	 */

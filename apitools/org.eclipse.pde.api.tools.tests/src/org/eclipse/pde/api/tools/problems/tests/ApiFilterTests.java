@@ -20,7 +20,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
 
 /**
  * Tests the {@link org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter} class
- * 
+ *
  * @since 1.0.1
  */
 public class ApiFilterTests extends TestCase {
@@ -33,7 +33,7 @@ public class ApiFilterTests extends TestCase {
 		ApiProblemFilter filter = new ApiProblemFilter("comp.id", problem, null); //$NON-NLS-1$
 		assertNotNull("The toString should not return null", filter.toString()); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests the {@link ApiProblemFilter#equals(Object)} method
 	 */
@@ -52,7 +52,7 @@ public class ApiFilterTests extends TestCase {
 		assertEquals("the filters should be equal", filter1, filter2); //$NON-NLS-1$
 		assertEquals("the filters should be equal", filter2, filter1); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests the {@link ApiProblemFilter#clone()} method
 	 */

@@ -16,14 +16,14 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Tests valid use of annotations on enums
- * 
+ *
  * @since 1.0.400
  */
 public class ValidEnumAnnotationsTests extends InvalidEnumAnnotationsTests {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public ValidEnumAnnotationsTests(String name) {

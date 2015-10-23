@@ -19,13 +19,13 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
- * Tests that the builder correctly finds and reports enum compatibility 
+ * Tests that the builder correctly finds and reports enum compatibility
  * problems
- * 
+ *
  * @since 1.0
  */
 public class EnumCompatibilityTests extends CompatibilityTest {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,7 +35,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.enums."; //$NON-NLS-1$
-	
+
 
 	/**
 	 * Constructor
@@ -52,7 +52,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("enums"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -75,7 +75,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	protected String getTestingProjectName() {
 		return "enumcompat"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests removing a member type
 	 */
@@ -94,15 +94,15 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveMemberTypeI() throws Exception {
 		xRemoveMemberType(true);
 	}
-	
+
 	public void testRemoveMemberTypeF() throws Exception {
 		xRemoveMemberType(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests removing a method
 	 */
@@ -121,15 +121,15 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveMethodI() throws Exception {
 		xRemoveMethod(true);
 	}
-	
+
 	public void testRemoveMethodF() throws Exception {
 		xRemoveMethod(false);
 	}
-	
+
 	/**
 	 * Tests conversion to a class
 	 */
@@ -150,15 +150,15 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testConvertToClassI() throws Exception {
 		xConvertToClass(true);
 	}
-	
+
 	public void testConvertToClassF() throws Exception {
 		xConvertToClass(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests conversion to an annotation
 	 */
@@ -179,15 +179,15 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testConvertToAnnotationI() throws Exception {
 		xConvertToAnnotation(true);
 	}
-	
+
 	public void testConvertToAnnotationF() throws Exception {
 		xConvertToAnnotation(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests conversion to an interface
 	 */
@@ -208,15 +208,15 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testConvertToInterfaceI() throws Exception {
 		xConvertToInterface(true);
 	}
-	
+
 	public void testConvertToInterfaceF() throws Exception {
 		xConvertToInterface(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests removing a field
 	 */
@@ -235,15 +235,15 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveFieldI() throws Exception {
 		xRemoveField(true);
 	}
-	
+
 	public void testRemoveFieldF() throws Exception {
 		xRemoveField(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests removing an enum constant
 	 */
@@ -262,15 +262,15 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveEnumConstantI() throws Exception {
 		xRemoveEnumConstant(true);
 	}
-	
+
 	public void testRemoveEnumConstantF() throws Exception {
 		xRemoveEnumConstant(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests reducing super interface set
 	 */
@@ -289,12 +289,12 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveSuperInterfaceI() throws Exception {
 		xRemoveSuperInterface(true);
 	}
-	
+
 	public void testRemoveSuperInterfaceF() throws Exception {
 		xRemoveSuperInterface(false);
-	}	
+	}
 }

@@ -17,11 +17,11 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests invalid tags on fields in classes
- * 
+ *
  * @since 1.0
  */
 public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -37,14 +37,14 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the test suite for class fields
 	 */
 	public static Test suite() {
 		return buildTestSuite(InvalidClassFieldTagTests.class);
 	}
-		
+
 	public void testInvalidClassFieldTag1I() {
 		x1(true);
 	}
@@ -52,7 +52,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidClassFieldTag1F() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests an invalid @noreference tag on final fields in inner / outer classes
 	 * using an incremental build
@@ -77,7 +77,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassFieldTag2I() {
 		x2(true);
 	}
@@ -85,7 +85,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidClassFieldTag2F() {
 		x2(false);
 	}
-	
+
 	/**
 	 * Tests a valid @noreference tag on three final fields in a class in the default package
 	 * using an incremental build
@@ -98,15 +98,15 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassFieldTag3I() {
 		x3(true);
 	}
-	
+
 	public void testInvalidClassFieldTag3F() {
 		x3(false);
 	}
-	
+
 	/**
 	 * Tests a invalid @noreference tag on static final fields in inner /outer class
 	 * using a full build
@@ -131,15 +131,15 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassFieldTag4I() {
 		x4(true);
 	}
-	
+
 	public void testInvalidClassFieldTag4F() {
 		x4(false);
 	}
-	
+
 	/**
 	 * Tests a valid @noreference tag on three static final fields in a class in the default package
 	 * using a full build
@@ -152,7 +152,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassFieldTag5I() {
 		x5(true);
 	}
@@ -160,7 +160,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidClassFieldTag5F() {
 		x5(false);
 	}
-	
+
 	/**
 	 * Tests a invalid @noextend tag on fields in inner /outer class
 	 * using a full build
@@ -187,7 +187,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassFieldTag6I() {
 		x6(true);
 	}
@@ -195,7 +195,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidClassFieldTag6F() {
 		x6(false);
 	}
-	
+
 	/**
 	 * Tests a invalid @noextend tag on three fields in a class in the default package
 	 * using an incremental build
@@ -210,7 +210,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test6.java", inc, true); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassFieldTag7I() {
 		x7(true);
 	}
@@ -218,7 +218,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidClassFieldTag7F() {
 		x7(false);
 	}
-	
+
 	/**
 	 * Tests an invalid @noimplement tag on fields in inner / outer classes
 	 * using an incremental build
@@ -249,11 +249,11 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidClassFieldTag8I() {
 		x8(true);
 	}
-	
+
 	public void testInvalidClassFieldTag8F() {
 		x8(false);
 	}
-	
+
 	/**
 	 * Tests a invalid @noimplement tag on three fields in a class in the default package
 	 * using a full build
@@ -272,11 +272,11 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidClassFieldTag9I() {
 		x9(true);
 	}
-	
+
 	public void testInvalidClassFieldTag9F() {
 		x9(false);
 	}
-	
+
 	/**
 	 * Tests a invalid @nooverride tag on fields in inner /outer class
 	 * using a full build
@@ -307,11 +307,11 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidClassFieldTag10I() {
 		x10(true);
 	}
-	
+
 	public void testInvalidClassFieldTag10F() {
 		x10(false);
 	}
-	
+
 	/**
 	 * Tests a valid @nooverride tag on three fields in a class in the default package
 	 * using a full build
@@ -330,11 +330,11 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidClassFieldTag11I() {
 		x11(true);
 	}
-	
+
 	public void testInvalidClassFieldTag11F() {
 		x11(false);
 	}
-	
+
 	/**
 	 * Tests a invalid @noinstantiate tag on fields in inner /outer class
 	 * using a full build
@@ -361,7 +361,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test11.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassFieldTag12I() {
 		x12(true);
 	}
@@ -369,7 +369,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidClassFieldTag12F() {
 		x12(false);
 	}
-	
+
 	/**
 	 * Tests a valid @noinstantiate tag on three fields in a class in the default package
 	 * using an incremental build

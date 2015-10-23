@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Tests valid annotations on interfaces
- * 
+ *
  * @since 1.0.600
  */
 public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTests {
@@ -42,7 +42,7 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoImplement annotation on interfaces
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoImplementF() throws Exception {
@@ -51,7 +51,7 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoImplement annotation on interfaces
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoImplementI() throws Exception {
@@ -64,7 +64,7 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoExtend annotation on interfaces
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoExtendF() throws Exception {
@@ -73,7 +73,7 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoExtend annotation on interfaces
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoExtendI() throws Exception {
@@ -86,7 +86,7 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoReference annotation on interfaces
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoReferenceF() throws Exception {
@@ -95,7 +95,7 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoReference annotation on interfaces
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoReferenceI() throws Exception {

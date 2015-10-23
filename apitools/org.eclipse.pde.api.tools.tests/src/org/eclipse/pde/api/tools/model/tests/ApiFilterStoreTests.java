@@ -39,15 +39,15 @@ import org.eclipse.pde.api.tools.tests.util.FileUtils;
 
 /**
  * Tests the {@link ApiFilterStore} and {@link ApiProblemFilter}s
- * 
+ *
  * @since 1.0.0
  */
 public class ApiFilterStoreTests extends AbstractApiTest {
-	
+
 	private static final IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source"); //$NON-NLS-1$
 	private static final IPath XML_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-xml"); //$NON-NLS-1$
 	private static final IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins"); //$NON-NLS-1$
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -61,7 +61,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IPackageFragmentRoot srcroot = project.findPackageFragmentRoot(project.getProject().getFullPath().append("src")); //$NON-NLS-1$
 		assertNotNull("the default src root must exist", srcroot); //$NON-NLS-1$
 		FileUtils.importFileFromDirectory(projectSrc, srcroot.getPath(), new NullProgressMonitor());
-		
+
 		// Import the test .api_filters file
 		File xmlsrc = XML_LOC.append(".api_filters").toFile(); //$NON-NLS-1$
 		assertTrue("the filter xml dir must exist", xmlsrc.exists()); //$NON-NLS-1$
@@ -73,7 +73,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IResource filters = project2.findMember("/.settings/.api_filters", true); //$NON-NLS-1$
 		assertNotNull("the .api_filters file must exist in the testing project", filters); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -81,9 +81,9 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	protected void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
 	}
-	
+
 	/**
-	 * Runs a series of assertions against the loaded {@link IApiFilterStore} 
+	 * Runs a series of assertions against the loaded {@link IApiFilterStore}
 	 * @param store the store to check
 	 */
 	private void assertFilterStore(IApiFilterStore store, int count) {
@@ -92,7 +92,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertEquals("there should be "+count+" resources with filters", count, resources.length); //$NON-NLS-1$ //$NON-NLS-2$
 		IJavaProject jproject = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
 		IProject project = jproject.getProject();
-		
+
 		//C4
 		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
@@ -100,7 +100,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertTrue("There should be 1 filter for src/x/y/z/C4.java", filters.length == 1); //$NON-NLS-1$
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertTrue("the usage problem for src/x/y/z/C4.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
-		
+
 		//C1
 		resource = project.findMember(new Path("src/x/C1.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/C1.java must exist", resource); //$NON-NLS-1$
@@ -110,7 +110,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertTrue("the removed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, 4, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
 		assertTrue("the changed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
-		
+
 		//C3
 		resource = project.findMember(new Path("src/x/y/C3.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/y/C3.java must exist"); //$NON-NLS-1$
@@ -120,7 +120,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertTrue("the major version problem for src/x/y/C3.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_VERSION, 7, IApiProblem.MINOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
 		assertTrue("the minor version problem for src/x/y/C3.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
-		
+
 		//MANIFEST.MF
 		resource = project.findMember(new Path("META-INF/MANIFEST.MF")); //$NON-NLS-1$
 		assertNotNull("the resource META-INF/MANIFEST.MF must exist", resource); //$NON-NLS-1$
@@ -133,7 +133,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_SINCETAGS, 7, IApiProblem.SINCE_TAG_INVALID, IApiProblem.NO_FLAGS);
 		assertTrue("the invalid since tag problem should be filterd for META-INF/MANIFEST.MF", store.isFiltered(problem)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that a filter store can be correctly annotated from a persisted version
 	 */
@@ -147,7 +147,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests that asking the store if it filters an invalid problem will return 'false'
 	 */
@@ -161,14 +161,14 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
 			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, IApiProblem.MINOR_VERSION_CHANGE, IDelta.ADDED);
 			assertFalse("the bogus problem should not be filtered", store.isFiltered(problem)); //$NON-NLS-1$
-		} 
+		}
 		catch (CoreException e) {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * tests removing an api problem filter 
+	 * tests removing an api problem filter
 	 */
 	public void testRemoveFilter() {
 		try {
@@ -182,12 +182,12 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			store = component.getFilterStore();
 			store.removeFilters(new IApiProblemFilter[] {ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null)});
 			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem)); //$NON-NLS-1$
-		} 
+		}
 		catch (CoreException e) {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * tests adding a filter using the method that accepts a filter
 	 */
@@ -210,7 +210,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			fail(ce.getMessage());
 		}
 	}
-	
+
 	/**
 	 * tests adding a filter using the method that accepts an api problem
 	 */
@@ -233,7 +233,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			fail(ce.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Tests that a filter store will not be annotated from a bundle
 	 */

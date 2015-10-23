@@ -19,15 +19,15 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests a variety of restricted constructor usages, where the callee has noreference restrictions
- * 
+ *
  * @since 1.0
  */
 public class ConstructorUsageTests extends UsageTest {
 
 	protected static final String CONST_CLASS_NAME = "ConstructorUsageClass"; //$NON-NLS-1$
-	
+
 	private static int pid = -1;
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -43,9 +43,9 @@ public class ConstructorUsageTests extends UsageTest {
 	protected int getDefaultProblemId() {
 		if(pid == -1) {
 			pid = ApiProblemFactory.createProblemId(
-					IApiProblem.CATEGORY_USAGE, 
-					IElementDescriptor.METHOD, 
-					IApiProblem.ILLEGAL_REFERENCE, 
+					IApiProblem.CATEGORY_USAGE,
+					IElementDescriptor.METHOD,
+					IApiProblem.ILLEGAL_REFERENCE,
 					IApiProblem.CONSTRUCTOR_METHOD);
 		}
 		return pid;
@@ -54,7 +54,7 @@ public class ConstructorUsageTests extends UsageTest {
 	public static Test suite() {
 		return buildTestSuite(ConstructorUsageTests.class);
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#getTestSourcePath()
 	 */
@@ -62,7 +62,7 @@ public class ConstructorUsageTests extends UsageTest {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("method"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that calls the a variety of restricted constructors are properly reported as problems
 	 * using a full build
@@ -70,7 +70,7 @@ public class ConstructorUsageTests extends UsageTest {
 	public void testConstructorUsageTests1F() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests that calls the a variety of restricted constructors are properly reported as problems
 	 * using an incremental build
@@ -78,7 +78,7 @@ public class ConstructorUsageTests extends UsageTest {
 	public void testConstructorUsageTests1I() {
 		x1(true);
 	}
-	
+
 	private void x1(boolean inc) {
 		//TODO uncomment once https://bugs.eclipse.org/bugs/show_bug.cgi?id=247028 has been fixed
 		setExpectedProblemIds(getDefaultProblemIdSet(12));

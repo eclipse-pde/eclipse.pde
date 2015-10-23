@@ -21,11 +21,11 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder correctly reports compatibility problems
  * related class hierarchies.
- * 
+ *
  * @since 1.0
  */
 public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,7 +35,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.fields.modifiers."; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,7 +51,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("modifiers"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -70,7 +70,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	/**
 	 * Returns a problem id for a compatibility change to a class based on the
 	 * specified flags.
-	 * 
+	 *
 	 * @param flags
 	 * @return problem id
 	 */
@@ -80,8 +80,8 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 				IDelta.FIELD_ELEMENT_TYPE,
 				IDelta.CHANGED,
 				flags);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a non-final field final
 	 */
@@ -96,15 +96,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalI() throws Exception {
 		xAddFinal(true);
-	}	
-	
+	}
+
 	public void testAddFinalF() throws Exception {
 		xAddFinal(false);
 	}
-	
+
 	/**
 	 * Tests making a non-final no-reference field final
 	 */
@@ -113,15 +113,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalNoReferenceI() throws Exception {
 		xAddFinalNoReference(true);
-	}	
-	
+	}
+
 	public void testAddFinalNoReferenceF() throws Exception {
 		xAddFinalNoReference(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests making a non-final field final
 	 */
@@ -136,15 +136,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalOnStaticI() throws Exception {
 		xAddFinalOnStatic(true);
-	}	
-	
+	}
+
 	public void testAddFinalOnStaticF() throws Exception {
 		xAddFinalOnStatic(false);
 	}
-	
+
 	/**
 	 * Tests making a non-final no-reference field final
 	 */
@@ -153,15 +153,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFinalOnStaticNoReferenceI() throws Exception {
 		xAddFinalOnStaticNoReference(true);
-	}	
-	
+	}
+
 	public void testAddFinalOnStaticNoReferenceF() throws Exception {
 		xAddFinalOnStaticNoReference(false);
-	}		
-	
+	}
+
 	/**
 	 * Tests making a non-final field final
 	 */
@@ -176,15 +176,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveFinalOnConstantI() throws Exception {
 		xRemoveFinalOnConstant(true);
 	}
-	
+
 	public void testRemoveFinalOnConstantF() throws Exception {
 		xRemoveFinalOnConstant(false);
 	}
-	
+
 	/**
 	 * Tests making a non-static field static
 	 */
@@ -199,15 +199,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddStaticI() throws Exception {
 		xAddStatic(true);
-	}	
-	
+	}
+
 	public void testAddStaticF() throws Exception {
 		xAddStatic(false);
 	}
-	
+
 	/**
 	 * Tests making a non-static no-reference field static
 	 */
@@ -216,15 +216,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddStaticNoReferenceI() throws Exception {
 		xAddStaticNoReference(true);
-	}	
-	
+	}
+
 	public void testAddStaticNoReferenceF() throws Exception {
 		xAddStaticNoReference(false);
 	}
-	
+
 	/**
 	 * Tests making a static field non-static
 	 */
@@ -239,15 +239,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveStaticI() throws Exception {
 		xRemoveStatic(true);
-	}	
-	
+	}
+
 	public void testRemoveStaticF() throws Exception {
 		xRemoveStatic(false);
 	}
-	
+
 	/**
 	 * Tests making a static no-reference field non-static
 	 */
@@ -256,15 +256,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveStaticNoReferenceI() throws Exception {
 		xRemoveStaticNoReference(true);
-	}	
-	
+	}
+
 	public void testRemoveStaticNoReferenceF() throws Exception {
 		xRemoveStaticNoReference(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a protected field to package protected
 	 */
@@ -279,15 +279,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPackageI() throws Exception {
 		xProtectedToPackage(true);
-	}	
-	
+	}
+
 	public void testProtectedToPackageF() throws Exception {
 		xProtectedToPackage(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a protected field to package protected when no-reference
 	 */
@@ -296,15 +296,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPackageNoReferenceI() throws Exception {
 		xProtectedToPackageNoReference(true);
-	}	
-	
+	}
+
 	public void testProtectedToPackageNoReferenceF() throws Exception {
 		xProtectedToPackageNoReference(false);
 	}
-	
+
 	/**
 	 * Tests changing a protected field to package protected when no-reference, and remove
 	 * the no-reference tag
@@ -314,15 +314,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPackageRemoveNoReferenceI() throws Exception {
 		xProtectedToPackageRemoveNoReference(true);
-	}	
-	
+	}
+
 	public void testProtectedToPackageRemoveNoReferenceF() throws Exception {
 		xProtectedToPackageRemoveNoReference(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a protected field to private
 	 */
@@ -337,15 +337,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPrivateI() throws Exception {
 		xProtectedToPrivate(true);
-	}	
-	
+	}
+
 	public void testProtectedToPrivateF() throws Exception {
 		xProtectedToPrivate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a protected field to private field in a no-extend class
 	 */
@@ -354,15 +354,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// expected no error
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPrivateNoExtendI() throws Exception {
 		xProtectedToPrivateNoExtend(true);
-	}	
-	
+	}
+
 	public void testProtectedToPrivateNoExtendF() throws Exception {
 		xProtectedToPrivateNoExtend(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a public field to package
 	 */
@@ -377,15 +377,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPackageI() throws Exception {
 		xPublicToPackage(true);
-	}	
-	
+	}
+
 	public void testPublicToPackageF() throws Exception {
 		xPublicToPackage(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a public field to private
 	 */
@@ -400,15 +400,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPrivateI() throws Exception {
 		xPublicToPrivate(true);
-	}	
-	
+	}
+
 	public void testPublicToPrivateF() throws Exception {
 		xPublicToPrivate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a public field to private
 	 */
@@ -417,15 +417,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPrivateNoReferenceI() throws Exception {
 		xPublicToPrivateNoReference(true);
-	}	
-	
+	}
+
 	public void testPublicToPrivateNoReferenceF() throws Exception {
 		xPublicToPrivateNoReference(false);
 	}
-	
+
 	/**
 	 * Tests changing a public field to protected
 	 */
@@ -440,15 +440,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToProtectedI() throws Exception {
 		xPublicToProtected(true);
-	}	
-	
+	}
+
 	public void testPublicToProtectedF() throws Exception {
 		xPublicToProtected(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing the value of a constant
 	 */
@@ -463,15 +463,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testModifyValueI() throws Exception {
 		xModifyValue(true);
-	}	
-	
+	}
+
 	public void testModifyValueF() throws Exception {
 		xModifyValue(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing the type of a field
 	 */
@@ -486,15 +486,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testChangeTypeI() throws Exception {
 		xChangeType(true);
-	}	
-	
+	}
+
 	public void testChangeTypeF() throws Exception {
 		xChangeType(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing the type of a protected field with a no-extend class
 	 */
@@ -503,15 +503,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// should be no problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testChangeTypeNoExtendI() throws Exception {
 		xChangeTypeNoExtend(true);
-	}	
-	
+	}
+
 	public void testChangeTypeNoExtendF() throws Exception {
 		xChangeTypeNoExtend(false);
 	}
-	
+
 	/**
 	 * Tests changing the type of a protected field annotated no-reference
 	 */
@@ -520,15 +520,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testChangeTypeNoReferenceI() throws Exception {
 		xChangeTypeNoReference(true);
-	}	
-	
+	}
+
 	public void testChangeTypeNoReferenceF() throws Exception {
 		xChangeTypeNoReference(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests generalizing the type of a field
 	 */
@@ -543,15 +543,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testGeneralizeTypeI() throws Exception {
 		xGeneralizeType(true);
-	}	
-	
+	}
+
 	public void testGeneralizeTypeF() throws Exception {
 		xGeneralizeType(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests generalizing the type of a protected field with a no-extend class
 	 */
@@ -560,15 +560,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// should be no problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testGeneralizeTypeNoExtendI() throws Exception {
 		xGeneralizeTypeNoExtend(true);
-	}	
-	
+	}
+
 	public void testGeneralizeTypeNoExtendF() throws Exception {
 		xGeneralizeTypeNoExtend(false);
 	}
-	
+
 	/**
 	 * Tests generalizing the type of a protected field annotated no-reference
 	 */
@@ -577,15 +577,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testGeneralizeTypeNoReferenceI() throws Exception {
 		xGeneralizeTypeNoReference(true);
-	}	
-	
+	}
+
 	public void testGeneralizeTypeNoReferenceF() throws Exception {
 		xGeneralizeTypeNoReference(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests specializing the type of a field
 	 */
@@ -601,15 +601,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testSpecializeTypeI() throws Exception {
 		xSpecializeType(true);
-	}	
-	
+	}
+
 	public void testSpecializeTypeF() throws Exception {
 		xSpecializeType(false);
 	}
-	
+
 	/**
 	 * Tests remove a type argument
 	 */
@@ -628,15 +628,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveTypeArgumentsI() throws Exception {
 		xRemoveTypeArguments(true);
-	}	
-	
+	}
+
 	public void testRemoveTypeArgumentsF() throws Exception {
 		xRemoveTypeArguments(false);
 	}
-	
+
 	/**
 	 * Tests adding a type parameter
 	 */
@@ -645,15 +645,15 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddTypeArgumentsI() throws Exception {
 		xAddTypeArguments(true);
 	}
-	
+
 	public void testAddTypeArgumentsF() throws Exception {
 		xAddTypeArguments(false);
 	}
-	
+
 	/**
 	 * Tests adding no-reference
 	 */
@@ -672,12 +672,12 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddNoReferenceI() throws Exception {
 		xAddNoReference(true);
-	}	
-	
+	}
+
 	public void testAddNoReferenceF() throws Exception {
 		xAddNoReference(false);
-	}			
+	}
 }

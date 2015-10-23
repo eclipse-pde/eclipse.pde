@@ -19,7 +19,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests a variety of interface uses, where the callee has API restrictions
- * 
+ *
  * @since 1.0
  */
 public class InterfaceUsageTests extends UsageTest {
@@ -28,7 +28,7 @@ public class InterfaceUsageTests extends UsageTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InterfaceUsageTests(String name) {
@@ -139,7 +139,7 @@ public class InterfaceUsageTests extends UsageTest {
 	/**
 	 * Tests that an interface tagged with &#64;noreference properly flags usage
 	 * of its members as no reference
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 1.0.300
 	 */
@@ -150,7 +150,7 @@ public class InterfaceUsageTests extends UsageTest {
 	/**
 	 * Tests that an interface tagged with &#64;noreference properly flags usage
 	 * of its members as no reference
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 1.0.300
 	 */
@@ -170,7 +170,7 @@ public class InterfaceUsageTests extends UsageTest {
 	/**
 	 * Tests that an interface tagged with &#64;noreference properly flags usage
 	 * of its member interfaces as no reference
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 1.0.300
 	 */
@@ -181,7 +181,7 @@ public class InterfaceUsageTests extends UsageTest {
 	/**
 	 * Tests that an interface tagged with &#64;noreference properly flags usage
 	 * of its member interfaces as no reference
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 1.0.300
 	 */

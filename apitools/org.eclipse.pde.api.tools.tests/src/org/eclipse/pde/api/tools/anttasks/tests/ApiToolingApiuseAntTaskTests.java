@@ -114,7 +114,7 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 
 	/**
 	 * Tests that a use scan will find illegal use problems that can be filtered
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testIllegalUse() throws Exception {
@@ -141,7 +141,7 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 
 	/**
 	 * Tests that a use scan will find illegal use problems that can be filtered
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testIllegalUseFiltered() throws Exception {
@@ -158,7 +158,7 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 	 * Tests that a use scan will find problems when a required bundle is an old
 	 * style (pre-OSGi) plug-in. Old style plug-ins are only supported when
 	 * running in the same JRE as an OSGi runtime.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testOldStylePlugin() throws Exception {

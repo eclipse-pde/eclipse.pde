@@ -21,11 +21,11 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder correctly reports compatibility problems
  * related to member types.
- * 
+ *
  * @since 1.0
  */
 public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,7 +35,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.membertypes."; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,7 +51,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("membertypes"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -70,7 +70,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 				IDelta.REMOVED,
 				IDelta.TYPE_MEMBER);
 	}
-	
+
 	protected int getReducedVisibilityId() {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -78,7 +78,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 				IDelta.CHANGED,
 				IDelta.DECREASE_ACCESS);
 	}
-	
+
 	protected int getRemovedAPITypeId() {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -86,7 +86,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 				IDelta.REMOVED,
 				IDelta.API_TYPE);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
@@ -94,7 +94,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	protected String getTestingProjectName() {
 		return "classcompat"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests removing a public member type
 	 */
@@ -109,11 +109,11 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePublicMemberTypeI() throws Exception {
 		xRemovePublicMemberType(true);
-	}	
-	
+	}
+
 	public void testRemovePublicMemberTypeF() throws Exception {
 		xRemovePublicMemberType(false);
 	}
@@ -132,15 +132,15 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveProtectedMemberTypeI() throws Exception {
 		xRemoveProtectedMemberType(true);
-	}	
-	
+	}
+
 	public void testRemoveProtectedMemberTypeF() throws Exception {
 		xRemoveProtectedMemberType(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests removing a default/package visible member type
 	 */
@@ -149,14 +149,14 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePackageMemberTypeI() throws Exception {
 		xRemovePackageMemberType(true);
-	}	
-	
+	}
+
 	public void testRemovePackageMemberTypeF() throws Exception {
 		xRemovePackageMemberType(false);
-	}	
+	}
 
 	/**
 	 * Tests removing a private member type
@@ -166,15 +166,15 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePrivateMemberTypeI() throws Exception {
 		xRemovePrivateMemberType(true);
-	}	
-	
+	}
+
 	public void testRemovePrivateMemberTypeF() throws Exception {
 		xRemovePrivateMemberType(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests removing a protected member type with the enclosing type annotated
 	 * noextend.
@@ -184,15 +184,15 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveProtectedMemberTypeNoExtendI() throws Exception {
 		xRemoveProtectedMemberTypeNoExtend(true);
-	}	
-	
+	}
+
 	public void testRemoveProtectedMemberTypeNoExtendF() throws Exception {
 		xRemoveProtectedMemberTypeNoExtend(false);
 	}
-	
+
 	/**
 	 * Tests reducing visibility from public to protected
 	 */
@@ -207,15 +207,15 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToProtectedI() throws Exception {
 		xPublicToProtected(true);
-	}	
-	
+	}
+
 	public void testPublicToProtectedF() throws Exception {
 		xPublicToProtected(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests reducing visibility from public to package
 	 */
@@ -230,15 +230,15 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPackageI() throws Exception {
 		xPublicToPackage(true);
 	}
-	
+
 	public void testPublicToPackageF() throws Exception {
 		xPublicToPackage(false);
 	}
-	
+
 	/**
 	 * Tests reducing visibility from public to private
 	 */
@@ -253,15 +253,15 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPrivateI() throws Exception {
 		xPublicToPrivate(true);
-	}	
-	
+	}
+
 	public void testPublicToPrivateF() throws Exception {
 		xPublicToPrivate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests reducing visibility from protected to package
 	 */
@@ -276,15 +276,15 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPackageI() throws Exception {
 		xProtectedToPackage(true);
-	}	
-	
+	}
+
 	public void testProtectedToPackageF() throws Exception {
 		xProtectedToPackage(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests reducing visibility from protected to private
 	 */
@@ -299,15 +299,15 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPrivateI() throws Exception {
 		xProtectedToPrivate(true);
-	}	
-	
+	}
+
 	public void testProtectedToPrivateF() throws Exception {
 		xProtectedToPrivate(false);
 	}
-	
+
 	/**
 	 * Tests reducing visibility from package to private
 	 */
@@ -316,15 +316,15 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		//no errors expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPackageToPrivateI() throws Exception {
 		xPackageToPrivate(true);
-	}	
-	
+	}
+
 	public void testPackageToPrivateF() throws Exception {
 		xPackageToPrivate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests reducing visibility from protected to package for a noextend enclosing type
 	 */
@@ -333,15 +333,15 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPackageNoExtendI() throws Exception {
 		xProtectedToPackageNoExtend(true);
-	}	
-	
+	}
+
 	public void testProtectedToPackageNoExtendF() throws Exception {
 		xProtectedToPackageNoExtend(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests reducing visibility from protected to private for a noextend enclosing type
 	 */
@@ -350,12 +350,12 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPrivateNoExtendI() throws Exception {
 		xProtectedToPrivateNoExtend(true);
-	}	
-	
+	}
+
 	public void testProtectedToPrivateNoExtendF() throws Exception {
 		xProtectedToPrivateNoExtend(false);
-	}		
+	}
 }

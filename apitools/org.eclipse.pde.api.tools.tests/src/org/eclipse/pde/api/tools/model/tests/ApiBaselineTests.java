@@ -32,16 +32,16 @@ import junit.framework.TestCase;
 
 /**
  * Test creation of states and components.
- * 
+ *
  * The API Baseline Tests should be run as JUnit tests, not JUnit Plug-in Tests.
  * This means that there is no OSGi environment available. The vm argument
  * requiredBundles must be set to a valid baseline. In addition, rather than use
  * the EE profiles provided by OSGi, the baseline will resolve using EEs found
  * in the org.eclipse.pde.api.tools.internal.util.profiles inside the
  * org.eclipse.pde.api.tools bundle.
- * 
+ *
  * "-DrequiredBundles=${eclipse_home}/plugins"
- * 
+ *
  * @since 1.0.0
  */
 public class ApiBaselineTests extends TestCase {
@@ -75,7 +75,7 @@ public class ApiBaselineTests extends TestCase {
 
 	/**
 	 * Resolves a package
-	 * 
+	 *
 	 * @throws FileNotFoundException
 	 * @throws CoreException
 	 */
@@ -89,7 +89,7 @@ public class ApiBaselineTests extends TestCase {
 
 	/**
 	 * Resolves a package within a single component
-	 * 
+	 *
 	 * @throws FileNotFoundException
 	 * @throws CoreException
 	 */
@@ -103,7 +103,7 @@ public class ApiBaselineTests extends TestCase {
 
 	/**
 	 * Resolves a system package
-	 * 
+	 *
 	 * @throws FileNotFoundException
 	 * @throws CoreException
 	 */
@@ -117,7 +117,7 @@ public class ApiBaselineTests extends TestCase {
 
 	/**
 	 * Resolves a system package
-	 * 
+	 *
 	 * @throws FileNotFoundException
 	 * @throws CoreException
 	 */
@@ -131,7 +131,7 @@ public class ApiBaselineTests extends TestCase {
 
 	/**
 	 * Finds the class file for java.lang.Object
-	 * 
+	 *
 	 * @throws FileNotFoundException
 	 * @throws CoreException
 	 */
@@ -148,7 +148,7 @@ public class ApiBaselineTests extends TestCase {
 
 	/**
 	 * Validates basic component attributes.
-	 * 
+	 *
 	 * @param baseline baseline to retrieve the component from
 	 * @param id component id
 	 * @param name component name
@@ -178,7 +178,7 @@ public class ApiBaselineTests extends TestCase {
 	/**
 	 * Tests creating a baseline with a component that has a nested jar of class
 	 * files.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testNestedJarComponent() throws CoreException {
@@ -209,7 +209,7 @@ public class ApiBaselineTests extends TestCase {
 	 * Tests that an x-friends directive works. Component A exports package
 	 * component.a.friend.of.b as a friend for b. Note - the package should
 	 * still be private.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testXFriendsDirective() throws CoreException {
@@ -225,7 +225,7 @@ public class ApiBaselineTests extends TestCase {
 	/**
 	 * Tests that an x-internal directive works. Component A exports package
 	 * component.a.internal as internal.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testXInternalDirective() throws CoreException {
@@ -241,7 +241,7 @@ public class ApiBaselineTests extends TestCase {
 	/**
 	 * Tests that a 'uses' directive works. Component A exports package
 	 * component.a. with a 'uses' directive but should still be API.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testUsesDirective() throws CoreException {
@@ -257,7 +257,7 @@ public class ApiBaselineTests extends TestCase {
 	/**
 	 * Tests that a non-exported package is private. Component A does not export
 	 * package component.a.not.exported.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testNotExported() throws CoreException {
@@ -272,7 +272,7 @@ public class ApiBaselineTests extends TestCase {
 
 	/**
 	 * Tests component prerequisites.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testPrerequisites() throws CoreException {
@@ -290,7 +290,7 @@ public class ApiBaselineTests extends TestCase {
 
 	/**
 	 * Tests component dependents.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testDependents() throws CoreException {

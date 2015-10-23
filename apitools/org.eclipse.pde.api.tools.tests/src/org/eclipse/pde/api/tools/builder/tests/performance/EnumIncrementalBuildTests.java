@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * This class extends the incremental performance tests for Java 5 constructs.
  * This test class uses the JDT APT core plugin
- * 
+ *
  * @since 1.0.0
  */
 public class EnumIncrementalBuildTests extends IncrementalBuildTests {
@@ -34,7 +34,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public EnumIncrementalBuildTests(String name) {
@@ -60,7 +60,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	 * Tests a Java 5 construct with multiple API problems using an incremental
 	 * build. <br>
 	 * This test uses <code>java5.performance.api.TestEnum</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens or unexpected problems are
 	 *             detected
 	 */
@@ -79,7 +79,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	/**
 	 * Tests the performance of removing an enum constant from an Enum. <br>
 	 * This test uses <code>java5.performance.api.TestEnum</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens or unexpected problems are
 	 *             detected
 	 */
@@ -94,7 +94,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	/**
 	 * Tests the performance of API leak detection incrementally on an Enum <br>
 	 * This test uses <code>java5.performance.api.TestEnum</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens or unexpected problems are
 	 *             detected
 	 */
@@ -109,7 +109,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	/**
 	 * Tests the performance of API usage detection incrementally on an Enum <br>
 	 * This test uses <code>java5.performance.api.TestEnum</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens or unexpected problems are
 	 *             detected
 	 */
@@ -124,7 +124,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	/**
 	 * Tests the performance of invalid tags on an enum + enum elements <br>
 	 * This test uses <code>java5.performance.api.TestEnum</code>
-	 * 
+	 *
 	 * @throws Exception if something bad happens or unexpected problems are
 	 *             detected
 	 */

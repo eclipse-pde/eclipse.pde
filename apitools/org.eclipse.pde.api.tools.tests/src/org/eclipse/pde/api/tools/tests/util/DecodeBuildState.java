@@ -95,5 +95,5 @@ public class DecodeBuildState {
 		System.out.println("Build state:" + String.valueOf(stringWriter.getBuffer())); //$NON-NLS-1$
 	}
 
-	
+
 }

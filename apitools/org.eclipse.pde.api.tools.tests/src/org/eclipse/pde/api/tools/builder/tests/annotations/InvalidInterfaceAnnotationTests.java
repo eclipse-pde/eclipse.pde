@@ -49,7 +49,7 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Tests @NoInstantiate on an interface
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoInstantiateF() throws Exception {
@@ -58,7 +58,7 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Tests @NoInstantiate on an interface
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoInstantiateI() throws Exception {
@@ -75,7 +75,7 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Tests @NoOverride on an interface
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoOverrideF() throws Exception {
@@ -84,7 +84,7 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Tests @NoOvveride on an interface
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoOverrideI() throws Exception {

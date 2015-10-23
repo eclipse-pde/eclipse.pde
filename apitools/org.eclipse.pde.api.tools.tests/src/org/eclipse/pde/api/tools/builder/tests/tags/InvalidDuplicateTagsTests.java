@@ -20,7 +20,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests invalid duplicate tags placed on members
- * 
+ *
  * @since 1.0.0
  */
 public class InvalidDuplicateTagsTests extends TagTest {
@@ -29,7 +29,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidDuplicateTagsTests(String name) {
@@ -49,7 +49,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 
 	/**
 	 * Must be called before a call {@link #getDefaultProblemId()}
-	 * 
+	 *
 	 * @param element
 	 * @param kind
 	 */

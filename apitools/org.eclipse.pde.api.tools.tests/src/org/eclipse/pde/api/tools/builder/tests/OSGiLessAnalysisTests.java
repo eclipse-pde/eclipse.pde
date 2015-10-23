@@ -30,11 +30,11 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Tests the base analyzer without OSGi present
- * 
+ *
  * @since 1.0
  */
 public class OSGiLessAnalysisTests extends TestCase {
-	
+
 	public void testAnalyzer() throws CoreException {
 		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("baseline", new Path("test-analyzer-1")); //$NON-NLS-1$ //$NON-NLS-2$
 		IApiBaseline current = TestSuiteHelper.createTestingBaseline("current", new Path("test-analyzer-2")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -44,21 +44,21 @@ public class OSGiLessAnalysisTests extends TestCase {
 		analyzer.analyzeComponent(null, null, null, baseline, component, new BuildContext(), new NullProgressMonitor());
 		IApiProblem[] problems = analyzer.getProblems();
 		Set<Integer> expectedIds = new HashSet<Integer>();
-		expectedIds.add(ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, 
-																		IDelta.FIELD_ELEMENT_TYPE, 
-																		IDelta.CHANGED, 
+		expectedIds.add(ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
+																		IDelta.FIELD_ELEMENT_TYPE,
+																		IDelta.CHANGED,
 																		IDelta.DECREASE_ACCESS));
-		expectedIds.add(ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, 
-																		IDelta.CLASS_ELEMENT_TYPE, 
-																		IDelta.REMOVED, 
+		expectedIds.add(ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
+																		IDelta.CLASS_ELEMENT_TYPE,
+																		IDelta.REMOVED,
 																		IDelta.METHOD));
-		expectedIds.add(ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, 
-																		IDelta.INTERFACE_ELEMENT_TYPE, 
-																		IDelta.ADDED, 
+		expectedIds.add(ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
+																		IDelta.INTERFACE_ELEMENT_TYPE,
+																		IDelta.ADDED,
 																		IDelta.METHOD));
-		expectedIds.add(ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, 
-																		IElementDescriptor.RESOURCE, 
-																		IApiProblem.MAJOR_VERSION_CHANGE, 
+		expectedIds.add(ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION,
+																		IElementDescriptor.RESOURCE,
+																		IApiProblem.MAJOR_VERSION_CHANGE,
 																		IApiProblem.NO_FLAGS));
 		assertEquals("Wrong number of problems", 4, problems.length); //$NON-NLS-1$
 		for (int i = 0; i < problems.length; i++) {

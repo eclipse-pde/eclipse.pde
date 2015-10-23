@@ -29,7 +29,7 @@ public class ApiToolsPerformanceTestSuite extends TestSuite {
 	public static Test suite() {
 		return new ApiToolsPerformanceTestSuite();
 	}
-	
+
 	/**
 	 * Constructor
 	 */

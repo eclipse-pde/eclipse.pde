@@ -28,15 +28,15 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Tests search scopes.
- * 
+ *
  * @since 1.0.0
  */
 public class SearchScopeTests extends TestCase {
-	
+
 	/**
 	 * Tests that visiting a scope with whole components is the same as visiting
 	 * the components.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testVisitEntireComponentsScope() throws CoreException {
@@ -59,21 +59,21 @@ public class SearchScopeTests extends TestCase {
 	/**
 	 * Visits all classes files in the container, add visited packages and types to the
 	 * given collections.
-	 * 
+	 *
 	 * @param container
 	 * @param packageNames
 	 * @param typeNames
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	private void visit(IApiTypeContainer container, final Collection<String> packageNames, final Collection<String> typeNames) throws CoreException {
 		ApiTypeContainerVisitor visitor = new ApiTypeContainerVisitor() {
-		
+
 			@Override
 			public boolean visitPackage(String packageName) {
 				packageNames.add(packageName);
 				return true;
 			}
-		
+
 			@Override
 			public void visit(String packageName, IApiTypeRoot classFile) {
 				typeNames.add(classFile.getTypeName());
@@ -81,10 +81,10 @@ public class SearchScopeTests extends TestCase {
 		};
 		container.accept(visitor);
 	}
-	
+
 	/**
 	 * Tests visiting a type scope - type A in package component.a in component.a
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testVisitTypeScope() throws CoreException {
@@ -102,11 +102,11 @@ public class SearchScopeTests extends TestCase {
 		visit(scope, actualPackages, actualTypes);
 		assertEquals("Different packages", expectedPackages, actualPackages); //$NON-NLS-1$
 		assertEquals("Different types", expectedTypes, actualTypes); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Tests that visiting a scope with two class files.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testVisitSpecificTypes() throws CoreException {
@@ -127,5 +127,5 @@ public class SearchScopeTests extends TestCase {
 		assertEquals("Different packages", expectedPackages, actualPackages); //$NON-NLS-1$
 		assertEquals("Different types", expectedTypes, actualTypes); //$NON-NLS-1$
 	}
-	
+
 }

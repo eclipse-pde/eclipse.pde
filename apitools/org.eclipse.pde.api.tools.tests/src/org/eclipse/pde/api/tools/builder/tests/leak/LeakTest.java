@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Tests the builder to make sure it correctly reports non-API type leaks
- * 
+ *
  * @since 1.0
  */
 public abstract class LeakTest extends ApiBuilderTest {
@@ -95,7 +95,7 @@ public abstract class LeakTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
@@ -149,7 +149,7 @@ public abstract class LeakTest extends ApiBuilderTest {
 
 	/**
 	 * Deploys a leak test
-	 * 
+	 *
 	 * @param sourcename the name of the source files to create in the testing
 	 *            project.
 	 * @param incremental if an incremental build should be performed

@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.core.PluginModelDelta;
 
 /**
  * Waiter for {@link PluginModelDelta}s of a specified kind
- * 
+ *
  * since 1.0.0
  */
 public class PluginModelEventWaiter extends AbstractApiEventWaiter implements IPluginModelListener {

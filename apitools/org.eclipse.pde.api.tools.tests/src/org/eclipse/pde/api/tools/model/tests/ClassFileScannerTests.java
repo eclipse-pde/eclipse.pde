@@ -22,7 +22,7 @@ import org.eclipse.test.OrderedTestSuite;
 
 /**
  * This class tests the class file scanner and the class file visitor
- * 
+ *
  * @since 1.0.0
  */
 public class ClassFileScannerTests extends ScannerTest {
@@ -32,7 +32,7 @@ public class ClassFileScannerTests extends ScannerTest {
 
 	/**
 	 * The ordered {@link Test} suite to run
-	 * 
+	 *
 	 * @return the {@link Test} suite
 	 */
 	public static Test suite() {
@@ -424,7 +424,7 @@ public class ClassFileScannerTests extends ScannerTest {
 
 	/**
 	 * Cleans up after the tests are done. This must be the last test run
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testCleanup() throws Exception {

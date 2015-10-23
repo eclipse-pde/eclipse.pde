@@ -39,7 +39,7 @@ public class ExternalDependencyTestUtils {
 
 	/**
 	 * Unzips the test project. Opens it before returning it
-	 * 
+	 *
 	 * @return returns the <code>IProject</code>
 	 */
 	public static IProject setupProject() {

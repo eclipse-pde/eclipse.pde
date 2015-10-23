@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests invalid annotations on interface methods
- * 
+ *
  * @since 1.0.600
  */
 public class InvalidInterfaceMethodAnnotationTests extends MethodAnnotationTest {
@@ -28,12 +28,12 @@ public class InvalidInterfaceMethodAnnotationTests extends MethodAnnotationTest 
 	public InvalidInterfaceMethodAnnotationTests(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the test for this class
 	 */

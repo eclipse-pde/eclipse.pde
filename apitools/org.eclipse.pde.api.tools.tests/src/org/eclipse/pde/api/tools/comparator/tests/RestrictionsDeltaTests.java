@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
  * Delta tests for restrictions delta
  */
 public class RestrictionsDeltaTests extends DeltaTestSetup {
-	
+
 	public static Test suite() {
 		return new TestSuite(RestrictionsDeltaTests.class);
 //		TestSuite suite = new TestSuite(RestrictionsDeltaTests.class.getName());
@@ -41,7 +41,7 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 	public String getTestRoot() {
 		return "restrictions"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Change restrictions
 	 */

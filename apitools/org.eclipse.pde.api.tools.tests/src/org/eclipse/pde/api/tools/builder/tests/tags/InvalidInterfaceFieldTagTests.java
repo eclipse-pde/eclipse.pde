@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests invalid tag use on interface fields
- * 
+ *
  * @since 1.0
  */
 public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
@@ -29,7 +29,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public InvalidInterfaceFieldTagTests(String name) {
 		super(name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.InvalidFieldTagTests#getTestSourcePath()
 	 */
@@ -44,15 +44,15 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public static Test suite() {
 		return buildTestSuite(InvalidInterfaceFieldTagTests.class);
 	}
-	
+
 	public void testInvalidInterfaceFieldTag1I() {
 		x1(true);
 	}
-	
+
 	public void testInvalidInterfaceFieldTag1F() {
-		
+
 	}
-	
+
 	/**
 	 * Tests the unsupported @noextend tag on a variety of inner / outer interface fields
 	 */
@@ -65,7 +65,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidInterfaceFieldTag2I() {
 		x2(true);
 	}
@@ -73,7 +73,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidInterfaceFieldTag2F() {
 		x2(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noextend tag on an interface field in the default package
 	 */
@@ -84,15 +84,15 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidInterfaceFieldTag3I() {
 		x3(true);
 	}
-	
+
 	public void testInvalidInterfaceFieldTag3F() {
 		x3(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer interface fields
 	 */
@@ -105,15 +105,15 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidInterfaceFieldTag4I() {
 		x4(true);
 	}
-	
+
 	public void testInvalidInterfaceFieldTag4F() {
 		x4(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noinstantiate tag on an interface field in the default package
 	 */
@@ -132,7 +132,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidInterfaceFieldTag5F() {
 		x5(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noimplement tag on a variety of inner / outer interface fields
 	 */
@@ -149,11 +149,11 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidInterfaceFieldTag6I() {
 		x6(true);
 	}
-	
+
 	public void testInvalidInterfaceFieldTag6F() {
 		x6(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noimplement tag on an interface field in the default package
 	 */
@@ -168,11 +168,11 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidInterfaceFieldTag7I() {
 		x7(true);
 	}
-	
+
 	public void testInvalidInterfaceFieldTag7F() {
 		x7(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride tag on a variety of inner / outer interface fields
 	 */
@@ -185,7 +185,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		});
 		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidInterfaceFieldTag8I() {
 		x8(true);
 	}
@@ -193,7 +193,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidInterfaceFieldTag8F() {
 		x8(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride tag on an interface field in the default package
 	 */
@@ -208,11 +208,11 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidInterfaceFieldTag9I() {
 		x9(true);
 	}
-	
+
 	public void testInvalidInterfaceFieldTag9F() {
 		x9(false);
 	}
-	
+
 	/**
 	 * Tests the supported @noreference tag on a variety of final inner / outer interface fields
 	 */
@@ -227,11 +227,11 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidInterfaceFieldTag10I() {
 		x10(true);
 	}
-	
+
 	public void testInvalidInterfaceFieldTag10F() {
 		x10(false);
 	}
-	
+
 	/**
 	 * Tests the supported @noreference tag on a final interface field in the default package
 	 */
@@ -242,11 +242,11 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidInterfaceFieldTag11I() {
 		x11(true);
 	}
-	
+
 	public void testInvalidInterfaceFieldTag11F() {
 		x11(false);
 	}
-	
+
 	/**
 	 * Tests the supported @noreference tag on a variety of static final inner / outer interface fields
 	 */
@@ -265,7 +265,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	public void testInvalidInterfaceFieldTag12F() {
 		x12(false);
 	}
-	
+
 	/**
 	 * Tests the supported @noreference tag on a static final interface field in the default package
 	 */

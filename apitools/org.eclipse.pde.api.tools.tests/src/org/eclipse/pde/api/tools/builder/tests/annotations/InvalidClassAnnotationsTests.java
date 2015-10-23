@@ -20,14 +20,14 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests a variety of invalid annotation use on classes
- * 
+ *
  * @since 1.0.400
  */
 public class InvalidClassAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidClassAnnotationsTests(String name) {
@@ -53,7 +53,7 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests annotations on members that are not visible
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNotVisibleAnnotations1I() throws Exception {
@@ -70,7 +70,7 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests annotations on members that are not visible
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNotVisibleAnnotations1F() throws Exception {

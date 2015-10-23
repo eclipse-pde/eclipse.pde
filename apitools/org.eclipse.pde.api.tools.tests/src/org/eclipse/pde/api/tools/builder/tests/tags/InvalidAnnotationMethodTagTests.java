@@ -18,14 +18,14 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests invalid tags on annotation methods.
- * 
+ *
  * @since 1.0
  */
 public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidAnnotationMethodTagTests(String name) {

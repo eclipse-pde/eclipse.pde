@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 
 /**
  * Root class for testing scanning classfiles
- * 
+ *
  * @since 1.0.400
  */
 public abstract class ScannerTest extends TestCase {
@@ -36,28 +36,28 @@ public abstract class ScannerTest extends TestCase {
 
 	/**
 	 * Get the testing workspace to use
-	 * 
+	 *
 	 * @return workspace root path
 	 */
 	protected abstract IPath getWorkspaceRoot();
 
 	/**
 	 * Get the path to the source to be compiled
-	 * 
+	 *
 	 * @return source path
 	 */
 	protected abstract IPath getSourcePath();
 
 	/**
 	 * The name of the workspace folder
-	 * 
+	 *
 	 * @return the name of the folder to use in the workspace location
 	 */
 	protected abstract String getPackageName();
 
 	/**
 	 * Compile the source to scan
-	 * 
+	 *
 	 * @return if compilation succeeded
 	 */
 	protected abstract boolean doCompile();
@@ -92,7 +92,7 @@ public abstract class ScannerTest extends TestCase {
 
 	/**
 	 * Returns the container
-	 * 
+	 *
 	 * @return the container
 	 */
 	protected DirectoryApiTypeContainer getContainer() {
@@ -101,7 +101,7 @@ public abstract class ScannerTest extends TestCase {
 
 	/**
 	 * Returns the set of references collected from the given class file
-	 * 
+	 *
 	 * @param qualifiedname
 	 * @return the set of references from the specified class file name or
 	 *         <code>null</code>
@@ -122,7 +122,7 @@ public abstract class ScannerTest extends TestCase {
 	 * Finds an {@link IReference} within the given set, where a matching ref
 	 * has the same kind and the target of the reference matches the specified
 	 * qualified name
-	 * 
+	 *
 	 * @param sourcename the qualified name of the source location
 	 * @param targetname the qualified name of the target location
 	 * @param kind the kind of the {@link IReference}
@@ -147,7 +147,7 @@ public abstract class ScannerTest extends TestCase {
 
 	/**
 	 * Returns the fully qualified type name associated with the given member.
-	 * 
+	 *
 	 * @param member
 	 * @return fully qualified type name
 	 */
@@ -163,7 +163,7 @@ public abstract class ScannerTest extends TestCase {
 	/**
 	 * Finds a reference to a given target from a given source to a given target
 	 * member of a specified kind from the given listing
-	 * 
+	 *
 	 * @param sourcename the qualified name of the location the reference is
 	 *            from
 	 * @param sourceMember the name of the source member making the reference or
@@ -203,7 +203,7 @@ public abstract class ScannerTest extends TestCase {
 
 	/**
 	 * Close the container and null it out
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	protected void cleanUp() throws Exception {

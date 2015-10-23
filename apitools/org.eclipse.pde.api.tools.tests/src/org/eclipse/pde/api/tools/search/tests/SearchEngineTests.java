@@ -16,11 +16,11 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
 
 /**
  * Tests the {@link org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine}
- * 
+ *
  * @since 1.0.1
  */
 public class SearchEngineTests extends SearchTest {
-	
+
 	/**
 	 * Tests the the engine properly aborts with invalid <code>null</code> arguments
 	 */
@@ -37,7 +37,7 @@ public class SearchEngineTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests that the search engine properly reports matches
 	 * when the scope and baseline are one-in-the-same
@@ -48,7 +48,7 @@ public class SearchEngineTests extends SearchTest {
 			TEST_REQUESTOR.setScopeBaseline(getTestBaseline());
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REPORTER.setExpectedReferences(
-					new String[] {P2_NAME, P3_NAME}, 
+					new String[] {P2_NAME, P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL, IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(null);
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
@@ -57,7 +57,7 @@ public class SearchEngineTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests that the search engine properly reports matches when the scope and baseline
 	 * are not the same {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
@@ -69,7 +69,7 @@ public class SearchEngineTests extends SearchTest {
 			TEST_REQUESTOR.setScopeBaseline(this.scope);
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REPORTER.setExpectedReferences(
-					new String[] {P2_NAME, P3_NAME}, 
+					new String[] {P2_NAME, P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL, IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(null);
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
@@ -78,7 +78,7 @@ public class SearchEngineTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests that an entry in the exclude file is honored
 	 */
@@ -90,7 +90,7 @@ public class SearchEngineTests extends SearchTest {
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excludeone.txt")); //$NON-NLS-1$
 			TEST_REPORTER.setExpectedReferences(
-					new String[] {P2_NAME}, 
+					new String[] {P2_NAME},
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(new String[] {P3_NAME});
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
@@ -99,7 +99,7 @@ public class SearchEngineTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests that all elements that appear in the exclude file are left out
 	 */
@@ -119,7 +119,7 @@ public class SearchEngineTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests that a RegEx entry in the exclude file is honored (R:a.b.c.*)
 	 */
@@ -131,7 +131,7 @@ public class SearchEngineTests extends SearchTest {
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excluderegex.txt")); //$NON-NLS-1$
 			TEST_REPORTER.setExpectedReferences(
-					new String[] {P3_NAME}, 
+					new String[] {P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(new String[] {P2_NAME});
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
@@ -140,7 +140,7 @@ public class SearchEngineTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests that a RegEx entry will cover all the proper matches (R:*.P*)
 	 */
@@ -160,7 +160,7 @@ public class SearchEngineTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests searching for API only
 	 */
@@ -171,7 +171,7 @@ public class SearchEngineTests extends SearchTest {
 			TEST_REQUESTOR.setScopeBaseline(this.scope);
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API);
 			TEST_REPORTER.setExpectedReferences(
-					new String[] {P2_NAME, P3_NAME}, 
+					new String[] {P2_NAME, P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(null);
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
@@ -180,7 +180,7 @@ public class SearchEngineTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests searching for internal references only
 	 */
@@ -191,7 +191,7 @@ public class SearchEngineTests extends SearchTest {
 			TEST_REQUESTOR.setScopeBaseline(this.scope);
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REPORTER.setExpectedReferences(
-					new String[] {P2_NAME, P3_NAME}, 
+					new String[] {P2_NAME, P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(null);
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
@@ -200,7 +200,7 @@ public class SearchEngineTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Search with tracing on (causing the console to have content)
 	 */
@@ -211,7 +211,7 @@ public class SearchEngineTests extends SearchTest {
 			TEST_REQUESTOR.setScopeBaseline(this.scope);
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API);
 			TEST_REPORTER.setExpectedReferences(
-					new String[] {P2_NAME, P3_NAME}, 
+					new String[] {P2_NAME, P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(null);
 			// ApiPlugin.DEBUG_SEARCH_ENGINE = true;
@@ -221,7 +221,7 @@ public class SearchEngineTests extends SearchTest {
 			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests that the search engine properly reports matches when the scope and baseline
 	 * are not the same {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
@@ -233,7 +233,7 @@ public class SearchEngineTests extends SearchTest {
 			TEST_REQUESTOR.setScopeBaseline(this.scope);
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REPORTER.setExpectedReferences(
-					new String[] {P2_NAME, P3_NAME}, 
+					new String[] {P2_NAME, P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL, IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(null);
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);

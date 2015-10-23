@@ -33,7 +33,7 @@ public class ValidEnumTagTests extends InvalidEnumTagTests {
 	public static Test suite() {
 		return buildTestSuite(ValidEnumTagTests.class);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
@@ -41,16 +41,16 @@ public class ValidEnumTagTests extends InvalidEnumTagTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$
 	}
-	
+
 	public void testValidEnumTag1I() {
 		x1(true);
 	}
-	
+
 	@Override
 	public void testInvalidEnumTag1F() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests having an @noreference tag on an enum in the default package
 	 */

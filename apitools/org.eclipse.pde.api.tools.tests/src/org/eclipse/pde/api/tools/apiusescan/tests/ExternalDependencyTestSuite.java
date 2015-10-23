@@ -15,8 +15,8 @@ import junit.framework.TestSuite;
 
 
 /**
- * Test suite that is run tests for External Dependency from API Use Scan reports 
- * 
+ * Test suite that is run tests for External Dependency from API Use Scan reports
+ *
  * @since 1.0.0
  */
 public class ExternalDependencyTestSuite extends TestSuite {
@@ -29,7 +29,7 @@ public class ExternalDependencyTestSuite extends TestSuite {
 	public static Test suite() {
 		return new ExternalDependencyTestSuite();
 	}
-	
+
 	/**
 	 * Constructor
 	 */

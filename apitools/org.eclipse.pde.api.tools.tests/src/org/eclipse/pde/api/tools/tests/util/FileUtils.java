@@ -38,7 +38,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Utilities for handling files
- * 
+ *
  * @since 1.0.0
  */
 public class FileUtils {
@@ -59,7 +59,7 @@ public class FileUtils {
 
 	/**
 	 * Recursively adds files from the specified directory to the provided list
-	 * 
+	 *
 	 * @param dir
 	 * @param collection
 	 * @throws IOException
@@ -83,7 +83,7 @@ public class FileUtils {
 
 	/**
 	 * Imports files from the specified root directory into the specified path
-	 * 
+	 *
 	 * @param rootDir
 	 * @param destPath
 	 * @param monitor
@@ -105,7 +105,7 @@ public class FileUtils {
 
 	/**
 	 * Imports the specified file to the destination path
-	 * 
+	 *
 	 * @param file
 	 * @param destPath
 	 * @param monitor
@@ -135,7 +135,7 @@ public class FileUtils {
 
 	/**
 	 * Creates a new java.io.File at the given path with the given contents
-	 * 
+	 *
 	 * @param path
 	 * @param contents
 	 * @throws IOException
@@ -153,7 +153,7 @@ public class FileUtils {
 	 * Delete a file or directory and insure that the file is no longer present
 	 * on file system. In case of directory, delete all the hierarchy
 	 * underneath.
-	 * 
+	 *
 	 * @param resource The resource to delete
 	 * @return true iff the file was really delete, false otherwise
 	 */
@@ -173,7 +173,7 @@ public class FileUtils {
 	 * Delete a file or directory and insure that the file is no longer present
 	 * on file system. In case of directory, delete all the hierarchy
 	 * underneath.
-	 * 
+	 *
 	 * @param path The path of the file or directory to delete
 	 * @return true iff the file was really delete, false otherwise
 	 */
@@ -197,7 +197,7 @@ public class FileUtils {
 
 	/**
 	 * Wait until a resource is _really_ deleted on file system.
-	 * 
+	 *
 	 * @param resource Deleted resource
 	 * @return true if the file was finally deleted, false otherwise
 	 */
@@ -257,7 +257,7 @@ public class FileUtils {
 	 * Returns whether a resource is really deleted or not. Does not only rely
 	 * on {@link IResource#isAccessible()} method but also look if it's not in
 	 * its parent children {@link #getParentChildResource(IResource)}.
-	 * 
+	 *
 	 * @param resource The resource to test if deleted
 	 * @return true if the resource is not accessible and was not found in its
 	 *         parent children.
@@ -268,7 +268,7 @@ public class FileUtils {
 
 	/**
 	 * Reads the content of the given source file.
-	 * 
+	 *
 	 * Returns null if unable to read given source file.
 	 */
 	public static String readFromFile(String sourceFilePath) throws FileNotFoundException, IOException {
@@ -299,7 +299,7 @@ public class FileUtils {
 
 	/**
 	 * Writes the given content string to the output file, specified
-	 * 
+	 *
 	 * @param contents
 	 * @param destinationFilePath
 	 */
@@ -330,7 +330,7 @@ public class FileUtils {
 	/**
 	 * writes a new zip file from all of the files contained in the specified
 	 * root directory
-	 * 
+	 *
 	 * @param rootDir
 	 * @param zipPath
 	 * @throws IOException
@@ -355,7 +355,7 @@ public class FileUtils {
 	/**
 	 * Writes all of the zip entries from the given directory to the specified
 	 * zip output stream
-	 * 
+	 *
 	 * @param dir
 	 * @param zip
 	 * @param rootPathLength
@@ -383,7 +383,7 @@ public class FileUtils {
 	/**
 	 * Returns parent's child resource matching the given resource or null if
 	 * not found.
-	 * 
+	 *
 	 * @param resource The searched file in parent
 	 * @return The parent's child matching the given file or null if not found.
 	 */
@@ -511,7 +511,7 @@ public class FileUtils {
 
 	/**
 	 * Copy the folder contents to the local file system.
-	 * 
+	 *
 	 * @param folder workspace folder
 	 * @param dir local directory
 	 */
@@ -533,7 +533,7 @@ public class FileUtils {
 
 	/**
 	 * Copies the given file to the given directory.
-	 * 
+	 *
 	 * @param dir
 	 * @param file
 	 */

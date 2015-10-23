@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Class tests that the tag scanner for the API tools correctly scans source for
  * API tags
- * 
+ *
  * @since 1.0.0
  */
 public class TagScannerTests extends TestCase {
@@ -51,7 +51,7 @@ public class TagScannerTests extends TestCase {
 	/**
 	 * Creates a new empty API component description, not owned by any
 	 * component.
-	 * 
+	 *
 	 * @return
 	 */
 	protected IApiDescription newDescription() {
@@ -60,7 +60,7 @@ public class TagScannerTests extends TestCase {
 
 	/**
 	 * Creates a new {@link ArchiveApiTypeContainer} on the given path
-	 * 
+	 *
 	 * @param path
 	 * @return
 	 */
@@ -71,7 +71,7 @@ public class TagScannerTests extends TestCase {
 	/**
 	 * Returns a new compilation unit on the standard test source path with the
 	 * specified name appended
-	 * 
+	 *
 	 * @param name
 	 * @return a new compilation unit
 	 */
@@ -83,7 +83,7 @@ public class TagScannerTests extends TestCase {
 	/**
 	 * Performs the scan to populate the manifest and traps exceptions thrown
 	 * from the scanner
-	 * 
+	 *
 	 * @param name
 	 * @param manifest
 	 * @param cfc
@@ -99,7 +99,7 @@ public class TagScannerTests extends TestCase {
 	/**
 	 * Performs the scan to populate the manifest and traps exceptions thrown
 	 * from the scanner
-	 * 
+	 *
 	 * @param name
 	 * @param manifest
 	 */
@@ -114,7 +114,7 @@ public class TagScannerTests extends TestCase {
 	/**
 	 * Performs the scan to populate the manifest and traps exceptions thrown
 	 * from the scanner
-	 * 
+	 *
 	 * @param name
 	 * @param manifest
 	 * @param cfc
@@ -340,7 +340,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that a source file with one type which has annotations and contains
 	 * more than one inner type with annotations is scanned correctly. Scans the
 	 * file <code>TestClass8</code>
-	 * 
+	 *
 	 * @since 1.0.400
 	 */
 	public void testMultiInnerTypeAnnotations() {
@@ -481,7 +481,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that a source file with one interface declaration and multi nested
 	 * interfaces are scanned correctly. Scans the file
 	 * <code>TestInterface5</code>
-	 * 
+	 *
 	 * @since 1.0.400
 	 */
 	public void testMultiInnerInterfaceAnnotations() {
@@ -520,7 +520,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that the source tags are added/collected properly for fields that
 	 * have no restriction tags, but the parent class does. Scans the file
 	 * <code>TestField7</code>
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
 	 */
 	public void testFieldBaseClassInheritedNotSupported() {
@@ -535,7 +535,7 @@ public class TagScannerTests extends TestCase {
 	/**
 	 * Tests that the annotations are added/collected properly for fields. Scans
 	 * the file <code>TestField10</code>
-	 * 
+	 *
 	 * @since 1.0.400
 	 */
 	public void testFieldNoReference() {
@@ -551,7 +551,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that the source tags are added/collected properly for fields that
 	 * have no restriction tags, but the parent class does. Scans the file
 	 * <code>TestField8</code>
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
 	 */
 	public void testFieldBaseClassInheritedNotSupported2() {
@@ -568,7 +568,7 @@ public class TagScannerTests extends TestCase {
 	 * have restrictions, but that should not assume the parent restrictions<br>
 	 * <br>
 	 * Scans the file <code>TestField11</code>
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
 	 */
 	public void testFieldBaseClassInheritedNotSupported3() {
@@ -1191,10 +1191,10 @@ public class TagScannerTests extends TestCase {
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.InvalidTagScanField3", "field")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull("there should be no annotations for field 'field'", description); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests only default methods annotate API descriptions with @nooverride
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
 	 */
@@ -1208,10 +1208,10 @@ public class TagScannerTests extends TestCase {
 		assertNotNull("There should be API annotations for the non-default method", description); //$NON-NLS-1$
 		assertTrue("The annotations for the non-default method should be API", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests default methods annotate API descriptions with @noreference
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
 	 */
@@ -1225,10 +1225,10 @@ public class TagScannerTests extends TestCase {
 		assertNotNull("There should be API annotations for the non-default method", description); //$NON-NLS-1$
 		assertTrue("The annotations for the non-default method should be API", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests default methods annotate API descriptions with @noreference and @nooverride
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
 	 */

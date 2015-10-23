@@ -18,14 +18,14 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Tests valid annotations on class fields
- * 
+ *
  * @since 1.0.400
  */
 public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public ValidClassFieldAnnotationTests(String name) {

@@ -29,7 +29,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Root class for all Java 7 tests
- * 
+ *
  * @since 1.0.600
  */
 public abstract class Java7UsageTest extends ApiBuilderTest {
@@ -89,10 +89,10 @@ public abstract class Java7UsageTest extends ApiBuilderTest {
 	 * Deploys a standard API usage test with the test project being created and
 	 * the given source is imported in the testing project into the given
 	 * project.
-	 * 
+	 *
 	 * This method assumes that the reference and testing project have been
 	 * imported into the workspace already.
-	 * 
+	 *
 	 * @param sourcename
 	 * @param inc if an incremental build should be done
 	 */
@@ -124,7 +124,7 @@ public abstract class Java7UsageTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {

@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder correctly finds and reports constructor
  * compatibility problems
- * 
+ *
  * @since 1.0
  */
 public class ConstructorCompatibilityTests extends CompatibilityTest {
@@ -35,7 +35,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.constructors."; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,7 +51,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("constructors"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -66,11 +66,11 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	protected int getDefaultProblemId() {
 		return 0;
 	}
-	
+
 	/**
 	 * Returns a problem id for a compatibility change to a class based on the
 	 * specified flags.
-	 * 
+	 *
 	 * @param flags
 	 * @return problem id
 	 */
@@ -80,7 +80,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 				IDelta.CONSTRUCTOR_ELEMENT_TYPE,
 				IDelta.CHANGED,
 				flags);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
@@ -89,7 +89,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	protected String getTestingProjectName() {
 		return "constcompat"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests changing a protected method to package protected
 	 */
@@ -104,15 +104,15 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPackageI() throws Exception {
 		xProtectedToPackage(true);
-	}	
-	
+	}
+
 	public void testProtectedToPackageF() throws Exception {
 		xProtectedToPackage(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a protected method to package protected when no-reference
 	 */
@@ -121,15 +121,15 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPackageNoReferenceI() throws Exception {
 		xProtectedToPackageNoReference(true);
-	}	
-	
+	}
+
 	public void testProtectedToPackageNoReferenceF() throws Exception {
 		xProtectedToPackageNoReference(false);
 	}
-	
+
 	/**
 	 * Tests changing a protected method to private
 	 */
@@ -144,15 +144,15 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPrivateI() throws Exception {
 		xProtectedToPrivate(true);
-	}	
-	
+	}
+
 	public void testProtectedToPrivateF() throws Exception {
 		xProtectedToPrivate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a protected method to private method in a no-extend class
 	 */
@@ -161,11 +161,11 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		// no expected errors
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testProtectedToPrivateNoExtendI() throws Exception {
 		xProtectedToPrivateNoExtend(true);
 	}
-	
+
 	public void testProtectedToPrivateNoExtendF() throws Exception {
 		xProtectedToPrivateNoExtend(false);
 	}
@@ -184,15 +184,15 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPackageI() throws Exception {
 		xPublicToPackage(true);
-	}	
-	
+	}
+
 	public void testPublicToPackageF() throws Exception {
 		xPublicToPackage(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a public method to private
 	 */
@@ -207,15 +207,15 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPrivateI() throws Exception {
 		xPublicToPrivate(true);
-	}	
-	
+	}
+
 	public void testPublicToPrivateF() throws Exception {
 		xPublicToPrivate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests changing a public method to private
 	 */
@@ -224,15 +224,15 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPrivateNoReferenceI() throws Exception {
 		xPublicToPrivateNoReference(true);
-	}	
-	
+	}
+
 	public void testPublicToPrivateNoReferenceF() throws Exception {
 		xPublicToPrivateNoReference(false);
 	}
-	
+
 	/**
 	 * Tests changing a public method to protected
 	 */
@@ -247,15 +247,15 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToProtectedI() throws Exception {
 		xPublicToProtected(true);
-	}	
-	
+	}
+
 	public void testPublicToProtectedF() throws Exception {
 		xPublicToProtected(false);
-	}	
-		
+	}
+
 	/**
 	 * Tests adding a type parameter to a constructor
 	 */
@@ -274,15 +274,15 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddTypeParameterI() throws Exception {
 		xAddTypeParameter(true);
-	}	
-	
+	}
+
 	public void testAddTypeParameterF() throws Exception {
 		xAddTypeParameter(false);
 	}
-	
+
 	/**
 	 * Tests removing a type parameter from a constructor
 	 */
@@ -301,15 +301,15 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveTypeParameterI() throws Exception {
 		xRemoveTypeParameter(true);
-	}	
-	
+	}
+
 	public void testRemoveTypeParameterF() throws Exception {
 		xRemoveTypeParameter(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests converting variable arguments to an array
 	 */
@@ -328,15 +328,15 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testVarArgsToArrayI() throws Exception {
 		xVarArgsToArray(true);
-	}	
-	
+	}
+
 	public void testVarArgsToArrayF() throws Exception {
 		xVarArgsToArray(false);
 	}
-	
+
 	/**
 	 * Tests converting an array to variable arguments
 	 */
@@ -345,12 +345,12 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		// no problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testArrayToVarArgsI() throws Exception {
 		xArrayToVarArgs(true);
-	}	
-	
+	}
+
 	public void testArrayToVarArgsF() throws Exception {
 		xArrayToVarArgs(false);
-	}	
+	}
 }

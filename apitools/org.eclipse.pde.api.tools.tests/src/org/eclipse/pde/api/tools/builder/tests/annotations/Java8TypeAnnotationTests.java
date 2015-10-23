@@ -32,7 +32,7 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	public static Test suite() {
 		return buildTestSuite(Java8TypeAnnotationTests.class);
 	}
-	
+
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_8;
@@ -40,9 +40,9 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("java8").append("types"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		return super.getTestSourcePath().append("java8").append("types"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	@Override
 	protected int getDefaultProblemId() {
 		return -1;
@@ -52,11 +52,11 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	protected String getTestingProjectName() {
 		return "java8tags"; //$NON-NLS-1$
 	}
-	
+
 	public void test1I() throws Exception {
 		x1(true);
 	}
-	
+
 	public void test1F() throws Exception {
 		x1(false);
 	}
@@ -68,11 +68,11 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	void x1(boolean inc) throws Exception{
 		deployAnnotationTest("test1.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void test2I() throws Exception {
 		x2(true);
 	}
-	
+
 	public void test2F() throws Exception {
 		x2(false);
 	}
@@ -84,11 +84,11 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	void x2(boolean inc) throws Exception{
 		deployAnnotationTest("test2.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void test3I() throws Exception {
 		x3(true);
 	}
-	
+
 	public void test3F() throws Exception {
 		x3(false);
 	}
@@ -100,11 +100,11 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	void x3(boolean inc) throws Exception{
 		deployAnnotationTest("test3.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void test4I() throws Exception {
 		x4(true);
 	}
-	
+
 	public void test4F() throws Exception {
 		x4(false);
 	}
@@ -116,11 +116,11 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	void x4(boolean inc) throws Exception{
 		deployAnnotationTestWithErrors("test4.java", inc, true); //$NON-NLS-1$
 	}
-	
+
 	public void test5I() throws Exception {
 		x5(true);
 	}
-	
+
 	public void test5F() throws Exception {
 		x5(false);
 	}
@@ -132,11 +132,11 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	void x5(boolean inc) throws Exception{
 		deployAnnotationTestWithErrors("test5.java", inc, true); //$NON-NLS-1$
 	}
-	
+
 	public void test6I() throws Exception {
 		x6(true);
 	}
-	
+
 	public void test6F() throws Exception {
 		x6(false);
 	}
@@ -160,7 +160,7 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	/**
 	 * Tests there are no problems with multiple type annotations at locations
 	 * class, interface, class field, meth param,method,local var
-	 * 
+	 *
 	 * @param inc
 	 * @throws Exception
 	 */
@@ -179,7 +179,7 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	/**
 	 * Tests there are problems with type annotation whose location is different
 	 * than defined in the target
-	 * 
+	 *
 	 * @param inc
 	 * @throws Exception
 	 */
@@ -198,7 +198,7 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	/**
 	 * Tests there are problems with type annotation whose attribute is not set
 	 * or if it doesnt have a default value
-	 * 
+	 *
 	 * @param inc
 	 * @throws Exception
 	 */
@@ -216,7 +216,7 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Tests there are no errors when attribute is not set for type annotation
-	 * 
+	 *
 	 * @param inc
 	 * @throws Exception
 	 */
@@ -224,6 +224,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		deployAnnotationTest("test10.java", inc, false); //$NON-NLS-1$
 	}
 
-	
-	
+
+
 }

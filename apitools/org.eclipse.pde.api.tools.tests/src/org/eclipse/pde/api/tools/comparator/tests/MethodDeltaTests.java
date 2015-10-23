@@ -27,7 +27,7 @@ import junit.framework.TestSuite;
  * Delta tests for method
  */
 public class MethodDeltaTests extends DeltaTestSetup {
-	
+
 	public static Test suite() {
 		return new TestSuite(MethodDeltaTests.class);
 //		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
@@ -77,7 +77,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertTrue("Not empty", delta.isEmpty()); //$NON-NLS-1$
 		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Change method name
 	 */
@@ -105,7 +105,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add formal parameter
 	 */
@@ -161,7 +161,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Change type of formal parameter
 	 */
@@ -189,7 +189,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Change result type
 	 */
@@ -261,7 +261,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Remove checked exception
 	 */
@@ -322,7 +322,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertTrue("Not empty", delta.isEmpty()); //$NON-NLS-1$
 		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Decrease visibility
 	 */
@@ -344,7 +344,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Decrease visibility
 	 */
@@ -366,7 +366,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Decrease visibility
 	 */
@@ -388,7 +388,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Decrease visibility
 	 */
@@ -410,7 +410,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Decrease visibility
 	 */
@@ -432,7 +432,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Increase visibility
 	 */
@@ -455,7 +455,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Increase visibility
 	 */
@@ -500,7 +500,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Abstract to non-abstract
 	 */
@@ -611,7 +611,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * non-static to static
 	 */
@@ -635,7 +635,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * native to non-native
 	 */
@@ -657,7 +657,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * non-native to native
 	 */
@@ -679,7 +679,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * synchronized to non-synchronized
 	 */
@@ -701,7 +701,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * non-synchronized to synchronized
 	 */
@@ -745,7 +745,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add new type parameter to a method that did not have a type parameter but
 	 * that had a generic signature.
@@ -792,7 +792,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 		assertEquals("foo<U:Ljava/lang/Object;V:Ljava/lang/Object;>(TU;)V", child.getKey()); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Delete type parameters
 	 */
@@ -836,7 +836,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Rename type parameter
 	 */
@@ -858,7 +858,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Reorder type parameters + changed class bound and interface bound
 	 */
@@ -905,7 +905,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Change last parameter from array to varargs
 	 */
@@ -927,7 +927,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Change last parameter from varargs to array
 	 */
@@ -949,7 +949,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Removed unchecked exception
 	 */
@@ -971,7 +971,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Removed checked exception
 	 */
@@ -993,7 +993,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add checked exception
 	 */
@@ -1015,7 +1015,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Added unchecked exception
 	 */
@@ -1037,7 +1037,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Added default value
 	 */

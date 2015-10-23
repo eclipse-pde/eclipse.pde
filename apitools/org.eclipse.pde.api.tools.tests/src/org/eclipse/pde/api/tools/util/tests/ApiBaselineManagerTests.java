@@ -154,7 +154,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		/**
 		 * Updates a javadoc tag, by either adding a new one or removing an
 		 * existing one
-		 * 
+		 *
 		 * @param body
 		 */
 		private void updateTag(BodyDeclaration body) {
@@ -205,7 +205,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Creates and returns a test baseline with the given id. Also adds it to
 	 * the baseline manager
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -298,7 +298,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 
 	/**
 	 * Adds the given source to the given package in the given fragment root
-	 * 
+	 *
 	 * @param root the root to add the source to
 	 * @param packagename the name of the package e.g. a.b.c
 	 * @param sourcename the name of the source file without an extension e.g.
@@ -311,7 +311,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 
 	/**
 	 * Adds the package with the given name to the given package fragment root
-	 * 
+	 *
 	 * @param the project to add the package to
 	 * @param srcroot the absolute path to the package fragment root to add the
 	 *            new package to
@@ -330,7 +330,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Adds a test library with the given name to the test projects' class path.
 	 * The library is imported from the {@link #PLUGIN_LOC} location.
-	 * 
+	 *
 	 * @param project the project to add the library classpath entry to
 	 * @param folderpath the path in the project where the library should be
 	 *            imported to
@@ -354,7 +354,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 
 	/**
 	 * Asserts if the given restriction is on the specified source
-	 * 
+	 *
 	 * @param packagename
 	 * @param sourcename
 	 */
@@ -434,7 +434,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Adds the specified tag to the source member defined by the member name
 	 * and signature
-	 * 
+	 *
 	 * @param unit
 	 * @param membername
 	 * @param signature
@@ -469,7 +469,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that making Javadoc changes to the source file TestClass2 cause the
 	 * workspace baseline to be updated.
-	 * 
+	 *
 	 * This test adds a @noinstantiate tag to the source file TestClass2
 	 */
 	public void testWPUpdateSourceTypeChanged() throws Exception {
@@ -494,7 +494,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that tags updated on an inner type are updated in the workspace
 	 * description.
-	 * 
+	 *
 	 * This test adds a @noinstantiate tag to an inner class in TestClass3
 	 */
 	public void testWPUpdateSourceInnerTypeChanged() throws Exception {
@@ -517,7 +517,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that changing the javadoc for a method updates the workspace
 	 * baseline
-	 * 
+	 *
 	 * This test adds a @noextend tag to the method foo() in TestClass1
 	 */
 	public void testWPUpdateSourceMethodChanged() throws Exception {
@@ -539,7 +539,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that changing the javadoc for a field updates the workspace
 	 * baseline
-	 * 
+	 *
 	 * This test adds a @noextend tag to the field 'field' in TestField9
 	 */
 	public void testWPUpdateSourceFieldChanged() throws Exception {
@@ -560,7 +560,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 
 	/**
 	 * Tests that removing a tag from a method updates the workspace baseline
-	 * 
+	 *
 	 * This test removes a @noextend tag to the method foo() in TestClass1
 	 */
 	public void testWPUpdateSourceMethodRemoveTag() throws Exception {
@@ -581,7 +581,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 
 	/**
 	 * Tests that removing a tag from a type updates the workspace baseline
-	 * 
+	 *
 	 * This test removes a @noinstantiate tag to an inner class in TestClass3
 	 */
 	public void testWPUpdateSourceTypeRemoveTag() throws Exception {
@@ -602,7 +602,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 
 	/**
 	 * Tests that removing a tag from a field updates the workspace baseline
-	 * 
+	 *
 	 * This test adds a @noextend tag to the field 'field' in TestField9
 	 */
 	public void testWPUpdateSourceFieldRemoveTag() throws Exception {
@@ -625,7 +625,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that a library added to the build and bundle class path of a
 	 * project causes the class file containers for the project to need to be
 	 * recomputed
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws InvocationTargetException
 	 * @throws CoreException
@@ -840,7 +840,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 
 	/**
 	 * sets the given package name to be an Exported-Package
-	 * 
+	 *
 	 * @param name
 	 */
 	private void setPackageToApi(IJavaProject project, String name) throws CoreException {

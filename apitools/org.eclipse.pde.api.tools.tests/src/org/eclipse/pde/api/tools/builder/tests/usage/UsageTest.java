@@ -31,7 +31,7 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Tests usage scanning in source
- * 
+ *
  * @since 1.0.0
  */
 public abstract class UsageTest extends ApiBuilderTest {
@@ -70,7 +70,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 	/**
 	 * Makes sure the compliance for the project is what the test says it should
 	 * be
-	 * 
+	 *
 	 * @param projectnames
 	 */
 	protected void ensureCompliance(String[] projectnames) {
@@ -108,10 +108,10 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 * Deploys a standard API usage test with the test project being created and
 	 * the given source is imported in the testing project into the given
 	 * project.
-	 * 
+	 *
 	 * This method assumes that the reference and testing project have been
 	 * imported into the workspace already.
-	 * 
+	 *
 	 * @param sourcename
 	 * @param inc if an incremental build should be done
 	 */
@@ -166,7 +166,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {

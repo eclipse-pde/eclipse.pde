@@ -26,7 +26,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
  * Delta tests for class
  */
 public class BundlesDeltaTests extends DeltaTestSetup {
-	
+
 	public static Test suite() {
 		return new TestSuite(BundlesDeltaTests.class);
 //		TestSuite suite = new TestSuite(BundlesDeltaTests.class.getName());
@@ -63,7 +63,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.API_BASELINE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Addition of EE
 	 */
@@ -153,7 +153,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong value", "J2SE-1.5", arguments[0]); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Test null profile
 	 */
@@ -166,7 +166,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 			// ignore
 		}
 	}
-	
+
 	/**
 	 * Test null baseline
 	 */
@@ -179,7 +179,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 			// ignore
 		}
 	}
-	
+
 	/**
 	 * Test null components
 	 */
@@ -243,7 +243,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
-		
+
 		try {
 			ApiComparator.compare(referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true); //$NON-NLS-1$
@@ -310,7 +310,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
-		
+
 		try {
 			ApiComparator.compare(referenceClassFile, (IApiTypeRoot)null, referenceComponent, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true); //$NON-NLS-1$
@@ -547,7 +547,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Test if diff is returned using org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator.compare(IApiComponent, IApiBaseline, int, boolean)
 	 */

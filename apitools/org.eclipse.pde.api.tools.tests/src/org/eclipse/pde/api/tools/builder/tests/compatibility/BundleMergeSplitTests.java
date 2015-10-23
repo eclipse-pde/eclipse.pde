@@ -37,7 +37,7 @@ import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 
 /**
  * Tests for splitting plug-ins across releases
- * 
+ *
  * @since 1.0
  */
 public class BundleMergeSplitTests extends ApiBuilderTest {
@@ -52,7 +52,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	protected static String WORKSPACE_ROOT = "mergesplit"; //$NON-NLS-1$
 
 	/**
-	 * 
+	 *
 	 */
 	public static final String WORKSPACE_PROFILE = "post-split"; //$NON-NLS-1$
 
@@ -62,7 +62,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public BundleMergeSplitTests(String name) {
@@ -128,7 +128,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 
 	/**
 	 * Tests that merging a plug-in is compatible with previous release.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void test001() throws Exception {
@@ -140,7 +140,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	/**
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void test002() throws Exception {
@@ -152,7 +152,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	/**
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Remove a re-exported type
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void test003() throws Exception {
@@ -172,7 +172,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	/**
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Adding a re-exported type
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void test004() throws Exception {
@@ -185,7 +185,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	/**
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Remove a re-exported type
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void test005() throws Exception {
@@ -205,7 +205,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	/**
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Remove a re-exported type
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void test006() throws Exception {
@@ -225,7 +225,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	/**
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Adding a type
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void test007() throws Exception {
@@ -238,7 +238,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	/**
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Remove a re-exported type
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void test008() throws Exception {
@@ -258,7 +258,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	/**
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Remove a re-exported type
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void test009() throws Exception {
@@ -286,7 +286,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * new types are in new packages and should contain the since tag
 	 * corresponding to the new bundle. Since the new bundle is not in the
 	 * baseline, the tags cannot be validated.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void test010() throws Exception {

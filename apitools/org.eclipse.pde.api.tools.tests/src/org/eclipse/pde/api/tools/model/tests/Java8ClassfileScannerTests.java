@@ -21,7 +21,7 @@ import org.eclipse.test.OrderedTestSuite;
 
 /**
  * Tests reading JJava 8 classfiles and extracting specific references
- * 
+ *
  * @since 1.0.400
  */
 public class Java8ClassfileScannerTests extends ScannerTest {
@@ -31,7 +31,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 
 	/**
 	 * Returns the {@link Test} suite to run
-	 * 
+	 *
 	 * @return the {@link Test} suite
 	 */
 	public static Test suite() {
@@ -43,7 +43,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 				"testCleanup" //$NON-NLS-1$
 		});
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#getWorkspaceRoot()
@@ -86,7 +86,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 
 	/**
 	 * Tests getting an invoke dynamic ref for a static method ref
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testStaticMethodRef() throws Exception {
@@ -97,7 +97,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 
 	/**
 	 * Tests getting an invoke dynamic ref for an instance method ref
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testInstanceMethodRef() throws Exception {
@@ -109,7 +109,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 	/**
 	 * Tests an invoke dynamic reference to an instance method of an arbitrary
 	 * object
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testArbitraryObjectMethodRef() throws Exception {
@@ -120,7 +120,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 
 	/**
 	 * Tests an invoke dynamic reference to a constructor method ref
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testConstructorMethodRef() throws Exception {
@@ -131,7 +131,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 
 	/**
 	 * Cleans up after the tests are done. This must be the last test run
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testCleanup() throws Exception {

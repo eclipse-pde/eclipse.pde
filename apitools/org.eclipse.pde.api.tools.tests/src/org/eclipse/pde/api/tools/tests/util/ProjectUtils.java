@@ -42,7 +42,7 @@ import org.osgi.framework.Version;
 
 /**
  * Utility class for a variety of project related operations
- * 
+ *
  * @since 1.0.0
  */
 public class ProjectUtils {
@@ -65,7 +65,7 @@ public class ProjectUtils {
 
 	/**
 	 * Returns if the currently running VM is version compatible with Java 7
-	 * 
+	 *
 	 * @return <code>true</code> if a Java 7 (or greater) VM is running
 	 *         <code>false</code> otherwise
 	 */
@@ -75,7 +75,7 @@ public class ProjectUtils {
 
 	/**
 	 * Returns if the currently running VM is version compatible with Java 6
-	 * 
+	 *
 	 * @return <code>true</code> if a Java 6 (or greater) VM is running
 	 *         <code>false</code> otherwise
 	 */
@@ -85,7 +85,7 @@ public class ProjectUtils {
 
 	/**
 	 * Returns if the currently running VM is version compatible with Java 5
-	 * 
+	 *
 	 * @return <code>true</code> if a Java 5 (or greater) VM is running
 	 *         <code>false</code> otherwise
 	 */
@@ -95,7 +95,7 @@ public class ProjectUtils {
 
 	/**
 	 * Returns if the currently running VM is version compatible with Java 8
-	 * 
+	 *
 	 * @return <code>true</code> if a Java 8 (or greater) VM is running
 	 *         <code>false</code> otherwise
 	 */
@@ -106,7 +106,7 @@ public class ProjectUtils {
 	/**
 	 * Returns if the current running system is compatible with the given Java
 	 * minor version
-	 * 
+	 *
 	 * @param ver the version to test - either 4, 5, 6 , 7 or 8
 	 * @return <code>true</code> if compatible <code>false</code> otherwise
 	 */
@@ -132,7 +132,7 @@ public class ProjectUtils {
 
 	/**
 	 * Crate a plug-in project with the given name
-	 * 
+	 *
 	 * @param projectName
 	 * @param additionalNatures
 	 * @return a new plug-in project
@@ -174,7 +174,7 @@ public class ProjectUtils {
 	/**
 	 * creates a java project with the specified name and additional project
 	 * natures
-	 * 
+	 *
 	 * @param projectName
 	 * @param additionalNatures
 	 * @return a new java project
@@ -200,7 +200,7 @@ public class ProjectUtils {
 
 	/**
 	 * Gets the output location for the given project, creates it if needed
-	 * 
+	 *
 	 * @param project
 	 * @return the path of the output location for the given project
 	 * @throws CoreException
@@ -216,7 +216,7 @@ public class ProjectUtils {
 	/**
 	 * Adds a new source container specified by the container name to the source
 	 * path of the specified project
-	 * 
+	 *
 	 * @param jproject
 	 * @param containerName
 	 * @return the package fragment root of the container name
@@ -232,7 +232,7 @@ public class ProjectUtils {
 
 	/**
 	 * Adds a container entry to the specified java project
-	 * 
+	 *
 	 * @param project
 	 * @param container
 	 * @throws JavaModelException
@@ -244,7 +244,7 @@ public class ProjectUtils {
 
 	/**
 	 * Adds a folder with the given name to the specified project
-	 * 
+	 *
 	 * @param project
 	 * @param name
 	 * @return the new container added to the specified project
@@ -266,7 +266,7 @@ public class ProjectUtils {
 
 	/**
 	 * Adds the specified classpath entry to the specified java project
-	 * 
+	 *
 	 * @param jproject
 	 * @param cpe
 	 * @throws JavaModelException
@@ -292,7 +292,7 @@ public class ProjectUtils {
 
 	/**
 	 * Removes the specified entry from the classpath of the specified project
-	 * 
+	 *
 	 * @param project
 	 * @param entry
 	 * @throws JavaModelException
@@ -313,7 +313,7 @@ public class ProjectUtils {
 	/**
 	 * Delegate equals method to cover the test cases where we want to insert an
 	 * updated element and one with the same path/type/kind is already there.
-	 * 
+	 *
 	 * @param e1
 	 * @param e2
 	 * @return
@@ -326,7 +326,7 @@ public class ProjectUtils {
 	 * Creates a project with the given name in the workspace and returns it. If
 	 * a project with the given name exists, it is refreshed and opened (if
 	 * closed) and returned
-	 * 
+	 *
 	 * @param projectName
 	 * @param monitor
 	 * @return a project with the given name
@@ -348,7 +348,7 @@ public class ProjectUtils {
 
 	/**
 	 * Adds the specified nature to the specified project
-	 * 
+	 *
 	 * @param proj
 	 * @param natureId
 	 * @param monitor
@@ -367,9 +367,9 @@ public class ProjectUtils {
 	/**
 	 * Removes the given package from the exported packages header, if it
 	 * exists.
-	 * 
+	 *
 	 * This method is not safe to use in a head-less manner.
-	 * 
+	 *
 	 * @param project the project to remove the package from
 	 * @param packagename the name of the package to remove from the export
 	 *            package header
@@ -393,9 +393,9 @@ public class ProjectUtils {
 
 	/**
 	 * Adds a new exported package to the manifest.
-	 * 
+	 *
 	 * This method is not safe to use in a head-less manner.
-	 * 
+	 *
 	 * @param project the project to get the manifest information from
 	 * @param packagename the fully qualified name of the package to add
 	 * @param internal if the added package should be internal or not
@@ -425,7 +425,7 @@ public class ProjectUtils {
 	/**
 	 * Returns the {@link IPackageExportDescription}s for the given project or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param project the project
 	 * @return the {@link IPackageExportDescription}s for the given project or
 	 *         <code>null</code>
@@ -437,7 +437,7 @@ public class ProjectUtils {
 
 	/**
 	 * Adds an entry to the bundle class path header
-	 * 
+	 *
 	 * @param project the project
 	 * @param entry the entry to append
 	 * @throws CoreException

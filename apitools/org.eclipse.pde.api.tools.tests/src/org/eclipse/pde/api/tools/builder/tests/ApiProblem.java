@@ -17,14 +17,14 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 
 /**
  * Customized {@link Problem} to handle using a problem id
- * 
+ *
  * @since 1.0.0
  */
 public class ApiProblem extends Problem {
 
 	private int problemid = 0;
 	private int linenumber = 0;
-	
+
 	/**
 	 * Constructor
 	 * @param marker
@@ -50,19 +50,19 @@ public class ApiProblem extends Problem {
 		super(location, message, resourcePath, start, end, categoryId, severity);
 		this.problemid = problemid;
 	}
-	
+
 	/**
 	 * @return the line number from the problem
 	 */
 	public int getLineNumber() {
 		return this.linenumber;
 	}
-	
+
 	/**
 	 * @return the problem id for this problem
 	 */
 	public int getProblemId() {
 		return problemid;
 	}
-	
+
 }

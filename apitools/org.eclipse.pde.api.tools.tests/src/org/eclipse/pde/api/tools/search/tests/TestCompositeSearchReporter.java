@@ -20,10 +20,10 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 /**
  * Test implementation of a search reporter that delegates to two
  * reporters: The {@link TestReporter} and the {@link XMLApiSearchReporter}
- * 
+ *
  * <p>The {@link TestReporter} is always called first to validate we are getting the references / skipped
  * components that we are expecting to see</p>
- * 
+ *
  * @since 1.0.1
  */
 public class TestCompositeSearchReporter implements IApiSearchReporter {
@@ -31,7 +31,7 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 	private SearchTest test = null;
 	ArrayList<IApiSearchReporter> reporters = new ArrayList<IApiSearchReporter>(2);
 	int testreporteridx = 0;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -51,7 +51,7 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 			this.test.reportFailure("you must specify IApiSearchReporters"); //$NON-NLS-1$
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportNotSearched(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement[])
 	 */
@@ -87,14 +87,14 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 			this.reporters.get(i).reportResults(element, references);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportMetadata(org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
 	 */
 	@Override
 	public void reportMetadata(IMetadata data) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportCounts()
 	 */

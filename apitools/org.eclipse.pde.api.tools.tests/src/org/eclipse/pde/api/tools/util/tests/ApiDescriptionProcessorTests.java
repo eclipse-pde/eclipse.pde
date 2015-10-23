@@ -53,7 +53,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class tests the {@link ApiDescriptionProcessor}
- * 
+ *
  * @since 1.0.0
  */
 public class ApiDescriptionProcessorTests extends AbstractApiTest {
@@ -79,7 +79,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param type
 		 * @param membername
 		 * @param signature
@@ -161,7 +161,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		/**
 		 * Determines if the listing of doc tags from the declaration contains
 		 * all of the expected tags
-		 * 
+		 *
 		 * @param tags
 		 * @return true if the tag list contains all of the expected tags, false
 		 *         otherwise
@@ -255,7 +255,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Creates all of the text edit changes collected from the processor. The
 	 * collected edits are arranged as multi-edits for the one file that they
 	 * belong to
-	 * 
+	 *
 	 * @param projectchange
 	 * @param project
 	 * @param cxml
@@ -294,7 +294,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 
 	/**
 	 * Processes the change from original to updated
-	 * 
+	 *
 	 * @param typename the name of the type to query
 	 * @param membername the name of the member
 	 * @param signature the signature of the member

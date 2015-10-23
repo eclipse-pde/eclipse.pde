@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -77,7 +77,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	/**
 	 * Returns the type container associated with the "bundle.a" project in the
 	 * workspace.
-	 * 
+	 *
 	 * @return
 	 */
 	protected IApiTypeContainer getTypeContainer() throws CoreException {
@@ -123,7 +123,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	/**
 	 * Returns all expected packages in the test project.
-	 * 
+	 *
 	 * @return
 	 */
 	protected Set<String> getAllPackageNames() {
@@ -180,7 +180,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	/**
 	 * Tests all packages are returned.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testPackageNames() throws CoreException {
@@ -209,7 +209,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	/**
 	 * Test type lookup.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testFindType() throws CoreException {
@@ -222,7 +222,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	/**
 	 * Test that type lookup fails for a type that is not in the project.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testMissingType() throws CoreException {
@@ -233,7 +233,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	/**
 	 * Visits the container - all packages and types.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testVisitor() throws CoreException {

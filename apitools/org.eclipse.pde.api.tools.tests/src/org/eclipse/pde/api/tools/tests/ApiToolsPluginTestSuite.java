@@ -28,7 +28,7 @@ import junit.framework.TestSuite;
 
 /**
  * Test suite that is run as a JUnit plugin test
- * 
+ *
  * @since 1.0.0
  */
 public class ApiToolsPluginTestSuite extends TestSuite {
@@ -41,7 +41,7 @@ public class ApiToolsPluginTestSuite extends TestSuite {
 	public static Test suite() {
 		return new ApiToolsPluginTestSuite();
 	}
-	
+
 	/**
 	 * Constructor
 	 */

@@ -18,14 +18,14 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests the use of invalid tags in annotation fields and constants
- * 
+ *
  * @since 1.0
  */
 public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidAnnotationFieldTagTests(String name) {

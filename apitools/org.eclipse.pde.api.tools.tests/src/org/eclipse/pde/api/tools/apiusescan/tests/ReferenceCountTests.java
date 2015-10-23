@@ -46,7 +46,7 @@ public class ReferenceCountTests extends TestCase {
 			fail("Could not setup the report : reportAll.zip"); //$NON-NLS-1$
 		}
 		IApiComponent apiComponent = fBaseline.getApiComponent(ExternalDependencyTestUtils.PROJECT_NAME);
-		String[][] apiUseTpes = new String[][] { 
+		String[][] apiUseTpes = new String[][] {
 				{"tests.apiusescan.coretestproject.ClassWithInnerType"},  //$NON-NLS-1$
 				{"tests.apiusescan.coretestproject.ClassWithInnerType",  //$NON-NLS-1$
 					"tests.apiusescan.coretestproject.IConstants"},  //$NON-NLS-1$
@@ -54,7 +54,7 @@ public class ReferenceCountTests extends TestCase {
 				{"tests.apiusescan.coretestproject.TestInterfaceImpl"} //$NON-NLS-1$
 		};
 		int[] expectedResult = new int[] {7, 9, 5, 6};
-		verifyReferenceCount(apiComponent, apiUseTpes, expectedResult);		
+		verifyReferenceCount(apiComponent, apiUseTpes, expectedResult);
 	}
 
 	public void verifyReferenceCount(IApiComponent apiComponent, String[][] apiUseTpes, int[] expectedResult) {
@@ -72,7 +72,7 @@ public class ReferenceCountTests extends TestCase {
 			fail("Could not setup the report : reportOne.zip"); //$NON-NLS-1$
 		}
 		IApiComponent apiComponent = fBaseline.getApiComponent(ExternalDependencyTestUtils.PROJECT_NAME);
-		String[][] apiUseTpes = new String[][] { 
+		String[][] apiUseTpes = new String[][] {
 				{"tests.apiusescan.coretestproject.ClassWithInnerType"},  //$NON-NLS-1$
 				{"tests.apiusescan.coretestproject.IConstants"},  //$NON-NLS-1$
 				{"tests.apiusescan.coretestproject.ITestInterface"},  //$NON-NLS-1$
@@ -88,7 +88,7 @@ public class ReferenceCountTests extends TestCase {
 			fail("Could not setup the report : reportTwo.zip"); //$NON-NLS-1$
 		}
 		IApiComponent apiComponent = fBaseline.getApiComponent(ExternalDependencyTestUtils.PROJECT_NAME);
-		String[][] apiUseTpes = new String[][] { 
+		String[][] apiUseTpes = new String[][] {
 				{"tests.apiusescan.coretestproject.ClassWithInnerType"},  //$NON-NLS-1$
 				{"tests.apiusescan.coretestproject.IConstants",  //$NON-NLS-1$
 					"tests.apiusescan.coretestproject.ITestInterface",  //$NON-NLS-1$
@@ -98,11 +98,11 @@ public class ReferenceCountTests extends TestCase {
 		int[] expectedResult = new int[] {0, 7, 7};
 		verifyReferenceCount(apiComponent, apiUseTpes, expectedResult);
 	}
-	
+
 	public void testCacheSize() {
 		fUseScanManager.clearCache();
 		fUseScanManager.setCacheSize(15);
-		
+
 		String reportLocation = ExternalDependencyTestUtils.setupReport("PDEApiUseScanReport", true); //$NON-NLS-1$
 		if (reportLocation == null) {
 			fail("Could not setup the report : PDEApiUseScanReport.zip"); //$NON-NLS-1$
@@ -111,19 +111,19 @@ public class ReferenceCountTests extends TestCase {
 
 		IReferenceDescriptor[] dependencies = fUseScanManager.getExternalDependenciesFor(apiComponent, null, null);
 		assertEquals("Incorrect number of references for org.eclipse.equinox.app", 13, dependencies.length); //$NON-NLS-1$
-		
+
 		IReferenceCollection useScanRefs =  apiComponent.getExternalDependencies();
 		assertTrue("References for org.eclipse.equinox.app.IApplication not found in cache",  //$NON-NLS-1$
 				useScanRefs.hasReferencesTo("org.eclipse.equinox.app.IApplication")); //$NON-NLS-1$
-		
+
 		apiComponent = TestSuiteHelper.createTestingApiComponent("org.eclipse.equinox.p2.operations", "org.eclipse.equinox.p2.operations", new ApiDescription(null)); //$NON-NLS-1$ //$NON-NLS-2$
 		dependencies = fUseScanManager.getExternalDependenciesFor(apiComponent, null, null);
 		assertEquals("Incorrect number of references for org.eclipse.equinox.p2.operations", 17, dependencies.length); //$NON-NLS-1$
-		
+
 		useScanRefs =  apiComponent.getExternalDependencies();
 		assertTrue("References for org.eclipse.equinox.p2.operations.InstallOperation not found in cache", //$NON-NLS-1$
 				useScanRefs.hasReferencesTo("org.eclipse.equinox.p2.operations.InstallOperation")); //$NON-NLS-1$
-		
+
 		assertFalse("References for org.eclipse.equinox.app.IApplication should have been purged from the cache", //$NON-NLS-1$
 				useScanRefs.hasReferencesTo("org.eclipse.equinox.app.IApplication")); //$NON-NLS-1$
 	}

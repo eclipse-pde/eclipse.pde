@@ -21,11 +21,11 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder correctly reports compatibility problems
  * for classes related to fields.
- * 
+ *
  * @since 1.0
  */
 public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,7 +35,7 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.fields."; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,7 +51,7 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("fields"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -78,7 +78,7 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 	protected String getTestingProjectName() {
 		return "classcompat"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests the removal of a public field from an API class.
 	 */
@@ -93,29 +93,29 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePublicFieldI() throws Exception {
 		xRemovePublicField(true);
-	}	
-	
+	}
+
 	public void testRemovePublicFieldF() throws Exception {
 		xRemovePublicField(false);
 	}
-	
+
 	/**
 	 * Tests the removal of 2 public fields from an API class - incremental.
 	 */
 	public void testRemoveTwoPublicFieldsI() throws Exception {
 		xRemoveTwoPublicFields(true);
-	}	
-	
+	}
+
 	/**
 	 * Tests the removal of 2 public methods from an API class - full.
 	 */
 	public void testRemoveTwoPublicFieldsF() throws Exception {
 		xRemoveTwoPublicFields(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests the removal of a public method from an API class - incremental.
 	 */
@@ -132,7 +132,7 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	/**
 	 * Tests the removal of a protected field from an API class.
 	 */
@@ -147,15 +147,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveProtectedFieldI() throws Exception {
 		xRemoveProtectedField(true);
 	}
-	
+
 	public void testRemoveProtectedFieldF() throws Exception {
 		xRemoveProtectedField(false);
 	}
-	
+
 	/**
 	 * Tests the removal of a private field from an API class.
 	 */
@@ -164,15 +164,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePrivateFieldI() throws Exception {
 		xRemovePrivateField(true);
-	}	
-	
+	}
+
 	public void testRemovePrivateFieldF() throws Exception {
 		xRemovePrivateField(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests the removal of a package protected field from an API class.
 	 */
@@ -181,15 +181,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePackageFieldI() throws Exception {
 		xRemovePackageField(true);
-	}	
-	
+	}
+
 	public void testRemovePackageFieldF() throws Exception {
 		xRemovePackageField(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests the removal of a public field from an API class annotated as noextend - incremental.
 	 */
@@ -204,15 +204,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePublicFieldNoExtendI() throws Exception {
 		xRemovePublicFieldNoExtend(true);
-	}	
-	
+	}
+
 	public void testRemovePublicFieldNoExtendF() throws Exception {
 		xRemovePublicFieldNoExtend(false);
 	}
-		
+
 	/**
 	 * Tests the removal of a protected field from an API class annotated as noextend.
 	 */
@@ -221,15 +221,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		// no problems expected since the method is not accessible
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveProtectedFieldNoExtendI() throws Exception {
 		xRemoveProtectedFieldNoExtend(true);
-	}	
-	
+	}
+
 	public void testRemoveProtectedFieldNoExtendF() throws Exception {
 		xRemoveProtectedFieldNoExtend(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests the removal of a public field from an API class annotated as noinstantiate - incremental.
 	 */
@@ -244,15 +244,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePublicFieldNoInstantiateI() throws Exception {
 		xRemovePublicFieldNoInstantiate(true);
-	}	
-	
+	}
+
 	public void testRemovePublicFieldNoInstantiateF() throws Exception {
 		xRemovePublicFieldNoInstantiate(false);
 	}
-		
+
 	/**
 	 * Tests the removal of a protected field from an API class annotated as noinstantiate.
 	 */
@@ -267,15 +267,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveProtectedFieldNoInstantiateI() throws Exception {
 		xRemoveProtectedFieldNoInstantiate(true);
-	}	
-	
+	}
+
 	public void testRemoveProtectedFieldNoInstantiateF() throws Exception {
 		xRemoveProtectedFieldNoInstantiate(false);
 	}
-	
+
 	/**
 	 * Tests the removal of a public field from an API class annotated as
 	 * noextend and noinstantiate.
@@ -291,15 +291,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePublicFieldNoExtendNoInstantiateI() throws Exception {
 		xRemovePublicFieldNoExtendNoInstatiate(true);
-	}	
+	}
 
 	public void testRemovePublicFieldNoExtendNoInstantiateF() throws Exception {
 		xRemovePublicFieldNoExtendNoInstatiate(false);
 	}
-	
+
 	/**
 	 * Tests the removal of a protected field from an API class annotated as
 	 * noextend and noinstantiate.
@@ -309,15 +309,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		// no problems expected due to noextend
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveProtectedFieldNoExtendNoInstantiateI() throws Exception {
 		xRemoveProtectedFieldNoExtendNoInstatiate(true);
-	}	
-	
+	}
+
 	public void testRemoveProtectedFieldNoExtendNoInstantiateF() throws Exception {
 		xRemoveProtectedFieldNoExtendNoInstatiate(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests the removal of a public field from an API class tagged noreference.
 	 */
@@ -326,15 +326,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		// no problems since no references allowed
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePublicFieldNoReferenceI() throws Exception {
 		xRemovePublicFieldNoReference(true);
-	}	
-	
+	}
+
 	public void testRemovePublicFieldNoReferencF() throws Exception {
 		xRemovePublicFieldNoReference(false);
 	}
-	
+
 	/**
 	 * Tests the removal of a protected field from an API class tagged noreference.
 	 */
@@ -343,15 +343,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		// no problems since no references allowed
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveProtectedFieldNoReferenceI() throws Exception {
 		xRemoveProtectedFieldNoReference(true);
-	}	
-	
+	}
+
 	public void testRemoveProtectedFieldNoReferencF() throws Exception {
 		xRemoveProtectedFieldNoReference(false);
 	}
-	
+
 	/**
 	 * Tests the addition of a private field in an API class.
 	 */
@@ -360,15 +360,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddPrivateFieldI() throws Exception {
 		xAddPrivateField(true);
-	}	
-	
+	}
+
 	public void testAddPrivateFieldF() throws Exception {
 		xAddPrivateField(false);
 	}
-	
+
 	/**
 	 * Tests the addition of a protected field in an API class.
 	 */
@@ -377,15 +377,15 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddProtectedFieldI() throws Exception {
 		xAddProtectedField(true);
-	}	
-	
+	}
+
 	public void testAddProtectedFieldF() throws Exception {
 		xAddProtectedField(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests the addition of a public field in an API class.
 	 */
@@ -394,12 +394,12 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddPublicFieldI() throws Exception {
 		xAddPublicField(true);
-	}	
-	
+	}
+
 	public void testAddPublicFieldF() throws Exception {
 		xAddPublicField(false);
-	}		
+	}
 }

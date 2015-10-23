@@ -16,14 +16,14 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Tests a variety of valid annotation use on classes
- * 
+ *
  * @since 1.0.400
  */
 public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public ValidClassAnnotationsTests(String name) {
@@ -49,7 +49,7 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 
 	/**
 	 * Tests all the valid annotations on a class
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testValidClassAnnotations1I() throws Exception {
@@ -58,7 +58,7 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 
 	/**
 	 * Tests all the valid annotations on a class
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testValidClassAnnotations1F() throws Exception {
@@ -67,7 +67,7 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 
 	/**
 	 * Tests all the valid annotations on a class in the default package
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testValidClassAnnotations2I() throws Exception {
@@ -76,7 +76,7 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 
 	/**
 	 * Tests all the valid annotations on a class in the default package
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testValidClassAnnotations2F() throws Exception {

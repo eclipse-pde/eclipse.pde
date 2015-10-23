@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Tests valid annotations on interface methods
- * 
+ *
  * @since 1.0.600
  */
 public class ValidInterfaceMethodAnnotationTests extends InvalidInterfaceMethodAnnotationTests {
@@ -39,7 +39,7 @@ public class ValidInterfaceMethodAnnotationTests extends InvalidInterfaceMethodA
 
 	/**
 	 * Tests the valid @NoReferrence annotation on interface methods
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoReferenceF() throws Exception {
@@ -48,7 +48,7 @@ public class ValidInterfaceMethodAnnotationTests extends InvalidInterfaceMethodA
 
 	/**
 	 * Tests the valid @NoReferrence annotation on interface methods
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoReferenceI() throws Exception {

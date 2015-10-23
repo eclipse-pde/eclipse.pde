@@ -21,9 +21,9 @@ import org.eclipse.pde.api.tools.tests.AbstractApiTest;
  * environment
  */
 public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
-	
+
 	private ApiBaselineManager fManager = ApiBaselineManager.getManager();
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -32,9 +32,9 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 		fManager.stop();
 		super.tearDown();
 	}
-	
+
 	/**
-	 * Tests that we can get an API baseline that exists from the manager 
+	 * Tests that we can get an API baseline that exists from the manager
 	 */
 	public void testGetApiProfile() {
 		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test1"); //$NON-NLS-1$
@@ -43,7 +43,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the test1 baseline must exist in the manager", baseline); //$NON-NLS-1$
 		assertTrue("the found baseline must be test1", baseline.getName().equals("test1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Tests that looking up a baseline that does not exist in the manager returns null
 	 */
@@ -51,7 +51,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 		IApiBaseline baseline = fManager.getApiBaseline("foobaseline"); //$NON-NLS-1$
 		assertNull("There should be no baseline found", baseline); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that setting the default baseline works
 	 */
@@ -63,7 +63,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the default baseline should not be null", baseline); //$NON-NLS-1$
 		assertTrue("the default baselines' name should be test2", baseline.getName().equals("test2")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Tests that setting the default baseline to one that does not exist in the manager will return null
 	 * when asked for the default.
@@ -73,7 +73,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 		IApiBaseline baseline = fManager.getDefaultApiBaseline();
 		assertNull("the default baseline should be null for a non-existant id", baseline); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests getting all baselines from the manager
 	 */
@@ -85,7 +85,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 		IApiBaseline[] baselines = fManager.getApiBaselines();
 		assertEquals("there should be 2 baselines", 2, baselines.length); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests removing an existing baseline from the manager
 	 */
@@ -96,9 +96,9 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 		assertTrue("the baseline test2 should have been removed from the manager", result); //$NON-NLS-1$
 		assertTrue("There should only be 0 baselines left", fManager.getApiBaselines().length == 0); //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * Tests that isExistingProfileName(..) returns return true when expected to 
+	 * Tests that isExistingProfileName(..) returns return true when expected to
 	 */
 	public void testIsExistingName() {
 		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test1"); //$NON-NLS-1$
@@ -106,7 +106,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 		boolean result = fManager.isExistingProfileName("test1"); //$NON-NLS-1$
 		assertTrue("the name test1 should be an existing name", result); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that isExistingProfileName returns false when asked about an non-existent name
 	 */
@@ -114,7 +114,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 		boolean result = fManager.isExistingProfileName("foobaseline"); //$NON-NLS-1$
 		assertFalse("foobaseline is not an existing name", result); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that calling the saving(..) method on the manager in headless mode does not fail
 	 */
@@ -128,9 +128,9 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 			}
 		}
 	}
-	
+
 	/**
-	 * Tests that calling the doneSaving(..) method on the manager does not fail in 
+	 * Tests that calling the doneSaving(..) method on the manager does not fail in
 	 * headless mode
 	 */
 	public void testDoneSavingCall() {
@@ -143,7 +143,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 			}
 		}
 	}
-	
+
 	/**
 	 * Tests that calling preparingToSave(..) does not fail in headless mode
 	 */
@@ -157,7 +157,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 			}
 		}
 	}
-	
+
 	/**
 	 * Tests that calling rollback(..) does not fail in headless mode
 	 */
@@ -171,7 +171,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 			}
 		}
 	}
-	
+
 	/**
 	 * Tests that the workspace baseline is null in headless mode
 	 */
@@ -184,7 +184,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 			assertNull("the workspace baseline must be null in headless mode", baseline); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests that calling the stop method does not fail, and works
 	 */

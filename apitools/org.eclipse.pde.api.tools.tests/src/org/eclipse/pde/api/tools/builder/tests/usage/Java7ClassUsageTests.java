@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Test class usage for Java 7 code snippets
- * 
+ *
  * @since 1.0.100
  */
 public class Java7ClassUsageTests extends Java7UsageTest {
@@ -37,10 +37,10 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	public static Test suite() {
 		return buildTestSuite(Java7ClassUsageTests.class);
 	}
-	
+
 	/**
 	 * Returns the problem id with the given kind
-	 * 
+	 *
 	 * @param kind
 	 * @return the problem id
 	 */
@@ -54,7 +54,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	public void testStringSwitchF() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests illegal use of classes inside a string switch block
 	 * (incremental)
@@ -62,7 +62,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	public void testStringSwitchI() {
 		x1(true);
 	}
-	
+
 	private void x1(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS),
@@ -77,7 +77,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests illegal use of classes inside a multi catch block
 	 * (full)
@@ -85,7 +85,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	public void testMultiCatchF() {
 		x2(false);
 	}
-	
+
 	/**
 	 * Tests illegal use of classes inside a multi catch block
 	 * (incremental)
@@ -93,7 +93,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	public void testMultiCatchI() {
 		x2(true);
 	}
-	
+
 	private void x2(boolean inc) {
 		String exceptionTypeName = "ExceptionA"; //$NON-NLS-1$
 		setExpectedProblemIds(new int[] {
@@ -107,7 +107,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests illegal use of classes inside a try with resources block
 	 * (full)
@@ -115,7 +115,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	public void testTryWithF() {
 		x3(false);
 	}
-	
+
 	/**
 	 * Tests illegal use of classes inside a try with resources block
 	 * (incremental)
@@ -123,7 +123,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	public void testTryWithI() {
 		x3(true);
 	}
-	
+
 	private void x3(boolean inc) {
 		String resourceTypeName = "TryWithResourcesClass"; //$NON-NLS-1$
 		setExpectedProblemIds(new int[] {
@@ -137,7 +137,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests illegal use of classes instantiated with the diamond operator
 	 * (full)
@@ -145,7 +145,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	public void testDiamondF() {
 		x4(false);
 	}
-	
+
 	/**
 	 * Tests illegal use of classes instantiated with the diamond operator
 	 * (incremental)
@@ -153,7 +153,7 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	public void testDiamondI() {
 		x4(true);
 	}
-	
+
 	private void x4(boolean inc) {
 		String resourceTypeName = "GenericClassUsageClass<T>"; //$NON-NLS-1$
 		setExpectedProblemIds(new int[] {

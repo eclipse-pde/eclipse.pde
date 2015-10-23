@@ -24,7 +24,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 
 /**
  * Test reporter for the search engine tests
- * 
+ *
  * @since 1.0.1
  */
 public class TestReporter implements IApiSearchReporter {
@@ -35,7 +35,7 @@ public class TestReporter implements IApiSearchReporter {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param test
 	 */
 	public TestReporter(SearchTest test) {
@@ -133,7 +133,7 @@ public class TestReporter implements IApiSearchReporter {
 	 * Sets the expected reference kinds to the names of the element they came
 	 * from. passing in <code>null</code>(s) will reset to not expecting any
 	 * references
-	 * 
+	 *
 	 * @param references
 	 */
 	void setExpectedReferences(String[] names, int[][] referencekinds) {
@@ -157,7 +157,7 @@ public class TestReporter implements IApiSearchReporter {
 
 	/**
 	 * Sets the {@link IApiElement}s we expect to see as not searched
-	 * 
+	 *
 	 * @param elements
 	 */
 	void setExpectedNotSearched(String[] elements) {

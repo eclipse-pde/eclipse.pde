@@ -33,7 +33,7 @@ import org.eclipse.pde.internal.core.natures.PDE;
 
 /**
  * Creates the {@link IJavaProject} used for testing in the target workspace
- * 
+ *
  * @since 1.0.0
  */
 public class ProjectCreationTests extends AbstractApiTest {
@@ -132,7 +132,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 
 	/**
 	 * Finds the specified package export.
-	 * 
+	 *
 	 * @param exports export descriptions to search
 	 * @param packageName what to search for
 	 * @return package export description or <code>null</code>
@@ -151,7 +151,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 
 	/**
 	 * Asserts the common values of an exported package object
-	 * 
+	 *
 	 * @param export the package description to test
 	 * @param internalstate the desired state of the 'internal' directive
 	 * @param friendcount the desired friend count
@@ -249,7 +249,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	/**
 	 * Returns the source path to load the test source files from into the
 	 * testing project
-	 * 
+	 *
 	 * @param dirname the name of the directory the source is contained in
 	 * @return the complete path of the source directory
 	 */
@@ -260,7 +260,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	/**
 	 * Returns the source path to load the test source files from into the
 	 * testing project
-	 * 
+	 *
 	 * @param dirname the name of the directory the source is contained in
 	 * @return the complete path of the source directory
 	 */

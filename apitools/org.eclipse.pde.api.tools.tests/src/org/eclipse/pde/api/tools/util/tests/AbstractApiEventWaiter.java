@@ -18,9 +18,9 @@ public abstract class AbstractApiEventWaiter {
 
 	final int DEFAULT_TIMEOUT = 15000;
 	private Object fEvent = null;
-	
+
 	/**
-	 * Begins waiting for an acceptable event 
+	 * Begins waiting for an acceptable event
 	 * @return the source of the event or <code>null</code> if the waiter times out
 	 * or is interrupted
 	 */
@@ -39,7 +39,7 @@ public abstract class AbstractApiEventWaiter {
 		}
 		return fEvent;
 	}
-	
+
 	/**
 	 * Sets the current received event
 	 * @param event
@@ -47,10 +47,10 @@ public abstract class AbstractApiEventWaiter {
 	protected void setEvent(Object event) {
 		fEvent = event;
 	}
-	
+
 	/**
 	 * Disconnects the waiter from whatever it is waiting on
 	 */
 	protected abstract void unregister();
-	
+
 }

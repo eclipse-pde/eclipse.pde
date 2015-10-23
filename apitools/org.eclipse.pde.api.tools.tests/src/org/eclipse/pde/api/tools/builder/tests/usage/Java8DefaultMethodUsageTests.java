@@ -22,7 +22,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public Java8DefaultMethodUsageTests(String name) {
@@ -44,7 +44,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	// /**
 	/**
 	 * Returns the problem id with the given kind
-	 * 
+	 *
 	 * @param kind
 	 * @return the problem id
 	 */
@@ -508,7 +508,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests that we do not find any problems referencing default methods in JDK
 	 * types
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
@@ -519,7 +519,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests that we do not find any problems referencing default methods in JDK
 	 * types
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
@@ -538,7 +538,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
@@ -549,7 +549,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
@@ -575,7 +575,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
@@ -586,7 +586,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
@@ -612,7 +612,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
@@ -623,7 +623,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
@@ -649,7 +649,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
@@ -660,7 +660,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */

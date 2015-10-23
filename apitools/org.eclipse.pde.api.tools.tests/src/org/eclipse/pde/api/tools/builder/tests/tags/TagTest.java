@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 /**
  * Tests the builder to make sure it correctly finds and reports unsupported tag
  * usage.
- * 
+ *
  * @since 1.0
  */
 public abstract class TagTest extends ApiBuilderTest {
@@ -48,7 +48,7 @@ public abstract class TagTest extends ApiBuilderTest {
 	/**
 	 * Sets the message arguments we are expecting for the given test, the
 	 * number of times denoted by count
-	 * 
+	 *
 	 * @param tagname
 	 * @param context
 	 * @param count
@@ -83,13 +83,13 @@ public abstract class TagTest extends ApiBuilderTest {
 			classes.add(ValidJava8InterfaceTagTests.class);
 			classes.add(InvalidJava8InterfaceTagTests.class);
 		}
-		
+
 		return classes.toArray(new Class<?>[classes.size()]);
 	}
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
@@ -161,7 +161,7 @@ public abstract class TagTest extends ApiBuilderTest {
 	/**
 	 * Returns an array composed only of the specified number of
 	 * {@link #PROBLEM_ID}
-	 * 
+	 *
 	 * @param problemcount
 	 * @return an array of {@link #PROBLEM_ID} of the specified size, or an
 	 *         empty array if the specified size is < 1
@@ -203,7 +203,7 @@ public abstract class TagTest extends ApiBuilderTest {
 	/**
 	 * Deploys a build test for API Javadoc tags using the given source file,
 	 * looking for problems specified from {@link #getExpectedProblemIds()()}
-	 * 
+	 *
 	 * @param sourcename
 	 * @param incremental if an incremental build should take place
 	 * @param usedefault if the default package should be used or not

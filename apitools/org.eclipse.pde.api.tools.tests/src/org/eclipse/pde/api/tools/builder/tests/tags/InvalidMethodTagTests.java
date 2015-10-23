@@ -26,14 +26,14 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Test unsupported javadoc tags on methods in classes, interfaces, enums and
  * annotations
- * 
+ *
  * @since 1.0
  */
 public class InvalidMethodTagTests extends TagTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidMethodTagTests(String name) {
@@ -85,7 +85,7 @@ public class InvalidMethodTagTests extends TagTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {

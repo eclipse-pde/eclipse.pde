@@ -18,13 +18,13 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Test class usage for Java 7 code snippets
- * 
+ *
  * @since 1.0.100
  */
 public class Java7FieldUsageTests extends Java7UsageTest {
 
 	private int pid = -1;
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -47,7 +47,7 @@ public class Java7FieldUsageTests extends Java7UsageTest {
 		}
 		return pid;
 	}
-	
+
 	/**
 	 * Tests illegal use of classes inside a string switch block
 	 * (full)
@@ -55,7 +55,7 @@ public class Java7FieldUsageTests extends Java7UsageTest {
 	public void testStringSwitchF() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests illegal use of classes inside a string switch block
 	 * (incremental)
@@ -63,8 +63,8 @@ public class Java7FieldUsageTests extends Java7UsageTest {
 	public void testStringSwitchI() {
 		x1(true);
 	}
-	
-	
+
+
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(3));
 		String typename = "testFStringSwitch"; //$NON-NLS-1$
@@ -73,11 +73,11 @@ public class Java7FieldUsageTests extends Java7UsageTest {
 				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f1" }, //$NON-NLS-1$
 				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f1" }, //$NON-NLS-1$
 				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f1" } //$NON-NLS-1$
-			
+
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests illegal use of classes inside a multi catch block
 	 * (full)
@@ -85,7 +85,7 @@ public class Java7FieldUsageTests extends Java7UsageTest {
 	public void testMultiCatchF() {
 		x2(false);
 	}
-	
+
 	/**
 	 * Tests illegal use of classes inside a multi catch block
 	 * (incremental)
@@ -93,8 +93,8 @@ public class Java7FieldUsageTests extends Java7UsageTest {
 	public void testMultiCatchI() {
 		x2(true);
 	}
-	
-	
+
+
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(2));
 		String typename = "testFMultiCatch"; //$NON-NLS-1$

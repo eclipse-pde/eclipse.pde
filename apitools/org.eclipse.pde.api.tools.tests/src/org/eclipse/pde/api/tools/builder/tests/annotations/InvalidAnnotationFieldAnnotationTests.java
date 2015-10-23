@@ -17,14 +17,14 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests invalid annotations used on annotation fields
- * 
+ *
  * @since 1.0.400
  */
 public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidAnnotationFieldAnnotationTests(String name) {

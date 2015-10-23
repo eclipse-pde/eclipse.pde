@@ -19,7 +19,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests labmda expression usage for Java 8 code snippets
- * 
+ *
  */
 public class Java8LambdaUsageTests extends Java8UsageTest {
 
@@ -39,7 +39,7 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	public static Test suite() {
 		return buildTestSuite(Java8LambdaUsageTests.class);
 	}
-	
+
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("lambda"); //$NON-NLS-1$
@@ -58,7 +58,7 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 
 	/**
 	 * Returns the problem id with the given kind
-	 * 
+	 *
 	 * @param kind
 	 * @return the problem id
 	 */
@@ -72,14 +72,14 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	public void testLambdaExpressionF() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests illegal use of fields inside a lambda expression (incremental)
 	 */
 	public void testLambdaExpressionI() {
 		x1(true);
 	}
-	
+
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(2));
 		String typename = "testLambdaExpression"; //$NON-NLS-1$

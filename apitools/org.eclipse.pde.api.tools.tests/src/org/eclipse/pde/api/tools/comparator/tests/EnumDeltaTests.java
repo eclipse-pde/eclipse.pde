@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * Delta tests for enum
  */
 public class EnumDeltaTests extends DeltaTestSetup {
-	
+
 	public static Test suite() {
 		return new TestSuite(EnumDeltaTests.class);
 //		TestSuite suite = new TestSuite(EnumDeltaTests.class.getName());
@@ -41,7 +41,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	public String getTestRoot() {
 		return "enum"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * delete enum constant
 	 */
@@ -148,7 +148,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add new enum constant
 	 */
@@ -187,7 +187,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertTrue("Not empty", delta.isEmpty()); //$NON-NLS-1$
 		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Added non visible method
 	 */
@@ -210,7 +210,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Added non visible method
 	 */

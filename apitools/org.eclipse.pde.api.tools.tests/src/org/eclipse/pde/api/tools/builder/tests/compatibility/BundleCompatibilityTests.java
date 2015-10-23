@@ -19,13 +19,13 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
- * Tests that the builder correctly finds and reports problems with 
+ * Tests that the builder correctly finds and reports problems with
  * API bundles.
- * 
+ *
  * @since 1.0
  */
 public class BundleCompatibilityTests extends CompatibilityTest {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -52,7 +52,7 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("bundles"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -94,15 +94,15 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testPublicToPackageI() throws Exception {
 		xPublicToPackage(true);
 	}
-	
+
 	public void testPublicToPackageF() throws Exception {
 		xPublicToPackage(false);
 	}
-	
+
 	/**
 	 * Tests deleting a public class
 	 */
@@ -121,15 +121,15 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(args);
 		performDeletionCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePublicClassI() throws Exception {
 		xRemovePublicClass(true);
 	}
-	
+
 	public void testRemovePublicClassF() throws Exception {
 		xRemovePublicClass(false);
 	}
-	
+
 	/**
 	 * Tests deleting a private class
 	 */
@@ -138,20 +138,20 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 		// no problem expected
 		performDeletionCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemovePrivateClassI() throws Exception {
 		xRemovePrivateClass(true);
 	}
-	
+
 	public void testRemovePrivateClassF() throws Exception {
 		xRemovePrivateClass(false);
 	}
-	
+
 
 	public void testDeleteAndReplaceI() throws Exception {
 		xDeleteAndReplace(true);
 	}
-	
+
 	public void testDeleteAndReplaceF() throws Exception {
 		xDeleteAndReplace(false);
 	}

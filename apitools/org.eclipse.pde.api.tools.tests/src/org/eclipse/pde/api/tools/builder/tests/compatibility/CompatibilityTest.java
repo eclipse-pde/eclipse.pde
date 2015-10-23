@@ -33,14 +33,14 @@ import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 
 /**
  * Base class for binary compatibility tests
- * 
+ *
  * @since 1.0
  */
 public abstract class CompatibilityTest extends ApiBuilderTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public CompatibilityTest(String name) {
@@ -95,7 +95,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
@@ -201,7 +201,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 * workspace path) location is updated with a corresponding file from test
 	 * data. A build is performed and problems are compared against the expected
 	 * problems for the associated resource.
-	 * 
+	 *
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
@@ -224,7 +224,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 * workspace path) location is updated with a corresponding file from test
 	 * data. A build is performed and problems are compared against the expected
 	 * problems for the associated resource.
-	 * 
+	 *
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
@@ -245,7 +245,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 * Performs a compatibility test. The workspace file at the specified (full
 	 * workspace path) location is deleted. A build is performed and problems
 	 * are compared against the expected problems for the associated resource.
-	 * 
+	 *
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
@@ -266,7 +266,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 * Performs a compatibility test. The workspace file at the specified (full
 	 * workspace path) location is created. A build is performed and problems
 	 * are compared against the expected problems for the associated resource.
-	 * 
+	 *
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build

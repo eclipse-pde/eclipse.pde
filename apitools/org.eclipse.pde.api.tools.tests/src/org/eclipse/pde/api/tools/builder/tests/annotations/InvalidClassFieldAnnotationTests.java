@@ -16,13 +16,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
- * 
+ *
  */
 public class InvalidClassFieldAnnotationTests extends FieldAnnotationTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidClassFieldAnnotationTests(String name) {

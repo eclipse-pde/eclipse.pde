@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder correctly reports compatibility problems
  * for type parameters associated with classes.
- * 
+ *
  * @since 1.0
  */
 public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTests {
@@ -73,7 +73,7 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 				IDelta.CLASS_ELEMENT_TYPE,
 				kind,
 				flags);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
@@ -190,7 +190,7 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 
 	public void testRemoveClassBoundF() throws Exception {
 		xRemoveClassBound(false);
-	}	
+	}
 
 	/**
 	 * Tests adding an interface bound to a type parameter
@@ -221,7 +221,7 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	private void xRemoveInterfaceBound(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveInterfaceBound.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
-				getProblemId(IDelta.REMOVED, IDelta.INTERFACE_BOUND), 
+				getProblemId(IDelta.REMOVED, IDelta.INTERFACE_BOUND),
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
@@ -259,7 +259,7 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 
 	public void testRemoveSecondaryInterfaceBoundF() throws Exception {
 		xRemoveSecondaryInterfaceBound(false);
-	}	
+	}
 
 	/**
 	 * Tests changing a class bound to a type parameter
@@ -282,7 +282,7 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 
 	public void testChangeClassBoundF() throws Exception {
 		xChangeClassBound(false);
-	}	
+	}
 
 	/**
 	 * Tests changing a class bound to a type parameter
@@ -305,7 +305,7 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 
 	public void testChangeInterfaceBoundF() throws Exception {
 		xChangeClassBound(false);
-	}		
+	}
 
 	/**
 	 * Tests changing a class to an annotation
@@ -355,7 +355,7 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 
 	public void testConvertToEnumF() throws Exception {
 		xConvertToEnum(false);
-	}	
+	}
 
 	/**
 	 * Tests changing a class to an interface
@@ -380,5 +380,5 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 
 	public void testConvertToInterfaceF() throws Exception {
 		xConvertToInterface(false);
-	}		
+	}
 }

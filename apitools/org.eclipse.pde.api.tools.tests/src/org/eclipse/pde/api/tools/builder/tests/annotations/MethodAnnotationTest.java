@@ -26,7 +26,7 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Abstract class for method annotation tests
- * 
+ *
  * @since 1.0.600
  */
 public abstract class MethodAnnotationTest extends AnnotationTest {
@@ -73,7 +73,7 @@ public abstract class MethodAnnotationTest extends AnnotationTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {

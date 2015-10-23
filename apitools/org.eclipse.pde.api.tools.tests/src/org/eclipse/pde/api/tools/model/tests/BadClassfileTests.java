@@ -69,7 +69,7 @@ public class BadClassfileTests extends TestCase {
 
 	/**
 	 * Writes any expected error pre-amble prior to the test running
-	 * 
+	 *
 	 * @param test
 	 */
 	void writePreamble(String test) {
@@ -79,7 +79,7 @@ public class BadClassfileTests extends TestCase {
 
 	/**
 	 * Tests trying to get the structure for a bad classfile
-	 * 
+	 *
 	 * @throws Exception if something bad happens
 	 */
 	public void testClassfileScanner() throws Exception {
@@ -91,7 +91,7 @@ public class BadClassfileTests extends TestCase {
 
 	/**
 	 * Tests trying to search a bad class file
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSearchEngine() throws Exception {

@@ -22,14 +22,14 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 /**
  * Tests that the builder correctly finds and reports interface compatibility
  * problems
- * 
+ *
  * @since 1.0
  */
 public class InterfaceCompatibilityTests extends CompatibilityTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
@@ -82,7 +82,7 @@ public class InterfaceCompatibilityTests extends CompatibilityTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InterfaceCompatibilityTests(String name) {

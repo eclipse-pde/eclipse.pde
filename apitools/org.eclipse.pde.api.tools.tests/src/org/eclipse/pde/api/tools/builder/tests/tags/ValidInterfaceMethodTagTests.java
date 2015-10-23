@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Tests valid javadoc tags on interface methods
- * 
+ *
  * @since 1.0
  */
 public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
@@ -36,7 +36,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the test for this class
 	 */
@@ -51,7 +51,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	public void testValidInterfaceMethodTag1F() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests the supported @noreference tag on interface methods
 	 */
@@ -62,7 +62,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	public void testValidInterfaceMethodTag4I() {
 		x4(true);
 	}
-	
+
 	public void testValidInterfaceMethodTag4F() {
 		x4(false);
 	}
@@ -73,15 +73,15 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	private void x4(boolean inc) {
 		deployTagTest("test4.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testValidInterfaceMethodTag5I() {
 		x5(true);
 	}
-	
+
 	public void testValidInterfaceMethodTag5F() {
 		x5(false);
 	}
-	
+
 	/**
 	 * Tests the supported @noreference tag on interface methods in the default package
 	 */

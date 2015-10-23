@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 public abstract class DeltaTestSetup extends TestCase {
 	protected static final String AFTER = "after"; //$NON-NLS-1$
-	
+
 	protected static final String BEFORE = "before"; //$NON-NLS-1$
 
 	protected static final String BUNDLE_NAME = "deltatest"; //$NON-NLS-1$
@@ -38,11 +38,11 @@ public abstract class DeltaTestSetup extends TestCase {
 
 	private static final IDelta[] EMPTY_CHILDREN = new IDelta[0];
 	private static final String TESTS_DELTAS_NAME = "tests-deltas"; //$NON-NLS-1$
-	
+
 	private static final String WORKSPACE_NAME = "tests_deltas_workspace"; //$NON-NLS-1$
 
 	private static IPath WORKSPACE_ROOT;
-	
+
 	private IApiBaseline before = null, after = null;
 
 	static {
@@ -52,7 +52,7 @@ public abstract class DeltaTestSetup extends TestCase {
 	public DeltaTestSetup(String name) {
 		super(name);
 	}
-	
+
 	private void collect0(IDelta delta, List<IDelta> collect) {
 		IDelta[] children = delta.getChildren();
 		int length = children.length;
@@ -145,7 +145,7 @@ public abstract class DeltaTestSetup extends TestCase {
 	/**
 	 * The test name must be the folder name inside the tests-deltas resource folder
 	 * <code>name</code> represents either "before" or "after"
-	 * 
+	 *
 	 * @param testName the given test name
 	 * @param name the given state name
 	 */
@@ -156,7 +156,7 @@ public abstract class DeltaTestSetup extends TestCase {
 	/**
 	 * The test name must be the folder name inside the tests-deltas resource folder
 	 * <code>name</code> represents either "before" or "after"
-	 * 
+	 *
 	 * @param testName the given test name
 	 * @param name the given state name
 	 * @param bundleName the given bundle name
@@ -168,7 +168,7 @@ public abstract class DeltaTestSetup extends TestCase {
 		IPath destinationPath = WORKSPACE_ROOT.append(name).append(bundleName);
 		String[] compilerOptions = TestSuiteHelper.getCompilerOptions();
 		assertTrue(TestSuiteHelper.compile(sourceFilePaths, destinationPath.toOSString(), compilerOptions));
-		
+
 		// copy the MANIFEST in the workspace folder
 		copyResources(testName, name, destinationPath.toOSString());
 	}
@@ -187,7 +187,7 @@ public abstract class DeltaTestSetup extends TestCase {
 		}
 		return after;
 	}
-	
+
 	private IPath getBaseLineFolder(String name) {
 		return new Path(WORKSPACE_NAME).append(name);
 	}
@@ -210,7 +210,7 @@ public abstract class DeltaTestSetup extends TestCase {
 		// create workspace root
 		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		//clean up

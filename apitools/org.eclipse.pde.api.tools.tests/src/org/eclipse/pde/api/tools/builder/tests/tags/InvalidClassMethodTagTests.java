@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests invalid javadoc tags on class methods
- * 
+ *
  * @since 1.0
  */
 public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
@@ -29,7 +29,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public InvalidClassMethodTagTests(String name) {
 		super(name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
@@ -37,25 +37,25 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the test for this class
 	 */
 	public static Test suite() {
 		return buildTestSuite(InvalidClassMethodTagTests.class);
 	}
-	
+
 	public void testInvalidClassMethodTag1I() {
 		x1(true);
 	}
-	
-	
+
+
 	public void testInvalidClassMethodTag1F() {
 		x1(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noimplement Javadoc tag on a variety of methods in a variety of inner / outer classes 
+	 * Tests the unsupported @noimplement Javadoc tag on a variety of methods in a variety of inner / outer classes
 	 */
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(16));
@@ -79,7 +79,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassMethodTag2I() {
 		x2(true);
 	}
@@ -87,9 +87,9 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag2F() {
 		x2(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noimplement Javadoc tag on a variety of methods in a class in the default package 
+	 * Tests the unsupported @noimplement Javadoc tag on a variety of methods in a class in the default package
 	 */
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
@@ -105,13 +105,13 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag3I() {
 		x3(true);
 	}
-	
+
 	public void testInvalidClassMethodTag3F() {
 		x3(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noextend Javadoc tag on a variety of methods in a variety of inner / outer classes 
+	 * Tests the unsupported @noextend Javadoc tag on a variety of methods in a variety of inner / outer classes
 	 */
 	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(16));
@@ -143,9 +143,9 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag4F() {
 		x4(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noextend Javadoc tag on a variety of methods in a class in the default package 
+	 * Tests the unsupported @noextend Javadoc tag on a variety of methods in a class in the default package
 	 */
 	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
@@ -161,13 +161,13 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag5I() {
 		x5(true);
 	}
-	
+
 	public void testInvalidClassMethodTag5F() {
 		x5(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on a variety of methods in a variety of inner / outer classes 
+	 * Tests the unsupported @noinstantiate Javadoc tag on a variety of methods in a variety of inner / outer classes
 	 */
 	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(16));
@@ -199,9 +199,9 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag6F() {
 		x6(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on a variety of methods in a class in the default package 
+	 * Tests the unsupported @noinstantiate Javadoc tag on a variety of methods in a class in the default package
 	 */
 	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
@@ -217,11 +217,11 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag7I() {
 		x7(true);
 	}
-	
+
 	public void testInvalidClassMethodTag7F() {
 		x7(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride Javadoc tag on private methods in a variety of inner /outer classes
 	 */
@@ -235,7 +235,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassMethodTag8I() {
 		x8(true);
 	}
@@ -243,7 +243,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag8F() {
 		x8(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride Javadoc tag on private methods in a class in the default package
 	 */
@@ -254,15 +254,15 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test8.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassMethodTag9I() {
 		x9(true);
 	}
-	
+
 	public void testInvalidClassMethodTag9F() {
 		x9(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride Javadoc tag on final methods in a variety of inner /outer classes
 	 */
@@ -284,7 +284,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag10F() {
 		x10(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride Javadoc tag on final methods in a class in the default package
 	 */
@@ -303,7 +303,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag11F() {
 		x11(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noreference Javadoc tag on private methods in a variety of inner /outer classes
 	 */
@@ -321,12 +321,12 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag12I() {
 		x12(true);
 	}
-	
-	
+
+
 	public void testInvalidClassMethodTag12F() {
 		x12(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noreference Javadoc tag on private methods in a class in the default package
 	 */
@@ -337,7 +337,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test12.java", inc, true); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassMethodTag13I() {
 		x13(true);
 	}
@@ -345,7 +345,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag13F() {
 		x13(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride tag on a static method
 	 */
@@ -358,15 +358,15 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test13.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassMethodTag14I() {
 		x14(true);
 	}
-	
+
 	public void testInvalidClassMethodTag14F() {
 		x14(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride tag on a method in a final class
 	 */
@@ -380,15 +380,15 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test14.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassMethodTag26I() {
 		x26(true);
 	}
-	
+
 	public void testInvalidClassMethodTag26F() {
 		x26(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride Javadoc tag on package default methods in a variety of inner /outer classes
 	 */
@@ -402,7 +402,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test26.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassMethodTag27I() {
 		x27(true);
 	}
@@ -410,7 +410,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag27F() {
 		x27(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride Javadoc tag on package default methods in a class in the default package
 	 */
@@ -421,7 +421,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test27.java", inc, false); //$NON-NLS-1$
 	}
-	
+
 	public void testInvalidClassMethodTag28I() {
 		x28(true);
 	}
@@ -429,7 +429,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag28F() {
 		x28(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noreference Javadoc tag on package default methods in a variety of inner /outer classes
 	 */
@@ -447,12 +447,12 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag29I() {
 		x29(true);
 	}
-	
-	
+
+
 	public void testInvalidClassMethodTag29F() {
 		x29(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported @noreference Javadoc tag on package default methods in a class in the default package
 	 */

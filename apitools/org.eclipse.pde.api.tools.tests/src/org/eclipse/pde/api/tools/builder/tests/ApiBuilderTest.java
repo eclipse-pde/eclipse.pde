@@ -65,7 +65,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Base class for API builder tests
- * 
+ *
  * @since 1.0
  */
 public abstract class ApiBuilderTest extends BuilderTests {
@@ -146,7 +146,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public ApiBuilderTest(String name) {
@@ -178,7 +178,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Asserts that there are no compilation problems in the environment
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	protected void expectingNoJDTProblems() throws CoreException {
@@ -187,7 +187,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Asserts that there are no compilation problems on the given resource path
-	 * 
+	 *
 	 * @param resource
 	 * @throws CoreException
 	 */
@@ -235,7 +235,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Creates a set of the default problem ids of the given count
-	 * 
+	 *
 	 * @param numproblems
 	 * @return the set of default problem ids, or an empty set.
 	 */
@@ -294,9 +294,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * directory. All projects in the given directory will try to be imported
 	 * into the workspace. The given 'projectsdir' is assumed to be a child path
 	 * of the test source path (the test-builder folder in the test workspace).
-	 * 
+	 *
 	 * This is the initial state of the workspace.
-	 * 
+	 *
 	 * @param projectsdir the directory to load projects from
 	 * @param buildimmediately if a build should be run immediately following
 	 *            the import
@@ -322,7 +322,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Exports the project as an API component to be used in an API baseline.
-	 * 
+	 *
 	 * @param project project to export
 	 * @param apiComponent associated API component from the workspace profile
 	 * @param baselineLocation local file system directory to host exported
@@ -362,7 +362,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Create the project described in record. If it is successful return true.
-	 * 
+	 *
 	 * @param projectDir directory containing existing project
 	 * @param importfiles
 	 * @param usetestcompliance
@@ -429,7 +429,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Method that can be overridden for custom assertion of the problems after
 	 * the build
-	 * 
+	 *
 	 * @param problems the complete listing of problems from the testing
 	 *            environment
 	 */
@@ -494,7 +494,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Sets the ids of the problems you expect to see from deploying a builder
 	 * test
-	 * 
+	 *
 	 * @param problemids
 	 */
 	protected void setExpectedProblemIds(int[] problemids) {
@@ -503,7 +503,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Sets the line mappings that problems are expected on
-	 * 
+	 *
 	 * @param linenumbers
 	 */
 	protected void setExpectedLineMappings(LineMapping[] linemappings) {
@@ -512,7 +512,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Sets the message arguments for corresponding problem ids.
-	 * 
+	 *
 	 * @param messageArgs message arguments - an array of String for each
 	 *            expected problem.
 	 */
@@ -534,10 +534,10 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @return the ids of the
 	 *         {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
 	 *         we are expecting to find after a build.
-	 * 
+	 *
 	 *         This method is consulted for every call to a deploy* method where
 	 *         a builder test is run.
-	 * 
+	 *
 	 *         The returned array from this method is used to make sure that
 	 *         expected problems (kind and count) appear after a build
 	 */
@@ -551,7 +551,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Returns the expected message arguments corresponding to expected problem
 	 * ids, or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @return message arguments for each expected problem or <code>null</code>
 	 *         if unspecified
 	 */
@@ -569,7 +569,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Returns the problem id from the marker
-	 * 
+	 *
 	 * @param marker
 	 * @return the problem id from the marker or -1 if there isn't one set on
 	 *         the marker
@@ -640,7 +640,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Concatenate and sort all problems for given root paths.
-	 * 
+	 *
 	 * @param roots The path to get the problems
 	 * @return All sorted problems of all given path
 	 */
@@ -710,7 +710,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Prints all of the problems from the current root to infinite children
-	 * 
+	 *
 	 * @param root
 	 */
 	@Override
@@ -720,7 +720,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Prints all of the problems from each of the roots to infinite children
-	 * 
+	 *
 	 * @param roots
 	 */
 	@Override
@@ -735,7 +735,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Takes each element of the array and calls toString on it to put an array
 	 * together as a string
-	 * 
+	 *
 	 * @param array
 	 * @return
 	 */
@@ -815,7 +815,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Enables or disables all of the usage problems for the builder
-	 * 
+	 *
 	 * @param enabled if true the builder options are set to 'Error', false sets
 	 *            the options to 'Ignore'
 	 */
@@ -838,7 +838,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Enables or disables all of the leak problems for the builder
-	 * 
+	 *
 	 * @param enabled if true the builder options are set to 'Error', false sets
 	 *            the options to 'Ignore'
 	 */
@@ -859,7 +859,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Deletes the workspace file at the specified location (full path).
-	 * 
+	 *
 	 * @param workspaceLocation
 	 */
 	protected void deleteWorkspaceFile(IPath workspaceLocation, boolean recorddeletion) throws Exception {
@@ -874,7 +874,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Returns a path in the local file system to an updated file based on this
 	 * tests source path and filename.
-	 * 
+	 *
 	 * @param filename name of file to update
 	 * @return path to the file in the local file system
 	 */
@@ -886,7 +886,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * Updates the contents of a workspace file at the specified location (full
 	 * path), with the contents of a local file at the given replacement
 	 * location (absolute path).
-	 * 
+	 *
 	 * @param workspaceLocation
 	 * @param replacementLocation
 	 */
@@ -911,7 +911,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * Updates the contents of a workspace file at the specified location (full
 	 * path), with the contents of a local file at the given replacement
 	 * location (absolute path).
-	 * 
+	 *
 	 * @param workspaceLocation
 	 * @param replacementLocation
 	 */
@@ -934,7 +934,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Enables or disables the unsupported Javadoc tag problems for the builder
-	 * 
+	 *
 	 * @param enabled if true the builder options are set to 'Error', false sets
 	 *            the options to 'Ignore'
 	 */
@@ -950,7 +950,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Enables or disables the unsupported annotation problems for the builder
-	 * 
+	 *
 	 * @param enabled
 	 * @since 1.0.400
 	 */
@@ -966,7 +966,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Enables or disables all of the compatibility problems for the builder
-	 * 
+	 *
 	 * @param enabled if true the builder options are set to 'Error', false sets
 	 *            the options to 'Ignore'
 	 */
@@ -985,7 +985,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Enables or disables all of the since tag problems for the builder
-	 * 
+	 *
 	 * @param enabled if true the builder options are set to 'Error', false sets
 	 *            the options to 'Ignore'
 	 */
@@ -1004,7 +1004,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Enables or disables all of the version number problems for the builder
-	 * 
+	 *
 	 * @param enabled if true the builder options are set to 'Error' or
 	 *            'Enabled', false sets the options to 'Ignore' or 'Disabled'
 	 */
@@ -1024,7 +1024,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Enables or disables the API baseline problems for the builder
-	 * 
+	 *
 	 * @param enabled if true the builder options are set to 'Error', false sets
 	 *            the options to 'Ignore'
 	 */
@@ -1042,7 +1042,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Enables or disables the External Depencency breakage problems for the
 	 * builder
-	 * 
+	 *
 	 * @param enabled if true the builder options are set to 'Error', false sets
 	 *            the options to 'Ignore'
 	 */
@@ -1106,7 +1106,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 * 
+	 *
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
@@ -1148,7 +1148,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * loads builder tests
-	 * 
+	 *
 	 * @return
 	 */
 	public static Test suite() {

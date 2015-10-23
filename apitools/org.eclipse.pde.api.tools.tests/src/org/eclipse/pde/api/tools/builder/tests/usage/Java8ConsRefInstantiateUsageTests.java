@@ -20,7 +20,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public Java8ConsRefInstantiateUsageTests(String name) {
@@ -41,7 +41,7 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 
 	/**
 	 * Returns the problem id with the given kind
-	 * 
+	 *
 	 * @param kind
 	 * @return the problem id
 	 */
@@ -74,9 +74,9 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 		String typename = "testConstructorRefInstantiate"; //$NON-NLS-1$
 
 		String[][] args = new String[][] {
-				{ "ConstructorReference2", typename }, //$NON-NLS-1$ 
-				{ "ConstructorReference2", typename }, //$NON-NLS-1$ 
-				{ "ConstructorReference2", typename } //$NON-NLS-1$ 
+				{ "ConstructorReference2", typename }, //$NON-NLS-1$
+				{ "ConstructorReference2", typename }, //$NON-NLS-1$
+				{ "ConstructorReference2", typename } //$NON-NLS-1$
 
 		};
 		setExpectedMessageArgs(args);
@@ -116,9 +116,9 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 		String typename = "testConstructorRefInstantiateAnnotation"; //$NON-NLS-1$
 
 		String[][] args = new String[][] {
-				{ "ConstructorReferenceAnno2", typename }, //$NON-NLS-1$ 
-				{ "ConstructorReferenceAnno2", typename }, //$NON-NLS-1$ 
-				{ "ConstructorReferenceAnno2", typename } //$NON-NLS-1$ 
+				{ "ConstructorReferenceAnno2", typename }, //$NON-NLS-1$
+				{ "ConstructorReferenceAnno2", typename }, //$NON-NLS-1$
+				{ "ConstructorReferenceAnno2", typename } //$NON-NLS-1$
 
 		};
 		setExpectedMessageArgs(args);

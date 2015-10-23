@@ -16,7 +16,7 @@ import org.eclipse.pde.api.tools.internal.util.TarException;
 
 /**
  * Tests creating {@link org.eclipse.pde.api.tools.internal.util.TarException}s
- * 
+ *
  * @since 1.0.1
  */
 public class TarExceptionTests extends TestCase {
@@ -31,5 +31,5 @@ public class TarExceptionTests extends TestCase {
 		assertNotNull("should be a new object created", exception); //$NON-NLS-1$
 		exception = new TarException("New Tar Exception", new Exception()); //$NON-NLS-1$
 	}
-	
+
 }

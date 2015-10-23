@@ -18,14 +18,14 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests the use of invalid tags on enum fields
- * 
+ *
  * @since 1.0
  */
 public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public InvalidEnumFieldTagTests(String name) {

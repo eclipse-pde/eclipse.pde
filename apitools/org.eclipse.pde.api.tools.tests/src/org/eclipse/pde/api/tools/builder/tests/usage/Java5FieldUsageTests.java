@@ -16,13 +16,13 @@ import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Tests field usage to Java 5 fields elements
- * 
+ *
  * @since 1.0.1
  */
 public class Java5FieldUsageTests extends FieldUsageTests {
 
 	protected static final String FIELD_ENUM_NAME = "FieldUsageEnum"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -37,7 +37,7 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 	public static Test suite() {
 		return buildTestSuite(Java5FieldUsageTests.class);
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
 	 */
@@ -50,15 +50,15 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 	public void testFieldUsage1F() {
 		x1(false);
 	}
-	
-	
+
+
 	@Override
 	public void testFieldUsage1I() {
 		x1(true);
 	}
-	
+
 	/**
-	 * Tests that an enum field tagged with a noreference tag that is being accessed from a dependent plug-in 
+	 * Tests that an enum field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is flagged as a problem
 	 */
 	private void x1(boolean inc) {
@@ -76,20 +76,20 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	@Override
 	public void testFieldUsage2F() {
 		x2(false);
 	}
-	
-	
+
+
 	@Override
 	public void testFieldUsage2I() {
 		x2(true);
 	}
-	
+
 	/**
-	 * Tests that a static final and final enum field tagged with a noreference tag that is being accessed from a dependent plug-in 
+	 * Tests that a static final and final enum field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is not flagged as a problem
 	 */
 	private void x2(boolean inc) {

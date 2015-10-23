@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Test class usage for Java 7 code snippets
- * 
+ *
  * @since 1.0.100
  */
 public class Java7MethodUsageTests extends Java7UsageTest {
@@ -40,14 +40,14 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 
 	/**
 	 * Returns the problem id with the given kind
-	 * 
+	 *
 	 * @param kind
 	 * @return the problem id
 	 */
 	protected int getProblemId(int kind, int flags) {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.METHOD, kind, flags);
 	}
-	
+
 	/**
 	 * Tests illegal use of methods inside a string switch block
 	 * (full)
@@ -55,7 +55,7 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 	public void testStringSwitchF() {
 		x1(false);
 	}
-	
+
 	/**
 	 * Tests illegal use of methods inside a string switch block
 	 * (incremental)
@@ -63,8 +63,8 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 	public void testStringSwitchI() {
 		x1(true);
 	}
-	
-	
+
+
 	private void x1(boolean inc) {
 		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
@@ -95,7 +95,7 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 	/**
 	 * Tests illegal use of methods inside a multi catch block
 	 * (full)
@@ -103,7 +103,7 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 	public void testMultiCatchF() {
 		x2(false);
 	}
-	
+
 	/**
 	 * Tests illegal use of methods inside a multi catch block
 	 * (incremental)
@@ -111,8 +111,8 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 	public void testMultiCatchI() {
 		x2(true);
 	}
-	
-	
+
+
 	private void x2(boolean inc) {
 		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
@@ -128,5 +128,5 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
+
 }

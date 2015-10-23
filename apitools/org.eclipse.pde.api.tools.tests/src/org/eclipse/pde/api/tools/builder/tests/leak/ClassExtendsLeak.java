@@ -20,7 +20,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Tests that leaked members via extends for classes is properly detected
- * 
+ *
  * @since 1.0
  */
 public class ClassExtendsLeak extends LeakTest {
@@ -32,7 +32,7 @@ public class ClassExtendsLeak extends LeakTest {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public ClassExtendsLeak(String name) {
@@ -588,7 +588,7 @@ public class ClassExtendsLeak extends LeakTest {
 	/**
 	 * Tests that a class that extends an internal class but overrides all of
 	 * its methods is not reported as leaking.
-	 * 
+	 *
 	 * @param inc
 	 */
 	private void x32(boolean inc) {

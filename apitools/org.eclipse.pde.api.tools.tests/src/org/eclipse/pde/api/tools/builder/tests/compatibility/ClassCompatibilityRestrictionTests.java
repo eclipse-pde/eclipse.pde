@@ -21,11 +21,11 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder correctly reports compatibility problems
  * related to member types.
- * 
+ *
  * @since 1.0
  */
 public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,7 +35,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.restrictions."; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,7 +51,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("restrictions"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -78,7 +78,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	protected String getTestingProjectName() {
 		return "classcompat"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests adding a noextend annotation
 	 */
@@ -93,11 +93,11 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddNoExtendI() throws Exception {
 		xAddNoExtend(true);
-	}	
-	
+	}
+
 	public void testAddNoExtendF() throws Exception {
 		xAddNoExtend(false);
 	}
@@ -116,14 +116,14 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddNoInstantiateI() throws Exception {
 		xAddNoInstantiate(true);
-	}	
-	
+	}
+
 	public void testAddNoInstantiateF() throws Exception {
 		xAddNoInstantiate(false);
-	}	
+	}
 
 	/**
 	 * Tests adding a noextend annotation
@@ -133,15 +133,15 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		// no errors expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testFinalAddNoExtendI() throws Exception {
 		xFinalAddNoExtend(true);
-	}	
-	
+	}
+
 	public void testFinalAddNoExtendF() throws Exception {
 		xFinalAddNoExtend(false);
 	}
-	
+
 	/**
 	 * Tests adding a noextend annotation
 	 */
@@ -154,7 +154,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	public void testFinalRemoveNoExtendI() throws Exception {
 		xFinalRemoveNoExtend(true);
 	}
-	
+
 	public void testFinalRemoveNoExtendF() throws Exception {
 		xFinalRemoveNoExtend(false);
 	}
@@ -171,49 +171,49 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	public void testAbstractRemoveNoInstantiateI() throws Exception {
 		xAbstractRemoveNoInstantiate(true);
 	}
-	
+
 	public void testAbstractRemoveNoInstantiateF() throws Exception {
 		xAbstractRemoveNoInstantiate(false);
 	}
 
 	/**
-	 * Tests adding a no-instantiate annotation to an abstract class 
+	 * Tests adding a no-instantiate annotation to an abstract class
 	 */
 	private void xAbstractAddNoInstantiate(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AbstractAddNoInstantiate.java"); //$NON-NLS-1$
 		// no errors expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAbstractAddNoInstantiateI() throws Exception {
 		xAbstractAddNoInstantiate(true);
-	}	
-	
+	}
+
 	public void testAbstractAddNoInstantiateF() throws Exception {
 		xAbstractAddNoInstantiate(false);
-	}	
-	
+	}
+
 	/**
-	 * Tests adding an abstract keyword to a no-instantiate class 
+	 * Tests adding an abstract keyword to a no-instantiate class
 	 */
 	private void xNoInstantiateAddAbstract(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("NoInstantiateAddAbstract.java"); //$NON-NLS-1$
 		// no errors expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testNoInstantiateAddAbstractI() throws Exception {
 		xNoInstantiateAddAbstract(true);
-	}	
-	
+	}
+
 	public void testNoInstantiateAddAbstractF() throws Exception {
 		xNoInstantiateAddAbstract(false);
-	}		
-	
+	}
+
 	public void testRemoveNoExtendI() throws Exception {
 		xRemoveNoExtend(true);
-	}	
-	
+	}
+
 	public void testRemoveNoExtendF() throws Exception {
 		xRemoveNoExtend(false);
 	}
