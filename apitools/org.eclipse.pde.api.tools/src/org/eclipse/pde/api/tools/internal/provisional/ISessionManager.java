@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
 
 /**
  * The session manager holds a list of currently available sessions.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -21,7 +21,7 @@ public interface ISessionManager {
 	/**
 	 * Adds the given session to this session manager. If the session is already
 	 * part of this session manager, the method has no effect.
-	 * 
+	 *
 	 * @param session the new session
 	 * @param activate if <code>true</code> the session will also be activated,
 	 *            <code>false</code> otherwise
@@ -32,7 +32,7 @@ public interface ISessionManager {
 	/**
 	 * Removes the given session. If the session is not in included in this
 	 * session manager, this method has no effect.
-	 * 
+	 *
 	 * @param session the given session to remove
 	 */
 	public void removeSession(ISession session);
@@ -44,14 +44,14 @@ public interface ISessionManager {
 
 	/**
 	 * Returns all available sessions registered with this session manager.
-	 * 
+	 *
 	 * @return list of available sessions
 	 */
 	public ISession[] getSessions();
 
 	/**
 	 * Adds the given session listener unless it has been added before.
-	 * 
+	 *
 	 * @param listener the given session listener to add
 	 * @throws IllegalArgumentException if the given listener is null
 	 */
@@ -60,14 +60,14 @@ public interface ISessionManager {
 	/**
 	 * Removes the given session listener. If the listener has not been added
 	 * before this method has no effect.
-	 * 
+	 *
 	 * @param listener the given session listener to remove
 	 */
 	public void removeSessionListener(ISessionListener listener);
 
 	/**
 	 * Returns the active session or <code>null</code> if there is no session.
-	 * 
+	 *
 	 * @return active session or <code>null</null>
 	 */
 	public ISession getActiveSession();
@@ -75,7 +75,7 @@ public interface ISessionManager {
 	/**
 	 * Activates the given session. If the session is not in included in this
 	 * session manager this method has no effect.
-	 * 
+	 *
 	 * @param session the given session or <code>null</code> to remove the
 	 *            active session.
 	 */

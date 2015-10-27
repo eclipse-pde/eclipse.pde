@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.PDECore;
 
 /**
  * Describes the workspace baseline. Tracks the PDE model for the workspace
- * 
+ *
  * @since 1.1
  */
 public class WorkspaceBaseline extends ApiBaseline {

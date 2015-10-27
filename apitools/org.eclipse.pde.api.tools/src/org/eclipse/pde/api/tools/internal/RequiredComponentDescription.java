@@ -15,7 +15,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IVersionRange;
 
 /**
  * Implementation of a required component description based on OSGi bundles.
- * 
+ *
  * @since 1.0.0
  */
 public class RequiredComponentDescription implements IRequiredComponentDescription {
@@ -29,7 +29,7 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 	 * Constructs a new required component description based on the given
 	 * required component id and version range. The required component
 	 * description is mandatory.
-	 * 
+	 *
 	 * @param id component's symbolic name
 	 * @param range version range
 	 */
@@ -40,7 +40,7 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 	/**
 	 * Constructs a new required component description based on the given
 	 * required component id and version range.
-	 * 
+	 *
 	 * @param id component's symbolic name
 	 * @param range version range
 	 * @param isOptional the optional flag of the required component
@@ -70,7 +70,7 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IRequiredComponentDescription#getVersionRange()
 	 */
 	@Override

@@ -16,7 +16,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 
 /**
  * Description of a field.
- * 
+ *
  * @since 1.0.0
  */
 public class FieldDescriptorImpl extends MemberDescriptorImpl implements IFieldDescriptor {
@@ -24,7 +24,7 @@ public class FieldDescriptorImpl extends MemberDescriptorImpl implements IFieldD
 	/**
 	 * Constructs a field descriptor with the given name, declared by the given
 	 * type.
-	 * 
+	 *
 	 * @param name field name
 	 * @param parent type containing the field declaration
 	 */

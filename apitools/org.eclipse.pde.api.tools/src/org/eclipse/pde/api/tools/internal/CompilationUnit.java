@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
  * A compilation unit in the API context acts as a proxy to the stream of file
  * contents. It holds meta-data about the underlying file, but does not hold on
  * to the actual contents of the file.
- * 
+ *
  * @since 1.0.0
  */
 public class CompilationUnit {
@@ -36,14 +36,14 @@ public class CompilationUnit {
 	private ICompilationUnit unit = null;
 	/**
 	 * The encoding to use when reading the compilation units' contents
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	private String encoding = null;
 
 	/**
 	 * The full path to the file Constructor
-	 * 
+	 *
 	 * @param filepath the absolute path to the file. If the path points to a
 	 *            file that does not exist an {@link IllegalArgumentException}
 	 *            is thrown
@@ -61,7 +61,7 @@ public class CompilationUnit {
 
 	/**
 	 * Constructor for use within the workspace
-	 * 
+	 *
 	 * @param compilationUnit the {@link ICompilationUnit} backing this
 	 *            {@link CompilationUnit}
 	 */
@@ -82,7 +82,7 @@ public class CompilationUnit {
 	 * If there is no backing {@link ICompilationUnit}, for example when created
 	 * from one of the Ant tasks, we simply use the system encoding if the
 	 * encoding has not already been set.
-	 * 
+	 *
 	 * @param base
 	 * @return the encoding to use for this {@link CompilationUnit}
 	 * @since 1.0.600
@@ -122,7 +122,7 @@ public class CompilationUnit {
 
 	/**
 	 * Returns the input stream of the file
-	 * 
+	 *
 	 * @return the input stream of the files' contents
 	 * @throws FileNotFoundException if the input stream could not connect to
 	 *             the actual file
@@ -140,7 +140,7 @@ public class CompilationUnit {
 
 	/**
 	 * Returns the encoding for this compilation unit.
-	 * 
+	 *
 	 * @return the encoding to use
 	 * @throws CoreException
 	 * @since 1.0.600

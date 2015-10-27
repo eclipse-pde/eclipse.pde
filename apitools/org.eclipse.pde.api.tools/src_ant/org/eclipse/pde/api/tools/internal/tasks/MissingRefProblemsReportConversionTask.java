@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 /**
  * Default task for converting the XML output from the apitooling.apiuse ants to
  * HTML
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class MissingRefProblemsReportConversionTask extends CommonUtilsTask {
@@ -38,7 +38,7 @@ public final class MissingRefProblemsReportConversionTask extends CommonUtilsTas
 	 * <p>
 	 * Default is <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
@@ -47,7 +47,7 @@ public final class MissingRefProblemsReportConversionTask extends CommonUtilsTas
 
 	/**
 	 * Set the location where the html reports are generated.
-	 * 
+	 *
 	 * <p>
 	 * This is optional. If not set, the html files are created in the same
 	 * folder as the xml files.
@@ -55,7 +55,7 @@ public final class MissingRefProblemsReportConversionTask extends CommonUtilsTas
 	 * <p>
 	 * The location is set using an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * @param htmlFilesLocation the given the location where the html reports
 	 *            are generated
 	 */
@@ -65,11 +65,11 @@ public final class MissingRefProblemsReportConversionTask extends CommonUtilsTas
 
 	/**
 	 * Set the location where the xml reports are retrieved.
-	 * 
+	 *
 	 * <p>
 	 * The location is set using an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * @param xmlFilesLocation the given location to retrieve the xml reports
 	 */
 	public void setXmlFiles(String xmlFilesLocation) {

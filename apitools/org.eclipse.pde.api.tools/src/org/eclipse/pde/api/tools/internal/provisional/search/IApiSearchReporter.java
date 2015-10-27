@@ -16,14 +16,14 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 /**
  * Describes a reporter called out to by the {@link ApiSearchEngine} when a
  * pre-determined set of results have been collected.
- * 
+ *
  * @since 1.0.0
  */
 public interface IApiSearchReporter {
 
 	/**
 	 * Reports the given results to the user (implementation independent)
-	 * 
+	 *
 	 * @param element the element that was searched
 	 * @param references the raw list of references from the
 	 *            {@link ApiSearchEngine}
@@ -33,7 +33,7 @@ public interface IApiSearchReporter {
 	/**
 	 * Reports the current listing of objects that were not searched for
 	 * whatever reason.
-	 * 
+	 *
 	 * @param notsearched array of elements not searched
 	 */
 	public void reportNotSearched(final IApiElement[] elements);
@@ -41,7 +41,7 @@ public interface IApiSearchReporter {
 	/**
 	 * Reports the given metadata object out to the report directory. Does no
 	 * work if the metadata is <code>null</code>
-	 * 
+	 *
 	 * @param data the data object to write out
 	 */
 	public void reportMetadata(IMetadata data);

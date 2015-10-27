@@ -21,35 +21,35 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescrip
 public interface IReferenceDescriptor {
 	/**
 	 * The line number from which the reference was made or -1 if unknown.
-	 * 
+	 *
 	 * @return source line number or -1
 	 */
 	public int getLineNumber();
 
 	/**
 	 * Returns the member descriptor where the reference exists.
-	 * 
+	 *
 	 * @return member descriptor where the reference exists
 	 */
 	public IMemberDescriptor getMember();
 
 	/**
 	 * Returns the component descriptor where the reference exists.
-	 * 
+	 *
 	 * @return component descriptor where the reference exists
 	 */
 	public IComponentDescriptor getComponent();
 
 	/**
 	 * Returns the specific kind of reference that was made.
-	 * 
+	 *
 	 * @return reference kind - one of the reference modifiers
 	 */
 	public int getReferenceKind();
 
 	/**
 	 * Returns any flags set on the reference
-	 * 
+	 *
 	 * @return any flags set on the reference
 	 */
 	public int getReferenceFlags();
@@ -57,28 +57,28 @@ public interface IReferenceDescriptor {
 	/**
 	 * Returns the type of reference that has been made - one of type, field, or
 	 * method.
-	 * 
+	 *
 	 * @return one of the reference type constants defined in this interface
 	 */
 	public int getReferenceType();
 
 	/**
 	 * Returns a descriptor for the referenced member.
-	 * 
+	 *
 	 * @return referenced member descriptor
 	 */
 	public IMemberDescriptor getReferencedMember();
 
 	/**
 	 * A descriptor for the referenced component.
-	 * 
+	 *
 	 * @return referenced component descriptor
 	 */
 	public IComponentDescriptor getReferencedComponent();
 
 	/**
 	 * Describes the visibility of the reference.
-	 * 
+	 *
 	 * @return visibility
 	 * @see org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers
 	 */
@@ -87,7 +87,7 @@ public interface IReferenceDescriptor {
 	/**
 	 * Returns the collection of reported problem messages for the original
 	 * {@link IReference} or <code>null</code> if there are no messages.
-	 * 
+	 *
 	 * @return the list of problem messages or <code>null</code>
 	 * @since 1.1
 	 */

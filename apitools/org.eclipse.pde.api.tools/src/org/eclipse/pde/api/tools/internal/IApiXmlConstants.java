@@ -15,7 +15,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Interface containing all of the constants used in XML documents in API Tools
- * 
+ *
  * @since 1.0.0
  */
 public interface IApiXmlConstants {
@@ -49,7 +49,7 @@ public interface IApiXmlConstants {
 	/**
 	 * Constant representing the element attribute for a comment. value is:
 	 * <code>comment</code>
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public static final String ATTR_COMMENT = "comment"; //$NON-NLS-1$
@@ -296,7 +296,7 @@ public interface IApiXmlConstants {
 	 * Constant representing a package fragment element node in XML. Value is:
 	 * <code>package</code>
 	 */
-	public static final String ELEMENT_PACKAGE_FRAGMENT = "fragment"; //$NON-NLS-1$	
+	public static final String ELEMENT_PACKAGE_FRAGMENT = "fragment"; //$NON-NLS-1$
 	/**
 	 * Constant representing a plugin element node in XML. Value is:
 	 * <code>plugin</code>
@@ -306,7 +306,7 @@ public interface IApiXmlConstants {
 	 * Constant representing the API component pool node name for an API profile
 	 * XML file. Value is <code>pool</code>
 	 */
-	public static final String ELEMENT_POOL = "pool"; //$NON-NLS-1$	
+	public static final String ELEMENT_POOL = "pool"; //$NON-NLS-1$
 	/**
 	 * Constant representing a resource element node in XML. Value is:
 	 * <code>resource</code>

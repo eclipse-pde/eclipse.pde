@@ -37,7 +37,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * The reference analyzer
- * 
+ *
  * @since 1.1
  */
 public class ReferenceAnalyzer {
@@ -146,7 +146,7 @@ public class ReferenceAnalyzer {
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers#REF_INSTANTIATE}
 	 * will be in the 26th index (0x1 << 27, which is 2 ^ 26). Also initializes
 	 * the bit mask of all interesting reference kinds.
-	 * 
+	 *
 	 * @param detectors problem detectors
 	 */
 	void indexProblemDetectors(IApiProblemDetector[] detectors) {
@@ -175,7 +175,7 @@ public class ReferenceAnalyzer {
 
 	/**
 	 * log 2 (x) = ln(x) / ln(2)
-	 * 
+	 *
 	 * @param bitConstant a single bit constant (0x1 << n)
 	 * @return log base 2 of the constant (the power of 2 the constant is equal
 	 *         to)
@@ -188,7 +188,7 @@ public class ReferenceAnalyzer {
 
 	/**
 	 * Scans the given scope extracting all reference information.
-	 * 
+	 *
 	 * @param scope scope to scan
 	 * @param monitor progress monitor
 	 * @exception CoreException if the scan fails
@@ -218,7 +218,7 @@ public class ReferenceAnalyzer {
 	 * Analyzes the given {@link IApiComponent} within the given
 	 * {@link IApiTypeContainer} (scope) and returns a collection of detected
 	 * {@link IApiProblem}s or an empty collection, never <code>null</code>
-	 * 
+	 *
 	 * @param component
 	 * @param scope
 	 * @param monitor
@@ -271,7 +271,7 @@ public class ReferenceAnalyzer {
 
 	/**
 	 * Returns the collection of problem detectors for the given reference kind
-	 * 
+	 *
 	 * @param referencekind
 	 * @return
 	 */
@@ -291,12 +291,12 @@ public class ReferenceAnalyzer {
 
 	/**
 	 * Builds problem detectors to use when analyzing the given component.
-	 * 
+	 *
 	 * @param component component to be analyzed
 	 * @param kindmask the kinds of detectors to build. See
 	 *            {@link ProblemDetectorBuilder} for kinds
 	 * @param monitor
-	 * 
+	 *
 	 * @return problem detectors
 	 */
 	public IApiProblemDetector[] buildProblemDetectors(IApiComponent component, int kindmask, IProgressMonitor monitor) {

@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * A container which can contain a set of source or class files.
- * 
+ *
  * @since 1.0.0
  */
 public interface IApiTypeContainer extends IApiElement {
@@ -39,7 +39,7 @@ public interface IApiTypeContainer extends IApiElement {
 	/**
 	 * Returns the names of all packages in this container in dot separated
 	 * format. Does not include empty packages.
-	 * 
+	 *
 	 * @return names of all packages in this container
 	 * @exception if unable to retrieve package names
 	 */
@@ -48,7 +48,7 @@ public interface IApiTypeContainer extends IApiElement {
 	/**
 	 * Returns the {@link IApiTypeRoot} with the given fully qualified name or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param qualifiedName fully qualified type name. Package names are dot
 	 *            separated and type names are '$'-separated.
 	 * @return {@link IApiTypeRoot} or <code>null</code>
@@ -59,7 +59,7 @@ public interface IApiTypeContainer extends IApiElement {
 	/**
 	 * Returns the {@link IApiTypeRoot} with the given fully qualified name
 	 * coming from the component with the given id or <code>null</code> if none.
-	 * 
+	 *
 	 * @param qualifiedName fully qualified type name. Package names are dot
 	 *            separated and type names are '$'-separated.
 	 * @param id the API component id to consider
@@ -70,7 +70,7 @@ public interface IApiTypeContainer extends IApiElement {
 
 	/**
 	 * Visits all {@link IApiTypeRoot} in this container.
-	 * 
+	 *
 	 * @param visitor class file visitor.
 	 * @exception CoreException if unable to visit this container
 	 */
@@ -80,7 +80,7 @@ public interface IApiTypeContainer extends IApiElement {
 	 * Closes this {@link IApiTypeContainer}. The container may still be used
 	 * after closing, but clients should close the container when they are done
 	 * with it to free system resources.
-	 * 
+	 *
 	 * @throws CoreException if closing fails
 	 */
 	public void close() throws CoreException;
@@ -93,7 +93,7 @@ public interface IApiTypeContainer extends IApiElement {
 	 * <li>{@link #FOLDER}</li>
 	 * <li>{@link #STUB}</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return the type of container this is
 	 */
 	public int getContainerType();

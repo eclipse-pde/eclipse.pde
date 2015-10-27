@@ -33,7 +33,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Detects leaked field declarations (declared type).
- * 
+ *
  * @since 1.1
  */
 public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {

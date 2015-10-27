@@ -23,7 +23,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 
 /**
  * Utility class used to resolve {@link IReference}s
- * 
+ *
  * @since 1.0.0
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -37,7 +37,7 @@ public final class ReferenceResolver {
 
 	/**
 	 * Resolves retained references.
-	 * 
+	 *
 	 * @param references list of {@link IReference} to resolve
 	 * @param progress monitor
 	 * @throws CoreException if something goes wrong
@@ -91,7 +91,7 @@ public final class ReferenceResolver {
 
 	/**
 	 * Resolves the collect sets of references.
-	 * 
+	 *
 	 * @param map the mapping of keys to sets of {@link IReference}s
 	 * @throws CoreException if something bad happens
 	 */
@@ -115,11 +115,11 @@ public final class ReferenceResolver {
 	/**
 	 * Creates a unique string key for a given reference. The key is of the form
 	 * "component X references type/member"
-	 * 
+	 *
 	 * <pre>
 	 * [component_id]#[type_name](#[member_name]#[member_signature])
 	 * </pre>
-	 * 
+	 *
 	 * @param reference reference
 	 * @return a string key for the given reference.
 	 */

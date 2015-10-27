@@ -48,7 +48,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 	 * Builds a type structure for a class file. Note that if an API component
 	 * is not specified, then some operations on the resulting {@link IApiType}
 	 * will not be available (navigating super types, member types, etc).
-	 * 
+	 *
 	 * @param cv class file visitor
 	 * @param component originating API component or <code>null</code> if
 	 *            unknown
@@ -247,7 +247,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 	/**
 	 * Builds a type structure with the given .class file bytes in the specified
 	 * API component.
-	 * 
+	 *
 	 * @param bytes class file bytes
 	 * @param component originating API component
 	 * @param file associated class file
@@ -271,7 +271,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 	/**
 	 * Builds a type structure with the given .class file bytes in the specified
 	 * API component.
-	 * 
+	 *
 	 * @param bytes class file bytes
 	 * @param component originating API component
 	 * @param file associated class file

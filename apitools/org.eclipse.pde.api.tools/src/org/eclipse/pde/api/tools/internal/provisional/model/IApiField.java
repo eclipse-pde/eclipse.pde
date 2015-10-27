@@ -12,12 +12,12 @@ package org.eclipse.pde.api.tools.internal.provisional.model;
 
 /**
  * A field type member.
- * 
+ *
  * @see IApiType
  * @see IApiMethod
- * 
+ *
  * @since 1.1
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -25,14 +25,14 @@ public interface IApiField extends IApiMember {
 
 	/**
 	 * Returns whether this field represents a constant in an enum type.
-	 * 
+	 *
 	 * @return whether this field represents a constant in an enum type
 	 */
 	public boolean isEnumConstant();
 
 	/**
 	 * Returns the constant value for this field or <code>null</code> if none.
-	 * 
+	 *
 	 * @return constant value or <code>null</code>
 	 */
 	public Object getConstantValue();

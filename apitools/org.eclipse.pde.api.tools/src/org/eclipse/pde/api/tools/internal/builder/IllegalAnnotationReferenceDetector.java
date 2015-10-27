@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
  * Detector for illegally referenced annotations
- * 
+ *
  * @since 1.0.600
  */
 public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeReference {
@@ -91,7 +91,7 @@ public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeRefer
 	 * <code>null</code> and not the enclosing {@link IAnnotatable} (if there is
 	 * one). That way we can fetch the default illegal type reference message
 	 * location
-	 * 
+	 *
 	 * @param type
 	 * @param member
 	 * @param reference

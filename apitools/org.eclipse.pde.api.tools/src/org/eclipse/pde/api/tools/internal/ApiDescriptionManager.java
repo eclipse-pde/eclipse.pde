@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -56,7 +56,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Manages a cache of API descriptions for Java projects. Descriptions are
  * re-used between API components for the same project.
- * 
+ *
  * @since 1.0
  */
 public final class ApiDescriptionManager implements ISaveParticipant {
@@ -95,7 +95,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	/**
 	 * Returns the singleton API description manager.
-	 * 
+	 *
 	 * @return API description manager
 	 */
 	public synchronized static ApiDescriptionManager getManager() {
@@ -108,10 +108,10 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	/**
 	 * Returns an API description for the given project component and connect it
 	 * to the given bundle description.
-	 * 
+	 *
 	 * @param project Java project
 	 * @param bundle
-	 * 
+	 *
 	 * @return API description
 	 */
 	public synchronized IApiDescription getApiDescription(ProjectComponent component, BundleDescription bundle) {
@@ -136,7 +136,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	/**
 	 * Cleans the API description for the given project.
-	 * 
+	 *
 	 * @param project
 	 * @param delete whether to delete the file on disk
 	 * @param remove whether to remove the cached API description
@@ -165,7 +165,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	/**
 	 * Notifies the API description that the underlying project has changed.
-	 * 
+	 *
 	 * @param project
 	 */
 	synchronized void projectChanged(IJavaProject project) {
@@ -178,7 +178,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	/**
 	 * Notifies the API description that the underlying project classpath has
 	 * changed.
-	 * 
+	 *
 	 * @param project
 	 */
 	synchronized void projectClasspathChanged(IJavaProject project) {
@@ -190,7 +190,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	/**
 	 * Flushes the changed element from the model cache
-	 * 
+	 *
 	 * @param element
 	 */
 	void flushElementCache(IJavaElement element) {
@@ -252,7 +252,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	/**
 	 * Restores the API description from its saved file, if any and returns true
 	 * if successful.
-	 * 
+	 *
 	 * @param project
 	 * @param description
 	 * @return whether the restore succeeded
@@ -383,7 +383,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	/**
 	 * Returns an integer attribute.
-	 * 
+	 *
 	 * @param element element with the integer
 	 * @param attr attribute name
 	 * @return attribute value as an integer
@@ -399,7 +399,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	/**
 	 * Returns a long attribute.
-	 * 
+	 *
 	 * @param element element with the long
 	 * @param attr attribute name
 	 * @return attribute value as an long
@@ -417,7 +417,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	/**
 	 * Throws an exception with the given message and underlying exception.
-	 * 
+	 *
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
 	 * @throws CoreException

@@ -34,7 +34,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Factory for creating {@link IApiProblem}s
- * 
+ *
  * @since 1.0.0
  */
 public class ApiProblemFactory {
@@ -48,7 +48,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new {@link IApiProblemFilter}
-	 * 
+	 *
 	 * @param componentid
 	 * @param problem
 	 * @param comment
@@ -62,7 +62,7 @@ public class ApiProblemFactory {
 	/**
 	 * Computes an {@link IApiProblem} hashcode from the given filter handle. If
 	 * the handle is <code>null</code> this method returns <code>-1</code>.
-	 * 
+	 *
 	 * @param filterhandle the problem handle
 	 * @return a new hashcode for the {@link IApiProblem} described in the
 	 *         filter or <code>-1</code>
@@ -98,7 +98,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Returns the deep hash code of the complete listing of message arguments
-	 * 
+	 *
 	 * @param arguments
 	 * @return the hash code of the message arguments
 	 */
@@ -174,7 +174,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new {@link IApiProblem}
-	 * 
+	 *
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized
@@ -200,7 +200,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new {@link IApiProblem}
-	 * 
+	 *
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized
@@ -220,7 +220,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new API usage {@link IApiProblem}
-	 * 
+	 *
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized
@@ -242,7 +242,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new API usage {@link IApiProblem}
-	 * 
+	 *
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized
@@ -265,7 +265,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new API baseline {@link IApiProblem}
-	 * 
+	 *
 	 * @param resourcepath the path to the resource this problem was found in
 	 *            The arguments are passed into the string in the order they
 	 *            appear in the array.
@@ -282,7 +282,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new API component resolution {@link IApiProblem}
-	 * 
+	 *
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized
 	 *            message. The arguments are passed into the string in the order
@@ -300,7 +300,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new fatal {@link IApiProblem}
-	 * 
+	 *
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized
 	 *            message. The arguments are passed into the string in the order
@@ -315,7 +315,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new since tag {@link IApiProblem}
-	 * 
+	 *
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized
@@ -337,7 +337,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new version number {@link IApiProblem}
-	 * 
+	 *
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized
@@ -359,7 +359,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new API Use Scan breakage {@link IApiProblem}
-	 * 
+	 *
 	 * @param resourcePath path of the resource associated with the problem
 	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized
@@ -385,12 +385,12 @@ public class ApiProblemFactory {
 	/**
 	 * Returns the localized message for the given {@link IApiProblem}. Returns
 	 * <code>null</code> if no localized message cannot be created.
-	 * 
+	 *
 	 * @param problemid the id of the problem to create a message for
 	 * @param arguments the arguments to pass into the localized string. The
 	 *            arguments are passed in to the string in the order they appear
 	 *            in the array.
-	 * 
+	 *
 	 * @return a localized message for the given {@link IApiProblem} or
 	 *         <code>null</code>
 	 */
@@ -402,7 +402,7 @@ public class ApiProblemFactory {
 	 * Returns the localized message for the given problem id and message
 	 * arguments. Returns a not found message if no localized message cannot be
 	 * created.
-	 * 
+	 *
 	 * @param messageid
 	 * @param messageargs
 	 * @return a localized message for the given arguments or a 'not found'
@@ -441,7 +441,7 @@ public class ApiProblemFactory {
 	/**
 	 * This method initializes the MessageTemplates class variable according to
 	 * the current Locale.
-	 * 
+	 *
 	 * @param loc Locale
 	 * @return HashtableOfInt
 	 */
@@ -473,7 +473,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a problem id from the composite members of a problem id.
-	 * 
+	 *
 	 * @param category
 	 * @param element
 	 * @param kind
@@ -488,7 +488,7 @@ public class ApiProblemFactory {
 	 * Returns the {@link IApiProblem} id from the given marker or
 	 * <code>-1</code> if the marker is <code>null</code> or the marker does not
 	 * contain the {@link IApiMarkerConstants#MARKER_ATTR_PROBLEM_ID} attribute
-	 * 
+	 *
 	 * @param marker
 	 * @return the {@link IApiProblem} id or <code>-1</code>
 	 * @since 1.0.400
@@ -503,10 +503,10 @@ public class ApiProblemFactory {
 	/**
 	 * Returns the kind of the problem from the given problem id. The returned
 	 * kind is not checked to see if it is correct or existing.
-	 * 
+	 *
 	 * @see IApiProblem#getKind()
 	 * @see IDelta#getKind()
-	 * 
+	 *
 	 * @param problemid
 	 * @return the kind from the given problem id
 	 */
@@ -517,10 +517,10 @@ public class ApiProblemFactory {
 	/**
 	 * Returns the kind of element from the given problem id. The returned
 	 * element kind is not checked to see if it is correct or existing.
-	 * 
+	 *
 	 * @see IElementDescriptor#getElementType()
 	 * @see IDelta#getElementType()
-	 * 
+	 *
 	 * @param problemid
 	 * @return the element kind from the given problem id
 	 */
@@ -531,9 +531,9 @@ public class ApiProblemFactory {
 	/**
 	 * Returns the flags from the given problem id. The returned flags are not
 	 * checked to see if they are correct or existing.
-	 * 
+	 *
 	 * @see IDelta#getFlags()
-	 * 
+	 *
 	 * @param problemid
 	 * @return the flags from the given problem id
 	 */
@@ -544,9 +544,9 @@ public class ApiProblemFactory {
 	/**
 	 * Returns the category of the given problem id. The returned category is
 	 * not checked to see if it is correct or existing.
-	 * 
+	 *
 	 * @see IApiProblem#getCategory()
-	 * 
+	 *
 	 * @param problemid
 	 * @return the category of this problem id
 	 */
@@ -556,7 +556,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Convenience method to get the message id from a problem id
-	 * 
+	 *
 	 * @param problemid
 	 * @return the message id to use for the given problem id
 	 */
@@ -566,7 +566,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Returns the problem message id for the given problem parameters.
-	 * 
+	 *
 	 * @param category
 	 * @param element
 	 * @param kind
@@ -967,7 +967,7 @@ public class ApiProblemFactory {
 
 	/**
 	 * Returns the problem severity id for the given problem parameters.
-	 * 
+	 *
 	 * @param category
 	 * @param element
 	 * @param kind

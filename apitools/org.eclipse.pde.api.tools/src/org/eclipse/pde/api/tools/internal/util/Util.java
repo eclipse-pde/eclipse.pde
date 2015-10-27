@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -129,7 +129,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A Utility class to use for API tools
- * 
+ *
  * @since 1.0.0
  */
 public final class Util {
@@ -150,7 +150,7 @@ public final class Util {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param name
 		 * @param project
 		 */
@@ -171,7 +171,7 @@ public final class Util {
 
 		/**
 		 * Returns if this build job is covered by another build job
-		 * 
+		 *
 		 * @param other
 		 * @return true if covered by another build job, false otherwise
 		 */
@@ -306,7 +306,7 @@ public final class Util {
 
 	/**
 	 * Throws an exception with the given message and underlying exception.
-	 * 
+	 *
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
 	 * @throws CoreException
@@ -319,7 +319,7 @@ public final class Util {
 	/**
 	 * Appends a property to the given string buffer with the given key and
 	 * value in the format "key=value\n".
-	 * 
+	 *
 	 * @param buffer buffer to append to
 	 * @param key key
 	 * @param value value
@@ -333,7 +333,7 @@ public final class Util {
 
 	/**
 	 * Collects all of the deltas from the given parent delta
-	 * 
+	 *
 	 * @param delta
 	 * @return
 	 */
@@ -353,7 +353,7 @@ public final class Util {
 
 	/**
 	 * Collects files into the collector array list
-	 * 
+	 *
 	 * @param root the root to collect the files from
 	 * @param collector the collector to place matches into
 	 * @param fileFilter the filter for files or <code>null</code> to accept all
@@ -373,7 +373,7 @@ public final class Util {
 
 	/**
 	 * Returns all of the API projects in the workspace
-	 * 
+	 *
 	 * @return all of the API projects in the workspace or <code>null</code> if
 	 *         there are none.
 	 */
@@ -402,7 +402,7 @@ public final class Util {
 
 	/**
 	 * Returns all of the API projects in the workspace
-	 * 
+	 *
 	 * @param sourcelevel
 	 * @return all of the API projects in the workspace or <code>null</code> if
 	 *         there are none.
@@ -436,7 +436,7 @@ public final class Util {
 
 	/**
 	 * Copies the given file to the new file
-	 * 
+	 *
 	 * @param file
 	 * @param newFile
 	 * @return if the copy succeeded
@@ -486,7 +486,7 @@ public final class Util {
 
 	/**
 	 * Creates an EE file for the given JRE and specified EE id
-	 * 
+	 *
 	 * @param jre
 	 * @param eeid
 	 * @return
@@ -510,7 +510,7 @@ public final class Util {
 	/**
 	 * Returns whether the objects are equal, accounting for either one being
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param o1
 	 * @param o2
 	 * @return whether the objects are equal, or both are <code>null</code>
@@ -524,7 +524,7 @@ public final class Util {
 
 	/**
 	 * Returns an execution environment description for the given VM.
-	 * 
+	 *
 	 * @param vm JRE to create an definition for
 	 * @return an execution environment description for the given VM
 	 * @throws IOException if unable to generate description
@@ -550,7 +550,7 @@ public final class Util {
 	 * Returns an array of all of the files from the given root that are
 	 * accepted by the given file filter. If the file filter is null all files
 	 * within the given root are returned.
-	 * 
+	 *
 	 * @param root
 	 * @param fileFilter
 	 * @return the list of files from within the given root
@@ -568,10 +568,10 @@ public final class Util {
 
 	/**
 	 * Returns a build job that will perform a full build on the given projects.
-	 * 
+	 *
 	 * If <code>projects</code> are null, then an AssertionFailedException is
 	 * thrown
-	 * 
+	 *
 	 * @param projects the projects to build
 	 * @return the build job
 	 * @throws AssertionFailedException if the given projects are null
@@ -587,10 +587,10 @@ public final class Util {
 	/**
 	 * Returns a build job that will return the build that corresponds to the
 	 * given build kind on the given projects.
-	 * 
+	 *
 	 * If <code>projects</code> are null, then an AssertionFailedException is
 	 * thrown
-	 * 
+	 *
 	 * @param projects the projects to build
 	 * @param buildKind the given build kind
 	 * @return the build job
@@ -607,7 +607,7 @@ public final class Util {
 	/**
 	 * Returns a result of searching the given components for class file with
 	 * the given type name.
-	 * 
+	 *
 	 * @param components API components to search or <code>null</code> if none
 	 * @param typeName type to search for
 	 * @return class file or <code>null</code> if none found
@@ -636,7 +636,7 @@ public final class Util {
 	 * Return a string that represents the element type of the given delta.
 	 * Returns {@link #UNKNOWN_ELEMENT_KIND} if the element type cannot be
 	 * determined.
-	 * 
+	 *
 	 * @param delta the given delta
 	 * @return a string that represents the element type of the given delta.
 	 */
@@ -646,7 +646,7 @@ public final class Util {
 
 	/**
 	 * Returns a text representation of a marker severity level
-	 * 
+	 *
 	 * @param severity
 	 * @return text of a marker severity level
 	 */
@@ -670,7 +670,7 @@ public final class Util {
 	/**
 	 * Return an int value that represents the given element type Returns -1 if
 	 * the element type cannot be determined.
-	 * 
+	 *
 	 * @param elementType the given element type
 	 * @return an int that represents the given element type constant.
 	 */
@@ -694,7 +694,7 @@ public final class Util {
 	/**
 	 * Return a string that represents the given element type Returns
 	 * {@link #UNKNOWN_ELEMENT_KIND} if the element type cannot be determined.
-	 * 
+	 *
 	 * @param elementType the given element type
 	 * @return a string that represents the given element type.
 	 */
@@ -729,7 +729,7 @@ public final class Util {
 	/**
 	 * Return a string that represents the given flags Returns
 	 * {@link #UNKNOWN_FLAGS} if the flags cannot be determined.
-	 * 
+	 *
 	 * @param flags the given delta's flags
 	 * @return a string that represents the given flags.
 	 */
@@ -876,7 +876,7 @@ public final class Util {
 	/**
 	 * Return a string that represents the kind of the given delta. Returns
 	 * {@link #UNKNOWN_KIND} if the kind cannot be determined.
-	 * 
+	 *
 	 * @param delta the given delta
 	 * @return a string that represents the kind of the given delta.
 	 */
@@ -887,7 +887,7 @@ public final class Util {
 	/**
 	 * Return a string that represents the given kind. Returns
 	 * {@link #UNKNOWN_KIND} if the kind cannot be determined.
-	 * 
+	 *
 	 * @param delta the given kind
 	 * @return a string that represents the given kind.
 	 */
@@ -908,7 +908,7 @@ public final class Util {
 	/**
 	 * Returns the preference key for the given element type, the given kind and
 	 * the given flags.
-	 * 
+	 *
 	 * @param elementType the given element type (retrieved using
 	 *            {@link IDelta#getElementType()}
 	 * @param kind the given kind (retrieved using {@link IDelta#getKind()}
@@ -971,7 +971,7 @@ public final class Util {
 
 	/**
 	 * Returns the details of the API delta as a string
-	 * 
+	 *
 	 * @param delta
 	 * @return the details of the delta as a string
 	 */
@@ -1029,7 +1029,7 @@ public final class Util {
 
 	/**
 	 * Returns the {@link IDocument} for the specified {@link ICompilationUnit}
-	 * 
+	 *
 	 * @param cu
 	 * @return the {@link IDocument} for the specified {@link ICompilationUnit}
 	 * @throws CoreException
@@ -1054,9 +1054,9 @@ public final class Util {
 	/**
 	 * Returns the OSGi profile properties corresponding to the given execution
 	 * environment id, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param eeId OSGi profile identifier
-	 * 
+	 *
 	 * @return the corresponding properties or <code>null</code> if none
 	 */
 	public static Properties getEEProfile(String eeId) {
@@ -1084,7 +1084,7 @@ public final class Util {
 	 * Returns the number of fragments for the given version value, -1 if the
 	 * format is unknown. The version is formed like: [optional plug-in name]
 	 * major.minor.micro.qualifier.
-	 * 
+	 *
 	 * @param version the given version value
 	 * @return the number of fragments for the given version value or -1 if the
 	 *         format is unknown
@@ -1214,7 +1214,7 @@ public final class Util {
 	/**
 	 * Updates a given progress monitor the given amount of work. Throws an
 	 * {@link OperationCanceledException} if the monitor has been canceled.
-	 * 
+	 *
 	 * @param monitor
 	 * @param work
 	 * @throws OperationCanceledException
@@ -1232,7 +1232,7 @@ public final class Util {
 	/**
 	 * Updates the given monitor 0 work ticks. This method is used to poll for
 	 * cancellation without advancing the work done.
-	 * 
+	 *
 	 * @param monitor
 	 * @throws OperationCanceledException
 	 */
@@ -1339,7 +1339,7 @@ public final class Util {
 
 	/**
 	 * Returns the given input stream as a byte array
-	 * 
+	 *
 	 * @param stream the stream to get as a byte array
 	 * @param length the length to read from the stream or -1 for unknown
 	 * @return the given input stream as a byte array
@@ -1390,7 +1390,7 @@ public final class Util {
 	 * length is specified (i.e. if length != -1), this represents the number of
 	 * bytes in the stream. Note the specified stream is not closed in this
 	 * method
-	 * 
+	 *
 	 * @param stream the stream to get convert to the char array
 	 * @param length the length of the input stream, or -1 if unknown
 	 * @param encoding the encoding to use when reading the stream
@@ -1428,7 +1428,7 @@ public final class Util {
 	/**
 	 * Tries to find the 'MANIFEST.MF' file with in the given project in the
 	 * 'META-INF folder'.
-	 * 
+	 *
 	 * @param currentProject
 	 * @return a handle to the manifest file or <code>null</code> if not found
 	 */
@@ -1440,7 +1440,7 @@ public final class Util {
 	 * Returns if the given {@link IMarker} is representing an
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
 	 * or not
-	 * 
+	 *
 	 * @param marker the marker to check
 	 * @return true if the marker is for an
 	 *         {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
@@ -1453,7 +1453,7 @@ public final class Util {
 
 	/**
 	 * Returns a reference type for the given fully qualified type name.
-	 * 
+	 *
 	 * @param fullyQualifiedName type name
 	 * @return reference type
 	 */
@@ -1466,7 +1466,7 @@ public final class Util {
 
 	/**
 	 * Returns if the given project is API enabled
-	 * 
+	 *
 	 * @param project the given project
 	 * @return true if the project is API enabled, false otherwise
 	 */
@@ -1480,7 +1480,7 @@ public final class Util {
 
 	/**
 	 * Returns if the given project is a java project
-	 * 
+	 *
 	 * @param project the given project
 	 * @return <code>true</code> if the project is a java project,
 	 *         <code>false</code> otherwise
@@ -1495,7 +1495,7 @@ public final class Util {
 
 	/**
 	 * Returns if the given project is API enabled
-	 * 
+	 *
 	 * @param project the given project
 	 * @return <code>true</code> if the project is API enabled,
 	 *         <code>false</code> otherwise
@@ -1510,7 +1510,7 @@ public final class Util {
 	/**
 	 * Returns if the given {@link IApiComponent} is a valid
 	 * {@link IApiComponent}
-	 * 
+	 *
 	 * @param apiComponent the given component
 	 * @return true if the given {@link IApiComponent} is valid, false otherwise
 	 */
@@ -1546,7 +1546,7 @@ public final class Util {
 	/**
 	 * Returns if the specified file name is an archive name. A name is
 	 * considered to be an archive name if it ends with either '.zip' or '.jar'
-	 * 
+	 *
 	 * @param fileName
 	 * @return true if the file name is an archive name false otherwise
 	 */
@@ -1557,7 +1557,7 @@ public final class Util {
 	/**
 	 * Returns if the given file name represents a 'standard' archive, where the
 	 * name has an extension of *.zip or *.jar
-	 * 
+	 *
 	 * @param fileName
 	 * @return true if the given file name is that of a 'standard' archive,
 	 *         false otherwise
@@ -1570,7 +1570,7 @@ public final class Util {
 	/**
 	 * Returns if the given file name represents a G-zip file name, where the
 	 * name has an extension of *.tar.gz or *.tgz
-	 * 
+	 *
 	 * @param fileName
 	 * @return true if the given file name is that of a G-zip archive, false
 	 *         otherwise
@@ -1582,7 +1582,7 @@ public final class Util {
 
 	/**
 	 * Returns if the flags are for a class
-	 * 
+	 *
 	 * @param accessFlags the given access flags
 	 * @return
 	 */
@@ -1593,7 +1593,7 @@ public final class Util {
 	/**
 	 * Returns if the specified file name is for a class file. A name is
 	 * considered to be a class file if it ends in '.class'
-	 * 
+	 *
 	 * @param fileName
 	 * @return true if the name is for a class file false otherwise
 	 */
@@ -1634,7 +1634,7 @@ public final class Util {
 	/**
 	 * Returns if the specified file name is for a java source file. A name is
 	 * considered to be a java source file if it ends in '.java'
-	 * 
+	 *
 	 * @param fileName
 	 * @return true if the name is for a java source file, false otherwise
 	 */
@@ -1644,7 +1644,7 @@ public final class Util {
 
 	/**
 	 * Returns if the given name is {@link java.lang.Object}
-	 * 
+	 *
 	 * @param name
 	 * @return true if the name is java.lang.Object, false otherwise
 	 */
@@ -1654,7 +1654,7 @@ public final class Util {
 
 	/**
 	 * Return if the name is {@link java.lang.RuntimeException}
-	 * 
+	 *
 	 * @param name
 	 * @return true if the name is java.lang.RuntimeException, false otherwise
 	 */
@@ -1672,7 +1672,7 @@ public final class Util {
 
 	/**
 	 * Returns a new XML document.
-	 * 
+	 *
 	 * @return document
 	 * @throws CoreException if unable to create a new document
 	 */
@@ -1691,7 +1691,7 @@ public final class Util {
 	/**
 	 * Parses the given string representing an XML document, returning its root
 	 * element.
-	 * 
+	 *
 	 * @param document XML document as a string
 	 * @return the document's root element
 	 * @throws CoreException if unable to parse the document
@@ -1727,7 +1727,7 @@ public final class Util {
 	/**
 	 * Save the given contents into the given file. The file parent folder must
 	 * exist.
-	 * 
+	 *
 	 * @param file the given file target
 	 * @param contents the given contents
 	 * @throws IOException if an IOException occurs while saving the file
@@ -1751,7 +1751,7 @@ public final class Util {
 
 	/**
 	 * Returns the contents of the given file as a string, or <code>null</code>
-	 * 
+	 *
 	 * @param file the file to get the contents for
 	 * @return the contents of the file as a {@link String} or <code>null</code>
 	 */
@@ -1779,7 +1779,7 @@ public final class Util {
 	/**
 	 * Returns the given string as an {@link InputStream}. It is up to the
 	 * caller to close the new stream.
-	 * 
+	 *
 	 * @param string the string to convert
 	 * @return the {@link InputStream} for the given string
 	 */
@@ -1794,7 +1794,7 @@ public final class Util {
 
 	/**
 	 * Serializes the given XML document into a UTF-8 string.
-	 * 
+	 *
 	 * @param document XML document to serialize
 	 * @return a string representing the given document
 	 * @throws CoreException if unable to serialize the document
@@ -1913,7 +1913,7 @@ public final class Util {
 
 	/**
 	 * Gets the .ee file supplied to run tests based on system property.
-	 * 
+	 *
 	 * @return
 	 */
 	public static File getEEDescriptionFile() {
@@ -1942,7 +1942,7 @@ public final class Util {
 
 	/**
 	 * Creates a new file in the users' <code>temp</code> directory
-	 * 
+	 *
 	 * @param prefix
 	 * @param suffix
 	 * @return a new temp file
@@ -2065,7 +2065,7 @@ public final class Util {
 	 * Delete a file or directory and insure that the file is no longer present
 	 * on file system. In case of directory, delete all the hierarchy
 	 * underneath.
-	 * 
+	 *
 	 * @param file The file or directory to delete
 	 * @return true iff the file was really delete, false otherwise
 	 */
@@ -2097,7 +2097,7 @@ public final class Util {
 
 	/**
 	 * Wait until the file is _really_ deleted on file system.
-	 * 
+	 *
 	 * @param file Deleted file
 	 * @return true if the file was finally deleted, false otherwise
 	 */
@@ -2150,7 +2150,7 @@ public final class Util {
 	 * Returns whether a file is really deleted or not. Does not only rely on
 	 * {@link File#exists()} method but also look if it's not in its parent
 	 * children {@link #getParentChildFile(File)}.
-	 * 
+	 *
 	 * @param file The file to test if deleted
 	 * @return true if the file does not exist and was not found in its parent
 	 *         children.
@@ -2162,7 +2162,7 @@ public final class Util {
 	/**
 	 * Returns the parent's child file matching the given file or null if not
 	 * found.
-	 * 
+	 *
 	 * @param file The searched file in parent
 	 * @return The parent's child matching the given file or null if not found.
 	 */
@@ -2192,7 +2192,7 @@ public final class Util {
 
 	/**
 	 * Turns the given array of strings into a {@link HashSet}
-	 * 
+	 *
 	 * @param values
 	 * @return a new {@link HashSet} of the string array
 	 */
@@ -2209,7 +2209,7 @@ public final class Util {
 	/**
 	 * Returns an identifier for the given API component including its version
 	 * identifier (component id + '(' + major + . + minor + . + micro + ')' )
-	 * 
+	 *
 	 * @param component API component
 	 * @return API component + version identifier
 	 */
@@ -2235,7 +2235,7 @@ public final class Util {
 	/**
 	 * Returns an identifier for the given API component including its version
 	 * identifier (component id + _ + major + _ + minor + _ + micro)
-	 * 
+	 *
 	 * @param component API component
 	 * @return API component + version identifier
 	 */
@@ -2296,7 +2296,7 @@ public final class Util {
 
 	/**
 	 * Returns the string representation of the {@link IApiElement} type
-	 * 
+	 *
 	 * @param type
 	 * @return the string of the {@link IApiElement} type
 	 */
@@ -2399,7 +2399,7 @@ public final class Util {
 	 * {@link IType} is <code>null</code> or the type cannot be located (does
 	 * not exist) than the MANIFEST.MF will be returned. <code>null</code> can
 	 * be returned in the case that the project does not have a manifest file.
-	 * 
+	 *
 	 * @param project the project to look in for the {@link IResource}
 	 * @param type the type we are looking for the resource for, or
 	 *            <code>null</code>
@@ -2444,7 +2444,7 @@ public final class Util {
 	 * Initializes the exclude set with regex support. The API baseline is used
 	 * to determine which bundles should be added to the list when processing
 	 * regex expressions.
-	 * 
+	 *
 	 * @param location
 	 * @param baseline
 	 * @return the list of bundles to be excluded
@@ -2505,7 +2505,7 @@ public final class Util {
 	/**
 	 * Collects the set of component ids that match a given regex in the exclude
 	 * file
-	 * 
+	 *
 	 * @param line
 	 * @param list
 	 * @param components
@@ -2553,7 +2553,7 @@ public final class Util {
 	 * Returns true if the given {@link IApiType} is API or not, where API is
 	 * defined as having API visibility in an API description and having either
 	 * the public of protected Java flag set
-	 * 
+	 *
 	 * @param visibility
 	 * @param typeDescriptor
 	 * @return true if the given type is API, false otherwise
@@ -2566,7 +2566,7 @@ public final class Util {
 	/**
 	 * Simple method to walk an array and call <code>toString()</code> on each
 	 * of the entries. Does not descend into sub-collections.
-	 * 
+	 *
 	 * @param array the array
 	 * @return the comma-separated string representation of the the array
 	 * @since 1.0.3

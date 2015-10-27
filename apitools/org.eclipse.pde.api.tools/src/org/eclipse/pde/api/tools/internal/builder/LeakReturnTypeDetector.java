@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Detects leaks in method return types
- * 
+ *
  * @since 1.1
  */
 public class LeakReturnTypeDetector extends MethodLeakDetector {

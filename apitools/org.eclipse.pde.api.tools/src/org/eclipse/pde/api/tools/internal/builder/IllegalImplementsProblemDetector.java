@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Detects when a type illegally implements another type.
- * 
+ *
  * @since 1.1
  */
 public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReference {
@@ -149,7 +149,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	/**
 	 * Returns if the given type implements any of the given interfaces anywhere
 	 * in its lineage
-	 * 
+	 *
 	 * @param type
 	 * @param iname
 	 * @return true if all of the interfaces are implemented, false otherwise
@@ -168,7 +168,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	/**
 	 * Inspects the hierarchy of super-interfaces to determine if an interface
 	 * with the given name is implemented or not
-	 * 
+	 *
 	 * @param iname the name of the interface to find
 	 * @param interfaces the collection of interfaces to inspect
 	 * @return true if the interface is implemented, false otherwise
@@ -192,7 +192,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	/**
 	 * Finds all of the implements restricted interfaces in the hierarchy of
 	 * this given type
-	 * 
+	 *
 	 * @param originalcomponent the original {@link IApiComponent}
 	 * @param entryinterface the name of the interface we originally entered the
 	 *            recursion with

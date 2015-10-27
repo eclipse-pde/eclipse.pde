@@ -51,14 +51,14 @@ import org.osgi.framework.BundleException;
  * <p>
  * Note: this class requires a running workspace to be instantiated.
  * </p>
- * 
+ *
  * @since 1.0.0
  */
 public class ProjectComponent extends BundleComponent {
 
 	/**
 	 * Constant used to describe the custom build.properties entry
-	 * 
+	 *
 	 * @since 1.0.3
 	 */
 	public static final String ENTRY_CUSTOM = "custom"; //$NON-NLS-1$
@@ -66,7 +66,7 @@ public class ProjectComponent extends BundleComponent {
 	/**
 	 * Constant used to describe build.properties that start with
 	 * <code>extra.</code>
-	 * 
+	 *
 	 * @since 1.0.3
 	 */
 	public static final String EXTRA_PREFIX = "extra."; //$NON-NLS-1$
@@ -94,7 +94,7 @@ public class ProjectComponent extends BundleComponent {
 	/**
 	 * Constructs an API component for the given Java project in the specified
 	 * baseline.
-	 * 
+	 *
 	 * @param baseline the owning API baseline
 	 * @param location the given location of the component
 	 * @param model the given model
@@ -135,7 +135,7 @@ public class ProjectComponent extends BundleComponent {
 
 	/**
 	 * Returns the {@link IPluginModelBase} backing this component
-	 * 
+	 *
 	 * @return the {@link IPluginModelBase} or throws and exception, never
 	 *         retruns <code>null</code>
 	 * @throws CoreException
@@ -341,7 +341,7 @@ public class ProjectComponent extends BundleComponent {
 	/**
 	 * Finds and returns an existing {@link IApiTypeContainer} at the specified
 	 * location in this project, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param location project relative path to the class file container
 	 * @return {@link IApiTypeContainer} or <code>null</code>
 	 */
@@ -362,7 +362,7 @@ public class ProjectComponent extends BundleComponent {
 	 * folder, or <code>null</code> if it does not exist. If the source folder
 	 * shares an output location with a previous source folder, the output
 	 * location is shared (a new one is not created).
-	 * 
+	 *
 	 * @param location project relative path to the source folder
 	 * @return {@link IApiTypeContainer} or <code>null</code>
 	 */
@@ -413,7 +413,7 @@ public class ProjectComponent extends BundleComponent {
 
 	/**
 	 * Returns the Java project associated with this component.
-	 * 
+	 *
 	 * @return associated Java project
 	 */
 	public IJavaProject getJavaProject() {
@@ -426,7 +426,7 @@ public class ProjectComponent extends BundleComponent {
 	 * a SOURCE package fragment - this method is only used by the project API
 	 * description to obtain a class file corresponding to a compilation unit
 	 * when tag scanning (to resolve signatures).
-	 * 
+	 *
 	 * @param root source package fragment root
 	 * @return API type container associated with the package fragment root, or
 	 *         <code>null</code> if none

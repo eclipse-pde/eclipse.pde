@@ -23,7 +23,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Description of an analyzer used by the API builder to find and report
  * problems with the current API state.
- * 
+ *
  * @see ApiAnalysisBuilder
  * @see IApiProblem
  * @since 1.0.0
@@ -44,7 +44,7 @@ public interface IApiAnalyzer {
 	 * running. When the platform is running, the references are retrieved using
 	 * the preference store.
 	 * </p>
-	 * 
+	 *
 	 * @param buildState the given build state or null if none
 	 * @param filterStore the given filter store or null if none
 	 * @param preferences the given preferences to be used for the analysis
@@ -61,7 +61,7 @@ public interface IApiAnalyzer {
 	/**
 	 * Returns the complete set of {@link IApiProblem}s found by this analyzer,
 	 * or an empty array. This method must never return <code>null</code>
-	 * 
+	 *
 	 * @return the complete set of problems found by this analyzer or an empty
 	 *         array.
 	 */

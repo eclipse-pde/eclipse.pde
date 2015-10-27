@@ -76,7 +76,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * This class converts a collection of API use report XML files from a given
  * location to a corresponding collection of HTML in a given location
- * 
+ *
  * @since 1.0.1
  */
 public class UseReportConverter extends HTMLConvertor {
@@ -95,7 +95,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 		/**
 		 * Returns if the reference should be reported or not
-		 * 
+		 *
 		 * @param desc
 		 * @return true if the reference should be reported false otherwise
 		 */
@@ -113,7 +113,7 @@ public class UseReportConverter extends HTMLConvertor {
 		/**
 		 * Returns the enclosing {@link IReferenceTypeDescriptor} for the given
 		 * member descriptor
-		 * 
+		 *
 		 * @param member
 		 * @return the enclosing {@link IReferenceTypeDescriptor} or
 		 *         <code>null</code>
@@ -222,7 +222,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 		/**
 		 * Formats the arrays of messages
-		 * 
+		 *
 		 * @param messages
 		 * @return the formatted messages or <code>null</code>
 		 */
@@ -545,7 +545,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * Visibility constant indicating an element has host-fragment level of
 	 * visibility. i.e. fragments have {@link #PRIVATE_PERMISSIBLE}-like access
 	 * to the internals of their host.
-	 * 
+	 *
 	 * @since 1.0.1
 	 */
 	public static final int FRAGMENT_PERMISSIBLE = 0x0000005;
@@ -563,13 +563,13 @@ public class UseReportConverter extends HTMLConvertor {
 	public static final String INTERNAL_REFS_COLOUR = "#F2C3C3"; //$NON-NLS-1$
 	/**
 	 * Colour gray for illegal references
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public static final String ILLEGAL_REFS_COLOUR = "#E0E0E0"; //$NON-NLS-1$
 	/**
 	 * Colour gold for the references table header. Old colour: #CC9933
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public static final String REFERENCES_TABLE_HEADER_COLOUR = "#E0C040"; //$NON-NLS-1$
@@ -615,7 +615,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param htmlroot the folder root where the HTML reports should be written
 	 * @param xmlroot the folder root where the current API use scan output is
 	 *            located
@@ -765,7 +765,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns the handle to the default parser, caches the handle once it has
 	 * been created
-	 * 
+	 *
 	 * @return the handle to the default parser
 	 * @throws Exception forwarded general exception that can be trapped in Ant
 	 *             builds
@@ -789,7 +789,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Builds the name for the component
-	 * 
+	 *
 	 * @param id id of the component
 	 * @param version version of the component, can be <code>null</code>
 	 * @return string name
@@ -818,7 +818,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Applies the given XSLT to the given XML to produce HTML in the given file
-	 * 
+	 *
 	 * @param xsltfile
 	 * @param xmlfile
 	 * @param htmloutput
@@ -843,7 +843,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Applies the given XSLT source to the given XML file outputting to the
 	 * given HTML file
-	 * 
+	 *
 	 * @param xslt
 	 * @param xmlfile
 	 * @param htmlfile
@@ -860,7 +860,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Transforms the given set of xml files with the given XSLT and places the
 	 * result into a corresponding HTML file
-	 * 
+	 *
 	 * @param xmlfiles
 	 * @param xsltFile
 	 * @param html
@@ -884,7 +884,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Gets the HTML path to write out the transformed XML file to
-	 * 
+	 *
 	 * @param reportroot
 	 * @param xmlfile
 	 * @return
@@ -907,7 +907,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns the name to use for the corresponding HTML file from the given
 	 * XML file
-	 * 
+	 *
 	 * @param xmlFile
 	 * @return the HTML name to use
 	 */
@@ -922,7 +922,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns the collection of missing bundle names
-	 * 
+	 *
 	 * @param missingfile
 	 * @return the collection of missing bundle names
 	 * @throws Exception
@@ -951,7 +951,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns the sentence describing the purpose / reason of the missing
 	 * bundles
-	 * 
+	 *
 	 * @return a blurb describing the table of missing bundles
 	 */
 	protected String getMissingBundlesHeader() {
@@ -961,7 +961,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Writes any existing metadata out to a meta.html file in the root of the
 	 * HTML report location
-	 * 
+	 *
 	 * @param htmlroot
 	 * @throws Exception
 	 */
@@ -1004,7 +1004,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Writes out a summary of the missing required bundles
-	 * 
+	 *
 	 * @param htmlroot
 	 * @return <code>true</code> if there was at least one missing bundle
 	 */
@@ -1045,13 +1045,13 @@ public class UseReportConverter extends HTMLConvertor {
 			} else {
 				buffer.append(OPEN_P).append(getMissingBundlesHeader()).append(CLOSE_P);
 				buffer.append("<table border=\"1\" width=\"50%\">\n"); //$NON-NLS-1$
-				buffer.append(OPEN_TR).append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" width=\"36%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_required_bundles).append(CLOSE_B).append(CLOSE_TD).append(CLOSE_TR); //$NON-NLS-1$ //$NON-NLS-2$ 
+				buffer.append(OPEN_TR).append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" width=\"36%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_required_bundles).append(CLOSE_B).append(CLOSE_TD).append(CLOSE_TR); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			for (String value : sorted) {
 				buffer.append(OPEN_TR).append(OPEN_TD).append(value).append(CLOSE_TD).append(CLOSE_TR);
 			}
 			buffer.append(CLOSE_TABLE);
-			buffer.append(BR).append("<a href=\"not_searched.html\">").append(SearchMessages.UseReportConverter_back_to_not_searched).append(CLOSE_A); //$NON-NLS-1$ 
+			buffer.append(BR).append("<a href=\"not_searched.html\">").append(SearchMessages.UseReportConverter_back_to_not_searched).append(CLOSE_A); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
 			// write file
@@ -1071,7 +1071,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Writes out the file of components that were not searched: either because
 	 * they appeared in an exclude list or they have no .api_description file
-	 * 
+	 *
 	 * @param htmlroot
 	 */
 	void writeNotSearchedPage(final File htmlroot) throws Exception {
@@ -1099,7 +1099,7 @@ public class UseReportConverter extends HTMLConvertor {
 			if (xml.exists()) {
 				try {
 					applyXSLT(xslt, xml, originhtml);
-				} catch (TransformerException e) {	
+				} catch (TransformerException e) {
 					useNotSearchedXml = true;
 					ApiPlugin.logErrorMessage(SearchMessages.UseReportConverter_te_applying_xslt_skipped);
 				}
@@ -1120,7 +1120,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns path of XSL file to use when generating "not searched"
 	 * information.
-	 * 
+	 *
 	 * @return path to the XSL file
 	 */
 	String getNotSearchedXSLPath() {
@@ -1129,7 +1129,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Writes the referenced member index page
-	 * 
+	 *
 	 * @param report
 	 * @param referees the listing of referencing bundles
 	 */
@@ -1203,7 +1203,7 @@ public class UseReportConverter extends HTMLConvertor {
 				buffer.append(CLOSE_TR);
 			}
 			buffer.append(CLOSE_TABLE);
-			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$ 
+			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
 			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), IApiCoreConstants.UTF_8));
@@ -1220,7 +1220,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns the colour to use based on certain counts
-	 * 
+	 *
 	 * @param counts
 	 * @return the colour to use
 	 * @since 1.1
@@ -1238,7 +1238,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns a string of additional information to print out at the top of the
 	 * referenced types page.
-	 * 
+	 *
 	 * @return additional referenced type information.
 	 */
 	protected String getAdditionalReferencedTypeInformation() {
@@ -1247,7 +1247,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns the page title to use for the referenced types page
-	 * 
+	 *
 	 * @param bundle
 	 * @return the page title for the referenced types page
 	 */
@@ -1257,7 +1257,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Writes the page that displays all of the members used in a type
-	 * 
+	 *
 	 * @param map
 	 * @param type
 	 * @param typefile
@@ -1282,7 +1282,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append("<div align=\"left\" class=\"main\">"); //$NON-NLS-1$
 			buffer.append("<table border=\"1\" width=\"80%\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_TR);
-			buffer.append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">").append(OPEN_B).append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+			buffer.append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">").append(OPEN_B).append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			buffer.append(CLOSE_TR);
 			IElementDescriptor desc = null;
 			for (Entry<IMemberDescriptor, Member> entry : map.entrySet()) {
@@ -1301,7 +1301,7 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			buffer.append(CLOSE_TABLE);
 			buffer.append(CLOSE_DIV);
-			buffer.append(OPEN_P).append("<a href=\"index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$ 
+			buffer.append(OPEN_P).append("<a href=\"index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
 			// write the file
@@ -1320,7 +1320,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns the header to use for the section that describes the type details
 	 * table
-	 * 
+	 *
 	 * @return the details header
 	 */
 	protected String getTypeDetailsHeader() {
@@ -1329,7 +1329,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns the blurb that follows the type details header
-	 * 
+	 *
 	 * @return the details information
 	 * @see #getTypeDetailsHeader()
 	 */
@@ -1339,7 +1339,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns the title to use for the type references page
-	 * 
+	 *
 	 * @param typename
 	 * @return the type references page title
 	 */
@@ -1349,7 +1349,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns the nested table of references
-	 * 
+	 *
 	 * @return the nested table of references as a string
 	 */
 	String getReferencesTable(Member member) {
@@ -1362,8 +1362,8 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append("<td colspan=\"3\" bgcolor=\"#CCCCCC\">").append(OPEN_B).append(entry.getKey()).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
 			buffer.append(CLOSE_TR);
 			buffer.append("<tr bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("<td align=\"left\" width=\"84%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_location).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
-			buffer.append("<td align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_line_number).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
+			buffer.append("<td align=\"left\" width=\"84%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_location).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
+			buffer.append("<td align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_line_number).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
 			buffer.append("<td align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_kind).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
 			buffer.append(CLOSE_TR);
 			refs = entry.getValue();
@@ -1393,7 +1393,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns the name to display for the given {@link IElementDescriptor}
 	 * which can be qualified or not
-	 * 
+	 *
 	 * @param desc
 	 * @param qualifiedparams
 	 * @param qualified
@@ -1436,7 +1436,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Extracts underlying link text from the given absolute filename based off
 	 * the root file
-	 * 
+	 *
 	 * @param root
 	 * @param fileName
 	 * @return link text pruned via the given root file
@@ -1454,7 +1454,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns the page title for the index page
-	 * 
+	 *
 	 * @return the index page title
 	 */
 	protected String getIndexTitle() {
@@ -1463,7 +1463,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Writes the main index file for the reports
-	 * 
+	 *
 	 * @param scanResult a list of {@link Report} objects returns from the use
 	 *            scan parser
 	 * @param reportsRoot
@@ -1554,7 +1554,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns a table describing what all of the colours mean in the reports
-	 * 
+	 *
 	 * @return a colour legend table
 	 * @since 1.1
 	 */
@@ -1587,7 +1587,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * This method is called during the HTML header creation phase to allow META
 	 * header elements to be written for metadata objects
-	 * 
+	 *
 	 * @param buffer
 	 * @throws Exception
 	 */
@@ -1599,14 +1599,14 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * This method is called during the initial index page creation to allow and
 	 * executive summary of the use scan to be written out from metadata
-	 * 
+	 *
 	 * @param buffer
 	 * @throws Exception
 	 */
 	void writeMetadataSummary(StringBuffer buffer) throws Exception {
 		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_scan_details).append(CLOSE_H4);
 		if (this.metadata != null) {
-			buffer.append("<table border=\"0px\" title=\"").append(SearchMessages.UseReportConverter_scan_details).append("\"width=\"50%\">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			buffer.append("<table border=\"0px\" title=\"").append(SearchMessages.UseReportConverter_scan_details).append("\"width=\"50%\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_scan_date).append(CLOSE_TD);
 			buffer.append(openTD(36)).append(this.metadata.getRunAtDate()).append(CLOSE_TD);
@@ -1714,11 +1714,11 @@ public class UseReportConverter extends HTMLConvertor {
 			} else {
 				buffer.append(SearchMessages.UseReportConverter_none);
 			}
-			
+
 			buffer.append(CLOSE_TD);
 			buffer.append(CLOSE_TR);
 
-	
+
 			buffer.append(CLOSE_TD);
 			buffer.append(CLOSE_TR);
 			buffer.append(CLOSE_TABLE);
@@ -1727,7 +1727,7 @@ public class UseReportConverter extends HTMLConvertor {
 		}
 	}
 
-	
+
 	void writeFilterCount(StringBuffer buffer) throws Exception {
 		boolean isAdditionFilterProvided = this.metadata.getAdditionalfilters() != null && !this.metadata.getAdditionalfilters().isEmpty();
 
@@ -1742,7 +1742,7 @@ public class UseReportConverter extends HTMLConvertor {
 	}
 	/**
 	 * Returns the use metadata from this scan
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -1827,7 +1827,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns the use filtered count from this scan
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -1865,7 +1865,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Reads saved patterns from the meta.xml file
-	 * 
+	 *
 	 * @param element
 	 * @return the array of patterns or <code>null</code>
 	 */
@@ -1884,7 +1884,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Writes out a META tag of the kind <code>description</code>
-	 * 
+	 *
 	 * @param buffer
 	 * @param description
 	 */
@@ -1897,7 +1897,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * the first column contains the linked item and the following five columns
 	 * are API, Internal, Permissible, Fragment-Permissible and Other reference
 	 * counts respectively
-	 * 
+	 *
 	 * @param columnname
 	 * @param includeversion
 	 * @return the default references table header
@@ -1942,7 +1942,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * Where the first column contains the linked item and the following five
 	 * columns are Version, API, Internal, Permissible, Fragment-Permissible
 	 * reference counts respectively
-	 * 
+	 *
 	 * @param counts
 	 * @param link
 	 * @param linktext
@@ -1956,11 +1956,11 @@ public class UseReportConverter extends HTMLConvertor {
 		if (includeversion) {
 			buffer.append("\t<td align=\"left\">").append(getVersion(linktext)).append(CLOSE_TD); //$NON-NLS-1$
 		}
-		buffer.append("\t<td align=\"center\">").append(counts.getTotalApiRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
-		buffer.append("\t<td align=\"center\">").append(counts.getTotalInternalRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
-		buffer.append("\t<td align=\"center\">").append(counts.getTotalPermissableRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
-		buffer.append("\t<td align=\"center\">").append(counts.getTotalFragmentPermissibleRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
-		buffer.append("\t<td align=\"center\">").append(counts.getTotalIllegalRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalApiRefCount()).append(CLOSE_TD); //$NON-NLS-1$
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalInternalRefCount()).append(CLOSE_TD); //$NON-NLS-1$
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalPermissableRefCount()).append(CLOSE_TD); //$NON-NLS-1$
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalFragmentPermissibleRefCount()).append(CLOSE_TD); //$NON-NLS-1$
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalIllegalRefCount()).append(CLOSE_TD); //$NON-NLS-1$
 		buffer.append(CLOSE_TR);
 		return buffer.toString();
 	}
@@ -1975,7 +1975,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns the version string from the text (if any)
-	 * 
+	 *
 	 * @param text
 	 * @return
 	 * @since 1.1
@@ -1998,9 +1998,9 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Allows additional infos to be added to the HTML at the top of the report
 	 * page
-	 * 
+	 *
 	 * @param hasreports
-	 * 
+	 *
 	 * @return additional information string to add
 	 */
 	protected String getAdditionalIndexInfo(boolean hasreports) {
@@ -2009,7 +2009,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns HTML summary for references from a specific component.
-	 * 
+	 *
 	 * @param typename
 	 * @param counts
 	 * @return HTML as a string

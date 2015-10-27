@@ -52,14 +52,14 @@ import org.objectweb.asm.tree.ClassNode;
 
 /**
  * Extracts references from a class file
- * 
+ *
  * @since 1.0.0
  */
 public class ReferenceExtractor extends ClassVisitor {
 
 	/**
 	 * A visitor for visiting java 5+ signatures
-	 * 
+	 *
 	 * ClassSignature = (visitFormalTypeParameter visitClassBound?
 	 * visitInterfaceBound* )* (visitSuperClass visitInterface* )
 	 * MethodSignature = (visitFormalTypeParameter visitClassBound?
@@ -103,7 +103,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		 * context. The kind flag is set to a parameterized type as subsequent
 		 * calls to this method without visiting other nodes only occurs when we
 		 * are processing parameterized types of generic declarations
-		 * 
+		 *
 		 * @param name the name of the type
 		 */
 		protected void processType(String name) {
@@ -240,7 +240,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param mv
 		 */
 		public ClassFileMethodVisitor(MethodVisitor mv, String name, int argumentcount) {
@@ -488,7 +488,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		/**
 		 * Creates a type from a type description. Works around bugs creating
 		 * types from array type signatures in ASM.
-		 * 
+		 *
 		 * @param desc signature
 		 * @return Type
 		 */
@@ -624,7 +624,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 	/**
 	 * {@link FieldVisitor} to track use of types in annotations
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	class ClassFileFieldVisitor extends FieldVisitor {
@@ -666,7 +666,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		/**
 		 * Add a field to be tracked
-		 * 
+		 *
 		 * @param field
 		 */
 		public void addField(Reference ref) {
@@ -677,7 +677,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		/**
 		 * Add an accessor to be tracked
-		 * 
+		 *
 		 * @param accessor
 		 */
 		public void addAccessor(Reference ref) {
@@ -943,14 +943,14 @@ public class ReferenceExtractor extends ClassVisitor {
 
 	/**
 	 * Track synthetic field / accessor
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	FieldTracker fieldtracker = null;
 
 	/**
 	 * The version for the class being visited
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	private int fVersion;
@@ -975,14 +975,14 @@ public class ReferenceExtractor extends ClassVisitor {
 	/**
 	 * {@link FieldVisitor} used to track and collect references to annotation
 	 * types
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	private ClassFileFieldVisitor fieldvisitor = new ClassFileFieldVisitor();
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param type the type to extract references from
 	 * @param collector the listing of references to annotate from this pass
 	 * @param referenceKinds kinds of references to extract as defined by
@@ -999,7 +999,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param type
 	 * @param collector
 	 * @param referenceKinds
@@ -1031,7 +1031,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	/**
 	 * Returns whether to consider a reference to the specified type. Configured
 	 * by setting to include references within the same class file.
-	 * 
+	 *
 	 * @param owner
 	 * @return true if considered, false otherwise
 	 */
@@ -1046,7 +1046,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * Returns whether the specified reference should be considered when
 	 * extracting references. Configured by setting on whether to include
 	 * references within the same class file.
-	 * 
+	 *
 	 * @param ref reference
 	 * @return whether to include the reference
 	 */
@@ -1076,7 +1076,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	/**
 	 * Returns the full internal name (if available) from the given simple name.
 	 * The returned name has been modified to be '.' separated
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -1093,7 +1093,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * Adds a reference to the given type from the current member. Discards the
 	 * reference if the type corresponds to the class file being scanned or if
 	 * the type is a primitive type.
-	 * 
+	 *
 	 * @param type referenced type
 	 * @param linenumber line number where referenced
 	 * @param kind kind of reference
@@ -1110,7 +1110,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	/**
 	 * Adds a reference to the given field from the current member. Discards the
 	 * reference if the field is defined in the class file being scanned.
-	 * 
+	 *
 	 * @param declaringType type declaring the field being referenced
 	 * @param name of the field being referenced
 	 * @param linenumber line number where referenced
@@ -1128,7 +1128,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	/**
 	 * Adds a reference to the given method from the current member. Discards
 	 * the reference if the method is defined in the class file being scanned.
-	 * 
+	 *
 	 * @param declaringType type declaring the method (but could be a virtual
 	 *            lookup)
 	 * @param name of the method being referenced
@@ -1151,7 +1151,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * the class file being scanned. If the target member is contained in the
 	 * class file being scanned it is discarded based on the setting to include
 	 * local references.
-	 * 
+	 *
 	 * @param target reference
 	 * @param reference added, or <code>null</code> if none
 	 */
@@ -1167,12 +1167,12 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * Processes the member signature from the specified type with the given
 	 * signature and kind. A member can be either a type, method, field or local
 	 * variable
-	 * 
+	 *
 	 * @param name the name of the member to process
 	 * @param signature the signature of the member to process
 	 * @param kind the kind
 	 * @param type the type of member wanting to use the visitor
-	 * 
+	 *
 	 * @return the collection of references created for this signature
 	 */
 	protected List<Reference> processSignature(String name, String signature, int kind, int type) {
@@ -1200,7 +1200,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * type descriptions as a parameter, all else will throw an exception from
 	 * the ASM framework If the description is an array, the underlying type of
 	 * the array is returned.
-	 * 
+	 *
 	 * @param desc
 	 * @return the {@link Type} of the description or <code>null</code>
 	 */
@@ -1337,7 +1337,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 	/**
 	 * Processes the dependent inner class
-	 * 
+	 *
 	 * @param type
 	 * @param refkinds
 	 * @return
@@ -1437,7 +1437,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 	/**
 	 * Called when a member is entered. Pushes the member onto the member stack.
-	 * 
+	 *
 	 * @param member current member
 	 */
 	protected void enterMember(IApiMember member) {
@@ -1453,7 +1453,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 	/**
 	 * Returns the member currently being visited.
-	 * 
+	 *
 	 * @return current member
 	 */
 	protected IApiMember getMember() {
@@ -1464,7 +1464,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * Find out if the method declaration is a default method and return the
 	 * type defining it. Uses the JLS specified order of lookup between
 	 * superclasses and superinterfaces.
-	 * 
+	 *
 	 * @param type the type used as a starting point for the search, will not be
 	 *            searched if <code>isOverride</code> is <code>true</code>
 	 * @param name name of the method
@@ -1501,7 +1501,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		}
 		return null;
 	}
-	
-	
+
+
 
 }

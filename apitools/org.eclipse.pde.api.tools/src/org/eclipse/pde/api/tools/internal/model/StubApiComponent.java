@@ -36,7 +36,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 
 /**
  * An API component for a system library.
- * 
+ *
  * @since 1.0.0
  */
 public class StubApiComponent extends SystemLibraryApiComponent {
@@ -102,7 +102,7 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 	/**
 	 * Returns a listing of all of the installed meta-data or an empty array,
 	 * never <code>null</code>
-	 * 
+	 *
 	 * @return list of installed meta-data or an empty list, never
 	 *         <code>null</code>
 	 */
@@ -141,7 +141,7 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 	/**
 	 * Constructs a system library from the given execution environment
 	 * description file.
-	 * 
+	 *
 	 * @param baseline owning baseline
 	 * @param fileName the file name that corresponds to the stub file for the
 	 *            corresponding profile

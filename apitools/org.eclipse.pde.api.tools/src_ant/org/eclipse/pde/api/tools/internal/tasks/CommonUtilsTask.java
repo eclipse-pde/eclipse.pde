@@ -32,7 +32,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Common code for API Tools Ant tasks.
- * 
+ *
  * @since 1.0.0
  * @noextend This class is not intended to be sub-classed by clients.
  */
@@ -58,7 +58,7 @@ public abstract class CommonUtilsTask extends Task {
 	 * directory. The installLocation will be searched for bundles to add as API
 	 * components. If an error occurs creating the baseline, the exception stack
 	 * trace will be printed and an empty baseline will be returned.
-	 * 
+	 *
 	 * @param baselineName Name to use for the new baseline
 	 * @param installLocation Location of an installation or directory of
 	 *            bundles to add as API components
@@ -91,7 +91,7 @@ public abstract class CommonUtilsTask extends Task {
 
 	/**
 	 * Deletes an {@link IApiBaseline} from the given folder
-	 * 
+	 *
 	 * @param referenceLocation
 	 * @param folder
 	 */
@@ -104,7 +104,7 @@ public abstract class CommonUtilsTask extends Task {
 	/**
 	 * Extract extracts the SDK from the given location to the given directory
 	 * name
-	 * 
+	 *
 	 * @param installDirName
 	 * @param location
 	 * @return the {@link File} handle to the extracted SDK
@@ -149,7 +149,7 @@ public abstract class CommonUtilsTask extends Task {
 	/**
 	 * Initializes the include/exclude list from the given file location, and
 	 * returns a {@link Set} of project names that should be include/excluded.
-	 * 
+	 *
 	 * @param excludeListLocation
 	 * @return the set of project names to be excluded
 	 */
@@ -165,7 +165,7 @@ public abstract class CommonUtilsTask extends Task {
 	 * Saves the report with the given name in the report location. If a
 	 * componentID is provided, a child directory using that name will be
 	 * created to put the report in.
-	 * 
+	 *
 	 * @param componentID Name of the component to create a child directory for
 	 *            or <code>null<code> to put the report in the XML root
 	 * @param contents contents to output to the report
@@ -209,7 +209,7 @@ public abstract class CommonUtilsTask extends Task {
 	/**
 	 * Parses and returns patterns as an array of Strings or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param patterns comma separated list or <code>null</code>
 	 * @return individual patterns or <code>null</code>
 	 */

@@ -35,7 +35,7 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
  * Base implementation of a problem detector for type references
- * 
+ *
  * @since 1.1
  * @noextend This class is not intended to be sub-classed by clients.
  */
@@ -49,7 +49,7 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 
 	/**
 	 * Adds the given type as not to be extended.
-	 * 
+	 *
 	 * @param type a type that is marked no extend
 	 * @param componentId the component the type is located in
 	 */
@@ -68,7 +68,7 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 
 	/**
 	 * Returns if the mapping contains the referenced type name
-	 * 
+	 *
 	 * @param reference
 	 * @return true of the mapping contains the key false otherwise
 	 */

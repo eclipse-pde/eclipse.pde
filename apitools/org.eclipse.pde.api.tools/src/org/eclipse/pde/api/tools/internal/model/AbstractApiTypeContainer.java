@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 
 /**
  * Common implementation of an {@link IApiTypeContainer}
- * 
+ *
  * @since 1.0.0
  */
 public abstract class AbstractApiTypeContainer extends ApiElement implements IApiTypeContainer {
@@ -39,7 +39,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent the parent {@link IApiElement} or <code>null</code> if
 	 *            none.
 	 * @param type the type of the container
@@ -153,7 +153,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	/**
 	 * Returns the {@link IApiTypeContainer}s in this container. Creates the
 	 * containers if they are not yet created.
-	 * 
+	 *
 	 * @return the {@link IApiTypeContainer}s
 	 */
 	protected synchronized IApiTypeContainer[] getApiTypeContainers() throws CoreException {
@@ -166,7 +166,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	/**
 	 * Returns the {@link IApiTypeContainer}s in this container. Creates the
 	 * containers if they are not yet created.
-	 * 
+	 *
 	 * @param id the given id
 	 * @return the {@link IApiTypeContainer}s
 	 */
@@ -190,14 +190,14 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	/**
 	 * Creates and returns the {@link IApiTypeContainer}s for this component.
 	 * Subclasses must override.
-	 * 
+	 *
 	 * @return list of {@link IApiTypeContainer}s for this component
 	 */
 	protected abstract List<IApiTypeContainer> createApiTypeContainers() throws CoreException;
 
 	/**
 	 * Sets the {@link IApiTypeContainer}s in this container.
-	 * 
+	 *
 	 * @param containers the {@link IApiTypeContainer}s to set
 	 */
 	protected synchronized void setApiTypeContainers(IApiTypeContainer[] containers) {

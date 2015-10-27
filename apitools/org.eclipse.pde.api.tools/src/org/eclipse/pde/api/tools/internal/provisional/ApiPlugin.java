@@ -54,7 +54,7 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * API Tools core plug-in. API tools can be run with or without an OSGi
  * framework.
- * 
+ *
  * @since 1.0.0
  */
 public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsListener {
@@ -383,7 +383,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
@@ -436,7 +436,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 
 	/**
 	 * Logs the specified throwable with this plug-in's log.
-	 * 
+	 *
 	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {
@@ -445,19 +445,19 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message the error message to log
 	 */
 	public static void logErrorMessage(String message) {
 		// this message is intentionally not internationalized, as an exception
 		// may
 		// be due to the resource bundle itself
-		log(newErrorStatus("Internal message logged from API Tools Core: " + message, null)); //$NON-NLS-1$	
+		log(newErrorStatus("Internal message logged from API Tools Core: " + message, null)); //$NON-NLS-1$
 	}
 
 	/**
 	 * Returns a new error status for this plug-in with the given message
-	 * 
+	 *
 	 * @param message the message to be included in the status
 	 * @param exception the exception to be included in the status or
 	 *            <code>null</code> if none
@@ -469,7 +469,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 
 	/**
 	 * Returns whether the API tools bundle is running inside an OSGi framework.
-	 * 
+	 *
 	 * @return whether the API tools bundle is running inside an OSGi framework
 	 */
 	public static boolean isRunningInFramework() {
@@ -481,7 +481,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * and search for
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
 	 * s stored in the manager.
-	 * 
+	 *
 	 * @return the singleton instance of the {@link IApiProfileManager}
 	 */
 	public IApiBaselineManager getApiBaselineManager() {
@@ -502,7 +502,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * Adds the given save participant to the listing of participants to be
 	 * notified when the workbench saving life-cycle occurs. If the specified
 	 * participant is <code>null</code> no changes are made.
-	 * 
+	 *
 	 * @param participant
 	 */
 	public void addSaveParticipant(ISaveParticipant participant) {
@@ -514,7 +514,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	/**
 	 * Removes the given save participant from the current listing. If the
 	 * specified participant is <code>null</code> no changes are made.
-	 * 
+	 *
 	 * @param participant
 	 */
 	public void removeSaveParticipant(ISaveParticipant participant) {
@@ -699,7 +699,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * . If the project does not have project specific settings, the workspace
 	 * preference is returned. If <code>null</code> is passed in as the project
 	 * the workspace preferences are consulted.
-	 * 
+	 *
 	 * @param prefkey the given preference key
 	 * @param project the given project or <code>null</code>
 	 * @return the severity level for the given pref key
@@ -733,7 +733,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * <li>the given array of contexts are <code>null</code></li>
 	 * <li>if no nodes could be determined from the given contexts</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param context
 	 * @return the array of {@link IEclipsePreferences} to look in or
 	 *         <code>null</code>.
@@ -758,7 +758,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 
 	/**
 	 * Returns if the given project has project-specific settings.
-	 * 
+	 *
 	 * @param project
 	 * @return true if the project has specific settings, false otherwise
 	 * @since 1.1
@@ -788,7 +788,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * {@link IProject}. If the project does not have project specific settings,
 	 * the workspace preference is returned. If <code>null</code> is passed in
 	 * as the project the workspace preferences are consulted.
-	 * 
+	 *
 	 * @param prefkey the given preference key
 	 * @param project the given project or <code>null</code>
 	 * @return the enable state
@@ -810,7 +810,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 
 	/**
 	 * Returns a service with the specified name or <code>null</code> if none.
-	 * 
+	 *
 	 * @param serviceName name of service
 	 * @return service object or <code>null</code> if none
 	 */

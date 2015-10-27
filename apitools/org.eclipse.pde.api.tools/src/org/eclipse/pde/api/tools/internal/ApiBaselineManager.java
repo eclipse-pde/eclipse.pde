@@ -67,7 +67,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * baselines. This manager is lazy, in that caches are built and maintained when
  * requests are made for information, nothing is pre-loaded when the manager is
  * initialized.
- * 
+ *
  * @since 1.0.0
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -93,7 +93,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 
 	/**
 	 * The main cache for the manager. The form of the cache is:
-	 * 
+	 *
 	 * <pre>
 	 * HashMap<String(baselineid), {@link IApiBaseline}>
 	 * </pre>
@@ -144,7 +144,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 
 	/**
 	 * Returns the singleton instance of the manager
-	 * 
+	 *
 	 * @return the singleton instance of the manager
 	 */
 	public static synchronized ApiBaselineManager getManager() {
@@ -207,7 +207,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * Loads the infos for the given baseline from persisted storage (the
 	 * *.profile file)
-	 * 
+	 *
 	 * @param baseline the given baseline
 	 * @throws CoreException if an exception occurs while loading baseline infos
 	 */
@@ -243,7 +243,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * Initializes the baseline cache lazily. Only performs work if the current
 	 * cache has not been created yet
-	 * 
+	 *
 	 * @throws FactoryConfigurationError
 	 * @throws ParserConfigurationException
 	 */
@@ -289,7 +289,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * Persists all of the cached elements to individual xml files named with
 	 * the id of the API baseline
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	private void persistStateCache() throws CoreException, IOException {
@@ -340,7 +340,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * Writes out the current state of the {@link IApiBaseline} as XML to the
 	 * given output stream
-	 * 
+	 *
 	 * @param stream
 	 * @throws CoreException
 	 */
@@ -357,7 +357,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 
 	/**
 	 * Returns an XML description of the given baseline.
-	 * 
+	 *
 	 * @param baseline the given API baseline
 	 * @return XML string representation of the given baseline
 	 * @throws CoreException if an exception occurs while retrieving the xml
@@ -391,7 +391,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * Throws a core exception with the given message and underlying exception,
 	 * if any.
-	 * 
+	 *
 	 * @param message error message
 	 * @param e underlying exception or <code>null</code>
 	 * @throws CoreException
@@ -402,7 +402,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 
 	/**
 	 * Restore a baseline from the given input stream (persisted baseline).
-	 * 
+	 *
 	 * @param baseline the given baseline to restore
 	 * @param stream the given input stream
 	 * @throws CoreException if unable to restore the baseline
@@ -523,7 +523,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 
 	/**
 	 * Returns if the given name is an existing baseline name
-	 * 
+	 *
 	 * @param name
 	 * @return true if the given name is an existing baseline name, false
 	 *         otherwise
@@ -622,7 +622,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 
 	/**
 	 * Creates a workspace {@link IApiBaseline}
-	 * 
+	 *
 	 * @return a new workspace {@link IApiBaseline} or <code>null</code>
 	 */
 	private IApiBaseline createWorkspaceBaseline() throws CoreException {

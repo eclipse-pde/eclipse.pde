@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.internal.comparator;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * 
+ *
  */
 public class ComparatorMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.comparator.comparatormessages"; //$NON-NLS-1$

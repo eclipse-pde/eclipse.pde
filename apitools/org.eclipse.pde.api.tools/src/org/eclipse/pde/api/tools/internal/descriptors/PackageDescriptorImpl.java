@@ -16,14 +16,14 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 
 /**
  * Package description.
- * 
+ *
  * @since 1.0.0
  */
 public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements IPackageDescriptor {
 
 	/**
 	 * Constructs a package description
-	 * 
+	 *
 	 * @param name dot qualified package name, empty string for default package
 	 */
 	public PackageDescriptorImpl(String name) {

@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * A description of an API problem
- * 
+ *
  * @since 1.0.0
  */
 public class ApiProblem implements IApiProblem {
@@ -83,7 +83,7 @@ public class ApiProblem implements IApiProblem {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param resource the resource this problem occurs on / in
 	 * @param typeName the qualified type name this problem occurs on / in
 	 * @param messageargs arguments to be passed into a localized message for
@@ -237,7 +237,7 @@ public class ApiProblem implements IApiProblem {
 
 	/**
 	 * Compares the complete list of message arguments
-	 * 
+	 *
 	 * @param arguments
 	 * @return true if all of the arguments are equal, false otherwise
 	 */
@@ -258,7 +258,7 @@ public class ApiProblem implements IApiProblem {
 
 	/**
 	 * Returns the deep hash code of the complete listing of message arguments
-	 * 
+	 *
 	 * @param arguments
 	 * @return the hash code of the message arguments
 	 */
@@ -308,7 +308,7 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the string representation of an element descriptor type or
 	 * <code>null</code> if the kind is unknown
-	 * 
+	 *
 	 * @param kind
 	 * @return the string of the kind or <code>null</code>
 	 */
@@ -337,7 +337,7 @@ public class ApiProblem implements IApiProblem {
 
 	/**
 	 * Returns the string representation of the kind of since tab api problem
-	 * 
+	 *
 	 * @param kind
 	 * @return the string for the since tag api problem kind
 	 */
@@ -357,7 +357,7 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the string representation of the kind of usage problem for an
 	 * {@link IApiProblem} kind
-	 * 
+	 *
 	 * @param kind
 	 * @return the string for the usage API problem kind
 	 */
@@ -390,7 +390,7 @@ public class ApiProblem implements IApiProblem {
 
 	/**
 	 * Returns the string representation of the version problem kind.
-	 * 
+	 *
 	 * @param kind
 	 * @return the string of the version API problem kind
 	 */
@@ -415,7 +415,7 @@ public class ApiProblem implements IApiProblem {
 
 	/**
 	 * Returns the string representation of the API component problem kind
-	 * 
+	 *
 	 * @param kind
 	 * @return the string of the API component problem kind
 	 */
@@ -431,7 +431,7 @@ public class ApiProblem implements IApiProblem {
 
 	/**
 	 * Returns the string representation of the API baseline problem kind
-	 * 
+	 *
 	 * @param kind
 	 * @return the string of the API baseline problem kind
 	 */
@@ -448,7 +448,7 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the string representation of the API Use Scan breakage problem
 	 * kind
-	 * 
+	 *
 	 * @param kind
 	 * @return
 	 */
@@ -459,7 +459,7 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.API_USE_SCAN_METHOD_PROBLEM:
 				return "API_USE_SCAN_METHOD_PROBLEM"; //$NON-NLS-1$
 			case IApiProblem.API_USE_SCAN_FIELD_PROBLEM:
-				return "API_USE_SCAN_FIELD_PROBLEM"; //$NON-NLS-1$		
+				return "API_USE_SCAN_FIELD_PROBLEM"; //$NON-NLS-1$
 			default:
 				return Util.UNKNOWN_KIND;
 		}
@@ -469,7 +469,7 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the string representation of the kind of an {@link IApiProblem},
 	 * given its category
-	 * 
+	 *
 	 * @param category
 	 * @param kind
 	 * @return the string of the {@link IApiProblem} kind
@@ -497,7 +497,7 @@ public class ApiProblem implements IApiProblem {
 
 	/**
 	 * Return the string representation of the flags for a problem
-	 * 
+	 *
 	 * @param category
 	 * @param flags
 	 * @return the string for the problem flags
@@ -556,7 +556,7 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the string representation of the element kind of an
 	 * {@link IApiProblem}, given its category
-	 * 
+	 *
 	 * @param category
 	 * @param kind
 	 * @return the string of the {@link IApiProblem} element kind
@@ -584,7 +584,7 @@ public class ApiProblem implements IApiProblem {
 
 	/**
 	 * Returns a string representation of the category of an API problem
-	 * 
+	 *
 	 * @param category
 	 * @return the string of the API problem category
 	 */

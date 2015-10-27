@@ -43,7 +43,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Base implementation of {@link IApiType}
- * 
+ *
  * @since 1.0.0
  * @noextend This class is not intended to be sub-classed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -139,7 +139,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 * Creates an API type. Note that if an API component is not specified, then
 	 * some operations will not be available (navigating super types, member
 	 * types, etc).
-	 * 
+	 *
 	 * @param parent the parent {@link IApiElement} or <code>null</code> if none
 	 * @param name the name of the type
 	 * @param signature the signature of the type
@@ -186,7 +186,7 @@ public class ApiType extends ApiMember implements IApiType {
 
 	/**
 	 * Used when building a type structure.
-	 * 
+	 *
 	 * @param name method name
 	 * @param signature method signature
 	 * @param genericSig
@@ -204,7 +204,7 @@ public class ApiType extends ApiMember implements IApiType {
 
 	/**
 	 * Used when building a type structure.
-	 * 
+	 *
 	 * @param name field name
 	 * @param signature field signature
 	 * @param genericSig
@@ -284,7 +284,7 @@ public class ApiType extends ApiMember implements IApiType {
 	/**
 	 * Resolves and returns the specified fully qualified type name or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param qName qualified name
 	 * @return type or <code>null</code>
 	 * @throws CoreException if unable to resolve
@@ -306,7 +306,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 * Throws an exception due to the fact an API component was not provided
 	 * when this type was created and is now required to perform navigation or
 	 * resolution.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	private void requiresApiComponent() throws CoreException {
@@ -369,7 +369,7 @@ public class ApiType extends ApiMember implements IApiType {
 
 	/**
 	 * Sets the signature of the method that encloses this local type
-	 * 
+	 *
 	 * @param signature the signature of the method.
 	 * @see org.eclipse.jdt.core.Signature for more information
 	 */
@@ -462,7 +462,7 @@ public class ApiType extends ApiMember implements IApiType {
 
 	/**
 	 * Used when building a type structure.
-	 * 
+	 *
 	 * @param name member type name
 	 * @param modifiers
 	 */

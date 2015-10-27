@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 
 /**
  * Common base class for element descriptors.
- * 
+ *
  * @since 1.0.0
  */
 public abstract class ElementDescriptorImpl implements IElementDescriptor, Comparable<IElementDescriptor> {

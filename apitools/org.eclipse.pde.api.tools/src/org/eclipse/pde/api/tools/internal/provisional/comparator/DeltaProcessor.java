@@ -16,14 +16,14 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Class used to process the delta to find out if they are compatible or not.
- * 
+ *
  * @since 1.0.0
  */
 public class DeltaProcessor {
 
 	/**
 	 * Return true is the given delta is compatible, false otherwise.
-	 * 
+	 *
 	 * @param delta the given delta
 	 * @return true is the given delta is compatible, false otherwise.
 	 */
@@ -57,7 +57,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if the delta is compatible or not
-	 * 
+	 *
 	 * @param delta
 	 * @return true if the delta represents a compatible change or not
 	 */
@@ -101,7 +101,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if the API baseline is compatible
-	 * 
+	 *
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
@@ -123,7 +123,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if the API component is compatible
-	 * 
+	 *
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
@@ -148,7 +148,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if the annotation is compatible or not
-	 * 
+	 *
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
@@ -196,7 +196,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if the method is compatible or not
-	 * 
+	 *
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
@@ -250,7 +250,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if the field is compatible or not
-	 * 
+	 *
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
@@ -327,7 +327,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if the constructor is compatible or not
-	 * 
+	 *
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
@@ -374,7 +374,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if the enum is compatible or not
-	 * 
+	 *
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
@@ -429,7 +429,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if a class file is compatible
-	 * 
+	 *
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
@@ -515,7 +515,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if the interface element is compatible
-	 * 
+	 *
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
@@ -556,7 +556,7 @@ public class DeltaProcessor {
 
 	/**
 	 * Returns if the interface element is compatible
-	 * 
+	 *
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */

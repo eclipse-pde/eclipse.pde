@@ -39,7 +39,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Detects leaks in method return types and parameters
- * 
+ *
  * @since 1.1
  * @noextend This class is not intended to be sub-classed by clients.
  */
@@ -145,7 +145,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	/**
 	 * Returns if the source API restrictions for the given member matches the
 	 * restrictions in the parent API description
-	 * 
+	 *
 	 * @param member
 	 * @return true if it matches, false otherwise
 	 */
@@ -186,7 +186,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	/**
 	 * Returns if the source modifiers for the given member match the ones
 	 * specified in the detector
-	 * 
+	 *
 	 * @param member
 	 * @return true if the modifiers match, false otherwise
 	 */

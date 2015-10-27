@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -51,7 +51,7 @@ import org.eclipse.pde.core.build.IBuildModel;
 
 /**
  * The API tools build state
- * 
+ *
  * @since 1.0.1
  */
 public class BuildState {
@@ -63,13 +63,13 @@ public class BuildState {
 	private Map<String, Set<IDelta>> breakingChanges;
 	/**
 	 * Map of the last saved state of the manifest file
-	 * 
+	 *
 	 * @since 1.0.3
 	 */
 	private Map<String, String> manifestChanges;
 	/**
 	 * Map of the last saved state of the build.properties file
-	 * 
+	 *
 	 * @since 1.0.3
 	 */
 	private Map<String, String> buildPropChanges;
@@ -89,7 +89,7 @@ public class BuildState {
 
 	/**
 	 * Reads the build state from an input stream
-	 * 
+	 *
 	 * @param in
 	 * @return the {@link BuildState} from the given input stream
 	 * @throws IOException
@@ -163,7 +163,7 @@ public class BuildState {
 
 	/**
 	 * Writes the given {@link BuildState} to the given output stream
-	 * 
+	 *
 	 * @param state
 	 * @param out
 	 * @throws IOException
@@ -218,7 +218,7 @@ public class BuildState {
 
 	/**
 	 * Read the {@link IDelta} from the build state (input stream)
-	 * 
+	 *
 	 * @param in the input stream to read the {@link IDelta} from
 	 * @return a reconstructed {@link IDelta} from the build state
 	 * @throws IOException
@@ -259,7 +259,7 @@ public class BuildState {
 
 	/**
 	 * Writes a given {@link IDelta} to the build state (the output stream)
-	 * 
+	 *
 	 * @param delta the delta to write
 	 * @param out the stream to write to
 	 * @throws IOException
@@ -293,7 +293,7 @@ public class BuildState {
 	/**
 	 * Adds an {@link IDelta} for a compatible compatibility change to the
 	 * current state
-	 * 
+	 *
 	 * @param delta the {@link IDelta} to add to the state
 	 */
 	public void addCompatibleChange(IDelta delta) {
@@ -311,7 +311,7 @@ public class BuildState {
 	/**
 	 * Add an {@link IDelta} for an incompatible compatibility change to the
 	 * current state
-	 * 
+	 *
 	 * @param delta the {@link IDelta} to add to the state
 	 */
 	public void addBreakingChange(IDelta delta) {
@@ -370,7 +370,7 @@ public class BuildState {
 
 	/**
 	 * Remove all entries for the given type name.
-	 * 
+	 *
 	 * @param typeName the given type name
 	 */
 	public void cleanup(String typeName) {
@@ -382,7 +382,7 @@ public class BuildState {
 	/**
 	 * Sets the current list if re-exported {@link IApiComponent}s for this
 	 * build state
-	 * 
+	 *
 	 * @param components
 	 */
 	public void setReexportedComponents(IApiComponent[] components) {
@@ -401,7 +401,7 @@ public class BuildState {
 
 	/**
 	 * Adds a dependent project to the listing of dependent projects
-	 * 
+	 *
 	 * @param projectName
 	 */
 	public void addApiToolingDependentProject(String projectName) {
@@ -422,7 +422,7 @@ public class BuildState {
 	 * Allows the last built state of the manifest to be saved. This method will
 	 * perform compaction of the manifest, removing headers that we not need to
 	 * care about.
-	 * 
+	 *
 	 * @param state the last built state of the manifest
 	 * @since 1.0.3
 	 */
@@ -445,7 +445,7 @@ public class BuildState {
 	/**
 	 * Returns the last saved state of the manifest or an empty {@link Map},
 	 * never <code>null</code>
-	 * 
+	 *
 	 * @return the last built state of the manifest or an empty {@link Map},
 	 *         never <code>null</code>
 	 * @since 1.0.3
@@ -465,7 +465,7 @@ public class BuildState {
 	 * <li>names that start with: {@link IBuildEntry#JAR_PREFIX}</li>
 	 * <li>names that start with: <code>extra.</code></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param model the {@link IBuildModel} to save
 	 * @since 1.0.3
 	 */
@@ -491,7 +491,7 @@ public class BuildState {
 	/**
 	 * Allows the map to be reset to the given map, passing in <code>null</code>
 	 * clears the current mapping.
-	 * 
+	 *
 	 * @param map the map to set
 	 * @since 1.0.3
 	 */
@@ -506,7 +506,7 @@ public class BuildState {
 	/**
 	 * Returns the last built state of the build.properties file or an empty
 	 * {@link Map}, never <code>null</code>
-	 * 
+	 *
 	 * @return the last built state of the build.properties file or an empty
 	 *         {@link Map}, never <code>null</code>
 	 * @since 1.0.3
@@ -517,7 +517,7 @@ public class BuildState {
 
 	/**
 	 * Returns a CRC32 code of the project's build path or -1 if unknown.
-	 * 
+	 *
 	 * @return CRC32 code of the project's build path or -1
 	 */
 	public long getBuildPathCRC() {
@@ -526,7 +526,7 @@ public class BuildState {
 
 	/**
 	 * Sets the build path CRC for this project's resolved build path.
-	 * 
+	 *
 	 * @param crc32 crc32 code
 	 */
 	public void setBuildPathCRC(long crc32) {
@@ -546,7 +546,7 @@ public class BuildState {
 
 	/**
 	 * Reads the build state for the relevant project.
-	 * 
+	 *
 	 * @return the current {@link BuildState} for the given project or
 	 *         <code>null</code> if there is not one
 	 */
@@ -579,7 +579,7 @@ public class BuildState {
 
 	/**
 	 * Sets the last built state for the given project, or null to reset it.
-	 * 
+	 *
 	 * @param project the project to set a state for
 	 * @param state the {@link BuildState} to set as the last state
 	 */
@@ -604,7 +604,7 @@ public class BuildState {
 	/**
 	 * Returns the {@link File} to use for saving and restoring the last built
 	 * state for the given project.
-	 * 
+	 *
 	 * @param project gets the saved state file for the given project
 	 * @return the {@link File} to use for saving and restoring the last built
 	 *         state for the given project.
@@ -619,7 +619,7 @@ public class BuildState {
 
 	/**
 	 * Saves the current build state
-	 * 
+	 *
 	 * @param project
 	 * @param state
 	 * @throws CoreException
@@ -667,7 +667,7 @@ public class BuildState {
 	/**
 	 * Computes and returns a CRC of the projects resolved build path, or -1 if
 	 * unknown.
-	 * 
+	 *
 	 * @param project project
 	 * @return build path CRC or -1
 	 */

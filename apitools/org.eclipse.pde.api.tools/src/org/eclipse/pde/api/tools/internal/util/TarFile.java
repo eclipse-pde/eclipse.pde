@@ -34,7 +34,7 @@ public class TarFile {
 
 		/**
 		 * Creates a new tar input stream on the given input stream.
-		 * 
+		 *
 		 * @param in input stream
 		 * @throws TarException
 		 * @throws IOException
@@ -50,7 +50,7 @@ public class TarFile {
 		/**
 		 * Create a new tar input stream, skipping ahead to the given entry in
 		 * the file.
-		 * 
+		 *
 		 * @param in input stream
 		 * @param entry skips to this entry in the file
 		 * @throws TarException
@@ -64,7 +64,7 @@ public class TarFile {
 		/**
 		 * The checksum of a tar file header is simply the sum of the bytes in
 		 * the header.
-		 * 
+		 *
 		 * @param header
 		 * @return checksum
 		 */
@@ -78,7 +78,7 @@ public class TarFile {
 
 		/**
 		 * Skips ahead to the position of the given entry in the file.
-		 * 
+		 *
 		 * @param entry
 		 * @returns false if the entry has already been passed
 		 * @throws TarException
@@ -107,7 +107,7 @@ public class TarFile {
 
 		/**
 		 * Returns true if the header checksum is correct.
-		 * 
+		 *
 		 * @param header
 		 * @return true if this header has a valid checksum
 		 */
@@ -151,7 +151,7 @@ public class TarFile {
 		/**
 		 * Returns the next entry in the tar file. Does not handle GNU @LongLink
 		 * extensions.
-		 * 
+		 *
 		 * @return the next entry in the tar file
 		 * @throws TarException
 		 * @throws IOException
@@ -283,7 +283,7 @@ public class TarFile {
 		/**
 		 * Moves ahead to the next file in the tar archive and returns a
 		 * TarEntry object describing it.
-		 * 
+		 *
 		 * @return the next entry in the tar file
 		 * @throws TarException
 		 * @throws IOException
@@ -347,7 +347,7 @@ public class TarFile {
 
 	/**
 	 * Create a new TarFile for the given file.
-	 * 
+	 *
 	 * @param file
 	 * @throws TarException
 	 * @throws IOException
@@ -376,7 +376,7 @@ public class TarFile {
 
 	/**
 	 * Close the tar file input stream.
-	 * 
+	 *
 	 * @throws IOException if the file cannot be successfully closed
 	 */
 	public void close() throws IOException {
@@ -390,7 +390,7 @@ public class TarFile {
 
 	/**
 	 * Create a new TarFile for the given path name.
-	 * 
+	 *
 	 * @param filename
 	 * @throws TarException
 	 * @throws IOException
@@ -401,7 +401,7 @@ public class TarFile {
 
 	/**
 	 * Returns an enumeration cataloguing the tar archive.
-	 * 
+	 *
 	 * @return enumeration of all files in the archive
 	 */
 	public Enumeration<?> entries() {
@@ -428,7 +428,7 @@ public class TarFile {
 
 	/**
 	 * Returns a new InputStream for the given file in the tar archive.
-	 * 
+	 *
 	 * @param entry
 	 * @return an input stream for the given file
 	 * @throws TarException
@@ -461,7 +461,7 @@ public class TarFile {
 
 	/**
 	 * Returns the path name of the file this archive represents.
-	 * 
+	 *
 	 * @return path
 	 */
 	public String getName() {

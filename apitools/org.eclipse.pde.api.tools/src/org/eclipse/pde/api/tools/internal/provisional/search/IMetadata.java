@@ -18,14 +18,14 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Object used to hold API use scan metadata that can be written out by an
  * {@link IApiSearchReporter}
- * 
+ *
  * @since 1.0.1
  */
 public interface IMetadata {
 
 	/**
 	 * Writes the current snapshot of metadata out to the given file
-	 * 
+	 *
 	 * @param file the file to write to
 	 * @throws IOException
 	 * @throws CoreException

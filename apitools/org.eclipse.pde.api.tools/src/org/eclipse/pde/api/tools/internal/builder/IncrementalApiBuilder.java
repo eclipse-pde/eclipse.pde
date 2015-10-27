@@ -47,7 +47,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
  * Used to incrementally build changed Java types
- * 
+ *
  * @since 3.5
  */
 public class IncrementalApiBuilder {
@@ -70,7 +70,7 @@ public class IncrementalApiBuilder {
 
 		/**
 		 * Creates a change of the specified kinds.
-		 * 
+		 *
 		 * @param kind bit mask of STUCTURAL | DESCRIPTION
 		 * @param deltaKind resource delta kind
 		 * @param resource file that changed
@@ -89,7 +89,7 @@ public class IncrementalApiBuilder {
 		/**
 		 * IF the given {@link IProject} is the same as the project context, or
 		 * is contained in the listing of interesting projects
-		 * 
+		 *
 		 * @param lproject
 		 * @param others
 		 * @return <code>true</code> if the project is the same or in the
@@ -110,7 +110,7 @@ public class IncrementalApiBuilder {
 		/**
 		 * Constructs a new visitor, noting whether the build path of the
 		 * project has changed since the last build.
-		 * 
+		 *
 		 * @param pathChanged
 		 */
 		ResourceDeltaVisitor(boolean pathChanged) {
@@ -192,7 +192,7 @@ public class IncrementalApiBuilder {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param project the current project context being built
 	 * @param delta the {@link IResourceDelta} from the build framework
 	 * @param buildstate the current build state from the
@@ -206,7 +206,7 @@ public class IncrementalApiBuilder {
 	 * Incrementally builds using the
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer}
 	 * from the given {@link ApiAnalysisBuilder}
-	 * 
+	 *
 	 * @param baseline the baseline to compare with
 	 * @param wbaseline the workspace baseline
 	 * @param deltas the deltas to be built
@@ -264,7 +264,7 @@ public class IncrementalApiBuilder {
 	/**
 	 * Builds an API delta using the default baseline (from the workspace
 	 * settings and the current
-	 * 
+	 *
 	 * @param project
 	 * @param baseline the baseline to compare to
 	 * @param wbaseline the current workspace baseline
@@ -304,7 +304,7 @@ public class IncrementalApiBuilder {
 	/**
 	 * Records the type name from the given IFile as a dependent type in the
 	 * given build context
-	 * 
+	 *
 	 * @param file
 	 * @param kind mask of STRUCTURAL and/or DESCRIPTION
 	 */
@@ -330,7 +330,7 @@ public class IncrementalApiBuilder {
 
 	/**
 	 * Collects the inner types from the compilation unit
-	 * 
+	 *
 	 * @param file
 	 * @param mask of STRUCTURAL and/or DESCRIPTION
 	 */
@@ -355,7 +355,7 @@ public class IncrementalApiBuilder {
 
 	/**
 	 * Collects the inner types from the compilation unit
-	 * 
+	 *
 	 * @param file
 	 * @param mask of STRUCTURAL and/or DESCRIPTION
 	 */
@@ -386,7 +386,7 @@ public class IncrementalApiBuilder {
 	/**
 	 * Constructs a build context based on the current JDT build state and known
 	 * changes.
-	 * 
+	 *
 	 * @param project the current project being built
 	 * @param state the current JDT build state
 	 * @param list of changes
@@ -469,7 +469,7 @@ public class IncrementalApiBuilder {
 	 * Adds the dependent files from the current build context based on the
 	 * current JDT build state to either the structural or description
 	 * dependents.
-	 * 
+	 *
 	 * @param project the current project being built
 	 * @param state the current JDT build state
 	 * @param types dot and $ qualified names of base types that changed
@@ -520,7 +520,7 @@ public class IncrementalApiBuilder {
 	/**
 	 * Adds a type to search for dependents of in considered projects for an
 	 * incremental build
-	 * 
+	 *
 	 * @param path
 	 */
 	void splitName(String typename, StringSet packages, StringSet simpleTypes) {
@@ -541,7 +541,7 @@ public class IncrementalApiBuilder {
 	/**
 	 * Returns an array of type names, and cleans up markers for the specified
 	 * resource
-	 * 
+	 *
 	 * @param project the project being built
 	 * @param state the current build state for the given project
 	 * @param monitor
@@ -588,7 +588,7 @@ public class IncrementalApiBuilder {
 
 	/**
 	 * Resolves the java path from the given resource
-	 * 
+	 *
 	 * @param resource
 	 * @param kind CLASS_FILE, JAVA_FILE, or UNKNOWN
 	 * @return the resolved path or <code>null</code> if the resource is not

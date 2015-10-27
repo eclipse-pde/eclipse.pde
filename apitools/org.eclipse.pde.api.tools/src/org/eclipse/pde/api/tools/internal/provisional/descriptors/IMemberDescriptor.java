@@ -18,14 +18,14 @@ package org.eclipse.pde.api.tools.internal.provisional.descriptors;
  * A member has either an enclosing type for a parent. Top level types have a
  * package for a parent.
  * </p>
- * 
+ *
  * @since 1.0.0
  */
 public interface IMemberDescriptor extends IElementDescriptor {
 
 	/**
 	 * Returns the name of this member.
-	 * 
+	 *
 	 * @return member name
 	 */
 	public String getName();
@@ -33,14 +33,14 @@ public interface IMemberDescriptor extends IElementDescriptor {
 	/**
 	 * Returns a descriptor for the type this member is declared in or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @return enclosing type or <code>null</code>
 	 */
 	public IReferenceTypeDescriptor getEnclosingType();
 
 	/**
 	 * Returns a descriptor for the package this member is contained in.
-	 * 
+	 *
 	 * @return package descriptor
 	 */
 	public IPackageDescriptor getPackage();

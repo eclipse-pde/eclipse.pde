@@ -15,9 +15,9 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 
 /**
  * Base implementation of {@link IComponentDescriptor}
- * 
+ *
  * @since 1.0.1
- * 
+ *
  * @noextend This class is not intended to be sub-classed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -28,7 +28,7 @@ public class ComponentDescriptorImpl extends NamedElementDescriptorImpl implemen
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param componentid
 	 */
 	public ComponentDescriptorImpl(String componentid, String version) {

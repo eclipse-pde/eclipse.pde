@@ -14,28 +14,28 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Describes a set of {@link IApiElement}.
- * 
+ *
  * @since 1.1.0
  */
 public interface IApiScope {
 
 	/**
 	 * Adds the given {@link IApiElement} to the scope
-	 * 
+	 *
 	 * @param newelements
 	 */
 	public void addElement(IApiElement newelement);
 
 	/**
 	 * Returns all API elements contained within this scope
-	 * 
+	 *
 	 * @return all API elements contained within this scope
 	 */
 	IApiElement[] getApiElements();
 
 	/**
 	 * Visits all {@link IApiElement} in this scope.
-	 * 
+	 *
 	 * @param visitor class file visitor.
 	 * @exception CoreException if unable to visit this scope
 	 */
@@ -43,7 +43,7 @@ public interface IApiScope {
 
 	/**
 	 * Returns if this scope encloses the given element
-	 * 
+	 *
 	 * @param element
 	 * @return true if this scope encloses the given element, false otherwise
 	 */

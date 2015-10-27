@@ -22,7 +22,7 @@ import org.objectweb.asm.Opcodes;
 
 /**
  * Base implementation of {@link IApiMethod}
- * 
+ *
  * @since 1.0.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -36,7 +36,7 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 	public static final int Polymorphic = 0x200000;
 
 	private static final String INIT = "<init>"; //$NON-NLS-1$
-	private static final String CLINIT = "<clinit>"; //$NON-NLS-1$	
+	private static final String CLINIT = "<clinit>"; //$NON-NLS-1$
 
 	private String[] fExceptions;
 	private String fDefaultValue;
@@ -45,7 +45,7 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param enclosing enclosing type
 	 * @param name method name
 	 * @param signature method signature
@@ -99,7 +99,7 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 
 	/**
 	 * Used when building a type structure.
-	 * 
+	 *
 	 * @param value default value
 	 */
 	public void setDefaultValue(String value) {

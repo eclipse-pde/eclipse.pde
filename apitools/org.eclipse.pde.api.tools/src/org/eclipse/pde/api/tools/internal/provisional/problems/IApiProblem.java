@@ -16,7 +16,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 
 /**
  * Describes a given API problem.
- * 
+ *
  * @since 1.0.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -54,7 +54,7 @@ public interface IApiProblem {
 	/**
 	 * Constant representing a fatal problem i.e. a fatal JDT problem has been
 	 * detected
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public static final int CATEGORY_FATAL_PROBLEM = 0x70000000;
@@ -102,7 +102,7 @@ public interface IApiProblem {
 	 * Constant representing the value of the invalid @since tag
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>1</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_SINCETAGS
 	 */
@@ -112,7 +112,7 @@ public interface IApiProblem {
 	 * Constant representing the value of the malformed @since tag
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>2</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_SINCETAGS
 	 */
@@ -122,7 +122,7 @@ public interface IApiProblem {
 	 * Constant representing the value of the missing @since tag
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>3</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_SINCETAGS
 	 */
@@ -132,7 +132,7 @@ public interface IApiProblem {
 	 * Constant representing the value of the major version change
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>1</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_VERSION
 	 */
@@ -142,7 +142,7 @@ public interface IApiProblem {
 	 * Constant representing the value of the minor version change
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>2</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_VERSION
 	 */
@@ -152,7 +152,7 @@ public interface IApiProblem {
 	 * Constant representing the value of the major version change (no API
 	 * breakage) {@link IApiProblem} kind. <br>
 	 * Value is: <code>3</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_VERSION
 	 */
@@ -162,7 +162,7 @@ public interface IApiProblem {
 	 * Constant representing the value of the minor version change (no new API)
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>4</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_VERSION
 	 */
@@ -173,7 +173,7 @@ public interface IApiProblem {
 	 * {@link IApiProblem} kind as a consequence of a major version change in a
 	 * re-exported bundle. <br>
 	 * Value is: <code>5</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_VERSION
 	 */
@@ -184,7 +184,7 @@ public interface IApiProblem {
 	 * {@link IApiProblem} kind as a consequence of a minor version change in a
 	 * re-exported bundle.. <br>
 	 * Value is: <code>6</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_VERSION
 	 */
@@ -194,7 +194,7 @@ public interface IApiProblem {
 	 * Constant representing the value of an illegal extend {@link IApiProblem}
 	 * kind. <br>
 	 * Value is: <code>1</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -204,7 +204,7 @@ public interface IApiProblem {
 	 * Constant representing the value of an illegal instantiate
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>2</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -214,7 +214,7 @@ public interface IApiProblem {
 	 * Constant representing the value of an illegal reference
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>3</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -224,7 +224,7 @@ public interface IApiProblem {
 	 * Constant representing the value of an illegal implement
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>4</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -234,7 +234,7 @@ public interface IApiProblem {
 	 * Constant representing the value of an illegal override
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>5</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -243,7 +243,7 @@ public interface IApiProblem {
 	/**
 	 * Constant representing the value of an API leak {@link IApiProblem} kind. <br>
 	 * Value is: <code>6</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -253,7 +253,7 @@ public interface IApiProblem {
 	 * Constant representing the value of an invalid API javadoc tag use
 	 * {@link IApiProblem} kind <br>
 	 * Value is: <code>7</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -263,7 +263,7 @@ public interface IApiProblem {
 	 * Constant representing the value of a duplicate API Javadoc tag use
 	 * {@link IApiProblem} kind <br>
 	 * Value is: <code>8</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -273,7 +273,7 @@ public interface IApiProblem {
 	 * Constant representing the value of an illegal reference inside system
 	 * libraries use {@link IApiProblem} kind <br>
 	 * Value is: <code>9</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -282,7 +282,7 @@ public interface IApiProblem {
 	 * Constant representing the value of an unused API problem filter
 	 * {@link IApiProblem} kind <br>
 	 * Value is:<code>10</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -292,7 +292,7 @@ public interface IApiProblem {
 	 * preferences are configured to perform the system library scans
 	 * {@link IApiProblem} kind <br>
 	 * Value is:<code>11</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 * @since 1.0.400
@@ -302,7 +302,7 @@ public interface IApiProblem {
 	 * Constant representing the value of a duplicate annotation in use <br>
 	 * <br>
 	 * Value is: <code>12</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 * @since 1.0.600
@@ -312,14 +312,14 @@ public interface IApiProblem {
 	 * COnstant representing the value of an unsupported annotation in use <br>
 	 * <br>
 	 * Value is: <code>13</code>
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static final int UNSUPPORTED_ANNOTATION_USE = 13;
 	/**
 	 * Flags to indicate a leak from extending a non-API type. <br>
 	 * Value is: <code>1</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -328,7 +328,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate a leak from implementing a non-API type. <br>
 	 * Value is: <code>2</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -337,7 +337,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate a leak from a field declaration. <br>
 	 * Value is: <code>3</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -346,7 +346,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate a leak from a return type. <br>
 	 * Value is: <code>4</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -355,7 +355,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate a leak from a method parameter <br>
 	 * Value is: <code>5</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -364,7 +364,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate a leak from a constructor parameter <br>
 	 * Value is: <code>6</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -373,7 +373,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate a constructor method <br>
 	 * Value is: <code>7</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -382,7 +382,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate a 'normal' method <br>
 	 * Value is: <code>8</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -391,7 +391,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate a field <br>
 	 * Value is: <code>9</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -400,7 +400,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate a local type (a class defined in a method) <br>
 	 * Value is: <code>10</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -409,7 +409,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate an anonymous type <br>
 	 * Value is: <code>11</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -418,7 +418,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate an indirect reference <br>
 	 * Value is: <code>12</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -427,7 +427,7 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate an indirect reference from a local type <br>
 	 * Value is: <code>13</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
@@ -436,10 +436,10 @@ public interface IApiProblem {
 	 * Flags to indicate a reference to an annotation <br>
 	 * <br>
 	 * Values is: <code>14</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static final int ANNOTATION = 14;
@@ -448,7 +448,7 @@ public interface IApiProblem {
 	 * Constant representing the value of a default API profile
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>1</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_API_BASELINE
 	 */
@@ -458,7 +458,7 @@ public interface IApiProblem {
 	 * Constant representing the value of a API component resolution
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>1</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_API_COMPONENT_RESOLUTION
 	 */
@@ -468,7 +468,7 @@ public interface IApiProblem {
 	 * Constant representing the value of a workspace baseline resolution
 	 * {@link IApiProblem} kind. <br>
 	 * Value is: <code>1</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_FATAL_PROBLEM
 	 */
@@ -476,7 +476,7 @@ public interface IApiProblem {
 	/**
 	 * Constant representing the value of a type {@link IApiProblem} kind. <br>
 	 * Value is: <code>1</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
 	 */
@@ -484,7 +484,7 @@ public interface IApiProblem {
 	/**
 	 * Constant representing the value of a method {@link IApiProblem} kind. <br>
 	 * Value is: <code>2</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
 	 */
@@ -492,7 +492,7 @@ public interface IApiProblem {
 	/**
 	 * Constant representing the value of a field {@link IApiProblem} kind. <br>
 	 * Value is: <code>3</code>
-	 * 
+	 *
 	 * @see #getKind()
 	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
 	 */
@@ -500,7 +500,7 @@ public interface IApiProblem {
 	/**
 	 * Constant indicating a use scan reference cannot be resolved <br>
 	 * Value is: <code>1</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
 	 * @since 1.0.400
@@ -509,7 +509,7 @@ public interface IApiProblem {
 	/**
 	 * Constant indicating a use scan reference has been deleted <br>
 	 * Value is: <code>2</code>
-	 * 
+	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
 	 * @since 1.0.400
@@ -520,7 +520,7 @@ public interface IApiProblem {
 	 * Returns the severity of the problem. See the severity constants defined
 	 * in {@link org.eclipse.pde.api.tools.internal.provisional.ApiPlugin}
 	 * class.
-	 * 
+	 *
 	 * @return the severity of the problem
 	 * @see org.eclipse.pde.api.tools.internal.provisional.ApiPlugin#SEVERITY_ERROR
 	 * @see org.eclipse.pde.api.tools.internal.provisional.ApiPlugin#SEVERITY_WARNING
@@ -530,17 +530,17 @@ public interface IApiProblem {
 
 	/**
 	 * Returns the kind of element this problem is related to.
-	 * 
+	 *
 	 * @see IElementDescriptor#getElementType()
 	 * @see IDelta#getElementType()
-	 * 
+	 *
 	 * @return the element kind this problem is related to.
 	 */
 	public int getElementKind();
 
 	/**
 	 * Returns the id used to lookup the message for this problem.
-	 * 
+	 *
 	 * @return the message id
 	 */
 	public int getMessageid();
@@ -548,7 +548,7 @@ public interface IApiProblem {
 	/**
 	 * Returns the project relative path to the resource this problem was found
 	 * in, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the project relative path to the resource the problem was found
 	 *         in, or null if none
 	 */
@@ -557,7 +557,7 @@ public interface IApiProblem {
 	/**
 	 * Returns the fully qualified type name to the type this problem was found
 	 * in, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the fully qualified type name to the type this problem , null if
 	 *         none. was found in
 	 */
@@ -566,7 +566,7 @@ public interface IApiProblem {
 	/**
 	 * Returns the listing of message arguments passed in to the problem or an
 	 * empty array, never <code>null</code>
-	 * 
+	 *
 	 * @return the message arguments passed to the problem or an empty array
 	 */
 	public String[] getMessageArguments();
@@ -574,7 +574,7 @@ public interface IApiProblem {
 	/**
 	 * Returns the start of the character selection to make, or -1 if there is
 	 * no character starting position.
-	 * 
+	 *
 	 * @return the start of the character selection or -1.
 	 */
 	public int getCharStart();
@@ -582,7 +582,7 @@ public interface IApiProblem {
 	/**
 	 * Returns the end of the character selection to make, or -1 if there is no
 	 * character ending position.
-	 * 
+	 *
 	 * @return the end of the character selection or -1
 	 */
 	public int getCharEnd();
@@ -590,7 +590,7 @@ public interface IApiProblem {
 	/**
 	 * Returns the number of the line this problem occurred on, or -1 if there
 	 * is no line number.
-	 * 
+	 *
 	 * @return the line number this problem occurred on or -1
 	 */
 	public int getLineNumber();
@@ -607,7 +607,7 @@ public interface IApiProblem {
 	 * <li>{@link #CATEGORY_FATAL_PROBLEM}</li>
 	 * <li>{@link #CATEGORY_API_USE_SCAN_PROBLEM}</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return the category for the problem
 	 */
 	public int getCategory();
@@ -615,28 +615,28 @@ public interface IApiProblem {
 	/**
 	 * Returns the unique id of the problem. A problem Id is the composition of
 	 * the category, kind, flags and severity.
-	 * 
+	 *
 	 * @return the id of the problem
 	 */
 	public int getId();
 
 	/**
 	 * Returns a human readable, localized description of the problem
-	 * 
+	 *
 	 * @return the description of the problem
 	 */
 	public String getMessage();
 
 	/**
 	 * Returns the kind of this problem.
-	 * 
+	 *
 	 * @return the kind of this problem
 	 */
 	public int getKind();
 
 	/**
 	 * Returns the flags for this problem.
-	 * 
+	 *
 	 * @return the flags for this problem
 	 */
 	public int getFlags();
@@ -665,7 +665,7 @@ public interface IApiProblem {
 	 * attributes will be inserted after default ones (as described in
 	 * {@link CategorizedProblem#getMarkerType()}, and thus could be used to
 	 * override defaults.
-	 * 
+	 *
 	 * @return the names of the corresponding marker attributes
 	 */
 	public String[] getExtraMarkerAttributeIds();
@@ -677,7 +677,7 @@ public interface IApiProblem {
 	 * {@link #getExtraMarkerAttributeIds()}. The values must be eligible for
 	 * marker creation, as defined by
 	 * <code> IMarker#setAttributes(String[], Object[])}.
-	 * 
+	 *
 	 * @return the values of the corresponding extra marker attributes
 	 */
 	public Object[] getExtraMarkerAttributeValues();

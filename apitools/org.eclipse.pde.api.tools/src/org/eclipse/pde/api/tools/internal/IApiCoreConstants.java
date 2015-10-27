@@ -14,7 +14,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 
 /**
  * Constants used by API tools core plugin
- * 
+ *
  * @since 1.0.0
  */
 public interface IApiCoreConstants {

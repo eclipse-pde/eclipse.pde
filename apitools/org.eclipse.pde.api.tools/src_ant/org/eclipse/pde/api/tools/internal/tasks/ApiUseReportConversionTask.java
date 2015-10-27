@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 /**
  * Default task for converting the XML output from the apitooling.apiuse ant
  * task to HTML
- * 
+ *
  * @since 1.0.0
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -41,7 +41,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	 * <p>
 	 * Default is <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
@@ -50,7 +50,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 
 	/**
 	 * Set the location where the html reports are generated.
-	 * 
+	 *
 	 * <p>
 	 * This is optional. If not set, the html files are created in the same
 	 * folder as the xml files.
@@ -58,7 +58,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	 * <p>
 	 * The location is set using an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * @param htmlFilesLocation the given the location where the html reports
 	 *            are generated
 	 */
@@ -68,11 +68,11 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 
 	/**
 	 * Set the location where the xml reports are retrieved.
-	 * 
+	 *
 	 * <p>
 	 * The location is set using an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * @param xmlFilesLocation the given location to retrieve the xml reports
 	 */
 	public void setXmlFiles(String xmlFilesLocation) {
@@ -83,7 +83,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	 * Set the group of {@link String} patterns to use as heuristics to filter
 	 * references to names matching any of the given patterns during the report
 	 * conversion
-	 * 
+	 *
 	 * @param patterns
 	 */
 	public void setToFilterPatterns(String patterns) {
@@ -94,7 +94,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	 * Set the group of {@link String} patterns to use as heuristics to filter
 	 * references from names matching any of the given patterns during the
 	 * report conversion
-	 * 
+	 *
 	 * @param patterns
 	 */
 	public void setFilterPatterns(String patterns) {
@@ -104,15 +104,15 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	/**
 	 * Sets the location of the XSLT file to use in the conversion of the XML
 	 * the HTML.
-	 * 
+	 *
 	 * <p>
 	 * This is optional. If none is specified, then a default one is used.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The location is an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * @param xsltFileLocation
 	 */
 	public void setXSLTFile(String xsltFileLocation) {

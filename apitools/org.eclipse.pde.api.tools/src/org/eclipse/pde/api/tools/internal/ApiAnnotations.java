@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 
 /**
  * Base implementation of the {@linkplain IApiAnnotations} interface
- * 
+ *
  * @since 1.0.0
  */
 public class ApiAnnotations implements IApiAnnotations {

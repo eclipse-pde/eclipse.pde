@@ -103,7 +103,7 @@ public class UseScanManager {
 
 	/**
 	 * Returns a handle to the singleton instance
-	 * 
+	 *
 	 * @return the singleton {@link UseScanManager}
 	 */
 	public synchronized static UseScanManager getInstance() {
@@ -118,7 +118,7 @@ public class UseScanManager {
 	 * Returns the references for a given <code>IApiComponent</code>. If it can
 	 * not find them in cache, they will be fetched from the API Use Scans and
 	 * stored.
-	 * 
+	 *
 	 * @param apiComponent component whose references have to be fetched
 	 * @param refTypes reference types for which the references has to be
 	 *            computed in the given <code>IApiComponent</code>. If
@@ -163,7 +163,7 @@ public class UseScanManager {
 
 	/**
 	 * fetches the references from the API Use Scan locations
-	 * 
+	 *
 	 * @param apiComponent
 	 * @param member
 	 * @param references
@@ -246,7 +246,7 @@ public class UseScanManager {
 
 	/**
 	 * Returns the scan
-	 * 
+	 *
 	 * @param location
 	 * @return
 	 */
@@ -273,7 +273,7 @@ public class UseScanManager {
 	 * <li>the previous child directory has its own child directory that matches
 	 * the name pattern <code>^.* (.*)$</code></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param file
 	 * @return <code>true</code> is the sub folders match the patterns,
 	 *         <code>false</code> otherwise
@@ -308,7 +308,7 @@ public class UseScanManager {
 	 * <li>the previous child directory has its own child directory that matches
 	 * the name pattern <code>{@link #NAME_REGEX}</code></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param file
 	 * @return <code>true</code> is the sub folders match the patterns,
 	 *         <code>false</code> otherwise
@@ -348,7 +348,7 @@ public class UseScanManager {
 
 	/**
 	 * Returns if the scan if a valid API use scan
-	 * 
+	 *
 	 * @param location
 	 * @return true if the scan is valid false otherwise
 	 */
@@ -363,7 +363,7 @@ public class UseScanManager {
 
 	/**
 	 * Returns the report locations from the preferences
-	 * 
+	 *
 	 * @return
 	 */
 	public String[] getReportLocations() {
@@ -388,7 +388,7 @@ public class UseScanManager {
 	 * Sets the report locations to be used. Once set, these locations will be
 	 * used instead of ones in the preference. When set to <code>null</code>,
 	 * the locations in preference will be used.
-	 * 
+	 *
 	 * @param locations
 	 */
 	public void setReportLocations(String[] locations) {
@@ -397,7 +397,7 @@ public class UseScanManager {
 
 	/**
 	 * Sets the cache size
-	 * 
+	 *
 	 * @param size The total number of references that can be held in memory
 	 */
 	public void setCacheSize(int size) {

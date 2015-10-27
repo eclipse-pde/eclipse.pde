@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Detects leaked implemented interfaces.
- * 
+ *
  * @since 1.1
  */
 public class LeakImplementsProblemDetector extends AbstractTypeLeakDetector {

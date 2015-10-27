@@ -13,14 +13,14 @@ package org.eclipse.pde.api.tools.internal;
 /**
  * Used to represent any value for system settings in OSGi state. For example,
  * ws, os, arch.
- * 
+ *
  * @since 1.0.0
  */
 public class AnyValue {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param arg
 	 */
 	public AnyValue(String arg) {

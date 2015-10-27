@@ -72,7 +72,7 @@ public class MissingRefMetadata implements IMetadata {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param profile
 	 * @param runatdate
 	 * @param reportlocation
@@ -89,7 +89,7 @@ public class MissingRefMetadata implements IMetadata {
 
 	/**
 	 * Returns the use metadata from meta.xml
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -167,7 +167,7 @@ public class MissingRefMetadata implements IMetadata {
 
 	/**
 	 * Allows the profile to be set. This method accepts <code>null</code>
-	 * 
+	 *
 	 * @param profile the profile to set
 	 */
 	public void setProfile(String profile) {
@@ -176,7 +176,7 @@ public class MissingRefMetadata implements IMetadata {
 
 	/**
 	 * Returns the profile set in this metadata or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the profile
 	 */
 	public String getProfile() {
@@ -185,7 +185,7 @@ public class MissingRefMetadata implements IMetadata {
 
 	/**
 	 * Allows the run-at date to be set. This method accepts <code>null</code>
-	 * 
+	 *
 	 * @param date the date to set
 	 */
 	public void setRunAtDate(String date) {
@@ -195,7 +195,7 @@ public class MissingRefMetadata implements IMetadata {
 	/**
 	 * Returns the run-at date set in this metadata or <code>null</code> if
 	 * none.
-	 * 
+	 *
 	 * @return the run-at date or <code>null</code>
 	 */
 	public String getRunAtDate() {
@@ -205,7 +205,7 @@ public class MissingRefMetadata implements IMetadata {
 	/**
 	 * Returns the report location set in this metadata or <code>null</code> if
 	 * none.
-	 * 
+	 *
 	 * @return the report location or <code>null</code>
 	 */
 	public String getReportLocation() {
@@ -215,7 +215,7 @@ public class MissingRefMetadata implements IMetadata {
 	/**
 	 * Allows the report location to be set. This method accepts
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param location the new report location
 	 */
 	public void setReportLocation(String location) {
@@ -225,7 +225,7 @@ public class MissingRefMetadata implements IMetadata {
 	/**
 	 * Returns the API Use Scans set in this metadata or <code>null</code> if
 	 * none.
-	 * 
+	 *
 	 * @return the apiusescans
 	 */
 	public String getApiUseScans() {
@@ -234,7 +234,7 @@ public class MissingRefMetadata implements IMetadata {
 
 	/**
 	 * Allows the API Use Scan to be set. This method accepts <code>null</code>
-	 * 
+	 *
 	 * @param apiusescans the apiusescans to set
 	 */
 	public void setApiUseScans(String apiusescans) {

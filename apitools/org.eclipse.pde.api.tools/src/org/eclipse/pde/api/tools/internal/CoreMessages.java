@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.internal;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * 
+ *
  */
 public class CoreMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.coremessages"; //$NON-NLS-1$

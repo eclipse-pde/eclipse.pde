@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Detects when a type illegally extends another type.
- * 
+ *
  * @since 1.1
  */
 public class IllegalInstantiateProblemDetector extends AbstractIllegalTypeReference {

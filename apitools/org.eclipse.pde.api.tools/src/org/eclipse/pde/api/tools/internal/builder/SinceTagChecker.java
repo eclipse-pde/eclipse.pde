@@ -33,7 +33,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * An AST visitor used to find missing or incorrect @since tags
- * 
+ *
  * @since 1.0.0
  */
 public class SinceTagChecker extends ASTVisitor {
@@ -49,7 +49,7 @@ public class SinceTagChecker extends ASTVisitor {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param nameStart
 	 */
 	public SinceTagChecker(int nameStart) {
@@ -150,7 +150,7 @@ public class SinceTagChecker extends ASTVisitor {
 
 	/**
 	 * Processes a javadoc tag
-	 * 
+	 *
 	 * @param bodyDeclaration
 	 */
 	private void processJavadoc(BodyDeclaration bodyDeclaration) {

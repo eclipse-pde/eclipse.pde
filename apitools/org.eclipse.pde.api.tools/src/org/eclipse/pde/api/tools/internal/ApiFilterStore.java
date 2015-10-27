@@ -59,7 +59,7 @@ import org.w3c.dom.Element;
  * {@link org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore} for
  * workspace projects. Filters can be added or removed and the changes persisted
  * to the api_filters XML file.
- * 
+ *
  * @since 1.0.0
  */
 public class ApiFilterStore extends FilterStore implements IResourceChangeListener {
@@ -80,7 +80,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param owningComponent the id of the component that owns this filter
 	 *            store
 	 */
@@ -92,7 +92,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 
 	/**
 	 * Saves the .api_filters file for the component
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public void persistApiFilters() {
@@ -362,7 +362,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 
 	/**
 	 * Converts the information contained in the given map to an XML string
-	 * 
+	 *
 	 * @param filtermap the mapping of filters to convert to XML
 	 * @return an XML string representation of the given mapping of filters
 	 * @throws CoreException
@@ -564,7 +564,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	/**
 	 * Callback hook to tell the filter store it needs to be saved on the next
 	 * cycle
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public void needsSaving() {
@@ -617,7 +617,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 
 	/**
 	 * records that the following filter has been used
-	 * 
+	 *
 	 * @param resource
 	 * @param filter
 	 */
@@ -636,7 +636,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	/**
 	 * Returns all of the unused filters for this store at the moment in time
 	 * this method is called.
-	 * 
+	 *
 	 * @param the resource the filter applies to
 	 * @param typeName the name of the type the filter appears on
 	 * @param categories the collection of {@link IApiProblem} categories to
@@ -691,7 +691,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 * Collects the complete set of problem filters from the given set whose
 	 * underlying problem categories do not match any from the given array and
 	 * whose type name matches the underlying problem type name.
-	 * 
+	 *
 	 * @param filters
 	 * @param typename
 	 * @param collector
@@ -716,7 +716,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 * Returns if the category of the given problem matches one of the
 	 * categories given in the collection. If the collection of categories is
 	 * <code>null</code> the problem does not match.
-	 * 
+	 *
 	 * @param problem
 	 * @param categories
 	 * @return true if the given collection contains the given problems'

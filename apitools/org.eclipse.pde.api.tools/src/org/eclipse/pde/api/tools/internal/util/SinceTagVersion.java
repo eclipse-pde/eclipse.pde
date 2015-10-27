@@ -19,7 +19,7 @@ import org.osgi.framework.Version;
  * Version identifier for @since tags. It consists of an optional bundle name
  * followed by a version string that follows the format defined in the class
  * {@link Version}
- * 
+ *
  * @since 3.4
  */
 public class SinceTagVersion {
@@ -31,7 +31,7 @@ public class SinceTagVersion {
 
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param value the given since tag value
 	 * @throws IllegalArgumentException if the given value is null
 	 */
@@ -125,7 +125,7 @@ public class SinceTagVersion {
 	/**
 	 * Returns the version part of the @since tag as a string. null if the given
 	 * version did not have the right format
-	 * 
+	 *
 	 * @return the version part of the @since tag
 	 */
 	public String getVersionString() {
@@ -135,7 +135,7 @@ public class SinceTagVersion {
 	/**
 	 * Returns the version part of the @since tag. null if the given version did
 	 * not have the right format
-	 * 
+	 *
 	 * @return the version part of the @since tag
 	 */
 	public Version getVersion() {
@@ -144,7 +144,7 @@ public class SinceTagVersion {
 
 	/**
 	 * Returns the prefix part of the @since tag. It can be null.
-	 * 
+	 *
 	 * @return the prefix part of the @since tag
 	 */
 	public String prefixString() {
@@ -153,7 +153,7 @@ public class SinceTagVersion {
 
 	/**
 	 * Returns the postfix part of the @since tag. It can be null.
-	 * 
+	 *
 	 * @return the postfix part of the @since tag
 	 */
 	public String postfixString() {

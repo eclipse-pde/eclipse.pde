@@ -32,14 +32,14 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 /**
  * An {@link IApiTypeRoot} rooted at a project output container in the
  * workspace.
- * 
+ *
  * @since 1.0.0
  */
 public class ProjectTypeContainer extends ApiElement implements IApiTypeContainer {
 
 	/**
 	 * Proxy visitor for collecting package names, etc for our type containers
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	class ContainerVisitor implements IResourceProxyVisitor {
@@ -49,7 +49,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param collector
 		 * @param root
 		 */
@@ -76,7 +76,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 
 	/**
 	 * Constructs an {@link IApiTypeContainer} rooted at the location.
-	 * 
+	 *
 	 * @param parent the {@link IApiElement} parent for this container
 	 * @param container folder in the workspace
 	 */
@@ -116,7 +116,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 
 	/**
 	 * Visits the given {@link IContainer}
-	 * 
+	 *
 	 * @param container
 	 * @param pkgName
 	 * @param visitor
@@ -205,7 +205,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	/**
 	 * Traverses a directory to determine if it has {@link IApiTypeRoot}s and
 	 * then visits sub-directories.
-	 * 
+	 *
 	 * @param packageName package name of directory being visited
 	 * @param dir directory being visited
 	 */

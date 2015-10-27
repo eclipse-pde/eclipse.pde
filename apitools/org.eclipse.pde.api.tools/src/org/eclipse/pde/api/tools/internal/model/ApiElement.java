@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
  * Abstract description of an API element. Each {@link IApiElement} has a
  * specific type, name and parent. <br>
  * API elements cannot be re-parented.
- * 
+ *
  * @since 1.0.0
  */
 public abstract class ApiElement implements IApiElement {
@@ -32,7 +32,7 @@ public abstract class ApiElement implements IApiElement {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent the parent {@link IApiElement} for this element, may be
 	 *            <code>null</code>
 	 * @param type the type of this element. See {@link IApiElement} for values.
@@ -83,7 +83,7 @@ public abstract class ApiElement implements IApiElement {
 	/**
 	 * Sets the name of this {@link ApiElement} to the new name, iff the new
 	 * name is not <code>null</code>, otherwise no change is made.
-	 * 
+	 *
 	 * @param newname
 	 */
 	protected void setName(String newname) {
@@ -94,7 +94,7 @@ public abstract class ApiElement implements IApiElement {
 
 	/**
 	 * Throws a core exception.
-	 * 
+	 *
 	 * @param message message
 	 * @param e underlying exception or <code>null</code>
 	 * @throws CoreException

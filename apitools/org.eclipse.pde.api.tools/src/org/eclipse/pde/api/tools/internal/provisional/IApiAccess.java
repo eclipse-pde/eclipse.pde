@@ -14,7 +14,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
  * This interface describes a type of access to packages in a bundle. <br>
  * An example type of access would be friend access to an internal package or
  * SPI access to an API package.
- * 
+ *
  * @since 1.0.1
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -36,7 +36,7 @@ public interface IApiAccess {
 	/**
 	 * Returns the access level. Will be one of the constants defined in
 	 * {@link IApiAccess}.
-	 * 
+	 *
 	 * @return the access level
 	 */
 	public int getAccessLevel();

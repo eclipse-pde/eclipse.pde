@@ -24,14 +24,14 @@ import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 /**
  * Manages contributed javadoc tags. This manager is lazy, in that nothing is
  * loaded until it is asked for.
- * 
+ *
  * @since 1.0.0
  */
 public final class JavadocTagManager {
 
 	/**
 	 * Compound key for the annotation cache
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	class Key {
@@ -62,7 +62,7 @@ public final class JavadocTagManager {
 	 * Constant for the <code>noinsantiate</code> tag <br>
 	 * <br>
 	 * Value is: <code>@noinstantiate</code>
-	 * 
+	 *
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOINSTANTIATE = "@noinstantiate"; //$NON-NLS-1$
@@ -70,7 +70,7 @@ public final class JavadocTagManager {
 	 * Constant for the <code>&#64;NoInstantiate</code> annotation <br>
 	 * <br>
 	 * Value is: <code>NoInstantiate</code>
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static final String ANNOTATION_NOINSTANTIATE = "NoInstantiate"; //$NON-NLS-1$
@@ -78,7 +78,7 @@ public final class JavadocTagManager {
 	 * Constant for the <code>noextend</code> tag <br>
 	 * <br>
 	 * Value is: <code>@noextend</code>
-	 * 
+	 *
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOEXTEND = "@noextend"; //$NON-NLS-1$
@@ -86,7 +86,7 @@ public final class JavadocTagManager {
 	 * Constant for the <code>&#64;NoExtend</code> annotation <br>
 	 * <br>
 	 * Value is: <code>NoExtend</code>
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static final String ANNOTATION_NOEXTEND = "NoExtend"; //$NON-NLS-1$
@@ -94,7 +94,7 @@ public final class JavadocTagManager {
 	 * Constant for the <code>noimplement</code> tag <br>
 	 * <br>
 	 * Value is: <code>@noimplement</code>
-	 * 
+	 *
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOIMPLEMENT = "@noimplement"; //$NON-NLS-1$
@@ -102,7 +102,7 @@ public final class JavadocTagManager {
 	 * Constant for the <code>&#64;NoImplement</code> annotation <br>
 	 * <br>
 	 * Value is: <code>NoImplement</code>
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static final String ANNOTATION_NOIMPLEMENT = "NoImplement"; //$NON-NLS-1$
@@ -110,7 +110,7 @@ public final class JavadocTagManager {
 	 * Constant for the <code>nooverride</code> tag <br>
 	 * <br>
 	 * Value is: <code>@nooverride</code>
-	 * 
+	 *
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOOVERRIDE = "@nooverride"; //$NON-NLS-1$
@@ -118,7 +118,7 @@ public final class JavadocTagManager {
 	 * Constant for the <code>&#64;NoOverride</code> annotation <br>
 	 * <br>
 	 * Value is: <code>NoOverride</code>
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static final String ANNOTATION_NOOVERRIDE = "NoOverride"; //$NON-NLS-1$
@@ -126,7 +126,7 @@ public final class JavadocTagManager {
 	 * Constant for the <code>noreference</code> tag <br>
 	 * <br>
 	 * Value is: <code>@noreference</code>
-	 * 
+	 *
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOREFERENCE = "@noreference"; //$NON-NLS-1$
@@ -134,14 +134,14 @@ public final class JavadocTagManager {
 	 * Constant for the <code>&#64;NoReference</code> annotation <br>
 	 * <br>
 	 * Value is: <code>NoReference</code>
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static final String ANNOTATION_NOREFERENCE = "NoReference"; //$NON-NLS-1$
 
 	/**
 	 * The collection of all tags
-	 * 
+	 *
 	 * @see #TAG_NOEXTEND
 	 * @see #TAG_NOIMPLEMENT
 	 * @see #TAG_NOINSTANTIATE
@@ -152,20 +152,20 @@ public final class JavadocTagManager {
 
 	/**
 	 * The collection of all annotation names
-	 * 
+	 *
 	 * @see #ANNOTATION_NOEXTEND
 	 * @see #ANNOTATION_NOIMPLEMENT
 	 * @see #ANNOTATION_NOINSTANTIATE
 	 * @see #ANNOTATION_NOOVERRIDE
 	 * @see #ANNOTATION_NOREFERENCE
-	 * 
+	 *
 	 * @sine 1.0.600
 	 */
 	public static final Set<String> ALL_ANNOTATIONS;
 
 	/**
 	 * Cache for simple annotation names mapped to their fully qualified name
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	private static final HashMap<String, String> fqAnnotationNames;
@@ -202,7 +202,7 @@ public final class JavadocTagManager {
 
 	/**
 	 * Cache of annotations keyed by the member the apply to
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	private HashMap<Key, Set<String>> fAnnotationCache = null;
@@ -214,7 +214,7 @@ public final class JavadocTagManager {
 
 	/**
 	 * Initialize the annotation mapping
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	private void initializeAnnotations() {
@@ -311,7 +311,7 @@ public final class JavadocTagManager {
 	 * Returns all of the java doc tags for a given kind of type and member. See
 	 * {@link IApiJavadocTag} for a complete listing of tag Java type and member
 	 * types.
-	 * 
+	 *
 	 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
 	 * @param member one of <code>METHOD</code> or <code>FIELD</code> or
 	 *            <code>NONE</code>
@@ -331,7 +331,7 @@ public final class JavadocTagManager {
 
 	/**
 	 * Returns the set of supported annotations for the given type and member
-	 * 
+	 *
 	 * @param type the type kind
 	 * @param member the member kind
 	 * @return the set of supported annotations or an empty set, never
@@ -354,11 +354,11 @@ public final class JavadocTagManager {
 	 * <br>
 	 * Example: <code>NoExtend</code> returns
 	 * <code>org.eclipse.pde.api.toools.annnotations.NoExtend</code>
-	 * 
+	 *
 	 * @param typename
 	 * @return the fully qualified type name of the annotation or
 	 *         <code>null</code> if unknown
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public synchronized String getQualifiedNameForAnnotation(String typename) {
@@ -368,7 +368,7 @@ public final class JavadocTagManager {
 	/**
 	 * Returns the {@link IApiJavadocTag} that has the given id or
 	 * <code>null</code> if there is no tag with the given id
-	 * 
+	 *
 	 * @param id the id of the tag to fetch
 	 * @return the {@link IApiJavadocTag} with the given id or <code>null</code>
 	 */
@@ -380,7 +380,7 @@ public final class JavadocTagManager {
 	/**
 	 * Returns the complete listing of {@link IApiJavadocTag}s contained in the
 	 * manager or an empty array, never <code>null</code>
-	 * 
+	 *
 	 * @return the complete listing of tags in the manager or <code>null</code>
 	 */
 	public synchronized IApiJavadocTag[] getAllTags() {
@@ -409,7 +409,7 @@ public final class JavadocTagManager {
 	 * Returns the restriction modifier set on the javadoc tag with the given
 	 * name. If the manager has no entry for the specified tag name
 	 * <code>-1</code> is returned.
-	 * 
+	 *
 	 * @param tagname the name of the tag
 	 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
 	 * @param member one of <code>METHOD</code> or <code>FIELD</code> or

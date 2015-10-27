@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -59,7 +59,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Scans the source of a *.java file for any API javadoc tags
- * 
+ *
  * @since 1.0.0
  */
 public class TagScanner {
@@ -92,7 +92,7 @@ public class TagScanner {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param description API description to annotate
 		 * @param container class file container or <code>null</code>, used to
 		 *            resolve method signatures
@@ -104,7 +104,7 @@ public class TagScanner {
 
 		/**
 		 * A type has been entered - update the type being visited.
-		 * 
+		 *
 		 * @param name name from type node
 		 */
 		private void enterType(SimpleName name) {
@@ -161,10 +161,10 @@ public class TagScanner {
 
 		/**
 		 * Checks the annotation name found on the given {@link TypeDeclaration}
-		 * 
+		 *
 		 * @param name the name of the annotation
 		 * @param node the parent {@link TypeDeclaration}
-		 * 
+		 *
 		 * @since 1.0.600
 		 */
 		void scanTypeAnnotation(String name, TypeDeclaration node) {
@@ -194,7 +194,7 @@ public class TagScanner {
 		/**
 		 * Checks the annotation name found on the given
 		 * {@link FieldDeclaration}
-		 * 
+		 *
 		 * @param name the annotation name
 		 * @param node the parent {@link FieldDeclaration}
 		 */
@@ -213,10 +213,10 @@ public class TagScanner {
 		/**
 		 * Checks the annotation name found on the given
 		 * {@link MethodDeclaration}
-		 * 
+		 *
 		 * @param name the name of the annotation
 		 * @param node the parent {@link MethodDeclaration}
-		 * 
+		 *
 		 * @since 1.0.600
 		 */
 		void scanMethodAnnotation(String name, MethodDeclaration node) {
@@ -274,7 +274,7 @@ public class TagScanner {
 
 		/**
 		 * Scans the JavaDoc of a {@link TypeDeclaration}
-		 * 
+		 *
 		 * @param node the type
 		 * @since 1.0.600
 		 */
@@ -346,7 +346,7 @@ public class TagScanner {
 
 		/**
 		 * Scans the JavaDoc of an {@link AnnotationTypeDeclaration}
-		 * 
+		 *
 		 * @param node the annotation
 		 * @since 1.0.600
 		 */
@@ -381,7 +381,7 @@ public class TagScanner {
 
 		/**
 		 * Scans the JavaDoc of an {@link EnumDeclaration}
-		 * 
+		 *
 		 * @param node the enum
 		 * @since 1.0.600
 		 */
@@ -437,7 +437,7 @@ public class TagScanner {
 
 		/**
 		 * Scans the JavaDoc node of a {@link MethodDeclaration}
-		 * 
+		 *
 		 * @param node the method
 		 * @since 1.0.600
 		 */
@@ -506,7 +506,7 @@ public class TagScanner {
 
 		/**
 		 * Scans the JavaDoc nodes of a {@link FieldDeclaration}
-		 * 
+		 *
 		 * @param node the field
 		 * @since 1.0.600
 		 */
@@ -533,7 +533,7 @@ public class TagScanner {
 
 		/**
 		 * Determine if the flags contain private or package default flags
-		 * 
+		 *
 		 * @param flags
 		 * @return <code>true</code> if the flags are private or default,
 		 *         <code>false</code> otherwise
@@ -550,7 +550,7 @@ public class TagScanner {
 
 	/**
 	 * Delegate for getting the singleton instance of the scanner
-	 * 
+	 *
 	 * @return
 	 */
 	public static final TagScanner newScanner() {
@@ -569,7 +569,7 @@ public class TagScanner {
 	/**
 	 * Scans the specified {@link ICompilationUnit} for contributed API Javadoc
 	 * tags. Tags on methods will have unresolved signatures.
-	 * 
+	 *
 	 * @param unit the compilation unit source
 	 * @param description the API description to annotate with any new tag rules
 	 *            found
@@ -578,7 +578,7 @@ public class TagScanner {
 	 *            signatures if required (for tags on methods). If not provided
 	 *            (<code>null</code>), method signatures will be unresolved.
 	 * @param monitor
-	 * 
+	 *
 	 * @throws CoreException if problems were encountered while scanning tags,
 	 *             the description may still be modified
 	 */
@@ -589,7 +589,7 @@ public class TagScanner {
 	/**
 	 * Scans the specified source {@linkplain CompilationUnit} for contributed
 	 * API javadoc tags. Tags on methods will have unresolved signatures.
-	 * 
+	 *
 	 * @param source the source file to scan for tags
 	 * @param description the API description to annotate with any new tag rules
 	 *            found
@@ -601,7 +601,7 @@ public class TagScanner {
 	 *            AST to scan or <code>null</code> if default options should be
 	 *            used
 	 * @param monitor
-	 * 
+	 *
 	 * @throws CoreException if problems were encountered while scanning tags,
 	 *             the description may still be modified
 	 */

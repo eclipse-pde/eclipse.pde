@@ -16,14 +16,14 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 /**
  * An API description for a project that does not have an API Tools nature.
  * Keeps track of package visibility.
- * 
+ *
  * @since 1.1
  */
 public class NonApiProjectDescription extends ProjectApiDescription {
 
 	/**
 	 * Constructs API description for the given project.
-	 * 
+	 *
 	 * @param project
 	 */
 	public NonApiProjectDescription(IJavaProject project) {

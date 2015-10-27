@@ -41,7 +41,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Engine used to search for API use
- * 
+ *
  * @since 1.0.0
  */
 public final class ApiSearchEngine {
@@ -127,7 +127,7 @@ public final class ApiSearchEngine {
 
 	/**
 	 * Returns the set of resolved references for the given {@link IApiType}
-	 * 
+	 *
 	 * @param requestor
 	 * @param type
 	 * @param monitor
@@ -150,7 +150,7 @@ public final class ApiSearchEngine {
 	/**
 	 * Runs the given list of references through the search requestor to
 	 * determine if they should be kept or not
-	 * 
+	 *
 	 * @param requestor
 	 * @param type
 	 * @param references
@@ -189,7 +189,7 @@ public final class ApiSearchEngine {
 	/**
 	 * Searches for all accepted {@link IReference}s from the given
 	 * {@link IApiElement}
-	 * 
+	 *
 	 * @param requestor
 	 * @param element
 	 * @param reporter search reporter to output xml results as references are
@@ -251,7 +251,7 @@ public final class ApiSearchEngine {
 	/**
 	 * Searches for all of the use of API or internal code from the given
 	 * {@link IApiComponent} within the given {@link IApiBaseline}
-	 * 
+	 *
 	 * @param baseline the baseline to search within
 	 * @param requestor the requestor to use for the search
 	 * @param reporter the reporter to use when reporting any search results to
@@ -316,7 +316,7 @@ public final class ApiSearchEngine {
 
 	/**
 	 * Computes the process context (label)
-	 * 
+	 *
 	 * @param requestor
 	 * @return the label describing the process for the progress monitor
 	 */

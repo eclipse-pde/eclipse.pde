@@ -15,7 +15,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 
 /**
  * Common base class for element descriptors with names.
- * 
+ *
  * @since 1.0.0
  */
 public abstract class NamedElementDescriptorImpl extends ElementDescriptorImpl {
@@ -27,7 +27,7 @@ public abstract class NamedElementDescriptorImpl extends ElementDescriptorImpl {
 
 	/**
 	 * Constructs an element descriptor with the given name and parent.
-	 * 
+	 *
 	 * @param name element name
 	 */
 	NamedElementDescriptorImpl(String name) {
@@ -36,7 +36,7 @@ public abstract class NamedElementDescriptorImpl extends ElementDescriptorImpl {
 
 	/**
 	 * Returns this element's simple name.
-	 * 
+	 *
 	 * @return element name
 	 */
 	public String getName() {

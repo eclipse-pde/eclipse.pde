@@ -17,7 +17,7 @@ package org.eclipse.pde.api.tools.internal.provisional.descriptors;
  * Component descriptors do not have parent components and do not have a path,
  * therefore both the {@link #getParent()} and {@link #getPath()} method always
  * yield <code>null</code>
- * 
+ *
  * @since 1.0.1
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -26,7 +26,7 @@ public interface IComponentDescriptor extends IElementDescriptor {
 
 	/**
 	 * Returns the component id from the descriptor
-	 * 
+	 *
 	 * @return the component id
 	 */
 	public String getId();
@@ -34,7 +34,7 @@ public interface IComponentDescriptor extends IElementDescriptor {
 	/**
 	 * Returns the version id for this component or <code>null</code> if
 	 * unspecified.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getVersion();

@@ -16,7 +16,7 @@ import java.util.HashSet;
 /**
  * Manager to handle temporary files that have been created. Used as a fall-back
  * to ensure we clean up after ourselves
- * 
+ *
  * @since 1.0.1
  */
 public final class FileManager {
@@ -36,7 +36,7 @@ public final class FileManager {
 
 	/**
 	 * Returns the singleton instance of the manager
-	 * 
+	 *
 	 * @return the manager instance
 	 */
 	public synchronized static FileManager getManager() {
@@ -49,7 +49,7 @@ public final class FileManager {
 	/**
 	 * Records a file root path to be deleted on the next call to
 	 * {@link #deleteFiles()}.
-	 * 
+	 *
 	 * @param absolutepath the absolute path in the local file system of the
 	 *            file to delete
 	 */
@@ -67,7 +67,7 @@ public final class FileManager {
 	/**
 	 * Deletes all of the recorded file roots from the local filesystem (if
 	 * still existing) and returns the success of the entire delete operation.
-	 * 
+	 *
 	 * @return true if all recorded files were deleted, false otherwise
 	 */
 	public boolean deleteFiles() {

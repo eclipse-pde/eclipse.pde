@@ -12,9 +12,9 @@ package org.eclipse.pde.api.tools.internal.provisional;
 
 /**
  * Describes an API tools Javadoc tag
- * 
+ *
  * @noimplement this interface is not to be implemented by clients
- * 
+ *
  * @since 1.0.0
  */
 public interface IApiJavadocTag {
@@ -96,7 +96,7 @@ public interface IApiJavadocTag {
 	 * {@link RestrictionModifiers#NO_RESTRICTIONS} if the restriction cannot be
 	 * parsed into an integer. See {@link RestrictionModifiers} for a listing of
 	 * platform modifiers.
-	 * 
+	 *
 	 * @return the restriction modifier for the tag or
 	 *         {@link RestrictionModifiers#NO_RESTRICTIONS}
 	 */
@@ -106,11 +106,11 @@ public interface IApiJavadocTag {
 	 * Returns the formatted javadoc tag label. A formatted javadoc tag label
 	 * takes the form '@'+'tag name'. <br>
 	 * For example:
-	 * 
+	 *
 	 * <pre>
 	 * <code>@noimplement</code>
 	 * </pre>
-	 * 
+	 *
 	 * @return the formatted javadoc tag label
 	 */
 	public String getTagName();
@@ -120,11 +120,11 @@ public interface IApiJavadocTag {
 	 * specified kind. A complete javadoc tag takes the form
 	 * '@'+'tagname'+'tagcomment' <br>
 	 * For example:
-	 * 
+	 *
 	 * <pre>
 	 * <code>@noimplement</code> this interface is not to be implemented by clients
 	 * </pre>
-	 * 
+	 *
 	 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
 	 * @param member one of <code>METHOD</code> or <code>FIELD</code> or
 	 *            <code>NONE</code>
@@ -135,7 +135,7 @@ public interface IApiJavadocTag {
 	/**
 	 * Returns whether this tag is applicable to the specified kind of type and
 	 * member.
-	 * 
+	 *
 	 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
 	 * @param member one of <code>METHOD</code> or <code>FIELD</code> or
 	 *            <code>NONE</code>
@@ -146,7 +146,7 @@ public interface IApiJavadocTag {
 	/**
 	 * Allows the tag to be set as applicable to the given type and member, with
 	 * the given comment.
-	 * 
+	 *
 	 * @param type the Java type the tag will be applicable to
 	 * @param member the Java member the tag will be applicable to
 	 * @param comment an optional comment to be displayed after the tag

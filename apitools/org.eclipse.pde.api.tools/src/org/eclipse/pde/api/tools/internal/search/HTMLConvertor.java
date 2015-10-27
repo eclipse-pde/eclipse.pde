@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.search;
 
 /**
  * Contains strings and methods for writing HTML markup
- * 
+ *
  * @since 1.0.1
  */
 public abstract class HTMLConvertor {
@@ -104,7 +104,7 @@ public abstract class HTMLConvertor {
 	/**
 	 * Closing p tag: <code>&lt;/p&gt;</code>
 	 */
-	public static final String CLOSE_P = "</p>\n"; //$NON-NLS-1$	
+	public static final String CLOSE_P = "</p>\n"; //$NON-NLS-1$
 	/**
 	 * Opening ol tag: <code>&lt;ol&gt;</code>
 	 */
@@ -160,7 +160,7 @@ public abstract class HTMLConvertor {
 
 	/**
 	 * Opens a new <code>&lt;td&gt;</code> with the given width attribute set
-	 * 
+	 *
 	 * @param width
 	 * @return a new open <code>&lt;td&gt;</code> tag
 	 */

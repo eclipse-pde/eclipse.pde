@@ -119,7 +119,7 @@ public class ApiFileGenerationTask extends Task {
 	boolean allowNonApiProject = false;
 	/**
 	 * The encoding to read the source files with
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	String encoding;
@@ -127,7 +127,7 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Set the project name.
-	 * 
+	 *
 	 * @param projectName the given project name
 	 */
 	public void setProjectName(String projectName) {
@@ -136,14 +136,14 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Set the project location.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * This is the folder that contains all the source files for the given
 	 * project. <br>
 	 * <br>
 	 * The location is set using an absolute path.</p>
-	 * 
+	 *
 	 * @param projectLocation the given project location
 	 */
 	public void setProject(String projectLocation) {
@@ -152,13 +152,13 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Set the target location.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * This is the folder in which the generated files are generated. <br>
 	 * <br>
 	 * The location is set using an absolute path.</p>
-	 * 
+	 *
 	 * @param targetLocation the given target location
 	 */
 	public void setTarget(String targetLocation) {
@@ -167,7 +167,7 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Set the binary locations.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * This is a list of folders or jar files that contain all the .class files
@@ -175,7 +175,7 @@ public class ApiFileGenerationTask extends Task {
 	 * Each entry must exist. <br>
 	 * <br>
 	 * They should be specified using absolute paths.
-	 * 
+	 *
 	 * @param binaryLocations the given binary locations
 	 */
 	public void setBinary(String binaryLocations) {
@@ -191,7 +191,7 @@ public class ApiFileGenerationTask extends Task {
 	 * <p>
 	 * Default is: <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2
 	 * @param allow
 	 */
@@ -201,7 +201,7 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Sets the encoding the task should use when reading text streams
-	 * 
+	 *
 	 * @param encoding
 	 * @since 1.0.600
 	 */
@@ -217,7 +217,7 @@ public class ApiFileGenerationTask extends Task {
 	 * <p>
 	 * Default is <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
@@ -226,7 +226,7 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Set the extra manifest files' locations.
-	 * 
+	 *
 	 * <p>
 	 * This is a list of extra MANIFEST.MF files' locations that can be set to
 	 * provide more API packages to scan. They are separated by the platform
@@ -240,7 +240,7 @@ public class ApiFileGenerationTask extends Task {
 	 * Jar files can be specified instead of MANIFEST.MF file. If a jar file is
 	 * specified, its MANIFEST.MF file will be read if it exists.
 	 * </p>
-	 * 
+	 *
 	 * @param manifests the given extra manifest files' locations
 	 */
 	public void setExtraManifests(String manifests) {
@@ -249,14 +249,14 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Set the extra source locations.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * This is a list of locations for source files that will be scanned. They
 	 * are separated by the platform path separator. Each entry must exist. <br>
 	 * <br>
 	 * They should be specified using absolute paths.
-	 * 
+	 *
 	 * @param manifests the given extra source locations
 	 */
 	public void setExtraSourceLocations(String sourceLocations) {
@@ -486,7 +486,7 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Returns if the given path ends with one of the collected API path names
-	 * 
+	 *
 	 * @param path
 	 * @return true if the given path name ends with one of the collected API
 	 *         package names
@@ -503,7 +503,7 @@ public class ApiFileGenerationTask extends Task {
 	/**
 	 * Collects the names of the packages that are API for the bundle the API
 	 * description is being created for
-	 * 
+	 *
 	 * @param manifestmap
 	 * @return the names of the packages that are API for the bundle the API
 	 *         description is being created for
@@ -559,7 +559,7 @@ public class ApiFileGenerationTask extends Task {
 	/**
 	 * Resolves the compiler compliance based on the BREE entry in the
 	 * MANIFEST.MF file
-	 * 
+	 *
 	 * @param manifestmap
 	 * @return The derived {@link JavaCore#COMPILER_COMPLIANCE} from the BREE in
 	 *         the manifest map, or {@link JavaCore#VERSION_1_3} if there is no
@@ -592,7 +592,7 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Resolves if the '.project' file belongs to an API enabled project or not
-	 * 
+	 *
 	 * @param dotProjectFile
 	 * @return true if the '.project' file is for an API enabled project, false
 	 *         otherwise
@@ -630,7 +630,7 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Check if the given source contains an source extension point.
-	 * 
+	 *
 	 * @param pluginXMLContents the given file contents
 	 * @return true if it contains a source extension point, false otherwise
 	 */

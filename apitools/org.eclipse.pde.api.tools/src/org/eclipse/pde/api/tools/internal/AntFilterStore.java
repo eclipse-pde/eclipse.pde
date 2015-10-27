@@ -35,7 +35,7 @@ public class AntFilterStore extends FilterStore {
 	public static ArrayList<IApiProblem> filteredAPIProblems = new ArrayList<>();
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param debug
 	 * @param filtersRoot
 	 * @param componentID
@@ -83,7 +83,7 @@ public class AntFilterStore extends FilterStore {
 	/**
 	 * Internal use method that allows auto-persisting of the filter file to be
 	 * turned on or off
-	 * 
+	 *
 	 * @param problems the problems to add the the store
 	 * @param persist if the filters should be auto-persisted after they are
 	 *            added

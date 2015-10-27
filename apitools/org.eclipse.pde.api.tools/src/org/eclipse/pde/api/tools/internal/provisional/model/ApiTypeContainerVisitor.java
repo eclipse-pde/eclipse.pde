@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional.model;
 
 /**
  * Visits {@link IApiTypeRoot}s in an {@link IApiTypeContainer}
- * 
+ *
  * @since 1.0.0
  */
 public abstract class ApiTypeContainerVisitor {
@@ -25,7 +25,7 @@ public abstract class ApiTypeContainerVisitor {
 	 * The default implementation does nothing and returns <code>true</code>.
 	 * Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param component API component being visited
 	 * @return whether class files in the component should be visited
 	 */
@@ -39,7 +39,7 @@ public abstract class ApiTypeContainerVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param component API component
 	 */
 	public void end(IApiComponent component) {
@@ -53,7 +53,7 @@ public abstract class ApiTypeContainerVisitor {
 	 * The default implementation does nothing and returns <code>true</code>.
 	 * Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param container
 	 * @return
 	 */
@@ -66,7 +66,7 @@ public abstract class ApiTypeContainerVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param container
 	 */
 	public void end(IApiTypeContainer container) {
@@ -80,7 +80,7 @@ public abstract class ApiTypeContainerVisitor {
 	 * The default implementation does nothing and returns <code>true</code>.
 	 * Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param packageName fully qualified dot separated package name or the
 	 *            empty string for the default package
 	 * @return whether class files in the package should be visited
@@ -94,7 +94,7 @@ public abstract class ApiTypeContainerVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param packageName fully qualified dot separated package name or the
 	 *            empty string for the default package
 	 */
@@ -107,7 +107,7 @@ public abstract class ApiTypeContainerVisitor {
 	 * <p>
 	 * The default implementation does nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param packageName fully qualified dot separated package name or the
 	 *            empty string for the default package
 	 * @param typeroot {@link IApiTypeRoot} to visit
@@ -121,7 +121,7 @@ public abstract class ApiTypeContainerVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param packageName fully qualified dot separated package name or the
 	 *            empty string for the default package
 	 * @param typeroot {@link IApiTypeRoot} ending visit on

@@ -82,7 +82,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Implementation of an API component based on a bundle in the file system.
- * 
+ *
  * @since 1.0.0
  */
 public class BundleComponent extends Component {
@@ -149,7 +149,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Constructs a new API component from the specified location in the file
 	 * system in the given baseline.
-	 * 
+	 *
 	 * @param baseline owning API baseline
 	 * @param location directory or jar file
 	 * @param bundleid
@@ -178,7 +178,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Returns this bundle's manifest as a dictionary or <code>null</code> if no
 	 * manifest was found.
-	 * 
+	 *
 	 * @return manifest dictionary or <code>null</code>
 	 * @exception CoreException if something goes terribly wrong
 	 */
@@ -230,7 +230,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Returns if the bundle at the specified location is a valid bundle or not.
 	 * Validity is determined via the existence of a readable manifest file
-	 * 
+	 *
 	 * @param location
 	 * @return true if the bundle at the given location is valid false otherwise
 	 * @throws IOException
@@ -256,7 +256,7 @@ public class BundleComponent extends Component {
 
 	/**
 	 * Initializes the component
-	 * 
+	 *
 	 * @throws CoreException on failure
 	 */
 	protected synchronized void init() {
@@ -287,7 +287,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Returns if this component is a a binary bundle in the workspace i.e. an
 	 * imported binary bundle
-	 * 
+	 *
 	 * @return true if the component is a binary bundle in the workspace, false
 	 *         otherwise
 	 */
@@ -297,7 +297,7 @@ public class BundleComponent extends Component {
 
 	/**
 	 * Returns the {@link State} from the backing baseline
-	 * 
+	 *
 	 * @return the state from the backing {@link ApiBaseline}
 	 */
 	protected State getState() {
@@ -307,7 +307,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Returns the {@link BundleDescription} for the given manifest + state or
 	 * throws an exception, never returns <code>null</code>
-	 * 
+	 *
 	 * @param manifest
 	 * @param location
 	 * @param id
@@ -330,7 +330,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Tries to look up the bundle described by the given manifest in the given
 	 * state
-	 * 
+	 *
 	 * @param manifest
 	 * @return the bundle for the given manifest, <code>null</code> otherwise
 	 * @throws BundleException
@@ -354,7 +354,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Returns whether this API component represents a binary bundle versus a
 	 * project bundle.
-	 * 
+	 *
 	 * @return whether this API component represents a binary bundle
 	 */
 	protected boolean isBinary() {
@@ -388,7 +388,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Creates and returns this component's API description based on packages
 	 * supplied by this component, exported packages, and associated directives.
-	 * 
+	 *
 	 * @return API description
 	 * @throws CoreException if unable to initialize
 	 */
@@ -411,7 +411,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Returns the names of all packages that originate from this bundle. Does
 	 * not include packages that originate from fragments or a host.
-	 * 
+	 *
 	 * @return local package names
 	 * @throws CoreException
 	 */
@@ -438,7 +438,7 @@ public class BundleComponent extends Component {
 	 * for packages that originate from fragments). However, a host's API
 	 * description will be represented by a proxy that delegates to the host and
 	 * all of its fragments to provide a complete description of the host.
-	 * 
+	 *
 	 * @param apiDesc API description to initialize
 	 * @param bundle the bundle to load from
 	 * @param packages the complete set of packages names originating from the
@@ -475,7 +475,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Adds package exports to the given list if the associated package
 	 * originates from this bundle.
-	 * 
+	 *
 	 * @param packages names of packages supplied by this bundle
 	 * @param supplied list to append package exports to
 	 * @param exportPackages package exports to consider
@@ -496,7 +496,7 @@ public class BundleComponent extends Component {
 
 	/**
 	 * Annotates the API description with exported packages.
-	 * 
+	 *
 	 * @param apiDesc description to annotate
 	 * @param exportedPackages packages that are exported
 	 */
@@ -611,7 +611,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Returns whether this API component is enabled for API analysis by the API
 	 * builder.
-	 * 
+	 *
 	 * @return whether this API component is enabled for API analysis by the API
 	 *         builder.
 	 */
@@ -621,7 +621,7 @@ public class BundleComponent extends Component {
 
 	/**
 	 * Returns classpath entries defined in the given manifest.
-	 * 
+	 *
 	 * @param manifest
 	 * @return classpath entries as bundle relative paths
 	 * @throws BundleException
@@ -646,7 +646,7 @@ public class BundleComponent extends Component {
 	 * this bundle, or <code>null</code> if the {@link IApiTypeContainer} does
 	 * not exist. The path is the name (path) of entries specified by the
 	 * <code>Bundle-ClassPath:</code> header.
-	 * 
+	 *
 	 * @param path relative path to a class file container in this bundle
 	 * @return {@link IApiTypeContainer} or <code>null</code>
 	 * @throws IOException
@@ -723,7 +723,7 @@ public class BundleComponent extends Component {
 	 * Extracts a directory from the archive given a path prefix for entries to
 	 * retrieve. <code>null</code> can be passed in as a prefix, causing all
 	 * entries to be be extracted from the archive.
-	 * 
+	 *
 	 * @param zip the {@link ZipFile} to extract from
 	 * @param pathprefix the prefix'ing path to include for extraction
 	 * @param parent the parent directory to extract to
@@ -751,7 +751,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Extracts a non-directory entry from a zip file and returns the File
 	 * handle
-	 * 
+	 *
 	 * @param zip the zip to extract from
 	 * @param entry the entry to extract
 	 * @param parent the parent directory to add the extracted entry to
@@ -817,7 +817,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Reads and returns the file contents corresponding to the given file name.
 	 * The bundle may be in a jar or in a directory at the specified location.
-	 * 
+	 *
 	 * @param xmlFileName the given file name
 	 * @param bundleLocation the root location of the bundle
 	 * @return the file contents or <code>null</code> if not present
@@ -854,7 +854,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Parses a bundle's .api_description XML into a string. The file may be in
 	 * a jar or in a directory at the specified location.
-	 * 
+	 *
 	 * @param bundleLocation root location of the bundle
 	 * @return API description XML as a string or <code>null</code> if none
 	 * @throws IOException if unable to parse
@@ -892,7 +892,7 @@ public class BundleComponent extends Component {
 
 	/**
 	 * Returns a URL describing a file inside a bundle.
-	 * 
+	 *
 	 * @param bundleLocation root location of the bundle. May be a directory or
 	 *            a file (jar)
 	 * @param filePath bundle relative path to desired file
@@ -961,7 +961,7 @@ public class BundleComponent extends Component {
 
 	/**
 	 * Returns this component's bundle description.
-	 * 
+	 *
 	 * @return bundle description
 	 */
 	public synchronized BundleDescription getBundleDescription() throws CoreException {
@@ -1044,7 +1044,7 @@ public class BundleComponent extends Component {
 
 	/**
 	 * Check if the given source contains an source extension point.
-	 * 
+	 *
 	 * @param pluginXMLContents the given file contents
 	 * @return true if it contains a source extension point, false otherwise
 	 */
@@ -1111,7 +1111,7 @@ public class BundleComponent extends Component {
 
 	/**
 	 * Sets whether this bundle has an underlying API description file.
-	 * 
+	 *
 	 * @param hasApiDescription whether this bundle has an underlying API
 	 *            description file
 	 */

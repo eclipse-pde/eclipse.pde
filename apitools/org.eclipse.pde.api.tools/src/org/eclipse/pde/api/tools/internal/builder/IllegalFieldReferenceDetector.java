@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Detects references to 'no reference' fields.
- * 
+ *
  * @since 1.1
  */
 public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
@@ -52,7 +52,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 
 	/**
 	 * Adds the given field as not to be referenced
-	 * 
+	 *
 	 * @param field a field that is marked no reference
 	 * @param componentId the component the type is located in
 	 */
@@ -63,10 +63,10 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 
 	/**
 	 * Adds an {@link IReferenceTypeDescriptor} that is reference-restricted
-	 * 
+	 *
 	 * @param type the {@link IReferenceTypeDescriptor} that is restricted
 	 * @param componentid the id of the API the reference type comes from
-	 * 
+	 *
 	 * @since 1.0.400
 	 */
 	void addIllegalType(IReferenceTypeDescriptor type, String componentid) {

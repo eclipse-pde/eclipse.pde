@@ -15,7 +15,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * API problem types.
- * 
+ *
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -179,7 +179,7 @@ public interface IApiProblemTypes {
 	public static final String INVALID_JAVADOC_TAG = "INVALID_JAVADOC_TAG"; //$NON-NLS-1$
 	/**
 	 * Key for an annotation appearing where it is not supported
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static final String INVALID_ANNOTATION = "INVALID_ANNOTATION"; //$NON-NLS-1$
@@ -194,7 +194,7 @@ public interface IApiProblemTypes {
 	public static final String UNUSED_PROBLEM_FILTERS = "UNUSED_PROBLEM_FILTERS"; //$NON-NLS-1$
 	/**
 	 * Key for the severity of no EE descriptions being installed
-	 * 
+	 *
 	 * @since 1.0.400
 	 */
 	public static final String MISSING_EE_DESCRIPTIONS = "MISSING_EE_DESCRIPTIONS"; //$NON-NLS-1$

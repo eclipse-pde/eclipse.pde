@@ -28,7 +28,7 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
  * Detects when a 'no reference' method is called.
- * 
+ *
  * @since 1.1
  */
 public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReference {
@@ -37,7 +37,7 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 
 	/**
 	 * Adds an {@link IReferenceTypeDescriptor} that is reference-restricted
-	 * 
+	 *
 	 * @param type the qualified name of the {@link IReferenceTypeDescriptor}
 	 *            that is restricted
 	 * @param componentid the id of the component that the type is from

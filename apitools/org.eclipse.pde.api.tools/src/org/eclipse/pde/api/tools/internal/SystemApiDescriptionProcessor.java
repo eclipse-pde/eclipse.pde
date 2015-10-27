@@ -39,7 +39,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Provides tools for scanning/loading/parsing component.xml files.
- * 
+ *
  * @since 1.0.0
  */
 public class SystemApiDescriptionProcessor {
@@ -53,7 +53,7 @@ public class SystemApiDescriptionProcessor {
 	 * Parses a component XML into a string. The location may be a jar,
 	 * directory containing the component.xml file, or the component.xml file
 	 * itself
-	 * 
+	 *
 	 * @param location root location of the component.xml file, or the
 	 *            component.xml file itself
 	 * @return component XML as a string or <code>null</code> if none
@@ -108,7 +108,7 @@ public class SystemApiDescriptionProcessor {
 
 	/**
 	 * Throws an exception with the given message and underlying exception.
-	 * 
+	 *
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
 	 * @throws CoreException
@@ -123,7 +123,7 @@ public class SystemApiDescriptionProcessor {
 	 * specified {@link IApiDescription} with {@link IPackageDescriptor}s,
 	 * {@link IReferenceTypeDescriptor}s, {@link IMethodDescriptor}s and
 	 * {@link IFieldDescriptor}s.
-	 * 
+	 *
 	 * @param settings API settings to annotate
 	 * @param xml XML used to generate settings
 	 * @throws CoreException
@@ -167,7 +167,7 @@ public class SystemApiDescriptionProcessor {
 	 * Annotates the backing {@link IApiDescription} from the given
 	 * {@link Element}, by adding the visibility and restriction attributes to
 	 * the specified {@link IElementDescriptor}
-	 * 
+	 *
 	 * @param settings the settings to annotate
 	 * @param descriptor the current descriptor context
 	 * @param element the current element to annotate from
@@ -185,7 +185,7 @@ public class SystemApiDescriptionProcessor {
 	/**
 	 * Tests if the given restriction exists for the given element and returns
 	 * an updated restrictions flag.
-	 * 
+	 *
 	 * @param element XML element
 	 * @param name attribute to test
 	 * @param flag bit mask for attribute
@@ -203,7 +203,7 @@ public class SystemApiDescriptionProcessor {
 	/**
 	 * Tests if the given restriction exists for the given element and returns
 	 * an updated restrictions flag.
-	 * 
+	 *
 	 * @param element XML element
 	 * @param name attribute to test
 	 * @param flag bit mask for attribute
@@ -221,7 +221,7 @@ public class SystemApiDescriptionProcessor {
 	/**
 	 * Tests if the given restriction exists for the given element and returns
 	 * an updated restrictions flag.
-	 * 
+	 *
 	 * @param element XML element
 	 * @param name attribute to test
 	 * @param flag bit mask for attribute
@@ -241,7 +241,7 @@ public class SystemApiDescriptionProcessor {
 	 * elements that are direct children of the specified {@link Element}.
 	 * {@link IFieldDescriptor}s are created as needed and added as children of
 	 * the specified {@link IReferenceTypeDescriptor}.
-	 * 
+	 *
 	 * @param settings the {@link IApiDescription} to add the new
 	 *            {@link IFieldDescriptor} to
 	 * @param typedesc the containing type descriptor for this field
@@ -269,7 +269,7 @@ public class SystemApiDescriptionProcessor {
 	 * elements that are direct children of the specified {@link Element}.
 	 * {@link IMethodDescriptor}s are created as needed and added as children of
 	 * the specified {@link IReferenceTypeDescriptor}.
-	 * 
+	 *
 	 * @param settings the {@link IApiDescription} to add the new
 	 *            {@link IMethodDescriptor} to
 	 * @param typedesc the containing type descriptor for this method

@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 
 /**
  * Description of a method.
- * 
+ *
  * @since 1.0.0
  */
 public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMethodDescriptor {
@@ -29,7 +29,7 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 
 	/**
 	 * Constructs a method descriptor.
-	 * 
+	 *
 	 * @param name method name
 	 * @param enclosingType enclosing type
 	 * @param signature method signature

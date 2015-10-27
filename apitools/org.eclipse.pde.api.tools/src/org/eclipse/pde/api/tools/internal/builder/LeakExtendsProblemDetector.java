@@ -33,7 +33,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Detects leaked super types.
- * 
+ *
  * @since 1.1
  */
 public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
@@ -140,7 +140,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 
 	/**
 	 * Adds all visible methods to the given set in the specified type.
-	 * 
+	 *
 	 * @param type type to analyze
 	 * @param members set to add methods to
 	 * @param modifiers visibilities to consider
@@ -158,7 +158,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	/**
 	 * Returns whether the given type has any visible fields base on the given
 	 * visibility flags to consider. A field is visible signals a definite leak.
-	 * 
+	 *
 	 * @param type type to analyze
 	 * @param modifiers visibilities to consider
 	 * @return whether there are any visible fields
@@ -177,7 +177,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	/**
 	 * Adds all API super types of the given type to the given list in top down
 	 * order.
-	 * 
+	 *
 	 * @param superTypes list to add to
 	 * @param type type being processed
 	 */
@@ -201,7 +201,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 
 	/**
 	 * Returns whether the given type has API visibility.
-	 * 
+	 *
 	 * @param type type
 	 * @return whether the given type has API visibility
 	 */

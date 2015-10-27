@@ -16,7 +16,7 @@ import org.osgi.framework.Version;
 
 /**
  * Implementation of a required component description based on OSGi bundles.
- * 
+ *
  * @since 1.0.0
  */
 public class BundleVersionRange implements IVersionRange {
@@ -26,7 +26,7 @@ public class BundleVersionRange implements IVersionRange {
 	/**
 	 * Constructs a new version range based on the given required bundle version
 	 * interval.
-	 * 
+	 *
 	 * @param versionInterval string representing mathematical interval
 	 *            describing range of compatible versions
 	 */
@@ -36,7 +36,7 @@ public class BundleVersionRange implements IVersionRange {
 
 	/**
 	 * Constructs a new version range based on the given range.
-	 * 
+	 *
 	 * @param range version range
 	 */
 	public BundleVersionRange(VersionRange range) {

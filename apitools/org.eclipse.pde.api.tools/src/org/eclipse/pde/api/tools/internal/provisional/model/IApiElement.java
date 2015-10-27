@@ -12,9 +12,9 @@ package org.eclipse.pde.api.tools.internal.provisional.model;
 
 /**
  * Describes an element that can appear in the API Tools model.
- * 
+ *
  * @since 1.0.0
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -60,14 +60,14 @@ public interface IApiElement {
 
 	/**
 	 * Returns the name of this element
-	 * 
+	 *
 	 * @return the element name
 	 */
 	public String getName();
 
 	/**
 	 * Returns this element's kind encoded as an integer.
-	 * 
+	 *
 	 * @return the kind of element; one of the constants declared in
 	 *         <code>IApiElement</code>
 	 * @see IApiElement
@@ -77,7 +77,7 @@ public interface IApiElement {
 	/**
 	 * Returns the immediate parent {@link IApiElement} of this element, or
 	 * <code>null</code> if this element has no parent
-	 * 
+	 *
 	 * @return the immediate parent of this element or <code>null</code>
 	 */
 	public IApiElement getParent();
@@ -85,7 +85,7 @@ public interface IApiElement {
 	/**
 	 * Returns the first ancestor of this API element that has the given type.
 	 * Returns <code>null</code> if no such ancestor can be found.
-	 * 
+	 *
 	 * @param ancestorType the given type
 	 * @return the first ancestor of this API element that has the given type,
 	 *         or <code>null</code> if no such an ancestor can be found
@@ -95,7 +95,7 @@ public interface IApiElement {
 	/**
 	 * Returns the API component this type originated from or <code>null</code>
 	 * if unknown.
-	 * 
+	 *
 	 * @return API component this type originated from or <code>null</code>
 	 */
 	public IApiComponent getApiComponent();

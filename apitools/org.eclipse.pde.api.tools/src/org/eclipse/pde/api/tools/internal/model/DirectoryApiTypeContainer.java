@@ -34,7 +34,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * An {@link IApiTypeContainer} rooted at a directory in the file system.
- * 
+ *
  * @since 1.0.0
  */
 public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeContainer {
@@ -48,7 +48,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 
 		/**
 		 * Constructs a class file on the given file
-		 * 
+		 *
 		 * @param directory the parent {@link IApiElement} directory
 		 * @param location
 		 * @param qualified type name
@@ -118,7 +118,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 
 	/**
 	 * Constructs an {@link IApiTypeContainer} rooted at the specified path.
-	 * 
+	 *
 	 * @param parent the parent {@link IApiElement} or <code>null</code> if none
 	 * @param location absolute path in the local file system
 	 */
@@ -231,7 +231,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	/**
 	 * Traverses a directory to determine if it has class files and then visits
 	 * sub-directories.
-	 * 
+	 *
 	 * @param packageName package name of directory being visited
 	 * @param dir directory being visited
 	 */

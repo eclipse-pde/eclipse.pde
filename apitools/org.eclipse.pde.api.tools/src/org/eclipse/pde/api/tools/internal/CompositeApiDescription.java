@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescri
 
 /**
  * A host API description combines descriptions of a host and all its fragments.
- * 
+ *
  * @since 1.0
  */
 public class CompositeApiDescription implements IApiDescription {
@@ -31,7 +31,7 @@ public class CompositeApiDescription implements IApiDescription {
 
 	/**
 	 * Constructs a composite API description out of the given descriptions.
-	 * 
+	 *
 	 * @param descriptions
 	 */
 	public CompositeApiDescription(IApiDescription[] descriptions) {

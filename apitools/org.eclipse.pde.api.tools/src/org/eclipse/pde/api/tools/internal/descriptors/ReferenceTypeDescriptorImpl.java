@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 
 /**
  * Reference type descriptor.
- * 
+ *
  * @since 1.0.0
  */
 public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements IReferenceTypeDescriptor {
@@ -43,7 +43,7 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 
 	/**
 	 * Constructs a type descriptor with the given name and parent.
-	 * 
+	 *
 	 * @param name simple type name
 	 * @param parent package or enclosing type
 	 */
@@ -54,7 +54,7 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 
 	/**
 	 * Constructs a type descriptor with the given name and parent.
-	 * 
+	 *
 	 * @param name simple type name
 	 * @param parent package or enclosing type
 	 * @param genericSignature generic signature info or <code>null</code>

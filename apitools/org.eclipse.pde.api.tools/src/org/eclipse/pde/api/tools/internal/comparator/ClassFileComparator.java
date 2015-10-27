@@ -50,7 +50,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Compares class files from the workspace to those in the default
  * {@link IApiBaseline}
- * 
+ *
  * @since 1.0.0
  */
 public class ClassFileComparator {
@@ -113,7 +113,7 @@ public class ClassFileComparator {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param classFile the class file from the workspace to compare
 	 * @param classFile2 the class file from the baseline to compare to
 	 * @param component the API component from the workspace
@@ -136,7 +136,7 @@ public class ClassFileComparator {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param type the {@link IApiType} from the workspace to compare
 	 * @param classFile2 the class file from the baseline to compare to
 	 * @param component the API component from the workspace
@@ -222,7 +222,7 @@ public class ClassFileComparator {
 
 	/**
 	 * reports problem status to the comparators' complete status
-	 * 
+	 *
 	 * @param newstatus
 	 */
 	protected void reportStatus(IStatus newstatus) {
@@ -235,7 +235,7 @@ public class ClassFileComparator {
 
 	/**
 	 * Report problem to the comparators' status
-	 * 
+	 *
 	 * @param e
 	 */
 	private void reportStatus(CoreException e) {
@@ -718,7 +718,7 @@ public class ClassFileComparator {
 	/**
 	 * Recursively collects all of the super-interfaces of the given type
 	 * descriptor within the scope of the given API component
-	 * 
+	 *
 	 * @param type
 	 * @param set
 	 */
@@ -789,7 +789,7 @@ public class ClassFileComparator {
 	/**
 	 * Returns a new {@link Delta} to use, and resets the status of creating a
 	 * delta
-	 * 
+	 *
 	 * @return
 	 */
 	private Delta createDelta() {
@@ -799,7 +799,7 @@ public class ClassFileComparator {
 	/**
 	 * Returns the change(s) between the type descriptor and its equivalent in
 	 * the current baseline.
-	 * 
+	 *
 	 * @return the changes in the type descriptor or <code>null</code>
 	 */
 	public IDelta getDelta(IProgressMonitor monitor) {
@@ -1836,7 +1836,7 @@ public class ClassFileComparator {
 	/**
 	 * Returns the complete super-interface set for the given type descriptor or
 	 * null, if it could not be computed
-	 * 
+	 *
 	 * @param type
 	 * @return the complete super-interface set for the given descriptor, or
 	 *         <code>null</code>
@@ -2207,7 +2207,7 @@ public class ClassFileComparator {
 	/**
 	 * Returns the delta element type code for the given type. Translates a type
 	 * to interface, class, emum or annotation.
-	 * 
+	 *
 	 * @param type
 	 * @return delta element type
 	 */
@@ -2227,7 +2227,7 @@ public class ClassFileComparator {
 	/**
 	 * Returns the delta element type code for the given method. Translates a
 	 * method to constructor or method.
-	 * 
+	 *
 	 * @param method
 	 * @return delta element type
 	 */
@@ -2241,7 +2241,7 @@ public class ClassFileComparator {
 	/**
 	 * Returns the delta type code for the given method when it is the target of
 	 * a remove/add. Translates a method to constructor or method.
-	 * 
+	 *
 	 * @param method
 	 * @return delta type
 	 */
@@ -2254,7 +2254,7 @@ public class ClassFileComparator {
 
 	/**
 	 * Translates a member to its delta element type code.
-	 * 
+	 *
 	 * @param member
 	 * @return delta element type code
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 
 /**
  * Delta visitor that generates XML for the delta.
- * 
+ *
  * @since 1.0.0
  */
 public class DeltaXmlVisitor extends DeltaVisitor {
@@ -38,7 +38,7 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 
 	/**
 	 * Constructs a new visitor for the given component.
-	 * 
+	 *
 	 * @param component API component
 	 * @throws CoreException if unable to construct the visitor
 	 */
@@ -99,7 +99,7 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 
 	/**
 	 * Returns the settings as a UTF-8 string containing XML.
-	 * 
+	 *
 	 * @return XML
 	 * @throws CoreException if something goes wrong
 	 */
@@ -110,7 +110,7 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 	/**
 	 * Return the xml dom document this visitor generates. Use {@link #getXML()}
 	 * to get the serialized xml string.
-	 * 
+	 *
 	 * @return xml dom document
 	 */
 	public Document getDocument() {

@@ -50,7 +50,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 		/**
 		 * Builds the name for the component
-		 * 
+		 *
 		 * @param id id of the component
 		 * @param version version of the component, can be <code>null</code>
 		 * @return string name
@@ -130,7 +130,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 				}
 				buffer.append(CLOSE_TABLE);
 
-				buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.MissingRefReportConverter_BackToIndex).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$ 
+				buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.MissingRefReportConverter_BackToIndex).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 				buffer.append(W3C_FOOTER);
 				buffer.append(CLOSE_BODY);
 
@@ -177,7 +177,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 				Collections.sort(pbs, missingcompare);
 				for (IApiProblem pb : pbs) {
 					buffer.append(OPEN_TR);
-					buffer.append("<td align=\"left\" width=\"75%\">").append(pb.getMessage()).append(CLOSE_TD); //$NON-NLS-1$ 
+					buffer.append("<td align=\"left\" width=\"75%\">").append(pb.getMessage()).append(CLOSE_TD); //$NON-NLS-1$
 					buffer.append(CLOSE_TR);
 				}
 			}
@@ -195,7 +195,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 		/**
 		 * Returns the HTML markup for the problems table header.
-		 * 
+		 *
 		 * @param sectionname
 		 * @param type
 		 * @return the default references table header
@@ -208,7 +208,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 			buffer.append("<table border=\"1\" width=\"80%\">\n"); //$NON-NLS-1$
 
 			buffer.append(OPEN_TR);
-			buffer.append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">").append(OPEN_B).append(type).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+			buffer.append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">").append(OPEN_B).append(type).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			buffer.append(CLOSE_TR);
 
 			return buffer.toString();
@@ -293,7 +293,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param htmlroot the folder root where the HTML reports should be written
 	 * @param xmlroot the folder root where the current API use scan output is
 	 *            located
@@ -341,7 +341,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 	/**
 	 * Writes the main index file for the reports
-	 * 
+	 *
 	 * @param result a list of {@link Report} objects returns from the use scan
 	 *            parser
 	 */
@@ -370,7 +370,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 			getFilteredCount();
 			writeFilterCount(buffer);
-			
+
 			buffer.append(OPEN_H4).append(SearchMessages.MissingRefReportConverter_AddlBundleInfo).append(CLOSE_H4);
 			// if(hasMissing()) {
 			// buffer.append(OPEN_P);
@@ -422,7 +422,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 	/**
 	 * Returns the HTML markup for one entry in the problem summary table.
-	 * 
+	 *
 	 * @param report
 	 * @param link
 	 * @return a single reference table entry
@@ -433,9 +433,9 @@ public class MissingRefReportConverter extends UseReportConverter {
 		buffer.append("<td><b><a href=\"").append(link).append("\">").append(getBundleOnlyName(report.name)).append("</a>").append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		buffer.append("\t<td align=\"left\">").append(getVersion(report.name)).append(CLOSE_TD); //$NON-NLS-1$
 		buffer.append("\t<td align=\"center\">").append(report.typeProblems).append(CLOSE_TD); //$NON-NLS-1$
-		buffer.append("\t<td align=\"center\">").append(report.methodProblems).append(CLOSE_TD); //$NON-NLS-1$ 
-		buffer.append("\t<td align=\"center\">").append(report.fieldProblems).append(CLOSE_TD); //$NON-NLS-1$ 
-		buffer.append("\t<td align=\"center\">").append(report.getTotal()).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td align=\"center\">").append(report.methodProblems).append(CLOSE_TD); //$NON-NLS-1$
+		buffer.append("\t<td align=\"center\">").append(report.fieldProblems).append(CLOSE_TD); //$NON-NLS-1$
+		buffer.append("\t<td align=\"center\">").append(report.getTotal()).append(CLOSE_TD); //$NON-NLS-1$
 		buffer.append(CLOSE_TR);
 		return buffer.toString();
 	}
@@ -476,7 +476,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 	void writeMetadataSummary(StringBuffer buffer) throws Exception {
 		MissingRefMetadata metadata = (MissingRefMetadata) getMetadata();
 		buffer.append(OPEN_H4).append(SearchMessages.MissingRefReportConverter_MetadataTitle).append(CLOSE_H4);
-		buffer.append("<table border=\"0px\" title=\"").append(SearchMessages.MissingRefReportConverter_MetadataTableTitle).append("\"width=\"50%\">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		buffer.append("<table border=\"0px\" title=\"").append(SearchMessages.MissingRefReportConverter_MetadataTableTitle).append("\"width=\"50%\">"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		buffer.append(OPEN_TR);
 		buffer.append(openTD(14)).append(SearchMessages.MissingRefReportConverter_ReportDate).append(CLOSE_TD);
@@ -525,7 +525,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 	@Override
 	protected void writeMetadataHeaders(StringBuffer buffer) {
-		buffer.append("<meta name=\"").append("description").append("\" content=\"").append(SearchMessages.MissingRefReportConverter_IndexMetaTag).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+		buffer.append("<meta name=\"").append("description").append("\" content=\"").append(SearchMessages.MissingRefReportConverter_IndexMetaTag).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	/**

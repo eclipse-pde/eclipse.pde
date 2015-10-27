@@ -45,7 +45,7 @@ public class Messages extends NLS {
 	/**
 	 * This method initializes the MessageTemplates class variable according to
 	 * the current Locale.
-	 * 
+	 *
 	 * @param loc Locale
 	 * @return HashtableOfInt
 	 */

@@ -28,7 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Base class for validators
- * 
+ *
  * @since 1.0.600
  */
 public abstract class Validator extends ASTVisitor {
@@ -128,7 +128,7 @@ public abstract class Validator extends ASTVisitor {
 
 	/**
 	 * Returns the next item on the tip of the stack
-	 * 
+	 *
 	 * @return the next {@link Item}
 	 */
 	protected Item getItem() {
@@ -137,7 +137,7 @@ public abstract class Validator extends ASTVisitor {
 
 	/**
 	 * Returns the fully qualified name of the enclosing type for the given node
-	 * 
+	 *
 	 * @param node
 	 * @return the fully qualified name of the enclosing type
 	 */
@@ -147,7 +147,7 @@ public abstract class Validator extends ASTVisitor {
 
 	/**
 	 * Constructs the qualified name of the enclosing parent type
-	 * 
+	 *
 	 * @param node the node to get the parent name for
 	 * @param buffer the buffer to write the name into
 	 * @return the fully qualified name of the parent
@@ -182,7 +182,7 @@ public abstract class Validator extends ASTVisitor {
 	 * Returns the {@link IApiJavadocTag} kind of the parent {@link ASTNode} for
 	 * the given node or -1 if the parent is not found or not a
 	 * {@link TypeDeclaration}
-	 * 
+	 *
 	 * @param node
 	 * @return the {@link IApiJavadocTag} kind of the parent or -1
 	 */
@@ -203,7 +203,7 @@ public abstract class Validator extends ASTVisitor {
 	/**
 	 * Returns the modifiers from the smallest enclosing type containing the
 	 * given node
-	 * 
+	 *
 	 * @param node
 	 * @return the modifiers for the smallest enclosing type or 0
 	 */
@@ -220,7 +220,7 @@ public abstract class Validator extends ASTVisitor {
 
 	/**
 	 * Adds a found problem to the listing
-	 * 
+	 *
 	 * @param problem
 	 */
 	protected void addProblem(IApiProblem problem) {
@@ -233,7 +233,7 @@ public abstract class Validator extends ASTVisitor {
 	/**
 	 * Returns the complete listing of API annotation problems found during the
 	 * scan or an empty array, never <code>null</code>
-	 * 
+	 *
 	 * @return the complete listing of API annotation problems found
 	 */
 	public IApiProblem[] getProblems() {

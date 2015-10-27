@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * {@link IApiTypeContainer} container for an archive (jar or zip) file.
- * 
+ *
  * @since 1.0.0
  */
 public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeContainer {
@@ -48,7 +48,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 
 		/**
 		 * Constructs a new handle to an {@link IApiTypeRoot} in the archive.
-		 * 
+		 *
 		 * @param container archive
 		 * @param entryName zip entry name
 		 */
@@ -158,7 +158,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	/**
 	 * Constructs an {@link IApiTypeContainer} container for the given jar or
 	 * zip file at the specified location.
-	 * 
+	 *
 	 * @param parent the parent {@link IApiElement} or <code>null</code> if none
 	 * @param path location of the file in the local file system
 	 */
@@ -253,7 +253,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 
 	/**
 	 * Initializes cache of packages and types.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	private synchronized void init() throws CoreException {

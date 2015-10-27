@@ -19,14 +19,14 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 
 /**
  * Common implementation for {@link IApiTypeRoot}
- * 
+ *
  * @since 1.0.0
  */
 public abstract class AbstractApiTypeRoot extends ApiElement implements IApiTypeRoot {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent the parent {@link IApiElement} or <code>null</code> if none
 	 * @param name the name of the type root
 	 */

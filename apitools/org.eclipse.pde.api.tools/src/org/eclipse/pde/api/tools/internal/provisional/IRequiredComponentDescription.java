@@ -12,28 +12,28 @@ package org.eclipse.pde.api.tools.internal.provisional;
 
 /**
  * Describes an API component required by another component.
- * 
+ *
  * @since 1.0.0
  */
 public interface IRequiredComponentDescription {
 
 	/**
 	 * Returns the symbolic name of the required component.
-	 * 
+	 *
 	 * @return symbolic name of the required component
 	 */
 	public String getId();
 
 	/**
 	 * Returns a range of compatible versions of the required component.
-	 * 
+	 *
 	 * @return compatible version range
 	 */
 	public IVersionRange getVersionRange();
 
 	/**
 	 * Returns whether the required component is optional.
-	 * 
+	 *
 	 * @return whether the required component is optional.
 	 */
 	public boolean isOptional();
@@ -41,7 +41,7 @@ public interface IRequiredComponentDescription {
 	/**
 	 * Returns whether the required component is re-exported by the declaring
 	 * component.
-	 * 
+	 *
 	 * @return whether the required component is re-exported by the declaring
 	 *         component
 	 */

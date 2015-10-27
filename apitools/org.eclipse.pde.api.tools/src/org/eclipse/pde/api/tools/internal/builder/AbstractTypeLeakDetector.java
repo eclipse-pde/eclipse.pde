@@ -33,7 +33,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Detects leaked types.
- * 
+ *
  * @since 1.1
  */
 public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetector {

@@ -517,7 +517,7 @@ public class APIFreezeReportConversionTask extends Task {
 	 * <p>
 	 * Default is <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
@@ -526,16 +526,16 @@ public class APIFreezeReportConversionTask extends Task {
 
 	/**
 	 * Set the path of the html file to generate.
-	 * 
+	 *
 	 * <p>
 	 * The location is set using an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This is optional. If not set, the html file name is retrieved from the
 	 * xml file name by replacing ".xml" in ".html".
 	 * </p>
-	 * 
+	 *
 	 * @param htmlFilePath the path of the html file to generate
 	 */
 	public void setHtmlFile(String htmlFilePath) {
@@ -544,11 +544,11 @@ public class APIFreezeReportConversionTask extends Task {
 
 	/**
 	 * Set the path of the xml file to convert to html.
-	 * 
+	 *
 	 * <p>
 	 * The path is set using an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * @param xmlFilePath the path of the xml file to convert to html
 	 */
 	public void setXmlFile(String xmlFilePath) {

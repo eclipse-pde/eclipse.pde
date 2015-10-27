@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,7 +14,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Class containing constants and utility methods for restriction modifiers
- * 
+ *
  * @since 1.0.0
  */
 public final class RestrictionModifiers {
@@ -59,7 +59,7 @@ public final class RestrictionModifiers {
 	/**
 	 * Returns if the no_implement modifier has been set in the specified
 	 * modifiers
-	 * 
+	 *
 	 * @param modifiers the modifiers to resolve
 	 * @return if the no_implement modifier has been set in the specified
 	 *         modifiers
@@ -70,7 +70,7 @@ public final class RestrictionModifiers {
 
 	/**
 	 * Returns if the no_extend modifier has been set in the specified modifiers
-	 * 
+	 *
 	 * @param modifiers the modifiers to resolve
 	 * @return if the no_extend modifier has been set in the specified modifiers
 	 */
@@ -81,7 +81,7 @@ public final class RestrictionModifiers {
 	/**
 	 * Returns if the no_override modifier has been set in the specified
 	 * modifiers
-	 * 
+	 *
 	 * @param modifiers the modifiers to resolve
 	 * @return if the no_override modifier has been set in the specified
 	 *         modifiers
@@ -93,7 +93,7 @@ public final class RestrictionModifiers {
 	/**
 	 * Returns if the no_instantiate modifier has been set in the specified
 	 * modifiers
-	 * 
+	 *
 	 * @param modifiers the modifiers to resolve
 	 * @return if the no_instantiate modifier has been set in the specified
 	 *         modifiers
@@ -105,7 +105,7 @@ public final class RestrictionModifiers {
 	/**
 	 * Returns if the no_reference modifier has been set in the specified
 	 * modifiers
-	 * 
+	 *
 	 * @param modifiers the modifiers to resolve
 	 * @return if the no_reference modifier has been set in the specified
 	 *         modifiers
@@ -116,7 +116,7 @@ public final class RestrictionModifiers {
 
 	/**
 	 * Returns if the modifiers indicate no restrictions.
-	 * 
+	 *
 	 * @param modifiers the modifiers to test
 	 * @return if the modifiers indicate no restrictions
 	 */
@@ -127,7 +127,7 @@ public final class RestrictionModifiers {
 	/**
 	 * Returns the string representation of the specified restriction(s) or
 	 * <code>UNKNOWN_KIND</code> if the kind is unknown.
-	 * 
+	 *
 	 * @param restrictions the restrictions to get the display string for
 	 * @return the string representation for the given restrictions or
 	 *         <code>UNKNOWN_KIND</code>

@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Handle to the structure of a class, interface, annotation, or enum.
- * 
+ *
  * @since 1.0.0
  */
 public interface IApiTypeRoot extends IApiElement {
@@ -22,7 +22,7 @@ public interface IApiTypeRoot extends IApiElement {
 	/**
 	 * Returns the fully qualified name of the type this storage represents.
 	 * Package names are dot separated and type names are '$'-separated.
-	 * 
+	 *
 	 * @return fully qualified type name
 	 */
 	public String getTypeName();
@@ -30,7 +30,7 @@ public interface IApiTypeRoot extends IApiElement {
 	/**
 	 * Returns the structure contained in this type storage. I.e. access to the
 	 * methods, fields, and member types in the associated type.
-	 * 
+	 *
 	 * @return structure of associated type or <code>null</code> if a problem
 	 *         occurs creating the new type
 	 * @exception CoreException if unable to retrieve the structure
@@ -42,7 +42,7 @@ public interface IApiTypeRoot extends IApiElement {
 	 * <code>null</code> if unknown. Note that the component will only be
 	 * <code>null</code> in the case that a class file container was created
 	 * without an owning component.
-	 * 
+	 *
 	 * @return API component or <code>null</code> if unknown
 	 */
 	@Override

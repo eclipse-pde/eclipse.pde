@@ -73,7 +73,7 @@ public class FilterStore implements IApiFilterStore {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param component
 	 */
 	public FilterStore(BundleComponent component) {
@@ -199,7 +199,7 @@ public class FilterStore implements IApiFilterStore {
 	/**
 	 * Returns <code>true</code> if the attributes of the problems match,
 	 * <code>false</code> otherwise
-	 * 
+	 *
 	 * @param filterProblem the problem from the filter store
 	 * @param problem the problem from the builder
 	 * @return <code>true</code> if the problems match, <code>false</code>
@@ -238,7 +238,7 @@ public class FilterStore implements IApiFilterStore {
 	 * <li>both are the same length</li>
 	 * <li>both have equal elements at equal positions in the array</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param problemMessageArguments
 	 * @param filterProblemMessageArguments
 	 * @return <code>true</code> if the arrays are equal, <code>false</code>
@@ -293,7 +293,7 @@ public class FilterStore implements IApiFilterStore {
 	 * Reads the API problem filter file and calls back to
 	 * {@link #addFilters(IApiProblemFilter[])} to store the filters. <br>
 	 * This method will not close the given input stream when done reading it.
-	 * 
+	 *
 	 * @param contents the {@link InputStream} for the contents of the filter
 	 *            file, <code>null</code> is not allowed.
 	 * @throws IOException if the stream cannot be read or fails
@@ -381,7 +381,7 @@ public class FilterStore implements IApiFilterStore {
 	/**
 	 * Internal use method that allows auto-persisting of the filter file to be
 	 * turned on or off
-	 * 
+	 *
 	 * @param problems the problems to add the the store
 	 * @param persist if the filters should be auto-persisted after they are
 	 *            added
@@ -408,7 +408,7 @@ public class FilterStore implements IApiFilterStore {
 
 	/**
 	 * Loads the specified integer attribute from the given XML element
-	 * 
+	 *
 	 * @param element the XML element
 	 * @param name the name of the attribute
 	 * @return the specified value in XML or -1

@@ -14,7 +14,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
 
 /**
  * Default implementation of {@link IApiAccess}
- * 
+ *
  * @since 1.0.1
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -34,7 +34,7 @@ public class ApiAccess implements IApiAccess {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param access
 	 */
 	public ApiAccess(int access) {
@@ -69,7 +69,7 @@ public class ApiAccess implements IApiAccess {
 
 	/**
 	 * Returns a textual representation of an {@link IApiAccess}
-	 * 
+	 *
 	 * @param access
 	 * @return the textual representation of an {@link IApiAccess}
 	 */

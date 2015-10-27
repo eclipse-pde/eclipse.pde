@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 
 /**
  * Base implementation of {@link IApiMember}
- * 
+ *
  * @since 1.0.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -31,7 +31,7 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 	/**
 	 * Constructs a member enclosed by the given type with the specified name,
 	 * type constant, and flags (modifiers).
-	 * 
+	 *
 	 * @param parent the parent {@link IApiElement} for this type
 	 * @param name member name
 	 * @param signature signature (type or method)
@@ -47,7 +47,7 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 
 	/**
 	 * Returns this member's signature.
-	 * 
+	 *
 	 * @return signature
 	 */
 	@Override
@@ -57,7 +57,7 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 
 	/**
 	 * Returns generic signature or <code>null</code> if none.
-	 * 
+	 *
 	 * @return
 	 */
 	@Override
@@ -107,7 +107,7 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 	 * Returns if the immediate enclosing {@link IApiType}s of the two members
 	 * are equal: where both enclosing type being <code>null</code> is
 	 * considered equal
-	 * 
+	 *
 	 * @param e1
 	 * @param e2
 	 * @return true if both immediate enclosing type are equal
@@ -129,7 +129,7 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 
 	/**
 	 * Used when building a member type.
-	 * 
+	 *
 	 * @param access modifiers
 	 */
 	public void setModifiers(int access) {

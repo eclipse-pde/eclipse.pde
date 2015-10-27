@@ -45,9 +45,9 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * <br>
  * The logic in this class must be kept in sync with how we determine what is
  * visible in out completion proposal code
- * 
+ *
  * @see org.eclipse.pde.api.tools.ui.internal.completion.APIToolsJavadocCompletionProposalComputer
- * 
+ *
  * @since 1.0.0
  */
 public class TagValidator extends Validator {
@@ -68,7 +68,7 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent
 	 * @param tags
 	 * @param annotations
@@ -125,7 +125,7 @@ public class TagValidator extends Validator {
 	/**
 	 * Validates the set of tags for the given parent node and the given listing
 	 * of {@link TagElement}s
-	 * 
+	 *
 	 * @param node
 	 * @param tags
 	 */
@@ -218,7 +218,7 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Process the tags for the given {@link TypeDeclaration} node
-	 * 
+	 *
 	 * @param type
 	 * @param tags
 	 * @since 1.0.400
@@ -264,7 +264,7 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Processes all of the tags for the given {@link FieldDeclaration}
-	 * 
+	 *
 	 * @param field
 	 * @param tags
 	 * @since 1.0.400
@@ -331,7 +331,7 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Processes all of the tags for the given {@link MethodDeclaration}
-	 * 
+	 *
 	 * @param method
 	 * @param tags
 	 * @since 1.0.400
@@ -417,7 +417,7 @@ public class TagValidator extends Validator {
 	/**
 	 * Returns the complete listing of supported tags for the given type and
 	 * member
-	 * 
+	 *
 	 * @param type
 	 * @param member
 	 * @return the list of supported tag names or the
@@ -439,7 +439,7 @@ public class TagValidator extends Validator {
 	/**
 	 * Creates a new {@link IApiProblem} for the given tag and adds it to the
 	 * cache
-	 * 
+	 *
 	 * @param tag
 	 * @param element
 	 * @param context
@@ -513,7 +513,7 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Checks the annotation that appears on the given parent
-	 * 
+	 *
 	 * @param node the annotation
 	 * @param type the parent
 	 */
@@ -553,7 +553,7 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Checks the annotation that appears on the given parent
-	 * 
+	 *
 	 * @param node the annotation
 	 * @param type the parent
 	 */
@@ -575,7 +575,7 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Checks the annotation that appears on the given parent
-	 * 
+	 *
 	 * @param node the annotation
 	 * @param type the parent
 	 */
@@ -596,7 +596,7 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Checks the annotation that appears on the given parent
-	 * 
+	 *
 	 * @param node the annotation
 	 * @param parent the parent
 	 */
@@ -656,7 +656,7 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Checks the given annotation
-	 * 
+	 *
 	 * @param node the annotation
 	 */
 	void checkMethod(MarkerAnnotation node, MethodDeclaration parent) {
@@ -733,7 +733,7 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Creates a new problem
-	 * 
+	 *
 	 * @param typeName
 	 * @param node
 	 * @param element

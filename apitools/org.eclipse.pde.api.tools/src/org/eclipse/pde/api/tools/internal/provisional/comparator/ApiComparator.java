@@ -40,7 +40,7 @@ import org.osgi.framework.Version;
 /**
  * This class defines a comparator to get a IDelta out of the comparison of two
  * elements.
- * 
+ *
  * @since 1.0
  */
 public class ApiComparator {
@@ -51,7 +51,7 @@ public class ApiComparator {
 
 	/**
 	 * Returns a delta for a API component version change
-	 * 
+	 *
 	 * @param apiComponent2
 	 * @param id
 	 * @param apiComponentVersion
@@ -86,7 +86,7 @@ public class ApiComparator {
 	/**
 	 * Returns a delta that corresponds to the difference between the given
 	 * baseline and the reference.
-	 * 
+	 *
 	 * @param referenceBaseline the given API baseline which is used as the
 	 *            reference
 	 * @param baseline the given API baseline to compare with
@@ -95,7 +95,7 @@ public class ApiComparator {
 	 * @param force a flag to force the comparison of nested API components with
 	 *            the same versions
 	 * @param monitor
-	 * 
+	 *
 	 * @return a delta, an empty delta if no difference is found or null if the
 	 *         delta detection failed
 	 * @throws IllegalArgumentException if one of the two baselines is null
@@ -165,7 +165,7 @@ public class ApiComparator {
 	/**
 	 * Returns a delta that corresponds to the difference between the given
 	 * component and the reference baseline.
-	 * 
+	 *
 	 * @param component the given component to compare with the given reference
 	 *            baseline
 	 * @param referenceBaseline the given API baseline which is used as the
@@ -175,7 +175,7 @@ public class ApiComparator {
 	 * @param force a flag to force the comparison of nested API components with
 	 *            the same versions
 	 * @param monitor
-	 * 
+	 *
 	 * @return a delta, an empty delta if no difference is found or null if the
 	 *         delta detection failed
 	 * @exception IllegalArgumentException if:
@@ -227,7 +227,7 @@ public class ApiComparator {
 	 * Returns a delta that corresponds to the comparison of the two given API
 	 * components. The two components are compared even if their versions are
 	 * identical.
-	 * 
+	 *
 	 * @param referenceComponent the given API component
 	 * @param component2 the given API component to compare with
 	 * @param referenceBaseline the given API baseline from which the given
@@ -237,7 +237,7 @@ public class ApiComparator {
 	 * @param visibilityModifiers the given visibility that triggers what
 	 *            visibility should be used for the comparison
 	 * @param monitor
-	 * 
+	 *
 	 * @return a delta, an empty delta if no difference is found or null if the
 	 *         delta detection failed
 	 * @exception IllegalArgumentException if:
@@ -298,7 +298,7 @@ public class ApiComparator {
 	 * Returns a delta that corresponds to the difference between the given
 	 * component and the given reference component. The given component cannot
 	 * be null.
-	 * 
+	 *
 	 * @param referenceComponent the given API component that is used as the
 	 *            reference
 	 * @param component the given component to compare with
@@ -307,7 +307,7 @@ public class ApiComparator {
 	 * @param force a flag to force the comparison of nested API components with
 	 *            the same versions
 	 * @param monitor
-	 * 
+	 *
 	 * @return a delta, an empty delta if no difference is found or null if the
 	 *         delta detection failed
 	 */
@@ -323,7 +323,7 @@ public class ApiComparator {
 	/**
 	 * Returns a delta that corresponds to the comparison of the given class
 	 * file with the reference.
-	 * 
+	 *
 	 * @param typeRoot2 the given class file that comes from the
 	 *            <code>component2</code>
 	 * @param component the given API component from the reference
@@ -337,7 +337,7 @@ public class ApiComparator {
 	 * @param visibilityModifiers the given visibility that triggers what
 	 *            visibility should be used for the comparison
 	 * @param monitor
-	 * 
+	 *
 	 * @return a delta, an empty delta if no difference is found or null if the
 	 *         delta detection failed
 	 * @exception IllegalArgumentException if:
@@ -446,7 +446,7 @@ public class ApiComparator {
 	/**
 	 * Returns a delta that corresponds to the comparison of the given class
 	 * file.
-	 * 
+	 *
 	 * @param typeRoot the given class file
 	 * @param typeRoot2 the given class file to compare with
 	 * @param component the given API component from which the given class file
@@ -459,7 +459,7 @@ public class ApiComparator {
 	 * @param visibilityModifiers the given visibility that triggers what
 	 *            visibility should be used for the comparison
 	 * @param monitor
-	 * 
+	 *
 	 * @return a delta, an empty delta if no difference is found or
 	 *         <code>null</code> if the delta detection failed
 	 * @exception IllegalArgumentException if:
@@ -501,7 +501,7 @@ public class ApiComparator {
 	 * Equivalent to: compare(baseline, baseline2, visibilityModifiers, false,
 	 * false, monitor);
 	 * </p>
-	 * 
+	 *
 	 * @param scope the given scope for the comparison
 	 * @param baseline the given API baseline to compare with
 	 * @param visibilityModifiers the given visibility that triggers what
@@ -509,7 +509,7 @@ public class ApiComparator {
 	 * @param force a flag to force the comparison of nested API components with
 	 *            the same versions
 	 * @param monitor the given progress monitor to report progress
-	 * 
+	 *
 	 * @return a delta, an empty delta if no difference is found or null if the
 	 *         delta detection failed
 	 * @throws IllegalArgumentException if one of the two baselines is null
@@ -526,7 +526,7 @@ public class ApiComparator {
 	 * <p>
 	 * Equivalent to: compare(baseline, baseline2, visibilityModifiers, false);
 	 * </p>
-	 * 
+	 *
 	 * @param scope the given scope for the comparison
 	 * @param baseline the given API baseline to compare with
 	 * @param visibilityModifiers the given visibility that triggers what
@@ -536,7 +536,7 @@ public class ApiComparator {
 	 * @param continueOnResolverError if <code>true</code> the comparison will
 	 *            continue even if a component in the scope has a resolver error
 	 * @param monitor the given progress monitor to report progress
-	 * 
+	 *
 	 * @return a delta, an empty delta if no difference is found or null if the
 	 *         delta detection failed. If set to continue on resolver error a
 	 *         delta, possibly empty, will always be returned
@@ -599,7 +599,7 @@ public class ApiComparator {
 	/**
 	 * Returns true, if the given type descriptor should be skipped, false
 	 * otherwise.
-	 * 
+	 *
 	 * @param visibilityModifiers
 	 * @param elementDescription
 	 * @param typeDescriptor
@@ -624,7 +624,7 @@ public class ApiComparator {
 	/**
 	 * Performs the internal compare of the given {@link IApiComponent}s using
 	 * their type containers
-	 * 
+	 *
 	 * @param component
 	 * @param component2
 	 * @param referenceBaseline
@@ -632,7 +632,7 @@ public class ApiComparator {
 	 * @param visibilityModifiers
 	 * @param globalDelta
 	 * @param monitor
-	 * 
+	 *
 	 * @return a delta of changed API elements
 	 * @throws CoreException
 	 */

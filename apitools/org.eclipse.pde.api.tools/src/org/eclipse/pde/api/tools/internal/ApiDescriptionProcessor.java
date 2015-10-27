@@ -79,7 +79,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Provides tools for scanning/loading/parsing component.xml files.
- * 
+ *
  * @since 1.0.0
  */
 public class ApiDescriptionProcessor {
@@ -117,7 +117,7 @@ public class ApiDescriptionProcessor {
 
 		/**
 		 * Constructs a new visitor to collect tag updates in a java project.
-		 * 
+		 *
 		 * @param jp project to update
 		 * @param cd project's API description
 		 * @param collector collection to place text edits into
@@ -171,7 +171,7 @@ public class ApiDescriptionProcessor {
 
 		/**
 		 * Adds a status to the current listing of messages
-		 * 
+		 *
 		 * @param status
 		 */
 		private void addStatus(IStatus status) {
@@ -184,7 +184,7 @@ public class ApiDescriptionProcessor {
 		/**
 		 * Returns the status of processing the project. Status is OK if no
 		 * errors occurred.
-		 * 
+		 *
 		 * @return status
 		 */
 		public IStatus getStatus() {
@@ -208,7 +208,7 @@ public class ApiDescriptionProcessor {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param APIs a listing of {@link IElementDescriptor}s that we care
 		 *            about for this visit
 		 */
@@ -237,7 +237,7 @@ public class ApiDescriptionProcessor {
 
 		/**
 		 * Returns the kind of type being visited.
-		 * 
+		 *
 		 * @return <code>TYPE_CLASS</code> or <code>TYPE_INTERFACE</code>
 		 */
 		private int getType() {
@@ -267,7 +267,7 @@ public class ApiDescriptionProcessor {
 		/**
 		 * Updates the specified javadoc node if needed, creates a new doc node
 		 * if one is not present
-		 * 
+		 *
 		 * @param element the element to get API information from
 		 * @param docnode the doc node to update
 		 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
@@ -306,7 +306,7 @@ public class ApiDescriptionProcessor {
 		/**
 		 * Creates a new {@link TagElement} against the specified {@link AST}
 		 * and returns it
-		 * 
+		 *
 		 * @param ast the {@link AST} to create the {@link TagElement} against
 		 * @param tagname the name of the new tag
 		 * @return a new {@link TagElement} with the given name
@@ -320,7 +320,7 @@ public class ApiDescriptionProcessor {
 		/**
 		 * Collects the missing javadoc tags from based on the given listing of
 		 * {@link TagElement}s
-		 * 
+		 *
 		 * @param api
 		 * @param tags
 		 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
@@ -385,7 +385,7 @@ public class ApiDescriptionProcessor {
 		/**
 		 * Determines if the specified tag appears in the {@link TagElement}
 		 * listing given
-		 * 
+		 *
 		 * @param tags
 		 * @param tag
 		 * @return true if the listing of {@link TagElement}s contains the given
@@ -405,7 +405,7 @@ public class ApiDescriptionProcessor {
 		/**
 		 * Finds the {@link IElementDescriptor} that matches the specified name
 		 * and signature
-		 * 
+		 *
 		 * @param name
 		 * @param signature
 		 * @return the matching {@link IElementDescriptor} or <code>null</code>
@@ -452,7 +452,7 @@ public class ApiDescriptionProcessor {
 	 * Parses a component XML into a string. The location may be a jar,
 	 * directory containing the component.xml file, or the component.xml file
 	 * itself
-	 * 
+	 *
 	 * @param location root location of the component.xml file, or the
 	 *            component.xml file itself
 	 * @return component XML as a string or <code>null</code> if none
@@ -509,7 +509,7 @@ public class ApiDescriptionProcessor {
 	 * This method updates the javadoc for members of the specified java source
 	 * files with information retrieved from the the specified component.xml
 	 * file.
-	 * 
+	 *
 	 * @param project the java project to update
 	 * @param componentxml the component.xml file to update from
 	 * @param collector
@@ -532,7 +532,7 @@ public class ApiDescriptionProcessor {
 	 * Given the type, the parent type descriptor and an annotated description,
 	 * update the javadoc comments for the type and all members of the type
 	 * found in the description.
-	 * 
+	 *
 	 * @param type
 	 * @param desc
 	 * @param description
@@ -578,7 +578,7 @@ public class ApiDescriptionProcessor {
 
 	/**
 	 * Throws an exception with the given message and underlying exception.
-	 * 
+	 *
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
 	 * @throws CoreException
@@ -593,7 +593,7 @@ public class ApiDescriptionProcessor {
 	 * specified {@link IApiDescription} with {@link IPackageDescriptor}s,
 	 * {@link IReferenceTypeDescriptor}s, {@link IMethodDescriptor}s and
 	 * {@link IFieldDescriptor}s.
-	 * 
+	 *
 	 * @param settings API settings to annotate
 	 * @param xml XML used to generate settings
 	 * @throws CoreException
@@ -643,7 +643,7 @@ public class ApiDescriptionProcessor {
 	 * Annotates the backing {@link IApiDescription} from the given
 	 * {@link Element}, by adding the visibility and restriction attributes to
 	 * the specified {@link IElementDescriptor}
-	 * 
+	 *
 	 * @param settings the settings to annotate
 	 * @param descriptor the current descriptor context
 	 * @param element the current element to annotate from
@@ -660,7 +660,7 @@ public class ApiDescriptionProcessor {
 
 	/**
 	 * Returns restriction settings described in the given element.
-	 * 
+	 *
 	 * @param project the {@link IJavaProject} context
 	 * @param element XML element
 	 * @param descriptor the {@link IElementDescriptor} to get the restrictions
@@ -730,7 +730,7 @@ public class ApiDescriptionProcessor {
 	/**
 	 * Tests if the given restriction exists for the given element and returns
 	 * an updated restrictions flag.
-	 * 
+	 *
 	 * @param element XML element
 	 * @param name attribute to test
 	 * @param flag bit mask for attribute
@@ -750,7 +750,7 @@ public class ApiDescriptionProcessor {
 
 	/**
 	 * Returns visibility settings described in the given element or -1 if none.
-	 * 
+	 *
 	 * @param element XML element
 	 * @return visibility settings or -1 if none
 	 */
@@ -780,7 +780,7 @@ public class ApiDescriptionProcessor {
 	 * elements that are direct children of the specified {@link Element}.
 	 * {@link IFieldDescriptor}s are created as needed and added as children of
 	 * the specified {@link IReferenceTypeDescriptor}.
-	 * 
+	 *
 	 * @param settings the {@link IApiDescription} to add the new
 	 *            {@link IFieldDescriptor} to
 	 * @param typedesc the containing type descriptor for this field
@@ -810,7 +810,7 @@ public class ApiDescriptionProcessor {
 	 * elements that are direct children of the specified {@link Element}.
 	 * {@link IMethodDescriptor}s are created as needed and added as children of
 	 * the specified {@link IReferenceTypeDescriptor}.
-	 * 
+	 *
 	 * @param settings the {@link IApiDescription} to add the new
 	 *            {@link IMethodDescriptor} to
 	 * @param typedesc the containing type descriptor for this method

@@ -24,7 +24,7 @@ public class BuildStamps {
 
 	/**
 	 * Returns the current build time stamp for the given project.
-	 * 
+	 *
 	 * @param project project
 	 * @return relative build time stamp
 	 */
@@ -39,7 +39,7 @@ public class BuildStamps {
 	/**
 	 * Increments the build time stamp for the given project. Only to be called
 	 * by the builder.
-	 * 
+	 *
 	 * @param project project being built
 	 */
 	public static synchronized void incBuildStamp(IProject project) {

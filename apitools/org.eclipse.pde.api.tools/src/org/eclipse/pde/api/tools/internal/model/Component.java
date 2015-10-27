@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.internal.search.UseScanReferences;
 /**
  * Common implementation of an API component as a composite class file
  * container.
- * 
+ *
  * @since 1.0.0
  */
 public abstract class Component extends AbstractApiTypeContainer implements IApiComponent {
@@ -48,7 +48,7 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 
 	/**
 	 * Constructs an API component in the given {@link IApiBaseline}.
-	 * 
+	 *
 	 * @param baseline the parent {@link IApiBaseline}
 	 */
 	public Component(IApiBaseline baseline) {
@@ -101,7 +101,7 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 
 	/**
 	 * Returns whether this component has created an API description.
-	 * 
+	 *
 	 * @return whether this component has created an API description
 	 */
 	protected synchronized boolean isApiDescriptionInitialized() {
@@ -110,7 +110,7 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 
 	/**
 	 * Returns if this component has created an API filter store
-	 * 
+	 *
 	 * @return true if a store has been created, false other wise
 	 */
 	protected synchronized boolean hasApiFilterStore() {
@@ -133,7 +133,7 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 
 	/**
 	 * Creates and returns the API description for this component.
-	 * 
+	 *
 	 * @return newly created API description for this component
 	 */
 	protected abstract IApiDescription createApiDescription() throws CoreException;
@@ -158,7 +158,7 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 
 	/**
 	 * Lazily creates a new {@link IApiFilterStore} when it is requested
-	 * 
+	 *
 	 * @return the current {@link IApiFilterStore} for this component
 	 * @throws CoreException
 	 */

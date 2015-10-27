@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 
 /**
  * Description of a field.
- * 
+ *
  * @since 1.0.0
  */
 public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl implements IMemberDescriptor {
@@ -29,7 +29,7 @@ public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl im
 
 	/**
 	 * Constructs a member with the given name and parent
-	 * 
+	 *
 	 * @param name field name
 	 * @param parent type containing the field declaration or package containing
 	 *            the type

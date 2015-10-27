@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -46,7 +46,7 @@ import com.ibm.icu.text.MessageFormat;
  * <p>
  * Note, the implementation is not thread safe.
  * </p>
- * 
+ *
  * @see IApiDescription
  * @since 1.0.0
  */
@@ -71,7 +71,7 @@ public class ApiDescription implements IApiDescription {
 	/**
 	 * A comparator for {@link ManifestNode}s. Used while visiting child nodes
 	 * to give a somewhat predictable visit order
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	static class NodeComparator implements Comparator<IElementDescriptor> {
@@ -88,7 +88,7 @@ public class ApiDescription implements IApiDescription {
 
 	/**
 	 * Default instance of the {@link NodeComparator}
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	static NodeComparator fgComparator = new NodeComparator();
@@ -165,7 +165,7 @@ public class ApiDescription implements IApiDescription {
 		 * Returns if the given node has API visibility. If the given node has
 		 * {@link ApiDescription#VISIBILITY_INHERITED} visibility this method
 		 * recursively asks its' parent nodes if they have API visibility.
-		 * 
+		 *
 		 * @param node
 		 * @return true if this node has API visibility false otherwise
 		 */
@@ -186,10 +186,10 @@ public class ApiDescription implements IApiDescription {
 		/**
 		 * Ensure this node is up to date. Default implementation does nothing.
 		 * Subclasses should override as required.
-		 * 
+		 *
 		 * Returns the resulting node if the node is valid, or <code>null</code>
 		 * if the node no longer exists.
-		 * 
+		 *
 		 * @return up to date node, or <code>null</code> if no longer exists
 		 */
 		protected ManifestNode refresh() {
@@ -201,7 +201,7 @@ public class ApiDescription implements IApiDescription {
 
 		/**
 		 * Persists this node as a child of the given element.
-		 * 
+		 *
 		 * @param document XML document
 		 * @param parentElement parent element in the document
 		 * @param component component the description is for or
@@ -236,7 +236,7 @@ public class ApiDescription implements IApiDescription {
 
 		/**
 		 * Adds visibility and restrictions to the XML element.
-		 * 
+		 *
 		 * @param xmlElement XML element to annotate
 		 * @param component the component the description is for or
 		 *            <code>null</code>
@@ -250,7 +250,7 @@ public class ApiDescription implements IApiDescription {
 	/**
 	 * This is a map of component names to a map of package names to package
 	 * node objects represented as:
-	 * 
+	 *
 	 * <pre>
 	 * HashMap<IElementDescriptor(package), ManifestNode(package)>
 	 * </pre>
@@ -260,7 +260,7 @@ public class ApiDescription implements IApiDescription {
 	/**
 	 * This map holds the mapping of special access kinds for packages and has
 	 * the form:
-	 * 
+	 *
 	 * <pre>
 	 * HashMap<IPackageDescriptor(package), HashMap<IElementDescriptor(component), IApiAccess>>
 	 * </pre>
@@ -271,7 +271,7 @@ public class ApiDescription implements IApiDescription {
 
 	/**
 	 * Constructs an API description owned by the specified component.
-	 * 
+	 *
 	 * @param owningComponentId API component identifier or <code>null</code> if
 	 *            there is no specific owner.
 	 */
@@ -286,7 +286,7 @@ public class ApiDescription implements IApiDescription {
 
 	/**
 	 * Visits all children nodes in the given children map.
-	 * 
+	 *
 	 * @param visitor visitor to visit
 	 * @param childrenMap map of element name to manifest nodes
 	 * @param monitor
@@ -316,7 +316,7 @@ public class ApiDescription implements IApiDescription {
 	/**
 	 * Compares the given version against the embedded version that has been
 	 * read from the API description
-	 * 
+	 *
 	 * @param version
 	 * @return returns the same values as a compareTo call:
 	 *         <ul>
@@ -341,7 +341,7 @@ public class ApiDescription implements IApiDescription {
 	 * given version string cannot be parsed to a valid version, the embedded
 	 * version will default to the current version, as specified in
 	 * {@link IApiXmlConstants#API_DESCRIPTION_CURRENT_VERSION}
-	 * 
+	 *
 	 * @param version the version to set on this description
 	 */
 	public void setEmbeddedVersion(String version) {
@@ -354,7 +354,7 @@ public class ApiDescription implements IApiDescription {
 
 	/**
 	 * Visits a node and its children.
-	 * 
+	 *
 	 * @param visitor visitor to visit
 	 * @param node node to visit
 	 */
@@ -383,7 +383,7 @@ public class ApiDescription implements IApiDescription {
 	 * visibility and no restrictions if insert is <code>true</code> and a node
 	 * is not present. Default visibility for packages is API, and for types is
 	 * inherited.
-	 * 
+	 *
 	 * @param element element
 	 * @param write <code>true</code> if setting a node, <code>false</code> if
 	 *            getting a node
@@ -458,7 +458,7 @@ public class ApiDescription implements IApiDescription {
 	/**
 	 * Returns the visibility of the given node, walking up the tree if needed
 	 * to resolve inherited visibility.
-	 * 
+	 *
 	 * @param node
 	 * @return visibility modifier
 	 */
@@ -474,7 +474,7 @@ public class ApiDescription implements IApiDescription {
 
 	/**
 	 * Resolves annotations based on inheritance for the given node and element.
-	 * 
+	 *
 	 * @param node manifest node
 	 * @param element the element annotations are being resolved for
 	 * @return annotations
@@ -513,11 +513,11 @@ public class ApiDescription implements IApiDescription {
 	/**
 	 * Creates and returns a new manifest node to be inserted into the tree or
 	 * <code>null</code> if the node does not exist.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses should override this method as required.
 	 * </p>
-	 * 
+	 *
 	 * @param parentNode parent node
 	 * @param element element the node is to be created for
 	 * @return new manifest node or <code>null</code> if none
@@ -618,7 +618,7 @@ public class ApiDescription implements IApiDescription {
 	 * Default implementation returns <code>false</code>. Subclasses should
 	 * override this method as required.
 	 * </p>
-	 * 
+	 *
 	 * @param elementDescriptor
 	 * @return whether a new node should be inserted into the API description
 	 *         when resolving the annotations for an element if a node is not
@@ -637,7 +637,7 @@ public class ApiDescription implements IApiDescription {
 
 	/**
 	 * Returns whether this description has been modified.
-	 * 
+	 *
 	 * @return
 	 */
 	protected synchronized boolean isModified() {
@@ -646,7 +646,7 @@ public class ApiDescription implements IApiDescription {
 
 	/**
 	 * Sets the modification of api description
-	 * 
+	 *
 	 * @param mod
 	 * @return
 	 */

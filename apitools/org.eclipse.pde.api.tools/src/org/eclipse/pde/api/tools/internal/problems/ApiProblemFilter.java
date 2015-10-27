@@ -16,7 +16,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
 
 /**
  * Base implementation of {@link IApiProblemFilter}
- * 
+ *
  * @since 1.0.0
  */
 public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
@@ -30,7 +30,7 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param componentid
 	 * @param problem
 	 * @param comment
@@ -49,7 +49,7 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 
 	/**
 	 * Sets the comment for this filter.
-	 * 
+	 *
 	 * @param comment the comment or <code>null</code> to remove the existing
 	 *            comment
 	 * @since 1.1
@@ -86,7 +86,7 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 	 * <li>they are both null</li>
 	 * <li>they are equal via the default .equals() method</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param s1
 	 * @param s2
 	 * @return true if the objects are equal, false otherwise

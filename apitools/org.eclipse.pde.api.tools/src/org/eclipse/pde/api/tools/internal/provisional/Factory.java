@@ -38,7 +38,7 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
  * Factory to create API model objects.
- * 
+ *
  * @since 1.0
  */
 public class Factory {
@@ -48,7 +48,7 @@ public class Factory {
 	 * given id and an undefined version. The given id does not have to be the
 	 * id of a component that actually exists: no resolution or lookup of any
 	 * kind is done with the descriptor.
-	 * 
+	 *
 	 * @param componentid
 	 * @return a new component descriptor
 	 */
@@ -61,7 +61,7 @@ public class Factory {
 	 * given id and version. The given id does not have to be the id of a
 	 * component that actually exists: no resolution or lookup of any kind is
 	 * done with the descriptor.
-	 * 
+	 *
 	 * @param componentid
 	 * @param version version descriptor or <code>null</code> if none
 	 * @return a new component descriptor
@@ -74,7 +74,7 @@ public class Factory {
 	 * Returns a package descriptor for the package with the given name. An
 	 * empty string indicates the default package. Package names are dot
 	 * qualified.
-	 * 
+	 *
 	 * @param packageName package name
 	 * @return an {@link IPackageDescriptor} for the package
 	 */
@@ -86,7 +86,7 @@ public class Factory {
 	 * Utility method to create a type descriptor for a type with the given
 	 * fully qualified name. Package names are dot qualified and type names are
 	 * '$'-qualified.
-	 * 
+	 *
 	 * @param fullyQualifiedName
 	 * @return an {@link ITypeDescriptor} for the type
 	 */
@@ -99,7 +99,7 @@ public class Factory {
 	/**
 	 * Utility method to create a type descriptor for a method contained within
 	 * the given type
-	 * 
+	 *
 	 * @param typename the name of the enclosing type for the method
 	 * @param name the name of the method
 	 * @param signaturethe signature of the method
@@ -113,7 +113,7 @@ public class Factory {
 	/**
 	 * Utility method to create a type descriptor for a field contained within
 	 * the given type
-	 * 
+	 *
 	 * @param typename the name of the enclosing type for the field
 	 * @param name the name of the field
 	 * @return an {@link IFieldDescriptor} for the field
@@ -125,7 +125,7 @@ public class Factory {
 
 	/**
 	 * Creates a new {@link IReferenceDescriptor} object
-	 * 
+	 *
 	 * @param origincomponent the component where the reference comes from
 	 * @param originmember the member where the reference comes from
 	 * @param line the line number of the reference or -1 if unknown
@@ -151,7 +151,7 @@ public class Factory {
 
 	/**
 	 * Returns a scope containing all elements in the given components.
-	 * 
+	 *
 	 * @param components API components
 	 * @return search scope
 	 * @throws CoreException if the baseline of the given components is disposed
@@ -168,7 +168,7 @@ public class Factory {
 	/**
 	 * Returns a new scope containing the specified types in the given
 	 * component.
-	 * 
+	 *
 	 * @param component API component
 	 * @param types reference types
 	 * @return search scope
@@ -180,7 +180,7 @@ public class Factory {
 	/**
 	 * Returns a method descriptor with a resolved signature for the given
 	 * method descriptor with an unresolved signature.
-	 * 
+	 *
 	 * @param descriptor method to resolve
 	 * @return resolved method descriptor or the same method descriptor if
 	 *         unable to resolve

@@ -23,7 +23,7 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 /**
  * Leak detectors keep track of all pre-requisite non-API package names to weed
  * out public references.
- * 
+ *
  * @since 1.1
  * @noextend This class is not intended to be sub-classed by clients.
  */
@@ -37,7 +37,7 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 
 	/**
 	 * Returns whether the referenced type name matches a non-API package.
-	 * 
+	 *
 	 * @param reference
 	 * @return whether the referenced type name matches a non-API package
 	 */
@@ -63,7 +63,7 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 
 	/**
 	 * Returns whether all enclosing types of the given member are visible.
-	 * 
+	 *
 	 * @param member member
 	 * @return whether all enclosing types of the given member are visible
 	 * @throws CoreException

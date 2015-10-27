@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 
 /**
  * Base API tools Javadoc tag implementation
- * 
+ *
  * @since 1.0.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -51,7 +51,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param id the id of the tag
 	 * @param name the name of the tag (not including the '@' symbol)
 	 * @param rmodifier
@@ -83,7 +83,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 
 	/**
 	 * Returns the comment for the given type ad member
-	 * 
+	 *
 	 * @param type
 	 * @param member
 	 * @return the comment for the tag
@@ -149,7 +149,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	/**
 	 * Returns a key to use for tag when getting / setting comment related
 	 * attributes
-	 * 
+	 *
 	 * @param type
 	 * @param member
 	 * @return a new key that can be used for map lookups

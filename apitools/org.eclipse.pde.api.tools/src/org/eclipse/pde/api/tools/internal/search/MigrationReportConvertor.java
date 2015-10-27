@@ -15,14 +15,14 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Report converter specialization for migration reports
- * 
+ *
  * @since 1.0.1
  */
 public class MigrationReportConvertor extends UseReportConverter {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param htmlroot
 	 * @param xmlroot
 	 * @param topatterns

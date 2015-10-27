@@ -37,7 +37,7 @@ public abstract class UseScanVisitor {
 	 * <p>
 	 * Components in a scan are visited in alphabetical order.
 	 * </p>
-	 * 
+	 *
 	 * @param target API component to which references exist
 	 * @return whether to visit components that reference this component
 	 */
@@ -47,7 +47,7 @@ public abstract class UseScanVisitor {
 
 	/**
 	 * End visiting a component that was referenced by others
-	 * 
+	 *
 	 * @param target the component that was visited
 	 */
 	public void endVisitComponent(IComponentDescriptor target) {
@@ -60,7 +60,7 @@ public abstract class UseScanVisitor {
 	 * Referencing components in a scan are visited in alphabetical order within
 	 * the current target component.
 	 * </p>
-	 * 
+	 *
 	 * @param component the component that references the current target
 	 *            component
 	 * @return whether to visit reference members within the component
@@ -72,7 +72,7 @@ public abstract class UseScanVisitor {
 	/**
 	 * Ends visiting a component that made references to the current target
 	 * component.
-	 * 
+	 *
 	 * @param component that component that was visited
 	 */
 	public void endVisitReferencingComponent(IComponentDescriptor component) {
@@ -81,7 +81,7 @@ public abstract class UseScanVisitor {
 	/**
 	 * Visits a referenced member and returns whether to visit reference
 	 * locations
-	 * 
+	 *
 	 * @param referencedMember the member that was referenced
 	 * @return whether to visit individual reference locations
 	 */
@@ -91,7 +91,7 @@ public abstract class UseScanVisitor {
 
 	/**
 	 * End visits a referenced member
-	 * 
+	 *
 	 * @param referencedMember the member that was referenced
 	 */
 	public void endVisitMember(IMemberDescriptor referencedMember) {
@@ -100,7 +100,7 @@ public abstract class UseScanVisitor {
 
 	/**
 	 * Visits a reference to the current member.
-	 * 
+	 *
 	 * @param reference the reference
 	 */
 	public void visitReference(IReferenceDescriptor reference) {

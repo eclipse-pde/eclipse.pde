@@ -111,7 +111,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Base implementation of the analyzer used in the {@link ApiAnalysisBuilder}
- * 
+ *
  * @since 1.0.0
  */
 public class BaseApiAnalyzer implements IApiAnalyzer {
@@ -298,7 +298,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * markers. When running the the API tools analysis task the analyzer should
 	 * continue to process the component to produce some results (the task
 	 * should warn that the results may not be accurate).
-	 * 
+	 *
 	 * @param continueOnError whether to continue processing a component if it
 	 *            has resolution errors
 	 */
@@ -313,7 +313,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * with markers. When running the the API tools analysis task the analyzer
 	 * should continue to process the component to produce some results (the
 	 * task should warn that the results may not be accurate).
-	 * 
+	 *
 	 * @return whether this analyzer will continue analyzing a component if it
 	 *         has resolution errors
 	 */
@@ -324,7 +324,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Checks if the setting to scan for invalid references is not set to be
 	 * ignored AND there are no descriptions installed
-	 * 
+	 *
 	 * @param component
 	 * @param monitor
 	 * @since 1.0.400
@@ -358,7 +358,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Processes the API Use Scan report for the given API Component
-	 * 
+	 *
 	 * @param apiComponent
 	 * @param bcontext
 	 * @param monitor
@@ -472,7 +472,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Creates an {@link IApiProblem} for the broken external dependency
-	 * 
+	 *
 	 * @param problems
 	 * @param dependency
 	 * @param referenceType
@@ -558,7 +558,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Checks the compatibility of each type.
-	 * 
+	 *
 	 * @param changedtypes type names, may have <code>null</code> entries
 	 * @param reference API component in the reference baseline
 	 * @param component API component being checked for compatibility
@@ -577,7 +577,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Checks for unused API problem filters
-	 * 
+	 *
 	 * @param context the current build context
 	 * @param reference
 	 * @param monitor
@@ -644,7 +644,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Removes the given set of {@link IApiProblemFilter}s from the given
 	 * {@link IApiFilterStore} using a workspace runnable to avoid resource
 	 * notifications
-	 * 
+	 *
 	 * @param store the store to remove from
 	 * @param filterlist list of filters to batch remove
 	 * @param monitor
@@ -660,7 +660,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Creates a new unused {@link IApiProblemFilter} problem
-	 * 
+	 *
 	 * @param filters the filters to create the problems for
 	 * @return a new {@link IApiProblem} for unused problem filters or
 	 *         <code>null</code>
@@ -728,7 +728,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Check the version changes of re-exported bundles to make sure that the
 	 * given component version is modified accordingly.
-	 * 
+	 *
 	 * @param reference the given reference API component
 	 * @param component the given component
 	 */
@@ -788,7 +788,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Creates and AST for the given {@link ITypeRoot} at the given offset
-	 * 
+	 *
 	 * @param root
 	 * @param offset
 	 * @return
@@ -831,7 +831,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Returns an {@link IApiTypeContainer} given the component and type names
 	 * context
-	 * 
+	 *
 	 * @param component
 	 * @param types
 	 * @return a new {@link IApiTypeContainer} for the component and type names
@@ -851,7 +851,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Returns a listing of {@link IReferenceTypeDescriptor}s given the listing
 	 * of type names
-	 * 
+	 *
 	 * @param typenames
 	 * @return
 	 */
@@ -939,7 +939,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Whether to ignore since tag checks. If <code>null</code> is passed in we
 	 * are asking if all since tag checks should be ignored, if a pref is
 	 * specified we only want to know if that kind should be ignored
-	 * 
+	 *
 	 * @param pref
 	 * @return
 	 */
@@ -998,7 +998,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * @return if the invalid annotation check should be ignored
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	private boolean ignoreInvalidAnnotationCheck() {
@@ -1020,7 +1020,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Checks the validation of tags for the given {@link IApiComponent}
-	 * 
+	 *
 	 * @param context
 	 * @param component
 	 * @param monitor
@@ -1072,7 +1072,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Recursively finds all source in the given project and scans it for
 	 * invalid tags
-	 * 
+	 *
 	 * @param element
 	 * @param monitor
 	 * @throws JavaModelException
@@ -1109,7 +1109,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Processes the given type name for invalid Javadoc tags
-	 * 
+	 *
 	 * @param typename
 	 */
 	private void processType(String typename, boolean tags, boolean annotations) {
@@ -1130,7 +1130,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Processes the given {@link ICompilationUnit} for invalid tags
-	 * 
+	 *
 	 * @param cunit
 	 */
 	private void processType(ICompilationUnit cunit, boolean tags, boolean annotations) {
@@ -1149,7 +1149,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Checks for illegal API usage in the specified component, creating problem
 	 * markers as required.
-	 * 
+	 *
 	 * @param context the current build context
 	 * @param component component being built
 	 * @param monitor progress monitor
@@ -1199,7 +1199,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Returns the collection of type names to be built
-	 * 
+	 *
 	 * @param context
 	 * @return the complete listing of type names to build or an empty array,
 	 *         never <code>null</code>
@@ -1237,7 +1237,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Compares the given type between the two API components
-	 * 
+	 *
 	 * @param typeName the type to check in each component
 	 * @param reference
 	 * @param component
@@ -1391,7 +1391,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Compares the two given components and generates an {@link IDelta}
-	 * 
+	 *
 	 * @param jproject
 	 * @param reference
 	 * @param component
@@ -1447,7 +1447,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Processes delta to determine if it needs an @since tag. If it does and
 	 * one is not present or the version of the tag is incorrect, a marker is
 	 * created
-	 * 
+	 *
 	 * @param jproject
 	 * @param delta
 	 * @param component
@@ -1587,7 +1587,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Creates a marker to denote a problem with the since tag (existence or
 	 * correctness) for a member and returns it, or <code>null</code>
-	 * 
+	 *
 	 * @param kind
 	 * @param messageargs
 	 * @param compilationUnit
@@ -1660,7 +1660,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Creates an {@link IApiProblem} for the given compatibility delta
-	 * 
+	 *
 	 * @param delta
 	 * @param jproject
 	 * @param reference
@@ -1729,7 +1729,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Creates an {@link IApiProblem} for the given API component
-	 * 
+	 *
 	 * @param component
 	 * @return a new API component resolution problem or <code>null</code>
 	 */
@@ -1742,7 +1742,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Processes a delta to know if we need to check for since tag or version
 	 * numbering problems
-	 * 
+	 *
 	 * @param jproject
 	 * @param delta
 	 * @param reference
@@ -1885,7 +1885,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Checks the version number of the API component and creates a problem
 	 * markers as needed
-	 * 
+	 *
 	 * @param reference
 	 * @param component
 	 */
@@ -2064,7 +2064,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Collects details from the given delta listing for version problems
-	 * 
+	 *
 	 * @param deltas
 	 * @return a {@link String} of the details why the version number should be
 	 *         changed
@@ -2090,7 +2090,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Creates a marker on a manifest file for a version numbering problem and
 	 * returns it or <code>null</code>
-	 * 
+	 *
 	 * @param kind
 	 * @param messageargs
 	 * @param version
@@ -2198,7 +2198,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Returns the Java project associated with the given API component, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param component API component
 	 * @return Java project or <code>null</code>
 	 */
@@ -2213,7 +2213,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Adds the problem to the list of problems iff it is not <code>null</code>
 	 * and not filtered
-	 * 
+	 *
 	 * @param problem
 	 * @return
 	 */
@@ -2227,7 +2227,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Returns if the given {@link IApiProblem} should be filtered from having a
 	 * problem marker created for it
-	 * 
+	 *
 	 * @param problem the problem that may or may not be filtered
 	 * @return true if the {@link IApiProblem} should not have a marker created,
 	 *         false otherwise

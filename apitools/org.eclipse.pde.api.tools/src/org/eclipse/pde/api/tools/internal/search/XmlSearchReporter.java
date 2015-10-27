@@ -44,7 +44,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Search reporter that outputs results to an XML file
- * 
+ *
  * @since 1.0.1
  */
 public class XmlSearchReporter implements IApiSearchReporter {
@@ -58,7 +58,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param location the absolute path in the local file system to the folder
 	 *            to write the reports to
 	 * @param debug if debugging infos should be written out to the console
@@ -119,7 +119,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 
 	/**
 	 * Resolves the id to use for the component in the mapping
-	 * 
+	 *
 	 * @param component
 	 * @return the id to use for the component in the mapping, includes the
 	 *         version information as well

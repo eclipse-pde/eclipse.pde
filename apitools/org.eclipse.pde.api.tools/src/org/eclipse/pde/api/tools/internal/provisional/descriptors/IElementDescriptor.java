@@ -15,7 +15,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 
 /**
  * Describes an element in an API component.
- * 
+ *
  * @since 1.0.0
  */
 public interface IElementDescriptor {
@@ -52,7 +52,7 @@ public interface IElementDescriptor {
 
 	/**
 	 * Returns the parent of this element or <code>null</code> if none.
-	 * 
+	 *
 	 * @return
 	 */
 	public IElementDescriptor getParent();
@@ -60,14 +60,14 @@ public interface IElementDescriptor {
 	/**
 	 * Returns all parents of this element in a top-down path, including this
 	 * element as the last element in the path.
-	 * 
+	 *
 	 * @return path top-down path to this element
 	 */
 	public IElementDescriptor[] getPath();
 
 	/**
 	 * Returns one of the element type constants defined by this interface.
-	 * 
+	 *
 	 * @return element type constant
 	 */
 	public int getElementType();

@@ -38,7 +38,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Implementation of a reference from one member to another.
- * 
+ *
  * @since 1.0.0
  */
 public class Reference implements IReference {
@@ -55,7 +55,7 @@ public class Reference implements IReference {
 
 	/**
 	 * One of the valid reference kinds
-	 * 
+	 *
 	 * @see IReference
 	 */
 	private int fKind = 0;
@@ -104,7 +104,7 @@ public class Reference implements IReference {
 	 * Adds the given collection of
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
 	 * s to the backing listing.
-	 * 
+	 *
 	 * @param origin where the reference occurred from
 	 * @param typeName name of the referenced type where virtual method lookup
 	 *            begins
@@ -127,7 +127,7 @@ public class Reference implements IReference {
 
 	/**
 	 * Creates and returns a method reference.
-	 * 
+	 *
 	 * @param origin where the reference occurred from
 	 * @param typeName name of the referenced type where virtual method lookup
 	 *            begins
@@ -141,7 +141,7 @@ public class Reference implements IReference {
 
 	/**
 	 * Creates and returns a method reference.
-	 * 
+	 *
 	 * @param origin where the reference occurred from
 	 * @param typeName name of the referenced type where virtual method lookup
 	 *            begins
@@ -165,7 +165,7 @@ public class Reference implements IReference {
 
 	/**
 	 * Creates and returns a field reference.
-	 * 
+	 *
 	 * @param origin where the reference occurred from
 	 * @param typeName name of the referenced type where field lookup begins
 	 * @param fieldName name of the referenced field
@@ -177,13 +177,13 @@ public class Reference implements IReference {
 
 	/**
 	 * Creates and returns a field reference.
-	 * 
+	 *
 	 * @param origin where the reference occurred from
 	 * @param typeName name of the referenced type where field lookup begins
 	 * @param fieldName name of the referenced field
 	 * @param kind kind of field reference
 	 * @param flags flags for the reference
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static Reference fieldReference(IApiMember origin, String typeName, String fieldName, int kind, int flags) {
@@ -199,7 +199,7 @@ public class Reference implements IReference {
 
 	/**
 	 * Creates and returns a type reference.
-	 * 
+	 *
 	 * @param origin where the reference occurred from
 	 * @param typeName name of the referenced type
 	 * @param kind kind of reference
@@ -210,7 +210,7 @@ public class Reference implements IReference {
 
 	/**
 	 * Creates and returns a type reference.
-	 * 
+	 *
 	 * @param origin where the reference occurred from
 	 * @param typeName name of the referenced type
 	 * @param signature extra type signature information
@@ -222,13 +222,13 @@ public class Reference implements IReference {
 
 	/**
 	 * Creates and returns a type reference.
-	 * 
+	 *
 	 * @param origin where the reference occurred from
 	 * @param typeName name of the referenced type
 	 * @param signature extra type signature information
 	 * @param kind kind of reference
 	 * @param flags flags for the reference
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static Reference typeReference(IApiMember origin, String typeName, String signature, int kind, int flags) {
@@ -264,7 +264,7 @@ public class Reference implements IReference {
 
 	/**
 	 * OR's the given set of new flags with the current set of flags
-	 * 
+	 *
 	 * @param newflags
 	 */
 	public void setFlags(int newflags) {
@@ -298,7 +298,7 @@ public class Reference implements IReference {
 
 	/**
 	 * Sets the line number - used by the reference extractor.
-	 * 
+	 *
 	 * @param line line number
 	 */
 	void setLineNumber(int line) {
@@ -307,7 +307,7 @@ public class Reference implements IReference {
 
 	/**
 	 * Resolves this reference
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void resolve() throws CoreException {
@@ -371,7 +371,7 @@ public class Reference implements IReference {
 
 	/**
 	 * Resolves the field in the parent class hierarchy
-	 * 
+	 *
 	 * @param type the initial type to search
 	 * @param fieldame the name of the field
 	 * @return true if the field resolved
@@ -395,7 +395,7 @@ public class Reference implements IReference {
 	 * Resolves a virtual method and returns whether the method lookup was
 	 * successful. We need to resolve the actual type that implements the method
 	 * - i.e. do the virtual method lookup.
-	 * 
+	 *
 	 * @param callSiteComponent the component where the method call site was
 	 *            located
 	 * @param typeName referenced type name
@@ -425,7 +425,7 @@ public class Reference implements IReference {
 	 * Sets the resolved value for the invokevirtual or invokeinterface
 	 * reference. If the method is not null and successfully updates the
 	 * reference true is returned
-	 * 
+	 *
 	 * @param method
 	 * @return
 	 * @throws CoreException
@@ -451,7 +451,7 @@ public class Reference implements IReference {
 	/**
 	 * Resolves a given method in the super type hierarchy, returns true if it
 	 * is resolved
-	 * 
+	 *
 	 * @param type
 	 * @param methodName
 	 * @param methodSignature
@@ -472,13 +472,13 @@ public class Reference implements IReference {
 
 	/**
 	 * Try to find the method in the interface hierarchy
-	 * 
+	 *
 	 * @param type
 	 * @param methodName
 	 * @param methodSignature
 	 * @return
 	 * @throws CoreException
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	boolean resolveInterfaceMethod(IApiType type, String methodName, String methodSignature) throws CoreException {
@@ -500,7 +500,7 @@ public class Reference implements IReference {
 	 * Resolves a method and returns whether the method lookup was successful.
 	 * We need to resolve the actual type that implements the method - i.e. do
 	 * the virtual method lookup.
-	 * 
+	 *
 	 * @param callSiteComponent the component where the method call site was
 	 *            located
 	 * @param typeName referenced type name
@@ -600,7 +600,7 @@ public class Reference implements IReference {
 
 	/**
 	 * Used by the search engine when resolving multiple references.
-	 * 
+	 *
 	 * @param resolution resolved reference
 	 */
 	public void setResolution(IApiMember resolution) {
@@ -641,7 +641,7 @@ public class Reference implements IReference {
 	/**
 	 * Returns the string representation for the given reference kind or
 	 * <code>UKNOWN_KIND</code> if the kind cannot be determined.
-	 * 
+	 *
 	 * @param kind the kid(s) to get the display text for
 	 * @return the string for the reference kind
 	 * @since 1.0.1
@@ -839,7 +839,7 @@ public class Reference implements IReference {
 
 	/**
 	 * Builds a reference descriptor from this reference or <code>null</code>.
-	 * 
+	 *
 	 * @return corresponding reference descriptor or <code>null</code> if
 	 *         unresolved
 	 * @throws CoreException if unable to resolve visibility

@@ -66,7 +66,7 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 
 	/**
 	 * Creates a visitor to resolve references in the given baseline
-	 * 
+	 *
 	 * @param base baseline
 	 * @param location to create XML report
 	 */
@@ -251,7 +251,7 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	/**
 	 * Limits the scope of bundles to consider references from, as a regular
 	 * expression.
-	 * 
+	 *
 	 * @param regex regular expression or <code>null</code> if all
 	 */
 	public void setAnalysisScope(String regex) {
@@ -261,7 +261,7 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	/**
 	 * Limits the set of bundles to consider analyzing references to, as a
 	 * regular expression.
-	 * 
+	 *
 	 * @param regex regular expression or <code>null</code> if all.
 	 */
 	public void setTargetScope(String regex) {

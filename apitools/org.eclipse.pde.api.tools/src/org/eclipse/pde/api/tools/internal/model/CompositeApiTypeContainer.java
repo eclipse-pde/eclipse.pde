@@ -19,7 +19,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 
 /**
  * A collection of class file containers.
- * 
+ *
  * @since 1.0
  */
 public class CompositeApiTypeContainer extends AbstractApiTypeContainer {
@@ -28,7 +28,7 @@ public class CompositeApiTypeContainer extends AbstractApiTypeContainer {
 
 	/**
 	 * Constructs a composite container on the given list of containers.
-	 * 
+	 *
 	 * @param containers list of containers
 	 */
 	public CompositeApiTypeContainer(IApiElement parent, List<IApiTypeContainer> containers) {

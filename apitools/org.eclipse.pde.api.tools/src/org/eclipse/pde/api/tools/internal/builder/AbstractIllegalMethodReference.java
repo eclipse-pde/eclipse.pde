@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Abstract implementation for illegal method references i.e. method calls,
  * constructor invocation, etc
- * 
+ *
  * @since 1.1
  */
 public abstract class AbstractIllegalMethodReference extends AbstractProblemDetector {
@@ -45,7 +45,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 
 	/**
 	 * Adds the given type as not to be extended.
-	 * 
+	 *
 	 * @param type a type that is marked no extend
 	 * @param componentId the component the type is located in
 	 */

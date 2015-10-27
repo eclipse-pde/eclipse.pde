@@ -13,9 +13,9 @@ package org.eclipse.pde.api.tools.internal.provisional;
 /**
  * Interface that defines all the constants used to create the API Tools
  * markers.
- * 
+ *
  * This interface is not intended to be extended or implemented.
- * 
+ *
  * @since 1.0.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -68,7 +68,7 @@ public interface IApiMarkerConstants {
 	/**
 	 * Constant representing the id for the fatal problem marker. Value is:
 	 * <code>org.eclipse.pde.api.tools.fatal_problem</code>
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public static final String FATAL_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".fatal_problem"; //$NON-NLS-1$
@@ -163,7 +163,7 @@ public interface IApiMarkerConstants {
 	 * Constant representing the apiMarkerID value for a duplicate annotation <br>
 	 * <br>
 	 * Value is: <code>10</code>
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static final int DUPLICATE_ANNOTATION_MARKER_ID = 10;
@@ -171,7 +171,7 @@ public interface IApiMarkerConstants {
 	 * Constant representing the apiMarkerID for unsupported annotation markers. <br>
 	 * <br>
 	 * Value is: <code>11</code>
-	 * 
+	 *
 	 * @since 1.0.600
 	 */
 	public static final int UNSUPPORTED_ANNOTATION_MARKER_ID = 11;

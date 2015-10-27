@@ -40,14 +40,14 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
  * {@link ApiSearchEngine}. This requestor returns a search scope composed of
  * the dependent (visible) {@link IApiComponent}s for the given
  * {@link IApiElement}
- * 
+ *
  * <p>
  * The references are filtered based on api filter stores. The filters may come
  * from a .api_filters found in the component or a separate filter location set
  * in the ant task via {@link #setFilterRoot(String)}. If filter files are found
  * in both locations, the filters at both will be applied.
  * </p>
- * 
+ *
  * @since 1.0.0
  */
 public class UseSearchRequestor implements IApiSearchRequestor {
@@ -74,14 +74,14 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * The root directory of the .api_filters files that should be used to
 	 * filter references.
-	 * 
+	 *
 	 * The .api_filters files specify specific problems to ignore during api
 	 * analysis. During the use scan, the problem filters will be used to filter
 	 * the use scan results.
-	 * 
+	 *
 	 * The root is specified using an absolute path. The root needs to contain
 	 * the following structure:
-	 * 
+	 *
 	 * <pre>
 	 * root
 	 *  |
@@ -109,14 +109,14 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 
 	/**
 	 * The default {@link ReferenceAnalyzer} for detecting illegal API use
-	 * 
+	 *
 	 * @see #includesIllegalUse()
 	 */
 	ReferenceAnalyzer fAnalyzer = null;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param elements an array of {@link IApiElement}s for the search engine to
 	 *            use
 	 * @param scope the raw list of {@link IApiElement}s to extract references
@@ -175,7 +175,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 
 	/**
 	 * Returns if the given {@link IApiTypeContainer} should be processed
-	 * 
+	 *
 	 * @param container
 	 * @return true if the container should be processed false otherwise
 	 */
@@ -230,7 +230,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * Returns true if the given reference is an illegal usage reference iff
 	 * illegal use is part of the search mask.
-	 * 
+	 *
 	 * @param reference
 	 * @return true if the reference is illegal use false otherwise
 	 * @since 1.1
@@ -259,7 +259,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 
 	/**
 	 * Returns if the given problem is filtered
-	 * 
+	 *
 	 * @param problem
 	 * @return <code>true</code> is filtered, false otherwise
 	 */
@@ -275,7 +275,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * Prepares the search scope based on the available entries in the
 	 * constructor
-	 * 
+	 *
 	 * @param elements
 	 */
 	private void prepareScope(IApiElement[] elements) {
@@ -309,7 +309,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 
 	/**
 	 * The patterns for jar names to exclude from the search
-	 * 
+	 *
 	 * @param patterns
 	 */
 	public void setJarPatterns(String[] patterns) {
@@ -319,16 +319,16 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * Sets the root directory of the .api_filters files that should be used to
 	 * filter references.
-	 * 
+	 *
 	 * The .api_filters files specify specific problems to ignore during api
 	 * analysis. During the use scan, the problem filters will be used to filter
 	 * the use scan results. If .api_filter files are found inside the component
 	 * those filters will be applied in addition to any found at this filter
 	 * root.
-	 * 
+	 *
 	 * The root is specified using an absolute path. The root needs to contain
 	 * the following structure:
-	 * 
+	 *
 	 * <pre>
 	 * root
 	 *  |
@@ -336,7 +336,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 *         |
 	 *         +--- .api_filters
 	 * </pre>
-	 * 
+	 *
 	 * @param filterRoot the absolute string path to the root of the filters
 	 */
 	public void setFilterRoot(String filterRoot) {

@@ -24,7 +24,7 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
  * Detects when a method illegally overrides another method.
- * 
+ *
  * @since 1.1
  */
 public class IllegalOverrideProblemDetector extends AbstractIllegalMethodReference {

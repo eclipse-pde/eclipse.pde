@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Class containing constants and utility methods for visibility modifiers
- * 
+ *
  * @since 1.0.0
  */
 public final class VisibilityModifiers {
@@ -58,7 +58,7 @@ public final class VisibilityModifiers {
 
 	/**
 	 * Returns if the modifier is 'API'
-	 * 
+	 *
 	 * @param modifiers the modifiers to resolve
 	 * @return if the modifier is 'API'
 	 */
@@ -68,7 +68,7 @@ public final class VisibilityModifiers {
 
 	/**
 	 * Returns if the modifier is 'SPI'
-	 * 
+	 *
 	 * @param modifiers the modifiers to resolve
 	 * @return if the modifier is 'SPI'
 	 */
@@ -78,7 +78,7 @@ public final class VisibilityModifiers {
 
 	/**
 	 * Returns if the modifier is 'Private'
-	 * 
+	 *
 	 * @param modifiers the modifiers to resolve
 	 * @return if the modifier is 'Private'
 	 */
@@ -88,7 +88,7 @@ public final class VisibilityModifiers {
 
 	/**
 	 * Returns if the modifier is 'Private Permissible'
-	 * 
+	 *
 	 * @param modifiers the modifiers to resolve
 	 * @return if the modifier is 'Private Permissible'
 	 */
@@ -99,7 +99,7 @@ public final class VisibilityModifiers {
 	/**
 	 * Returns the string representation of the specified visibility modifier or
 	 * <code>UNKNOWN_VISIBILITY</code> if the modifier is unknown.
-	 * 
+	 *
 	 * @param visibility
 	 * @return the string representation of the visibility or
 	 *         <code>UNKNOWN_VISIBILITY</code>

@@ -135,7 +135,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
 	/**
 	 * Retains the reference for further analysis.
-	 * 
+	 *
 	 * @param reference reference
 	 */
 	protected void retainReference(IReference reference) {
@@ -144,7 +144,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
 	/**
 	 * Return the list of retained references.
-	 * 
+	 *
 	 * @return references
 	 */
 	protected List<IReference> getRetainedReferences() {
@@ -158,7 +158,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
 	/**
 	 * Creates a problem for a specific reference in the workspace
-	 * 
+	 *
 	 * @param reference reference
 	 * @param associated java project (with reference source location)
 	 * @return problem or <code>null</code> if none
@@ -266,7 +266,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Returns the source range to include in the associated problem or
 	 * <code>null</code> if a valid source range could not be computed.
-	 * 
+	 *
 	 * @param type resolved type where the reference occurs
 	 * @param doc source document of the type
 	 * @param reference associated reference
@@ -276,14 +276,14 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
 	/**
 	 * Returns the element type the problem is reported on.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract int getElementType(IReference reference);
 
 	/**
 	 * Returns problem flags, if any.
-	 * 
+	 *
 	 * @param reference
 	 * @return problem flags
 	 */
@@ -291,35 +291,35 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
 	/**
 	 * Returns problem message arguments
-	 * 
+	 *
 	 * @return message arguments
 	 */
 	protected abstract String[] getMessageArgs(IReference reference) throws CoreException;
 
 	/**
 	 * Returns problem message arguments to be used in headless build
-	 * 
+	 *
 	 * @return message arguments
 	 */
 	protected abstract String[] getQualifiedMessageArgs(IReference reference) throws CoreException;
 
 	/**
 	 * Returns the kind of problem to create
-	 * 
+	 *
 	 * @return problem kind
 	 */
 	protected abstract int getProblemKind();
 
 	/**
 	 * Returns the key used to lookup problem severity.
-	 * 
+	 *
 	 * @return problem severity key
 	 */
 	protected abstract String getSeverityKey();
 
 	/**
 	 * Returns the fully qualified type name associated with the given member.
-	 * 
+	 *
 	 * @param member
 	 * @return fully qualified type name
 	 */
@@ -343,7 +343,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Returns the qualified type name to display. This method delegates to the
 	 * {@link Signatures} class to build the display signatures
-	 * 
+	 *
 	 * @param member
 	 * @return fully qualified display signature for the given {@link IApiType}
 	 *         or enclosing type if the member is not a type itself
@@ -373,7 +373,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
 	/**
 	 * Returns the unqualified type name associated with the given member.
-	 * 
+	 *
 	 * @param member
 	 * @return unqualified type name
 	 */
@@ -403,7 +403,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * {@link Position} for the name of the given {@link IType}. Returns
 	 * <code>null</code> in the event the given {@link IType} is
 	 * <code>null</code> or the name range cannot be computed for the type.
-	 * 
+	 *
 	 * @param type the type
 	 * @param reference the reference
 	 * @throws CoreException
@@ -424,16 +424,16 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * Finds the method name to select on the given line of code starting from
 	 * the given index. This method will recurse to find a method name in the
 	 * even there is a name clash with the type. For example:
-	 * 
+	 *
 	 * <pre>
 	 * MyType type = new MyType();
 	 * </pre>
-	 * 
+	 *
 	 * If we are trying to find the constructor method call we have a name
 	 * collision (and the first occurrence of MyType would be selected). <br>
 	 * A name is determined to be a method name if it is followed by a '('
 	 * character (excluding spaces)
-	 * 
+	 *
 	 * @param namepart
 	 * @param line
 	 * @param index
@@ -527,7 +527,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
 	/**
 	 * Returns whether the resolved reference is a real problem.
-	 * 
+	 *
 	 * @param reference
 	 * @return whether a problem
 	 */
@@ -570,7 +570,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Tries to find the given {@link IApiMethod} in the given {@link IType}. If
 	 * a matching method is not found <code>null</code> is returned
-	 * 
+	 *
 	 * @param type the type top look in for the given {@link IApiMethod}
 	 * @param method the {@link IApiMethod} to look for
 	 * @return the {@link IMethod} from the given {@link IType} that matches the
@@ -611,7 +611,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Tries to find the given {@link IApiField} in the given {@link IType}. If
 	 * the field cannot be found <code>null</code> is returned
-	 * 
+	 *
 	 * @param type
 	 * @param field
 	 * @return the {@link IField} matching the given {@link IApiField} or
@@ -638,7 +638,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Tries to find the given {@link IApiType} in the given {@link IType}. If
 	 * no match is found <code>null</code> is returned.
-	 * 
+	 *
 	 * @param type
 	 * @param apitype
 	 * @param reference
@@ -678,7 +678,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Returns the enclosing {@link IMethod} for the given type or
 	 * <code>null</code> if it cannot be computed
-	 * 
+	 *
 	 * @param type
 	 * @param jtype
 	 * @param reference
@@ -740,7 +740,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Performs a quick look-up using the offset into the the
 	 * {@link ICompilationUnit}
-	 * 
+	 *
 	 * @param jtype
 	 * @param document
 	 * @param reference
@@ -764,7 +764,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Returns the source range for the given {@link IApiMethod} within the
 	 * given {@link IType}
-	 * 
+	 *
 	 * @param type the type to look for the method within
 	 * @param reference the reference the method comes from
 	 * @param method the {@link IApiMethod} to look for the source range for
@@ -791,7 +791,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Returns the source range to use for the given field within the given
 	 * {@link IType}
-	 * 
+	 *
 	 * @param type the type to look in for the given {@link IApiField}
 	 * @param reference the reference the field is involved in
 	 * @param field the field to find the range for
@@ -826,7 +826,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * <li>Try looking for pattern '*.variable'</li>
 	 * <li>Else select the entire line optimistically</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param field the field to find the name range for
 	 * @param document the document to look within
 	 * @param reference the reference the field is from
@@ -889,7 +889,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Searches for the name of a method at the line number specified in the
 	 * given reference.
-	 * 
+	 *
 	 * @param name method name
 	 * @param document document to search in
 	 * @param reference provides line number
@@ -965,12 +965,12 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Returns if the signature is enclosed by the one of the elements of the
 	 * given set of type names.
-	 * 
+	 *
 	 * @param signature the signature of the element
 	 * @param typenames the Set of {@link String}s of type names
 	 * @return <code>true</code> if the given set contains a type name that
 	 *         encloses the given signature, <code>false</code> otherwise
-	 * 
+	 *
 	 * @since 1.0.400
 	 */
 	boolean isEnclosedBy(String signature, Set<String> typenames) {

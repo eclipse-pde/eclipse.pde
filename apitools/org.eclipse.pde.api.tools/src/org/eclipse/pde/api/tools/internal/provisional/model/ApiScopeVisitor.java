@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Visits {@link IApiElement}s in an {@link IApiScope}
- * 
+ *
  * @since 1.0.0
  */
 public class ApiScopeVisitor {
@@ -23,7 +23,7 @@ public class ApiScopeVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param component
 	 */
 	public void endVisit(IApiComponent component) {
@@ -35,7 +35,7 @@ public class ApiScopeVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param baseline
 	 */
 	public void endVisit(IApiBaseline baseline) {
@@ -47,7 +47,7 @@ public class ApiScopeVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param container
 	 */
 	public void endVisit(IApiTypeContainer container) {
@@ -59,7 +59,7 @@ public class ApiScopeVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param typeRoot
 	 */
 	public void endVisit(IApiTypeRoot typeRoot) {
@@ -74,7 +74,7 @@ public class ApiScopeVisitor {
 	 * The default implementation does nothing and returns <code>true</code>.
 	 * Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param component API component being visited
 	 * @return whether class files in the component should be visited
 	 * @throws CoreException if an exception occurs during the visit
@@ -90,7 +90,7 @@ public class ApiScopeVisitor {
 	 * The default implementation does nothing and returns <code>true</code>.
 	 * Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param baseline API baseline being visited
 	 * @return whether API baseline's components should be visited
 	 * @throws CoreException if an exception occurs during the visit
@@ -106,7 +106,7 @@ public class ApiScopeVisitor {
 	 * The default implementation does nothing and returns <code>true</code>.
 	 * Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param container the given API type container being visited
 	 * @return whether types in the container should be visited
 	 * @throws CoreException if an exception occurs during the visit
@@ -121,7 +121,7 @@ public class ApiScopeVisitor {
 	 * The default implementation does nothing and returns <code>true</code>.
 	 * Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param typeRoot the given API type root being visited
 	 * @return whether types in the container should be visited
 	 * @throws CoreException if an exception occurs during the visit

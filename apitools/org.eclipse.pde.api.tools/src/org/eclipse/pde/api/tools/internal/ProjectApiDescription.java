@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -54,7 +54,7 @@ import org.w3c.dom.Element;
 
 /**
  * Implementation of an API description for a Java project.
- * 
+ *
  * @since 1.0
  */
 public class ProjectApiDescription extends ApiDescription {
@@ -96,7 +96,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 		/**
 		 * Constructs a new node.
-		 * 
+		 *
 		 * @param parent
 		 * @param element
 		 * @param visibility
@@ -169,7 +169,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 		/**
 		 * Constructs a node for a reference type.
-		 * 
+		 *
 		 * @param type
 		 * @param parent
 		 * @param element
@@ -324,7 +324,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Constructs a new API description for the given project API component.
-	 * 
+	 *
 	 * @param component
 	 */
 	public ProjectApiDescription(IJavaProject project) {
@@ -384,7 +384,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Visits a type.
-	 * 
+	 *
 	 * @param visitor
 	 * @param owningComponent
 	 * @param type
@@ -507,7 +507,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Constructs and returns a new node for the given package fragment.
-	 * 
+	 *
 	 * @param fragment
 	 * @param parent
 	 * @param descriptor
@@ -521,7 +521,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Constructs and returns a new node for the given type.
-	 * 
+	 *
 	 * @param type
 	 * @param parent
 	 * @param descriptor
@@ -535,7 +535,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Constructs a new manifest node.
-	 * 
+	 *
 	 * @param parent
 	 * @param element
 	 * @param vis
@@ -606,7 +606,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Returns the Java project associated with this component.
-	 * 
+	 *
 	 * @return associated Java project
 	 */
 	private IJavaProject getJavaProject() {
@@ -615,7 +615,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Returns a class file container for the given package fragment root.
-	 * 
+	 *
 	 * @param root package fragment root
 	 * @return class file container
 	 * @exception CoreException if container cannot be located
@@ -630,7 +630,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Returns all package fragments that originate from this project.
-	 * 
+	 *
 	 * @return all package fragments that originate from this project
 	 */
 	private IPackageFragment[] getLocalPackageFragments() {
@@ -657,7 +657,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Returns this API description as XML.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public synchronized String getXML() throws CoreException {
@@ -674,7 +674,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Persists the elements in the given map as XML elements, appended to the
 	 * given xmlElement.
-	 * 
+	 *
 	 * @param document XML document
 	 * @param xmlElement node to append children no
 	 * @param elementMap elements to persist
@@ -725,7 +725,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Returns the API component associated with this API description
-	 * 
+	 *
 	 * @return API component
 	 * @exception CoreException if the API component cannot be located
 	 */
@@ -740,7 +740,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Resolves annotations based on inheritance for the given node and element.
-	 * 
+	 *
 	 * @param node manifest node
 	 * @param element the element annotations are being resolved for
 	 * @return annotations

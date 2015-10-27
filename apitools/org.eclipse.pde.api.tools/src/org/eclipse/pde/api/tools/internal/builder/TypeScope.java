@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 /**
  * A search scope containing only types from one component. More efficient than
  * a general purpose scope.
- * 
+ *
  * @since 1.0
  */
 public class TypeScope extends ApiElement implements IApiTypeContainer {
@@ -47,7 +47,7 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 
 	/**
 	 * Constructs a new class file container/search scope on the given types.
-	 * 
+	 *
 	 * @param component API component
 	 * @param types types within the component
 	 */

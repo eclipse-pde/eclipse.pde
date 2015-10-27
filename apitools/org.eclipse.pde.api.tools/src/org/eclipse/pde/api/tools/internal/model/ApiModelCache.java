@@ -19,7 +19,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 
 /**
  * Manages the caches of {@link IApiElement}s
- * 
+ *
  * @since 1.0.2
  */
 public final class ApiModelCache {
@@ -31,7 +31,7 @@ public final class ApiModelCache {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param size
 		 * @param overflow
 		 */
@@ -51,7 +51,7 @@ public final class ApiModelCache {
 
 		/**
 		 * Returns if the cache has any elements in it or not
-		 * 
+		 *
 		 * @return true if the cache has no entries, false otherwise
 		 */
 		public boolean isEmpty() {
@@ -74,7 +74,7 @@ public final class ApiModelCache {
 
 	/**
 	 * Returns the singleton instance of this cache
-	 * 
+	 *
 	 * @return the cache
 	 */
 	public static synchronized ApiModelCache getCache() {
@@ -87,7 +87,7 @@ public final class ApiModelCache {
 	/**
 	 * Returns the key to use in a cache. The key is of the form:
 	 * <code>[baselineid].[componentid].[typename]</code><br>
-	 * 
+	 *
 	 * @param baseline
 	 * @param component
 	 * @param typename
@@ -102,7 +102,7 @@ public final class ApiModelCache {
 	/**
 	 * Caches the given {@link IApiElement} in the correct cache based on its
 	 * type.
-	 * 
+	 *
 	 * @param element the element to cache
 	 * @throws CoreException if there is a problem accessing any of the
 	 *             {@link IApiElement} info in order to cache it - pass the
@@ -172,7 +172,7 @@ public final class ApiModelCache {
 	/**
 	 * Returns the root type name assuming that the '$' char is a member type
 	 * boundary
-	 * 
+	 *
 	 * @param typename
 	 * @return the pruned name or the original name
 	 */
@@ -186,7 +186,7 @@ public final class ApiModelCache {
 
 	/**
 	 * Method to see if the type boundary char appears in the type name
-	 * 
+	 *
 	 * @param typename
 	 * @return true if the type name contains '$' false otherwise
 	 */
@@ -197,7 +197,7 @@ public final class ApiModelCache {
 	/**
 	 * Returns the {@link IApiElement} infos for the element referenced by the
 	 * given identifier and of the given type.
-	 * 
+	 *
 	 * @param baselineid the id of the baseline the component + element belongs
 	 *            to
 	 * @param componentid the id of the {@link IApiComponent} the element
@@ -205,7 +205,7 @@ public final class ApiModelCache {
 	 * @param identifier for example the qualified name of the type or the id of
 	 *            an API component
 	 * @param type the kind of the element to look for info for
-	 * 
+	 *
 	 * @return the cached {@link IApiElement} or <code>null</code> if no such
 	 *         element is cached
 	 */
@@ -244,11 +244,11 @@ public final class ApiModelCache {
 	/**
 	 * Removes the {@link IApiElement} from the given component (given its id)
 	 * with the given identifier and of the given type.
-	 * 
+	 *
 	 * @param componentid the id of the component the element resides in
 	 * @param identifier the id (name) of the element to remove
 	 * @param type the type of the element (TYPE, METHOD, FIELD, etc)
-	 * 
+	 *
 	 * @return true if the element was removed, false otherwise
 	 */
 	public boolean removeElementInfo(String baselineid, String componentid, String identifier, int type) {
@@ -322,7 +322,7 @@ public final class ApiModelCache {
 	/**
 	 * Removes the given {@link IApiElement} info from the cache and returns it
 	 * if present
-	 * 
+	 *
 	 * @param element
 	 * @return true if the {@link IApiElement} was removed false otherwise
 	 * @throws CoreException if there is a problem accessing any of the
@@ -383,7 +383,7 @@ public final class ApiModelCache {
 
 	/**
 	 * Returns if the cache has any elements in it or not
-	 * 
+	 *
 	 * @return true if the cache has no entries, false otherwise
 	 */
 	public boolean isEmpty() {

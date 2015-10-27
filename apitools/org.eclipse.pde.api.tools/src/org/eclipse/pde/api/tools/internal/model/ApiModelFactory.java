@@ -47,7 +47,7 @@ import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
  * Utility class for creating new
  * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiElement}s and
  * for performing common tasks on them
- * 
+ *
  * @since 1.0.0
  */
 public class ApiModelFactory {
@@ -64,7 +64,7 @@ public class ApiModelFactory {
 
 	/**
 	 * {@link FilenameFilter} for CVS files
-	 * 
+	 *
 	 * @since 1.0.1
 	 */
 	static class CVSNameFilter implements FilenameFilter {
@@ -93,7 +93,7 @@ public class ApiModelFactory {
 	 * specified location or <code>null</code> if the location specified does
 	 * not contain a valid API component. The component is not added to the
 	 * baseline.
-	 * 
+	 *
 	 * @param location absolute path in the local file system to the API
 	 *            component
 	 * @return API component or <code>null</code> if the location specified does
@@ -113,7 +113,7 @@ public class ApiModelFactory {
 	 * given model or <code>null</code> if the given model cannot be resolved or
 	 * does not contain a valid API component. The component is not added to the
 	 * baseline.
-	 * 
+	 *
 	 * @param baseline
 	 * @param model the given model
 	 * @return API component or <code>null</code> if the given model cannot be
@@ -148,7 +148,7 @@ public class ApiModelFactory {
 	 * API nature), as we still need them to make a complete API baseline
 	 * without resolution errors.
 	 * </p>
-	 * 
+	 *
 	 * @param location
 	 * @return true if the location is an imported binary project, false
 	 *         otherwise
@@ -170,7 +170,7 @@ public class ApiModelFactory {
 	 * non-OSGi environment must have its execution environment specified at
 	 * creation time.
 	 * </p>
-	 * 
+	 *
 	 * @param name baseline name
 	 * @return a new empty {@link IApiBaseline}
 	 */
@@ -188,7 +188,7 @@ public class ApiModelFactory {
 	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>
 	 * .
 	 * </p>
-	 * 
+	 *
 	 * @param name baseline name
 	 * @param eeDescription execution environment description file
 	 * @return a new {@link IApiBaseline}
@@ -209,7 +209,7 @@ public class ApiModelFactory {
 	 * non-OSGi environment must have its execution environment specified at
 	 * creation time.
 	 * </p>
-	 * 
+	 *
 	 * @param name baseline name
 	 * @param location the given baseline's location
 	 * @return a new empty {@link IApiBaseline}
@@ -230,7 +230,7 @@ public class ApiModelFactory {
 	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>
 	 * .
 	 * </p>
-	 * 
+	 *
 	 * @param name baseline name
 	 * @param eeDescription execution environment description file
 	 * @param location the given baseline's location
@@ -246,7 +246,7 @@ public class ApiModelFactory {
 	 * Collects API components for the bundles part of the specified
 	 * installation and adds them to the baseline. The components that were
 	 * added to the baseline are returned.
-	 * 
+	 *
 	 * @param baseline The baseline to add the components to
 	 * @param installLocation location of an installation that components are
 	 *            collected from
@@ -356,7 +356,7 @@ public class ApiModelFactory {
 	 * <code>target:/targetSeq/definitionLocation</code>. A location must be
 	 * compatible with
 	 * {@link org.eclipse.core.runtime.Path#fromPortableString(String)}.
-	 * 
+	 *
 	 * @param definition the target platform definition
 	 * @return an encoded location
 	 * @see #isDerivedFromTarget
@@ -375,7 +375,7 @@ public class ApiModelFactory {
 
 	/**
 	 * Return a stable identifier for the provided definition.
-	 * 
+	 *
 	 * @param definition
 	 * @return a stable identifier, in portable OS format as per
 	 *         {@link org.eclipse.core.runtime.Path#fromPortableString(String)}.
@@ -402,7 +402,7 @@ public class ApiModelFactory {
 	 * Return true if the provided profile seems to have been derived from the
 	 * given target definition. The target definition may have evolved since
 	 * originally created.
-	 * 
+	 *
 	 * @param profile the API profile
 	 * @param definition the target definition
 	 * @return true if the profile was derived from the given definition
@@ -430,7 +430,7 @@ public class ApiModelFactory {
 	/**
 	 * Return true if the provided profile is up-to-date with the given target
 	 * definition
-	 * 
+	 *
 	 * @param profile the API profile
 	 * @param definition the target definition
 	 * @return true if the profile is up-to-date

@@ -45,7 +45,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 /**
  * Detects references to fields, methods and types that are not available for a
  * specific EE.
- * 
+ *
  * @since 1.1
  */
 public class SystemApiDetector extends AbstractProblemDetector {
@@ -114,7 +114,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 
 	/**
 	 * Returns the signature to display for found problems
-	 * 
+	 *
 	 * @param member the member to get the signature from
 	 * @param qualified if the returned signature should be type-qualified or
 	 *            not

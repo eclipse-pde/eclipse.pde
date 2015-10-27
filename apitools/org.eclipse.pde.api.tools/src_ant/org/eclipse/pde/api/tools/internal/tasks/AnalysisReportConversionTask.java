@@ -309,7 +309,7 @@ public class AnalysisReportConversionTask extends Task {
 
 	/**
 	 * Write out the index file
-	 * 
+	 *
 	 * @param reportsRoot
 	 * @param summaries
 	 * @param allNonApiBundleSummary
@@ -542,7 +542,7 @@ public class AnalysisReportConversionTask extends Task {
 	 * <p>
 	 * Default is <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
@@ -551,7 +551,7 @@ public class AnalysisReportConversionTask extends Task {
 
 	/**
 	 * Set the location where the html reports are generated.
-	 * 
+	 *
 	 * <p>
 	 * This is optional. If not set, the html files are created in the same
 	 * folder as the xml files.
@@ -559,7 +559,7 @@ public class AnalysisReportConversionTask extends Task {
 	 * <p>
 	 * The location is set using an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * @param htmlFilesLocation the given the location where the html reports
 	 *            are generated
 	 */
@@ -569,11 +569,11 @@ public class AnalysisReportConversionTask extends Task {
 
 	/**
 	 * Set the location where the xml reports are retrieved.
-	 * 
+	 *
 	 * <p>
 	 * The location is set using an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * @param xmlFilesLocation the given location to retrieve the xml reports
 	 */
 	public void setXmlFiles(String xmlFilesLocation) {

@@ -14,7 +14,7 @@ public class DeltaVisitor {
 
 	/**
 	 * Visit the given delta
-	 * 
+	 *
 	 * @param delta the given delta
 	 * @return true if the children of the given delta should also be processed
 	 */
@@ -24,7 +24,7 @@ public class DeltaVisitor {
 
 	/**
 	 * Callback called when the delta visitor is exiting the given delta
-	 * 
+	 *
 	 * @param delta the given delta
 	 */
 	public void endVisit(IDelta delta) {

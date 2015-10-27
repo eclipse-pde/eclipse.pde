@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  * </p>
  * <p>
  * Specific visit ordering:
- * 
+ *
  * <pre>
  * ComponentDescription := [visitElement[PackageDescription] endVisitElement[PackageDescription]]*
  * PackageDescription := [visitElement[TypeDescription] endVisitElement[TypeDescription]]*
@@ -30,11 +30,11 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  * MemberDescription := MethodDescription | FieldDescription
  * OverrideDescription := PackageDescription | TypeDescription | MethodDescription | FieldDescription
  * </pre>
- * 
+ *
  * MemberDescriptions are visited in the order they are keyed for the backing
  * {@link HashMap}
  * </p>
- * 
+ *
  * @since 1.0.0
  */
 public abstract class ApiDescriptionVisitor {
@@ -46,7 +46,7 @@ public abstract class ApiDescriptionVisitor {
 	 * The default implementation does nothing and returns <code>true</code>.
 	 * Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param element element being visited
 	 * @param description description of the element visited
 	 * @return whether child elements should be visited
@@ -60,7 +60,7 @@ public abstract class ApiDescriptionVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
-	 * 
+	 *
 	 * @param element element being end-visited
 	 * @param description description of the element end-visited
 	 */

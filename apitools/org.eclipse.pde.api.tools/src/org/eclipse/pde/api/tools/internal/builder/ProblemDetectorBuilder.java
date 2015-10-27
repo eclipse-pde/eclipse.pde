@@ -34,7 +34,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Builds problem detectors for reference analysis.
- * 
+ *
  * @since 1.1
  */
 public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
@@ -94,14 +94,14 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 
 	/**
 	 * Stack containing all of the types tagged &#64;noreference
-	 * 
+	 *
 	 * @since 1.0.400
 	 */
 	Set<IElementDescriptor> fRestrictedTypes = new HashSet<>();
 
 	/**
 	 * Build problem detectors for a component.
-	 * 
+	 *
 	 * @param component
 	 * @param kinds the integer mask of the kinds of detectors to create
 	 */
@@ -181,7 +181,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 
 	/**
 	 * Sets the owning component of this builder
-	 * 
+	 *
 	 * @param component
 	 */
 	public void setOwningComponent(IApiComponent component) {
@@ -221,7 +221,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 
 	/**
 	 * Returns whether the given problem kind should be ignored.
-	 * 
+	 *
 	 * @param problemKey
 	 * @return whether the given problem kind should be ignored
 	 */
@@ -233,7 +233,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	/**
 	 * Returns a set of all non-API package names that are in prerequisite
 	 * components.
-	 * 
+	 *
 	 * @return
 	 */
 	Set<String> getNonApiPackageNames() {
@@ -242,7 +242,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 
 	/**
 	 * Adds additional non-API package descriptors to the detector builder.
-	 * 
+	 *
 	 * @param packagee
 	 * @return true if the descriptor did not exist in the current collection
 	 *         and was added, false otherwise
@@ -256,7 +256,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 
 	/**
 	 * Returns a list of problem detectors to be used.
-	 * 
+	 *
 	 * @return problem detectors
 	 */
 	public List<IApiProblemDetector> getProblemDetectors() {
@@ -265,7 +265,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 
 	/**
 	 * Adds the system detector to the given listing
-	 * 
+	 *
 	 * @param detectors
 	 * @param project
 	 */
@@ -287,7 +287,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 
 	/**
 	 * Adds the use detectors to the listing
-	 * 
+	 *
 	 * @param detectors
 	 * @param project
 	 */
@@ -340,7 +340,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 * Adds any leak detectors to the listing. If a project context is available
 	 * we filter out disabled detectors based on project / workspace preference
 	 * settings
-	 * 
+	 *
 	 * @param detectors
 	 * @param project
 	 */

@@ -36,7 +36,7 @@ import org.eclipse.jdt.core.JavaCore;
 /**
  * Standard delta processor for us to track element state changes in the workspace
  * using {@link IJavaElementDelta}s and {@link IResourceDelta}s.
- * 
+ *
  * @since 1.1
  */
 public class WorkspaceDeltaProcessor implements IElementChangedListener, IResourceChangeListener {
@@ -51,7 +51,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 
 	/**
 	 * Processes the java element deltas of interest
-	 * 
+	 *
 	 * @param deltas
 	 */
 	void processJavaElementDeltas(IJavaElementDelta[] deltas, IJavaProject project) {

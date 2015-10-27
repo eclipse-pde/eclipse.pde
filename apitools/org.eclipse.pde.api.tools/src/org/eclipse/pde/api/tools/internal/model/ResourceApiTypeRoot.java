@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * A class file corresponding to a resource in the workspace.
- * 
+ *
  * @since 1.0
  */
 public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
@@ -34,7 +34,7 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 
 	/**
 	 * Constructs an {@link IApiTypeRoot} on the underlying file.
-	 * 
+	 *
 	 * @param parent the {@link IApiElement} parent or <code>null</code> if none
 	 * @param file underlying resource
 	 * @param component API component the class file originates from

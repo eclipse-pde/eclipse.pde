@@ -39,7 +39,7 @@ public class ApiToolProjectNature implements IProjectNature {
 
 	/**
 	 * Retrieve the current project
-	 * 
+	 *
 	 * @return the current project
 	 */
 	@Override

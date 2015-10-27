@@ -18,7 +18,7 @@ package org.eclipse.pde.api.tools.internal.provisional.descriptors;
  * <p>
  * Package segments of a type name are dot-separated
  * </p>
- * 
+ *
  * @since 1.0.0
  */
 public interface IReferenceTypeDescriptor extends IMemberDescriptor {
@@ -26,14 +26,14 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor {
 	/**
 	 * Returns this type's fully qualified name. Package names are dot qualified
 	 * and inner types are '$'-separated.
-	 * 
+	 *
 	 * @return type name
 	 */
 	public String getQualifiedName();
 
 	/**
 	 * Returns this type's signature.
-	 * 
+	 *
 	 * @return type signature
 	 */
 	public String getSignature();
@@ -41,14 +41,14 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor {
 	/**
 	 * Returns type signature information about this type or <code>null</code>
 	 * if none. May contain extra information for parameterized types.
-	 * 
+	 *
 	 * @return type signature information for this type or <code>null</code>
 	 */
 	public String getGenericSignature();
 
 	/**
 	 * Returns a descriptor for the package this type is contained in.
-	 * 
+	 *
 	 * @return package descriptor
 	 */
 	@Override
@@ -56,7 +56,7 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor {
 
 	/**
 	 * Returns a descriptor for a member type.
-	 * 
+	 *
 	 * @param simpleName simple type name
 	 * @return type descriptor
 	 */
@@ -64,17 +64,17 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor {
 
 	/**
 	 * Returns a descriptor for a field with the given name in this type.
-	 * 
+	 *
 	 * @param name field name
 	 * @return field descriptor
-	 * 
+	 *
 	 */
 	public IFieldDescriptor getField(String name);
 
 	/**
 	 * Returns a descriptor for a non-synthetic method with the given name and
 	 * signature in this type.
-	 * 
+	 *
 	 * @param name method name
 	 * @param signature method signature
 	 * @return method descriptor
@@ -83,7 +83,7 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor {
 
 	/**
 	 * Returns whether this type describes an anonymous inner type.
-	 * 
+	 *
 	 * @return whether this type describes an anonymous inner type
 	 */
 	public boolean isAnonymous();

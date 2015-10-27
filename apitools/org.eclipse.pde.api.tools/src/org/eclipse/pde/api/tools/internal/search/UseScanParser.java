@@ -65,7 +65,7 @@ public class UseScanParser {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param type one of IReference.T_TYPE_REFERENCE,
 		 *            IReference.T_METHOD_REFERENCE,
 		 *            IReference.T_FIELD_REFERENCE
@@ -100,7 +100,7 @@ public class UseScanParser {
 	/**
 	 * Process the XML element described by the URI, local name, name and
 	 * attributes
-	 * 
+	 *
 	 * @param uri the URI of the XML element
 	 * @param localName the local name of the XML element
 	 * @param name the name of the XML element
@@ -204,7 +204,7 @@ public class UseScanParser {
 
 	/**
 	 * Parses the problem messages from the attributes
-	 * 
+	 *
 	 * @param attribs
 	 * @return the messages or an empty array never <code>null</code>
 	 * @since 1.1
@@ -221,7 +221,7 @@ public class UseScanParser {
 	/**
 	 * Resolves references from an API use scan rooted at the specified location
 	 * in the file system in the given baseline.
-	 * 
+	 *
 	 * @param xmlLocation root of API use scan (XML directory).
 	 * @param monitor progress monitor
 	 * @param baseline API baseline to resolve references in
@@ -314,7 +314,7 @@ public class UseScanParser {
 
 	/**
 	 * Returns a parser
-	 * 
+	 *
 	 * @return default parser
 	 * @throws Exception forwarded general exception that can be trapped in Ant
 	 *             builds
@@ -367,7 +367,7 @@ public class UseScanParser {
 
 	/**
 	 * Returns all the child directories from the given directory
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 */
@@ -378,7 +378,7 @@ public class UseScanParser {
 
 	/**
 	 * Returns the {@link IReference} type from the file name
-	 * 
+	 *
 	 * @param xmlfile
 	 * @return the type from the file name
 	 */
@@ -486,7 +486,7 @@ public class UseScanParser {
 
 	/**
 	 * Sorts the given files by name (not path).
-	 * 
+	 *
 	 * @param files
 	 * @return sorted files
 	 */

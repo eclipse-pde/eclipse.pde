@@ -42,7 +42,7 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 
 	/**
 	 * Constructs a visitor with the given patterns.
-	 * 
+	 *
 	 * @param internal regular expressions to match as internal packages or
 	 *            <code>null</code>
 	 * @param api regular expressions to match as API or <code>null</code>
@@ -54,7 +54,7 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 
 	/**
 	 * Sets the description to be modified.
-	 * 
+	 *
 	 * @param description API description to modify
 	 */
 	public void setApiDescription(IApiDescription description) {
@@ -64,7 +64,7 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 	/**
 	 * Sets regular expressions to consider as internal packages. Used to
 	 * override visibility settings in an API description.
-	 * 
+	 *
 	 * @param patterns regular expressions, may be empty or <code>null</code>
 	 */
 	private void setInternalPatterns(String[] patterns) {
@@ -81,7 +81,7 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 	/**
 	 * Sets regular expressions to consider as API packages. Used to override
 	 * visibility settings in an API description.
-	 * 
+	 *
 	 * @param patterns regular expressions, may be empty or <code>null</code>
 	 */
 	private void setApiPatterns(String[] patterns) {
@@ -120,7 +120,7 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 
 	/**
 	 * Returns whether the package matches any of the given patterns.
-	 * 
+	 *
 	 * @param name name to match
 	 * @param patterns patterns to match against
 	 * @return whether there's a match

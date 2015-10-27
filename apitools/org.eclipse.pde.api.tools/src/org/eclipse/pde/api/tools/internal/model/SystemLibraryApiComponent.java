@@ -29,7 +29,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 
 /**
  * An API component for a system library.
- * 
+ *
  * @since 1.0.0
  */
 public class SystemLibraryApiComponent extends Component {
@@ -61,7 +61,7 @@ public class SystemLibraryApiComponent extends Component {
 
 	/**
 	 * Constructs a system library.
-	 * 
+	 *
 	 * @param baseline owning baseline
 	 */
 	protected SystemLibraryApiComponent(IApiBaseline baseline) {
@@ -71,7 +71,7 @@ public class SystemLibraryApiComponent extends Component {
 	/**
 	 * Constructs a system library from the given execution environment
 	 * description file.
-	 * 
+	 *
 	 * @param baseline owning baseline
 	 * @param description EE file
 	 * @param systemPackages exported system packages
@@ -145,7 +145,7 @@ public class SystemLibraryApiComponent extends Component {
 
 	/**
 	 * Initializes properties from the EE file.
-	 * 
+	 *
 	 * @param description EE file
 	 */
 	private void init(ExecutionEnvironmentDescription description) {

@@ -32,7 +32,7 @@ public class Delta implements IDelta {
 
 	/**
 	 * Writes the delta to the given {@link PrintWriter}
-	 * 
+	 *
 	 * @param delta
 	 * @param writer
 	 */
@@ -101,7 +101,7 @@ public class Delta implements IDelta {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param elementType
 	 * @param kind
 	 * @param flags
@@ -129,7 +129,7 @@ public class Delta implements IDelta {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param elementType
 	 * @param kind
 	 * @param flags
@@ -157,7 +157,7 @@ public class Delta implements IDelta {
 	/**
 	 * Adds a child delta to this delta. If the specified delta is
 	 * <code>null</code> no work is done.
-	 * 
+	 *
 	 * @param delta the new child delta
 	 */
 	public void add(IDelta delta) {

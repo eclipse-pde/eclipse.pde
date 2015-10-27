@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public class TarEntry implements Cloneable {
 	/**
 	 * Create a new TarEntry for a file of the given name at the given position
 	 * in the file.
-	 * 
+	 *
 	 * @param name filename
 	 * @param pos position in the file in bytes
 	 */
@@ -46,7 +46,7 @@ public class TarEntry implements Cloneable {
 
 	/**
 	 * Create a new TarEntry for a file of the given name.
-	 * 
+	 *
 	 * @param name filename
 	 */
 	public TarEntry(String name) {
@@ -66,7 +66,7 @@ public class TarEntry implements Cloneable {
 	/**
 	 * Returns the type of this file, one of FILE, LINK, SYM_LINK, CHAR_DEVICE,
 	 * BLOCK_DEVICE, DIRECTORY or FIFO.
-	 * 
+	 *
 	 * @return file type
 	 */
 	public int getFileType() {
@@ -75,7 +75,7 @@ public class TarEntry implements Cloneable {
 
 	/**
 	 * Returns the mode of the file in UNIX permissions format.
-	 * 
+	 *
 	 * @return file mode
 	 */
 	public long getMode() {
@@ -84,7 +84,7 @@ public class TarEntry implements Cloneable {
 
 	/**
 	 * Returns the name of the file.
-	 * 
+	 *
 	 * @return filename
 	 */
 	public String getName() {
@@ -93,7 +93,7 @@ public class TarEntry implements Cloneable {
 
 	/**
 	 * Returns the size of the file in bytes.
-	 * 
+	 *
 	 * @return size
 	 */
 	public long getSize() {
@@ -103,7 +103,7 @@ public class TarEntry implements Cloneable {
 	/**
 	 * Returns the modification time of the file in seconds since January 1st
 	 * 1970.
-	 * 
+	 *
 	 * @return time
 	 */
 	public long getTime() {
@@ -113,7 +113,7 @@ public class TarEntry implements Cloneable {
 	/**
 	 * Sets the type of the file, one of FILE, LINK, SYMLINK, CHAR_DEVICE,
 	 * BLOCK_DEVICE, or DIRECTORY.
-	 * 
+	 *
 	 * @param type
 	 */
 	public void setFileType(int type) {
@@ -122,7 +122,7 @@ public class TarEntry implements Cloneable {
 
 	/**
 	 * Sets the mode of the file in UNIX permissions format.
-	 * 
+	 *
 	 * @param mode
 	 */
 	public void setMode(long mode) {
@@ -131,7 +131,7 @@ public class TarEntry implements Cloneable {
 
 	/**
 	 * Sets the size of the file in bytes.
-	 * 
+	 *
 	 * @param size
 	 */
 	public void setSize(long size) {
@@ -140,7 +140,7 @@ public class TarEntry implements Cloneable {
 
 	/**
 	 * Sets the modification time of the file in seconds since January 1st 1970.
-	 * 
+	 *
 	 * @param time
 	 */
 	public void setTime(long time) {

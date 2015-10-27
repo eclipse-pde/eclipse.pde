@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 /**
  * {@link IApiDescription} visitor that generates XML for the given
  * {@link IApiComponent}.
- * 
+ *
  * @since 1.0.0
  */
 public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
@@ -69,7 +69,7 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 
 	/**
 	 * Constructs a new visitor for the given component.
-	 * 
+	 *
 	 * @param component API component
 	 * @throws CoreException if unable to construct the visitor
 	 */
@@ -79,10 +79,10 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 
 	/**
 	 * Constructs a new visitor for the given component.
-	 * 
+	 *
 	 * @param componentName the given component name
 	 * @param componentId the given component id
-	 * 
+	 *
 	 * @throws CoreException if unable to construct the visitor
 	 */
 	public ApiDescriptionXmlCreator(String componentName, String componentId) throws CoreException {
@@ -100,7 +100,7 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 
 	/**
 	 * Annotates the attribute set of the specified {@link Element}
-	 * 
+	 *
 	 * @param componentContext component context to which the API applies, or
 	 *            <code>null</code>
 	 * @param description the description to annotate from
@@ -140,7 +140,7 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 
 	/**
 	 * Returns the settings as a UTF-8 string containing XML.
-	 * 
+	 *
 	 * @return XML
 	 * @throws CoreException if something goes wrong
 	 */

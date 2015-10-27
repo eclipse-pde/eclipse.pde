@@ -43,7 +43,7 @@ import com.ibm.icu.text.DateFormat;
 
 /**
  * Ant task for performing the API use analysis of a given Eclipse SDK
- * 
+ *
  * @since 1.0.1
  */
 public final class ApiUseTask extends CommonUtilsTask {
@@ -58,7 +58,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	private boolean considerinternal = false;
 	/**
 	 * if illegal API use should be reported in the search
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	private boolean considerillegaluse = false;
@@ -94,7 +94,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Archive name patterns to not scan during analysis. Formulation:
-	 * 
+	 *
 	 * <pre>
 	 * <bundle name>:<path to jar>
 	 * </pre>
@@ -118,13 +118,13 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Set the location of the current product you want to search.
-	 * 
+	 *
 	 * <p>
 	 * It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that
 	 * corresponds to the Eclipse installation folder. This is the directory is
 	 * which you can find the Eclipse executable.
 	 * </p>
-	 * 
+	 *
 	 * @param location the given location for the baseline to analyze
 	 */
 	public void setLocation(String location) {
@@ -134,12 +134,12 @@ public final class ApiUseTask extends CommonUtilsTask {
 	/**
 	 * Set the regular expression pattern used to build the scope of elements to
 	 * search for references from in the product location.
-	 * 
+	 *
 	 * <p>
 	 * The pattern must be a well-formatted regular expression as defined here:
 	 * http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html
 	 * </p>
-	 * 
+	 *
 	 * @param scopepattern
 	 */
 	public void setScopePattern(String scopepattern) {
@@ -149,12 +149,12 @@ public final class ApiUseTask extends CommonUtilsTask {
 	/**
 	 * Set the regular expression pattern used to build the scope of elements to
 	 * search for references to in the product location.
-	 * 
+	 *
 	 * <p>
 	 * The pattern must be a well-formatted regular expression as defined here:
 	 * http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html
 	 * </p>
-	 * 
+	 *
 	 * @param referencepattern
 	 */
 	public void setReferencePattern(String referencepattern) {
@@ -163,20 +163,20 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Set the output location where the reports will be generated.
-	 * 
+	 *
 	 * <p>
 	 * Once the task is completed, reports are available in this directory using
 	 * a structure similar to the filter root. A sub-folder is created for each
 	 * component that has problems to be reported. Each sub-folder contains a
 	 * file called "report.xml".
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * A special folder called "allNonApiBundles" is also created in this folder
 	 * that contains a xml file called "report.xml". This file lists all the
 	 * bundles that are not using the API Tools nature.
 	 * </p>
-	 * 
+	 *
 	 * @param baselineLocation the given location for the reference baseline to
 	 *            analyze
 	 */
@@ -192,7 +192,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * <p>
 	 * Default is <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
@@ -207,7 +207,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * <p>
 	 * Default is <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param considerapi the given value
 	 */
 	public void setConsiderAPI(String considerapi) {
@@ -222,7 +222,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * <p>
 	 * Default is <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param considerillegaluse the given value
 	 */
 	public void setConsiderIllegalUse(String considerillegaluse) {
@@ -231,7 +231,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Sets any package name patterns to consider as API packages.
-	 * 
+	 *
 	 * @param patterns comma separated list of regular expressions or
 	 *            <code>null</code>
 	 */
@@ -247,7 +247,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * <p>
 	 * Default is <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param considerapi the given value
 	 */
 	public void setConsiderInternal(String considerinternal) {
@@ -256,7 +256,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Sets any package name patterns to consider as internal packages.
-	 * 
+	 *
 	 * @param patterns comma separated list of regular expressions or
 	 *            <code>null</code>
 	 */
@@ -266,7 +266,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Sets any archive name patterns to not scan during the analysis.
-	 * 
+	 *
 	 * @param patterns
 	 */
 	public void setArchivePatterns(String patterns) {
@@ -347,7 +347,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Returns if we should add the given component to our search scope
-	 * 
+	 *
 	 * @param component
 	 * @param pattern
 	 * @param allowresolve
@@ -373,7 +373,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Collects the scope elements and reference ids in one pass
-	 * 
+	 *
 	 * @param baseline the baseline to check the components for
 	 * @param ids the live set of reference ids
 	 * @param scope the live set of elements for the scope
@@ -428,7 +428,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	/**
 	 * Returns the set of search flags to use for the
 	 * {@link IApiSearchRequestor}
-	 * 
+	 *
 	 * @return the set of flags to use
 	 */
 	protected int getSearchFlags() {
@@ -443,7 +443,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * location. The returned {@link IApiBaseline} is not checked for resolution
 	 * errors or consistency. If <code>null</code> is passed in as a location
 	 * <code>null</code> is returned.
-	 * 
+	 *
 	 * @param name the name to give to the baseline
 	 * @param location the location the baseline should be prepared from. If
 	 *            <code>null</code> is passed in, <code>null</code> is returned
@@ -543,7 +543,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Set the exclude list location.
-	 * 
+	 *
 	 * <p>
 	 * The exclude list is used to know what bundles should excluded from the
 	 * xml report generated by the task execution. Lines starting with '#' are
@@ -552,7 +552,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * <p>
 	 * The format of the exclude list file looks like this:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * # DOC BUNDLES
 	 * org.eclipse.jdt.doc.isv
@@ -570,7 +570,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * <p>
 	 * The location is set using an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * @param excludeListLocation the given location for the excluded list file
 	 */
 	public void setExcludeList(String excludeListLocation) {
@@ -579,7 +579,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Set the include list location.
-	 * 
+	 *
 	 * <p>
 	 * The include list is used to know what bundles should included from the
 	 * xml report generated by the task execution. Lines starting with '#' are
@@ -588,7 +588,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * <p>
 	 * The format of the include list file looks like this:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * # DOC BUNDLES
 	 * org.eclipse.jdt.doc.isv
@@ -606,7 +606,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * <p>
 	 * The location is set using an absolute path.
 	 * </p>
-	 * 
+	 *
 	 * @param includeListLocation the given location for the included list file
 	 */
 	public void setIncludeList(String includeListLocation) {
@@ -615,18 +615,18 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Set the root directory of API filters to use during the use scan.
-	 * 
+	 *
 	 * The argument is the root directory of the .api_filters files that should
 	 * be used to filter references.
-	 * 
+	 *
 	 * The .api_filters files specify specific problems to ignore during api
 	 * analysis. During the use scan, the problem filters will be used to filter
 	 * the use scan results. If a .api_filters file is found inside the
 	 * component both sets of filters will be applied.
-	 * 
+	 *
 	 * The root is specified using an absolute path. The root needs to contain
 	 * the following structure:
-	 * 
+	 *
 	 * <pre>
 	 * root
 	 *  |
@@ -634,7 +634,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 *         |
 	 *         +--- .api_filters
 	 * </pre>
-	 * 
+	 *
 	 * @param filters the root of the .api_filters files
 	 */
 	public void setFilters(String filters) {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
 
 /**
  * Class containing constants and utility methods for @since values.
- * 
+ *
  * This covers the corresponding profiles:
  * <ul>
  * <li>CDC-1.0_Foundation-1.0</li>
@@ -29,7 +29,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
  * <li>OSGi_Minimum-1.1</li>
  * <li>OSGi_Minimum-1.2</li>
  * </ul>
- * 
+ *
  * @since 1.0.0
  */
 public final class ProfileModifiers {
@@ -152,7 +152,7 @@ public final class ProfileModifiers {
 	/**
 	 * Returns if the CDC_1_0_FOUNDATION_1_0 modifier has been set in the given
 	 * modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the CDC_1_0_FOUNDATION_1_0 modifier has been set in the
 	 *         specified modifiers, false otherwise
@@ -164,7 +164,7 @@ public final class ProfileModifiers {
 	/**
 	 * Returns if the CDC_1_1_FOUNDATION_1_1 modifier has been set in the given
 	 * modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the CDC_1_1_FOUNDATION_1_1 modifier has been set in the
 	 *         specified modifiers, false otherwise
@@ -175,7 +175,7 @@ public final class ProfileModifiers {
 
 	/**
 	 * Returns if the J2SE_1_2 modifier has been set in the given modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the J2SE_1_2 modifier has been set in the specified
 	 *         modifiers, false otherwise
@@ -186,7 +186,7 @@ public final class ProfileModifiers {
 
 	/**
 	 * Returns if the J2SE_1_3 modifier has been set in the given modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the J2SE_1_3 modifier has been set in the specified
 	 *         modifiers, false otherwise
@@ -197,7 +197,7 @@ public final class ProfileModifiers {
 
 	/**
 	 * Returns if the J2SE_1_4 modifier has been set in the given modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the J2SE_1_4 modifier has been set in the specified
 	 *         modifiers, false otherwise
@@ -208,7 +208,7 @@ public final class ProfileModifiers {
 
 	/**
 	 * Returns if the J2SE_1_5 modifier has been set in the given modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the J2SE_1_5 modifier has been set in the specified
 	 *         modifiers, false otherwise
@@ -219,7 +219,7 @@ public final class ProfileModifiers {
 
 	/**
 	 * Returns if the JAVASE_1_6 modifier has been set in the given modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the JAVASE_1_6 modifier has been set in the specified
 	 *         modifiers, false otherwise
@@ -230,7 +230,7 @@ public final class ProfileModifiers {
 
 	/**
 	 * Returns if the JAVASE_1_7 modifier has been set in the given modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the JAVASE_1_7 modifier has been set in the specified
 	 *         modifiers, false otherwise
@@ -252,7 +252,7 @@ public final class ProfileModifiers {
 
 	/**
 	 * Returns if the JRE_1_1 modifier has been set in the given modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the JRE_1_1 modifier has been set in the specified
 	 *         modifiers, false otherwise
@@ -264,7 +264,7 @@ public final class ProfileModifiers {
 	/**
 	 * Returns if the OSGI_MINIMUM_1_0 modifier has been set in the given
 	 * modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the OSGI_MINIMUM_1_0 modifier has been set in the
 	 *         specified modifiers, false otherwise
@@ -276,7 +276,7 @@ public final class ProfileModifiers {
 	/**
 	 * Returns if the OSGI_MINIMUM_1_1 modifier has been set in the given
 	 * modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the OSGI_MINIMUM_1_1 modifier has been set in the
 	 *         specified modifiers, false otherwise
@@ -288,7 +288,7 @@ public final class ProfileModifiers {
 	/**
 	 * Returns if the OSGI_MINIMUM_1_2 modifier has been set in the given
 	 * modifiers.
-	 * 
+	 *
 	 * @param modifiers the given modifiers
 	 * @return true if the OSGI_MINIMUM_1_2 modifier has been set in the
 	 *         specified modifiers, false otherwise

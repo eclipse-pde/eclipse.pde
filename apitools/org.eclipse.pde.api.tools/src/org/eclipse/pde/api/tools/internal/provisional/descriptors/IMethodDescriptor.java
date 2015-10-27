@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional.descriptors;
 
 /**
  * Describes a method.
- * 
+ *
  * @since 1.0.0
  */
 public interface IMethodDescriptor extends IMemberDescriptor {
@@ -26,14 +26,14 @@ public interface IMethodDescriptor extends IMemberDescriptor {
 	 * <code>public void foo(String text, int length)</code> would return
 	 * <code>"(Ljava.lang.String;I)V"</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return the signature of this method
 	 */
 	public String getSignature();
 
 	/**
 	 * Returns whether this method is a constructor
-	 * 
+	 *
 	 * @return whether this method is a constructor
 	 */
 	public boolean isConstructor();

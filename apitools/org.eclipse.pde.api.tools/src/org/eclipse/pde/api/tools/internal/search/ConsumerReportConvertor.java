@@ -42,7 +42,7 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  * Generates an HTML report from an XML use scan. The generated report is
  * 'consumer based'. It lists the bundles that have references in them (rather
  * than listing bundles that produce the types being referenced)
- * 
+ *
  * @since 1.0.300
  */
 public class ConsumerReportConvertor extends UseReportConverter {
@@ -83,7 +83,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	/**
 	 * Use scan visitor that produces the report data for a single consumer
 	 * bundle. The visitor collects the report data in a {@link Consumer}.
-	 * 
+	 *
 	 */
 	class ConsumerReportVisitor extends UseScanVisitor {
 		Consumer consumer;
@@ -101,7 +101,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param consumerDescriptor the bundle that we are collecting
 		 *            information on
 		 */
@@ -354,7 +354,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 
 		/**
 		 * Returns if the reference should be reported or not
-		 * 
+		 *
 		 * @param desc
 		 * @return true if the reference should be reported false otherwise
 		 */
@@ -372,7 +372,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		/**
 		 * Returns the enclosing {@link IReferenceTypeDescriptor} for the given
 		 * member descriptor
-		 * 
+		 *
 		 * @param member
 		 * @return the enclosing {@link IReferenceTypeDescriptor} or
 		 *         <code>null</code>
@@ -394,7 +394,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 
 		/**
 		 * Formats the arrays of messages
-		 * 
+		 *
 		 * @param messages
 		 * @return the formatted messages or <code>null</code>
 		 */
@@ -434,7 +434,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param htmlroot the folder root where the HTML reports should be written
 	 * @param xmlroot the folder root where the current API use scan output is
 	 *            located
@@ -481,7 +481,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 
 	/**
 	 * Writes the main index file for the reports
-	 * 
+	 *
 	 * @param scanResult a list of {@link Consumer} objects returns from the use
 	 *            scan parser
 	 * @param reportsRoot
@@ -569,7 +569,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 * Writes the HTML report for a specific consumer. It lists all the
 	 * producers (bundles that provide the API) that the consumer bundle
 	 * references.
-	 * 
+	 *
 	 * @param consumer consumer to write the report for
 	 * @param producers a map of producer name to a {@link Producer} object
 	 * @throws Exception
@@ -615,7 +615,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(CLOSE_TABLE);
 			buffer.append(BR);
 
-			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$ 
+			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
 			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), IApiCoreConstants.UTF_8));
@@ -636,7 +636,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 * <p>
 	 * Called from {@link #writeConsumerReport(Consumer)}
 	 * </p>
-	 * 
+	 *
 	 * @param producer producer to write the report for
 	 * @throws Exception
 	 */
@@ -691,7 +691,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(CLOSE_TABLE);
 			buffer.append(BR);
 
-			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(NLS.bind(SearchMessages.ConsumerReportConvertor_BackLinkToConsumer, parentConsumer.name)).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$ 
+			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(NLS.bind(SearchMessages.ConsumerReportConvertor_BackLinkToConsumer, parentConsumer.name)).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
 			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), IApiCoreConstants.UTF_8));

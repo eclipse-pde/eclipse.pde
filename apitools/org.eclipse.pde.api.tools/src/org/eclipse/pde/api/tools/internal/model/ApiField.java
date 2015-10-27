@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Base implementation of {@link IApiField}
- * 
+ *
  * @since 1.0.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -38,7 +38,7 @@ public class ApiField extends ApiMember implements IApiField {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent the enclosing type of the field
 	 * @param name the name of the field
 	 * @param signature the signature for the field

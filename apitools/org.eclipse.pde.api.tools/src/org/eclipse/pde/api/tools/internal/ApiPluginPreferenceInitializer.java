@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Initializes all of the core preferences for the {@link ApiPlugin}
- * 
+ *
  * @since 1.0.0
  */
 public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitializer {

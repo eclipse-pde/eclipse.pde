@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.model;
 
 /**
  * A key for a method - name & signature based.
- * 
+ *
  * @since 1.1
  */
 public class MethodKey {
@@ -23,7 +23,7 @@ public class MethodKey {
 
 	/**
 	 * Constructs a new method key
-	 * 
+	 *
 	 * @param typename the name (fully qualified or otherwise) of the type the
 	 *            method is from
 	 * @param name method name the name of the method
@@ -60,7 +60,7 @@ public class MethodKey {
 	 * <li>both are equal</li>
 	 * <li>both are <code>null</code></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param sig1
 	 * @param sig2
 	 * @return <code>true</code> if the signatures are equal <code>false</code>

@@ -42,7 +42,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 /**
  * This class contains utility methods for creating and working with Java
  * element signatures.
- * 
+ *
  * @since 1.0.0
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -58,7 +58,7 @@ public final class Signatures {
 	 * Collects which signature to use and de-qualifies it. If there is a
 	 * generic signature it is returned, otherwise the standard signature is
 	 * used
-	 * 
+	 *
 	 * @param method
 	 * @return the de-qualified signature for the method
 	 */
@@ -77,7 +77,7 @@ public final class Signatures {
 	 * For example:<br>
 	 * <code>a.b.c.Type$Member -&gt; a.b.c.Type</code><br>
 	 * <code>x.y.z.Type -&gt; x.y.z.Type</code><br>
-	 * 
+	 *
 	 * @param typename the type name to process
 	 * @return the primary type name stripped off of the given type name
 	 */
@@ -93,7 +93,7 @@ public final class Signatures {
 	 * Returns the signature to use to display this {@link IApiMethod}. This
 	 * method will load the enclosing type in the event the method is a
 	 * constructor.
-	 * 
+	 *
 	 * @param method
 	 * @return the display signature to use for this {@link IApiMethod}
 	 * @throws CoreException if a lookup to the parent type of the method fails
@@ -109,7 +109,7 @@ public final class Signatures {
 
 	/**
 	 * Returns the signature of the method qualified with the given type
-	 * 
+	 *
 	 * @param type
 	 * @param method
 	 * @return the given type qualified signature of the given method
@@ -133,7 +133,7 @@ public final class Signatures {
 
 	/**
 	 * Returns the signature of the method qualified with the given type
-	 * 
+	 *
 	 * @param method
 	 * @return the given type qualified signature of the given method
 	 * @throws CoreException if a lookup to the parent type of the given method
@@ -157,7 +157,7 @@ public final class Signatures {
 	 * the format of a content assist proposal.<br>
 	 * <br>
 	 * For example: <code>x.y.z.Clazz.mymethod() : Object</code>
-	 * 
+	 *
 	 * @param method the descriptor to get a formatted signature for
 	 * @param qualifiedparams
 	 * @param includereturn if the return type should be returned
@@ -183,7 +183,7 @@ public final class Signatures {
 
 	/**
 	 * Returns the de-qualified method signature
-	 * 
+	 *
 	 * @param method
 	 * @param includereturn
 	 * @return the de-qualified method signature
@@ -205,7 +205,7 @@ public final class Signatures {
 	/**
 	 * Returns the name to use for the method. If the method is a constructor,
 	 * the enclosing type is loaded to get its simple name
-	 * 
+	 *
 	 * @param method
 	 * @return the name for the method. If the method is a constructor the
 	 *         simple name of the enclosing type is substituted.
@@ -225,7 +225,7 @@ public final class Signatures {
 	/**
 	 * Returns the name to use for the method. If the method is a constructor,
 	 * the enclosing type is loaded to get its simple name
-	 * 
+	 *
 	 * @param method
 	 * @return the name for the method. If the method is a constructor the
 	 *         simple name of the enclosing type is substituted.
@@ -244,7 +244,7 @@ public final class Signatures {
 
 	/**
 	 * Returns the unqualified signature of the given {@link IApiField}
-	 * 
+	 *
 	 * @param field
 	 * @return the unqualified signature of the given {@link IApiField}
 	 */
@@ -254,7 +254,7 @@ public final class Signatures {
 
 	/**
 	 * Returns the type-qualified field signature
-	 * 
+	 *
 	 * @param field
 	 * @return the type-qualified field signature
 	 */
@@ -270,7 +270,7 @@ public final class Signatures {
 
 	/**
 	 * Returns the type-qualified field signature
-	 * 
+	 *
 	 * @param field
 	 * @return the type-qualified field signature
 	 * @throws Core
@@ -288,7 +288,7 @@ public final class Signatures {
 	/**
 	 * Returns the type signature to use for displaying the given
 	 * {@link IApiType}
-	 * 
+	 *
 	 * @param type
 	 * @return the display signature to use for the given {@link IApiType}
 	 */
@@ -299,7 +299,7 @@ public final class Signatures {
 	/**
 	 * Returns the type signature to use for displaying the given
 	 * {@link IReferenceTypeDescriptor}
-	 * 
+	 *
 	 * @param type
 	 * @return the display signature to use for the given
 	 *         {@link IReferenceTypeDescriptor}
@@ -310,7 +310,7 @@ public final class Signatures {
 
 	/**
 	 * Returns the de-qualified signature for the given {@link IApiType}
-	 * 
+	 *
 	 * @param type the type to get the signature for
 	 * @return the de-qualified signature for the given {@link IApiType}
 	 */
@@ -321,7 +321,7 @@ public final class Signatures {
 	/**
 	 * Returns the display-able representation of the given signature and
 	 * generic signature
-	 * 
+	 *
 	 * @param signature
 	 * @param genericsignature
 	 * @param qualified
@@ -343,14 +343,14 @@ public final class Signatures {
 	/**
 	 * Returns the name of an anonymous or local type with all qualification
 	 * removed. For example:
-	 * 
+	 *
 	 * <pre>
 	 * <code>
 	 *  Class$3inner --> inner
 	 *  Class$3 --> null
 	 * </code>
 	 * </pre>
-	 * 
+	 *
 	 * @param name the name to resolve
 	 * @return the name of an anonymous or local type with qualification removed
 	 *         or <code>null</code> if the anonymous type has no name
@@ -378,7 +378,7 @@ public final class Signatures {
 	/**
 	 * Appends the given listing of type parameter names to the signature
 	 * contained in the given buffer
-	 * 
+	 *
 	 * @param buffer
 	 * @param parameters
 	 */
@@ -402,7 +402,7 @@ public final class Signatures {
 	/**
 	 * Returns a comma and space used for displaying comma-separated lists in
 	 * signatures.
-	 * 
+	 *
 	 * @return the string rendering for a comma and following space
 	 */
 	public static String getComma() {
@@ -411,7 +411,7 @@ public final class Signatures {
 
 	/**
 	 * Returns the string for rendering the '<code>&lt;</code>' character.
-	 * 
+	 *
 	 * @return the string for rendering '<code>&lt;</code>'
 	 */
 	public static String getLT() {
@@ -420,7 +420,7 @@ public final class Signatures {
 
 	/**
 	 * Returns the string for rendering the '<code>&gt;</code>' character.
-	 * 
+	 *
 	 * @return the string for rendering '<code>&gt;</code>'
 	 */
 	public static String getGT() {
@@ -430,7 +430,7 @@ public final class Signatures {
 	/**
 	 * Convert fully qualified signature to unqualified one. The descriptor can
 	 * be dot or slashed based.
-	 * 
+	 *
 	 * @param descriptor the given descriptor to convert
 	 * @return the converted signature
 	 */
@@ -482,7 +482,7 @@ public final class Signatures {
 
 	/**
 	 * Creates a method signature from a specified {@link MethodDeclaration}
-	 * 
+	 *
 	 * @param node
 	 * @return the signature for the given method node or <code>null</code>
 	 */
@@ -511,7 +511,7 @@ public final class Signatures {
 	 * Returns the listing of the signatures of the parameters passed in, where
 	 * the list elements are all {@link SingleVariableDeclaration}s and the
 	 * elements in the returned list are of type {@link String}
-	 * 
+	 *
 	 * @param rawparams
 	 * @return a listing of signatures for the specified parameters
 	 */
@@ -567,7 +567,7 @@ public final class Signatures {
 	 * segment and returning it. This method assumes that qualified type names
 	 * are '.' separated. If the type specified is a package than an empty
 	 * string is returned.
-	 * 
+	 *
 	 * @param qualifiedname the fully qualified name of a type, '.' separated
 	 *            (e.g. a.b.c.Type)
 	 * @return the simple name from the qualified name. For example if the
@@ -586,7 +586,7 @@ public final class Signatures {
 
 	/**
 	 * Processes the signature for the given {@link Type}
-	 * 
+	 *
 	 * @param type the type to process
 	 * @return the signature for the type or <code>null</code> if one could not
 	 *         be derived
@@ -620,7 +620,7 @@ public final class Signatures {
 	/**
 	 * Returns if the given signatures match. Where signatures are considered to
 	 * match iff the return type, name and parameters are the same.
-	 * 
+	 *
 	 * @param signature
 	 * @param signature2
 	 * @return true if the signatures are equal, false otherwise
@@ -647,7 +647,7 @@ public final class Signatures {
 	/**
 	 * Returns if the two types match. Types are considered to match iff the
 	 * type name and array count (if any) are the same
-	 * 
+	 *
 	 * @param type
 	 * @param type2
 	 * @return true if the type names match, false otherwise
@@ -686,7 +686,7 @@ public final class Signatures {
 	/**
 	 * Returns if the specified signature is qualified or not. Qualification is
 	 * determined if there is a token in the signature the begins with an 'L'.
-	 * 
+	 *
 	 * @param signature
 	 * @return true if the signature is qualified, false otherwise
 	 */
@@ -700,7 +700,7 @@ public final class Signatures {
 
 	/**
 	 * The type name is dot-separated
-	 * 
+	 *
 	 * @param typeName the given type name
 	 * @return the package name for the given type name or an empty string if
 	 *         none
@@ -713,7 +713,7 @@ public final class Signatures {
 	/**
 	 * Collects the synthetic parameter of the fully qualified name of the
 	 * enclosing context for a constructor of an inner type
-	 * 
+	 *
 	 * @param method the constructor declaration
 	 * @param rparams the listing of parameters to add to
 	 */
@@ -758,7 +758,7 @@ public final class Signatures {
 	/**
 	 * Returns if the {@link AbstractTypeDeclaration} is static or not (has the
 	 * static keyword or not)
-	 * 
+	 *
 	 * @param typeDeclaration
 	 * @return true if it is static, false otherwise
 	 */
@@ -782,7 +782,7 @@ public final class Signatures {
 	/**
 	 * Determines if the given {@link MethodDeclaration} is present in a top
 	 * level type
-	 * 
+	 *
 	 * @param method the given method
 	 * @return true if the given {@link MethodDeclaration} is present in a top
 	 *         level type, false otherwise
@@ -798,7 +798,7 @@ public final class Signatures {
 	 * For example:<br>
 	 * <code>a.b.c.Type -&gt; Type</code><br>
 	 * <code>a.b.c.Type$Member -&gt; Type$Member</code>
-	 * 
+	 *
 	 * @param referencedTypeName
 	 * @return the type name with package qualification removed
 	 */

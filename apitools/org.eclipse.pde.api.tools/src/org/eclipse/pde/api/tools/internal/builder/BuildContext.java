@@ -15,7 +15,7 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext;
 
 /**
  * Default implementation of an {@link IBuildContext}
- * 
+ *
  * @since 1.0.1
  */
 public class BuildContext implements IBuildContext {
@@ -82,7 +82,7 @@ public class BuildContext implements IBuildContext {
 	/**
 	 * Adds the given type name to the collection of structurally changed types.
 	 * Does nothing if <code>null</code> is passed in as the type name.
-	 * 
+	 *
 	 * @param typename
 	 */
 	public void recordStructuralChange(String typename) {
@@ -98,7 +98,7 @@ public class BuildContext implements IBuildContext {
 	/**
 	 * Adds the given type name to the collection of removed types. Does nothing
 	 * if <code>null</code> is passed in as the type name.
-	 * 
+	 *
 	 * @param typename
 	 */
 	public void recordRemovedType(String typename) {
@@ -114,7 +114,7 @@ public class BuildContext implements IBuildContext {
 	/**
 	 * Adds the given type name to the collection of types that have had an API
 	 * description change. Does nothing if <code>null</code> is passed in.
-	 * 
+	 *
 	 * @param typename the type that has an API description change or
 	 *            <code>null</code>
 	 */
@@ -130,7 +130,7 @@ public class BuildContext implements IBuildContext {
 	/**
 	 * Adds the given type name to the collection of dependent type names. Does
 	 * nothing if <code>null</code> is passed in as the type name.
-	 * 
+	 *
 	 * @param typename the type to add a dependent of
 	 */
 	public void recordDescriptionDependent(String typename) {
