@@ -95,7 +95,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	public boolean performFinish(IProject project, IPluginModelBase model, IProgressMonitor monitor) {
 		try {
 			ITemplateSection[] sections = getTemplateSections();
-			
+
 			SubMonitor subMonitor = SubMonitor.convert(monitor, sections.length);
 			for (int i = 0; i < sections.length; i++) {
 				sections[i].execute(project, model, subMonitor.split(1));
