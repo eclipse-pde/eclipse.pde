@@ -84,11 +84,6 @@ public class SystemLibraryApiComponent extends Component {
 		fSystemPackages = systemPackages;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#
-	 * createApiDescription()
-	 */
 	@Override
 	protected IApiDescription createApiDescription() throws CoreException {
 		IApiDescription api = new ApiDescription(getSymbolicName());
@@ -107,23 +102,12 @@ public class SystemLibraryApiComponent extends Component {
 		return api;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiFilterStore
-	 * ()
-	 */
 	@Override
 	protected IApiFilterStore createApiFilterStore() {
 		// TODO
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#
-	 * createClassFileContainers()
-	 */
 	@Override
 	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 		List<IApiTypeContainer> libs = new ArrayList<>(fLibraries.length);
@@ -134,53 +118,26 @@ public class SystemLibraryApiComponent extends Component {
 		return libs;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#
-	 * getExecutionEnvironments()
-	 */
 	@Override
 	public String[] getExecutionEnvironments() {
 		return fExecEnv;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getId
-	 * ()
-	 */
 	@Override
 	public String getSymbolicName() {
 		return fExecEnv[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#
-	 * getLocation()
-	 */
 	@Override
 	public String getLocation() {
 		return fLocation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#
-	 * getRequiredComponents()
-	 */
 	@Override
 	public IRequiredComponentDescription[] getRequiredComponents() {
 		return new IRequiredComponentDescription[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getVersion
-	 * ()
-	 */
 	@Override
 	public String getVersion() {
 		return fVersion;
@@ -199,38 +156,21 @@ public class SystemLibraryApiComponent extends Component {
 		fLocation = description.getProperty(ExecutionEnvironmentDescription.JAVA_HOME);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiComponent#isSourceComponent()
-	 */
 	@Override
 	public boolean isSourceComponent() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#
-	 * isSystemComponent()
-	 */
 	@Override
 	public boolean isSystemComponent() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiComponent#isFragment()
-	 */
 	@Override
 	public boolean isFragment() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiComponent#hasFragments()
-	 */
 	@Override
 	public boolean hasFragments() {
 		return false;
@@ -240,33 +180,16 @@ public class SystemLibraryApiComponent extends Component {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#
-	 * hasApiDescription()
-	 */
 	@Override
 	public boolean hasApiDescription() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getLowestEEs
-	 * ()
-	 */
 	@Override
 	public String[] getLowestEEs() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getErrors
-	 * ()
-	 */
 	@Override
 	public ResolverError[] getErrors() throws CoreException {
 		return null;

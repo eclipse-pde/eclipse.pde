@@ -69,12 +69,6 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 		return ((IApiType) getParent()).isInterface() && (getModifiers() & Opcodes.ACC_ABSTRACT) == 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.model.ApiMember#equals(java.lang.Object
-	 * )
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiMethod) {
@@ -83,40 +77,21 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.ApiMember#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode() + getSignature().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#
-	 * getExceptionNames()
-	 */
 	@Override
 	public String[] getExceptionNames() {
 		return fExceptions;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#
-	 * isClassInitializer()
-	 */
 	@Override
 	public boolean isClassInitializer() {
 		return getName().equals(CLINIT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#
-	 * getDefaultValue()
-	 */
 	@Override
 	public String getDefaultValue() {
 		return fDefaultValue;
@@ -164,12 +139,6 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 		return String.valueOf(buffer);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getHandle
-	 * ()
-	 */
 	@Override
 	public IMemberDescriptor getHandle() {
 		if (fHandle == null) {

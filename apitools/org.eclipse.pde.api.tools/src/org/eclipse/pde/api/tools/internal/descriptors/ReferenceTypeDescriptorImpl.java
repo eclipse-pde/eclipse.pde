@@ -64,53 +64,26 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 		fGenericSignature = genericSignature;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#getField
-	 * (java.lang.String)
-	 */
 	@Override
 	public IFieldDescriptor getField(String name) {
 		return new FieldDescriptorImpl(name, this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#getMethod
-	 * (java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IMethodDescriptor getMethod(String name, String signature) {
 		return new MethodDescriptorImpl(name, this, signature);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#getType
-	 * (java.lang.String)
-	 */
 	@Override
 	public IReferenceTypeDescriptor getType(String simpleName) {
 		return new ReferenceTypeDescriptorImpl(simpleName, this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getQualifiedName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#
-	 * getQualifiedName()
-	 */
 	@Override
 	public synchronized String getQualifiedName() {
 		if (fFullName == null) {
@@ -140,10 +113,6 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 		return fFullName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IReferenceTypeDescriptor) {
@@ -153,22 +122,11 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getQualifiedName().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.descriptors.NamedElementDescriptorImpl
-	 * #compareTo(org.eclipse.pde.api.tools.internal.provisional.descriptors.
-	 * IElementDescriptor)
-	 */
 	@Override
 	public int compareTo(IElementDescriptor o) {
 		if (o instanceof ReferenceTypeDescriptorImpl) {
@@ -180,22 +138,11 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 		return super.compareTo(o);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor#getElementType
-	 * ()
-	 */
 	@Override
 	public int getElementType() {
 		return IElementDescriptor.TYPE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#
-	 * getSignature()
-	 */
 	@Override
 	public String getSignature() {
 		if (fSignature == null) {
@@ -208,22 +155,11 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 		return fSignature;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#
-	 * getGenericSignature()
-	 */
 	@Override
 	public String getGenericSignature() {
 		return fGenericSignature;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.descriptors.IReferenceTypeDescriptor#isAnonymous
-	 * ()
-	 */
 	@Override
 	public boolean isAnonymous() {
 		if (getEnclosingType() != null) {

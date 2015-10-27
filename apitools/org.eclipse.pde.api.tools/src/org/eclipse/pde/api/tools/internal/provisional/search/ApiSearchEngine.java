@@ -73,24 +73,11 @@ public final class ApiSearchEngine {
 			this.monitor = (SubMonitor) monitor;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.provisional.model.
-		 * ApiTypeContainerVisitor
-		 * #visit(org.eclipse.pde.api.tools.internal.provisional
-		 * .model.IApiTypeContainer)
-		 */
 		@Override
 		public boolean visit(IApiTypeContainer container) {
 			return requestor.acceptContainer(container);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.provisional.model.
-		 * ApiTypeContainerVisitor#visit(java.lang.String,
-		 * org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot)
-		 */
 		@Override
 		public void visit(String packageName, IApiTypeRoot typeroot) {
 			if (monitor.isCanceled()) {
@@ -107,12 +94,6 @@ public final class ApiSearchEngine {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.provisional.model.
-		 * ApiTypeContainerVisitor#end(java.lang.String,
-		 * org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot)
-		 */
 		@Override
 		public void end(String packageName, IApiTypeRoot typeroot) {
 			if (this.collector.size() >= COLLECTOR_MAX) {
@@ -128,11 +109,6 @@ public final class ApiSearchEngine {
 			return requestor.acceptComponent(component);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.provisional.model.
-		 * ApiTypeContainerVisitor#endVisitPackage(java.lang.String)
-		 */
 		@Override
 		public void endVisitPackage(String packageName) {
 			reportResults();

@@ -54,10 +54,6 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 		fIsExprted = isExported;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof RequiredComponentDescription) {
@@ -67,10 +63,6 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 		return super.equals(obj);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IRequiredComponentDescription#getId()
-	 */
 	@Override
 	public String getId() {
 		return fId;
@@ -86,28 +78,16 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 		return fRange;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return fId.hashCode() + fRange.hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IRequiredComponentDescription#isOptional()
-	 */
 	@Override
 	public boolean isOptional() {
 		return this.fIsOptional;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
@@ -117,12 +97,6 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 		return buf.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription
-	 * #isExported()
-	 */
 	@Override
 	public boolean isExported() {
 		return fIsExprted;

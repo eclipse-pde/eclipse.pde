@@ -149,10 +149,6 @@ public class CompilationUnit {
 		return this.encoding;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getName();

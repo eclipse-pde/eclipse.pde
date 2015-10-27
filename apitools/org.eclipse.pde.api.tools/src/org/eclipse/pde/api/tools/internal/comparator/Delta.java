@@ -141,12 +141,6 @@ public class Delta implements IDelta {
 		this(componentID, elementType, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, 0, 0, typeName, key, data);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#accept
-	 * (org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor)
-	 */
 	@Override
 	public void accept(DeltaVisitor visitor) {
 		if (visitor.visit(this)) {
@@ -181,10 +175,6 @@ public class Delta implements IDelta {
 		this.children[this.deltasCounter++] = delta;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -266,12 +256,6 @@ public class Delta implements IDelta {
 		return this.componentID.substring(0, index);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getArguments
-	 * ()
-	 */
 	@Override
 	public String[] getArguments() {
 		if (this.datas == null) {
@@ -280,12 +264,6 @@ public class Delta implements IDelta {
 		return this.datas;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getChildren
-	 * ()
-	 */
 	@Override
 	public IDelta[] getChildren() {
 		if (this.children == null) {
@@ -298,54 +276,26 @@ public class Delta implements IDelta {
 		return this.children;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#
-	 * getElementType()
-	 */
 	@Override
 	public int getElementType() {
 		return this.elementType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getFlags
-	 * ()
-	 */
 	@Override
 	public int getFlags() {
 		return this.flags;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getKey()
-	 */
 	@Override
 	public String getKey() {
 		return this.key;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getKind
-	 * ()
-	 */
 	@Override
 	public int getKind() {
 		return this.kind;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getMessage
-	 * ()
-	 */
 	@Override
 	public String getMessage() {
 		if (DeltaProcessor.isCompatible(this)) {
@@ -355,12 +305,6 @@ public class Delta implements IDelta {
 		return ApiProblemFactory.getLocalizedMessage(id, (this.datas != null ? this.datas : null));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getModifiers
-	 * ()
-	 */
 	@Override
 	public int getNewModifiers() {
 		return (this.modifiers >>> NEW_MODIFIERS_OFFSET);
@@ -371,41 +315,21 @@ public class Delta implements IDelta {
 		return this.modifiers & MODIFIERS_MASK;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#
-	 * getCurrentRestrictions()
-	 */
 	@Override
 	public int getCurrentRestrictions() {
 		return (this.restrictions & RESTRICTIONS_MASK);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#
-	 * getPreviousRestrictions()
-	 */
 	@Override
 	public int getPreviousRestrictions() {
 		return (this.restrictions >>> PREVIOUS_RESTRICTIONS_OFFSET);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getTypeName
-	 * ()
-	 */
 	@Override
 	public String getTypeName() {
 		return this.typeName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -422,21 +346,11 @@ public class Delta implements IDelta {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#isEmpty
-	 * ()
-	 */
 	@Override
 	public boolean isEmpty() {
 		return this.deltasCounter == 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringWriter writer = new StringWriter();

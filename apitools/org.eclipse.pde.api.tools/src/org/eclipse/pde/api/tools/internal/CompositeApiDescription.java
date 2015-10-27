@@ -38,12 +38,6 @@ public class CompositeApiDescription implements IApiDescription {
 		fDescriptions = descriptions;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept
-	 * (org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor)
-	 */
 	@Override
 	public void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor) {
 		for (int i = 0; i < fDescriptions.length; i++) {
@@ -51,15 +45,6 @@ public class CompositeApiDescription implements IApiDescription {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept
-	 * (org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor,
-	 * org
-	 * .eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor
-	 * , org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public boolean accept(ApiDescriptionVisitor visitor, IElementDescriptor element, IProgressMonitor monitor) {
 		for (int i = 0; i < fDescriptions.length; i++) {
@@ -70,13 +55,6 @@ public class CompositeApiDescription implements IApiDescription {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#
-	 * resolveAnnotations(java.lang.String,
-	 * org.eclipse.pde.api.tools.internal.provisional
-	 * .descriptors.IElementDescriptor)
-	 */
 	@Override
 	public IApiAnnotations resolveAnnotations(IElementDescriptor element) {
 		for (int i = 0; i < fDescriptions.length; i++) {
@@ -88,13 +66,6 @@ public class CompositeApiDescription implements IApiDescription {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#
-	 * setRestrictions(java.lang.String,
-	 * org.eclipse.pde.api.tools.internal.provisional
-	 * .descriptors.IElementDescriptor, int)
-	 */
 	@Override
 	public IStatus setRestrictions(IElementDescriptor element, int restrictions) {
 		for (int i = 0; i < fDescriptions.length; i++) {
@@ -131,14 +102,6 @@ public class CompositeApiDescription implements IApiDescription {
 		return Status.OK_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiDescription#setVisibility
-	 * (java.lang.String,
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors
-	 * .IElementDescriptor, int)
-	 */
 	@Override
 	public IStatus setVisibility(IElementDescriptor element, int visibility) {
 		for (int i = 0; i < fDescriptions.length; i++) {
@@ -150,29 +113,10 @@ public class CompositeApiDescription implements IApiDescription {
 		return Status.CANCEL_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiDescription#setAccessLevel
-	 * (
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor
-	 * ,
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor
-	 * , int)
-	 */
 	@Override
 	public void setAccessLevel(IElementDescriptor element, IPackageDescriptor pelement, int access) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#
-	 * resolveAccessLevel
-	 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
-	 * .IElementDescriptor,
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors
-	 * .IPackageDescriptor)
-	 */
 	@Override
 	public IApiAccess resolveAccessLevel(IElementDescriptor element, IPackageDescriptor pelement) {
 		IApiAccess access = null;

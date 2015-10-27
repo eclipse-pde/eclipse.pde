@@ -75,10 +75,6 @@ public class ApiDescription implements IApiDescription {
 	 * @since 1.0.600
 	 */
 	static class NodeComparator implements Comparator<IElementDescriptor> {
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(IElementDescriptor o1, IElementDescriptor o2) {
 			String s1 = o1 instanceof IReferenceTypeDescriptor ? ((IReferenceTypeDescriptor) o1).getQualifiedName() : ((NamedElementDescriptorImpl) o1).getName();
@@ -113,12 +109,6 @@ public class ApiDescription implements IApiDescription {
 			this.parent = parent;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object) This method is safe to
-		 * override, as the name of an element is unique within its branch of
-		 * the tree and does not change over time.
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof ManifestNode) {
@@ -127,21 +117,11 @@ public class ApiDescription implements IApiDescription {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#hashCode() This method is safe to override, as
-		 * the name of an element is unique within its branch of the tree and
-		 * does not change over time.
-		 */
 		@Override
 		public int hashCode() {
 			return element.hashCode();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			String type = null;
@@ -299,13 +279,6 @@ public class ApiDescription implements IApiDescription {
 		fOwningComponentId = owningComponentId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept
-	 * (org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor) {
 		visitChildren(visitor, fPackageMap, monitor);
@@ -330,15 +303,6 @@ public class ApiDescription implements IApiDescription {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept
-	 * (org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor,
-	 * org
-	 * .eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor
-	 * , org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public boolean accept(ApiDescriptionVisitor visitor, IElementDescriptor element, IProgressMonitor monitor) {
 		ManifestNode node = findNode(element, false);
@@ -476,12 +440,6 @@ public class ApiDescription implements IApiDescription {
 		return node;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#
-	 * resolveAPIDescription(java.lang.String,
-	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor)
-	 */
 	@Override
 	public IApiAnnotations resolveAnnotations(IElementDescriptor element) {
 		ManifestNode node = findNode(element, false);
@@ -580,13 +538,6 @@ public class ApiDescription implements IApiDescription {
 		return new ManifestNode(parentNode, element, vis, RestrictionModifiers.NO_RESTRICTIONS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IApiDescription#setRestrictions
-	 * (java.lang.String,
-	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor, int)
-	 */
 	@Override
 	public IStatus setRestrictions(IElementDescriptor element, int restrictions) {
 		ManifestNode node = findNode(element, true);
@@ -607,13 +558,6 @@ public class ApiDescription implements IApiDescription {
 				new Object[] { element.toString(), fOwningComponentId }), null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IApiDescription#setVisibility
-	 * (java.lang.String,
-	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor, int)
-	 */
 	@Override
 	public IStatus setVisibility(IElementDescriptor element, int visibility) {
 		ManifestNode node = findNode(element, true);
@@ -659,10 +603,6 @@ public class ApiDescription implements IApiDescription {
 		return Status.OK_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -714,15 +654,6 @@ public class ApiDescription implements IApiDescription {
 		fModified = mod;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#
-	 * resolveAccessLevel
-	 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
-	 * .IElementDescriptor,
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors
-	 * .IPackageDescriptor)
-	 */
 	@Override
 	public IApiAccess resolveAccessLevel(IElementDescriptor element, IPackageDescriptor pelement) {
 		if (fAccessMap != null) {
@@ -734,16 +665,6 @@ public class ApiDescription implements IApiDescription {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiDescription#setAccessLevel
-	 * (
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor
-	 * ,
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor
-	 * , int)
-	 */
 	@Override
 	public void setAccessLevel(IElementDescriptor element, IPackageDescriptor pelement, int access) {
 		if (element != null && pelement != null && access != IApiAccess.NORMAL) {

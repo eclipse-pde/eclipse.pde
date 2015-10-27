@@ -78,13 +78,6 @@ public class ReferenceAnalyzer {
 			fMonitor.worked(1);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor
-		 * #visit(java.lang.String,
-		 * org.eclipse.pde.api.tools.model.component.IClassFile)
-		 */
 		@Override
 		public void visit(String packageName, IApiTypeRoot classFile) {
 			if (!fMonitor.isCanceled()) {
@@ -329,15 +322,6 @@ public class ReferenceAnalyzer {
 			}
 			// add names from the leak component as well
 			ApiDescriptionVisitor nameVisitor = new ApiDescriptionVisitor() {
-				/*
-				 * (non-Javadoc)
-				 * @see org.eclipse.pde.api.tools.internal.provisional.
-				 * ApiDescriptionVisitor
-				 * #visitElement(org.eclipse.pde.api.tools.internal
-				 * .provisional.descriptors.IElementDescriptor,
-				 * org.eclipse.pde.api
-				 * .tools.internal.provisional.IApiAnnotations)
-				 */
 				@Override
 				public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 					if (element.getElementType() == IElementDescriptor.PACKAGE) {

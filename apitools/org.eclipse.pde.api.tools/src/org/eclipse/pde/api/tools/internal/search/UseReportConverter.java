@@ -133,13 +133,6 @@ public class UseReportConverter extends HTMLConvertor {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent
-		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors.
-		 * IComponentDescriptor)
-		 */
 		@Override
 		public boolean visitComponent(IComponentDescriptor target) {
 			this.currentreport = new Report();
@@ -148,13 +141,6 @@ public class UseReportConverter extends HTMLConvertor {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisit
-		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors.
-		 * IComponentDescriptor)
-		 */
 		@Override
 		public void endVisitComponent(IComponentDescriptor target) {
 			try {
@@ -182,26 +168,12 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
-		 * visitReferencingComponent
-		 * (org.eclipse.pde.api.tools.internal.provisional
-		 * .descriptors.IComponentDescriptor)
-		 */
 		@Override
 		public boolean visitReferencingComponent(IComponentDescriptor component) {
 			this.currentreferee = new Type(component);
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
-		 * endVisitReferencingComponent
-		 * (org.eclipse.pde.api.tools.internal.provisional
-		 * .descriptors.IComponentDescriptor)
-		 */
 		@Override
 		public void endVisitReferencingComponent(IComponentDescriptor component) {
 			if (this.currentreferee.counts.getTotalRefCount() > 0) {
@@ -209,14 +181,6 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember
-		 * (org
-		 * .eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor
-		 * )
-		 */
 		@Override
 		public boolean visitMember(IMemberDescriptor referencedMember) {
 			IReferenceTypeDescriptor desc = getEnclosingDescriptor(referencedMember);
@@ -241,13 +205,6 @@ public class UseReportConverter extends HTMLConvertor {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitMember
-		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors.
-		 * IMemberDescriptor)
-		 */
 		@Override
 		public void endVisitMember(IMemberDescriptor referencedMember) {
 			if (this.currentmember.children.size() == 0) {
@@ -283,12 +240,6 @@ public class UseReportConverter extends HTMLConvertor {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference
-		 * (org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
-		 */
 		@Override
 		public void visitReference(IReferenceDescriptor reference) {
 			IMemberDescriptor fromMember = reference.getMember();

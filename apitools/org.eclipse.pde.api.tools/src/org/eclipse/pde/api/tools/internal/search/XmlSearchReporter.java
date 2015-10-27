@@ -76,13 +76,6 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter
-	 * #reportResults
-	 * (org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
-	 */
 	@Override
 	public void reportResults(IApiElement element, final IReference[] references) {
 		if (references.length == 0) {
@@ -188,13 +181,6 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter
-	 * #reportMetadata
-	 * (org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
-	 */
 	@Override
 	public void reportMetadata(IMetadata data) {
 		if (data == null) {
@@ -222,12 +208,6 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter
-	 * #reportCounts()
-	 */
 	@Override
 	public void reportCounts() {
 		BufferedWriter writer = null;

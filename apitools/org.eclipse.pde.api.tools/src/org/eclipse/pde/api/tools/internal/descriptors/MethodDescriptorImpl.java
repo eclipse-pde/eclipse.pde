@@ -39,10 +39,6 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 		fSignature = signature;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -52,10 +48,6 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 		return buffer.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IMethodDescriptor) {
@@ -65,43 +57,21 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getName().hashCode() + getEnclosingType().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor#getElementType
-	 * ()
-	 */
 	@Override
 	public int getElementType() {
 		return IElementDescriptor.METHOD;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IMethodDescriptor#getSignature
-	 * ()
-	 */
 	@Override
 	public String getSignature() {
 		return fSignature;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor
-	 * #isConstructor()
-	 */
 	@Override
 	public boolean isConstructor() {
 		return "<init>".equals(getName()); //$NON-NLS-1$

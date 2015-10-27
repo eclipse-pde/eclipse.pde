@@ -75,14 +75,6 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		location = xmlLocation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent
-	 * (org
-	 * .eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor
-	 * )
-	 */
 	@Override
 	public boolean visitComponent(IComponentDescriptor target) {
 		unresolved = new ArrayList<>();
@@ -106,13 +98,6 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
-	 * visitReferencingComponent
-	 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
-	 * .IComponentDescriptor)
-	 */
 	@Override
 	public boolean visitReferencingComponent(IComponentDescriptor component) {
 		referencingComponent = component;
@@ -126,13 +111,6 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember(
-	 * org.eclipse
-	 * .pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
-	 */
 	@Override
 	public boolean visitMember(IMemberDescriptor referencedMember) {
 		targetMember = referencedMember;
@@ -169,12 +147,6 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference
-	 * (org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
-	 */
 	@Override
 	public void visitReference(IReferenceDescriptor reference) {
 		Reference ref = null;
@@ -215,13 +187,6 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		unresolved.add(error);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisit(org
-	 * .eclipse
-	 * .pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
-	 */
 	@Override
 	public void endVisitComponent(IComponentDescriptor target) {
 		if (skipped) {
@@ -239,11 +204,6 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitScan()
-	 */
 	@Override
 	public void endVisitScan() {
 		BufferedWriter writer = null;

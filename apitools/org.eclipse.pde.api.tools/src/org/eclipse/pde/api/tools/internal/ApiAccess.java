@@ -24,12 +24,6 @@ public class ApiAccess implements IApiAccess {
 	public static final IApiAccess NORMAL_ACCESS = new NormalAccess();
 
 	static class NormalAccess implements IApiAccess {
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.provisional.IApiAccess#getAccessLevel
-		 * ()
-		 */
 		@Override
 		public int getAccessLevel() {
 			return IApiAccess.NORMAL;
@@ -47,30 +41,16 @@ public class ApiAccess implements IApiAccess {
 		this.access = access;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiAccess#getAccessLevel
-	 * ()
-	 */
 	@Override
 	public int getAccessLevel() {
 		return this.access;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return this.access;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiAccess) {
@@ -79,10 +59,6 @@ public class ApiAccess implements IApiAccess {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();

@@ -48,12 +48,6 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		fDoc.appendChild(fDeltas);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor
-	 * #visit(org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta)
-	 */
 	@Override
 	public boolean visit(IDelta delta) {
 		if (delta == ApiComparator.NO_DELTA) {
@@ -98,13 +92,6 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		fDeltas.appendChild(deltaElement);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor
-	 * #endVisit
-	 * (org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta)
-	 */
 	@Override
 	public void endVisit(IDelta delta) {
 		// nothing to do

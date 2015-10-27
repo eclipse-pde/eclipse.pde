@@ -44,12 +44,6 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 	ApiBaselineManager bmanager = ApiBaselineManager.getManager();
 	ApiDescriptionManager dmanager = ApiDescriptionManager.getManager();
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse
-	 * .jdt.core.ElementChangedEvent)
-	 */
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		processJavaElementDeltas(event.getDelta().getAffectedChildren(), null);
@@ -220,12 +214,6 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org
-	 * .eclipse.core.resources.IResourceChangeEvent)
-	 */
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResource resource = event.getResource();

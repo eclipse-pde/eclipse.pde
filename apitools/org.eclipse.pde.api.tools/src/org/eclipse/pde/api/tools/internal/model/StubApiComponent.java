@@ -159,33 +159,17 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 		fLocation = path.toOSString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#
-	 * createApiDescription()
-	 */
 	@Override
 	protected IApiDescription createApiDescription() throws CoreException {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiFilterStore
-	 * ()
-	 */
 	@Override
 	protected IApiFilterStore createApiFilterStore() {
 		// TODO
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.SystemLibraryApiComponent#
-	 * createApiTypeContainers()
-	 */
 	@Override
 	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 		List<IApiTypeContainer> libs = new ArrayList<>(fLibraries.length);
@@ -196,11 +180,6 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 		return libs;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#
-	 * isSystemComponent()
-	 */
 	@Override
 	public boolean isSystemComponent() {
 		return false;

@@ -38,21 +38,11 @@ public class ComponentDescriptorImpl extends NamedElementDescriptorImpl implemen
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor
-	 * #getElementType()
-	 */
 	@Override
 	public int getElementType() {
 		return COMPONENT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		int hc = 0;
@@ -62,10 +52,6 @@ public class ComponentDescriptorImpl extends NamedElementDescriptorImpl implemen
 		return this.componentid.hashCode() + hc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IComponentDescriptor) {
@@ -80,41 +66,21 @@ public class ComponentDescriptorImpl extends NamedElementDescriptorImpl implemen
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.
-	 * IComponentDescriptor#getId()
-	 */
 	@Override
 	public String getId() {
 		return this.componentid;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor
-	 * #getPath()
-	 */
 	@Override
 	public IElementDescriptor[] getPath() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return this.componentid;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.
-	 * IComponentDescriptor#getVersion()
-	 */
 	@Override
 	public String getVersion() {
 		return version;

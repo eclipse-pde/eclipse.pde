@@ -35,43 +35,21 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  */
 public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeReference {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector
-	 * #getReferenceKinds()
-	 */
 	@Override
 	public int getReferenceKinds() {
 		return IReference.REF_ANNOTATION_USE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * getProblemFlags
-	 * (org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
-	 */
 	@Override
 	protected int getProblemFlags(IReference reference) {
 		return IApiProblem.ANNOTATION;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * getProblemKind()
-	 */
 	@Override
 	protected int getProblemKind() {
 		return IApiProblem.ILLEGAL_REFERENCE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * getSeverityKey()
-	 */
 	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.ILLEGAL_REFERENCE;
@@ -82,14 +60,6 @@ public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeRefer
 		return super.considerReference(reference);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.builder.AbstractIllegalTypeReference
-	 * #getSourceRange(org.eclipse.jdt.core.IType,
-	 * org.eclipse.jface.text.IDocument,
-	 * org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
-	 */
 	@Override
 	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		IApiMember member = reference.getMember();
@@ -147,12 +117,6 @@ public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeRefer
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		return new String[] { getSimpleTypeName(reference.getResolvedReference()) };

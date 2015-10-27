@@ -107,12 +107,6 @@ public class ProjectApiDescription extends ApiDescription {
 			fFragments = fragments;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#refresh
-		 * ()
-		 */
 		@Override
 		protected ManifestNode refresh() {
 			refreshPackages();
@@ -125,12 +119,6 @@ public class ProjectApiDescription extends ApiDescription {
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML
-		 * (org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
-		 */
 		@Override
 		void persistXML(Document document, Element parentElement) {
 			if (hasApiVisibility(this)) {
@@ -146,12 +134,6 @@ public class ProjectApiDescription extends ApiDescription {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#toString
-		 * ()
-		 */
 		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
@@ -203,12 +185,6 @@ public class ProjectApiDescription extends ApiDescription {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#refresh
-		 * ()
-		 */
 		@Override
 		protected synchronized ManifestNode refresh() {
 			if (fRefreshing) {
@@ -320,12 +296,6 @@ public class ProjectApiDescription extends ApiDescription {
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML
-		 * (org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
-		 */
 		@Override
 		void persistXML(Document document, Element parentElement) {
 			if (hasApiVisibility(this)) {
@@ -338,12 +308,6 @@ public class ProjectApiDescription extends ApiDescription {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#toString
-		 * ()
-		 */
 		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
@@ -368,12 +332,6 @@ public class ProjectApiDescription extends ApiDescription {
 		fProject = project;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept
-	 * (org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor)
-	 */
 	@Override
 	public synchronized void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor) {
 		boolean completeVisit = true;
@@ -450,13 +408,6 @@ public class ProjectApiDescription extends ApiDescription {
 		visitor.endVisitElement(node.element, annotations);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.ApiDescription#isInsertOnResolve(org
-	 * .eclipse
-	 * .pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
-	 */
 	@Override
 	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
 		switch (elementDescriptor.getElementType()) {
@@ -471,14 +422,6 @@ public class ProjectApiDescription extends ApiDescription {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.ApiDescription#createNode(org.eclipse
-	 * .pde.api.tools.internal.ApiDescription.ManifestNode,
-	 * org.eclipse.pde.api.tools
-	 * .internal.provisional.descriptors.IElementDescriptor)
-	 */
 	@Override
 	protected ManifestNode createNode(ManifestNode parentNode, IElementDescriptor element) {
 		switch (element.getElementType()) {
@@ -773,10 +716,6 @@ public class ProjectApiDescription extends ApiDescription {
 		fPackageTimeStamp = -1L;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();

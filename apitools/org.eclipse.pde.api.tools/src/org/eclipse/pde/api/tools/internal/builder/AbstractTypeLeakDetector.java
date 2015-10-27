@@ -45,13 +45,6 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 		super(nonApiPackageNames);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
-	 * #considerReference(org.eclipse.pde.api.tools.internal.provisional.model.
-	 * IReference)
-	 */
 	@Override
 	public boolean considerReference(IReference reference) {
 		// consider the reference if the location the reference is made from is
@@ -79,12 +72,6 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected boolean isProblem(IReference reference) {
 		IApiMember member = reference.getResolvedReference();
@@ -116,12 +103,6 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 		return VisibilityModifiers.isAPI(annotations.getVisibility());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getQualifiedMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		return new String[] {
@@ -129,12 +110,6 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 				getQualifiedTypeName(reference.getMember()) };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		return new String[] {
@@ -142,13 +117,6 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 				getSimpleTypeName(reference.getMember()) };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getSourceRange(org.eclipse.jdt.core.IType,
-	 * org.eclipse.jface.text.IDocument,
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		ISourceRange range = type.getNameRange();
@@ -162,22 +130,11 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 		return pos;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getElementType
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected int getElementType(IReference reference) {
 		return IElementDescriptor.TYPE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getProblemKind()
-	 */
 	@Override
 	protected int getProblemKind() {
 		return IApiProblem.API_LEAK;

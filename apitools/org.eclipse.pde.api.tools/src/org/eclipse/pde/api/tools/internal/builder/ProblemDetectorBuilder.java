@@ -110,13 +110,6 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 		initializeDetectors(component);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ApiDescriptionVisitor#visitElement(org.eclipse
-	 * .pde.api.tools.descriptors.IElementDescriptor, java.lang.String,
-	 * org.eclipse.pde.api.tools.IApiAnnotations)
-	 */
 	@Override
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		int mask = description.getRestrictions();

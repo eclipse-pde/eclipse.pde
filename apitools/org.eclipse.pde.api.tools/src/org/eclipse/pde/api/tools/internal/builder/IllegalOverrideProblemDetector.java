@@ -29,43 +29,21 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  */
 public class IllegalOverrideProblemDetector extends AbstractIllegalMethodReference {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
-	 * #getReferenceKinds()
-	 */
 	@Override
 	public int getReferenceKinds() {
 		return IReference.REF_OVERRIDE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getProblemKind()
-	 */
 	@Override
 	protected int getProblemKind() {
 		return IApiProblem.ILLEGAL_OVERRIDE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getSeverityKey()
-	 */
 	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.ILLEGAL_OVERRIDE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();
@@ -75,12 +53,6 @@ public class IllegalOverrideProblemDetector extends AbstractIllegalMethodReferen
 				Signature.toString(method.getSignature(), method.getName(), null, false, false) };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getQualifiedMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();
@@ -89,24 +61,11 @@ public class IllegalOverrideProblemDetector extends AbstractIllegalMethodReferen
 				Signatures.getMethodSignature(method) };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getSourceRange(org.eclipse.jdt.core.IType,
-	 * org.eclipse.jface.text.IDocument,
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		return getSourceRangeForMethod(type, reference, (IApiMethod) reference.getResolvedReference());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getProblemFlags
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected int getProblemFlags(IReference reference) {
 		return IApiProblem.NO_FLAGS;

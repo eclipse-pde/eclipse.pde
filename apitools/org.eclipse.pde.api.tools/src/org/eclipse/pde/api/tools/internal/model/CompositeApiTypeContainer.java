@@ -36,11 +36,6 @@ public class CompositeApiTypeContainer extends AbstractApiTypeContainer {
 		this.fContainers = containers;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#
-	 * createClassFileContainers()
-	 */
 	@Override
 	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 		return fContainers;

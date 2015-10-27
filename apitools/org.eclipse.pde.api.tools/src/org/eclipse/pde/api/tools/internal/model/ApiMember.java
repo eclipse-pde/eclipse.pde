@@ -65,42 +65,21 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 		return fGenericSignature;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getModifiers
-	 * ()
-	 */
 	@Override
 	public int getModifiers() {
 		return fFlags;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#
-	 * getEnclosingType()
-	 */
 	@Override
 	public IApiType getEnclosingType() throws CoreException {
 		return (IApiType) getAncestor(IApiElement.TYPE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#
-	 * getApiComponent()
-	 */
 	@Override
 	public IApiComponent getApiComponent() {
 		return (IApiComponent) getAncestor(IApiElement.COMPONENT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#
-	 * getPackageName()
-	 */
 	@Override
 	public String getPackageName() {
 		try {
@@ -113,10 +92,6 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiElement) {
@@ -146,10 +121,6 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 		return t1.equals(t2);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		IApiType enclosing = (IApiType) getAncestor(IApiElement.TYPE);

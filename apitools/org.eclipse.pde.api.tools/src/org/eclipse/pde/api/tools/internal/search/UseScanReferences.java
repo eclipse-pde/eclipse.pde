@@ -30,13 +30,6 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 		fReferencesMap = new HashMap<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.IReferenceCollection#add(java
-	 * .lang.String,
-	 * org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
-	 */
 	@Override
 	public void add(String type, IReferenceDescriptor refDesc) {
 		List<IReferenceDescriptor> refDescList = fReferencesMap.get(type);
@@ -49,22 +42,12 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceCollection#
-	 * hasReferencesTo(java.lang.String)
-	 */
 	@Override
 	public boolean hasReferencesTo(String type) {
 		List<IReferenceDescriptor> refDescList = fReferencesMap.get(type);
 		return refDescList != null && refDescList.size() > 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceCollection#
-	 * getExternalDependenciesTo(java.lang.String[])
-	 */
 	@Override
 	public IReferenceDescriptor[] getExternalDependenciesTo(String[] types) {
 		if (types == null || types.length == 0) {
@@ -83,11 +66,6 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 		return referenceDescriptorList.toArray(new IReferenceDescriptor[referenceDescriptorList.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceCollection#
-	 * getAllExternalDependencies()
-	 */
 	@Override
 	public IReferenceDescriptor[] getAllExternalDependencies() {
 		List<IReferenceDescriptor> allRefDescs = new ArrayList<>();
@@ -97,10 +75,6 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 		return allRefDescs.toArray(new IReferenceDescriptor[allRefDescs.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.core.util.ILRUCacheable#getCacheFootprint()
-	 */
 	@Override
 	public int getCacheFootprint() {
 		return fReferencesMap.size();

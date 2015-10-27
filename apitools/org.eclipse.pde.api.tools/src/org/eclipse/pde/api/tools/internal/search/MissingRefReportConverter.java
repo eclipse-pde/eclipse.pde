@@ -304,12 +304,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 		this.htmlLocation = htmlroot;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#convert(
-	 * java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void convert(String xslt, IProgressMonitor monitor) throws Exception {
 		File htmlRoot = new File(this.htmlLocation);
@@ -419,11 +413,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#
-	 * getNoReportsInformation()
-	 */
 	@Override
 	protected String getNoReportsInformation() {
 		StringBuffer buffer = new StringBuffer();
@@ -517,12 +506,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 		buffer.append(CLOSE_TABLE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getMetadata
-	 * ()
-	 */
 	@Override
 	IMetadata getMetadata() throws Exception {
 		File xmlFile = new File(getReportsRoot(), "meta" + XML_EXTENSION); //$NON-NLS-1$
@@ -535,22 +518,11 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getIndexTitle
-	 * ()
-	 */
 	@Override
 	protected String getIndexTitle() {
 		return SearchMessages.MissingRefReportConverter_ReportTitle;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#
-	 * writeMetadataHeaders(java.lang.StringBuffer)
-	 */
 	@Override
 	protected void writeMetadataHeaders(StringBuffer buffer) {
 		buffer.append("<meta name=\"").append("description").append("\" content=\"").append(SearchMessages.MissingRefReportConverter_IndexMetaTag).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
@@ -566,34 +538,16 @@ public class MissingRefReportConverter extends UseReportConverter {
 		return visitor.reports;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getHtmlLocation
-	 * ()
-	 */
 	@Override
 	protected String getHtmlLocation() {
 		return this.htmlLocation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getXmlLocation
-	 * ()
-	 */
 	@Override
 	protected String getXmlLocation() {
 		return this.xmlLocation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getReportsRoot
-	 * ()
-	 */
 	@Override
 	protected File getReportsRoot() {
 		if (this.reportsRoot == null) {
@@ -602,12 +556,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 		return this.reportsRoot;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getReportIndex
-	 * ()
-	 */
 	@Override
 	public File getReportIndex() {
 		// TODO remove if

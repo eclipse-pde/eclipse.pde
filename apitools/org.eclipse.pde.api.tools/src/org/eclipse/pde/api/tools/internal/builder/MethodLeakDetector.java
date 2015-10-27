@@ -52,43 +52,21 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 		super(nonApiPackageNames);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getElementType
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected int getElementType(IReference reference) {
 		return IElementDescriptor.METHOD;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getProblemKind()
-	 */
 	@Override
 	protected int getProblemKind() {
 		return IApiProblem.API_LEAK;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getSeverityKey()
-	 */
 	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected boolean isProblem(IReference reference) {
 		IApiMethod method = (IApiMethod) reference.getMember();
@@ -129,12 +107,6 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getMember();
@@ -144,12 +116,6 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 				Signatures.getMethodSignature(method) };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getQualifiedMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getMember();
@@ -159,25 +125,11 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 				Signatures.getMethodSignature(method) };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getSourceRange(org.eclipse.jdt.core.IType,
-	 * org.eclipse.jface.text.IDocument,
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		return getSourceRangeForMethod(type, reference, (IApiMethod) reference.getMember());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
-	 * #considerReference(org.eclipse.pde.api.tools.internal.provisional.model.
-	 * IReference)
-	 */
 	@Override
 	public boolean considerReference(IReference reference) {
 		if (super.considerReference(reference) && isNonAPIReference(reference)) {

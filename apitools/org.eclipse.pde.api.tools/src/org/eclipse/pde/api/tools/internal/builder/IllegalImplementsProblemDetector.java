@@ -38,46 +38,21 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	 */
 	private HashMap<String, IApiType> fRestrictedInterfaces = new HashMap<>();
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
-	 * #getReferenceKinds()
-	 */
 	@Override
 	public int getReferenceKinds() {
 		return IReference.REF_IMPLEMENTS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
-	 * #getProblemKind()
-	 */
 	@Override
 	protected int getProblemKind() {
 		return IApiProblem.ILLEGAL_IMPLEMENT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
-	 * #getSeverityKey()
-	 */
 	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.ILLEGAL_IMPLEMENT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
-	 * #considerReference
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	public boolean considerReference(IReference reference) {
 		try {
@@ -105,13 +80,6 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
-	 * #isProblem
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected boolean isProblem(IReference reference) {
 		try {
@@ -134,13 +102,6 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 		return super.isProblem(reference);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
-	 * #getMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		String[] args = super.getMessageArgs(reference);
@@ -157,13 +118,6 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 		return args;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
-	 * #getMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		String[] args = super.getQualifiedMessageArgs(reference);
@@ -180,13 +134,6 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 		return args;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
-	 * #getProblemFlags
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected int getProblemFlags(IReference reference) {
 		if (isIllegalType(reference)) {

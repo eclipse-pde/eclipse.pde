@@ -59,29 +59,16 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 			fLocation = location;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.model.component.IClassFile#getTypeName()
-		 */
 		@Override
 		public String getTypeName() {
 			return getName();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 */
 		@Override
 		public int compareTo(Object o) {
 			return getName().compareTo(((LocalApiTypeRoot) o).getName());
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof LocalApiTypeRoot) {
@@ -90,21 +77,11 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return this.getName().hashCode();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot#getContents
-		 * ()
-		 */
 		@Override
 		public byte[] getContents() throws CoreException {
 			InputStream stream = null;
@@ -202,23 +179,12 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		return buff.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IClassFileContainer#close()
-	 */
 	@Override
 	public synchronized void close() throws CoreException {
 		fPackages = null;
 		fPackageNames = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IClassFileContainer#findClassFile
-	 * (java.lang.String)
-	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		init();
@@ -239,12 +205,6 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IClassFileContainer#getPackageNames
-	 * ()
-	 */
 	@Override
 	public String[] getPackageNames() throws CoreException {
 		init();
@@ -314,12 +274,6 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		return findTypeRoot(qualifiedName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer
-	 * #getContainerType()
-	 */
 	@Override
 	public int getContainerType() {
 		return DIRECTORY;

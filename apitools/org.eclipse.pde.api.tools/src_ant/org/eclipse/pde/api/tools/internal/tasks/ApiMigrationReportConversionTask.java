@@ -118,10 +118,6 @@ public class ApiMigrationReportConversionTask extends CommonUtilsTask {
 		this.xsltFileLocation = xsltFileLocation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.apache.tools.ant.Task#execute()
-	 */
 	@Override
 	public void execute() throws BuildException {
 		if (this.debug) {

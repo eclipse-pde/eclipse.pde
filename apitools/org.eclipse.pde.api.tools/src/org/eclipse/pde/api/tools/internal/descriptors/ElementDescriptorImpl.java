@@ -22,21 +22,11 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  */
 public abstract class ElementDescriptorImpl implements IElementDescriptor, Comparable<IElementDescriptor> {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor#getParent()
-	 */
 	@Override
 	public IElementDescriptor getParent() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor#getPath()
-	 */
 	@Override
 	public IElementDescriptor[] getPath() {
 		List<IElementDescriptor> list = new ArrayList<>();

@@ -154,34 +154,18 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		return fInstance;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.IApiBaselineManager#getApiProfile(java.lang
-	 * .String)
-	 */
 	@Override
 	public synchronized IApiBaseline getApiBaseline(String name) {
 		initializeStateCache();
 		return baselinecache.get(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiBaselineManager#getApiProfiles()
-	 */
 	@Override
 	public synchronized IApiBaseline[] getApiBaselines() {
 		initializeStateCache();
 		return baselinecache.values().toArray(new IApiBaseline[baselinecache.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.IApiBaselineManager#addApiProfile(org.eclipse
-	 * .pde.api.tools.model.component.IApiBaseline)
-	 */
 	@Override
 	public synchronized void addApiBaseline(IApiBaseline newbaseline) {
 		if (newbaseline != null) {
@@ -194,12 +178,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.IApiBaselineManager#removeApiBaseline(java.
-	 * lang.String)
-	 */
 	@Override
 	public synchronized boolean removeApiBaseline(String name) {
 		if (name != null) {
@@ -511,12 +489,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources
-	 * .ISaveContext)
-	 */
 	@Override
 	public void saving(ISaveContext context) throws CoreException {
 		if (!fNeedsSaving) {
@@ -594,63 +566,30 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core
-	 * .resources.ISaveContext)
-	 */
 	@Override
 	public void doneSaving(ISaveContext context) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse
-	 * .core.resources.ISaveContext)
-	 */
 	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core
-	 * .resources.ISaveContext)
-	 */
 	@Override
 	public void rollback(ISaveContext context) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager#
-	 * getDefaultApiBaseline()
-	 */
 	@Override
 	public synchronized IApiBaseline getDefaultApiBaseline() {
 		initializeStateCache();
 		return baselinecache.get(defaultbaseline);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager#
-	 * setDefaultApiBaseline(java.lang.String)
-	 */
 	@Override
 	public void setDefaultApiBaseline(String name) {
 		fNeedsSaving = true;
 		defaultbaseline = name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager#
-	 * getWorkspaceBaseline()
-	 */
 	@Override
 	public synchronized IApiBaseline getWorkspaceBaseline() {
 		if (ApiPlugin.isRunningInFramework()) {
@@ -719,11 +658,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		return baseline;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager#
-	 * getWorkspaceComponent(java.lang.String)
-	 */
 	@Override
 	public synchronized IApiComponent getWorkspaceComponent(String symbolicName) {
 		IApiBaseline baseline = getWorkspaceBaseline();

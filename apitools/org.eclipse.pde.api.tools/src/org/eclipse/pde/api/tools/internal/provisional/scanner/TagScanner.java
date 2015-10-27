@@ -262,12 +262,6 @@ public class TagScanner {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .TypeDeclaration)
-		 */
 		@Override
 		public boolean visit(TypeDeclaration node) {
 			if (isNotVisible(node.getModifiers())) {
@@ -326,12 +320,6 @@ public class TagScanner {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core
-		 * .dom.TypeDeclaration)
-		 */
 		@Override
 		public void endVisit(TypeDeclaration node) {
 			if (!isNotVisible(node.getModifiers())) {
@@ -339,12 +327,6 @@ public class TagScanner {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core
-		 * .dom.AnnotationTypeDeclaration)
-		 */
 		@Override
 		public void endVisit(AnnotationTypeDeclaration node) {
 			if (!isNotVisible(node.getModifiers())) {
@@ -352,12 +334,6 @@ public class TagScanner {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .AnnotationTypeDeclaration)
-		 */
 		@Override
 		public boolean visit(AnnotationTypeDeclaration node) {
 			if (isNotVisible(node.getModifiers())) {
@@ -393,12 +369,6 @@ public class TagScanner {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .EnumDeclaration)
-		 */
 		@Override
 		public boolean visit(EnumDeclaration node) {
 			if (isNotVisible(node.getModifiers())) {
@@ -434,12 +404,6 @@ public class TagScanner {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core
-		 * .dom.EnumDeclaration)
-		 */
 		@Override
 		public void endVisit(EnumDeclaration node) {
 			if (!isNotVisible(node.getModifiers())) {
@@ -447,12 +411,6 @@ public class TagScanner {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .PackageDeclaration)
-		 */
 		@Override
 		public boolean visit(PackageDeclaration node) {
 			Name name = node.getName();
@@ -460,12 +418,6 @@ public class TagScanner {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .MethodDeclaration)
-		 */
 		@Override
 		public boolean visit(MethodDeclaration node) {
 			if (isNotVisible(node.getModifiers())) {
@@ -543,12 +495,6 @@ public class TagScanner {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .FieldDeclaration)
-		 */
 		@Override
 		public boolean visit(FieldDeclaration node) {
 			if (isNotVisible(node.getModifiers())) {

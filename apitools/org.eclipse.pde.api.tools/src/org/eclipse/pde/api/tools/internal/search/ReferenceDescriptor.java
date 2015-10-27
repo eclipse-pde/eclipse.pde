@@ -43,10 +43,6 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 		this.messages = messages;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ReferenceDescriptor) {
@@ -56,73 +52,36 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return origin.hashCode() + target.hashCode() + from.hashCode() + to.hashCode() + line + kind + visibility;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#getComponent
-	 * ()
-	 */
 	@Override
 	public IComponentDescriptor getComponent() {
 		return from;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#getLineNumber
-	 * ()
-	 */
 	@Override
 	public int getLineNumber() {
 		return line;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#getMember
-	 * ()
-	 */
 	@Override
 	public IMemberDescriptor getMember() {
 		return origin;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#
-	 * getReferenceKind()
-	 */
 	@Override
 	public int getReferenceKind() {
 		return kind;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#
-	 * getReferenceFlags()
-	 */
 	@Override
 	public int getReferenceFlags() {
 		return flags;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#
-	 * getReferenceType()
-	 */
 	@Override
 	public int getReferenceType() {
 		switch (getReferencedMember().getElementType()) {
@@ -137,42 +96,21 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#
-	 * getReferencedComponent()
-	 */
 	@Override
 	public IComponentDescriptor getReferencedComponent() {
 		return to;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#
-	 * getReferencedMember()
-	 */
 	@Override
 	public IMemberDescriptor getReferencedMember() {
 		return target;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#getVisibility
-	 * ()
-	 */
 	@Override
 	public int getVisibility() {
 		return visibility;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#
-	 * getProblemMessages()
-	 */
 	@Override
 	public String[] getProblemMessages() {
 		return this.messages;

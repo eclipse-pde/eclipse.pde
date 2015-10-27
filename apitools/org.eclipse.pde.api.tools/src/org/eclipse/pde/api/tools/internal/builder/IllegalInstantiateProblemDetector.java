@@ -26,25 +26,11 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
  */
 public class IllegalInstantiateProblemDetector extends AbstractIllegalTypeReference {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
-	 * #getReferenceKinds()
-	 */
 	@Override
 	public int getReferenceKinds() {
 		return IReference.REF_INSTANTIATE | IReference.REF_VIRTUALMETHOD ;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
-	 * #getSourceRange(org.eclipse.jdt.core.IType,
-	 * org.eclipse.jface.text.IDocument,
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		String name = getSimpleTypeName(reference.getResolvedReference());
@@ -55,23 +41,11 @@ public class IllegalInstantiateProblemDetector extends AbstractIllegalTypeRefere
 		return pos;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
-	 * #getProblemKind()
-	 */
 	@Override
 	protected int getProblemKind() {
 		return IApiProblem.ILLEGAL_INSTANTIATE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
-	 * #getSeverityKey()
-	 */
 	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.ILLEGAL_INSTANTIATE;

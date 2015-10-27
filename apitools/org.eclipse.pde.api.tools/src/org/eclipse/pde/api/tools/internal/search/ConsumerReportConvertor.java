@@ -58,50 +58,22 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		 */
 		Set<IComponentDescriptor> consumers = new HashSet<>();
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent
-		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors.
-		 * IComponentDescriptor)
-		 */
 		@Override
 		public boolean visitComponent(IComponentDescriptor target) {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
-		 * visitReferencingComponent
-		 * (org.eclipse.pde.api.tools.internal.provisional
-		 * .descriptors.IComponentDescriptor)
-		 */
 		@Override
 		public boolean visitReferencingComponent(IComponentDescriptor component) {
 			consumers.add(component);
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember
-		 * (org
-		 * .eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor
-		 * )
-		 */
 		@Override
 		public boolean visitMember(IMemberDescriptor referencedMember) {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference
-		 * (org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
-		 */
 		@Override
 		public void visitReference(IReferenceDescriptor reference) {
 		}
@@ -139,12 +111,6 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			consumer.name = composeName(consumerDescriptor.getId(), consumerDescriptor.getVersion());
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitScan
-		 * ()
-		 */
 		@Override
 		public void endVisitScan() {
 			try {
@@ -165,13 +131,6 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent
-		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors.
-		 * IComponentDescriptor)
-		 */
 		@Override
 		public boolean visitComponent(IComponentDescriptor target) {
 			currentProducer = new Producer();
@@ -179,13 +138,6 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
-		 * endVisitComponent
-		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
-		 * .IComponentDescriptor)
-		 */
 		@Override
 		public void endVisitComponent(IComponentDescriptor target) {
 			if (this.currentProducer.counts.getTotalRefCount() > 0) {
@@ -210,39 +162,17 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
-		 * visitReferencingComponent
-		 * (org.eclipse.pde.api.tools.internal.provisional
-		 * .descriptors.IComponentDescriptor)
-		 */
 		@Override
 		public boolean visitReferencingComponent(IComponentDescriptor component) {
 			return component.equals(consumerDescriptor);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
-		 * endVisitReferencingComponent
-		 * (org.eclipse.pde.api.tools.internal.provisional
-		 * .descriptors.IComponentDescriptor)
-		 */
 		@Override
 		public void endVisitReferencingComponent(IComponentDescriptor component) {
 			// Do nothing, visitor only runs for one consumer at a time, html
 			// gets written and the end of the scan
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember
-		 * (org
-		 * .eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor
-		 * )
-		 */
 		@Override
 		public boolean visitMember(IMemberDescriptor referencedMember) {
 			IReferenceTypeDescriptor desc = getEnclosingDescriptor(referencedMember);
@@ -263,13 +193,6 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitMember
-		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors.
-		 * IMemberDescriptor)
-		 */
 		@Override
 		public void endVisitMember(IMemberDescriptor referencedMember) {
 			if (this.currenttype.counts.getTotalRefCount() == 0) {
@@ -281,12 +204,6 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference
-		 * (org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
-		 */
 		@Override
 		public void visitReference(IReferenceDescriptor reference) {
 			IMemberDescriptor fromMember = reference.getMember();
@@ -530,12 +447,6 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		super(htmlroot, xmlroot, topatterns, frompatterns);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#parse(org
-	 * .eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected List<?> parse(IProgressMonitor monitor) throws Exception {
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);

@@ -26,14 +26,6 @@ public class CRCVisitor extends ApiDescriptionVisitor {
 
 	private CRC32 fCrc = new CRC32();
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#
-	 * visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.
-	 * IElementDescriptor,
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
-	 */
 	@Override
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		String signature = null;

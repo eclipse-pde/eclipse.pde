@@ -34,19 +34,8 @@ public abstract class AbstractApiTypeRoot extends ApiElement implements IApiType
 		super(parent, IApiElement.API_TYPE_ROOT, name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getContents()
-	 */
 	public abstract byte[] getContents() throws CoreException;
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getStructure
-	 * ()
-	 */
 	@Override
 	public IApiType getStructure() throws CoreException {
 		ApiModelCache cache = ApiModelCache.getCache();

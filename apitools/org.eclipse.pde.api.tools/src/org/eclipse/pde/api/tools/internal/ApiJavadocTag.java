@@ -64,30 +64,15 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		fRModifier = rmodifier;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getTagId()
-	 */
 	public String getTagId() {
 		return fId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.IApiJavadocTag#getRestrictionModifier()
-	 */
 	@Override
 	public int getRestrictionModifier() {
 		return fRModifier;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag#setApplicableTo
-	 * (int, int, java.lang.String)
-	 */
 	@Override
 	public void setApplicableTo(int type, int member, String comment) {
 		if (fTagItems == null) {
@@ -111,10 +96,6 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		return (String) (obj == null ? EMPTY_STRING : obj);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getTagLabel()
-	 */
 	@Override
 	public String getTagName() {
 		if (fTaglabel == null) {
@@ -126,19 +107,11 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		return fTaglabel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getTagName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiJavadocTag#getCompleteTag(int, int)
-	 */
 	@Override
 	public String getCompleteTag(int type, int member) {
 		StringBuffer tag = new StringBuffer();
@@ -152,19 +125,11 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		return tag.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiJavadocTag#isApplicable(int, int)
-	 */
 	@Override
 	public boolean isApplicable(int type, int member) {
 		return fTagItems != null && fTagItems.keySet().contains(getTagKey(type, member));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiJavadocTag) {
@@ -176,10 +141,6 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getTagName().hashCode();

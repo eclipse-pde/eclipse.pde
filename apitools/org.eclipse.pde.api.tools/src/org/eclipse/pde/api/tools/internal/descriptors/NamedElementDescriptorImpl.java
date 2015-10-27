@@ -43,10 +43,6 @@ public abstract class NamedElementDescriptorImpl extends ElementDescriptorImpl {
 		return fName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public int compareTo(IElementDescriptor o) {
 		if (o instanceof ReferenceTypeDescriptorImpl) {

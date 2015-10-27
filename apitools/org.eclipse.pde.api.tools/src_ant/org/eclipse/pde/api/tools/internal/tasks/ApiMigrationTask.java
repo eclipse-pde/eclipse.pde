@@ -213,10 +213,6 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.apache.tools.ant.Task#execute()
-	 */
 	@Override
 	public void execute() throws BuildException {
 		assertParameters();

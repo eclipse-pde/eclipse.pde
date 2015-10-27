@@ -39,23 +39,11 @@ public final class ApiModelCache {
 			super(size, overflow);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.internal.core.OverflowingLRUCache#close(org.eclipse
-		 * .jdt.internal.core.util.LRUCache.LRUCacheEntry)
-		 */
 		@Override
 		protected boolean close(LRUCacheEntry entry) {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.internal.core.OverflowingLRUCache#newInstance(int,
-		 * int)
-		 */
 		@Override
 		protected LRUCache newInstance(int size, int newOverflow) {
 			return new Cache(size, newOverflow);

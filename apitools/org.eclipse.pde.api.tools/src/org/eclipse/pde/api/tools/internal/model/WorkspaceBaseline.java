@@ -33,30 +33,16 @@ public class WorkspaceBaseline extends ApiBaseline {
 		super(ApiBaselineManager.WORKSPACE_API_BASELINE_ID);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.ApiBaseline#dispose()
-	 */
 	@Override
 	public void dispose() {
 		doDispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.ApiBaseline#getState()
-	 */
 	@Override
 	public State getState() {
 		return PDECore.getDefault().getModelManager().getState().getState();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * IApiBaseline#addApiComponents(org.eclipse.pde.api.tools.model.component
-	 * .IApiComponent[], boolean)
-	 */
 	@Override
 	public void addApiComponents(IApiComponent[] components) throws CoreException {
 		HashSet<String> ees = new HashSet<>();

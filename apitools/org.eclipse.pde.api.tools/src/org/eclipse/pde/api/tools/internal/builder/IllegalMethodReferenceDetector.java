@@ -47,14 +47,6 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 		fIllegalTypes.put(type.getQualifiedName(), componentid);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.builder.AbstractIllegalMethodReference
-	 * #
-	 * considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.
-	 * IReference)
-	 */
 	@Override
 	public boolean considerReference(IReference reference) {
 		if (super.considerReference(reference)) {
@@ -67,14 +59,6 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.builder.AbstractIllegalMethodReference
-	 * #
-	 * isProblem(org.eclipse.pde.api.tools.internal.provisional.builder.IReference
-	 * )
-	 */
 	@Override
 	protected boolean isProblem(IReference reference) {
 		if (super.isProblem(reference)) {
@@ -92,43 +76,21 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 		return isReferenceFromComponent(reference, compid);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
-	 * #getReferenceKinds()
-	 */
 	@Override
 	public int getReferenceKinds() {
 		return IReference.REF_INTERFACEMETHOD | IReference.REF_SPECIALMETHOD | IReference.REF_STATICMETHOD | IReference.REF_VIRTUALMETHOD | IReference.REF_CONSTRUCTORMETHOD;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getProblemKind()
-	 */
 	@Override
 	protected int getProblemKind() {
 		return IApiProblem.ILLEGAL_REFERENCE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getSeverityKey()
-	 */
 	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.ILLEGAL_REFERENCE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();
@@ -143,13 +105,6 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 				Signatures.getMethodSignature(method) };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getSourceRange(org.eclipse.jdt.core.IType,
-	 * org.eclipse.jface.text.IDocument,
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();
@@ -160,12 +115,6 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 		return pos;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getQualifiedMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();

@@ -58,12 +58,6 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 			this.segmentcount = root.getFullPath().segmentCount();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse
-		 * .core.resources.IResourceProxy)
-		 */
 		@Override
 		public boolean visit(IResourceProxy proxy) throws CoreException {
 			if (proxy.getType() == IResource.FOLDER) {
@@ -228,12 +222,6 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 		return findTypeRoot(qualifiedName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer
-	 * #getContainerType()
-	 */
 	@Override
 	public int getContainerType() {
 		return FOLDER;

@@ -42,12 +42,6 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 		fComment = comment;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
-	 * #getComment()
-	 */
 	@Override
 	public String getComment() {
 		return fComment;
@@ -64,19 +58,11 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 		fComment = comment;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProblemFilter#getComponentId()
-	 */
 	@Override
 	public String getComponentId() {
 		return fComponentId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiProblemFilter) {
@@ -88,10 +74,6 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 		return super.equals(obj);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return fProblem.hashCode() + fComponentId.hashCode();
@@ -113,10 +95,6 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 		return (s1 == null && s2 == null) || (s1 != null && s1.equals(s2));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -125,20 +103,11 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 		return buffer.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Object clone() {
 		return new ApiProblemFilter(this.fComponentId, fProblem, fComment);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter#
-	 * getUnderlyingProblem()
-	 */
 	@Override
 	public IApiProblem getUnderlyingProblem() {
 		return fProblem;

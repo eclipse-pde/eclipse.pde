@@ -607,10 +607,6 @@ public class Reference implements IReference {
 		fResolved = resolution;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();

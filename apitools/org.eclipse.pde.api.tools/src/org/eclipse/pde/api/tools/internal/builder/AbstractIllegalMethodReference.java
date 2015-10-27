@@ -54,12 +54,6 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 		fMethodComponents.put(method, componentId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * considerReference
-	 * (org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
-	 */
 	@Override
 	public boolean considerReference(IReference reference) {
 		MethodKey key = new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true);
@@ -87,12 +81,6 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected boolean isProblem(IReference reference) {
 		if (!super.isProblem(reference)) {
@@ -105,23 +93,11 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 		return isReferenceFromComponent(reference, componentId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getElementType
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected int getElementType(IReference reference) {
 		return IElementDescriptor.METHOD;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getProblemFlags
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected int getProblemFlags(IReference reference) {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();

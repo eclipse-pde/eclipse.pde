@@ -60,12 +60,6 @@ public class ApiField extends ApiMember implements IApiField {
 		return (Flags.isEnum(getModifiers()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.model.ApiMember#equals(java.lang.Object
-	 * )
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiField) {
@@ -79,11 +73,6 @@ public class ApiField extends ApiMember implements IApiField {
 		return super.hashCode() + (this.fValue != null ? this.fValue.hashCode() : 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiField#
-	 * getConstantValue()
-	 */
 	@Override
 	public Object getConstantValue() {
 		return fValue;
@@ -107,12 +96,6 @@ public class ApiField extends ApiMember implements IApiField {
 		return String.valueOf(buffer);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getHandle
-	 * ()
-	 */
 	@Override
 	public IMemberDescriptor getHandle() {
 		if (fHandle == null) {

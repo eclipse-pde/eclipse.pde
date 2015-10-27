@@ -80,14 +80,6 @@ public class FilterStore implements IApiFilterStore {
 		fComponent = component;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#addFilters
-	 * (
-	 * org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
-	 * [])
-	 */
 	@Override
 	public void addFilters(IApiProblemFilter[] filters) {
 		if (filters != null && filters.length > 0) {
@@ -105,12 +97,6 @@ public class FilterStore implements IApiFilterStore {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#addFiltersFor
-	 * (org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem[])
-	 */
 	@Override
 	public void addFiltersFor(IApiProblem[] problems) {
 		if (problems != null && problems.length > 0) {
@@ -119,36 +105,16 @@ public class FilterStore implements IApiFilterStore {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#getFilters
-	 * (org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	public IApiProblemFilter[] getFilters(IResource resource) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#getResources
-	 * ()
-	 */
 	@Override
 	public IResource[] getResources() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#removeFilters
-	 * (
-	 * org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
-	 * [])
-	 */
 	@Override
 	public boolean removeFilters(IApiProblemFilter[] filters) {
 		if (filters != null && filters.length > 0) {
@@ -209,12 +175,6 @@ public class FilterStore implements IApiFilterStore {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#isFiltered
-	 * (org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem)
-	 */
 	@Override
 	public boolean isFiltered(IApiProblem problem) {
 		initializeApiFilters();
@@ -321,11 +281,6 @@ public class FilterStore implements IApiFilterStore {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fFilterMap != null) {

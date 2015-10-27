@@ -45,66 +45,31 @@ public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {
 		super(nonApiPackageNames);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractTypeLeakDetector#
-	 * isApplicable
-	 * (org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
-	 */
 	@Override
 	protected boolean isApplicable(IApiAnnotations annotations) {
 		return super.isApplicable(annotations) && !RestrictionModifiers.isReferenceRestriction(annotations.getRestrictions());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
-	 * #getReferenceKinds()
-	 */
 	@Override
 	public int getReferenceKinds() {
 		return IReference.REF_FIELDDECL;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getElementType
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected int getElementType(IReference reference) {
 		return IElementDescriptor.FIELD;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getSeverityKey()
-	 */
 	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.LEAK_FIELD_DECL;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
-	 * getProblemFlags
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected int getProblemFlags(IReference reference) {
 		return IApiProblem.LEAK_FIELD;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractTypeLeakDetector#isProblem
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected boolean isProblem(IReference reference) {
 		if (super.isProblem(reference)) {
@@ -128,12 +93,6 @@ public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractTypeLeakDetector#
-	 * getMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		IApiField field = (IApiField) reference.getMember();
@@ -143,12 +102,6 @@ public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {
 				field.getName() };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractTypeLeakDetector#
-	 * getQualifiedMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiField field = (IApiField) reference.getMember();
@@ -158,13 +111,6 @@ public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {
 				field.getName() };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractTypeLeakDetector#
-	 * getSourceRange(org.eclipse.jdt.core.IType,
-	 * org.eclipse.jface.text.IDocument,
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		IApiField field = (IApiField) reference.getMember();

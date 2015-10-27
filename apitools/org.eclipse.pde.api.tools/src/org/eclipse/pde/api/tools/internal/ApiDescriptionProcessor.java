@@ -128,13 +128,6 @@ public class ApiDescriptionProcessor {
 			fCollector = collector;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.model.component.ApiDescriptionVisitor#
-		 * visitElement
-		 * (org.eclipse.pde.api.tools.model.component.IElementDescriptor,
-		 * java.lang.String, org.eclipse.pde.api.tools.model.IApiAnnotations)
-		 */
 		@Override
 		public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 			switch (element.getElementType()) {
@@ -153,13 +146,6 @@ public class ApiDescriptionProcessor {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.model.component.ApiDescriptionVisitor#
-		 * endVisitElement
-		 * (org.eclipse.pde.api.tools.model.component.IElementDescriptor,
-		 * java.lang.String, org.eclipse.pde.api.tools.model.IApiAnnotations)
-		 */
 		@Override
 		public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 			if (element.getElementType() == IElementDescriptor.TYPE) {
@@ -233,12 +219,6 @@ public class ApiDescriptionProcessor {
 			typeStack = new Stack<>();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .TypeDeclaration)
-		 */
 		@Override
 		public boolean visit(TypeDeclaration node) {
 			int type = IApiJavadocTag.TYPE_CLASS;
@@ -250,12 +230,6 @@ public class ApiDescriptionProcessor {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core
-		 * .dom.TypeDeclaration)
-		 */
 		@Override
 		public void endVisit(TypeDeclaration node) {
 			typeStack.pop();
@@ -270,12 +244,6 @@ public class ApiDescriptionProcessor {
 			return (typeStack.peek()).intValue();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .FieldDeclaration)
-		 */
 		@Override
 		public boolean visit(FieldDeclaration node) {
 			List<VariableDeclarationFragment> fields = node.fragments();
@@ -287,12 +255,6 @@ public class ApiDescriptionProcessor {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .MethodDeclaration)
-		 */
 		@Override
 		public boolean visit(MethodDeclaration node) {
 			String signature = Signatures.getMethodSignatureFromNode(node);

@@ -330,12 +330,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * IApiBaseline#addApiComponents(org.eclipse.pde.api.tools.model.component
-	 * .IApiComponent[], boolean)
-	 */
 	@Override
 	public void addApiComponents(IApiComponent[] components) throws CoreException {
 		HashSet<String> ees = new HashSet<>();
@@ -458,10 +452,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		return fComponentsById != null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiBaseline#getApiComponents()
-	 */
 	@Override
 	public IApiComponent[] getApiComponents() {
 		loadBaselineInfos();
@@ -472,10 +462,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		return values.toArray(new IApiComponent[values.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiBaseline#resolvePackage(IApiComponent, String)
-	 */
 	@Override
 	public synchronized IApiComponent[] resolvePackage(IApiComponent sourceComponent, String packageName) throws CoreException {
 		HashMap<IApiComponent, IApiComponent[]> componentsForPackage = null;
@@ -638,10 +624,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		return fState;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiBaseline#getApiComponent(String)
-	 */
 	@Override
 	public IApiComponent getApiComponent(String id) {
 		loadBaselineInfos();
@@ -651,10 +633,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		return fComponentsById.get(id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiBaseline#getExecutionEnvironment()
-	 */
 	@Override
 	public String getExecutionEnvironment() {
 		return fExecutionEnvironment;
@@ -729,10 +707,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		return this.getName().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiBaseline#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fState == null) {
@@ -794,10 +768,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		ApiModelCache.getCache().removeElementInfo(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiBaseline#getDependentComponents(IApiComponent[])
-	 */
 	@Override
 	public IApiComponent[] getDependentComponents(IApiComponent[] components) throws CoreException {
 		ArrayList<BundleDescription> bundles = getBundleDescriptions(components);
@@ -842,12 +812,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		return bundles;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.IApiBaseline#getPrerequisiteComponents(org.
-	 * eclipse.pde.api.tools.IApiComponent[])
-	 */
 	@Override
 	public IApiComponent[] getPrerequisiteComponents(IApiComponent[] components) throws CoreException {
 		ArrayList<BundleDescription> bundles = getBundleDescriptions(components);
@@ -869,41 +833,20 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiBaseline#getExecutionEnvironmentStatus()
-	 */
 	@Override
 	public IStatus getExecutionEnvironmentStatus() {
 		return fEEStatus;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged
-	 * (org.eclipse.jdt.launching.IVMInstall,
-	 * org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse
-	 * .jdt.launching.IVMInstall)
-	 */
 	@Override
 	public void vmAdded(IVMInstall vm) {
 		if (!(vm instanceof VMStandin)) {
@@ -916,12 +859,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse
-	 * .jdt.launching.PropertyChangeEvent)
-	 */
 	@Override
 	public void vmChanged(PropertyChangeEvent event) {
 		if (!(event.getSource() instanceof VMStandin)) {
@@ -949,12 +886,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		resolveSystemLibrary(ees);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse
-	 * .jdt.launching.IVMInstall)
-	 */
 	@Override
 	public void vmRemoved(IVMInstall vm) {
 		if (vm.equals(fVMBinding)) {
@@ -966,29 +897,16 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiBaseline#getLocation()
-	 */
 	@Override
 	public String getLocation() {
 		return this.fLocation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiBaseline#setLocation(String)
-	 */
 	@Override
 	public void setLocation(String location) {
 		this.fLocation = location;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline#
-	 * getApiComponent(org.eclipse.core.resources.IProject)
-	 */
 	@Override
 	public IApiComponent getApiComponent(IProject project) {
 		loadBaselineInfos();

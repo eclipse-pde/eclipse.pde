@@ -58,12 +58,6 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	public SystemApiDetector() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * getElementType
-	 * (org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
-	 */
 	@Override
 	protected int getElementType(IReference reference) {
 		IApiMember member = reference.getMember();
@@ -79,12 +73,6 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * getMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
-	 */
 	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		IApiMember member = reference.getMember();
@@ -159,12 +147,6 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		return typeName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * getProblemFlags
-	 * (org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
-	 */
 	@Override
 	protected int getProblemFlags(IReference reference) {
 		switch (reference.getReferenceType()) {
@@ -186,22 +168,11 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * getProblemKind()
-	 */
 	@Override
 	protected int getProblemKind() {
 		return IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * getQualifiedMessageArgs
-	 * (org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
-	 */
 	@Override
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiMember member = reference.getMember();
@@ -241,23 +212,11 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * getSeverityKey()
-	 */
 	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
-	 * getSourceRange(org.eclipse.jdt.core.IType,
-	 * org.eclipse.jface.text.IDocument,
-	 * org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
-	 */
 	@Override
 	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		switch (reference.getReferenceType()) {
@@ -349,12 +308,6 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
 	@Override
 	protected boolean isProblem(IReference reference) {
 		// the reference must be in the system library
@@ -407,14 +360,6 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector
-	 * #
-	 * considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.
-	 * IReference)
-	 */
 	@Override
 	public boolean considerReference(IReference reference) {
 		try {
@@ -456,23 +401,11 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector
-	 * #getReferenceKinds()
-	 */
 	@Override
 	public int getReferenceKinds() {
 		return IReference.MASK_REF_ALL & ~IReference.REF_OVERRIDE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
-	 * #createProblems()
-	 */
 	@Override
 	public List<IApiProblem> createProblems() {
 		List<IReference> references = getRetainedReferences();

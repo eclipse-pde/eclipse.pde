@@ -30,20 +30,12 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		String name = getName();
 		return name.equals("") ? "<default package>" : name; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IPackageDescriptor) {
@@ -53,32 +45,16 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor#getElementType
-	 * ()
-	 */
 	@Override
 	public int getElementType() {
 		return IElementDescriptor.PACKAGE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IPackageDescriptor#getType(
-	 * java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IReferenceTypeDescriptor getType(String typeQualifiedName, String signature) {
 		String[] names = typeQualifiedName.split("\\$"); //$NON-NLS-1$
@@ -89,12 +65,6 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 		return typeDescriptor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor
-	 * #getType(java.lang.String)
-	 */
 	@Override
 	public IReferenceTypeDescriptor getType(String typeQualifiedName) {
 		String[] names = typeQualifiedName.split("\\$"); //$NON-NLS-1$

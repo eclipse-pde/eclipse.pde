@@ -42,14 +42,6 @@ public class UseScanReferenceVisitor extends UseScanVisitor {
 		fReferences = references;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent
-	 * (org
-	 * .eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor
-	 * )
-	 */
 	@Override
 	public boolean visitComponent(IComponentDescriptor target) {
 
@@ -60,13 +52,6 @@ public class UseScanReferenceVisitor extends UseScanVisitor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember(
-	 * org.eclipse
-	 * .pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
-	 */
 	// Visit only for the specific types, if supplied.
 	@Override
 	public boolean visitMember(IMemberDescriptor referencedMember) {
@@ -88,25 +73,12 @@ public class UseScanReferenceVisitor extends UseScanVisitor {
 		return found;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference
-	 * (org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
-	 */
 	@Override
 	public void visitReference(IReferenceDescriptor reference) {
 		ReferenceDescriptor refDesc = new ReferenceDescriptor(fReferencingComponent, reference.getMember(), reference.getLineNumber(), fCurrentComponent, fCurrentReferencedMember, reference.getReferenceKind(), reference.getReferenceFlags(), reference.getVisibility(), null);
 		fReferences.add(fCurrentReferencedMemberRootType, refDesc);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
-	 * visitReferencingComponent
-	 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
-	 * .IComponentDescriptor)
-	 */
 	@Override
 	public boolean visitReferencingComponent(IComponentDescriptor component) {
 		fReferencingComponent = component;

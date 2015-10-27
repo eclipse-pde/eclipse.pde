@@ -56,10 +56,6 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 			super(container, entryName);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.manifest.IClassFile#getTypeName()
-		 */
 		@Override
 		public String getTypeName() {
 			if (fTypeName == null) {
@@ -68,10 +64,6 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 			return fTypeName;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 */
 		@Override
 		public int compareTo(Object o) {
 			return getTypeName().compareTo(((ArchiveApiTypeRoot) o).getTypeName());
@@ -97,12 +89,6 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 			return getName().hashCode();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot#getContents
-		 * ()
-		 */
 		@Override
 		public byte[] getContents() throws CoreException {
 			ArchiveApiTypeContainer archive = (ArchiveApiTypeContainer) getParent();
@@ -147,10 +133,6 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			return getTypeName();
@@ -313,10 +295,6 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ArchiveApiTypeContainer) {
@@ -325,10 +303,6 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return this.fLocation.hashCode();
@@ -343,12 +317,6 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 		return findTypeRoot(qualifiedName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer
-	 * #getContainerType()
-	 */
 	@Override
 	public int getContainerType() {
 		return ARCHIVE;

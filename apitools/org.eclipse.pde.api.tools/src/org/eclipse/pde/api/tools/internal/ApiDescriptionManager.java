@@ -212,42 +212,18 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core
-	 * .resources.ISaveContext)
-	 */
 	@Override
 	public void doneSaving(ISaveContext context) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse
-	 * .core.resources.ISaveContext)
-	 */
 	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core
-	 * .resources.ISaveContext)
-	 */
 	@Override
 	public void rollback(ISaveContext context) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources
-	 * .ISaveContext)
-	 */
 	@Override
 	public synchronized void saving(ISaveContext context) throws CoreException {
 		if (context.getKind() == ISaveContext.PROJECT_SAVE && !Util.isJavaProject(context.getProject())) {

@@ -135,13 +135,6 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 		prepareScope(scope);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
-	 * #acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.
-	 * IApiComponent)
-	 */
 	@Override
 	public boolean acceptComponent(IApiComponent component) {
 		try {
@@ -160,26 +153,11 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
-	 * #acceptContainer(org.eclipse.pde.api.tools.internal.provisional.model.
-	 * IApiTypeContainer)
-	 */
 	@Override
 	public boolean acceptContainer(IApiTypeContainer container) {
 		return considerTypeContainer(container);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
-	 * #
-	 * acceptMember(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember
-	 * )
-	 */
 	@Override
 	public boolean acceptMember(IApiMember member) {
 		// don't consider inner types, as they are considered with the root type
@@ -221,13 +199,6 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
-	 * #acceptReference(org.eclipse.pde.api.tools.internal.provisional.builder.
-	 * IReference)
-	 */
 	@Override
 	public boolean acceptReference(IReference reference) {
 		try {
@@ -296,12 +267,6 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 		return (currentStore != null && currentStore.isFiltered(problem)) || (antStore != null && antStore.isFiltered(problem));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
-	 * #getReferenceKinds()
-	 */
 	@Override
 	public int getReferenceKinds() {
 		return IReference.MASK_REF_ALL & ~IReference.REF_CONSTANTPOOL;
@@ -322,45 +287,21 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
-	 * #getScope()
-	 */
 	@Override
 	public IApiScope getScope() {
 		return fScope;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
-	 * #includesAPI()
-	 */
 	@Override
 	public boolean includesAPI() {
 		return (fSearchMask & INCLUDE_API) > 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
-	 * #includesInternal()
-	 */
 	@Override
 	public boolean includesInternal() {
 		return (fSearchMask & INCLUDE_INTERNAL) > 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
-	 * #includesIllegalUse()
-	 */
 	@Override
 	public boolean includesIllegalUse() {
 		return (fSearchMask & INCLUDE_ILLEGAL_USE) > 0;

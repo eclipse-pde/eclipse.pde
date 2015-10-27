@@ -44,12 +44,6 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 		fFile = file;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot#getContents
-	 * ()
-	 */
 	@Override
 	public byte[] getContents() throws CoreException {
 		InputStream stream = fFile.getContents(true);
@@ -67,38 +61,21 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getTypeName()
-	 */
 	@Override
 	public String getTypeName() {
 		return getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getTypeName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiTypeRoot) {

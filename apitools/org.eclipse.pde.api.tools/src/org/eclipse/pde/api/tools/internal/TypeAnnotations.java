@@ -33,22 +33,11 @@ public class TypeAnnotations implements IApiAnnotations {
 		return fBuildStamp;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations#getVisibility
-	 * ()
-	 */
 	@Override
 	public int getVisibility() {
 		return fAnnotations.getVisibility();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations#
-	 * getRestrictions()
-	 */
 	@Override
 	public int getRestrictions() {
 		return fAnnotations.getRestrictions();

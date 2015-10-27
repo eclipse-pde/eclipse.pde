@@ -56,21 +56,11 @@ public class SinceTagChecker extends ASTVisitor {
 		this.nameStart = nameStart;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * CompilationUnit)
-	 */
 	@Override
 	public boolean visit(CompilationUnit compilationUnit) {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * VariableDeclarationFragment)
-	 */
 	@Override
 	public boolean visit(VariableDeclarationFragment node) {
 		if ((this.bits & ABORT) != 0) {
@@ -87,21 +77,11 @@ public class SinceTagChecker extends ASTVisitor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * EnumDeclaration)
-	 */
 	@Override
 	public boolean visit(EnumDeclaration node) {
 		return visitAbstractTypeDeclaration(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * TypeDeclaration)
-	 */
 	@Override
 	public boolean visit(TypeDeclaration node) {
 		return visitAbstractTypeDeclaration(node);
@@ -122,21 +102,11 @@ public class SinceTagChecker extends ASTVisitor {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * AnnotationTypeDeclaration)
-	 */
 	@Override
 	public boolean visit(AnnotationTypeDeclaration node) {
 		return visitAbstractTypeDeclaration(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * MethodDeclaration)
-	 */
 	@Override
 	public boolean visit(MethodDeclaration node) {
 		if ((this.bits & ABORT) != 0) {
@@ -149,11 +119,6 @@ public class SinceTagChecker extends ASTVisitor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * AnnotationTypeMemberDeclaration)
-	 */
 	@Override
 	public boolean visit(AnnotationTypeMemberDeclaration node) {
 		if ((this.bits & ABORT) != 0) {
@@ -166,21 +131,11 @@ public class SinceTagChecker extends ASTVisitor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * Initializer)
-	 */
 	@Override
 	public boolean visit(Initializer node) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * EnumConstantDeclaration)
-	 */
 	@Override
 	public boolean visit(EnumConstantDeclaration node) {
 		if ((this.bits & ABORT) != 0) {

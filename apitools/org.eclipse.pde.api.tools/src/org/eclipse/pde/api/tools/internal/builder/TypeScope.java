@@ -67,11 +67,6 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#
-	 * getPackageNames()
-	 */
 	@Override
 	public String[] getPackageNames() throws CoreException {
 		Set<String> pkgs = fPackageToTypes.keySet();
@@ -81,12 +76,6 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#accept
-	 * (org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
-	 */
 	@Override
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		if (visitor.visit(fComponent)) {
@@ -107,20 +96,10 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 		visitor.end(fComponent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#close()
-	 */
 	@Override
 	public void close() throws CoreException {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#
-	 * findClassFile(java.lang.String)
-	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		IReferenceTypeDescriptor descriptor = Factory.typeDescriptor(qualifiedName);
@@ -131,11 +110,6 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#
-	 * findClassFile(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 		if (fComponent.getSymbolicName().equals(id)) {
@@ -144,10 +118,6 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -162,12 +132,6 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 		return buffer.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer
-	 * #getContainerType()
-	 */
 	@Override
 	public int getContainerType() {
 		return IApiTypeContainer.COMPONENT;

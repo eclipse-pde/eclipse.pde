@@ -173,11 +173,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	public BaseApiAnalyzer() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#
-	 * analyzeComponent(..)
-	 */
 	@Override
 	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final Properties preferences, final IApiBaseline baseline, final IApiComponent component, final IBuildContext context, IProgressMonitor monitor) {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 8);
@@ -871,11 +866,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		return types.toArray(new IReferenceTypeDescriptor[types.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#
-	 * getProblems()
-	 */
 	@Override
 	public IApiProblem[] getProblems() {
 		if (fProblems == null) {
@@ -884,12 +874,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		return fProblems.toArray(new IApiProblem[fProblems.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#dispose
-	 * ()
-	 */
 	@Override
 	public void dispose() {
 		if (fProblems != null) {

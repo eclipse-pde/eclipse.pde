@@ -114,15 +114,6 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#
-	 * endVisitElement
-	 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
-	 * .IElementDescriptor,
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
-	 */
 	@Override
 	public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 		switch (element.getElementType()) {
@@ -157,13 +148,6 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 		return Util.serializeDocument(fDoc);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.ApiDescriptionVisitor#visitElement
-	 * (org.eclipse.pde.api.tools.model.component.IElementDescriptor,
-	 * java.lang.String, org.eclipse.pde.api.tools.model.IApiAnnotations)
-	 */
 	@Override
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		switch (element.getElementType()) {

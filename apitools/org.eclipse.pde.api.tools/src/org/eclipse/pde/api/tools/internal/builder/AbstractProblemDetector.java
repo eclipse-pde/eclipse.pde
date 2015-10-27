@@ -151,14 +151,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		return fPotentialProblems;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector
-	 * #
-	 * considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.
-	 * IReference)
-	 */
 	@Override
 	public boolean considerReference(IReference reference) {
 		return reference != null && (reference.getReferenceKind() & getReferenceKinds()) > 0;
@@ -497,12 +489,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
-	 * #createProblems()
-	 */
 	@Override
 	public List<IApiProblem> createProblems() {
 		List<IReference> references = getRetainedReferences();

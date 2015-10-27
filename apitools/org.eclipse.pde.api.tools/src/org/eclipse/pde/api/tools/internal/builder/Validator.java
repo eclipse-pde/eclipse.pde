@@ -59,11 +59,6 @@ public abstract class Validator extends ASTVisitor {
 	 */
 	private ArrayList<IApiProblem> fProblems = null;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * AnnotationTypeDeclaration)
-	 */
 	@Override
 	public boolean visit(AnnotationTypeDeclaration node) {
 		isvisible &= !Flags.isPrivate(node.getModifiers());
@@ -71,12 +66,6 @@ public abstract class Validator extends ASTVisitor {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom
-	 * .AnnotationTypeDeclaration)
-	 */
 	@Override
 	public void endVisit(AnnotationTypeDeclaration node) {
 		fStack.pop();
@@ -86,11 +75,6 @@ public abstract class Validator extends ASTVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * TypeDeclaration)
-	 */
 	@Override
 	public boolean visit(TypeDeclaration node) {
 		int flags = node.getModifiers();
@@ -107,12 +91,6 @@ public abstract class Validator extends ASTVisitor {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom
-	 * .TypeDeclaration)
-	 */
 	@Override
 	public void endVisit(TypeDeclaration node) {
 		fStack.pop();
@@ -122,11 +100,6 @@ public abstract class Validator extends ASTVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * EnumDeclaration)
-	 */
 	@Override
 	public boolean visit(EnumDeclaration node) {
 		int flags = node.getModifiers();
@@ -139,12 +112,6 @@ public abstract class Validator extends ASTVisitor {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom
-	 * .EnumDeclaration)
-	 */
 	@Override
 	public void endVisit(EnumDeclaration node) {
 		fStack.pop();
@@ -154,12 +121,6 @@ public abstract class Validator extends ASTVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom
-	 * .CompilationUnit)
-	 */
 	@Override
 	public void endVisit(CompilationUnit node) {
 		fStack.clear();

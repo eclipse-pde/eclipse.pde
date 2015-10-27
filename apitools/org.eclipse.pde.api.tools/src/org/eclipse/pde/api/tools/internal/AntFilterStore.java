@@ -45,12 +45,6 @@ public class AntFilterStore extends FilterStore {
 		fFiltersRoot = filtersRoot;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#isFiltered
-	 * (org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem)
-	 */
 	@Override
 	public boolean isFiltered(IApiProblem problem) {
 		boolean isFiltered = super.isFiltered(problem);
@@ -60,11 +54,6 @@ public class AntFilterStore extends FilterStore {
 		return isFiltered;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.FilterStore#initializeApiFilters()
-	 */
 	@Override
 	protected synchronized void initializeApiFilters() {
 		if (fFilterMap != null) {

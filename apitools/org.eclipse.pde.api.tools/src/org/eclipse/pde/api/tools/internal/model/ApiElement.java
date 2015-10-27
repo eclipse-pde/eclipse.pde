@@ -103,11 +103,6 @@ public abstract class ApiElement implements IApiElement {
 		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, e));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#
-	 * getApiComponent()
-	 */
 	@Override
 	public IApiComponent getApiComponent() {
 		return (IApiComponent) getAncestor(COMPONENT);

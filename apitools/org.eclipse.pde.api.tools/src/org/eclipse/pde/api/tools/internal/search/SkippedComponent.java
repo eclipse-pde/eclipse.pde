@@ -46,10 +46,6 @@ public class SkippedComponent implements IApiElement {
 		this.errors = errors;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SkippedComponent) {
@@ -58,10 +54,6 @@ public class SkippedComponent implements IApiElement {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return this.componentid.hashCode();

@@ -108,59 +108,31 @@ public class ApiProblem implements IApiProblem {
 		this.fMessageArguments = messageargs;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProblem#getId()
-	 */
 	@Override
 	public int getId() {
 		return fId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiProblem#getCategory()
-	 */
 	@Override
 	public int getCategory() {
 		return (fId & CATEGORY_MASK);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem#
-	 * getMessageid()
-	 */
 	@Override
 	public int getMessageid() {
 		return (fId & MESSAGE_MASK) >> OFFSET_MESSAGE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiProblem#getFlags()
-	 */
 	@Override
 	public int getFlags() {
 		return (fId & FLAGS_MASK) >> OFFSET_FLAGS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProblem#getKind()
-	 */
 	@Override
 	public int getKind() {
 		return (fId & KIND_MASK) >> OFFSET_KINDS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiProblem#getMessage()
-	 */
 	@Override
 	public String getMessage() {
 		if (fMessage == null) {
@@ -169,21 +141,11 @@ public class ApiProblem implements IApiProblem {
 		return fMessage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem#
-	 * getResourcePath()
-	 */
 	@Override
 	public String getResourcePath() {
 		return fResourcePath;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiProblem#getSeverity()
-	 */
 	@Override
 	public int getSeverity() {
 		if (ApiPlugin.isRunningInFramework()) {
@@ -192,52 +154,26 @@ public class ApiProblem implements IApiProblem {
 		return ApiPlugin.SEVERITY_WARNING;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiProblem#getElementKind
-	 * ()
-	 */
 	@Override
 	public int getElementKind() {
 		return (fId & ELEMENT_KIND_MASK) >> OFFSET_ELEMENT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem#
-	 * getLineNumber()
-	 */
 	@Override
 	public int getLineNumber() {
 		return fLineNumber;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem#
-	 * getCharStart()
-	 */
 	@Override
 	public int getCharStart() {
 		return fCharStart;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem#
-	 * getCharEnd()
-	 */
 	@Override
 	public int getCharEnd() {
 		return fCharEnd;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem#
-	 * getExtraMarkerAttributeNames()
-	 */
 	@Override
 	public String[] getExtraMarkerAttributeIds() {
 		if (fExtraArguments == null || fExtraArgumentIds == null) {
@@ -249,11 +185,6 @@ public class ApiProblem implements IApiProblem {
 		return fExtraArgumentIds;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem#
-	 * getExtraMarkerAttributeValues()
-	 */
 	@Override
 	public Object[] getExtraMarkerAttributeValues() {
 		if (fExtraArguments == null || fExtraArgumentIds == null) {
@@ -265,11 +196,6 @@ public class ApiProblem implements IApiProblem {
 		return fExtraArguments;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem#
-	 * getMessageArguments()
-	 */
 	@Override
 	public String[] getMessageArguments() {
 		if (fMessageArguments == null) {
@@ -347,10 +273,6 @@ public class ApiProblem implements IApiProblem {
 		return hashcode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -373,10 +295,6 @@ public class ApiProblem implements IApiProblem {
 		return buffer.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getId() + (fResourcePath != null ? fResourcePath.hashCode() : 0) + argumentsHashcode(fMessageArguments) + (fTypeName != null ? fTypeName.hashCode() : 0);

@@ -299,10 +299,6 @@ public final class ApiUseTask extends CommonUtilsTask {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.apache.tools.ant.Task#execute()
-	 */
 	@Override
 	public void execute() throws BuildException {
 		assertParameters();

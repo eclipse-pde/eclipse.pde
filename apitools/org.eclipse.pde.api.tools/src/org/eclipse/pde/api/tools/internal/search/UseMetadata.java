@@ -157,11 +157,6 @@ public class UseMetadata implements IMetadata {
 		this.runatdate = runatdate;
 		this.description = description;
 	}
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IMetadata#
-	 * serializeToFile(java.io.File)
-	 */
 	@Override
 	public void serializeToFile(File file) throws IOException, CoreException {
 		BufferedWriter writer = null;

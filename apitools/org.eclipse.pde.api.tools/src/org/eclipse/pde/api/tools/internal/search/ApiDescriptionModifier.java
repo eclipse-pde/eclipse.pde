@@ -95,14 +95,6 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#
-	 * visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.
-	 * IElementDescriptor,
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
-	 */
 	@Override
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		switch (element.getElementType()) {

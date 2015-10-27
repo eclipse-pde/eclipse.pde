@@ -163,12 +163,6 @@ public class BundleComponent extends Component {
 		fWorkspaceBinary = isBinary() && ApiBaselineManager.WORKSPACE_API_BASELINE_ID.equals(baseline.getName());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#dispose
-	 * ()
-	 */
 	@Override
 	public void dispose() {
 		try {
@@ -246,10 +240,6 @@ public class BundleComponent extends Component {
 		return manifest != null && (manifest.get(Constants.BUNDLE_NAME) != null && manifest.get(Constants.BUNDLE_VERSION) != null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof BundleComponent) {
@@ -259,10 +249,6 @@ public class BundleComponent extends Component {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getName().hashCode() + getSymbolicName().hashCode() + getVersion().hashCode();
@@ -375,12 +361,6 @@ public class BundleComponent extends Component {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiDescription
-	 * ()
-	 */
 	@Override
 	protected IApiDescription createApiDescription() throws CoreException {
 		BundleDescription[] fragments = getBundleDescription().getFragments();
@@ -549,12 +529,6 @@ public class BundleComponent extends Component {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiFilterStore
-	 * ()
-	 */
 	@Override
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
 		return new FilterStore(this);
@@ -942,12 +916,6 @@ public class BundleComponent extends Component {
 		return new URL(urlSt.toString());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.manifest.IApiComponent#getExecutionEnvironments
-	 * ()
-	 */
 	@Override
 	public synchronized String[] getExecutionEnvironments() throws CoreException {
 		if (fBundleDescription == null) {
@@ -956,21 +924,12 @@ public class BundleComponent extends Component {
 		return fBundleDescription.getExecutionEnvironments();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getSymbolicName()
-	 */
 	@Override
 	public final String getSymbolicName() {
 		init();
 		return fSymbolicName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.manifest.IApiComponent#getRequiredComponents()
-	 */
 	@Override
 	public synchronized IRequiredComponentDescription[] getRequiredComponents() throws CoreException {
 		if (fBundleDescription == null) {
@@ -985,10 +944,6 @@ public class BundleComponent extends Component {
 		return req;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getVersion()
-	 */
 	@Override
 	public synchronized String getVersion() {
 		init();
@@ -1017,10 +972,6 @@ public class BundleComponent extends Component {
 		return fBundleDescription;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		if (fBundleDescription != null) {
@@ -1046,31 +997,16 @@ public class BundleComponent extends Component {
 		return super.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IApiComponent#getLocation()
-	 */
 	@Override
 	public String getLocation() {
 		return fLocation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IApiComponent#isSystemComponent
-	 * ()
-	 */
 	@Override
 	public boolean isSystemComponent() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IApiComponent#isSourceComponent()
-	 */
 	@Override
 	public synchronized boolean isSourceComponent() throws CoreException {
 		Map<String, String> manifest = getManifest();
@@ -1146,10 +1082,6 @@ public class BundleComponent extends Component {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiComponent#isFragment()
-	 */
 	@Override
 	public synchronized boolean isFragment() throws CoreException {
 		init();
@@ -1159,10 +1091,6 @@ public class BundleComponent extends Component {
 		return fBundleDescription.getHost() != null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.Component#getHost()
-	 */
 	@Override
 	public synchronized IApiComponent getHost() throws CoreException {
 		init();
@@ -1176,10 +1104,6 @@ public class BundleComponent extends Component {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiComponent#hasFragments()
-	 */
 	@Override
 	public synchronized boolean hasFragments() throws CoreException {
 		return getBundleDescription().getFragments().length != 0;
@@ -1195,11 +1119,6 @@ public class BundleComponent extends Component {
 		fHasApiDescription = hasApiDescription;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#
-	 * hasApiDescription()
-	 */
 	@Override
 	public boolean hasApiDescription() {
 		// ensure initialized
@@ -1210,11 +1129,6 @@ public class BundleComponent extends Component {
 		return fHasApiDescription;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#
-	 * getLowestEEs()
-	 */
 	@Override
 	public String[] getLowestEEs() throws CoreException {
 		if (lowestEEs != null) {
@@ -1306,12 +1220,6 @@ public class BundleComponent extends Component {
 		return temp;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getErrors
-	 * ()
-	 */
 	@Override
 	public synchronized ResolverError[] getErrors() throws CoreException {
 		init();

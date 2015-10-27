@@ -202,11 +202,6 @@ public final class Util {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.
-		 * IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			synchronized (getClass()) {

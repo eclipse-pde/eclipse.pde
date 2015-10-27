@@ -117,12 +117,6 @@ public class IncrementalApiBuilder {
 			buildpathChanged = pathChanged;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse
-		 * .core.resources.IResourceDelta)
-		 */
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			switch (delta.getResource().getType()) {

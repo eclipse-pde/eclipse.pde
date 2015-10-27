@@ -40,12 +40,6 @@ public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl im
 		fParent = parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IMemberDescriptor#getEnclosingType
-	 * ()
-	 */
 	@Override
 	public IReferenceTypeDescriptor getEnclosingType() {
 		IElementDescriptor parent = getParent();
@@ -55,11 +49,6 @@ public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl im
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IMemberDescriptor#getPackage()
-	 */
 	@Override
 	public IPackageDescriptor getPackage() {
 		IElementDescriptor parent = getParent();
@@ -69,11 +58,6 @@ public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl im
 		return (IPackageDescriptor) parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor#getParent()
-	 */
 	@Override
 	public IElementDescriptor getParent() {
 		return fParent;

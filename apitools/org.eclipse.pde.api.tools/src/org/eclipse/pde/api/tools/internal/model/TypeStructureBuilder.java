@@ -59,11 +59,6 @@ public class TypeStructureBuilder extends ClassVisitor {
 		fFile = file;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassVisitor#visit(int, int, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.String[])
-	 */
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 		StringBuffer simpleSig = new StringBuffer();
@@ -96,11 +91,6 @@ public class TypeStructureBuilder extends ClassVisitor {
 		super.visit(version, laccess, name, signature, superName, interfaces);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassVisitor#visitInnerClass(java.lang.String,
-	 * java.lang.String, java.lang.String, int)
-	 */
 	@Override
 	public void visitInnerClass(String name, String outerName, String innerName, int access) {
 		super.visitInnerClass(name, outerName, innerName, access);
@@ -130,21 +120,11 @@ public class TypeStructureBuilder extends ClassVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassVisitor#visitOuterClass(java.lang.String,
-	 * java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void visitOuterClass(String owner, String name, String desc) {
 		fType.setEnclosingMethodInfo(name, desc);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassVisitor#visitField(int, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
 		int laccess = access;
@@ -156,11 +136,6 @@ public class TypeStructureBuilder extends ClassVisitor {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassVisitor#visitMethod(int, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.String[])
-	 */
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 		String[] names = null;
@@ -383,11 +358,6 @@ public class TypeStructureBuilder extends ClassVisitor {
 			super(mv, enclosingMethodSetter);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitFieldInsn(int,
-		 * java.lang.String, java.lang.String, java.lang.String)
-		 */
 		@Override
 		public void visitFieldInsn(int opcode, String owner, String name, String desc) {
 			super.visitFieldInsn(opcode, owner, name, desc);
@@ -420,10 +390,6 @@ public class TypeStructureBuilder extends ClassVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();

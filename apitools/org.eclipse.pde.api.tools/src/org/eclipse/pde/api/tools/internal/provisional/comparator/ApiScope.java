@@ -39,12 +39,6 @@ public class ApiScope implements IApiScope {
 	 */
 	ArrayList<IApiElement> elements;
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#accept
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor)
-	 */
 	@Override
 	public void accept(ApiScopeVisitor visitor) throws CoreException {
 		IApiElement[] elems = getApiElements();
@@ -82,12 +76,6 @@ public class ApiScope implements IApiScope {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#addElement
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IApiElement)
-	 */
 	@Override
 	public void addElement(IApiElement newelement) {
 		if (this.elements == null) {
@@ -96,12 +84,6 @@ public class ApiScope implements IApiScope {
 		this.elements.add(newelement);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#encloses
-	 * (org.eclipse.pde.api.tools.internal.provisional.model.IApiElement)
-	 */
 	@Override
 	public boolean encloses(IApiElement element) {
 		if (element != null) {
@@ -117,12 +99,6 @@ public class ApiScope implements IApiScope {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#getApiElement
-	 * ()
-	 */
 	@Override
 	public IApiElement[] getApiElements() {
 		if (this.elements == null || this.elements.size() == 0) {

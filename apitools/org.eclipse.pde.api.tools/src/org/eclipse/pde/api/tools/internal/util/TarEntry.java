@@ -53,10 +53,6 @@ public class TarEntry implements Cloneable {
 		this(name, -1);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Object clone() {
 		TarEntry entry = new TarEntry(this.name, this.filepos);

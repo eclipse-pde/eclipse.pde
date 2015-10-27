@@ -109,33 +109,17 @@ public class ProjectComponent extends BundleComponent {
 		this.fModel = model;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.model.ApiElement#setName(java.lang
-	 * .String)
-	 */
 	@Override
 	protected void setName(String newname) {
 		// Override to use the translated name from the plug-in model
 		super.setName(fModel.getResourceString(newname));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#isBinary()
-	 */
 	@Override
 	protected boolean isBinary() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.model.BundleComponent#getBundleDescription
-	 * (java.util.Map, java.lang.String, long)
-	 */
 	@Override
 	protected BundleDescription getBundleDescription(Map<String, String> manifest, String location, long id) throws BundleException {
 		try {
@@ -166,20 +150,11 @@ public class ProjectComponent extends BundleComponent {
 		return fModel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.model.BundleComponent#isApiEnabled()
-	 */
 	@Override
 	protected boolean isApiEnabled() {
 		return Util.isApiProject(fProject);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#dispose()
-	 */
 	@Override
 	public void dispose() {
 		try {
@@ -202,11 +177,6 @@ public class ProjectComponent extends BundleComponent {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#
-	 * createLocalApiDescription()
-	 */
 	@Override
 	protected IApiDescription createLocalApiDescription() throws CoreException {
 		long time = System.currentTimeMillis();
@@ -220,12 +190,6 @@ public class ProjectComponent extends BundleComponent {
 		return apiDesc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.model.BundleComponent#createApiFilterStore
-	 * ()
-	 */
 	@Override
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
 		long time = System.currentTimeMillis();
@@ -236,11 +200,6 @@ public class ProjectComponent extends BundleComponent {
 		return store;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#
-	 * createApiTypeContainers()
-	 */
 	@Override
 	protected synchronized List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 		// first populate build.properties cache so we can create class file
@@ -366,11 +325,6 @@ public class ProjectComponent extends BundleComponent {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#
-	 * createApiTypeContainer(java.lang.String)
-	 */
 	@Override
 	protected IApiTypeContainer createApiTypeContainer(String path) throws CoreException {
 		if (this.fPathToOutputContainers == null) {

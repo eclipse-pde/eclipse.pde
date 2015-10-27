@@ -31,28 +31,16 @@ public class ApiAnnotations implements IApiAnnotations {
 		this.bits = (visibility << OFFSET_VISIBILITY) | (restrictions << OFFSET_RESTRICTIONS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.IApiAnnotations#getRestrictions()
-	 */
 	@Override
 	public int getRestrictions() {
 		return (this.bits & RESTRICTIONS_MASK) >> OFFSET_RESTRICTIONS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.IApiAnnotations#getVisibility()
-	 */
 	@Override
 	public int getVisibility() {
 		return (this.bits & VISIBILITY_MASK) >> OFFSET_VISIBILITY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -63,10 +51,6 @@ public class ApiAnnotations implements IApiAnnotations {
 		return buffer.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ApiAnnotations) {
@@ -76,10 +60,6 @@ public class ApiAnnotations implements IApiAnnotations {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return this.bits;

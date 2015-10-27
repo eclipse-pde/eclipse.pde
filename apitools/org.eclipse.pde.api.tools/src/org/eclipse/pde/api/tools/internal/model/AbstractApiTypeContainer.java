@@ -49,12 +49,6 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		super(parent, type, name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#accept
-	 * (org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
-	 */
 	@Override
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		IApiTypeContainer[] containers = getApiTypeContainers();
@@ -63,11 +57,6 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#close()
-	 */
 	@Override
 	public synchronized void close() throws CoreException {
 		if (fApiTypeContainers == null) {
@@ -145,11 +134,6 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#
-	 * getPackageNames()
-	 */
 	@Override
 	public String[] getPackageNames() throws CoreException {
 		List<String> names = new ArrayList<>();
@@ -232,12 +216,6 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer
-	 * #getContainerType()
-	 */
 	@Override
 	public int getContainerType() {
 		return 0;

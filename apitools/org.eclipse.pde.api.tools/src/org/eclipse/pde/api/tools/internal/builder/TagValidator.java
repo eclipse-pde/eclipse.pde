@@ -109,12 +109,6 @@ public class TagValidator extends Validator {
 		return super.visit(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Javadoc
-	 * )
-	 */
 	@Override
 	public boolean visit(Javadoc node) {
 		if (!fScanTags) {

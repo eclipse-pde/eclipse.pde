@@ -131,11 +131,6 @@ public class MissingRefMetadata implements IMetadata {
 		return metadata;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IMetadata#
-	 * serializeToFile(java.io.File)
-	 */
 	@Override
 	public void serializeToFile(File file) throws IOException, CoreException {
 		BufferedWriter writer = null;

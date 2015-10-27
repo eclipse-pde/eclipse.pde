@@ -171,12 +171,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		job.schedule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#addFilters
-	 * (org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter[])
-	 */
 	@Override
 	public synchronized void addFilters(IApiProblemFilter[] filters) {
 		if (filters == null) {
@@ -219,12 +213,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		persistApiFilters();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#addFiltersFor
-	 * (org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem[])
-	 */
 	@Override
 	public synchronized void addFiltersFor(IApiProblem[] problems) {
 		if (problems == null) {
@@ -244,12 +232,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		persistApiFilters();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#getFilters
-	 * (org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	public synchronized IApiProblemFilter[] getFilters(IResource resource) {
 		initializeApiFilters();
@@ -265,12 +247,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		return allFilters.toArray(new IApiProblemFilter[allFilters.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#isFiltered
-	 * (org.eclipse.pde.api.tools.internal.provisional.IApiProblem)
-	 */
 	@Override
 	public synchronized boolean isFiltered(IApiProblem problem) {
 		initializeApiFilters();
@@ -309,11 +285,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// if the store is about to be disposed and has pending changes save
@@ -328,12 +299,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#getResources
-	 * ()
-	 */
 	@Override
 	public synchronized IResource[] getResources() {
 		initializeApiFilters();
@@ -341,12 +306,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		return resources.toArray(new IResource[resources.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#removeFilters
-	 * (org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter[])
-	 */
 	@Override
 	public synchronized boolean removeFilters(IApiProblemFilter[] filters) {
 		if (filters == null) {
@@ -524,11 +483,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		return Util.serializeDocument(document);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.FilterStore#initializeApiFilters()
-	 */
 	@Override
 	protected synchronized void initializeApiFilters() {
 		if (fFilterMap != null) {
@@ -572,13 +526,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		fNeedsSaving = false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.FilterStore#internalAddFilters(org
-	 * .eclipse.pde.api.tools.internal.provisional.problems.IApiProblem[],
-	 * java.lang.String[])
-	 */
 	@Override
 	protected synchronized void internalAddFilters(IApiProblem[] problems, String[] comments) {
 		Set<IApiProblemFilter> filters = null;
@@ -788,21 +735,11 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "API filter store for component: " + fProject.getElementName(); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org
-	 * .eclipse.core.resources.IResourceChangeEvent)
-	 */
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (fTriggeredChange) {

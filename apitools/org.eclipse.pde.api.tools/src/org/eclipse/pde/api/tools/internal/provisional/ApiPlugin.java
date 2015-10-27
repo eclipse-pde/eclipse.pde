@@ -523,12 +523,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core
-	 * .resources.ISaveContext)
-	 */
 	@Override
 	public void doneSaving(ISaveContext context) {
 		for (ISaveParticipant sp : savelisteners) {
@@ -536,12 +530,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse
-	 * .core.resources.ISaveContext)
-	 */
 	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
 		for (ISaveParticipant sp : savelisteners) {
@@ -549,12 +537,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core
-	 * .resources.ISaveContext)
-	 */
 	@Override
 	public void rollback(ISaveContext context) {
 		for (ISaveParticipant sp : savelisteners) {
@@ -562,12 +544,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources
-	 * .ISaveContext)
-	 */
 	@Override
 	public void saving(ISaveContext context) throws CoreException {
 		for (ISaveParticipant sp : savelisteners) {
@@ -583,11 +559,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		try {
@@ -706,11 +677,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		return result.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
@@ -856,12 +822,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		return fBundleContext.getService(reference);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org
-	 * .eclipse.osgi.service.debug.DebugOptions)
-	 */
 	@Override
 	public void optionsChanged(DebugOptions options) {
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);

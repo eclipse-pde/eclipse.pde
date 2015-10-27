@@ -154,11 +154,6 @@ public class ApiType extends ApiMember implements IApiType {
 		fStorage = storage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#
-	 * extractReferences(int, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public List<IReference> extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException {
 		HashSet<Reference> references = new HashSet<>();
@@ -168,12 +163,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return new LinkedList<>(references);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getField
-	 * (java.lang.String)
-	 */
 	@Override
 	public IApiField getField(String name) {
 		if (fFields != null) {
@@ -182,11 +171,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getFields()
-	 */
 	@Override
 	public IApiField[] getFields() {
 		if (fFields != null) {
@@ -195,11 +179,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return EMPTY_FIELDS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#
-	 * getPackageName()
-	 */
 	@Override
 	public String getPackageName() {
 		return getName().substring(0, getName().lastIndexOf('.'));
@@ -241,12 +220,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return field;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getMethod
-	 * (java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IApiMethod getMethod(String name, String signature) {
 		if (fMethods != null) {
@@ -255,12 +228,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getMethods
-	 * ()
-	 */
 	@Override
 	public IApiMethod[] getMethods() {
 		if (fMethods != null) {
@@ -269,11 +236,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return EMPTY_METHODS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#
-	 * getSuperInterfaceNames()
-	 */
 	@Override
 	public String[] getSuperInterfaceNames() {
 		return fSuperInterfaceNames;
@@ -283,11 +245,6 @@ public class ApiType extends ApiMember implements IApiType {
 		fSuperInterfaceNames = names;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#
-	 * getSuperInterfaces()
-	 */
 	@Override
 	public IApiType[] getSuperInterfaces() throws CoreException {
 		String[] names = getSuperInterfaceNames();
@@ -308,12 +265,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return fSuperInterfaces;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getSuperclass
-	 * ()
-	 */
 	@Override
 	public IApiType getSuperclass() throws CoreException {
 		String name = getSuperclassName();
@@ -362,11 +313,6 @@ public class ApiType extends ApiMember implements IApiType {
 		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Messages.ApiType_2));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#
-	 * getSuperclassName()
-	 */
 	@Override
 	public String getSuperclassName() {
 		return fSuperclassName;
@@ -380,44 +326,21 @@ public class ApiType extends ApiMember implements IApiType {
 		fSimpleName = simpleName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isAnnotation
-	 * ()
-	 */
 	@Override
 	public boolean isAnnotation() {
 		return (getModifiers() & Opcodes.ACC_ANNOTATION) != 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isAnonymous
-	 * ()
-	 */
 	@Override
 	public boolean isAnonymous() {
 		return fAnonymous;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isLocal()
-	 */
 	@Override
 	public boolean isLocal() {
 		return fLocal;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getTypeRoot
-	 * ()
-	 */
 	@Override
 	public IApiTypeRoot getTypeRoot() {
 		return fStorage;
@@ -463,11 +386,6 @@ public class ApiType extends ApiMember implements IApiType {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#
-	 * getEnclosingMethod()
-	 */
 	@Override
 	public IApiMethod getEnclosingMethod() {
 		if (fEnclosingMethod == null) {
@@ -493,54 +411,26 @@ public class ApiType extends ApiMember implements IApiType {
 		return fEnclosingMethod;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isClass()
-	 */
 	@Override
 	public boolean isClass() {
 		return (getModifiers() & (Opcodes.ACC_ANNOTATION | Opcodes.ACC_ENUM | Opcodes.ACC_INTERFACE)) == 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isEnum()
-	 */
 	@Override
 	public boolean isEnum() {
 		return (getModifiers() & Opcodes.ACC_ENUM) != 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isInterface
-	 * ()
-	 */
 	@Override
 	public boolean isInterface() {
 		return (getModifiers() & Opcodes.ACC_INTERFACE) != 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isMemberType
-	 * ()
-	 */
 	@Override
 	public boolean isMemberType() {
 		return fMemberType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getHandle
-	 * ()
-	 */
 	@Override
 	public IMemberDescriptor getHandle() {
 		if (fHandle == null) {
@@ -549,10 +439,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return fHandle;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiType) {
@@ -565,10 +451,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		IApiComponent component = getApiComponent();
@@ -593,12 +475,6 @@ public class ApiType extends ApiMember implements IApiType {
 		fMemberTypes.put(simpleName, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getMemberType
-	 * (java.lang.String)
-	 */
 	@Override
 	public IApiType getMemberType(String simpleName) throws CoreException {
 		if (fMemberTypes == null) {
@@ -627,12 +503,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getMemberTypes
-	 * ()
-	 */
 	@Override
 	public IApiType[] getMemberTypes() throws CoreException {
 		if (fMemberTypes == null) {
@@ -693,12 +563,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return String.valueOf(buffer);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getSimpleName
-	 * ()
-	 */
 	@Override
 	public String getSimpleName() {
 		if (this.isAnonymous()) {
@@ -715,11 +579,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.model.ApiMember#getEnclosingType()
-	 */
 	@Override
 	public IApiType getEnclosingType() throws CoreException {
 		if (fEnclosingType != null) {

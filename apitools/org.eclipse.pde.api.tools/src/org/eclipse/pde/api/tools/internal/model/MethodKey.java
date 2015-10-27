@@ -39,10 +39,6 @@ public class MethodKey {
 		fConsiderTypename = considertypename;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof MethodKey) {
@@ -52,10 +48,6 @@ public class MethodKey {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return (fConsiderTypename ? fTypename.hashCode() : 0) + fSelector.hashCode() + (fSig == null ? 0 : fSig.hashCode());
@@ -81,10 +73,6 @@ public class MethodKey {
 		return sig2 == null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();

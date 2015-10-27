@@ -76,10 +76,6 @@ public final class MissingRefProblemsReportConversionTask extends CommonUtilsTas
 		this.xmlReportsLocation = xmlFilesLocation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.apache.tools.ant.Task#execute()
-	 */
 	@Override
 	public void execute() throws BuildException {
 		if (this.xmlReportsLocation == null) {
