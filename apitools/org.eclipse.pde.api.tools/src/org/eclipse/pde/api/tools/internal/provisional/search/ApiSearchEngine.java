@@ -70,7 +70,7 @@ public final class ApiSearchEngine {
 			this.requestor = requestor;
 			this.reporter = reporter;
 			this.element = element;
-			this.monitor = (SubMonitor) monitor;
+			this.monitor = SubMonitor.convert(monitor);
 		}
 
 		@Override
@@ -101,9 +101,6 @@ public final class ApiSearchEngine {
 			}
 		}
 
-		/**
-		 * @see org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor#visit(org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent)
-		 */
 		@Override
 		public boolean visit(IApiComponent component) {
 			return requestor.acceptComponent(component);
@@ -138,13 +135,9 @@ public final class ApiSearchEngine {
 	List<IReference> getResolvedReferences(IApiSearchRequestor requestor, IApiType type, IProgressMonitor monitor) throws CoreException {
 		String name = type.getSimpleName() == null ? SearchMessages.ApiSearchEngine_anonymous_type : type.getSimpleName();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(SearchMessages.ApiSearchEngine_extracting_refs_from, name), 2);
-		try {
-			List<IReference> refs = type.extractReferences(requestor.getReferenceKinds(), localmonitor.split(1));
-			ReferenceResolver.resolveReferences(refs, localmonitor.split(1));
-			return refs;
-		} finally {
-			localmonitor.done();
-		}
+		List<IReference> refs = type.extractReferences(requestor.getReferenceKinds(), localmonitor.split(1));
+		ReferenceResolver.resolveReferences(refs, localmonitor.split(1));
+		return refs;
 	}
 
 	/**
@@ -163,24 +156,20 @@ public final class ApiSearchEngine {
 		IReference ref = null;
 		SubMonitor localmonitor = SubMonitor.convert(monitor, references.size());
 		IApiMember member = null;
-		try {
-			for (Iterator<IReference> iter = references.iterator(); iter.hasNext();) {
-				if (localmonitor.isCanceled()) {
-					return Collections.EMPTY_LIST;
-				}
-				ref = iter.next();
-				member = ref.getResolvedReference();
-				if (member == null) {
-					continue;
-				}
-				localmonitor.setTaskName(MessageFormat.format(SearchMessages.ApiSearchEngine_searching_for_use_from, fRequestorContext, type.getName()));
-				if (requestor.acceptReference(ref)) {
-					refs.add(ref);
-				}
-				localmonitor.worked(1);
+		for (Iterator<IReference> iter = references.iterator(); iter.hasNext();) {
+			if (localmonitor.isCanceled()) {
+				return Collections.EMPTY_LIST;
 			}
-		} finally {
-			localmonitor.done();
+			ref = iter.next();
+			member = ref.getResolvedReference();
+			if (member == null) {
+				continue;
+			}
+			localmonitor.setTaskName(MessageFormat.format(SearchMessages.ApiSearchEngine_searching_for_use_from, fRequestorContext, type.getName()));
+			if (requestor.acceptReference(ref)) {
+				refs.add(ref);
+			}
+			localmonitor.worked(1);
 		}
 		return refs;
 	}

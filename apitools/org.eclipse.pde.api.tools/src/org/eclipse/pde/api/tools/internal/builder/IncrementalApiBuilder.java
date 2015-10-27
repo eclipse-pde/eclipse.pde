@@ -254,9 +254,6 @@ public class IncrementalApiBuilder {
 				System.out.println("ApiAnalysisBuilder: Trapped OperationCanceledException"); //$NON-NLS-1$
 			}
 		} finally {
-			if (!localmonitor.isCanceled()) {
-				localmonitor.done();
-			}
 			this.context.dispose();
 		}
 	}
@@ -274,29 +271,23 @@ public class IncrementalApiBuilder {
 	 */
 	void build(final IProject project, final IApiBaseline baseline, final IApiBaseline wbaseline, final State state, BuildState buildstate, IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 6);
-		try {
-			Util.updateMonitor(localmonitor, 1);
-			localmonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, project.getName()));
-			Util.updateMonitor(localmonitor, 0);
-			if (this.context.hasTypes()) {
-				IPluginModelBase currentModel = this.builder.getCurrentModel();
-				if (currentModel != null) {
-					String id = currentModel.getBundleDescription().getSymbolicName();
-					IApiComponent comp = wbaseline.getApiComponent(id);
-					if (comp == null) {
-						return;
-					}
-					extClean(project, buildstate, localmonitor.split(1));
-					Util.updateMonitor(localmonitor, 1);
-					this.builder.getAnalyzer().analyzeComponent(buildstate, null, null, baseline, comp, this.context, localmonitor.split(1));
-					Util.updateMonitor(localmonitor, 1);
-					this.builder.createMarkers();
-					Util.updateMonitor(localmonitor, 1);
+		Util.updateMonitor(localmonitor, 1);
+		localmonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, project.getName()));
+		Util.updateMonitor(localmonitor, 0);
+		if (this.context.hasTypes()) {
+			IPluginModelBase currentModel = this.builder.getCurrentModel();
+			if (currentModel != null) {
+				String id = currentModel.getBundleDescription().getSymbolicName();
+				IApiComponent comp = wbaseline.getApiComponent(id);
+				if (comp == null) {
+					return;
 				}
-			}
-		} finally {
-			if (localmonitor != null) {
-				localmonitor.done();
+				extClean(project, buildstate, localmonitor.split(1));
+				Util.updateMonitor(localmonitor, 1);
+				this.builder.getAnalyzer().analyzeComponent(buildstate, null, null, baseline, comp, this.context, localmonitor.split(1));
+				Util.updateMonitor(localmonitor, 1);
+				this.builder.createMarkers();
+				Util.updateMonitor(localmonitor, 1);
 			}
 		}
 	}

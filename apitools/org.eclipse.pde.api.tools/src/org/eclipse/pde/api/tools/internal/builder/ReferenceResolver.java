@@ -64,9 +64,7 @@ public final class ReferenceResolver {
 				refs.add(ref);
 			}
 		}
-		if (monitor.isCanceled()) {
-			return;
-		}
+
 		long end = System.currentTimeMillis();
 		if (ApiPlugin.DEBUG_REFERENCE_RESOLVER) {
 			System.out.println("Reference resolver: split into " + methodDecls.size() + " method overrides and " + sigtoref.size() + " unique references (" + (end - start) + "ms)"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
@@ -98,9 +96,6 @@ public final class ReferenceResolver {
 	private static void resolveReferenceSets(Map<String, List<IReference>> map, IProgressMonitor monitor) throws CoreException {
 		IReference ref = null;
 		for (List<IReference> refs : map.values()) {
-			if (monitor.isCanceled()) {
-				return;
-			}
 			ref = refs.get(0);
 			((Reference) ref).resolve();
 			IApiMember resolved = ref.getResolvedReference();

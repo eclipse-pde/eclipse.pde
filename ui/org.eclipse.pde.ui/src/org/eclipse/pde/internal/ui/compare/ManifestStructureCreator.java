@@ -86,7 +86,7 @@ public class ManifestStructureCreator extends StructureCreator {
 
 		String id = "Manifest"; //$NON-NLS-1$
 		ManifestNode parent = new ManifestNode(root, 0, id, doc, 0, doc.getLength());
-		monitor = beginWork(monitor);
+		SubMonitor subMonitor = SubMonitor.convert(monitor).split(1);
 		StringBuffer headerBuffer = new StringBuffer();
 		int headerStart = 0;
 		while (true) {
@@ -115,18 +115,8 @@ public class ManifestStructureCreator extends StructureCreator {
 
 			headerStart = lineStart;
 			headerBuffer.replace(0, headerBuffer.length(), line);
-			worked(monitor);
+			subMonitor.worked(1);
 		}
-	}
-
-	private void worked(IProgressMonitor monitor) {
-		if (monitor.isCanceled())
-			throw new OperationCanceledException();
-		monitor.worked(1);
-	}
-
-	private IProgressMonitor beginWork(IProgressMonitor monitor) {
-		return SubMonitor.convert(monitor);
 	}
 
 	private void saveNode(DocumentRangeNode root, IDocument doc, String header, int start) {

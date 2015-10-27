@@ -260,7 +260,6 @@ public class ReferenceAnalyzer {
 			}
 			IApiProblem[] array = allProblems.toArray(new IApiProblem[allProblems.size()]);
 			localMonitor.worked(1);
-			localMonitor.done();
 			return array;
 		} finally {
 			// clean up

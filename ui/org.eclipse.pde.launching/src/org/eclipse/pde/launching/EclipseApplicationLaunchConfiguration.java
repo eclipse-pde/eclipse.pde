@@ -174,10 +174,11 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 
 		// clear config area, if necessary
-		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false)) {
 			CoreUtility.deleteContent(getConfigDir(configuration), subMon.split(25));
+		}
 
-		subMon.done();
+		subMon.setWorkRemaining(0);
 	}
 
 	@Override
