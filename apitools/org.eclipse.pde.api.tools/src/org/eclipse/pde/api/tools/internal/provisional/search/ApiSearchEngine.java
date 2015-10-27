@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,8 +136,8 @@ public final class ApiSearchEngine {
 	 * @throws CoreException
 	 */
 	List<IReference> getResolvedReferences(IApiSearchRequestor requestor, IApiType type, IProgressMonitor monitor) throws CoreException {
-		String name = type.getSimpleName();
-		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(SearchMessages.ApiSearchEngine_extracting_refs_from, new Object[] { (name == null ? SearchMessages.ApiSearchEngine_anonymous_type : name) }), 2);
+		String name = type.getSimpleName() == null ? SearchMessages.ApiSearchEngine_anonymous_type : type.getSimpleName();
+		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(SearchMessages.ApiSearchEngine_extracting_refs_from, name), 2);
 		try {
 			List<IReference> refs = type.extractReferences(requestor.getReferenceKinds(), localmonitor.split(1));
 			ReferenceResolver.resolveReferences(refs, localmonitor.split(1));
@@ -173,8 +173,7 @@ public final class ApiSearchEngine {
 				if (member == null) {
 					continue;
 				}
-				localmonitor.setTaskName(MessageFormat.format(SearchMessages.ApiSearchEngine_searching_for_use_from, new Object[] {
-						fRequestorContext, type.getName() }));
+				localmonitor.setTaskName(MessageFormat.format(SearchMessages.ApiSearchEngine_searching_for_use_from, fRequestorContext, type.getName()));
 				if (requestor.acceptReference(ref)) {
 					refs.add(ref);
 				}
@@ -270,7 +269,7 @@ public final class ApiSearchEngine {
 		AntFilterStore.filteredAPIProblems.clear();
 		fRequestorContext = computeContext(requestor);
 		IApiElement[] scopeelements = scope.getApiElements();
-		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(SearchMessages.ApiSearchEngine_searching_projects, new Object[] { fRequestorContext }), scopeelements.length * 2 + 1);
+		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(SearchMessages.ApiSearchEngine_searching_projects, fRequestorContext), scopeelements.length * 2 + 1);
 		try {
 			long start = System.currentTimeMillis();
 			long loopstart = 0;
@@ -278,9 +277,7 @@ public final class ApiSearchEngine {
 			MultiStatus mstatus = null;
 			for (int i = 0; i < scopeelements.length; i++) {
 				try {
-					taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project, new Object[] {
-							scopeelements[i].getApiComponent().getSymbolicName(),
-							fRequestorContext });
+					taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project, scopeelements[i].getApiComponent().getSymbolicName(), fRequestorContext);
 					localmonitor.setTaskName(taskname);
 					if (ApiPlugin.DEBUG_SEARCH_ENGINE) {
 						loopstart = System.currentTimeMillis();

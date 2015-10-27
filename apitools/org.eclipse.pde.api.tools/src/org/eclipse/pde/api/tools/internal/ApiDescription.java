@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -554,8 +554,7 @@ public class ApiDescription implements IApiDescription {
 			node.restrictions = restrictions;
 			return Status.OK_STATUS;
 		}
-		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND, MessageFormat.format("Failed to set API restriction: {0} not found in {1}", //$NON-NLS-1$
-				new Object[] { element.toString(), fOwningComponentId }), null);
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND, MessageFormat.format("Failed to set API restriction: {0} not found in {1}", element.toString(), fOwningComponentId), null); //$NON-NLS-1$
 	}
 
 	@Override
@@ -574,8 +573,7 @@ public class ApiDescription implements IApiDescription {
 			node.visibility = visibility;
 			return Status.OK_STATUS;
 		}
-		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND, MessageFormat.format("Failed to set API visibility: {0} not found in {1}", //$NON-NLS-1$
-				new Object[] { element.toString(), fOwningComponentId }), null);
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND, MessageFormat.format("Failed to set API visibility: {0} not found in {1}", element.toString(), fOwningComponentId), null);//$NON-NLS-1$
 	}
 
 	@Override

@@ -187,7 +187,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(eeDescription);
 			String profile = ee.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
 			initialize(ee);
-			fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_1, new Object[] { profile }));
+			fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_1, profile));
 		}
 		this.fLocation = location;
 	}
@@ -426,11 +426,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				Set<String> covered = new HashSet<>(VMsToEEs.get(bestFit));
 				missing.removeAll(covered);
 				if (missing.isEmpty()) {
-					fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_1, new Object[] { systemEE }));
+					fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_1, systemEE));
 				} else {
 					MultiStatus multi = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, CoreMessages.ApiBaseline_4, null);
 					for (String id : missing) {
-						multi.add(new Status(IStatus.WARNING, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_5, new Object[] { id })));
+						multi.add(new Status(IStatus.WARNING, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_5, id)));
 					}
 					fEEStatus = multi;
 				}

@@ -227,7 +227,7 @@ public class ClassFileComparator {
 	 */
 	protected void reportStatus(IStatus newstatus) {
 		if (this.status == null) {
-			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_0, new Object[] { this.type1.getName() });
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_0, this.type1.getName());
 			this.status = new MultiStatus(ApiPlugin.PLUGIN_ID, IStatus.ERROR, msg, null);
 		}
 		this.status.add(newstatus);
@@ -2182,9 +2182,7 @@ public class ClassFileComparator {
 		String packageName = Signatures.getPackageName(typeName);
 		IApiComponent[] components = baseline.resolvePackage(component, packageName);
 		if (components == null) {
-			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new Object[] {
-					packageName, baseline.getName(),
-					component.getSymbolicName() });
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, packageName, baseline.getName(), component.getSymbolicName());
 			if (ApiPlugin.DEBUG_CLASSFILE_COMPARATOR) {
 				System.err.println("TYPE LOOKUP: " + msg); //$NON-NLS-1$
 			}
@@ -2193,8 +2191,7 @@ public class ClassFileComparator {
 		}
 		IApiTypeRoot result = Util.getClassFile(components, typeName);
 		if (result == null) {
-			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new Object[] {
-					typeName, baseline.getName(), component.getSymbolicName() });
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, typeName, baseline.getName(), component.getSymbolicName());
 			if (ApiPlugin.DEBUG_CLASSFILE_COMPARATOR) {
 				System.err.println("TYPE LOOKUP: " + msg); //$NON-NLS-1$
 			}

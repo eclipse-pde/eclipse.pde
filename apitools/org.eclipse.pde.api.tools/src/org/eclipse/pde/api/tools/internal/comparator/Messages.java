@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class Messages extends NLS {
 		Integer key = new Integer(getKey(delta));
 		String message = fMessages.get(key);
 		if (message == null) {
-			return MessageFormat.format(Messages.problem_message_not_found, new Object[] { String.valueOf(key) });
+			return MessageFormat.format(Messages.problem_message_not_found, String.valueOf(key));
 		}
 		String[] arguments = delta.getArguments();
 		if (arguments.length != 0) {

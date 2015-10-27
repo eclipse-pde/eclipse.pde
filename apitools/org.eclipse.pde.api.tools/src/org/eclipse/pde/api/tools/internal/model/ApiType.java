@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -256,8 +256,7 @@ public class ApiType extends ApiMember implements IApiType {
 			for (int i = 0; i < interfaces.length; i++) {
 				interfaces[i] = resolveType(names[i]);
 				if (interfaces[i] == null) {
-					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_RESOLUTION_ERRORS, MessageFormat.format(Messages.ApiType_0, new Object[] {
-							names[i], getName() }), null));
+					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_RESOLUTION_ERRORS, MessageFormat.format(Messages.ApiType_0, names[i], getName()), null));
 				}
 			}
 			fSuperInterfaces = interfaces;
@@ -274,8 +273,7 @@ public class ApiType extends ApiMember implements IApiType {
 		if (fSuperclass == null) {
 			fSuperclass = resolveType(name);
 			if (fSuperclass == null) {
-				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_RESOLUTION_ERRORS, MessageFormat.format(Messages.ApiType_1, new Object[] {
-						name, getName() }), null));
+				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_RESOLUTION_ERRORS, MessageFormat.format(Messages.ApiType_1, name, getName()), null));
 			}
 		}
 		return fSuperclass;
@@ -493,8 +491,7 @@ public class ApiType extends ApiMember implements IApiType {
 				qName.append(simpleName);
 				file = getApiComponent().findTypeRoot(qName.toString());
 				if (file == null) {
-					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format(Messages.ApiType_3, new Object[] {
-							simpleName, getName() })));
+					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format(Messages.ApiType_3, simpleName, getName())));
 				}
 				fMemberTypes.put(simpleName, file);
 			}

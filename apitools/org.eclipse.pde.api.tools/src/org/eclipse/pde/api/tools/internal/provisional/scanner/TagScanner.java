@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -613,12 +613,12 @@ public class TagScanner {
 			inputStream = source.getInputStream();
 			parser.setSource(Util.getInputStreamAsCharArray(inputStream, -1, source.getEncoding()));
 		} catch (FileNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Compilation unit source not found: {0}", new Object[] { source.getName() }), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Compilation unit source not found: {0}", source.getName()), e)); //$NON-NLS-1$
 		} catch (IOException e) {
 			if (ApiPlugin.DEBUG_TAG_SCANNER) {
 				System.err.println(source.getName());
 			}
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Error reading compilation unit: {0}", new Object[] { source.getName() }), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Error reading compilation unit: {0}", source.getName()), e)); //$NON-NLS-1$
 		} finally {
 			if (inputStream != null) {
 				try {

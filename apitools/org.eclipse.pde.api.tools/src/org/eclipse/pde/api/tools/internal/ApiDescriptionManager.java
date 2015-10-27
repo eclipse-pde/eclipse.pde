@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,7 +243,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 					Util.saveFile(new File(dir, IApiCoreConstants.API_DESCRIPTION_XML_NAME), xml);
 					desc.setModified(false);
 				} catch (IOException e) {
-					abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_0, new Object[] { project.getElementName() }), e);
+					abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_0, project.getElementName()), e);
 				}
 			}
 		}
@@ -279,7 +279,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 					return true;
 				}
 			} catch (IOException e) {
-				abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_1, new Object[] { project.getElementName() }), e);
+				abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_1, project.getElementName()), e);
 			} finally {
 				if (stream != null) {
 					try {

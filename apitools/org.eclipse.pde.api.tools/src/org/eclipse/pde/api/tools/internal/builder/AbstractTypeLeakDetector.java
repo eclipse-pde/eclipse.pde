@@ -84,7 +84,7 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 				if (isEnclosingTypeVisible(member)) {
 					// this is an unexpected condition - the enclosing type is
 					// visible, but it has no annotations - log an error
-					ApiPlugin.log(new Status(IStatus.INFO, ApiPlugin.PLUGIN_ID, MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, new Object[] { member.getName() })));
+					ApiPlugin.log(new Status(IStatus.INFO, ApiPlugin.PLUGIN_ID, MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, member.getName())));
 				} else {
 					// enclosing type is not visible - this is a problem
 					return true;

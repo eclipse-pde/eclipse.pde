@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -213,7 +213,7 @@ public class Factory {
 					}
 				}
 			}
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Unable to resolve method signature: {0}", new Object[] { descriptor.toString() }), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Unable to resolve method signature: {0}", descriptor.toString()), null)); //$NON-NLS-1$
 		}
 		return descriptor;
 	}

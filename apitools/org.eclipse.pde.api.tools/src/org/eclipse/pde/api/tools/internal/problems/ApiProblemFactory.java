@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -414,7 +414,7 @@ public class ApiProblemFactory {
 		}
 		String pattern = fMessages.get(new Integer(messageid));
 		if (pattern == null) {
-			return MessageFormat.format(BuilderMessages.ApiProblemFactory_problem_message_not_found, new Object[] { Integer.toString(messageid) });
+			return MessageFormat.format(BuilderMessages.ApiProblemFactory_problem_message_not_found, Integer.toString(messageid));
 		}
 		if (messageid == TYPE_CONVERSION_ID) {
 			MessageFormat messageFormat = new MessageFormat(pattern);

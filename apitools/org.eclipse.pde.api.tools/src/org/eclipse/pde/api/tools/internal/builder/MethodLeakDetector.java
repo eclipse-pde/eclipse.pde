@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,7 +95,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 				if (isEnclosingTypeVisible(type)) {
 					// this is an unexpected condition - the enclosing type is
 					// visible, but it has no annotations - log an error
-					ApiPlugin.log(new Status(IStatus.INFO, ApiPlugin.PLUGIN_ID, MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, new Object[] { type.getName() })));
+					ApiPlugin.log(new Status(IStatus.INFO, ApiPlugin.PLUGIN_ID, MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, type.getName())));
 				} else {
 					// enclosing type is not visible - this is a problem
 					return true;
