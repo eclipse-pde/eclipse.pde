@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -232,13 +232,12 @@ public class AnalysisReportConversionTask extends Task {
 		@Override
 		public String toString() {
 			return MessageFormat.format("{0} : compatibility {1}, api usage {2}, bundle version {3}, resolution {4}, link {5}", //$NON-NLS-1$
-					new Object[] {
 							this.componentID,
 							Integer.toString(this.compatibilityNumber),
 							Integer.toString(this.apiUsageNumber),
 							Integer.toString(this.bundleVersionNumber),
 							Integer.toString(this.componentResolutionNumber),
-							this.link });
+							this.link );
 		}
 	}
 
@@ -256,22 +255,22 @@ public class AnalysisReportConversionTask extends Task {
 	}
 
 	private void dumpHeader(PrintWriter writer, Report report) {
-		writer.println(MessageFormat.format(Messages.fullReportTask_apiproblemheader, new Object[] { report.componentID }));
+		writer.println(MessageFormat.format(Messages.fullReportTask_apiproblemheader, report.componentID));
 
 		// dump the summary
-		writer.println(MessageFormat.format(Messages.fullReportTask_apiproblemsummary, new Object[] {
+		writer.println(MessageFormat.format(Messages.fullReportTask_apiproblemsummary,
 				Integer.toString(report.getProblemSize(APIToolsAnalysisTask.COMPATIBILITY)),
 				Integer.toString(report.getProblemSize(APIToolsAnalysisTask.USAGE)),
-				Integer.toString(report.getProblemSize(APIToolsAnalysisTask.BUNDLE_VERSION)), }));
+				Integer.toString(report.getProblemSize(APIToolsAnalysisTask.BUNDLE_VERSION))));
 
 		if (report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION) == 1) {
-			writer.println(MessageFormat.format(Messages.fullReportTask_resolutiondetailsSingle, new Object[] {
+			writer.println(MessageFormat.format(Messages.fullReportTask_resolutiondetailsSingle,
 					report.componentID,
-					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION)) }));
+					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION))));
 		} else if (report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION) > 1) {
-			writer.println(MessageFormat.format(Messages.fullReportTask_resolutiondetails, new Object[] {
+			writer.println(MessageFormat.format(Messages.fullReportTask_resolutiondetails,
 					report.componentID,
-					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION)) }));
+					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION))));
 		}
 	}
 
@@ -280,29 +279,29 @@ public class AnalysisReportConversionTask extends Task {
 			System.out.println(summary);
 		}
 		if ((i % 2) == 0) {
-			writer.println(MessageFormat.format(Messages.fullReportTask_indexsummary_even, new Object[] {
+			writer.println(MessageFormat.format(Messages.fullReportTask_indexsummary_even,
 					summary.componentID,
 					Integer.toString(summary.compatibilityNumber),
 					Integer.toString(summary.apiUsageNumber),
 					Integer.toString(summary.bundleVersionNumber),
-					summary.link, }));
+					summary.link));
 		} else {
-			writer.println(MessageFormat.format(Messages.fullReportTask_indexsummary_odd, new Object[] {
+			writer.println(MessageFormat.format(Messages.fullReportTask_indexsummary_odd,
 					summary.componentID,
 					Integer.toString(summary.compatibilityNumber),
 					Integer.toString(summary.apiUsageNumber),
 					Integer.toString(summary.bundleVersionNumber),
-					summary.link, }));
+					summary.link));
 		}
 		if (summary.componentResolutionNumber > 0) {
 			if ((i % 2) == 0) {
-				writer.println(MessageFormat.format(Messages.fullReportTask_resolutionsummary_even, new Object[] {
+				writer.println(MessageFormat.format(Messages.fullReportTask_resolutionsummary_even,
 						summary.componentID,
-						Integer.toString(summary.componentResolutionNumber) }));
+						Integer.toString(summary.componentResolutionNumber) ));
 			} else {
-				writer.println(MessageFormat.format(Messages.fullReportTask_resolutionsummary_odd, new Object[] {
+				writer.println(MessageFormat.format(Messages.fullReportTask_resolutionsummary_odd,
 						summary.componentID,
-						Integer.toString(summary.componentResolutionNumber) }));
+						Integer.toString(summary.componentResolutionNumber) ));
 			}
 		}
 	}
@@ -321,9 +320,9 @@ public class AnalysisReportConversionTask extends Task {
 			FileWriter fileWriter = new FileWriter(htmlFile);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
 			if (allNonApiBundleSummary != null) {
-				writer.println(MessageFormat.format(Messages.fullReportTask_indexheader, new Object[] { NLS.bind(Messages.fullReportTask_nonApiBundleSummary, allNonApiBundleSummary.link) }));
+				writer.println(MessageFormat.format(Messages.fullReportTask_indexheader, NLS.bind(Messages.fullReportTask_nonApiBundleSummary, allNonApiBundleSummary.link)));
 			} else {
-				writer.println(MessageFormat.format(Messages.fullReportTask_indexheader, new Object[] { Messages.fullReportTask_apiBundleSummary }));
+				writer.println(MessageFormat.format(Messages.fullReportTask_indexheader, Messages.fullReportTask_apiBundleSummary));
 			}
 			Arrays.sort(summaries, new Comparator<Object>() {
 				@Override
@@ -353,9 +352,9 @@ public class AnalysisReportConversionTask extends Task {
 		for (int i = 0; i < nonApiBundleNames.length; i++) {
 			String bundleName = nonApiBundleNames[i];
 			if ((i % 2) == 0) {
-				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_even, new Object[] { bundleName }));
+				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_even, bundleName));
 			} else {
-				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_odd, new Object[] { bundleName }));
+				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_odd, bundleName));
 			}
 		}
 		writer.println(Messages.fullReportTask_bundlesfooter);
@@ -363,16 +362,16 @@ public class AnalysisReportConversionTask extends Task {
 
 	private void dumpProblems(PrintWriter writer, String categoryName, Problem[] problems, boolean printEmptyCategory) {
 		if (problems != null && problems.length != 0) {
-			writer.println(MessageFormat.format(Messages.fullReportTask_categoryheader, new Object[] { categoryName }));
+			writer.println(MessageFormat.format(Messages.fullReportTask_categoryheader, categoryName));
 			for (int i = 0, max = problems.length; i < max; i++) {
 				Problem problem = problems[i];
 				if ((i % 2) == 0) {
 					switch (problem.severity) {
 						case ApiPlugin.SEVERITY_ERROR:
-							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even_error, new Object[] { problem.getHtmlMessage() }));
+							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even_error, problem.getHtmlMessage()));
 							break;
 						case ApiPlugin.SEVERITY_WARNING:
-							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even_warning, new Object[] { problem.getHtmlMessage() }));
+							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even_warning, problem.getHtmlMessage()));
 							break;
 						default:
 							break;
@@ -380,10 +379,10 @@ public class AnalysisReportConversionTask extends Task {
 				} else {
 					switch (problem.severity) {
 						case ApiPlugin.SEVERITY_ERROR:
-							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd_error, new Object[] { problem.getHtmlMessage() }));
+							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd_error, problem.getHtmlMessage()));
 							break;
 						case ApiPlugin.SEVERITY_WARNING:
-							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd_warning, new Object[] { problem.getHtmlMessage() }));
+							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd_warning, problem.getHtmlMessage()));
 							break;
 						default:
 							break;
@@ -392,7 +391,7 @@ public class AnalysisReportConversionTask extends Task {
 			}
 			writer.println(Messages.fullReportTask_categoryfooter);
 		} else if (printEmptyCategory) {
-			writer.println(MessageFormat.format(Messages.fullReportTask_category_no_elements, new Object[] { categoryName }));
+			writer.println(MessageFormat.format(Messages.fullReportTask_category_no_elements, categoryName));
 		}
 	}
 
