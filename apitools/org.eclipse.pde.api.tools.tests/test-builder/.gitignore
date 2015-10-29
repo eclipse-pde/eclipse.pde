@@ -3,5 +3,5 @@
 /leakprojects/*/bin/
 /mergesplit/*/*/*/bin/
 /tagprojects/*/bin/
-/usageproject/bin/
-/usageprojects/*/bin/
+/usageproject*/bin/
+/usageprojects*/*/bin/
