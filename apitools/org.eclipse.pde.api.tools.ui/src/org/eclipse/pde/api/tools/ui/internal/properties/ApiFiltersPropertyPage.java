@@ -519,7 +519,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 			if (needsbuild) {
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				if (!workspace.isAutoBuilding()) {
-					if (MessageDialog.openQuestion(getShell(), PropertiesMessages.ApiFiltersPropertyPage_58, MessageFormat.format(PropertiesMessages.ApiFiltersPropertyPage_59, new Object[] { fProject.getName() }))) {
+					if (MessageDialog.openQuestion(getShell(), PropertiesMessages.ApiFiltersPropertyPage_58, MessageFormat.format(PropertiesMessages.ApiFiltersPropertyPage_59, fProject.getName()))) {
 						Util.getBuildJob(new IProject[] { fProject }, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 					}
 				}
