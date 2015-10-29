@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public class ApiUseScanJob extends Job {
 	 * @param name
 	 */
 	public ApiUseScanJob(ILaunchConfiguration configuration) {
-		super(MessageFormat.format(Messages.ApiUseScanJob_api_use_report, new Object[] { configuration.getName() }));
+		super(MessageFormat.format(Messages.ApiUseScanJob_api_use_report, configuration.getName()));
 		this.configuration = configuration;
 	}
 
@@ -226,7 +226,7 @@ public class ApiUseScanJob extends Job {
 				}
 				IApiBaseline baseline = bmanager.getApiBaseline(name);
 				if (baseline == null) {
-					abort(MessageFormat.format(Messages.ApiUseScanJob_baseline_does_not_exist, new Object[] { name }));
+					abort(MessageFormat.format(Messages.ApiUseScanJob_baseline_does_not_exist, name));
 				}
 				return baseline;
 			case ApiUseLaunchDelegate.KIND_INSTALL_PATH:
@@ -236,7 +236,7 @@ public class ApiUseScanJob extends Job {
 				}
 				File file = new File(path);
 				if (!file.exists() || !file.isDirectory()) {
-					abort(MessageFormat.format(Messages.ApiUseScanJob_intall_dir_does_no_exist, new Object[] { path }));
+					abort(MessageFormat.format(Messages.ApiUseScanJob_intall_dir_does_no_exist, path));
 				}
 				return createBaseline(path, monitor);
 			case ApiUseLaunchDelegate.KIND_TARGET_DEFINITION:
@@ -487,7 +487,7 @@ public class ApiUseScanJob extends Job {
 		IApiBaseline baseline = ApiModelFactory.newApiBaseline(this.configuration.getName());
 		IApiComponent[] components = ApiModelFactory.addComponents(baseline, installLocation, localmonitor);
 		if (components.length == 0) {
-			abort(MessageFormat.format(Messages.ApiUseScanJob_no_bundles, new Object[] { installLocation }));
+			abort(MessageFormat.format(Messages.ApiUseScanJob_no_bundles, installLocation));
 		}
 		return baseline;
 	}
