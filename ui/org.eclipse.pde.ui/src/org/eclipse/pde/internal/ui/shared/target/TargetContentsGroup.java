@@ -954,7 +954,7 @@ public class TargetContentsGroup {
 		fSelectRequiredButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() > 0 && fTree.getCheckedLeafCount() != total);
 
 		if (fTargetDefinition != null) {
-			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new Object[] {Integer.toString(fTree.getCheckedLeafCount()), Integer.toString(total)}));
+			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, Integer.toString(fTree.getCheckedLeafCount()), Integer.toString(total)));
 		} else {
 			fCountLabel.setText(""); //$NON-NLS-1$
 		}

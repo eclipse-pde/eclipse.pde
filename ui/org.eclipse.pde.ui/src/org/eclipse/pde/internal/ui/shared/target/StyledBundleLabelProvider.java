@@ -214,7 +214,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		String bundleCountString = Integer.toString(bundleCount);
 
 		styledString.append(' ');
-		styledString.append(MessageFormat.format(Messages.BundleContainerTable_10, new Object[] {bundleCountString}), StyledString.COUNTER_STYLER);
+		styledString.append(MessageFormat.format(Messages.BundleContainerTable_10, bundleCountString), StyledString.COUNTER_STYLER);
 	}
 
 	/**
