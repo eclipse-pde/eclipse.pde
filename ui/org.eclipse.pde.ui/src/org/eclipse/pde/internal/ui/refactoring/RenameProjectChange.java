@@ -59,7 +59,7 @@ public final class RenameProjectChange extends Change {
 
 	@Override
 	public String getName() {
-		return MessageFormat.format(PDEUIMessages.RenameProjectChange_name, new Object[] {fResourcePath.lastSegment(), fNewName});
+		return MessageFormat.format(PDEUIMessages.RenameProjectChange_name, fResourcePath.lastSegment(), fNewName);
 	}
 
 	public String getNewName() {
@@ -74,9 +74,9 @@ public final class RenameProjectChange extends Change {
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		IResource resource = getResource();
 		if (resource == null || !resource.exists())
-			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_projectDoesNotExist, new Object[] {fResourcePath.toString()}));
+			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_projectDoesNotExist, fResourcePath.toString()));
 		if (ResourcesPlugin.getWorkspace().getRoot().getProject(fNewName).exists())
-			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_destinationExists, new Object[] {fNewName}));
+			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_destinationExists, fNewName));
 		return new RefactoringStatus();
 	}
 
