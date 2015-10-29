@@ -79,14 +79,14 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 		} else {
 			IJavaElement element = resolveElementFromMarker();
 			if (element != null) {
-				return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new Object[] {
+				return MessageFormat.format(MarkerMessages.FilterProblemResolution_0,
 						JavaElementLabels.getTextLabel(element, JavaElementLabels.M_PARAMETER_TYPES),
-						resolveCategoryName() });
+						resolveCategoryName() );
 			} else {
 				IResource res = fBackingMarker.getResource();
-				return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new Object[] {
+				return MessageFormat.format(MarkerMessages.FilterProblemResolution_0,
 						res.getFullPath().removeFileExtension().lastSegment(),
-						resolveCategoryName() });
+						resolveCategoryName() );
 			}
 		}
 	}

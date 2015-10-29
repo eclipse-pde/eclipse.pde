@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class UpdateProjectSettingResolution implements IMarkerResolution2 {
 
 	@Override
 	public String getLabel() {
-		return MessageFormat.format(MarkerMessages.UpdateProjectSettingsResolution_0, new Object[] { PreferenceMessages.ReportApiComponentResolutionFailureDescription });
+		return MessageFormat.format(MarkerMessages.UpdateProjectSettingsResolution_0, PreferenceMessages.ReportApiComponentResolutionFailureDescription );
 	}
 
 	/**
