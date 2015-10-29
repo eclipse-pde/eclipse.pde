@@ -161,9 +161,9 @@ public class JavaResolutionFactory {
 		@Override
 		public String getName() {
 			if (!isUndo()) {
-				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_0, new Object[] {((ExportPackageDescription) getChangeObject()).getExporter().getName()});
+				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_0, ((ExportPackageDescription) getChangeObject()).getExporter().getName());
 			}
-			return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_1, new Object[] {((ExportPackageDescription) getChangeObject()).getExporter().getName()});
+			return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_1, ((ExportPackageDescription) getChangeObject()).getExporter().getName());
 		}
 
 		@Override
@@ -237,9 +237,9 @@ public class JavaResolutionFactory {
 		@Override
 		public String getName() {
 			if (!isUndo()) {
-				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_3, new Object[] {((ExportPackageDescription) getChangeObject()).getName()});
+				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_3, ((ExportPackageDescription) getChangeObject()).getName());
 			}
-			return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_4, new Object[] {((ExportPackageDescription) getChangeObject()).getName()});
+			return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_4, ((ExportPackageDescription) getChangeObject()).getName());
 		}
 
 		@Override
