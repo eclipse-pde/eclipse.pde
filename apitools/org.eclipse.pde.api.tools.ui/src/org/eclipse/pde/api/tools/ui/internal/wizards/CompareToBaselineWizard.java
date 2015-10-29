@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 /**
  * The wizard for comparing a selected set of projects against a selected
  * {@link IApiBaseline}
- * 
+ *
  * @since 1.0.100
  */
 public class CompareToBaselineWizard extends Wizard {
@@ -26,7 +26,7 @@ public class CompareToBaselineWizard extends Wizard {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param selection
 	 * @param title
 	 */

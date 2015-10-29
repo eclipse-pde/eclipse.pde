@@ -42,7 +42,7 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 /**
  * Resolution that removes the selected
  * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter}
- * 
+ *
  * @since 1.0.0
  */
 public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
@@ -56,7 +56,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param filter the original associated problem filter
 	 * @param marker the original marker this quick fix was opened on
 	 */

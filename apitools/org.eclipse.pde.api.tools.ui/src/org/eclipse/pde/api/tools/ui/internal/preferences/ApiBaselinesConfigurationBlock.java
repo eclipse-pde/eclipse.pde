@@ -44,7 +44,7 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * This block is used to add the API Tools profile notification settings UI to a
  * parent control
- * 
+ *
  * @since 1.0.0
  */
 public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
@@ -57,7 +57,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param key
 		 * @param values
 		 */
@@ -102,7 +102,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param qualifier
 		 * @param key
 		 */
@@ -114,7 +114,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		/**
 		 * Returns the {@link IEclipsePreferences} node for the given context
 		 * and {@link IWorkingCopyManager}
-		 * 
+		 *
 		 * @param context
 		 * @param manager
 		 * @return the {@link IEclipsePreferences} node or <code>null</code>
@@ -130,7 +130,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		/**
 		 * Returns the value stored in the {@link IEclipsePreferences} node from
 		 * the given context and working copy manager
-		 * 
+		 *
 		 * @param context
 		 * @param manager
 		 * @return the value from the {@link IEclipsePreferences} node or
@@ -147,7 +147,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		/**
 		 * Returns the stored value of this {@link IEclipsePreferences} node
 		 * using a given lookup order, and allowing the top scope to be ignored
-		 * 
+		 *
 		 * @param lookupOrder
 		 * @param ignoreTopScope
 		 * @param manager
@@ -166,7 +166,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Sets the value of this key
-		 * 
+		 *
 		 * @param context
 		 * @param value
 		 * @param manager
@@ -188,7 +188,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Returns a new {@link Key} for the {@link ApiUIPlugin} preference store
-	 * 
+	 *
 	 * @param key
 	 * @return the new {@link Key} for the {@link ApiUIPlugin} preference store
 	 */
@@ -269,7 +269,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param project
 	 */
 	public ApiBaselinesConfigurationBlock(IWorkbenchPreferenceContainer container) {
@@ -284,7 +284,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates the control in the parent control
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @param page
 	 */
@@ -381,7 +381,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Creates a {@link Label} | {@link Combo} control. The combo is initialised
 	 * from the given {@link Key}
-	 * 
+	 *
 	 * @param parent
 	 * @param label
 	 * @param key
@@ -405,7 +405,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Collects the keys that have changed on the page into the specified list
-	 * 
+	 *
 	 * @param changes the {@link List} to collect changed keys into
 	 */
 	private void collectChanges(IScopeContext context, List<Key> changes) {

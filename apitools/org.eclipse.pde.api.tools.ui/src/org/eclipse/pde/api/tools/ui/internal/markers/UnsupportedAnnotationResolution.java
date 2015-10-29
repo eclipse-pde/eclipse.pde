@@ -24,7 +24,7 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
  * Default resolution for unsupported annotations
- * 
+ *
  * @since 1.0.500
  */
 public class UnsupportedAnnotationResolution extends WorkbenchMarkerResolution {
@@ -34,7 +34,7 @@ public class UnsupportedAnnotationResolution extends WorkbenchMarkerResolution {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param marker the backing marker to resolve
 	 */
 	public UnsupportedAnnotationResolution(IMarker marker) {

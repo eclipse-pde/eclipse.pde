@@ -52,7 +52,7 @@ import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 /**
  * A dialog for selecting a project to configure project specific settings for
- * 
+ *
  * @since 1.0.0
  */
 public class ProjectSelectionDialog extends SelectionStatusDialog {
@@ -98,7 +98,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parentShell
 	 * @param projectsWithSpecifics
 	 */
@@ -184,7 +184,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	/**
 	 * Handles the change in selection of the viewer and updates the status of
 	 * the dialog at the same time
-	 * 
+	 *
 	 * @param objects
 	 */
 	void doSelectionChanged(Object[] objects) {
@@ -200,7 +200,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	/**
 	 * Updates the viewer filter based on the selection of the 'show project
 	 * with...' button
-	 * 
+	 *
 	 * @param selected
 	 */
 	protected void updateFilter(boolean selected) {

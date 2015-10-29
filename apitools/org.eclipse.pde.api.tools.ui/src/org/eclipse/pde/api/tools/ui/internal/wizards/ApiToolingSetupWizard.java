@@ -16,7 +16,7 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 /**
  * Wizard for updating the Javadoc tags of a java project using the
  * component.xml file for the project
- * 
+ *
  * @since 1.0.0
  */
 public class ApiToolingSetupWizard extends RefactoringWizard {

@@ -73,7 +73,7 @@ import org.eclipse.jdt.ui.text.java.IQuickFixProcessor;
 
 /**
  * Default quick fix processor for API tools
- * 
+ *
  * @since 1.0.500
  */
 public class ApiQuickFixProcessor implements IQuickFixProcessor {
@@ -179,7 +179,7 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 	/**
 	 * Creates the set of changes to update the compilation unit to use API
 	 * Tools annotations
-	 * 
+	 *
 	 * @param unit
 	 * @param qualifiedname
 	 * @return the {@link Change}, never <code>null</code>
@@ -200,7 +200,7 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 	/**
 	 * Create the {@link Change} object for adding / updating the
 	 * build.properties file as needed
-	 * 
+	 *
 	 * @param build
 	 * @return the {@link Change} object, never <code>null</code>
 	 * @throws CoreException
@@ -277,7 +277,7 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 
 	/**
 	 * Creates a new {@link Change}
-	 * 
+	 *
 	 * @param cu
 	 * @param fullyQualifiedName
 	 * @return

@@ -20,7 +20,7 @@ import org.eclipse.pde.api.tools.ui.internal.wizards.JavadocConversionWizard;
 
 /**
  * Default handler for the convert Javadoc command
- * 
+ *
  * @since 1.0.500
  */
 public class ConvertJavadocTagsHandler extends AbstractHandler {

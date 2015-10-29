@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
 
 /**
  * Generic {@link Change} for {@link IApiProblemFilter}s
- * 
+ *
  * @since 1.0.1
  */
 public abstract class FilterChange extends Change {
@@ -46,7 +46,7 @@ public abstract class FilterChange extends Change {
 	/**
 	 * Performs the delete operation and returns an undo change or
 	 * <code>null</code>
-	 * 
+	 *
 	 * @return an undo change or <code>null</code>
 	 */
 	protected abstract Change performDelete();
@@ -54,7 +54,7 @@ public abstract class FilterChange extends Change {
 	/**
 	 * Performs the add operation and returns an undo change or
 	 * <code>null</code>
-	 * 
+	 *
 	 * @return an undo change or <code>null</code>
 	 */
 	protected abstract Change performAdd();
@@ -76,7 +76,7 @@ public abstract class FilterChange extends Change {
 
 	/**
 	 * Returns the name to use for an {@link #ADD} change operation
-	 * 
+	 *
 	 * @return the name for an {@link #ADD} change
 	 */
 	protected String getAddName() {
@@ -85,7 +85,7 @@ public abstract class FilterChange extends Change {
 
 	/**
 	 * Returns the name to use for a {@link #DELETE} change operation
-	 * 
+	 *
 	 * @return the name for a {@link #DELETE} change
 	 */
 	protected String getDeleteName() {
@@ -95,7 +95,7 @@ public abstract class FilterChange extends Change {
 
 	/**
 	 * Returns the name to use for a {@link #RENAME} change operation
-	 * 
+	 *
 	 * @return the name for a {@link #RENAME} change
 	 */
 	protected String getRenameName() {
@@ -105,7 +105,7 @@ public abstract class FilterChange extends Change {
 
 	/**
 	 * Returns the name to use for a {@link #MOVE} change operation
-	 * 
+	 *
 	 * @return the name for a {@link #MOVE} change
 	 */
 	protected String getMoveName() {

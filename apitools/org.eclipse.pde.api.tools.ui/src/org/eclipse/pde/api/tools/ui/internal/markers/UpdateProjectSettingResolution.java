@@ -26,7 +26,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Marker resolution for adding an API filter for the specific member the marker
  * appears on
- * 
+ *
  * @since 1.0.0
  */
 public class UpdateProjectSettingResolution implements IMarkerResolution2 {
@@ -37,7 +37,7 @@ public class UpdateProjectSettingResolution implements IMarkerResolution2 {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param marker the backing marker for the resolution
 	 */
 	public UpdateProjectSettingResolution(IMarker marker) {
@@ -71,7 +71,7 @@ public class UpdateProjectSettingResolution implements IMarkerResolution2 {
 
 	/**
 	 * Resolves the {@link IJavaElement} from the infos in the marker.
-	 * 
+	 *
 	 * @return the associated {@link IJavaElement} for the infos in the
 	 *         {@link IMarker}
 	 */

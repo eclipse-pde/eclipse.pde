@@ -32,11 +32,11 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Operation for setting "resolution errors" problem to ignore.
- * 
+ *
  * @see IApiProblem
  * @see IApiProblemFilter
  * @see IApiFilterStore
- * 
+ *
  * @since 1.1
  */
 public class UpdateProjectSettingsOperation extends UIJob {
@@ -45,11 +45,11 @@ public class UpdateProjectSettingsOperation extends UIJob {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param element the element to create the filter for (method, field,
 	 *            class, enum, etc)
 	 * @param kind the kind of filter to create
-	 * 
+	 *
 	 * @see IApiProblemFilter#getKinds()
 	 */
 	public UpdateProjectSettingsOperation(IMarker marker) {

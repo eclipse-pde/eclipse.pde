@@ -17,7 +17,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 /**
  * The tab group for API use scanning
- * 
+ *
  * @since 1.0
  */
 public class ApiUseTabGroup extends AbstractLaunchConfigurationTabGroup {

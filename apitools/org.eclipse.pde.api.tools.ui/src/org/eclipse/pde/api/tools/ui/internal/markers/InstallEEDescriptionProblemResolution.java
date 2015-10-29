@@ -36,7 +36,7 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Problem resolution to install EE descriptions
- * 
+ *
  * @since 1.0.400
  */
 public class InstallEEDescriptionProblemResolution implements IMarkerResolution2 {

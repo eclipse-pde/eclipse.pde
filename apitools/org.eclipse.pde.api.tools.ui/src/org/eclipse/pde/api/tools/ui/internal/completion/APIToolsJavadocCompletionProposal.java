@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Point;
 /**
  * This class provides a completion proposal for javadoc type extensions, more
  * specifically it is used to contribute the following tags:
- * 
+ *
  * @since 1.0.0
  */
 public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposal, ICompletionProposalExtension2, ICompletionProposalExtension3 {
@@ -39,7 +39,7 @@ public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposa
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param replacetext
 	 * @param displaytext
 	 * @param image

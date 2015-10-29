@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page used to select the kind of pattern to create
- * 
+ *
  * @since 1.0.1
  */
 public class PatternSelectionPage extends WizardPage {

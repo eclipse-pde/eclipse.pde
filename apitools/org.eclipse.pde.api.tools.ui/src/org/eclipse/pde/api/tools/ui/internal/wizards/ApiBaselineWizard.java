@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 
 /**
  * A wizard to create a new API profile
- * 
+ *
  * @since 1.0.0
  */
 public class ApiBaselineWizard extends Wizard {
@@ -31,7 +31,7 @@ public class ApiBaselineWizard extends Wizard {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param profile
 	 */
 	public ApiBaselineWizard(IApiBaseline profile) {

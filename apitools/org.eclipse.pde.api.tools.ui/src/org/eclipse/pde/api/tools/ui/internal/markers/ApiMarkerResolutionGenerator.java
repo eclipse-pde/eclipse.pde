@@ -32,7 +32,7 @@ import org.eclipse.ui.IMarkerResolutionGenerator2;
 /**
  * Returns the listing of applicable {@link IMarkerResolution}s given a certain
  * kind of marker.
- * 
+ *
  * @since 1.0.0
  */
 public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2 {
@@ -114,7 +114,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 
 	/**
 	 * resolves the {@link IApiProblemFilter} for the given marker
-	 * 
+	 *
 	 * @param marker
 	 */
 	static IApiProblemFilter resolveFilter(IMarker marker) {

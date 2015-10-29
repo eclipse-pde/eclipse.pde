@@ -199,7 +199,7 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Throws a new {@link CoreException} with the given message
-	 * 
+	 *
 	 * @param message
 	 * @throws CoreException
 	 */
@@ -210,7 +210,7 @@ public class ApiUseScanJob extends Job {
 	/**
 	 * Creates a new {@link IApiBaseline} from the location set in the backing
 	 * launch configuration
-	 * 
+	 *
 	 * @param kind
 	 * @param monitor
 	 * @return the new {@link IApiBaseline}
@@ -256,7 +256,7 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Returns the target service or <code>null</code>
-	 * 
+	 *
 	 * @return service or <code>null</code>
 	 */
 	private ITargetPlatformService getTargetService() {
@@ -265,7 +265,7 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Collects the context of reference ids and scope elements in one pass
-	 * 
+	 *
 	 * @param baseline the baseline to check components from
 	 * @param ids the reference ids to consider
 	 * @param scope the scope of elements to search
@@ -300,7 +300,7 @@ public class ApiUseScanJob extends Job {
 	/**
 	 * Returns a pattern for the given regular expression or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param regex expression, <code>null</code> or empty
 	 * @return associated pattern or <code>null</code>
 	 */
@@ -316,7 +316,7 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Returns if we should add the given component to our search scope
-	 * 
+	 *
 	 * @param component
 	 * @param pattern
 	 * @param allowresolve
@@ -343,7 +343,7 @@ public class ApiUseScanJob extends Job {
 	/**
 	 * Returns if the given search modifier is set in the backing
 	 * {@link ILaunchConfiguration}
-	 * 
+	 *
 	 * @param modifier
 	 * @return true if the modifier is set, false otherwise
 	 * @throws CoreException
@@ -355,7 +355,7 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Performs the report creation
-	 * 
+	 *
 	 * @param reportType what report converter to use, either
 	 *            {@link ApiUseLaunchDelegate#REPORT_KIND_PRODUCER} or
 	 *            {@link ApiUseLaunchDelegate#REPORT_KIND_CONSUMER}
@@ -412,7 +412,7 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Cleans the report location specified by the parameter reportLocation
-	 * 
+	 *
 	 * @param monitor
 	 */
 	void cleanReportLocation(String location, IProgressMonitor monitor) {
@@ -427,7 +427,7 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Cleans the location if it exists
-	 * 
+	 *
 	 * @param file
 	 * @param monitor
 	 */
@@ -451,7 +451,7 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Creates an API baseline from a target definition.
-	 * 
+	 *
 	 * @param definition
 	 * @param monitor progress monitor
 	 */
@@ -478,7 +478,7 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Creates a baseline at an install location
-	 * 
+	 *
 	 * @param path
 	 * @param monitor
 	 */

@@ -42,7 +42,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * Class provides the general API tool preference page
- * 
+ *
  * @since 1.0.0
  */
 public class ApiErrorsWarningsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {

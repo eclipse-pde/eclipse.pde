@@ -22,7 +22,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Default handler for the compare to baseline command
- * 
+ *
  * @since 1.0.500
  */
 public class CompareToBaselineHandler extends AbstractHandler {

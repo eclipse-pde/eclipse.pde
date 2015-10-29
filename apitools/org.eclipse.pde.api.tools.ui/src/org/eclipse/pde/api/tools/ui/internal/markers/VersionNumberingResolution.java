@@ -26,7 +26,7 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * This resolution helps users to pick a default API profile when the tooling
  * has been set up but there is no default profile
- * 
+ *
  * @since 1.0.0
  */
 public class VersionNumberingResolution implements IMarkerResolution2 {

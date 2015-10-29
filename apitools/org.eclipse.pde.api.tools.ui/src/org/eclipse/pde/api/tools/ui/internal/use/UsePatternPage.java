@@ -16,7 +16,7 @@ import org.eclipse.pde.api.tools.ui.internal.use.ApiUsePatternTab.Pattern;
 
 /**
  * Abstract page that describes a page for creating {@link Pattern}s
- * 
+ *
  * @since 1.0.1
  */
 public abstract class UsePatternPage extends WizardPage {
@@ -25,7 +25,7 @@ public abstract class UsePatternPage extends WizardPage {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param pageName
 	 * @param title
 	 * @param titleImage

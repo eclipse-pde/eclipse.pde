@@ -25,7 +25,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Default handler for the remove filters command
- * 
+ *
  * @since 1.0.500
  */
 public class RemoveFiltersHandler extends AbstractHandler {
@@ -42,7 +42,7 @@ public class RemoveFiltersHandler extends AbstractHandler {
 
 	/**
 	 * Returns the {@link IAdaptable} from the current selection context
-	 * 
+	 *
 	 * @param selection
 	 * @return the {@link IAdaptable} for the current selection context
 	 */

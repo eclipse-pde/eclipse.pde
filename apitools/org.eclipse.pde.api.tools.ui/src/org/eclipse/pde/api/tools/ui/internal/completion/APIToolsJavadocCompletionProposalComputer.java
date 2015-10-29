@@ -58,12 +58,12 @@ import org.eclipse.swt.graphics.Image;
  * <br>
  * Any changes to the visibility logic here also must be updated in the
  * {@link TagValidator}
- * 
+ *
  * @see TagValidator
  * @see IApiJavadocTag
  * @see JavadocTagManager
  * @see APIToolsJavadocCompletionProposal
- * 
+ *
  * @since 1.0.0
  */
 public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletionProposalComputer {
@@ -118,7 +118,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 
 	/**
 	 * Computes all of the Javadoc completion proposals
-	 * 
+	 *
 	 * @param jcontext
 	 * @param corecontext
 	 * @return the complete list of Javadoc completion proposals or an empty
@@ -190,7 +190,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * <br>
 	 * Changes to the logic here must also be made in the {@link TagValidator}
 	 * to ensure the visibility is computed equally.
-	 * 
+	 *
 	 * @see TagValidator
 	 * @param element
 	 * @return <code>true</code> if the given element is visible
@@ -237,7 +237,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	/**
 	 * Method to post process returned flags from the
 	 * {@link org.eclipse.pde.api.tools.internal.JavadocTagManager}
-	 * 
+	 *
 	 * @param tag the tag to process
 	 * @param element the {@link IJavaElement} the tag will appear on
 	 * @return true if the tag should be included in completion proposals, false
@@ -283,7 +283,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 
 	/**
 	 * Returns the type of the enclosing type.
-	 * 
+	 *
 	 * @param element java element
 	 * @return TYPE_INTERFACE, TYPE_CLASS, TYPE_ENUM, TYPE_ANNOTATION or -1
 	 * @throws JavaModelException
@@ -309,7 +309,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	/**
 	 * Collects the existing tags on the {@link IJavaElement} we have been
 	 * activated on
-	 * 
+	 *
 	 * @param element
 	 * @param jcontext
 	 * @throws JavaModelException
@@ -353,7 +353,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	/**
 	 * Determines if the specified completion applies to the current offset
 	 * context in the document
-	 * 
+	 *
 	 * @param document
 	 * @param completiontext
 	 * @param offset

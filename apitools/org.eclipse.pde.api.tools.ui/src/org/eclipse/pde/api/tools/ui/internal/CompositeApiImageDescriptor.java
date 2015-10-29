@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Point;
 
 /**
  * Used to create images with (possible) adornments
- * 
+ *
  * @since 1.0.1
  */
 public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
@@ -32,7 +32,7 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param original
 	 * @param flags
 	 */
@@ -73,7 +73,7 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * Adds the given {@link ImageDescriptor} to the upper right-hand corner of
 	 * the original image
-	 * 
+	 *
 	 * @param desc
 	 * @param pos
 	 */
@@ -89,7 +89,7 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * Returns the {@link ImageData} from the given {@link ImageDescriptor} or
 	 * <code>null</code>
-	 * 
+	 *
 	 * @param descriptor
 	 * @return the {@link ImageData} from the given {@link ImageDescriptor} or
 	 *         <code>null</code>

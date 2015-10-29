@@ -84,7 +84,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * The main page for the {@link ApiToolingSetupWizard}
- * 
+ *
  * @since 1.0.0
  */
 public class ApiToolingSetupWizardPage extends UserInputWizardPage {
@@ -106,7 +106,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 
 		/**
 		 * Sets the current text filter to use
-		 * 
+		 *
 		 * @param filter
 		 */
 		public synchronized void setFilter(String pattern) {
@@ -147,7 +147,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param pageName
 	 */
 	protected ApiToolingSetupWizardPage() {
@@ -261,7 +261,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 
 	/**
 	 * Updates the number of items that have been checked
-	 * 
+	 *
 	 * @param count
 	 */
 	private void updateCheckStatus(int count) {
@@ -368,7 +368,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 * Creates all of the text edit changes collected from the processor. The
 	 * collected edits are arranged as multi-edits for the one file that they
 	 * belong to
-	 * 
+	 *
 	 * @param projectchange
 	 * @param project
 	 * @param cxml
@@ -452,7 +452,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 
 	/**
 	 * Called by the {@link ApiToolingSetupWizard} when finishing the wizard
-	 * 
+	 *
 	 * @return true if the page finished normally, false otherwise
 	 */
 	public boolean finish() {

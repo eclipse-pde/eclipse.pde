@@ -25,7 +25,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 /**
  * Finds an AST node at the given position in the AST, and allows access to the
  * {@link BodyDeclaration} at that position
- * 
+ *
  * @since 1.0.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -36,7 +36,7 @@ public class NodeFinder extends ASTVisitor {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param position
 	 */
 	public NodeFinder(int position) {
@@ -86,7 +86,7 @@ public class NodeFinder extends ASTVisitor {
 	/**
 	 * Visit the {@link BodyDeclaration} node to see if it is at the specified
 	 * position
-	 * 
+	 *
 	 * @param bodyDeclaration
 	 * @return
 	 */

@@ -58,7 +58,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Tab for an API use scan
- * 
+ *
  * @since 1.1
  */
 public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
@@ -400,7 +400,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Sets the enabled state of all of the child of the given group
-	 * 
+	 *
 	 * @param group
 	 * @param enabled
 	 */
@@ -487,7 +487,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Returns the target service or <code>null</code>
-	 * 
+	 *
 	 * @return service or <code>null</code>
 	 */
 	private ITargetPlatformService getTargetService() {
@@ -566,7 +566,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 * Updates the radio button group in
 	 * {@link #initializeFrom(ILaunchConfiguration)} to ensure the radio group
 	 * stays up-to-date when a revert is performed
-	 * 
+	 *
 	 * @param configuration
 	 */
 	void updateRadioButtons(ILaunchConfiguration configuration) throws CoreException {
@@ -612,7 +612,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Returns <code>true</code> if the given modifier is set in the
 	 * configuration
-	 * 
+	 *
 	 * @param modifier
 	 * @param configuration
 	 * @return
@@ -626,7 +626,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Restores the selected item for the given combo based on the stored value
 	 * from the configuration
-	 * 
+	 *
 	 * @param combo
 	 * @param value
 	 * @param settings
@@ -684,7 +684,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Returns the memento for the selected target definition or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @return memento or <code>null</code>
 	 */
 	private String getTargetMemento() {
@@ -702,7 +702,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Returns the handle of the selected target or <code>null</code> if none.
-	 * 
+	 *
 	 * @return target handle or <code>null</code>
 	 */
 	private ITargetHandle getTargetHandle() {
@@ -762,7 +762,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Handles browsing for a file with a given set of valid extensions
-	 * 
+	 *
 	 * @param text
 	 * @param message
 	 */
@@ -781,7 +781,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Handles the Browse... button being selected
-	 * 
+	 *
 	 * @param text
 	 */
 	void handleFolderBrowse(Text text, String message) {

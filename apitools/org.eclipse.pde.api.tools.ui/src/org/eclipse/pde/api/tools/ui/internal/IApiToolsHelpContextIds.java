@@ -29,7 +29,7 @@ import org.eclipse.pde.api.tools.ui.internal.wizards.JavadocConversionPage;
 
 /**
  * Listing of ids used a help context ids
- * 
+ *
  * @since 1.0.0
  */
 public interface IApiToolsHelpContextIds {
@@ -51,7 +51,7 @@ public interface IApiToolsHelpContextIds {
 	public static final String API_TOOLING_SETUP_WIZARD_PAGE = PREFIX + "api_tooling_setup_wizard_page"; //$NON-NLS-1$
 	/**
 	 * Constant representing the help id for the {@link JavadocConversionPage}
-	 * 
+	 *
 	 * @since 1.0.500
 	 */
 	public static final String JAVADOC_CONVERSION_WIZARD_PAGE = PREFIX + "javadoc_conversion_wizard_page"; //$NON-NLS-1$

@@ -32,10 +32,10 @@ public class ApiImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Create a new composite image.
-	 * 
+	 *
 	 * @param baseImage an image descriptor used as the base image
 	 * @param flags flags indicating which adornments are to be rendered
-	 * 
+	 *
 	 */
 	public ApiImageDescriptor(ImageDescriptor baseImage, int flags) {
 		setBaseImage(baseImage);

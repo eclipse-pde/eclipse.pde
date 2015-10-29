@@ -23,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page for creating a pattern to exclude nested jars from the scan.
- * 
+ *
  * @since 1.0.1
  */
 public class ArchivePatternPage extends UsePatternPage {
@@ -35,7 +35,7 @@ public class ArchivePatternPage extends UsePatternPage {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param pattern
 	 */
 	protected ArchivePatternPage(String pattern) {

@@ -24,7 +24,7 @@ public class PropertiesMessages extends NLS {
 	public static String ApiFiltersPropertyPage_edit_button;
 	public static String ApiFiltersPropertyPage_edit_comment;
 	public static String ApiFiltersPropertyPage_edit_filter_comment;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, PropertiesMessages.class);

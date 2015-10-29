@@ -35,12 +35,12 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 
 /**
- * Factory class to create some SWT resources. 
- * 
+ * Factory class to create some SWT resources.
+ *
  * @since 1.0.0
  */
 public class SWTFactory {
-	
+
 	/**
 	 * Returns a width hint for a button control.
 	 */
@@ -50,14 +50,14 @@ public class SWTFactory {
 		int widthHint = converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
-	
+
 	/**
 	 * Sets width and height hint for the button control.
 	 * <b>Note:</b> This is a NOP if the button's layout data is not
 	 * an instance of <code>GridData</code>.
-	 * 
+	 *
 	 * @param	the button for which to set the dimension hint
-	 */		
+	 */
 	public static void setButtonDimensionHint(Button button) {
 		Assert.isNotNull(button);
 		Object gd = button.getLayoutData();
@@ -66,13 +66,13 @@ public class SWTFactory {
 			((GridData)gd).horizontalAlignment = GridData.FILL;
 		}
 	}
-	
+
 	/**
 	 * Creates a check box button using the parents' font
-	 * 
+	 *
 	 * @param parent the parent to add the button to
 	 * @param label the label for the button
-	 * @param image the image for the button 
+	 * @param image the image for the button
 	 * @param checked the initial checked state of the button
 	 * @param hspan the horizontal span to take up in the parent composite
 	 * @return a new checked button set to the initial checked state
@@ -92,11 +92,11 @@ public class SWTFactory {
 		button.setLayoutData(gd);
 		return button;
 	}
-	
+
 	/**
 	 * Creates and returns a new push button with the given
 	 * label and/or image.
-	 * 
+	 *
 	 * @param parent parent control
 	 * @param label button label or <code>null</code>
 	 * @param image image of <code>null</code>
@@ -114,13 +114,13 @@ public class SWTFactory {
 		GridData gd = new GridData();
 		button.setLayoutData(gd);
 		SWTFactory.setButtonDimensionHint(button);
-		return button;	
-	}	
+		return button;
+	}
 
 	/**
 	 * Creates and returns a new push button with the given
 	 * label and/or image.
-	 * 
+	 *
 	 * @param parent parent control
 	 * @param label button label or <code>null</code>
 	 * @param image image of <code>null</code>
@@ -139,13 +139,13 @@ public class SWTFactory {
 		GridData gd = new GridData(fill);
 		button.setLayoutData(gd);
 		SWTFactory.setButtonDimensionHint(button);
-		return button;	
-	}	
-	
+		return button;
+	}
+
 	/**
 	 * Creates and returns a new radio button with the given
 	 * label.
-	 * 
+	 *
 	 * @param parent parent control
 	 * @param label button label or <code>null</code>
 	 * @return a new radio button
@@ -159,12 +159,12 @@ public class SWTFactory {
 		GridData gd = new GridData();
 		button.setLayoutData(gd);
 		SWTFactory.setButtonDimensionHint(button);
-		return button;	
-	}	
-	
+		return button;
+	}
+
 	/**
 	 * Creates a new label widget
-	 * 
+	 *
 	 * @param parent the parent composite to add this label widget to
 	 * @param text the text for the label
 	 * @param hspan the horizontal span to take up in the parent composite
@@ -182,10 +182,10 @@ public class SWTFactory {
 		l.setLayoutData(gd);
 		return l;
 	}
-	
+
 	/**
 	 * Creates a new label widget
-	 * 
+	 *
 	 * @param parent the parent composite to add this label widget to
 	 * @param text the text for the label
 	 * @param font the font for the label
@@ -203,10 +203,10 @@ public class SWTFactory {
 		l.setLayoutData(gd);
 		return l;
 	}
-	
+
 	/**
 	 * Creates a new link widget
-	 * 
+	 *
 	 * @param parent the parent composite to add this label widget to
 	 * @param text the text for the label
 	 * @param font the font for the label
@@ -221,7 +221,7 @@ public class SWTFactory {
 		l.setLayoutData(gd);
 		return l;
 	}
-	
+
 	public static Link createLink(Composite parent, String text, Font font, int hspan, int fill) {
 		Link l = new Link(parent, SWT.UNDERLINE_LINK);
 		l.setFont(font);
@@ -232,10 +232,10 @@ public class SWTFactory {
 		return l;
 	}
 
-	
+
 	/**
 	 * Creates a wrapping label
-	 * 
+	 *
 	 * @param parent the parent composite to add this label to
 	 * @param text the text to be displayed in the label
 	 * @param hspan the horizontal span that label should take up in the parent composite
@@ -254,10 +254,10 @@ public class SWTFactory {
 		l.setLayoutData(gd);
 		return l;
 	}
-	
+
 	/**
 	 * Creates a wrapping label
-	 * 
+	 *
 	 * @param parent the parent composite to add this label to
 	 * @param text the text to be displayed in the label
 	 * @param hspan the horizontal span that label should take up in the parent composite
@@ -274,10 +274,10 @@ public class SWTFactory {
 		l.setLayoutData(gd);
 		return l;
 	}
-	
+
 	/**
-	 * Creates a scrolled composite 
-	 * 
+	 * Creates a scrolled composite
+	 *
 	 * @param parent the parent to add to
 	 * @param columns the number of columns for the composite
 	 * @param hspan the horizontal span to take up in the parent
@@ -298,10 +298,10 @@ public class SWTFactory {
 		comp.setExpandVertical(true);
 		return comp;
 	}
-	
+
 	/**
 	 * Creates an ExpandibleComposite widget
-	 * 
+	 *
 	 * @param parent the parent to add this widget to
 	 * @param style the style for ExpandibleComposite expanding handle, and layout
 	 * @param label the label for the widget
@@ -320,14 +320,14 @@ public class SWTFactory {
 		ex.setLayoutData(gd);
 		return ex;
 	}
-	
+
 	/**
-	 * Creates a new text widget 
-	 * 
+	 * Creates a new text widget
+	 *
 	 * @param parent the parent composite to add this text widget to
 	 * @param hspan the horizontal span to take up on the parent composite
 	 * @return the new text widget
-	 * 
+	 *
 	 */
 	public static Text createSingleText(Composite parent, int hspan) {
     	Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
@@ -337,10 +337,10 @@ public class SWTFactory {
     	t.setLayoutData(gd);
     	return t;
     }
-	
+
 	/**
-	 * Creates a new text widget 
-	 * 
+	 * Creates a new text widget
+	 *
 	 * @param parent the parent composite to add this text widget to
 	 * @param style the style bits for the text widget
 	 * @param hspan the horizontal span to take up on the parent composite
@@ -355,10 +355,10 @@ public class SWTFactory {
     	t.setLayoutData(gd);
     	return t;
     }
-	
+
 	/**
-	 * Creates a new text widget 
-	 * 
+	 * Creates a new text widget
+	 *
 	 * @param parent the parent composite to add this text widget to
 	 * @param style the style bits for the text widget
 	 * @param hspan the horizontal span to take up on the parent composite
@@ -372,10 +372,10 @@ public class SWTFactory {
     	t.setLayoutData(gd);
     	return t;
     }
-	
+
 	/**
-	 * Creates a new text widget 
-	 * 
+	 * Creates a new text widget
+	 *
 	 * @param parent the parent composite to add this text widget to
 	 * @param style the style bits for the text widget
 	 * @param hspan the horizontal span to take up on the parent composite
@@ -394,10 +394,10 @@ public class SWTFactory {
     	t.setLayoutData(gd);
     	return t;
     }
-	
+
 	/**
 	 * Creates a Group widget
-	 * 
+	 *
 	 * @param parent the parent composite to add this group to
 	 * @param text the text for the heading of the group
 	 * @param columns the number of columns within the group
@@ -415,10 +415,10 @@ public class SWTFactory {
     	g.setLayoutData(gd);
     	return g;
     }
-	
+
 	/**
 	 * Creates a composite that uses the parent's font and has a grid layout
-	 * 
+	 *
 	 * @param parent the parent to add the composite to
 	 * @param columns the number of columns the composite should have
 	 * @param hspan the horizontal span the new composite should take up in the parent
@@ -435,10 +435,10 @@ public class SWTFactory {
     	g.setLayoutData(gd);
     	return g;
 	}
-	
+
 	/**
 	 * Creates a composite that uses the parent's font and has a grid layout
-	 * 
+	 *
 	 * @param parent the parent to add the composite to
 	 * @param font the font to use for this composite
 	 * @param columns the number of columns the composite should have
@@ -456,10 +456,10 @@ public class SWTFactory {
     	g.setLayoutData(gd);
     	return g;
 	}
-	
+
 	/**
 	 * Creates a composite that uses the parent's font and has a grid layout
-	 * 
+	 *
 	 * @param parent the parent to add the composite to
 	 * @param columns the number of columns the composite should have
 	 * @param hspan the horizontal span the new composite should take up in the parent
@@ -477,12 +477,12 @@ public class SWTFactory {
     	g.setLayoutData(gd);
     	return g;
 	}
-	
+
 	/**
-	 * Creates a vertical spacer for separating components. If applied to a 
+	 * Creates a vertical spacer for separating components. If applied to a
 	 * <code>GridLayout</code>, this method will automatically span all of the columns of the parent
 	 * to make vertical space
-	 * 
+	 *
 	 * @param parent the parent composite to add this spacer to
 	 * @param numlines the number of vertical lines to make as space
 	 */
@@ -496,10 +496,10 @@ public class SWTFactory {
 		gd.heightHint = numlines;
 		lbl.setLayoutData(gd);
 	}
-	
+
 	/**
 	 * Creates a horizontal spacer for separating components
-	 * 
+	 *
 	 * @param comp
 	 * @param numlines
 	 */
@@ -509,10 +509,10 @@ public class SWTFactory {
 		gd.horizontalSpan = numlines;
 		lbl.setLayoutData(gd);
 	}
-	
+
 	/**
 	 * Creates a Composite widget
-	 * 
+	 *
 	 * @param parent the parent composite to add this composite to
 	 * @param columns the number of columns within the composite
 	 * @param hspan the horizontal span the composite should take up on the parent
@@ -533,10 +533,10 @@ public class SWTFactory {
 		g.setLayoutData(gd);
 		return g;
 	}
-	
+
 	/**
 	 * This method is used to make a combo box
-	 * 
+	 *
 	 * @param parent the parent composite to add the new combo to
 	 * @param style the style for the Combo
 	 * @param hspan the horizontal span to take up on the parent composite
@@ -557,10 +557,10 @@ public class SWTFactory {
 		c.select(0);
 		return c;
 	}
-	
+
 	/**
 	 * This method is used to make a combo box with a default fill style of GridData.FILL_HORIZONTAL
-	 * 
+	 *
 	 * @param parent the parent composite to add the new combo to
 	 * @param style the style for the Combo
 	 * @param hspan the horizontal span to take up on the parent composite
@@ -579,10 +579,10 @@ public class SWTFactory {
 		c.select(0);
 		return c;
 	}
-	
+
 	/**
 	 * This method allows us to open the preference dialog on the specific page, in this case the perspective page
-	 * 
+	 *
 	 * @param shell
 	 * @param id the id of preference page to show
 	 * @param page the actual page to show
@@ -590,7 +590,7 @@ public class SWTFactory {
 	public static void showPreferencePage(Shell shell, String id, Object data) {
 		PreferencesUtil.createPreferenceDialogOn(shell, id, new String[] {id}, data).open();
 	}
-	
+
 	/**
 	 * This method allows us to open a property page in the default platform dialog
 	 * @param shell

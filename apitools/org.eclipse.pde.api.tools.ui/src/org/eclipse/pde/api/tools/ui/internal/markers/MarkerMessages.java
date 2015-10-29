@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import org.eclipse.osgi.util.NLS;
 /**
- * 
+ *
  */
 public class MarkerMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.markers.markermessages"; //$NON-NLS-1$
@@ -50,7 +50,7 @@ public class MarkerMessages extends NLS {
 	public static String RemoveFilterProblemResolution_removes_selected_problem_filter;
 	public static String RemoveUnsupportedAnnotationOperation_remove_unsupported_annotations;
 	public static String RemoveUnsupportedTagOperation_removeing_unsupported_tag;
-	
+
 	public static String UpdateProjectSettingsResolution_0;
 	public static String UpdateProjectSettingsOperation_0;
 	public static String UpdateProjectSettingsOperation_title;
@@ -94,7 +94,7 @@ public class MarkerMessages extends NLS {
 	public static String VersionNumberingResolution_reexportedMinor0;
 	public static String VersionNumberingResolution_reexportedMinor1;
 	public static String VersionNumberingResolution_reexportedMinor2;
-	
+
 	public static String UpdateVersionNumberingOperation_title;
 
 	static {

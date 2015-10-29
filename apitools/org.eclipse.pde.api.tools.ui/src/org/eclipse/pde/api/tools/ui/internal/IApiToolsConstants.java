@@ -107,10 +107,10 @@ public interface IApiToolsConstants {
 	/**
 	 * Key for fragment image
 	 */
-	public static final String IMG_OBJ_FRAGMENT = "IMG_OBJ_FRAGMENT"; //$NON-NLS-1$		
+	public static final String IMG_OBJ_FRAGMENT = "IMG_OBJ_FRAGMENT"; //$NON-NLS-1$
 	/**
 	 * Key for a correction change
-	 * 
+	 *
 	 * @since 1.0.500
 	 */
 	public static final String IMG_OBJ_CHANGE_CORRECTION = "IMG_OBJ_CHANGE_CORRECTION"; //$NON-NLS-1$
@@ -135,7 +135,7 @@ public interface IApiToolsConstants {
 	/**
 	 * Wizard banner for comparing a selected set of projects to a selected
 	 * baseline
-	 * 
+	 *
 	 * @since 1.0.l
 	 */
 	public static final String IMG_WIZBAN_COMPARE_TO_BASELINE = "IMG_WIZBAN_COMPARE_TO_BASELINE"; //$NON-NLS-1$

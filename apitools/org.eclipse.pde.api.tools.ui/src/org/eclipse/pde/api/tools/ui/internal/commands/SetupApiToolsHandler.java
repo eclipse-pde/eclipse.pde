@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizard;
 
 /**
  * Default handler for the setup API Tools command
- * 
+ *
  * @since 1.0.500
  */
 public class SetupApiToolsHandler extends AbstractHandler {

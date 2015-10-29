@@ -62,7 +62,7 @@ import org.eclipse.ui.PlatformUI;
  * For example a bundle manifest could say that a.b.c.provisional.package is API
  * and using this tab a user could provide a pattern a\.\.c\.provisional.*
  * saying that this should be treated as internal code use
- * 
+ *
  * @since 1.1
  */
 public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
@@ -287,7 +287,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Updates the buttons based on the selection in the viewer
-	 * 
+	 *
 	 * @param selection
 	 */
 	void updateButtons(IStructuredSelection selection) {
@@ -348,7 +348,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Adds a new pattern to the list
-	 * 
+	 *
 	 * @param pattern
 	 * @param kind
 	 * @return
@@ -359,7 +359,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Removes the pattern from the listing
-	 * 
+	 *
 	 * @param pattern
 	 * @return
 	 */

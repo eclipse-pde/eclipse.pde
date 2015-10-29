@@ -66,7 +66,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * Preference page to allow users to add use scans. The use scans are analyzed
  * in the API Tools builder to see if any methods found in the scan have been
  * removed.
- * 
+ *
  * @since 3.7
  */
 public class ApiUseScanPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -229,7 +229,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Selects (checks) all of the entries in the table
-	 * 
+	 *
 	 * @param checked
 	 */
 	void select(boolean checked) {
@@ -239,7 +239,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Allows users to select a directory with a use scan in it
-	 * 
+	 *
 	 * @param prevLocation
 	 * @return the new directory or <code>null</code> if the dialog was
 	 *         cancelled
@@ -255,7 +255,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Allows the user to select an archive from the file system
-	 * 
+	 *
 	 * @param file a starting file
 	 * @return the path to the new archive or <code>null</code> if cancelled
 	 */
@@ -272,7 +272,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Adds the given location to the table
-	 * 
+	 *
 	 * @param location
 	 */
 	void addLocation(String location) {
@@ -420,7 +420,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Detects changes to the use scan locations
-	 * 
+	 *
 	 * @param newLocations
 	 * @return if there have been changes to the use scan entries
 	 */
@@ -455,7 +455,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Sets the value to the given preference key
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 */
@@ -471,7 +471,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	/**
 	 * Retrieves the value for the given preference key or the returns the given
 	 * default if it is not defined
-	 * 
+	 *
 	 * @param key
 	 * @param defaultValue
 	 * @return the stored value or the specified default

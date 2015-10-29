@@ -28,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Wizard page for creating a RegEx pattern for augmenting a given page name in
  * an API description.
- * 
+ *
  * @since 1.0.1
  */
 public class DescriptionPatternPage extends UsePatternPage {
@@ -42,7 +42,7 @@ public class DescriptionPatternPage extends UsePatternPage {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param pattern
 	 * @param kind
 	 */

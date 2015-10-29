@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 
 /**
  * Parent class for operations that want to modify Javadoc tags in some way.
- * 
+ *
  * @since 1.0.0
  */
 public class JavadocTagOperation {
@@ -39,7 +39,7 @@ public class JavadocTagOperation {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param marker
 	 */
 	public JavadocTagOperation(IMarker marker) {
@@ -48,7 +48,7 @@ public class JavadocTagOperation {
 
 	/**
 	 * Sets the backing marker for this operation
-	 * 
+	 *
 	 * @param marker
 	 */
 	protected void setMarker(IMarker marker) {
@@ -57,7 +57,7 @@ public class JavadocTagOperation {
 
 	/**
 	 * Gets the current {@link IMarker} set for this operation
-	 * 
+	 *
 	 * @return
 	 */
 	protected IMarker getMarker() {
@@ -67,7 +67,7 @@ public class JavadocTagOperation {
 	/**
 	 * Finds an {@link ASTNode} for the given compilation unit at the backing
 	 * focal position
-	 * 
+	 *
 	 * @param unit
 	 * @return the {@link BodyDeclaration} or <code>null</code>
 	 */
@@ -82,7 +82,7 @@ public class JavadocTagOperation {
 	/**
 	 * Creates an {@link AST} with the given {@link ICompilationUnit} as source
 	 * and the {@link JavaCore#COMPILER_DOC_COMMENT_SUPPORT} options set.
-	 * 
+	 *
 	 * @param unit
 	 * @param focalposition
 	 * @param resolvebindings
@@ -103,7 +103,7 @@ public class JavadocTagOperation {
 	 * Returns the marker message arguments from the backing {@link IMarker}. An
 	 * empty array is returned if the underlying {@link IMarker} is
 	 * <code>null</code>
-	 * 
+	 *
 	 * @return the message arguments form the backing marker
 	 */
 	protected String[] getMarkerMessageArguments() {
@@ -119,7 +119,7 @@ public class JavadocTagOperation {
 	/**
 	 * Creates an {@link AST} with the given {@link ICompilationUnit} as source
 	 * and the {@link JavaCore#COMPILER_DOC_COMMENT_SUPPORT} options set.
-	 * 
+	 *
 	 * @param unit
 	 * @return a new {@link AST}
 	 */
@@ -130,7 +130,7 @@ public class JavadocTagOperation {
 	/**
 	 * Returns the focal position to start AST scanning from (A.K.A) the
 	 * {@link IMarker#CHAR_START} attribute
-	 * 
+	 *
 	 * @return the focal position
 	 */
 	protected int getFocalPosition() {
@@ -144,7 +144,7 @@ public class JavadocTagOperation {
 	 * Returns the {@link IApiJavadocTag} kind of the parent {@link ASTNode} for
 	 * the given node or -1 if the parent is not found or not a
 	 * {@link TypeDeclaration}
-	 * 
+	 *
 	 * @param node
 	 * @return the {@link IApiJavadocTag} kind of the parent or -1
 	 */
@@ -160,7 +160,7 @@ public class JavadocTagOperation {
 
 	/**
 	 * Returns if the given body declaration is a constructor or not
-	 * 
+	 *
 	 * @param body
 	 * @return
 	 */
@@ -175,7 +175,7 @@ public class JavadocTagOperation {
 	 * Updates the given monitor with the given tick count and polls for
 	 * cancellation. If the monitor is cancelled an
 	 * {@link OperationCanceledException} is thrown
-	 * 
+	 *
 	 * @param monitor
 	 * @param ticks
 	 * @throws OperationCanceledException

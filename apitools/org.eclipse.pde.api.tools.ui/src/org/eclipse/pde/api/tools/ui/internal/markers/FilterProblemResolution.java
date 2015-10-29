@@ -33,7 +33,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Marker resolution for adding an API filter for the specific member the marker
  * appears on
- * 
+ *
  * @since 1.0.0
  */
 public class FilterProblemResolution extends WorkbenchMarkerResolution {
@@ -45,7 +45,7 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param marker the backing marker for the resolution
 	 */
 	public FilterProblemResolution(IMarker marker) {
@@ -94,7 +94,7 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 	/**
 	 * Returns the category name from the problem id contained in the backing
 	 * marker.
-	 * 
+	 *
 	 * @return the name of the category from the markers' problem id
 	 */
 	protected String resolveCategoryName() {
@@ -135,7 +135,7 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 
 	/**
 	 * Resolves the {@link IJavaElement} from the infos in the marker.
-	 * 
+	 *
 	 * @return the associated {@link IJavaElement} for the infos in the
 	 *         {@link IMarker}
 	 */

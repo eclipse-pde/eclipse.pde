@@ -90,7 +90,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * The refactoring that will convert API tools Javadoc tags to the new
  * annotations.
- * 
+ *
  * @since 1.0.500
  */
 public class JavadocConversionRefactoring extends Refactoring {
@@ -123,7 +123,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 	/**
 	 * Whether to remove the existing javadoc tags as part of the refactoring
-	 * 
+	 *
 	 * @param remove
 	 */
 	public void setRemoveTags(boolean remove) {
@@ -132,7 +132,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 	/**
 	 * Set the projects to run the refactoring on
-	 * 
+	 *
 	 * @param newProjects
 	 */
 	public void setProjects(Set<IProject> newProjects) {
@@ -201,7 +201,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 	/**
 	 * Creates all of the text edit changes for the conversion. The collected
 	 * edits are arranged as multi-edits for the one file that they belong to
-	 * 
+	 *
 	 * @param projectchange the composite change to add to
 	 * @param project the project to scan
 	 * @param remove if the found tags should also be removed
@@ -241,7 +241,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 	/**
 	 * Scans the source and collects all of the changes in the given collector
-	 * 
+	 *
 	 * @param project the project to scan
 	 * @param collector the map to collect the edits in
 	 * @param remove if the old Javadoc tags should be removed as well
@@ -277,7 +277,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param project the project context
 		 * @param component the backing {@link IApiComponent}
 		 * @param description the backing API description
@@ -318,7 +318,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 		/**
 		 * Parses the AST for the given {@link IType} and collects edits for
 		 * adding annotations and additionally removing Javadoc tags
-		 * 
+		 *
 		 * @param type the type to scan
 		 * @param element the element
 		 * @param description the backing API description
@@ -381,7 +381,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param component
 		 * @param description
 		 * @param rewrite
@@ -505,7 +505,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 		/**
 		 * Adds any missing annotations and optionally removes any Javadoc tags
-		 * 
+		 *
 		 * @param body
 		 * @param annotations
 		 */
@@ -579,7 +579,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 		 * Checks to see if the required import is existing for any added
 		 * annotation. If any are found to be missing they will be added when we
 		 * are finished visiting the {@link CompilationUnit}
-		 * 
+		 *
 		 * @param added
 		 */
 		void ensureImport(String added) {
@@ -594,7 +594,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 		/**
 		 * Return the {@link ListRewrite} to use or <code>null</code> if there
 		 * is no suitable one
-		 * 
+		 *
 		 * @param node
 		 * @return the {@link ListRewrite} or <code>null</code>
 		 */

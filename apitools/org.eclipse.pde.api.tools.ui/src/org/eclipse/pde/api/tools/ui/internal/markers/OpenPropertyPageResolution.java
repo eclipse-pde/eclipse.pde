@@ -27,7 +27,7 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * This resolution is used to open a property page
- * 
+ *
  * @since 1.0.0
  */
 public class OpenPropertyPageResolution implements IMarkerResolution2 {
@@ -49,7 +49,7 @@ public class OpenPropertyPageResolution implements IMarkerResolution2 {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param pageid
 	 */
 	public OpenPropertyPageResolution(String pagename, String pageid, IAdaptable element) {

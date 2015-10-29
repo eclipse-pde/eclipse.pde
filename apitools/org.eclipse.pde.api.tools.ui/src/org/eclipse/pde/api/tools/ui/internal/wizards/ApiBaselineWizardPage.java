@@ -123,7 +123,7 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param original
 		 */
 		public WorkingCopyOperation(IApiBaseline original) {
@@ -157,7 +157,7 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 		/**
 		 * Returns the newly created {@link IApiProfile} working copy or
 		 * <code>null</code>
-		 * 
+		 *
 		 * @return the working copy or <code>null</code>
 		 */
 		public IApiBaseline getWorkingCopy() {
@@ -232,7 +232,7 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 	/**
 	 * Returns the current API components in the baseline or an empty collection
 	 * if none.
-	 * 
+	 *
 	 * @return the current API components in the baseline or an empty collection
 	 *         if none
 	 */
@@ -245,7 +245,7 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 
 	/**
 	 * Creates or edits the profile and returns it
-	 * 
+	 *
 	 * @return a new {@link IApiProfile} or <code>null</code> if an error was
 	 *         encountered creating the new profile
 	 * @throws IOException

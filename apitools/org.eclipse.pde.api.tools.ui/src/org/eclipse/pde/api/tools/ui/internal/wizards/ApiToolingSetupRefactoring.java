@@ -25,7 +25,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 /**
  * A refactoring to change Javadoc tags during API Tools setup
- * 
+ *
  * @since 1.0.0
  */
 public class ApiToolingSetupRefactoring extends Refactoring {

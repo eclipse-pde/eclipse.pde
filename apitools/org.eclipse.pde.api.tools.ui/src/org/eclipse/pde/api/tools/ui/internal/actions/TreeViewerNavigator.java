@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 class TreeViewerNavigator {
 	private TreeViewer fViewer;
-	
+
 	public TreeViewerNavigator(TreeViewer viewer) {
 		fViewer = viewer;
 	}

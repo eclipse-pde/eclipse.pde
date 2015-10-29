@@ -21,14 +21,14 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Problem resolution that creates an {@link IApiProblemFilter} with a comment
- * 
+ *
  * @since 1.1
  */
 public class FilterProblemWithCommentResolution extends FilterProblemResolution {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param marker
 	 */
 	public FilterProblemWithCommentResolution(IMarker marker) {

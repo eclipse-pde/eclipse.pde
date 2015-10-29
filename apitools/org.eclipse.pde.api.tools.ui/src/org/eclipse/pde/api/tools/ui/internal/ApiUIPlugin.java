@@ -41,7 +41,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * API Tools UI plug-in class.
- * 
+ *
  * @since 1.0.0
  */
 public class ApiUIPlugin extends AbstractUIPlugin {
@@ -83,7 +83,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Declare an Image in the registry table.
-	 * 
+	 *
 	 * @param reg image registry
 	 * @param key The key to use when registering the image
 	 * @param path The path where the image can be found. This path is relative
@@ -103,7 +103,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the singleton API Tools UI plug-in.
-	 * 
+	 *
 	 * @return plug-in
 	 */
 	public static ApiUIPlugin getDefault() {
@@ -115,7 +115,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the image associated with the given image descriptor.
-	 * 
+	 *
 	 * @param descriptor the image descriptor for which there is a managed image
 	 * @return the image associated with the image descriptor or
 	 *         <code>null</code> if the image descriptor can't create the
@@ -140,7 +140,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns an image descriptor from the registry with the given key or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param key image key
 	 * @return image descriptor or <code>null</code>
 	 */
@@ -159,7 +159,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns an image from the registry with the given key or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param key image key
 	 * @return image or <code>null</code>
 	 */
@@ -170,7 +170,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the currently active workbench window shell or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the currently active workbench window shell or <code>null</code>
 	 */
 	public static Shell getShell() {
@@ -188,7 +188,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
@@ -204,7 +204,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified throwable with this plug-in's log.
-	 * 
+	 *
 	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {
@@ -213,19 +213,19 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message the error message to log
 	 */
 	public static void logErrorMessage(String message) {
 		// this message is intentionally not internationalized, as an exception
 		// may
 		// be due to the resource bundle itself
-		log(newErrorStatus("Internal message logged from API Tools UI: " + message, null)); //$NON-NLS-1$	
+		log(newErrorStatus("Internal message logged from API Tools UI: " + message, null)); //$NON-NLS-1$
 	}
 
 	/**
 	 * Returns a new error status for this plug-in with the given message
-	 * 
+	 *
 	 * @param message the message to be included in the status
 	 * @param exception the exception to be included in the status or
 	 *            <code>null</code> if none
@@ -265,7 +265,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns dialog settings with the given name, creating a new section if
 	 * one does not exist.
-	 * 
+	 *
 	 * @param name section name
 	 * @return dialog settings
 	 */

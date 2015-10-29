@@ -46,7 +46,7 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * {@link UIJob} to remove unsupported annotations from a marker resolution
- * 
+ *
  * @since 1.0.500
  */
 public class RemoveUnsupportedAnnotationOperation extends UIJob {

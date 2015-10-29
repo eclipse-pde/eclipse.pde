@@ -25,7 +25,7 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
  * Marker resolution for unsupported API Javadoc tags
- * 
+ *
  * @since 1.0.0
  */
 public class UnsupportedTagResolution extends WorkbenchMarkerResolution {
@@ -35,7 +35,7 @@ public class UnsupportedTagResolution extends WorkbenchMarkerResolution {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param marker
 	 */
 	public UnsupportedTagResolution(IMarker marker) {

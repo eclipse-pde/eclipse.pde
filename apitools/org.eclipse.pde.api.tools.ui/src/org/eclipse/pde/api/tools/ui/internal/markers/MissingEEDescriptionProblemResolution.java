@@ -24,7 +24,7 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * Provides a resolution to open the API Errors/Warnings preference page so the
  * user can configure their invalid reference in EE settings
- * 
+ *
  * @since 1.0.400
  */
 public class MissingEEDescriptionProblemResolution implements IMarkerResolution2 {

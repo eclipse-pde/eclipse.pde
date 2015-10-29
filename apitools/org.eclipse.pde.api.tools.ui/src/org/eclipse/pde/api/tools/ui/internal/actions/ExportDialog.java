@@ -92,7 +92,7 @@ public class ExportDialog extends Dialog {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param provider
 	 * @param title
 	 */
@@ -117,7 +117,7 @@ public class ExportDialog extends Dialog {
 	 * <p>
 	 * Note that the <code>open</code> method blocks for input dialogs.
 	 * </p>
-	 * 
+	 *
 	 * @param parentShell the parent shell, or <code>null</code> to create a
 	 *            top-level shell
 	 * @param dialogTitle the dialog title, or <code>null</code> if none
@@ -237,7 +237,7 @@ public class ExportDialog extends Dialog {
 
 	/**
 	 * Returns the ok button.
-	 * 
+	 *
 	 * @return the ok button
 	 */
 	protected Button getOkButton() {
@@ -246,7 +246,7 @@ public class ExportDialog extends Dialog {
 
 	/**
 	 * Returns the text area.
-	 * 
+	 *
 	 * @return the text area
 	 */
 	protected Text getText() {
@@ -255,7 +255,7 @@ public class ExportDialog extends Dialog {
 
 	/**
 	 * Returns the validator.
-	 * 
+	 *
 	 * @return the validator
 	 */
 	protected IInputValidator getValidator() {
@@ -264,7 +264,7 @@ public class ExportDialog extends Dialog {
 
 	/**
 	 * Returns the string typed into this input dialog.
-	 * 
+	 *
 	 * @return the input string
 	 */
 	public String getValue() {
@@ -293,7 +293,7 @@ public class ExportDialog extends Dialog {
 	/**
 	 * Sets or clears the error message. If not <code>null</code>, the OK button
 	 * is disabled.
-	 * 
+	 *
 	 * @param errorMessage the error message, or <code>null</code> to clear
 	 * @since 3.0
 	 */
@@ -322,10 +322,10 @@ public class ExportDialog extends Dialog {
 	/**
 	 * Returns the style bits that should be used for the input text field.
 	 * Defaults to a single line entry. Subclasses may override.
-	 * 
+	 *
 	 * @return the integer style bits that should be used when creating the
 	 *         input text
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected int getInputTextStyle() {
@@ -341,7 +341,7 @@ public class ExportDialog extends Dialog {
 	/**
 	 * Restores the selected item for the given combo based on the stored value
 	 * from the dialog settings
-	 * 
+	 *
 	 * @param combo
 	 * @param id
 	 * @param settings

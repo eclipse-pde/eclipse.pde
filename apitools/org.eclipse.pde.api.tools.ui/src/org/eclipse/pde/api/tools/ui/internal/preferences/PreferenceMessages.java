@@ -70,12 +70,12 @@ public class PreferenceMessages extends NLS {
 	public static String ApiErrorsWarningsConfigurationBlock_invalid_tag_use;
 	public static String ApiErrorsWarningsConfigurationBlock_invalid_reference_to_system_libraries;
 	public static String ApiErrorsWarningsConfigurationBlock_leaks;
-	public static String ApiErrorsWarningsConfigurationBlock_no_ees_installed;	
+	public static String ApiErrorsWarningsConfigurationBlock_no_ees_installed;
 	public static String ApiErrorsWarningsConfigurationBlock_override_tagged_method;
 	public static String ApiErrorsWarningsConfigurationBlock_parameter_non_api;
 	public static String ApiErrorsWarningsConfigurationBlock_restrictions;
 	public static String ApiErrorsWarningsConfigurationBlock_return_type_non_api;
-	
+
 	public static String ProjectSelectionDialog_title;
 	public static String ProjectSelectionDialog_message;
 	public static String ProjectSelectionDialog_checkbox_text;
@@ -92,7 +92,7 @@ public class PreferenceMessages extends NLS {
 	public static String ANNOTATION_REMOVED_METHOD;
 	public static String ANNOTATION_REMOVED_TYPE_MEMBER;
 	public static String ANNOTATION_CHANGED_TYPE_CONVERSION;
-	
+
 	public static String INTERFACE_ADDED_FIELD;
 	public static String INTERFACE_ADDED_METHOD;
 	public static String INTERFACE_ADDED_RESTRICTIONS;
@@ -137,7 +137,7 @@ public class PreferenceMessages extends NLS {
 	public static String FIELD_CHANGED_NON_STATIC_TO_STATIC;
 	public static String FIELD_REMOVED_VALUE;
 	public static String FIELD_REMOVED_TYPE_ARGUMENT;
-	
+
 	public static String METHOD_ADDED_TYPE_PARAMETER;
 	public static String METHOD_CHANGED_VARARGS_TO_ARRAY;
 	public static String METHOD_CHANGED_DECREASE_ACCESS;

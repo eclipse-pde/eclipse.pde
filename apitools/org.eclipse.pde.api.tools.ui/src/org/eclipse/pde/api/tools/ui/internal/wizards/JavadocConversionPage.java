@@ -60,7 +60,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The wizard page for performing the conversion
- * 
+ *
  * @since 1.0.500
  */
 public class JavadocConversionPage extends UserInputWizardPage {
@@ -82,7 +82,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 
 		/**
 		 * Sets the current text filter to use
-		 * 
+		 *
 		 * @param filter
 		 */
 		public synchronized void setFilter(String pattern) {
@@ -123,7 +123,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public JavadocConversionPage() {
@@ -245,7 +245,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 
 	/**
 	 * Called by the {@link ApiToolingSetupWizard} when finishing the wizard
-	 * 
+	 *
 	 * @return true if the page finished normally, false otherwise
 	 */
 	public boolean finish() {

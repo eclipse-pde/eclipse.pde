@@ -16,7 +16,7 @@ import org.eclipse.pde.api.tools.ui.internal.use.ApiUsePatternTab.Pattern;
 
 /**
  * Wizard for creating patterns
- * 
+ *
  * @since 1.0.1
  */
 public class PatternWizard extends Wizard {
@@ -26,7 +26,7 @@ public class PatternWizard extends Wizard {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param pattern
 	 * @param kind
 	 */

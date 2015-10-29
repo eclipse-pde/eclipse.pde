@@ -40,11 +40,11 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Operation for creating a new API problem filter
- * 
+ *
  * @see IApiProblem
  * @see IApiProblemFilter
  * @see IApiFilterStore
- * 
+ *
  * @since 1.0.0
  */
 public class CreateApiFilterOperation extends UIJob {
@@ -54,11 +54,11 @@ public class CreateApiFilterOperation extends UIJob {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param element the element to create the filter for (method, field,
 	 *            class, enum, etc)
 	 * @param kind the kind of filter to create
-	 * 
+	 *
 	 * @see IApiProblemFilter#getKinds()
 	 */
 	public CreateApiFilterOperation(IMarker[] markers, boolean addingcomments) {

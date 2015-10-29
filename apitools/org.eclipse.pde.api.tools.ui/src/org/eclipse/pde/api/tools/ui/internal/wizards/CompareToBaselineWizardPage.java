@@ -43,7 +43,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page for the compare UI elements
- * 
+ *
  * @since 1.0.1
  */
 public class CompareToBaselineWizardPage extends WizardPage {
@@ -59,7 +59,7 @@ public class CompareToBaselineWizardPage extends WizardPage {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param selection
 	 * @param pageName
 	 */
@@ -163,7 +163,7 @@ public class CompareToBaselineWizardPage extends WizardPage {
 	/**
 	 * Restores the selected item for the given combo based on the stored value
 	 * from the dialog settings
-	 * 
+	 *
 	 * @param combo
 	 * @param id
 	 * @param settings
@@ -188,7 +188,7 @@ public class CompareToBaselineWizardPage extends WizardPage {
 
 	/**
 	 * Returns the {@link IAdaptable} from the current selection context
-	 * 
+	 *
 	 * @param selection
 	 * @return the {@link IAdaptable} for the current selection context
 	 */

@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 
 /**
  * Default resolution for duplicated annotations
- * 
+ *
  * @since 1.0.500
  */
 public class DuplicateAnnotationResolution extends UnsupportedAnnotationResolution {

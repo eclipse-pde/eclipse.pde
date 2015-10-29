@@ -15,14 +15,14 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 /**
  * Wizard to convert Javadoc tags to the new annotations
- * 
+ *
  * @since 1.0.500
  */
 public class JavadocConversionWizard extends RefactoringWizard {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param refactoring
 	 */
 	public JavadocConversionWizard(Refactoring refactoring) {

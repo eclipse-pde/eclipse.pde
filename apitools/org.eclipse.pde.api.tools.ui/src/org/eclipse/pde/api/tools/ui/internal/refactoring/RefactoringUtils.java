@@ -29,7 +29,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
 
 /**
  * Helper class to create API tools refactoring changes
- * 
+ *
  * @since 1.0.1
  */
 public class RefactoringUtils {
@@ -37,7 +37,7 @@ public class RefactoringUtils {
 	/**
 	 * Creates the {@link Change} for updating the filter store when a type is
 	 * deleted
-	 * 
+	 *
 	 * @param type the type being deleted
 	 * @return the change to the filter store
 	 */
@@ -66,7 +66,7 @@ public class RefactoringUtils {
 	/**
 	 * Creates the {@link Change} for updating a filter store when a package
 	 * fragment is deleted
-	 * 
+	 *
 	 * @param fragment the fragment that has been deleted
 	 * @return the {@link Change} for the package fragment deletion
 	 */
@@ -95,7 +95,7 @@ public class RefactoringUtils {
 	/**
 	 * Collects the complete set of {@link IApiProblemFilter}s for the given
 	 * collection of {@link IType}s
-	 * 
+	 *
 	 * @param types
 	 * @return the complete collection of {@link IApiProblemFilter}s or an empty
 	 *         list, never <code>null</code>
@@ -124,7 +124,7 @@ public class RefactoringUtils {
 	/**
 	 * Collects the complete list of {@link IType}s affected from within the
 	 * {@link IPackageFragment}
-	 * 
+	 *
 	 * @param fragment
 	 * @return the complete collection of affected {@link IType}s or an empty
 	 *         list, never <code>null</code>
@@ -152,7 +152,7 @@ public class RefactoringUtils {
 	/**
 	 * Creates the {@link Change} for updating {@link IApiProblemFilter}s that
 	 * are affected by the rename of a type
-	 * 
+	 *
 	 * @param type the type being renamed
 	 * @param newname the new name to be set on the resource
 	 * @return the rename type change for updating filters
@@ -164,7 +164,7 @@ public class RefactoringUtils {
 	/**
 	 * Creates the {@link Change} for {@link IApiProblemFilter}s affected by a
 	 * package fragment rename
-	 * 
+	 *
 	 * @param fragment
 	 * @param newname
 	 * @return the change for the package fragment rename
@@ -175,7 +175,7 @@ public class RefactoringUtils {
 
 	/**
 	 * Gets the {@link IApiFilterStore} for the given {@link IProject}
-	 * 
+	 *
 	 * @param project
 	 * @return the filter store for the given project or <code>null</code>
 	 * @throws CoreException
@@ -190,7 +190,7 @@ public class RefactoringUtils {
 
 	/**
 	 * Returns the new fully qualified name for the filter
-	 * 
+	 *
 	 * @param type
 	 * @param newname
 	 * @return
@@ -211,7 +211,7 @@ public class RefactoringUtils {
 
 	/**
 	 * Returns the new type name with the new package qualification
-	 * 
+	 *
 	 * @param newname
 	 * @param oldtypename
 	 * @return the new fully qualified type name
@@ -225,7 +225,7 @@ public class RefactoringUtils {
 	 * Returns a new path string given the type name. This method basically
 	 * removes the last segment of the path, appends the new name and resets the
 	 * extension
-	 * 
+	 *
 	 * @param oldpath
 	 * @param typename
 	 * @return the new resource path to use

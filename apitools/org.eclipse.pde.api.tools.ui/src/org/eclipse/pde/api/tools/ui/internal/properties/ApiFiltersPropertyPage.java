@@ -72,14 +72,14 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Property page to allow UI edits to the current set of filters for a given
  * project
- * 
+ *
  * @since 1.0.0
  */
 public class ApiFiltersPropertyPage extends PropertyPage {
 
 	/**
 	 * Holds an edit change so it can be reverted if cancel is pressed
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	class CommentChange {
@@ -292,7 +292,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 
 	/**
 	 * Handles the edit button being pressed
-	 * 
+	 *
 	 * @param selection
 	 * @since 1.1
 	 */
@@ -318,7 +318,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 
 	/**
 	 * Performs the remove
-	 * 
+	 *
 	 * @param selection
 	 */
 	void handleRemove(IStructuredSelection selection) {
@@ -353,7 +353,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 
 	/**
 	 * Collects the indexes of the first item in the current selection
-	 * 
+	 *
 	 * @param selection
 	 * @return an array of indexes (parent, child) of the first item in the
 	 *         current selection
@@ -379,7 +379,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	 * Updates the selection in the viewer based on the given indexes. If there
 	 * is no item to update at the given indexes then the next logical child is
 	 * taken, else the parent is selected, else no selection is made
-	 * 
+	 *
 	 * @param indexes
 	 */
 	private void updateSelection(int[] indexes) {
@@ -423,7 +423,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 
 	/**
 	 * Collects all of the elements to be deleted
-	 * 
+	 *
 	 * @param selection
 	 * @param comments a collector for filters that will have their comments
 	 *            removed

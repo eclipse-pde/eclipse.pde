@@ -35,7 +35,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 /**
  * Provides a property page for projects to allow project specific API Tools
  * settings to be applied;
- * 
+ *
  * @since 1.0.0
  */
 public class ApiErrorsWarningsPropertyPage extends PropertyPage {

@@ -69,7 +69,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Define a baseline from a Target Definition
- * 
+ *
  * @since 1.0.600
  */
 public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
@@ -87,7 +87,7 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param platformPath
 		 */
 		public ReloadTargetOperation(ITargetDefinition definition, String name) {
@@ -318,7 +318,7 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 	protected boolean pageValid() {
 		setErrorMessage(null);
 		// If a target is selected then report any resolving problems before
-		// any missing-name errors. It's strange to click on 'reset' and see 
+		// any missing-name errors. It's strange to click on 'reset' and see
 		// the progress bar and having any resolving errors masked by a
 		// missing-name or no-bundles-error
 		ITargetDefinition selected = getSelectedTargetDefinition();

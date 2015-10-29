@@ -84,7 +84,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * This block is used to add the API Tools notification settings UI to a parent
  * control
- * 
+ *
  * @since 1.0.0
  */
 public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
@@ -100,7 +100,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param key
 		 * @param values
 		 */
@@ -145,7 +145,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param qualifier
 		 * @param key
 		 */
@@ -157,7 +157,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		/**
 		 * Returns the {@link IEclipsePreferences} node for the given context
 		 * and {@link IWorkingCopyManager}
-		 * 
+		 *
 		 * @param context
 		 * @param manager
 		 * @return the {@link IEclipsePreferences} node or <code>null</code>
@@ -173,7 +173,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		/**
 		 * Returns the value stored in the {@link IEclipsePreferences} node from
 		 * the given context and working copy manager
-		 * 
+		 *
 		 * @param context
 		 * @param manager
 		 * @return the value from the {@link IEclipsePreferences} node or
@@ -190,7 +190,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		/**
 		 * Returns the stored value of this {@link IEclipsePreferences} node
 		 * using a given lookup order, and allowing the top scope to be ignored
-		 * 
+		 *
 		 * @param lookupOrder
 		 * @param ignoreTopScope
 		 * @param manager
@@ -209,7 +209,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Sets the value of this key
-		 * 
+		 *
 		 * @param context
 		 * @param value
 		 * @param manager
@@ -231,7 +231,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Returns a new {@link Key} for the {@link ApiUIPlugin} preference store
-	 * 
+	 *
 	 * @param key
 	 * @return the new {@link Key} for the {@link ApiUIPlugin} preference store
 	 */
@@ -570,7 +570,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Default value set for check box controls
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	private static final String[] CHECKBOX_VALUES = {
@@ -747,7 +747,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param project
 	 */
 	public ApiErrorsWarningsConfigurationBlock(IProject project, IWorkbenchPreferenceContainer container) {
@@ -777,7 +777,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates the control in the parent control
-	 * 
+	 *
 	 * @param parent the parent control
 	 */
 	public Control createControl(Composite parent) {
@@ -848,7 +848,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates a tab page parented in the folder
-	 * 
+	 *
 	 * @param tabID
 	 * @param folder
 	 * @param name
@@ -1146,7 +1146,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Initializes the group of EE meta-data that is installed
-	 * 
+	 *
 	 * @param parent
 	 */
 	private void initializeInstalledMetatadata(final Composite parent) {
@@ -1206,7 +1206,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Sets all values of the given set of keys to the given new value
-	 * 
+	 *
 	 * @param newValue
 	 * @param keys
 	 */
@@ -1223,7 +1223,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Creates an {@link ExpandableComposite} with a client composite and a
 	 * default grid layout
-	 * 
+	 *
 	 * @param parent
 	 * @param title
 	 * @return
@@ -1246,7 +1246,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Returns the scrolling parent for the given ExpandibleComposite object
-	 * 
+	 *
 	 * @param obj
 	 * @return
 	 */
@@ -1378,7 +1378,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * recursive method to enable/disable all of the controls on the main page
-	 * 
+	 *
 	 * @param ctrl
 	 * @param enabled
 	 */
@@ -1407,7 +1407,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Creates a {@link Label} | {@link Combo} control. The combo is initialised
 	 * from the given {@link Key}
-	 * 
+	 *
 	 * @param parent
 	 * @param label
 	 * @param key
@@ -1456,7 +1456,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Sets using project specific settings
-	 * 
+	 *
 	 * @param enable
 	 */
 	public void useProjectSpecificSettings(boolean enable) {
@@ -1487,7 +1487,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * returns if this block has project specific settings
-	 * 
+	 *
 	 * @param project
 	 * @return true if there are project specific settings, false otherwise
 	 */
@@ -1505,7 +1505,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Collects the keys that have changed on the page into the specified list
-	 * 
+	 *
 	 * @param changes the {@link List} to collect changed keys into
 	 */
 	private void collectChanges(IScopeContext context, List<Key> changes) {
@@ -1544,7 +1544,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * If a valid tab ID is provided, select that tab in the tab folder.
-	 * 
+	 *
 	 * @param tabID integer tab id, one of
 	 *            {@link ApiErrorsWarningsConfigurationBlock#API_USE_SCANS_PAGE_ID}
 	 *            ,

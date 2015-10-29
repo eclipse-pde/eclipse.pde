@@ -56,7 +56,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * The wizard page allowing a new directory-based API profiles to be created or
  * an existing one to be edited.
- * 
+ *
  * @since 1.0.0
  */
 public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
@@ -74,7 +74,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param platformPath
 		 */
 		public ReloadOperation(String name, String location) {
@@ -110,14 +110,14 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 	/**
 	 * We need to know if we are initializing the page to not respond to changed
 	 * events causing validation when the wizard opens.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=266597
 	 */
 	private boolean initializing = false;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param profile
 	 */
 	protected DirectoryBasedApiBaselineWizardPage(IApiBaseline profile) {

@@ -45,7 +45,7 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * The operation for removing an unsupported API Javadoc tag from a member
- * 
+ *
  * @since 1.0.0
  */
 public class RemoveUnsupportedTagOperation extends UIJob {
@@ -57,7 +57,7 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param marker
 	 */
 	public RemoveUnsupportedTagOperation(IMarker[] markers) {

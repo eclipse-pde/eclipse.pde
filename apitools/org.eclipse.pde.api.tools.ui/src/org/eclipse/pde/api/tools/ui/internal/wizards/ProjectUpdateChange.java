@@ -32,7 +32,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Provides a {@link Change} for updating the nature, etc of a project
- * 
+ *
  * @since 1.0.0
  */
 public class ProjectUpdateChange extends Change {
@@ -41,7 +41,7 @@ public class ProjectUpdateChange extends Change {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param project the project to configure
 	 */
 	public ProjectUpdateChange(IProject project) {

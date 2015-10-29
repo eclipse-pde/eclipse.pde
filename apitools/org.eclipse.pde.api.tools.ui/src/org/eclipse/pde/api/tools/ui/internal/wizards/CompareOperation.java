@@ -48,7 +48,7 @@ import org.eclipse.pde.api.tools.ui.internal.actions.DeltaSession;
 
 /**
  * Default operation for comparing a given selection to the given API baseline
- * 
+ *
  * @since 1.0.1
  */
 public class CompareOperation extends Job {
@@ -58,7 +58,7 @@ public class CompareOperation extends Job {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param baseline
 	 * @param selection
 	 */

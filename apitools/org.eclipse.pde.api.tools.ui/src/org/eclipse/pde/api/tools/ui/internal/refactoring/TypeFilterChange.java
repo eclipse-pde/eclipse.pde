@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
  * A change object for
  * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter}
  * s This change can handle adds / renames and removes.
- * 
+ *
  * @since 1.0.1
  */
 public class TypeFilterChange extends FilterChange {
@@ -28,7 +28,7 @@ public class TypeFilterChange extends FilterChange {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param store the store the filter is to be updated in
 	 * @param filter the filter being changed
 	 * @param primaryname the name of the primary type (the name of the

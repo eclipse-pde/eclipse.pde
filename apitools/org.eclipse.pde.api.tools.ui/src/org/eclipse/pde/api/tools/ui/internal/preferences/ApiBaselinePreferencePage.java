@@ -61,7 +61,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 /**
  * This preference page allows {@link IApiBaseline}s to be
  * created/removed/edited
- * 
+ *
  * @since 1.0.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -231,7 +231,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	/**
 	 * Returns if the {@link IApiProfile} with the given name has been removed,
 	 * but not yet committed back to the manager
-	 * 
+	 *
 	 * @param name the name of the {@link IApiProfile}
 	 * @return true if the {@link IApiProfile} has been removed from the page,
 	 *         false otherwise
@@ -264,7 +264,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	/**
 	 * Performs the edit operation for the edit button and the double click
 	 * listener for the table
-	 * 
+	 *
 	 * @param profile
 	 */
 	protected void doEdit(final IApiBaseline baseline) {
@@ -294,7 +294,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	/**
 	 * Returns if the specified {@link IApiProfile} is the default profile or
 	 * not
-	 * 
+	 *
 	 * @param element
 	 * @return if the profile is the default or not
 	 */

@@ -49,7 +49,7 @@ public class ApiUseScanConfigurationBlock {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param key
 		 * @param values
 		 */
@@ -94,7 +94,7 @@ public class ApiUseScanConfigurationBlock {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param qualifier
 		 * @param key
 		 */
@@ -106,7 +106,7 @@ public class ApiUseScanConfigurationBlock {
 		/**
 		 * Returns the {@link IEclipsePreferences} node for the given context
 		 * and {@link IWorkingCopyManager}
-		 * 
+		 *
 		 * @param context
 		 * @param manager
 		 * @return the {@link IEclipsePreferences} node or <code>null</code>
@@ -122,7 +122,7 @@ public class ApiUseScanConfigurationBlock {
 		/**
 		 * Returns the value stored in the {@link IEclipsePreferences} node from
 		 * the given context and working copy manager
-		 * 
+		 *
 		 * @param context
 		 * @param manager
 		 * @return the value from the {@link IEclipsePreferences} node or
@@ -139,7 +139,7 @@ public class ApiUseScanConfigurationBlock {
 		/**
 		 * Returns the stored value of this {@link IEclipsePreferences} node
 		 * using a given lookup order, and allowing the top scope to be ignored
-		 * 
+		 *
 		 * @param lookupOrder
 		 * @param ignoreTopScope
 		 * @param manager
@@ -158,7 +158,7 @@ public class ApiUseScanConfigurationBlock {
 
 		/**
 		 * Sets the value of this key
-		 * 
+		 *
 		 * @param context
 		 * @param value
 		 * @param manager
@@ -180,7 +180,7 @@ public class ApiUseScanConfigurationBlock {
 
 	/**
 	 * Returns a new {@link Key} for the {@link ApiUIPlugin} preference store
-	 * 
+	 *
 	 * @param key
 	 * @return the new {@link Key} for the {@link ApiUIPlugin} preference store
 	 */
@@ -254,7 +254,7 @@ public class ApiUseScanConfigurationBlock {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param project
 	 */
 	public ApiUseScanConfigurationBlock(IWorkingCopyManager manager) {
@@ -265,7 +265,7 @@ public class ApiUseScanConfigurationBlock {
 
 	/**
 	 * Creates the control in the parent control
-	 * 
+	 *
 	 * @param parent the parent control
 	 */
 	public Control createControl(Composite parent) {
@@ -351,7 +351,7 @@ public class ApiUseScanConfigurationBlock {
 	/**
 	 * Creates a {@link Label} | {@link Combo} control. The combo is initialized
 	 * from the given {@link Key}
-	 * 
+	 *
 	 * @param parent
 	 * @param label
 	 * @param key
@@ -374,7 +374,7 @@ public class ApiUseScanConfigurationBlock {
 
 	/**
 	 * Collects the keys that have changed on the page into the specified list
-	 * 
+	 *
 	 * @param changes the {@link List} to collect changed keys into
 	 */
 	private void collectChanges(IScopeContext context, List<Key> changes) {

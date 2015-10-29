@@ -41,7 +41,7 @@ public class ReportPatternPage extends UsePatternPage {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param pattern
 	 */
 	public ReportPatternPage(String pattern, int kind) {
