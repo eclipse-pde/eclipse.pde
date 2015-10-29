@@ -35,12 +35,6 @@ public class ApiToolingSetupRefactoring extends Refactoring {
 	 */
 	private HashSet<Change> fChanges = null;
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(org
-	 * .eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (fChanges == null || fChanges.size() < 1) {
@@ -49,23 +43,11 @@ public class ApiToolingSetupRefactoring extends Refactoring {
 		return RefactoringStatus.create(Status.OK_STATUS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(org
-	 * .eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return RefactoringStatus.create(Status.OK_STATUS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Refactoring#createChange(org.eclipse
-	 * .core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (fChanges == null) {
@@ -92,10 +74,6 @@ public class ApiToolingSetupRefactoring extends Refactoring {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#getName()
-	 */
 	@Override
 	public String getName() {
 		return WizardMessages.JavadocTagRefactoring_3;

@@ -49,12 +49,6 @@ public class ArchivePatternPage extends UsePatternPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
@@ -88,10 +82,6 @@ public class ArchivePatternPage extends UsePatternPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IApiToolsHelpContextIds.APITOOLS_ARCHIVE_PATTERN_WIZARD_PAGE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-	 */
 	@Override
 	public boolean isPageComplete() {
 		if (this.bundletext.getText().trim().length() == 0) {
@@ -114,12 +104,6 @@ public class ArchivePatternPage extends UsePatternPage {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#resetMessage
-	 * (boolean)
-	 */
 	@Override
 	protected void resetMessage(boolean isediting) {
 		setErrorMessage(null);
@@ -130,29 +114,16 @@ public class ArchivePatternPage extends UsePatternPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#getPattern()
-	 */
 	@Override
 	public String getPattern() {
 		return this.bundletext.getText().trim() + ':' + this.patterntext.getText().trim();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#getKind()
-	 */
 	@Override
 	public int getKind() {
 		return Pattern.JAR;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
-	 */
 	@Override
 	public IWizardPage getNextPage() {
 		return null;

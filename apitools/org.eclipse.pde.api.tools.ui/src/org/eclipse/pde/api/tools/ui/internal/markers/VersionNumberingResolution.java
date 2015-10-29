@@ -41,10 +41,6 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 		this.description = marker.getAttribute(IApiMarkerConstants.VERSION_NUMBERING_ATTR_DESCRIPTION, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		switch (this.kind) {
@@ -64,19 +60,11 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE_VERSION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		switch (this.kind) {
@@ -96,11 +84,6 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public void run(final IMarker marker) {
 		String title = null;
@@ -125,12 +108,6 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				title = NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMinor2, this.newVersionValue);
 		}
 		UIJob job = new UIJob(title) {
-			/*
-			 * (non-Javadoc)
-			 * @see
-			 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.
-			 * runtime.IProgressMonitor)
-			 */
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				UpdateBundleVersionOperation updateBundleVersionOperation = new UpdateBundleVersionOperation(marker, VersionNumberingResolution.this.newVersionValue);

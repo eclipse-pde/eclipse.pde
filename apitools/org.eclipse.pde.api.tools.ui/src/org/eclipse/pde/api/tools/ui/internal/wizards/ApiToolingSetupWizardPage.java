@@ -156,12 +156,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		setMessage(WizardMessages.UpdateJavadocTagsWizardPage_7);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
@@ -357,10 +351,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#getNextPage()
-	 */
 	@Override
 	public IWizardPage getNextPage() {
 		// always have to collect changes again in the event the user goes back
@@ -454,10 +444,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#performFinish()
-	 */
 	@Override
 	protected boolean performFinish() {
 		collectChanges();

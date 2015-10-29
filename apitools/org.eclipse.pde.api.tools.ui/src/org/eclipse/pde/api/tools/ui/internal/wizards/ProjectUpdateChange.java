@@ -48,40 +48,20 @@ public class ProjectUpdateChange extends Change {
 		fProject = project;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
-	 */
 	@Override
 	public Object getModifiedElement() {
 		return fProject;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
-	 */
 	@Override
 	public String getName() {
 		return WizardMessages.ProjectUpdateChange_add_nature_and_builder;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.
-	 * eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime
-	 * .IProgressMonitor)
-	 */
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (fProject.isAccessible()) {
@@ -90,12 +70,6 @@ public class ProjectUpdateChange extends Change {
 		return RefactoringStatus.createErrorStatus(MessageFormat.format(WizardMessages.ProjectUpdateChange_project_not_accessible, fProject.getName()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime
-	 * .IProgressMonitor)
-	 */
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(pm);

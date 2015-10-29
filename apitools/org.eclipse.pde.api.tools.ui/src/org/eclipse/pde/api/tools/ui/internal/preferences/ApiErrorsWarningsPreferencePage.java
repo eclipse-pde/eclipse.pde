@@ -87,12 +87,6 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		super(PreferenceMessages.ApiErrorsWarningsPreferencePage_0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
@@ -139,10 +133,6 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		return comp;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (block != null) {
@@ -151,60 +141,34 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		block.performCancel();
 		return super.performCancel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		block.performOK();
 		return super.performOk();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
-	 */
 	@Override
 	protected void performApply() {
 		block.performApply();
 		super.performApply();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		block.performDefaults();
 		super.performDefaults();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void applyData(Object data) {

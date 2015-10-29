@@ -52,12 +52,6 @@ public class DescriptionPatternPage extends UsePatternPage {
 		resetMessage(this.pattern != null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
@@ -80,10 +74,6 @@ public class DescriptionPatternPage extends UsePatternPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IApiToolsHelpContextIds.APITOOLS_DESCRIPTION_PATTERN_WIZARD_PAGE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-	 */
 	@Override
 	public boolean isPageComplete() {
 		String newtext = this.patterntext.getText().trim();
@@ -105,12 +95,6 @@ public class DescriptionPatternPage extends UsePatternPage {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#resetMessage
-	 * (boolean)
-	 */
 	@Override
 	protected void resetMessage(boolean isediting) {
 		setErrorMessage(null);
@@ -121,29 +105,16 @@ public class DescriptionPatternPage extends UsePatternPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
-	 */
 	@Override
 	public IWizardPage getNextPage() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#getKind()
-	 */
 	@Override
 	public int getKind() {
 		return this.kbutton.getSelection() ? Pattern.API : Pattern.INTERNAL;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#getPattern()
-	 */
 	@Override
 	public String getPattern() {
 		return this.patterntext.getText().trim();

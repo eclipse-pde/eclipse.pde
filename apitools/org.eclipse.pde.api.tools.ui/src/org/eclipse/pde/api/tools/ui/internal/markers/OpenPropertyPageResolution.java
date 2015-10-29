@@ -61,38 +61,21 @@ public class OpenPropertyPageResolution implements IMarkerResolution2 {
 		fElement = element;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return NLS.bind(MarkerMessages.OpenPropertyPageResolution_opens_the_property_page, fPageName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_OPEN_PAGE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return NLS.bind(MarkerMessages.OpenPropertyPageResolution_open_the_property_page, fPageName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public void run(IMarker marker) {
 		UIJob job = new UIJob(MarkerMessages.OpenPropertyPageResolution_opening_property_page_job_name) {

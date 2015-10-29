@@ -142,43 +142,21 @@ public class JavadocConversionRefactoring extends Refactoring {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#getName()
-	 */
 	@Override
 	public String getName() {
 		return WizardMessages.JavadocConversionRefactoring_convert_tag_to_annotation_refactoring_name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(org
-	 * .eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return RefactoringStatus.create(Status.OK_STATUS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(org
-	 * .eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return RefactoringStatus.create(Status.OK_STATUS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Refactoring#createChange(org.eclipse
-	 * .core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		SubMonitor localmonitor = SubMonitor.convert(pm, WizardMessages.JavadocConversionPage_scanning_projects_for_javadoc_tags, projects.size() * 100);
@@ -314,15 +292,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 			this.monitor = SubMonitor.convert(monitor, 100);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor
-		 * #visitElement
-		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
-		 * .IElementDescriptor,
-		 * org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
-		 */
 		@Override
 		public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 			if (element.getElementType() == IElementDescriptor.TYPE) {
@@ -425,12 +394,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 			this.remove = remove;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core
-		 * .dom.CompilationUnit)
-		 */
 		@Override
 		public void endVisit(CompilationUnit node) {
 			if (missingImports.size() > 0) {
@@ -448,12 +411,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 			super.endVisit(node);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .ImportDeclaration)
-		 */
 		@Override
 		public boolean visit(ImportDeclaration node) {
 			String name = node.getName().getFullyQualifiedName();
@@ -463,12 +420,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 			return super.visit(node);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .TypeDeclaration)
-		 */
 		@Override
 		public boolean visit(TypeDeclaration node) {
 			ITypeBinding binding = node.resolveBinding();
@@ -482,12 +433,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .AnnotationTypeDearation)
-		 */
 		@Override
 		public boolean visit(AnnotationTypeDeclaration node) {
 			ITypeBinding binding = node.resolveBinding();
@@ -501,12 +446,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .EnumDeclaration)
-		 */
 		@Override
 		public boolean visit(EnumDeclaration node) {
 			ITypeBinding binding = node.resolveBinding();
@@ -520,12 +459,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .FieldDeclaration)
-		 */
 		@Override
 		public boolean visit(FieldDeclaration node) {
 			ASTNode parent = node.getParent();
@@ -546,12 +479,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 			return super.visit(node);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .MethodDeclaration)
-		 */
 		@Override
 		public boolean visit(MethodDeclaration node) {
 			ASTNode parent = node.getParent();

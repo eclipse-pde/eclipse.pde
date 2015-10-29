@@ -41,12 +41,6 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 		fFlags = flags;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage
-	 * (int, int)
-	 */
 	@Override
 	protected void drawCompositeImage(int width, int height) {
 		ImageData bg = fOriginalImage.getImageData();
@@ -108,10 +102,6 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 		return data;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
-	 */
 	@Override
 	protected Point getSize() {
 		if (fSize == null) {
@@ -121,10 +111,6 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 		return fSize;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof CompositeApiImageDescriptor) {
@@ -134,10 +120,6 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return fOriginalImage.hashCode() | fFlags;

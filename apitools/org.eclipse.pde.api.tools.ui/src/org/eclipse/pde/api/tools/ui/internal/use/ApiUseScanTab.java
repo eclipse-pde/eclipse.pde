@@ -98,12 +98,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			reportlocation = null, description = null, filterRoot = null;
 	Group searchForGroup = null, searchInGroup = null, filterGroup = null;
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
@@ -434,19 +428,11 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return Messages.ApiUseScanTab_api_use_report;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_SETUP_APITOOLS);
@@ -520,12 +506,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.baseline.setItems(ids.toArray(new String[ids.size()]));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse
-	 * .debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		this.initializing = true;
@@ -665,12 +645,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse
-	 * .debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(ApiUseLaunchDelegate.TARGET_KIND, getTargetKind());
@@ -746,12 +720,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		return modifiers;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.
-	 * debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		int modifiers = ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES;
@@ -759,12 +727,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse
-	 * .debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		if (this.initializing) {

@@ -273,9 +273,6 @@ public class DeltaSession implements ISession {
 			// nothing to do
 		}
 
-		/*
-		 * (non-Javadoc) Method declared on IAdaptable
-		 */
 		@Override
 		@SuppressWarnings("unchecked")
 		public <T> T getAdapter(Class<T> adapter) {

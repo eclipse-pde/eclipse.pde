@@ -116,9 +116,6 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		};
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
@@ -178,10 +175,6 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		return composite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		// override to avoid synthetic accessor warnings
@@ -219,10 +212,6 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		ApiUIPlugin.getDefault().getDialogSettings().put(DIALOG_SETTINGS_SHOW_ALL, !selected);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
-	 */
 	@Override
 	protected void computeResult() {
 	}

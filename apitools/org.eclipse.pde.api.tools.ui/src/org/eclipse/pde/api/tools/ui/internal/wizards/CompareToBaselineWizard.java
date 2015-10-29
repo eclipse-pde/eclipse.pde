@@ -35,19 +35,11 @@ public class CompareToBaselineWizard extends Wizard {
 		setWindowTitle(title);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		addPage(new CompareToBaselineWizardPage(this.selection));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		return ((CompareToBaselineWizardPage) getStartingPage()).finish();

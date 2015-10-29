@@ -49,12 +49,6 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage {
 	Button pspecific = null;
 	Link link = null;
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
@@ -124,20 +118,12 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		block.performCancel();
 		return super.performCancel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		block.performOK();
@@ -153,20 +139,12 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage {
 		super.performDefaults();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
-	 */
 	@Override
 	protected void performApply() {
 		block.performApply();
 		super.performApply();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		block.dispose();

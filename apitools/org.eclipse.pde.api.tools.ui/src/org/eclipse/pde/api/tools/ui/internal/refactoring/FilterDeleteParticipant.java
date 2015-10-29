@@ -33,46 +33,21 @@ public class FilterDeleteParticipant extends DeleteParticipant {
 
 	private IJavaElement element = null;
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
-	 * checkConditions(org.eclipse.core.runtime.IProgressMonitor,
-	 * org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-	 */
 	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
-	 * createChange(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
-	 * getName()
-	 */
 	@Override
 	public String getName() {
 		return NLS.bind(RefactoringMessages.FilterDeleteParticipant_remove_unused_filters_for_0, this.element.getElementName());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
-	 * createPreChange(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public Change createPreChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		switch (this.element.getElementType()) {
@@ -88,12 +63,6 @@ public class FilterDeleteParticipant extends DeleteParticipant {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
-	 * initialize(java.lang.Object)
-	 */
 	@Override
 	protected boolean initialize(Object element) {
 		if (element instanceof IJavaElement) {

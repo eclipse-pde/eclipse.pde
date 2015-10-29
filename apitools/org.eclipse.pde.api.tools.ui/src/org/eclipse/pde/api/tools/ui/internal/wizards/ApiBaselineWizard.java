@@ -61,10 +61,6 @@ public class ApiBaselineWizard extends Wizard {
 		return content;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		if (profile != null) {
@@ -95,10 +91,6 @@ public class ApiBaselineWizard extends Wizard {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		try {

@@ -82,12 +82,6 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 			this.name = name;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse
-		 * .core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask(WizardMessages.ApiProfileWizardPage_0, 10);
@@ -130,12 +124,6 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 		super(profile);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 4, 1, GridData.FILL_HORIZONTAL);

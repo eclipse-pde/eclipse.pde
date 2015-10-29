@@ -41,10 +41,6 @@ public class UnsupportedAnnotationResolution extends WorkbenchMarkerResolution {
 		fBackingMarker = marker;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		if (this.plural) {
@@ -53,19 +49,11 @@ public class UnsupportedAnnotationResolution extends WorkbenchMarkerResolution {
 		return getLabel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_REMOVE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (this.plural) {
@@ -80,23 +68,12 @@ public class UnsupportedAnnotationResolution extends WorkbenchMarkerResolution {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public void run(IMarker marker) {
 		RemoveUnsupportedAnnotationOperation op = new RemoveUnsupportedAnnotationOperation(new IMarker[] { marker });
 		op.schedule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.views.markers.WorkbenchMarkerResolution#findOtherMarkers
-	 * (org.eclipse.core.resources.IMarker[])
-	 */
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<IMarker>(markers.length);

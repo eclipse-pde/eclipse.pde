@@ -65,28 +65,16 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 		fMarker = marker;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return NLS.bind(MarkerMessages.RemoveFilterProblemResolution_removes_selected_problem_filter, MarkerUtilities.getMessage(fMarker));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_REMOVE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (plural) {
@@ -95,12 +83,6 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 		return MarkerMessages.RemoveFilterProblemResolution_remove_unused_filter;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.views.markers.WorkbenchMarkerResolution#run(org.eclipse
-	 * .core.resources.IMarker[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, getLabel(), (markers.length * 2) + 1);
@@ -164,22 +146,11 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public void run(IMarker marker) {
 		run(new IMarker[] { marker }, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.views.markers.WorkbenchMarkerResolution#findOtherMarkers
-	 * (org.eclipse.core.resources.IMarker[])
-	 */
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<IMarker>(markers.length);

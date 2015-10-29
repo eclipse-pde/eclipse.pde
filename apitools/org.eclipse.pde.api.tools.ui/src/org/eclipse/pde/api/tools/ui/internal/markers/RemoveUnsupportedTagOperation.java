@@ -65,12 +65,6 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 		this.markers = markers;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.
-	 * IProgressMonitor)
-	 */
 	@Override
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, MarkerMessages.RemoveUnsupportedTagOperation_removeing_unsupported_tag, this.markers.length + 6);

@@ -51,30 +51,15 @@ public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposa
 		fDisplayText = displaytext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposal#getRelevance()
-	 */
 	@Override
 	public int getRelevance() {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse
-	 * .jface.text.IDocument)
-	 */
 	@Override
 	public void apply(IDocument document) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#
-	 * getAdditionalProposalInfo()
-	 */
 	@Override
 	public String getAdditionalProposalInfo() {
 		int index = fReplaceText.indexOf(fDisplayText);
@@ -84,53 +69,26 @@ public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposa
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#
-	 * getContextInformation()
-	 */
 	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString
-	 * ()
-	 */
 	@Override
 	public String getDisplayString() {
 		return fDisplayText;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection
-	 * (org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public Point getSelection(IDocument document) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#apply
-	 * (org.eclipse.jface.text.ITextViewer, char, int, int)
-	 */
 	@Override
 	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 		try {
@@ -142,33 +100,14 @@ public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposa
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#selected
-	 * (org.eclipse.jface.text.ITextViewer, boolean)
-	 */
 	@Override
 	public void selected(ITextViewer viewer, boolean smartToggle) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#unselected
-	 * (org.eclipse.jface.text.ITextViewer)
-	 */
 	@Override
 	public void unselected(ITextViewer viewer) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate
-	 * (org.eclipse.jface.text.IDocument, int,
-	 * org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		try {
@@ -185,31 +124,16 @@ public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposa
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#
-	 * getInformationControlCreator()
-	 */
 	@Override
 	public IInformationControlCreator getInformationControlCreator() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#
-	 * getPrefixCompletionStart(org.eclipse.jface.text.IDocument, int)
-	 */
 	@Override
 	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 		return fContext.getTokenStart();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#
-	 * getPrefixCompletionText(org.eclipse.jface.text.IDocument, int)
-	 */
 	@Override
 	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		if (validate(document, completionOffset, null)) {

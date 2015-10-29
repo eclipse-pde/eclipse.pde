@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,10 +52,6 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 		fBackingMarker = marker;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		try {
@@ -71,19 +67,11 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_FILTER);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (plural) {
@@ -165,12 +153,6 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 		return fResolvedElement;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.views.markers.WorkbenchMarkerResolution#run(org.eclipse
-	 * .core.resources.IMarker[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
 		CreateApiFilterOperation op = new CreateApiFilterOperation(markers, false);
@@ -178,22 +160,11 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 		op.schedule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public void run(IMarker marker) {
 		run(new IMarker[] { marker }, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.views.markers.WorkbenchMarkerResolution#findOtherMarkers
-	 * (org.eclipse.core.resources.IMarker[])
-	 */
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<IMarker>(markers.length);

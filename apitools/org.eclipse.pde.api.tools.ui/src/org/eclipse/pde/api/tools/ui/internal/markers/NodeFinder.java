@@ -43,81 +43,41 @@ public class NodeFinder extends ASTVisitor {
 		this.position = position;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * AnnotationTypeDeclaration)
-	 */
 	@Override
 	public boolean visit(AnnotationTypeDeclaration node) {
 		return visitNode(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * EnumDeclaration)
-	 */
 	@Override
 	public boolean visit(EnumDeclaration node) {
 		return visitNode(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * TypeDeclaration)
-	 */
 	@Override
 	public boolean visit(TypeDeclaration node) {
 		return visitNode(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * MethodDeclaration)
-	 */
 	@Override
 	public boolean visit(MethodDeclaration node) {
 		return visitNode(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * FieldDeclaration)
-	 */
 	@Override
 	public boolean visit(FieldDeclaration node) {
 		return visitNode(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * EnumConstantDeclaration)
-	 */
 	@Override
 	public boolean visit(EnumConstantDeclaration node) {
 		return visitNode(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * AnnotationTypeMemberDeclaration)
-	 */
 	@Override
 	public boolean visit(AnnotationTypeMemberDeclaration node) {
 		return visitNode(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-	 * Initializer)
-	 */
 	@Override
 	public boolean visit(Initializer node) {
 		return false;

@@ -83,12 +83,6 @@ public class PatternSelectionPage extends WizardPage {
 		super(PAGE_NAME, Messages.PatternSelectionPage_select_pattern, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 2, GridData.FILL_BOTH);
@@ -129,10 +123,6 @@ public class PatternSelectionPage extends WizardPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IApiToolsHelpContextIds.APITOOLS_PATTERN_SELECTION_WIZARD_PAGE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-	 */
 	@Override
 	public boolean isPageComplete() {
 		if (this.viewer.getSelection().isEmpty()) {
@@ -152,10 +142,6 @@ public class PatternSelectionPage extends WizardPage {
 		return (PatternElement) ss.getFirstElement();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
-	 */
 	@Override
 	public IWizardPage getNextPage() {
 		return getWizard().getPage(nextPage());

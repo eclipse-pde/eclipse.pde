@@ -49,10 +49,6 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 			this.name = name;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			return this.name;
@@ -64,12 +60,6 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 	 */
 	static class ContentProvider implements ITreeContentProvider {
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang
-		 * .Object)
-		 */
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof IApiComponent) {
@@ -88,12 +78,6 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang
-		 * .Object)
-		 */
 		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof IApiComponent) {
@@ -107,12 +91,6 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
-		 * java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IApiComponent[]) {
@@ -152,12 +130,6 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 			this.original = original;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse
-		 * .core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			try {

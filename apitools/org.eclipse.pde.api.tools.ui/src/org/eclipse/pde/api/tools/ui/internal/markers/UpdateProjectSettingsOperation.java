@@ -57,12 +57,6 @@ public class UpdateProjectSettingsOperation extends UIJob {
 		fBackingMarker = marker;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.
-	 * IProgressMonitor)
-	 */
 	@Override
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		boolean notNull = monitor != null;

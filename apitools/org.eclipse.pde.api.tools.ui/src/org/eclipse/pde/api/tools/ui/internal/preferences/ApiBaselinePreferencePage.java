@@ -102,12 +102,6 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	 */
 	private ApiBaselinesConfigurationBlock block = null;
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
@@ -330,19 +324,10 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		return (IApiBaseline[]) ((IStructuredSelection) tableviewer.getSelection()).toList().toArray(new IApiBaseline[ss.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		manager.setDefaultApiBaseline(origdefault);
@@ -390,10 +375,6 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		removed.clear();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		this.block.performOK();
@@ -401,10 +382,6 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
-	 */
 	@Override
 	protected void performApply() {
 		this.block.performApply();

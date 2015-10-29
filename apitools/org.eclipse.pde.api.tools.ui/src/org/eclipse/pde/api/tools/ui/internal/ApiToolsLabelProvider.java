@@ -55,10 +55,6 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 */
 	private Font font = null;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (font != null) {
@@ -67,10 +63,6 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IApiComponent) {
@@ -200,10 +192,6 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
 	@Override
 	public String getText(Object element) {
 		if (element instanceof IApiComponent) {
@@ -267,10 +255,6 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-	 */
 	@Override
 	public Font getFont(Object element) {
 		if (isDefaultBaseline(element)) {

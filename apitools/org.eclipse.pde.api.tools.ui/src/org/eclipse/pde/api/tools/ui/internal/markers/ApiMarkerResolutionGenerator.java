@@ -46,12 +46,6 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	private InstallEEDescriptionProblemResolution installEEResolution = new InstallEEDescriptionProblemResolution();
 	private DefaultApiProfileResolution profileResolution = new DefaultApiProfileResolution();
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.
-	 * core.resources.IMarker)
-	 */
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		if (!hasResolutions(marker)) {
@@ -149,12 +143,6 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse
-	 * .core.resources.IMarker)
-	 */
 	@Override
 	public boolean hasResolutions(IMarker marker) {
 		return Util.isApiProblemMarker(marker);

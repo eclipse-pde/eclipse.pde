@@ -33,20 +33,12 @@ public class JavadocConversionWizard extends RefactoringWizard {
 		setDefaultPageTitle(WizardMessages.JavadocConversionWizard_0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		super.performFinish();
 		return ((JavadocConversionPage) getStartingPage()).finish();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#addUserInputPages()
-	 */
 	@Override
 	protected void addUserInputPages() {
 		addPage(new JavadocConversionPage());

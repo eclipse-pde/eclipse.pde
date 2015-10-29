@@ -44,10 +44,6 @@ public class UpdateProjectSettingResolution implements IMarkerResolution2 {
 		fBackingMarker = marker;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		try {
@@ -63,19 +59,11 @@ public class UpdateProjectSettingResolution implements IMarkerResolution2 {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return MessageFormat.format(MarkerMessages.UpdateProjectSettingsResolution_0, new Object[] { PreferenceMessages.ReportApiComponentResolutionFailureDescription });
@@ -101,11 +89,6 @@ public class UpdateProjectSettingResolution implements IMarkerResolution2 {
 		return fResolvedElement;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public void run(IMarker marker) {
 		UpdateProjectSettingsOperation op = new UpdateProjectSettingsOperation(fBackingMarker);

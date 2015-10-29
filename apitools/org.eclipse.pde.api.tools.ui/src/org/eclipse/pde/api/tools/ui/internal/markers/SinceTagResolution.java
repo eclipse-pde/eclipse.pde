@@ -39,10 +39,6 @@ public class SinceTagResolution implements IMarkerResolution2 {
 		this.newVersionValue = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
@@ -54,19 +50,11 @@ public class SinceTagResolution implements IMarkerResolution2 {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_JAVADOCTAG);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
@@ -78,11 +66,6 @@ public class SinceTagResolution implements IMarkerResolution2 {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public void run(final IMarker marker) {
 		String title = null;

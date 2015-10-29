@@ -91,19 +91,11 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 			this.comment = orig;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			return this.filter.equals(obj);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return this.filter.hashCode();
@@ -115,11 +107,6 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	 * type
 	 */
 	static class ApiFilterComparator extends WorkbenchViewerComparator {
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
-		 */
 		@Override
 		public int category(Object element) {
 			if (element instanceof IApiProblemFilter) {
@@ -134,12 +121,6 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	 */
 	class TreeContentProvider implements ITreeContentProvider {
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang
-		 * .Object)
-		 */
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof IResource) {
@@ -152,12 +133,6 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 			return new Object[0];
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang
-		 * .Object)
-		 */
 		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof IResource) {
@@ -170,12 +145,6 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
-		 * java.lang.Object)
-		 */
 		@SuppressWarnings("unchecked")
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -208,12 +177,6 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	ArrayList<CommentChange> fEditSet = new ArrayList<CommentChange>();
 	private ArrayList<IResource> fInputset = null;
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
@@ -515,10 +478,6 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 		return store;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		// revert changes
@@ -530,10 +489,6 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 		return super.performCancel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		try {

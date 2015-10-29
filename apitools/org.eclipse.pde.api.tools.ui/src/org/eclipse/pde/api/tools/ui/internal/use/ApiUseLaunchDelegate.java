@@ -106,14 +106,6 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	public static final int CREATE_HTML = 1 << 4;
 	public static final int DISPLAY_REPORT = 1 << 5;
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.
-	 * eclipse.debug.core.ILaunchConfiguration, java.lang.String,
-	 * org.eclipse.debug.core.ILaunch,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		ApiUseScanJob job = new ApiUseScanJob(configuration);
@@ -121,13 +113,6 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.model.LaunchConfigurationDelegate#buildForLaunch
-	 * (org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		return false;

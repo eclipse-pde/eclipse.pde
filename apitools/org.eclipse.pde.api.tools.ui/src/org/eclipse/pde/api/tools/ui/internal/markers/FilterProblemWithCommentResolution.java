@@ -35,12 +35,6 @@ public class FilterProblemWithCommentResolution extends FilterProblemResolution 
 		super(marker);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ui.internal.markers.FilterProblemResolution
-	 * #getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (plural) {
@@ -60,13 +54,6 @@ public class FilterProblemWithCommentResolution extends FilterProblemResolution 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ui.internal.markers.FilterProblemResolution
-	 * #run(org.eclipse.core.resources.IMarker[],
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
 		CreateApiFilterOperation op = new CreateApiFilterOperation(markers, true);

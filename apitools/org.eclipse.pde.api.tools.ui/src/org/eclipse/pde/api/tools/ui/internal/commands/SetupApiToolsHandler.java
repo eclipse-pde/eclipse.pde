@@ -26,12 +26,6 @@ import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizard;
  */
 public class SetupApiToolsHandler extends AbstractHandler {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
-	 * ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ApiToolingSetupWizard wizard = new ApiToolingSetupWizard(new ApiToolingSetupRefactoring());

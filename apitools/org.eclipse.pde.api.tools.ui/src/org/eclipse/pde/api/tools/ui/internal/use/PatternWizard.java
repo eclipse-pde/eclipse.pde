@@ -36,10 +36,6 @@ public class PatternWizard extends Wizard {
 		this.kind = kind;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		if (this.pattern == null) {
@@ -69,10 +65,6 @@ public class PatternWizard extends Wizard {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		IWizardPage page = getStartingPage();
@@ -87,10 +79,6 @@ public class PatternWizard extends Wizard {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
-	 */
 	@Override
 	public boolean canFinish() {
 		String name = getStartingPage().getName();

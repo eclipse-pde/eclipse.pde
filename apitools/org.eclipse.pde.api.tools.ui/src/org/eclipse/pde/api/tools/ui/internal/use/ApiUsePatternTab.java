@@ -135,10 +135,6 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 			this.kind = kind;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			return this.pattern;
@@ -160,12 +156,6 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 			Messages.ApiUsePatternTab_column_pattern,
 			Messages.ApiUsePatternTab_column_kind };
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
@@ -257,20 +247,11 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		setControl(comp);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getShell()
-	 */
 	@Override
 	protected Shell getShell() {
 		return super.getShell();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#
-	 * updateLaunchConfigurationDialog()
-	 */
 	@Override
 	protected void updateLaunchConfigurationDialog() {
 		super.updateLaunchConfigurationDialog();
@@ -315,30 +296,16 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		this.removebutton.setEnabled(size > 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return Messages.ApiUsePatternTab_patterns_title;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_TEXT_EDIT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse
-	 * .debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
@@ -400,12 +367,6 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		return this.patterns.remove(pattern);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse
-	 * .debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		ArrayList<String> api = new ArrayList<String>();
@@ -446,12 +407,6 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, reportto.size() > 0 ? reportto : (List<String>) null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.
-	 * debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// do nothing, default is no patterns

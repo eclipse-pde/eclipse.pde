@@ -29,47 +29,24 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class DefaultApiProfileResolution implements IMarkerResolution2 {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return MarkerMessages.DefaultApiProfileResolution_0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return MarkerMessages.DefaultApiProfileResolution_1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public void run(IMarker marker) {
 		UIJob job = new UIJob(MarkerMessages.DefaultApiProfileResolution_2) {
-			/*
-			 * (non-Javadoc)
-			 * @see
-			 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.
-			 * runtime.IProgressMonitor)
-			 */
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				SWTFactory.showPreferencePage(ApiUIPlugin.getShell(), IApiToolsConstants.ID_BASELINES_PREF_PAGE, null);

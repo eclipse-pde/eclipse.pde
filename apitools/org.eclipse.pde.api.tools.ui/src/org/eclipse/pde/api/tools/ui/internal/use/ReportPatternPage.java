@@ -50,31 +50,16 @@ public class ReportPatternPage extends UsePatternPage {
 		this.kind = kind;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#getKind()
-	 */
 	@Override
 	public int getKind() {
 		return this.kind;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#getPattern()
-	 */
 	@Override
 	public String getPattern() {
 		return this.patterntext.getText().trim();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
@@ -116,10 +101,6 @@ public class ReportPatternPage extends UsePatternPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IApiToolsHelpContextIds.APITOOLS_REPORT_PATTERN_WIZARD_PAGE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-	 */
 	@Override
 	public boolean isPageComplete() {
 		String newtext = this.patterntext.getText().trim();
@@ -141,12 +122,6 @@ public class ReportPatternPage extends UsePatternPage {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#resetMessage
-	 * (boolean)
-	 */
 	@Override
 	protected void resetMessage(boolean isediting) {
 		setErrorMessage(null);

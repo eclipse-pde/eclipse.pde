@@ -143,24 +143,11 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 
 	static final String JAVA_ELEMENT_DELIMITERS = TextProcessor.getDefaultDelimiters() + "<>(),?{} "; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.ui.text.java.IQuickFixProcessor#hasCorrections(org.eclipse
-	 * .jdt.core.ICompilationUnit, int)
-	 */
 	@Override
 	public boolean hasCorrections(ICompilationUnit unit, int problemId) {
 		return problemId == IProblem.UndefinedType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.ui.text.java.IQuickFixProcessor#getCorrections(org.eclipse
-	 * .jdt.ui.text.java.IInvocationContext,
-	 * org.eclipse.jdt.ui.text.java.IProblemLocation[])
-	 */
 	@Override
 	public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
 		List<IJavaCompletionProposal> proposals = new ArrayList<IJavaCompletionProposal>();

@@ -86,10 +86,6 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 		Image archive = null;
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 			if (archive != null) {
@@ -98,12 +94,6 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			super.dispose();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ColumnLabelProvider#getImage(java.lang.
-		 * Object)
-		 */
 		@Override
 		public Image getImage(Object element) {
 			File file = new File(element.toString());
@@ -118,21 +108,10 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
@@ -353,29 +332,17 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		setErrorMessage(null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		applyChanges();
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
-	 */
 	@Override
 	protected void performApply() {
 		applyChanges();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		fLocationList.clear();

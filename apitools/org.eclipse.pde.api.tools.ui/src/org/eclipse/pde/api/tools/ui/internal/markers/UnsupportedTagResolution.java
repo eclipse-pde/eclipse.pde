@@ -42,10 +42,6 @@ public class UnsupportedTagResolution extends WorkbenchMarkerResolution {
 		fBackingMarker = marker;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		if (this.plural) {
@@ -54,19 +50,11 @@ public class UnsupportedTagResolution extends WorkbenchMarkerResolution {
 		return getLabel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_REMOVE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (this.plural) {
@@ -81,35 +69,18 @@ public class UnsupportedTagResolution extends WorkbenchMarkerResolution {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public void run(IMarker marker) {
 		RemoveUnsupportedTagOperation op = new RemoveUnsupportedTagOperation(new IMarker[] { marker });
 		op.schedule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.views.markers.WorkbenchMarkerResolution#run(org.eclipse
-	 * .core.resources.IMarker[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
 		RemoveUnsupportedTagOperation op = new RemoveUnsupportedTagOperation(markers);
 		op.schedule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.views.markers.WorkbenchMarkerResolution#findOtherMarkers
-	 * (org.eclipse.core.resources.IMarker[])
-	 */
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<IMarker>(markers.length);

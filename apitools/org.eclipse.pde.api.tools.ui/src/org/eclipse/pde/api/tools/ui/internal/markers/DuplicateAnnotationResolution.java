@@ -29,10 +29,6 @@ public class DuplicateAnnotationResolution extends UnsupportedAnnotationResoluti
 		super(marker);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		try {

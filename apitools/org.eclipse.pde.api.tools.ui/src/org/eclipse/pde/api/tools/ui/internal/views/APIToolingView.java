@@ -510,9 +510,6 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		return this.page;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IAdaptable
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {

@@ -31,10 +31,6 @@ public class DuplicateTagResolution extends UnsupportedTagResolution {
 		super(marker);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		try {

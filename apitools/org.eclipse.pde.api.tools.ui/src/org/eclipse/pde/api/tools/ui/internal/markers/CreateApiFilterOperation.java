@@ -67,12 +67,6 @@ public class CreateApiFilterOperation extends UIJob {
 		this.fAddingComment = addingcomments;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.
-	 * IProgressMonitor)
-	 */
 	@Override
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		try {

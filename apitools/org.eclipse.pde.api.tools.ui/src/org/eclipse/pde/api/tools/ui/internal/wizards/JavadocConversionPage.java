@@ -132,12 +132,6 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		setDescription(WizardMessages.JavadocConversionPage_convert_tags_to_annotations_description);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
@@ -260,10 +254,6 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#getNextPage()
-	 */
 	@Override
 	public IWizardPage getNextPage() {
 		// always have to collect changes again in the event the user goes back
@@ -284,10 +274,6 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		return page;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#performFinish()
-	 */
 	@Override
 	protected boolean performFinish() {
 		// always have to collect changes again in the event the user goes back

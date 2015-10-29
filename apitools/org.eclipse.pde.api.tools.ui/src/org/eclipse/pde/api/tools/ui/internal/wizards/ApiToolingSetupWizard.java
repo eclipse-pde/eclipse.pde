@@ -32,20 +32,12 @@ public class ApiToolingSetupWizard extends RefactoringWizard {
 		setDefaultPageTitle(WizardMessages.ApiToolingSetupWizard_0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		super.performFinish();
 		return ((ApiToolingSetupWizardPage) getStartingPage()).finish();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#addUserInputPages()
-	 */
 	@Override
 	protected void addUserInputPages() {
 		addPage(new ApiToolingSetupWizardPage());

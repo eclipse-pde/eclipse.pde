@@ -78,12 +78,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * node
 	 */
 	class TagCollector extends ASTVisitor {
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .Javadoc)
-		 */
 		@Override
 		public boolean visit(Javadoc node) {
 			Set<String> tagnames = ApiPlugin.getJavadocTagManager().getAllTagNames();
@@ -106,13 +100,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#
-	 * computeCompletionProposals
-	 * (org.eclipse.jdt.ui.text.java.ContentAssistInvocationContext,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		JavaContentAssistInvocationContext jcontext = null;
@@ -385,35 +372,16 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#
-	 * computeContextInformation
-	 * (org.eclipse.jdt.ui.text.java.ContentAssistInvocationContext,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return Collections.EMPTY_LIST;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#getErrorMessage
-	 * ()
-	 */
 	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#sessionEnded
-	 * ()
-	 */
 	@Override
 	public void sessionEnded() {
 		if (fImageHandle != null) {
@@ -427,12 +395,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 		fErrorMessage = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#sessionStarted
-	 * ()
-	 */
 	@Override
 	public void sessionStarted() {
 		fParser = ASTParser.newParser(AST.JLS8);

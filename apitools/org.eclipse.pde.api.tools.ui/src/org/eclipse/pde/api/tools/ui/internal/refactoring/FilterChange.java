@@ -59,12 +59,6 @@ public abstract class FilterChange extends Change {
 	 */
 	protected abstract Change performAdd();
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime
-	 * .IProgressMonitor)
-	 */
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		switch (this.kind) {
@@ -119,10 +113,6 @@ public abstract class FilterChange extends Change {
 		return NLS.bind(RefactoringMessages.FilterChange_remove_used_filter, new Object[] { problem.getMessage() });
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
-	 */
 	@Override
 	public String getName() {
 		switch (this.kind) {
@@ -138,31 +128,15 @@ public abstract class FilterChange extends Change {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.
-	 * eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime
-	 * .IProgressMonitor)
-	 */
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
-	 */
 	@Override
 	public Object getModifiedElement() {
 		return this.filter;

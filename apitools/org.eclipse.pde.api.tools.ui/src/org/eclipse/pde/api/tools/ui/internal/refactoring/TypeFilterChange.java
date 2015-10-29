@@ -43,24 +43,12 @@ public class TypeFilterChange extends FilterChange {
 		this.newpath = newpath;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ui.internal.refactoring.FilterChange#performAdd
-	 * ()
-	 */
 	@Override
 	protected Change performAdd() {
 		this.store.addFilters(new IApiProblemFilter[] { this.filter });
 		return new TypeFilterChange(this.store, this.filter, null, null, DELETE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.ui.internal.refactoring.FilterChange#performDelete
-	 * ()
-	 */
 	@Override
 	protected Change performDelete() {
 		if (this.store.removeFilters(new IApiProblemFilter[] { this.filter })) {

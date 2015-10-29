@@ -278,12 +278,6 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		return section;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse
-	 * .jface.resource.ImageRegistry)
-	 */
 	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		// model objects
@@ -346,12 +340,6 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		ApiPlugin.getDefault().getSessionManager().addSessionListener(this.sessionListener);
@@ -360,12 +348,6 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		// dispose composite images
