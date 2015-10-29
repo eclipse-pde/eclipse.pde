@@ -102,7 +102,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 					}
 				}
 
-				MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(getShell(), PDEUIMessages.AntGeneratingExportWizard_0, MessageFormat.format(PDEUIMessages.AntGeneratingExportWizard_1, new Object[] {buf.toString()}), PDEUIMessages.AntGeneratingExportWizard_2, false, PDEPlugin.getDefault().getPreferenceStore(), IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT);
+				MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(getShell(), PDEUIMessages.AntGeneratingExportWizard_0, MessageFormat.format(PDEUIMessages.AntGeneratingExportWizard_1, buf.toString()), PDEUIMessages.AntGeneratingExportWizard_2, false, PDEPlugin.getDefault().getPreferenceStore(), IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT);
 				if (dialog.getReturnCode() == Window.CANCEL) {
 					return false;
 				}
