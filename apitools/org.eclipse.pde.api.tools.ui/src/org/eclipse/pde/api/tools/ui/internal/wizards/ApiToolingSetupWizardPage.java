@@ -274,7 +274,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		if (checkcount == null) {
 			return;
 		}
-		checkcount.setText(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_n_items_checked, new Object[] { Integer.toString(count) }));
+		checkcount.setText(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_n_items_checked, Integer.toString(count)));
 	}
 
 	/**
@@ -393,7 +393,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 			Set<TextEdit> alledits = null;
 			for (Entry<IFile, Set<TextEdit>> entry : map.entrySet()) {
 				file = entry.getKey();
-				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new Object[] { file.getName() }), file);
+				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, file.getName()), file);
 				multiedit = new MultiTextEdit();
 				change.setEdit(multiedit);
 				alledits = entry.getValue();
@@ -432,7 +432,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 					pchange = new CompositeChange(project.getName());
 					refactoring.addChange(pchange);
 					pchange.add(new ProjectUpdateChange(project));
-					localmonitor.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, new Object[] { project.getName() }));
+					localmonitor.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, project.getName()));
 					IResource cxml = project.findMember(IApiCoreConstants.COMPONENT_XML_NAME);
 					if (cxml != null) {
 						// collect the changes for doc

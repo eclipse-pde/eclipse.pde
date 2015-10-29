@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -208,8 +208,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	public String getText(Object element) {
 		if (element instanceof IApiComponent) {
 			IApiComponent comp = (IApiComponent) element;
-			return MessageFormat.format(Messages.ApiToolsLabelProvider_0, new Object[] {
-					comp.getSymbolicName(), comp.getVersion() });
+			return MessageFormat.format(Messages.ApiToolsLabelProvider_0, comp.getSymbolicName(), comp.getVersion());
 		}
 		if (element instanceof File) {
 			try {

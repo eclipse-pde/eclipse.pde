@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class ProjectUpdateChange extends Change {
 	 */
 	@Override
 	public String getName() {
-		return MessageFormat.format(WizardMessages.ProjectUpdateChange_add_nature_and_builder, new Object[] {});
+		return WizardMessages.ProjectUpdateChange_add_nature_and_builder;
 	}
 
 	/*
@@ -87,7 +87,7 @@ public class ProjectUpdateChange extends Change {
 		if (fProject.isAccessible()) {
 			return RefactoringStatus.create(Status.OK_STATUS);
 		}
-		return RefactoringStatus.createErrorStatus(MessageFormat.format(WizardMessages.ProjectUpdateChange_project_not_accessible, new Object[] { fProject.getName() }));
+		return RefactoringStatus.createErrorStatus(MessageFormat.format(WizardMessages.ProjectUpdateChange_project_not_accessible, fProject.getName()));
 	}
 
 	/*

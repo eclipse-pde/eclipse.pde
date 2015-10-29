@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -245,7 +245,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 				}
 				file = entry.getKey();
 				monitor.setTaskName(NLS.bind(WizardMessages.JavadocConversionPage_collect_edits, new Object[] { file.getName() }));
-				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocConversionPage_convert_javadoc_tags_in, new Object[] { file.getName() }), file);
+				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocConversionPage_convert_javadoc_tags_in, file.getName()), file);
 				multiedit = new MultiTextEdit();
 				change.setEdit(multiedit);
 				alledits = entry.getValue();
