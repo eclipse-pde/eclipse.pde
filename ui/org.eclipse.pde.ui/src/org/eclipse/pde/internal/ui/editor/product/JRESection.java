@@ -51,9 +51,9 @@ public class JRESection extends PDESection {
 			IVMInstall install = JavaRuntime.getVMInstall(path);
 			String eeItem;
 			if (install != null) {
-				eeItem = MessageFormat.format(PDEUIMessages.JRESection_eeBoundJRE, new Object[] {env.getId(), install.getName()});
+				eeItem = MessageFormat.format(PDEUIMessages.JRESection_eeBoundJRE, env.getId(), install.getName());
 			} else {
-				eeItem = MessageFormat.format(PDEUIMessages.JRESection_eeUnboundJRE, new Object[] {env.getId()});
+				eeItem = MessageFormat.format(PDEUIMessages.JRESection_eeUnboundJRE, env.getId());
 			}
 			return eeItem;
 		}
