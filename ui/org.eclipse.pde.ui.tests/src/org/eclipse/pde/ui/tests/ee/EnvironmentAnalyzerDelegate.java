@@ -26,9 +26,6 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 	 */
 	public static final String EE_NO_SOUND = "J2SE-1.3-NO-SOUND";
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate#analyze(org.eclipse.jdt.launching.IVMInstall, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		if (!(vm instanceof IVMInstall2))

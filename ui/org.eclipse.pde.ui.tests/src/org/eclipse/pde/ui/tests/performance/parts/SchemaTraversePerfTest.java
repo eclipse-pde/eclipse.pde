@@ -27,9 +27,6 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 		return new TestSuite(SchemaTraversePerfTest.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.tests.performance.parts.AbstractSchemaPerfTest#setUpIterations()
-	 */
 	@Override
 	protected void setUpIterations() {
 		fTestIterations = 5;
@@ -44,9 +41,6 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 		executeTestRun();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.tests.performance.parts.AbstractSchemaPerfTest#executeTest()
-	 */
 	@Override
 	protected void executeTest() throws Exception {
 		URLConnection connection = null;

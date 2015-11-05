@@ -36,9 +36,6 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 
 	protected static File fXSDFile;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
-	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 		setUpSchemaFile();

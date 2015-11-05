@@ -46,9 +46,6 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 	private static final String MARKER = "marker";
 	private static final String MULTIPLE_MARKERS = "multipleMarkers";
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		URL location = PDETestsPlugin.getBundleContext().getBundle().getEntry("/tests/build.properties/build.properties.tests.zip");

@@ -37,25 +37,16 @@ public class ProjectUtils {
 		TestProjectProvider(String projectName) {
 			fProjectName = projectName;
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.internal.ui.wizards.IProjectProvider#getLocationPath()
-		 */
 		@Override
 		public IPath getLocationPath() {
 			return ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.internal.ui.wizards.IProjectProvider#getProject()
-		 */
 		@Override
 		public IProject getProject() {
 			return ResourcesPlugin.getWorkspace().getRoot().getProject(fProjectName);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.internal.ui.wizards.IProjectProvider#getProjectName()
-		 */
 		@Override
 		public String getProjectName() {
 			return fProjectName;
@@ -68,16 +59,10 @@ public class ProjectUtils {
 	 */
 	static class TestBundleWizard extends AbstractNewPluginTemplateWizard {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard#addAdditionalPages()
-		 */
 		@Override
 		protected void addAdditionalPages() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard#getTemplateSections()
-		 */
 		@Override
 		public ITemplateSection[] getTemplateSections() {
 			return new ITemplateSection[0];

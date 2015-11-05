@@ -41,33 +41,21 @@ public class ClasspathContainerInitializer extends org.eclipse.jdt.core.Classpat
 			fPath = path;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
-		 */
 		@Override
 		public IClasspathEntry[] getClasspathEntries() {
 			return new IClasspathEntry[0]; // empty
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
-		 */
 		@Override
 		public String getDescription() {
 			return "PDE Test Classpath Container";
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.core.IClasspathContainer#getKind()
-		 */
 		@Override
 		public int getKind() {
 			return IClasspathContainer.K_APPLICATION;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.core.IClasspathContainer#getPath()
-		 */
 		@Override
 		public IPath getPath() {
 			return fPath;

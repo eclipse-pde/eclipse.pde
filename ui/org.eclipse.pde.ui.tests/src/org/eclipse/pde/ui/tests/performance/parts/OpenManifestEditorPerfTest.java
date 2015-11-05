@@ -50,9 +50,6 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		return new TestSuite(OpenManifestEditorPerfTest.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
-	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 		Bundle bundle = getBundle();

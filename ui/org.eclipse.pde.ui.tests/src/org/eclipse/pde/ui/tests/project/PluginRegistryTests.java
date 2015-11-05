@@ -99,9 +99,6 @@ public class PluginRegistryTests extends TestCase {
 
 	public void testRangeWithFilterMatch() {
 		PluginFilter filter = new PluginFilter() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.core.plugin.PluginRegistry.PluginFilter#accept(org.eclipse.pde.core.plugin.IPluginModelBase)
-			 */
 			@Override
 			public boolean accept(IPluginModelBase model) {
 				IPluginBase base = model.getPluginBase();
@@ -121,9 +118,6 @@ public class PluginRegistryTests extends TestCase {
 
 	public void testRangeWithFilterNoMatch() {
 		PluginFilter filter = new PluginFilter() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.core.plugin.PluginRegistry.PluginFilter#accept(org.eclipse.pde.core.plugin.IPluginModelBase)
-			 */
 			@Override
 			public boolean accept(IPluginModelBase model) {
 				IPluginBase base = model.getPluginBase();
