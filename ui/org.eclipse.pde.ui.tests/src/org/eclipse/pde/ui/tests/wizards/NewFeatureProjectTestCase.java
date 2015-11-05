@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,22 +91,6 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		verifyFeatureNature();
 	}
 
-	/* public void testFeatureProjectData() {
-		FeatureData fd = createDefaultFeatureData();
-		String library = "testLibrary";
-		fd.library = library;
-		String provider = "testProvider";
-		fd.provider = provider;
-		createFeature(fd, false, null);
-		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(DEFAULT_FEATURE_DATA.id);
-		IFeature feature = model.getFeature();
-		assertTrue(feature.getVersion().equals(DEFAULT_FEATURE_DATA.version));
-		assertTrue(feature.getLabel().equals(DEFAULT_FEATURE_DATA.name));
-		assertTrue(feature.getId().equals(DEFAULT_FEATURE_DATA.id));
-		assertTrue(feature.getProviderName().equals(provider));
-		assertTrue(feature.getInstallHandler().getLibrary().equals(library));
-	} */
-
 	public void testSimpleFeature() throws Exception {
 		createFeature(DEFAULT_FEATURE_DATA, false, null);
 		verifyProjectExistence();
@@ -121,41 +105,4 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		verifyProjectExistence();
 		assertTrue("Testing for existing java nature...", hasNature(JavaCore.NATURE_ID));
 	}
-
-	/*public void testPluginFeature() {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IPluginModelBase model = manager.findModel("org.eclipse.pde.ui");
-		IPluginBase[] plugins = new IPluginBase[] { model.getPluginBase() };
-		createFeature(DEFAULT_FEATURE_DATA, false, plugins);
-		verifyProjectExistence();
-		FeatureModelManager featureManager = PDECore.getDefault().getFeatureModelManager();
-		IFeature pdeFeature = featureManager.findFeatureModel(DEFAULT_FEATURE_DATA.id).getFeature();
-		IFeaturePlugin[] fplugins = pdeFeature.getPlugins();
-		assertTrue("Testing number of feature plugins...", fplugins.length == 1);
-		assertTrue("Testing feature plugin id...", fplugins[0].getId().equals("org.eclipse.pde.ui"));
-	}*/
-
-	/*public void testModelCount() {
-		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-		int numModels = manager.getModels().length;
-		createFeature(DEFAULT_FEATURE_DATA, false, null);
-		verifyProjectExistence();
-		int numModelsNew = manager.getModels().length;
-		assertTrue(numModels + 1 == numModelsNew);
-	}*/
-
-	/*public void testMaskingFeature() {
-		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-		int numModels = manager.getModels().length;
-		FeatureData fd = createDefaultFeatureData();
-		IFeature pdeFeature = manager.findFeatureModel("org.eclipse.pde").getFeature();
-		fd.id = pdeFeature.getId();
-		fd.version = pdeFeature.getVersion();
-		createFeature(fd, false, null);
-		verifyProjectExistence();
-		int numNewModels = manager.getModels().length;
-		int numInWorkspace = manager.getWorkspaceModels().length;
-		assertTrue(numModels == numNewModels);
-		assertTrue(numInWorkspace == 1);
-	}*/
 }
