@@ -67,8 +67,8 @@ public class NewSiteProjectTestCase extends TestCase {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
 		try {
-			for (int i = 0; i < projects.length; i++) {
-				projects[i].delete(true, new NullProgressMonitor());
+			for (IProject project : projects) {
+				project.delete(true, new NullProgressMonitor());
 			}
 		} catch (CoreException e) {
 			// do nothing if deletion fails. No need to fail the test.

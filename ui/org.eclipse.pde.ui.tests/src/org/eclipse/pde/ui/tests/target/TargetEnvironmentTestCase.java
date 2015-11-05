@@ -80,8 +80,8 @@ public class TargetEnvironmentTestCase extends TestCase {
 		Dictionary[] platformProps = TargetPlatformHelper.getState().getPlatformProperties();
 
 		String[] profiles = TargetPlatformHelper.getKnownExecutionEnvironments();
-		for (int i = 0; i < profiles.length; i++) {
-			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profiles[i]);
+		for (String profile : profiles) {
+			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profile);
 			if (environment != null) {
 				Properties profileProps = environment.getProfileProperties();
 				if (profileProps != null) {
@@ -89,27 +89,27 @@ public class TargetEnvironmentTestCase extends TestCase {
 					String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 					if (systemPackages != null){
 						boolean foundSystemPackage = false;
-						for (int j = 0; j < platformProps.length; j++) {
-							if (systemPackages.equals(platformProps[j].get(Constants.FRAMEWORK_SYSTEMPACKAGES))){
+						for (Dictionary platformProp : platformProps) {
+							if (systemPackages.equals(platformProp.get(Constants.FRAMEWORK_SYSTEMPACKAGES))){
 								foundSystemPackage = true;
 								break;
 							}
 						}
 						if (!foundSystemPackage){
-							fail("The system packages property for EE " + profiles[i] + " was not found in the state's propeties");
+							fail("The system packages property for EE " + profile + " was not found in the state's propeties");
 						}
 					}
 					String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
 					if (ee != null){
 						boolean foundEE = false;
-						for (int j = 0; j < platformProps.length; j++) {
-							if (ee.equals(platformProps[j].get(Constants.FRAMEWORK_EXECUTIONENVIRONMENT))){
+						for (Dictionary platformProp : platformProps) {
+							if (ee.equals(platformProp.get(Constants.FRAMEWORK_EXECUTIONENVIRONMENT))){
 								foundEE = true;
 								break;
 							}
 						}
 						if (!foundEE){
-							fail("The framework EE property for EE " + profiles[i] + " was not found in the state's propeties");
+							fail("The framework EE property for EE " + profile + " was not found in the state's propeties");
 						}
 					}
 				}

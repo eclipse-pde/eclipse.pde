@@ -81,9 +81,9 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		status = definition.resolve(null);
 		IStatus[] children = status.getChildren();
 		assertEquals("Wrong number of children", 3, children.length);
-		for (int i = 0; i < children.length; i++) {
-			assertEquals("Incorrect severity", IStatus.ERROR, children[i].getSeverity());
-			assertFalse("Failed resolution should be single status", children[i].isMultiStatus());
+		for (IStatus element : children) {
+			assertEquals("Incorrect severity", IStatus.ERROR, element.getSeverity());
+			assertFalse("Failed resolution should be single status", element.isMultiStatus());
 		}
 	}
 
@@ -376,8 +376,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		int frag = 0;
 		int bin = 0;
 
-		for (int i = 0; i < bundles.length; i++) {
-			TargetBundle bundle = bundles[i];
+		for (TargetBundle bundle : bundles) {
 			if (bundle.isFragment()) {
 				frag++;
 				if (bundle.isSourceBundle()) {
@@ -430,8 +429,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 			int frag = 0;
 			int bin = 0;
 
-			for (int i = 0; i < bundles.length; i++) {
-				TargetBundle bundle = bundles[i];
+			for (TargetBundle bundle : bundles) {
 				if (bundle.isFragment()) {
 					frag++;
 					if (bundle.isSourceBundle()) {
@@ -460,8 +458,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 			frag = 0;
 			bin = 0;
 
-			for (int i = 0; i < bundles.length; i++) {
-				TargetBundle bundle = bundles[i];
+			for (TargetBundle bundle : bundles) {
 				if (bundle.isFragment()) {
 					frag++;
 					if (bundle.isSourceBundle()) {
@@ -512,8 +509,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		assertEquals("Wrong severity", IStatus.OK, definitionStatus.getSeverity());
 
 		// Ensure that all source bundles know what they provide source for.
-		for (int i = 0; i < bundles.length; i++) {
-			TargetBundle bundle = bundles[i];
+		for (TargetBundle bundle : bundles) {
 			if (bundle.isSourceBundle()){
 				BundleInfo info = bundle.getSourceTarget();
 				assertNotNull("Missing source target for " + bundle,info);
@@ -524,10 +520,10 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 
 		// Everything in the JDT feature has an equivalent named source bundle
 		bundles = featureContainer2.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundles[i].getBundleInfo().getSymbolicName().indexOf("doc") == -1){
-				assertTrue("Non-source bundle in source feature", bundles[i].isSourceBundle());
-				assertEquals("Incorrect source target", bundles[i].getBundleInfo().getSymbolicName(),bundles[i].getSourceTarget().getSymbolicName()+".source");
+		for (TargetBundle bundle : bundles) {
+			if (bundle.getBundleInfo().getSymbolicName().indexOf("doc") == -1){
+				assertTrue("Non-source bundle in source feature", bundle.isSourceBundle());
+				assertEquals("Incorrect source target", bundle.getBundleInfo().getSymbolicName(),bundle.getSourceTarget().getSymbolicName()+".source");
 			}
 		}
 	}

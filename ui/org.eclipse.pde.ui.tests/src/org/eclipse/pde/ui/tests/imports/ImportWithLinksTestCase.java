@@ -67,8 +67,8 @@ public class ImportWithLinksTestCase extends BaseImportTestCase {
 		}
 
 		IClasspathEntry[] entries = jProject.getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY)
+		for (IClasspathEntry entry : entries) {
+			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY)
 				return true;
 		}
 		return false;

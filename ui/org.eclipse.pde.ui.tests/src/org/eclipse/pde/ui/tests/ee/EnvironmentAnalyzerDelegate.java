@@ -36,8 +36,8 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 		if (javaVersion != null) {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(EE_NO_SOUND);
 			String[] compatible = new String[] {"1.8", "1.7", "1.6", "1.5", "1.4"};
-			for (int i = 0; i < compatible.length; i++) {
-				if (javaVersion.startsWith(compatible[i])) {
+			for (String element : compatible) {
+				if (javaVersion.startsWith(element)) {
 					result.add(new CompatibleEnvironment(env, false));
 				}
 			}

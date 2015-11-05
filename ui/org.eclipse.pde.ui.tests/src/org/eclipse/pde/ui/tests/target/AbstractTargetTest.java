@@ -197,8 +197,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 */
 	protected void delete(File dir) {
 		File[] files = dir.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			File file = files[i];
+		for (File file : files) {
 			if (file.isDirectory()) {
 				delete(file);
 			} else {
@@ -296,8 +295,8 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		TargetBundle[] bundles = target.getBundles();
 		List list = new ArrayList(bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
-			list.add(bundles[i].getBundleInfo());
+		for (TargetBundle bundle : bundles) {
+			list.add(bundle.getBundleInfo());
 		}
 		return list;
 	}
@@ -312,8 +311,8 @@ public abstract class AbstractTargetTest extends TestCase {
 	protected List getBundleInfos(ITargetLocation container) throws Exception {
 		TargetBundle[] bundles = container.getBundles();
 		List list = new ArrayList(bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
-			list.add(bundles[i].getBundleInfo());
+		for (TargetBundle bundle : bundles) {
+			list.add(bundle.getBundleInfo());
 		}
 		return list;
 	}

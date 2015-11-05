@@ -63,8 +63,8 @@ public class ExportBundleTests extends PDETestCase {
 				dir.delete();
 			else {
 				File[] files = dir.listFiles();
-				for (int i = 0; i < files.length; i++) {
-					deleteFolder(files[i]);
+				for (File file : files) {
+					deleteFolder(file);
 				}
 				if (dir.list().length == 0)
 					dir.delete();
@@ -218,19 +218,19 @@ public class ExportBundleTests extends PDETestCase {
 				if (exportContents.isDirectory()) {
 					// Should only have plugin/feature folders
 					File[] children = exportContents.listFiles();
-					for (int i = 0; i < children.length; i++) {
-						if (children[i].isDirectory()) {
-							System.out.println("Directory: " + children[i].getName());
-							File[] subChildren = children[i].listFiles();
-							for (int j = 0; j < subChildren.length; j++) {
-								if (subChildren[j].isDirectory()) {
-									System.out.println("   Directory: " + subChildren[j].getName());
+					for (File element : children) {
+						if (element.isDirectory()) {
+							System.out.println("Directory: " + element.getName());
+							File[] subChildren = element.listFiles();
+							for (File subElement : subChildren) {
+								if (subElement.isDirectory()) {
+									System.out.println("   Directory: " + subElement.getName());
 								} else {
-									System.out.println("   File: " + subChildren[j].getName());
+									System.out.println("   File: " + subElement.getName());
 								}
 							}
 						} else {
-							System.out.println("File: " + children[i].getName());
+							System.out.println("File: " + element.getName());
 						}
 					}
 				}

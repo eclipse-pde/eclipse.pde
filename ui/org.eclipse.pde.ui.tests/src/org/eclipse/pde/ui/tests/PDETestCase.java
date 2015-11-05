@@ -27,8 +27,8 @@ public abstract class PDETestCase extends TestCase {
 	protected void tearDown() {
 		// Close any editors we opened
 		IWorkbenchWindow[] workbenchPages = PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (int i = 0; i < workbenchPages.length; i++) {
-			IWorkbenchPage page = workbenchPages[i].getActivePage();
+		for (IWorkbenchWindow workbenchPage : workbenchPages) {
+			IWorkbenchPage page = workbenchPage.getActivePage();
 			if (page != null){
 				page.closeAllEditors(false);
 			}
@@ -38,8 +38,8 @@ public abstract class PDETestCase extends TestCase {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
 		try {
-			for (int i = 0; i < projects.length; i++) {
-				projects[i].delete(true, new NullProgressMonitor());
+			for (IProject project : projects) {
+				project.delete(true, new NullProgressMonitor());
 			}
 		} catch (CoreException e) {
 		}

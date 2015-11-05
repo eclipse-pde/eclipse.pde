@@ -58,10 +58,10 @@ public class ClasspathContributorTest extends TestCase {
 		IClasspathContainer container = JavaCore.getClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, jProject);
 		assertNotNull("Could not find PDE classpath container", container);
 		IClasspathEntry[] classpath = container.getClasspathEntries();
-		for (int i = 0; i < classpath.length; i++) {
+		for (IClasspathEntry element : classpath) {
 			// Ignore the PDE Core bundle dependency
-			if (classpath[i].getPath().toPortableString().indexOf("org.eclipse.pde.core") == -1){
-				assertTrue("Unexpected classpath entry found: " + classpath[i], expected.remove(classpath[i]));
+			if (element.getPath().toPortableString().indexOf("org.eclipse.pde.core") == -1){
+				assertTrue("Unexpected classpath entry found: " + element, expected.remove(element));
 			}
 		}
 		assertTrue("Expected classpath entry not found: " + expected.toArray(), expected.isEmpty());

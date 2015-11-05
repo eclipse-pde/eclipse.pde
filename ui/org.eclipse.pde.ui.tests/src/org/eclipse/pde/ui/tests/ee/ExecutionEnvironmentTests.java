@@ -86,8 +86,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 */
 	protected void validateSystemLibrary(IJavaProject project, IPath conatinerPath) throws JavaModelException {
 		IClasspathEntry[] classpath = project.getRawClasspath();
-		for (int i = 0; i < classpath.length; i++) {
-			IClasspathEntry entry = classpath[i];
+		for (IClasspathEntry entry : classpath) {
 			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
 				IPath path = entry.getPath();
 				if (JavaRuntime.JRE_CONTAINER.equals(path.segment(0))) {

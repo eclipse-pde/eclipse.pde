@@ -102,8 +102,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			List infos = getAllBundleInfos(target);
 			Set names = collectAllSymbolicNames(infos);
 			assertEquals(expectedBundles.length, infos.size());
-			for (int i = 0; i < expectedBundles.length; i++) {
-				assertTrue("Missing: " + expectedBundles[i], names.contains(expectedBundles[i]));
+			for (String expectedBundle : expectedBundles) {
+				assertTrue("Missing: " + expectedBundle, names.contains(expectedBundle));
 			}
 
 			// Now modify the target to have just a lower level root.  The extra higher level stuff should get removed.
@@ -112,8 +112,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			infos = getAllBundleInfos(target);
 			names = collectAllSymbolicNames(infos);
 			assertEquals(expectedBundles2.length, infos.size());
-			for (int i = 0; i < expectedBundles2.length; i++) {
-				assertTrue("Missing: " + expectedBundles2[i], names.contains(expectedBundles2[i]));
+			for (String element : expectedBundles2) {
+				assertTrue("Missing: " + element, names.contains(element));
 			}
 
 			List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
@@ -230,8 +230,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			Set names = collectAllSymbolicNames(infos);
 			assertEquals(bundleIds.length, infos.size());
 
-			for (int i = 0; i < bundleIds.length; i++) {
-				assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+			for (String bundleId : bundleIds) {
+				assertTrue("Missing: " + bundleId, names.contains(bundleId));
 			}
 			List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 			assertEquals(1, profiles.size());
@@ -268,8 +268,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		Set names = collectAllSymbolicNames(infos);
 		assertEquals(bundleIds.length, infos.size());
 
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		for (String bundleId : bundleIds) {
+			assertTrue("Missing: " + bundleId, names.contains(bundleId));
 		}
 		List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(1, profiles.size());
@@ -309,8 +309,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			expected.add("bundle.a1");
 			expected.add("bundle.a2");
 			expected.add("bundle.a3");
-			for (int i = 0; i < externalBundles.length; i++) {
-				assertTrue("Unexpected bundle in restored list: " + externalBundles[i].getInstallLocation(), expected.remove(externalBundles[i].getBundleDescription().getName()));
+			for (IPluginModelBase externalBundle : externalBundles) {
+				assertTrue("Unexpected bundle in restored list: " + externalBundle.getInstallLocation(), expected.remove(externalBundle.getBundleDescription().getName()));
 			}
 			assertTrue(expected.isEmpty());
 		} finally {
@@ -399,8 +399,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
 		assertEquals(bundleIds.length, infos.size());
 
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		for (String bundleId : bundleIds) {
+			assertTrue("Missing: " + bundleId, names.contains(bundleId));
 		}
 
 		getTargetService().deleteTarget(target.getHandle());
@@ -433,8 +433,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
 		assertEquals(bundleIds.length, infos.size());
 
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		for (String bundleId : bundleIds) {
+			assertTrue("Missing: " + bundleId, names.contains(bundleId));
 		}
 
 		getTargetService().deleteTarget(target.getHandle());
@@ -461,8 +461,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
 		assertEquals(bundleIds.length, infos.size());
 
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		for (String bundleId : bundleIds) {
+			assertTrue("Missing: " + bundleId, names.contains(bundleId));
 		}
 
 		infos = getBundleInfos(c2);
@@ -470,8 +470,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
 		assertEquals(bundleIds.length, infos.size());
 
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		for (String bundleId : bundleIds) {
+			assertTrue("Missing: " + bundleId, names.contains(bundleId));
 		}
 
 		List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();

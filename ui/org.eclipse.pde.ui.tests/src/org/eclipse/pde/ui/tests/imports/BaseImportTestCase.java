@@ -80,10 +80,10 @@ public abstract class BaseImportTestCase extends PDETestCase {
 		assertTrue("No models for " + bundleSymbolicName + " could be found", models.length > 0);
 		IPluginModelBase modelToImport = null;
 
-		for (int i = 0; i < models.length; i++) {
-			Version version = new Version(models[i].getPluginBase().getVersion());
+		for (IPluginModelBase model : models) {
+			Version version = new Version(model.getPluginBase().getVersion());
 			if (version.getMajor() == majorVersion){
-				modelToImport = models[i];
+				modelToImport = model;
 				break;
 			}
 		}
@@ -133,11 +133,11 @@ public abstract class BaseImportTestCase extends PDETestCase {
 
 	protected boolean checkSourceAttached(IJavaProject jProject) throws CoreException {
 		IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-		for (int i = 0; i < roots.length; i++) {
-			IClasspathEntry entry = roots[i].getRawClasspathEntry();
+		for (IPackageFragmentRoot root : roots) {
+			IClasspathEntry entry = root.getRawClasspathEntry();
 			if (entry.getEntryKind() != IClasspathEntry.CPE_LIBRARY || entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER || !entry.getPath().equals(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH))
 				continue;
-			if (roots[i].getSourceAttachmentPath() == null)
+			if (root.getSourceAttachmentPath() == null)
 				return false;
 		}
 		return true;

@@ -68,8 +68,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		}
 		TargetBundle[] bundles = target.getBundles();
 		Set urls = new HashSet(bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
-			urls.add(new File(bundles[i].getBundleInfo().getLocation()).toURL());
+		for (TargetBundle bundle : bundles) {
+			urls.add(new File(bundle.getBundleInfo().getLocation()).toURL());
 		}
 		return urls;
 	}
@@ -85,9 +85,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		Set urls = getAllBundleURLs(definition);
 		Set fragments = new HashSet();
 		TargetBundle[] bundles = definition.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundles[i].isFragment()) {
-				fragments.add(new File(bundles[i].getBundleInfo().getLocation()).toURL());
+		for (TargetBundle bundle : bundles) {
+			if (bundle.isFragment()) {
+				fragments.add(new File(bundle.getBundleInfo().getLocation()).toURL());
 			}
 		}
 
@@ -96,11 +96,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 		// should be equivalent
 		assertEquals("Should have same number of bundles", urls.size(), models.length);
-		for (int i = 0; i < models.length; i++) {
-			String location = models[i].getInstallLocation();
+		for (IPluginModelBase model : models) {
+			String location = model.getInstallLocation();
 			URL url = new File(location).toURL();
 			assertTrue("Missing plug-in " + location, urls.contains(url));
-			if (models[i].isFragmentModel()) {
+			if (model.isFragmentModel()) {
 				assertTrue("Missing fragmnet", fragments.remove(url));
 			}
 		}
@@ -126,8 +126,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
 		// pluginPaths will be null (and NPE) when self-hosting and the target platform is not a real installation
 		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-		for (int i = 0; i < pluginPaths.length; i++) {
-			URL url = pluginPaths[i];
+		for (URL url : pluginPaths) {
 			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
 
@@ -152,8 +151,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		Set set = collectAllSymbolicNames(infos);
-		for (int i = 0; i < restrictions.length; i++) {
-			NameVersionDescriptor info = restrictions[i];
+		for (NameVersionDescriptor info : restrictions) {
 			set.remove(info.getId());
 		}
 		assertEquals("Wrong bundles", 0, set.size());
@@ -227,8 +225,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		TargetBundle[] bundles = definition.getBundles();
 
 		assertEquals("Wrong number of bundles", 2, bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
-			TargetBundle rb = bundles[i];
+		for (TargetBundle rb : bundles) {
 			assertEquals("Should be a missing bundle version", TargetBundle.STATUS_VERSION_DOES_NOT_EXIST, rb.getStatus().getCode());
 			assertEquals("Should be an error", IStatus.ERROR, rb.getStatus().getSeverity());
 		}
@@ -254,8 +251,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
 		// pluginPaths will be null (and NPE) when self-hosting and the target platform is not a real installation
 		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-		for (int i = 0; i < pluginPaths.length; i++) {
-			URL url = pluginPaths[i];
+		for (URL url : pluginPaths) {
 			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
 
@@ -281,8 +277,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
 		// pluginPaths will be null (and NPE) when self-hosting and the target platform is not a real installation
 		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-		for (int i = 0; i < pluginPaths.length; i++) {
-			URL url = pluginPaths[i];
+		for (URL url : pluginPaths) {
 			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
 
@@ -307,8 +302,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 		// the old way
 		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), true);
-		for (int i = 0; i < pluginPaths.length; i++) {
-			URL url = pluginPaths[i];
+		for (URL url : pluginPaths) {
 			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
 		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
@@ -330,8 +324,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		// the old way
 		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), false);
 		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-		for (int i = 0; i < pluginPaths.length; i++) {
-			URL url = pluginPaths[i];
+		for (URL url : pluginPaths) {
 			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
 	}
@@ -352,8 +345,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		// the old way
 		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), false);
 		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-		for (int i = 0; i < pluginPaths.length; i++) {
-			URL url = pluginPaths[i];
+		for (URL url : pluginPaths) {
 			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
 	}
@@ -376,8 +368,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 		// the old way
 		URL[] pluginPaths = PluginPathFinder.getPluginPaths(location.toOSString(), false);
-		for (int i = 0; i < pluginPaths.length; i++) {
-			URL url = pluginPaths[i];
+		for (URL pluginPath : pluginPaths) {
+			URL url = pluginPath;
 			if (!urls.contains(url)) {
 				System.err.println(url.toString());
 			}
@@ -402,8 +394,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.resolve(null);
 		TargetBundle[] bundles = definition.getBundles();
 		List source = new ArrayList();
-		for (int i = 0; i < bundles.length; i++) {
-			TargetBundle sb = bundles[i];
+		for (TargetBundle sb : bundles) {
 			if (sb.isSourceBundle()) {
 				source.add(sb);
 			}
@@ -415,8 +406,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			names.add(((TargetBundle)source.get(i)).getBundleInfo().getSymbolicName());
 		}
 		String[] expected = new String[]{"org.eclipse.platform.source", "org.eclipse.jdt.source", "org.eclipse.pde.source", "org.eclipse.platform.source.win32.win32.x86"};
-		for (int i = 0; i < expected.length; i++) {
-			assertTrue("Missing source for " + expected[i], names.contains(expected[i]));
+		for (String element : expected) {
+			assertTrue("Missing source for " + element, names.contains(element));
 		}
 	}
 
@@ -503,9 +494,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		assertTrue("Missing features directory", dir.exists() && !dir.isFile());
 		String[] files = dir.list();
 		String location = null;
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].startsWith("org.eclipse.jdt_")) {
-				location = path.append(files[i]).toOSString();
+		for (String file : files) {
+			if (file.startsWith("org.eclipse.jdt_")) {
+				location = path.append(file).toOSString();
 				break;
 			}
 		}
@@ -539,8 +530,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		}
 
 		assertEquals("Wrong number of bundles in test JDT feature", expected.size(), bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
-			expected.remove(bundles[i].getBundleInfo().getSymbolicName());
+		for (TargetBundle bundle : bundles) {
+			expected.remove(bundle.getBundleInfo().getSymbolicName());
 		}
 		Iterator iterator = expected.iterator();
 		while (iterator.hasNext()) {
@@ -550,8 +541,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
 
 		// should be no source bundles
-		for (int i = 0; i < bundles.length; i++) {
-			TargetBundle bundle = bundles[i];
+		for (TargetBundle bundle : bundles) {
 			assertFalse("Should be no source bundles", bundle.isSourceBundle());
 		}
 	}
@@ -581,12 +571,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.eclipse.jdt.launching.macosx");
 
 		assertEquals("Wrong number of bundles in JDT feature", expected.size(), bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
-			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
+		for (TargetBundle bundle : bundles) {
+			String symbolicName = bundle.getBundleInfo().getSymbolicName();
 			expected.remove(symbolicName);
 			if (symbolicName.equals("org.eclipse.jdt.launching.macosx")) {
 				// the bundle should be missing unless on Mac
-				IStatus status = bundles[i].getStatus();
+				IStatus status = bundle.getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
@@ -604,8 +594,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 
 		// should be no source bundles
-		for (int i = 0; i < bundles.length; i++) {
-			TargetBundle bundle = bundles[i];
+		for (TargetBundle bundle : bundles) {
 			assertFalse("Should be no source bundles", bundle.isSourceBundle());
 		}
 	}
@@ -631,8 +620,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		Set set = collectAllSymbolicNames(infos);
-		for (int i = 0; i < restrictions.length; i++) {
-			NameVersionDescriptor info = restrictions[i];
+		for (NameVersionDescriptor info : restrictions) {
 			set.remove(info.getId());
 		}
 		assertEquals("Wrong bundles", 0, set.size());
@@ -663,12 +651,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		}
 
 		assertEquals("Wrong number of bundles", expected.size(), bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundles[i].getBundleInfo().getSymbolicName().equals("org.eclipse.jdt.doc.isv")) {
-				assertFalse("Should not be a source bundle", bundles[i].isSourceBundle());
+		for (TargetBundle bundle : bundles) {
+			if (bundle.getBundleInfo().getSymbolicName().equals("org.eclipse.jdt.doc.isv")) {
+				assertFalse("Should not be a source bundle", bundle.isSourceBundle());
 			} else {
-				assertTrue(expected.remove(bundles[i].getBundleInfo().getSymbolicName()));
-				assertTrue("Should be a source bundle", bundles[i].isSourceBundle());
+				assertTrue(expected.remove(bundle.getBundleInfo().getSymbolicName()));
+				assertTrue("Should be a source bundle", bundle.isSourceBundle());
 			}
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
@@ -708,9 +696,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
 
 			assertEquals("Wrong number of bundles in JDT feature", expected.size(), models.length);
-			for (int i = 0; i < models.length; i++) {
-				expected.remove(models[i].getPluginBase().getId());
-				assertTrue(models[i].isEnabled());
+			for (IPluginModelBase model : models) {
+				expected.remove(model.getPluginBase().getId());
+				assertTrue(model.isEnabled());
 			}
 			Iterator iterator = expected.iterator();
 			while (iterator.hasNext()) {
@@ -900,8 +888,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			setTargetPlatform(target);
 			IPluginModelBase[] models = PluginRegistry.getExternalModels();
 			Set enabled = new HashSet();
-			for (int i = 0; i < models.length; i++) {
-				IPluginModelBase pm = models[i];
+			for (IPluginModelBase pm : models) {
 				if (pm.getBundleDescription().getSymbolicName().equals(bsn)) {
 					NameVersionDescriptor desc = new NameVersionDescriptor(pm.getPluginBase().getId(), pm.getPluginBase().getVersion());
 					if (pm.isEnabled()) {
@@ -913,8 +900,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 			} else {
 				assertEquals("Wrong number of enabled bundles", descriptions.length, enabled.size());
-				for (int i = 0; i < descriptions.length; i++) {
-					assertTrue("Missing bundle", enabled.contains(descriptions[i]));
+				for (NameVersionDescriptor description : descriptions) {
+					assertTrue("Missing bundle", enabled.contains(description));
 				}
 			}
 		} finally {

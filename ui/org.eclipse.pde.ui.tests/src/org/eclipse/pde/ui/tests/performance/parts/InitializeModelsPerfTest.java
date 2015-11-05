@@ -81,8 +81,8 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 			if (curr.isDirectory()) {
 				File[] children = curr.listFiles();
 				if (children != null) {
-					for (int i = 0; i < children.length; i++) {
-						deleteContent(children[i]);
+					for (File element : children) {
+						deleteContent(element);
 					}
 				}
 			}

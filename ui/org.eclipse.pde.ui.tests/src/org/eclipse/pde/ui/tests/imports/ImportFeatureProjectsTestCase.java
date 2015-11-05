@@ -51,8 +51,8 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 		String name = model.getFeature().getId();
 
 		IFeaturePlugin[] plugins = model.getFeature().getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			if (name.equals(plugins[i].getId())) {
+		for (IFeaturePlugin plugin : plugins) {
+			if (name.equals(plugin.getId())) {
 				name += "-feature"; //$NON-NLS-1$
 				break;
 			}
@@ -76,10 +76,10 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 
 	private void verifyNatures() {
 		IFeatureModel[] imported = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
-		for (int i = 0; i < imported.length; i++) {
-			lookingAtProject(imported[i]);
+		for (IFeatureModel element : imported) {
+			lookingAtProject(element);
 			assertTrue("Verifying feature nature...", hasNature(PDE.FEATURE_NATURE));
-			IFeatureInstallHandler installHandler = imported[i].getFeature().getInstallHandler();
+			IFeatureInstallHandler installHandler = element.getFeature().getInstallHandler();
 			boolean shouldHaveJavaNature = installHandler != null ? installHandler.getLibrary() != null : false;
 			assertTrue("Verifying java nature...", hasNature(JavaCore.NATURE_ID) == shouldHaveJavaNature);
 		}
@@ -87,8 +87,8 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 
 	private void verifyFeature(boolean isBinary) {
 		IFeatureModel[] imported = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
-		for (int i = 0; i < imported.length; i++) {
-			lookingAtProject(imported[i]);
+		for (IFeatureModel element : imported) {
+			lookingAtProject(element);
 			try {
 				assertTrue("Verifing feature is binary...", isBinary == PDECore.BINARY_PROJECT_VALUE.equals(getProject().getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY)));
 			} catch (CoreException e) {
@@ -99,8 +99,8 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 	@Override
 	protected void verifyProjectExistence() {
 		IFeatureModel[] imported = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
-		for (int i = 0; i < imported.length; i++) {
-			lookingAtProject(imported[i]);
+		for (IFeatureModel element : imported) {
+			lookingAtProject(element);
 			super.verifyProjectExistence();
 		}
 	}
@@ -160,8 +160,8 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 	}
 
 	private IFeaturePlugin[] getFeaturePluginsFrom(String id, IFeatureModel[] imported) {
-		for (int i = 0; i < imported.length; i++)
-			if (imported[i].getFeature().getId().equals(id))
+		for (IFeatureModel element : imported)
+			if (element.getFeature().getId().equals(id))
 				return imported[0].getFeature().getPlugins();
 		return null;
 	}

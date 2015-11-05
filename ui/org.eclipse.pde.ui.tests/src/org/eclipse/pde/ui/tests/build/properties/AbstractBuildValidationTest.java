@@ -66,8 +66,8 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 			}
 
 		});
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = findProject(projects[i].getName());
+		for (File projectFileName : projects) {
+			IProject project = findProject(projectFileName.getName());
 			if (project.exists()) {
 				project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 				project.delete(true, new NullProgressMonitor());
@@ -88,14 +88,14 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 	protected void verifyQuickFixes(IResource buildProperty, PropertyResourceBundle expectedValues) throws CoreException {
 		IMarker[] markers = buildProperty.findMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_INFINITE);
 		ResolutionGenerator resGen = new ResolutionGenerator();
-		for (int i = 0; i < markers.length; i++) {
-			if (resGen.hasResolutions(markers[i])) {
-				String markerEntry = (String) markers[i].getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
-				IMarkerResolution[] resolutions = resGen.getResolutions(markers[i]);
+		for (IMarker marker : markers) {
+			if (resGen.hasResolutions(marker)) {
+				String markerEntry = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
+				IMarkerResolution[] resolutions = resGen.getResolutions(marker);
 				String quickFixindex = getProperty(expectedValues, markerEntry, "quickfix");
-				resolutions[new Integer(quickFixindex.trim()).intValue()].run(markers[i]);
-				buildProject(markers[i].getResource().getProject());
-				assertFalse("Quick fix verification failed for the project " + buildProperty.getProject().getName() , markers[i].exists());
+				resolutions[new Integer(quickFixindex.trim()).intValue()].run(marker);
+				buildProject(marker.getResource().getProject());
+				assertFalse("Quick fix verification failed for the project " + buildProperty.getProject().getName() , marker.exists());
 			}
 		}
 	}
@@ -119,24 +119,24 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 
 		int markerSeverity;
 		switch (severity) {
-			case CompilerFlags.ERROR :
-				markerSeverity = IMarker.SEVERITY_ERROR;
-				break;
-			case CompilerFlags.WARNING :
-				markerSeverity = IMarker.SEVERITY_WARNING;
-				break;
-			default :
-				markerSeverity = IMarker.SEVERITY_INFO;
+		case CompilerFlags.ERROR :
+			markerSeverity = IMarker.SEVERITY_ERROR;
+			break;
+		case CompilerFlags.WARNING :
+			markerSeverity = IMarker.SEVERITY_WARNING;
+			break;
+		default :
+			markerSeverity = IMarker.SEVERITY_INFO;
 		}
 
-		for (int i = 0; i < markers.length; i++) {
+		for (IMarker marker : markers) {
 			message = "Marker severity for the project " + projectName;
-			String markerEntry = (String) markers[i].getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
-			assertEquals(message, markerSeverity, getIntAttribute(markers[i], IMarker.SEVERITY));
+			String markerEntry = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
+			assertEquals(message, markerSeverity, getIntAttribute(marker, IMarker.SEVERITY));
 
 			message = "Marker type for the project " + projectName;
 			String markerType = getProperty(expectedValues, markerEntry, PDEMarkerFactory.CAT_ID);
-			assertEquals(message, markerType, getStringAttribute(markers[i], PDEMarkerFactory.CAT_ID));
+			assertEquals(message, markerType, getStringAttribute(marker, PDEMarkerFactory.CAT_ID));
 
 			message = "Marker line number for build.properties" + projectName;
 			int lineNumber;
@@ -146,16 +146,16 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 				message = "Could not read expected line number for the project " + projectName;
 				lineNumber = 0;
 			}
-			assertEquals(message, lineNumber, getIntAttribute(markers[i], IMarker.LINE_NUMBER));
+			assertEquals(message, lineNumber, getIntAttribute(marker, IMarker.LINE_NUMBER));
 
 			message = "Marker build entry token value for the project " + projectName;
 			String multipleMarkers = getProperty(expectedValues, markerEntry, MULTIPLE_MARKERS);
 			String tokenValue = getProperty(expectedValues, markerEntry, PDEMarkerFactory.BK_BUILD_TOKEN);
 			if (multipleMarkers.equalsIgnoreCase(Boolean.TRUE.toString())) {
-				boolean contains = tokenValue.indexOf(getStringAttribute(markers[i], PDEMarkerFactory.BK_BUILD_TOKEN)) >= 0;
+				boolean contains = tokenValue.indexOf(getStringAttribute(marker, PDEMarkerFactory.BK_BUILD_TOKEN)) >= 0;
 				assertTrue(message, contains);
 			} else {
-				assertEquals(message, tokenValue, getStringAttribute(markers[i], PDEMarkerFactory.BK_BUILD_TOKEN));
+				assertEquals(message, tokenValue, getStringAttribute(marker, PDEMarkerFactory.BK_BUILD_TOKEN));
 			}
 		}
 

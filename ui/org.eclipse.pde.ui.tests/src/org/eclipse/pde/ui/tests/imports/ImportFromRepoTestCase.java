@@ -120,8 +120,8 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 
 	private boolean checkSourceFolder(IJavaProject jProject) throws JavaModelException {
 		IClasspathEntry[] entries = jProject.getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE)
+		for (IClasspathEntry entry : entries) {
+			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE)
 				return true;
 		}
 		return false;

@@ -42,16 +42,16 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 
 		IFeatureModel[] expectedFeatures = PDECore.getDefault().getFeatureModelManager().getModels();
 		Set expectedIDs = new HashSet();
-		for (int i = 0; i < expectedFeatures.length; i++) {
-			expectedIDs.add(expectedFeatures[i].getFeature().getId());
+		for (IFeatureModel expectedFeature : expectedFeatures) {
+			expectedIDs.add(expectedFeature.getFeature().getId());
 		}
 
 		directoryContainer.resolve(definition, null);
 		TargetFeature[] features = directoryContainer.getFeatures();
 		assertNotNull(features);
 
-		for (int i = 0; i < features.length; i++) {
-			String currentID = features[i].getId();
+		for (TargetFeature feature : features) {
+			String currentID = feature.getId();
 			assertTrue("Extra feature in result: " + currentID, expectedIDs.contains(currentID));
 			expectedIDs.remove(currentID);
 		}
@@ -70,16 +70,16 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 
 		IFeatureModel[] expectedFeatures = PDECore.getDefault().getFeatureModelManager().getModels();
 		Set expectedIDs = new HashSet();
-		for (int i = 0; i < expectedFeatures.length; i++) {
-			expectedIDs.add(expectedFeatures[i].getFeature().getId());
+		for (IFeatureModel expectedFeature : expectedFeatures) {
+			expectedIDs.add(expectedFeature.getFeature().getId());
 		}
 
 		profileContainer.resolve(definition, null);
 		TargetFeature[] features = profileContainer.getFeatures();
 		assertNotNull(features);
 
-		for (int i = 0; i < features.length; i++) {
-			String currentID = features[i].getId();
+		for (TargetFeature feature : features) {
+			String currentID = feature.getId();
 			assertTrue("Extra feature in result: " + currentID, expectedIDs.contains(currentID));
 			expectedIDs.remove(currentID);
 		}
@@ -137,12 +137,12 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		definition.setIncluded(allFeatures);
 		TargetBundle[] bundles = definition.getBundles();
 
-		for (int i = 0; i < bundles.length; i++) {
-			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
+		for (TargetBundle bundle : bundles) {
+			String symbolicName = bundle.getBundleInfo().getSymbolicName();
 			expected.remove(symbolicName);
 			if (symbolicName.equals("org.eclipse.jdt.launching.macosx")) {
 				// the bundle should be missing unless on Mac
-				IStatus status = bundles[i].getStatus();
+				IStatus status = bundle.getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
@@ -186,12 +186,12 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		definition.setIncluded(allFeatures);
 		TargetBundle[] bundles = definition.getBundles();
 
-		for (int i = 0; i < bundles.length; i++) {
-			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
+		for (TargetBundle bundle : bundles) {
+			String symbolicName = bundle.getBundleInfo().getSymbolicName();
 			expected.remove(symbolicName);
 			if (symbolicName.equals("org.eclipse.jdt.launching.macosx")) {
 				// the bundle should be missing unless on Mac
-				IStatus status = bundles[i].getStatus();
+				IStatus status = bundle.getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
@@ -235,12 +235,12 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		definition.setIncluded(allFeatures);
 		TargetBundle[] bundles = definition.getBundles();
 
-		for (int i = 0; i < bundles.length; i++) {
-			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
+		for (TargetBundle bundle : bundles) {
+			String symbolicName = bundle.getBundleInfo().getSymbolicName();
 			expected.remove(symbolicName);
 			if (symbolicName.equals("org.eclipse.jdt.launching.macosx")) {
 				// the bundle should be missing unless on Mac
-				IStatus status = bundles[i].getStatus();
+				IStatus status = bundle.getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
@@ -316,12 +316,12 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		definition.setIncluded(allFeatures);
 		TargetBundle[] bundles = definition.getBundles();
 
-		for (int i = 0; i < bundles.length; i++) {
-			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
+		for (TargetBundle bundle : bundles) {
+			String symbolicName = bundle.getBundleInfo().getSymbolicName();
 			expected.remove(symbolicName);
 			if (symbolicName.equals("org.eclipse.jdt.launching.macosx")) {
 				// the bundle should be missing unless on Mac
-				IStatus status = bundles[i].getStatus();
+				IStatus status = bundle.getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {

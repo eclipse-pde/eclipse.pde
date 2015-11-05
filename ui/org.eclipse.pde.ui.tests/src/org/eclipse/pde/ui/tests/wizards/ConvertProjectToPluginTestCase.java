@@ -75,8 +75,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 		IProject[] projects = new IProject[] {project1, project2};
 
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+		for (IProject project : projects) {
 			assertNotNull(project);
 			assertTrue(project.exists());
 			assertFalse(project.hasNature(PDE.PLUGIN_NATURE));
@@ -85,8 +84,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 		convertProjects(projects, false);
 
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+		for (IProject project : projects) {
 			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
 			assertFalse(project.hasNature(API_TOOLS_NATURE));
 			assertTrue(PDEProject.getManifest(project).exists());
@@ -107,8 +105,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 		IProject[] projects = new IProject[] {project1, project2};
 
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+		for (IProject project : projects) {
 			assertNotNull(project);
 			assertTrue(project.exists());
 			assertFalse(project.hasNature(PDE.PLUGIN_NATURE));
@@ -117,8 +114,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 		convertProjects(projects, true);
 
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+		for (IProject project : projects) {
 			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
 			assertTrue(project.hasNature(API_TOOLS_NATURE));
 			assertTrue(PDEProject.getManifest(project).exists());

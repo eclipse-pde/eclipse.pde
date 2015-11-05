@@ -78,9 +78,9 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertTrue("Missing features directory", dir.exists() && !dir.isFile());
 		String[] files = dir.list();
 		String location = null;
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].startsWith("org.eclipse.jdt_")) {
-				location = path.append(files[i]).toOSString();
+		for (String file : files) {
+			if (file.startsWith("org.eclipse.jdt_")) {
+				location = path.append(file).toOSString();
 				break;
 			}
 		}
@@ -354,8 +354,8 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		NameVersionDescriptor[] infos = target.getImplicitDependencies();
 		assertEquals("Wrong number of implicit dependencies", 2, infos.length);
 		Set set = new HashSet();
-		for (int i = 0; i < infos.length; i++) {
-			set.add(infos[i].getId());
+		for (NameVersionDescriptor info : infos) {
+			set.add(info.getId());
 		}
 		assertTrue("Missing ", set.remove("org.eclipse.jdt.debug"));
 		assertTrue("Missing ", set.remove("org.eclipse.debug.core"));
