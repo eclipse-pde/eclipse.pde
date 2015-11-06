@@ -36,6 +36,7 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 
 	protected static File fXSDFile;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		setUpSchemaFile();

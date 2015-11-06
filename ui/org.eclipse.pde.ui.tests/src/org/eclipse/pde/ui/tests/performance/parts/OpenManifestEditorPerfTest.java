@@ -50,6 +50,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		return new TestSuite(OpenManifestEditorPerfTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Bundle bundle = getBundle();

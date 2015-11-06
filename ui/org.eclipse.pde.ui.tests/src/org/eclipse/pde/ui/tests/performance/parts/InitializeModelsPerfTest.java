@@ -32,6 +32,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 		return new TestSuite(InitializeModelsPerfTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		deleteContent(new File(PDECore.getDefault().getStateLocation().toOSString()));
@@ -72,6 +73,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 		assertPerformance();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		deleteContent(new File(PDECore.getDefault().getStateLocation().toOSString()));
 	}
