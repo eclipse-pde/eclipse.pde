@@ -321,8 +321,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 				// modify API descriptions
 				ApiDescriptionModifier visitor = new ApiDescriptionModifier(internalPatterns, apiPatterns);
 				IApiComponent[] components = baseline.getApiComponents();
-				for (int i = 0; i < components.length; i++) {
-					IApiComponent component = components[i];
+				for (IApiComponent component : components) {
 					if (!component.isSystemComponent() && !component.isSourceComponent()) {
 						visitor.setApiDescription(component.getApiDescription());
 						component.getApiDescription().accept(visitor, null);
@@ -403,8 +402,8 @@ public final class ApiUseTask extends CommonUtilsTask {
 		if (this.scopepattern != null) {
 			scopePattern = Pattern.compile(this.scopepattern);
 		}
-		for (int i = 0; i < components.length; i++) {
-			String symbolicName = components[i].getSymbolicName();
+		for (IApiComponent component : components) {
+			String symbolicName = component.getSymbolicName();
 			boolean skip = false;
 			if (!includedElements.isEmpty() && !(includedElements.containsExactMatch(symbolicName) || includedElements.containsPartialMatch(symbolicName))) {
 				skip = true;
@@ -413,14 +412,14 @@ public final class ApiUseTask extends CommonUtilsTask {
 				skip = true;
 			}
 			if (!skip) {
-				if (acceptComponent(components[i], refPattern, true)) {
+				if (acceptComponent(component, refPattern, true)) {
 					ids.add(symbolicName);
 				}
-				if (acceptComponent(components[i], scopePattern, false)) {
-					scope.add(components[i]);
+				if (acceptComponent(component, scopePattern, false)) {
+					scope.add(component);
 				}
 			} else {
-				this.notsearched.add(new SkippedComponent(symbolicName, components[i].getVersion(), components[i].getErrors()));
+				this.notsearched.add(new SkippedComponent(symbolicName, component.getVersion(), component.getErrors()));
 			}
 		}
 	}

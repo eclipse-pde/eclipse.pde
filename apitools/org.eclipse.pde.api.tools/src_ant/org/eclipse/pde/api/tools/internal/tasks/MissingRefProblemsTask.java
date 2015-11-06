@@ -103,11 +103,11 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 			Util.delete(loc);
 		}
 		if (usescans != null && usescans.length > 0) {
-			for (int i = 0; i < usescans.length; i++) {
-				File file = new File(usescans[i].trim());
+			for (String usescan : usescans) {
+				File file = new File(usescan.trim());
 				if (!file.exists()) {
 					StringBuffer error = new StringBuffer(Messages.MissingRefProblemsTask_invalidApiUseScanLocation);
-					error.append(usescans[i]);
+					error.append(usescan);
 					throw new BuildException(error.toString());
 				}
 			}
@@ -303,8 +303,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	}
 
 	private void dumpReport(Summary[] summaries) {
-		for (int i = 0, max = summaries.length; i < max; i++) {
-			Summary summary = summaries[i];
+		for (Summary summary : summaries) {
 			String contents = null;
 			String componentID = summary.fComponentID;
 

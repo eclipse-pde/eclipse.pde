@@ -147,8 +147,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	 */
 	private void gatherVisibleMethods(IApiType type, Set<MethodKey> members, int modifiers) {
 		IApiMethod[] methods = type.getMethods();
-		for (int i = 0; i < methods.length; i++) {
-			IApiMethod method = methods[i];
+		for (IApiMethod method : methods) {
 			if ((method.getModifiers() & modifiers) > 0 && !method.isConstructor() && !method.isSynthetic()) {
 				members.add(new MethodKey(type.getName(), method.getName(), method.getSignature(), false));
 			}
@@ -165,8 +164,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	 */
 	private boolean hasVisibleField(IApiType type, int modifiers) {
 		IApiField[] fields = type.getFields();
-		for (int i = 0; i < fields.length; i++) {
-			IApiField field = fields[i];
+		for (IApiField field : fields) {
 			if ((field.getModifiers() & modifiers) > 0) {
 				return true;
 			}
@@ -189,10 +187,10 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 			gatherAPISuperTypes(superTypes, type.getSuperclass());
 			IApiType[] interfaces = type.getSuperInterfaces();
 			if (interfaces != null) {
-				for (int i = 0; i < interfaces.length; i++) {
-					if (isAPIType(interfaces[i])) {
-						superTypes.add(interfaces[i]);
-						gatherAPISuperTypes(superTypes, interfaces[i]);
+				for (IApiType i : interfaces) {
+					if (isAPIType(i)) {
+						superTypes.add(i);
+						gatherAPISuperTypes(superTypes, i);
 					}
 				}
 			}

@@ -219,8 +219,8 @@ public abstract class CommonUtilsTask extends Task {
 		}
 		String[] strings = patterns.split(","); //$NON-NLS-1$
 		List<String> list = new ArrayList<>();
-		for (int i = 0; i < strings.length; i++) {
-			String pattern = strings[i].trim();
+		for (String string : strings) {
+			String pattern = string.trim();
 			if (pattern.length() > 0) {
 				list.add(pattern);
 			}
@@ -231,8 +231,7 @@ public abstract class CommonUtilsTask extends Task {
 	public static String convertToHtml(String s) {
 		char[] contents = s.toCharArray();
 		StringBuffer buffer = new StringBuffer();
-		for (int i = 0, max = contents.length; i < max; i++) {
-			char c = contents[i];
+		for (char c : contents) {
 			switch (c) {
 				case '<':
 					buffer.append("&lt;"); //$NON-NLS-1$

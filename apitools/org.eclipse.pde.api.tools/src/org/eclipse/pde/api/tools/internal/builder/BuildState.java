@@ -195,8 +195,8 @@ public class BuildState {
 		Set<String> apiToolingDependentsProjects = state.getApiToolingDependentProjects();
 		length = apiToolingDependentsProjects.size();
 		out.writeInt(length);
-		for (Iterator<String> iterator = apiToolingDependentsProjects.iterator(); iterator.hasNext();) {
-			out.writeUTF(iterator.next());
+		for (String string : apiToolingDependentsProjects) {
+			out.writeUTF(string);
 		}
 		Map<String, String> map = state.getManifestState();
 		out.writeInt(map.size());
@@ -336,8 +336,8 @@ public class BuildState {
 		}
 		HashSet<IDelta> collector = new HashSet<>();
 		Collection<Set<IDelta>> values = this.breakingChanges.values();
-		for (Iterator<Set<IDelta>> iterator = values.iterator(); iterator.hasNext();) {
-			collector.addAll(iterator.next());
+		for (Set<IDelta> set : values) {
+			collector.addAll(set);
 		}
 		return collector.toArray(new IDelta[collector.size()]);
 	}
@@ -352,8 +352,8 @@ public class BuildState {
 		}
 		HashSet<IDelta> collector = new HashSet<>();
 		Collection<Set<IDelta>> values = this.compatibleChanges.values();
-		for (Iterator<Set<IDelta>> iterator = values.iterator(); iterator.hasNext();) {
-			collector.addAll(iterator.next());
+		for (Set<IDelta> set : values) {
+			collector.addAll(set);
 		}
 		return collector.toArray(new IDelta[collector.size()]);
 	}
@@ -429,8 +429,7 @@ public class BuildState {
 	public void setManifestState(Map<String, String> state) {
 		if (state != null) {
 			Map<String, String> compact = new HashMap<>(7);
-			for (Iterator<String> i = ApiAnalysisBuilder.IMPORTANT_HEADERS.iterator(); i.hasNext();) {
-				String key = i.next();
+			for (String key : ApiAnalysisBuilder.IMPORTANT_HEADERS) {
 				String val = state.get(key);
 				if (val != null) {
 					compact.put(key, val);
@@ -473,14 +472,14 @@ public class BuildState {
 		if (model != null) {
 			IBuildEntry[] entries = model.getBuild().getBuildEntries();
 			String name = null;
-			for (int i = 0; i < entries.length; i++) {
-				name = entries[i].getName();
+			for (IBuildEntry entry : entries) {
+				name = entry.getName();
 				if (ProjectComponent.ENTRY_CUSTOM.equals(name)) {
-					this.buildPropChanges.put(ProjectComponent.ENTRY_CUSTOM, Util.deepToString(entries[i].getTokens()));
+					this.buildPropChanges.put(ProjectComponent.ENTRY_CUSTOM, Util.deepToString(entry.getTokens()));
 				} else if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
-					this.buildPropChanges.put(name, Util.deepToString(entries[i].getTokens()));
+					this.buildPropChanges.put(name, Util.deepToString(entry.getTokens()));
 				} else if (name.startsWith(ProjectComponent.EXTRA_PREFIX)) {
-					this.buildPropChanges.put(name, Util.deepToString(entries[i].getTokens()));
+					this.buildPropChanges.put(name, Util.deepToString(entry.getTokens()));
 				}
 			}
 		} else {
@@ -676,8 +675,7 @@ public class BuildState {
 		try {
 			IClasspathEntry[] classpath = jp.getResolvedClasspath(true);
 			CRC32 crc32 = new CRC32();
-			for (int i = 0; i < classpath.length; i++) {
-				IClasspathEntry entry = classpath[i];
+			for (IClasspathEntry entry : classpath) {
 				crc32.update(entry.getPath().toPortableString().getBytes());
 			}
 			return crc32.getValue();

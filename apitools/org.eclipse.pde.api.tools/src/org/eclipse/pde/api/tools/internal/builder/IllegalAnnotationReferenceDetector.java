@@ -66,11 +66,11 @@ public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeRefer
 		if (member != null) {
 			IAnnotatable annotable = findAnnotableElement(type, member, reference, doc);
 			if (annotable != null) {
-				IAnnotation[] annots = annotable.getAnnotations();
+				IAnnotation[] annotations = annotable.getAnnotations();
 				String typename = Signatures.getSimpleTypeName(reference.getResolvedReference().getName());
-				for (int i = 0; i < annots.length; i++) {
-					if (annots[i].getElementName().equals(typename)) {
-						ISourceRange range = annots[i].getNameRange();
+				for (IAnnotation annotation : annotations) {
+					if (annotation.getElementName().equals(typename)) {
+						ISourceRange range = annotation.getNameRange();
 						if (range != null) {
 							// select the '@' as well - augment offset and
 							// length accordingly

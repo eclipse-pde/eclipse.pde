@@ -227,12 +227,12 @@ public class IncrementalApiBuilder {
 				depprojects = new HashSet<>();
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				IProject pj = null;
-				for (int i = 0, max = projectNames.length; i < max; i++) {
-					pj = root.getProject(projectNames[i]);
+				for (String projectName : projectNames) {
+					pj = root.getProject(projectName);
 					if (pj.isAccessible()) {
 						// select only projects that don't exist in the
 						// reference baseline
-						if (baseline != null && baseline.getApiComponent(projectNames[i]) == null) {
+						if (baseline != null && baseline.getApiComponent(projectName) == null) {
 							depprojects.add(pj);
 						}
 					}
@@ -242,8 +242,8 @@ public class IncrementalApiBuilder {
 			long prev = buildstate.getBuildPathCRC();
 			long curr = BuildState.computeBuildPathCRC(project);
 			ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(curr != prev);
-			for (int i = 0; i < deltas.length; i++) {
-				deltas[i].accept(visitor);
+			for (IResourceDelta delta : deltas) {
+				delta.accept(visitor);
 			}
 			buildContext(project, state, visitor.changes, depprojects);
 			build(project, baseline, wbaseline, state, buildstate, localmonitor.split(1));
@@ -331,8 +331,8 @@ public class IncrementalApiBuilder {
 		try {
 			types = unit.getAllTypes();
 			String typename = null;
-			for (int i = 0; i < types.length; i++) {
-				typename = types[i].getFullyQualifiedName('$');
+			for (IType type : types) {
+				typename = type.getFullyQualifiedName('$');
 				if ((DESCRIPTION & kind) > 0) {
 					if (!this.context.containsDescriptionChange(typename) && !this.context.containsDescriptionDependent(typename)) {
 						this.context.recordDescriptionDependent(typename);
@@ -356,8 +356,8 @@ public class IncrementalApiBuilder {
 		try {
 			types = unit.getAllTypes();
 			String typename = null;
-			for (int i = 0; i < types.length; i++) {
-				typename = types[i].getFullyQualifiedName('$');
+			for (IType type : types) {
+				typename = type.getFullyQualifiedName('$');
 				if ((STRUCTURAL & kind) > 0) {
 					if (!this.context.containsStructuralChange(typename)) {
 						this.context.recordStructuralChange(typename);
@@ -469,9 +469,9 @@ public class IncrementalApiBuilder {
 	private void addDependents(final IProject project, State state, String[] types, int kind) {
 		StringSet packages = new StringSet(16);
 		StringSet typenames = new StringSet(16);
-		for (int i = 0; i < types.length; i++) {
-			if (types[i] != null) {
-				splitName(types[i], packages, typenames);
+		for (String type : types) {
+			if (type != null) {
+				splitName(type, packages, typenames);
 			}
 		}
 		// the qualifiedStrings are of the form 'p1/p2' & the simpleStrings are
@@ -541,8 +541,8 @@ public class IncrementalApiBuilder {
 		// clean up the state -
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=271110
 		String[] types = this.context.getRemovedTypes();
-		for (int i = 0; i < types.length; i++) {
-			state.cleanup(types[i]);
+		for (String type : types) {
+			state.cleanup(type);
 		}
 		Util.updateMonitor(monitor, 0);
 		IResource resource = project.findMember(ApiAnalysisBuilder.MANIFEST_PATH);
@@ -553,10 +553,10 @@ public class IncrementalApiBuilder {
 				// the manifest markers for a given type name is time of O(1)
 				IMarker[] markers = resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 				String tname = null;
-				for (int i = 0; i < markers.length; i++) {
-					tname = Util.getTypeNameFromMarker(markers[i]);
+				for (IMarker marker : markers) {
+					tname = Util.getTypeNameFromMarker(marker);
 					if (this.context.containsStructuralChange(tname)) {
-						markers[i].delete();
+						marker.delete();
 					}
 				}
 				Util.updateMonitor(monitor, 0);
@@ -564,10 +564,10 @@ public class IncrementalApiBuilder {
 				// that way to get all
 				// the manifest markers for a given type name is time of O(1)
 				markers = resource.findMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-				for (int i = 0; i < markers.length; i++) {
-					tname = Util.getTypeNameFromMarker(markers[i]);
+				for (IMarker marker : markers) {
+					tname = Util.getTypeNameFromMarker(marker);
 					if (this.context.containsStructuralChange(tname)) {
-						markers[i].delete();
+						marker.delete();
 					}
 				}
 				Util.updateMonitor(monitor, 0);

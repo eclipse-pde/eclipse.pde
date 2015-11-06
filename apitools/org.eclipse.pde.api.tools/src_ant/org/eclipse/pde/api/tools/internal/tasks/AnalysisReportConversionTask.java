@@ -56,8 +56,7 @@ public class AnalysisReportConversionTask extends Task {
 		public String getHtmlMessage() {
 			StringBuffer buffer = new StringBuffer();
 			char[] chars = this.message.toCharArray();
-			for (int i = 0, max = chars.length; i < max; i++) {
-				char character = chars[i];
+			for (char character : chars) {
 				switch (character) {
 					case '<':
 						buffer.append("&lt;"); //$NON-NLS-1$

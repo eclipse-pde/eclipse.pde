@@ -64,8 +64,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 
 		public Summary(String componentID, IApiProblem[] apiProblems) {
 			this.componentID = componentID;
-			for (int i = 0, max = apiProblems.length; i < max; i++) {
-				IApiProblem problem = apiProblems[i];
+			for (IApiProblem problem : apiProblems) {
 				switch (problem.getCategory()) {
 					case IApiProblem.CATEGORY_COMPATIBILITY:
 						apiCompatibilityProblems.add(problem);
@@ -198,8 +197,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 
 	private void dumpReport(Summary[] summaries, List<String> nonAPIBundleNames, Map<String, Object> bundlesWithErrors) {
 		ProblemCounter counter = new ProblemCounter();
-		for (int i = 0, max = summaries.length; i < max; i++) {
-			Summary summary = summaries[i];
+		for (Summary summary : summaries) {
 			String contents = null;
 			String componentID = summary.componentID;
 
@@ -243,9 +241,9 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION));
 					category.setAttribute(IApiXmlConstants.ATTR_VALUE, COMPONENT_RESOLUTION);
 					ResolverError[] errors = (ResolverError[]) bundlesWithErrors.get(componentID);
-					for (int j = 0; j < errors.length; j++) {
+					for (ResolverError e : errors) {
 						Element error = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERROR);
-						error.setAttribute(IApiXmlConstants.ATTR_MESSAGE, errors[j].toString());
+						error.setAttribute(IApiXmlConstants.ATTR_MESSAGE, e.toString());
 						category.appendChild(error);
 					}
 					report.appendChild(category);
@@ -471,8 +469,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				for (String name : names) {
 					System.out.println(name);
 					ResolverError[] errors = (ResolverError[]) bundlesWithErrors.get(name);
-					for (int i = 0; i < errors.length; i++) {
-						System.out.println(errors[i]);
+					for (ResolverError error : errors) {
+						System.out.println(error);
 					}
 				}
 				System.out.println("=========================="); //$NON-NLS-1$
@@ -480,8 +478,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 
 			// Check if any components have been removed from the baseline
 			IApiComponent[] baselineApiComponents = referenceBaseline.getApiComponents();
-			for (int i = 0, max = baselineApiComponents.length; i < max; i++) {
-				IApiComponent apiComponent = baselineApiComponents[i];
+			for (IApiComponent apiComponent : baselineApiComponents) {
 				String id = apiComponent.getSymbolicName();
 				if (!visitedApiComponentNames.remove(id)) {
 					// A component has been removed. Apply any include/exclude

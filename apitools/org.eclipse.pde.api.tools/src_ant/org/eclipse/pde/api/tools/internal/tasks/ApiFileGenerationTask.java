@@ -334,10 +334,10 @@ public class ApiFileGenerationTask extends Task {
 			String[] allBinaryLocations = this.binaryLocations.split(File.pathSeparator);
 			List<IApiTypeContainer> allContainers = new ArrayList<>();
 			IApiTypeContainer container = null;
-			for (int i = 0; i < allBinaryLocations.length; i++) {
-				container = getContainer(allBinaryLocations[i]);
+			for (String allBinaryLocation : allBinaryLocations) {
+				container = getContainer(allBinaryLocation);
 				if (container == null) {
-					throw new BuildException(NLS.bind(Messages.api_generation_invalidBinaryLocation, allBinaryLocations[i]));
+					throw new BuildException(NLS.bind(Messages.api_generation_invalidBinaryLocation, allBinaryLocation));
 				}
 				allContainers.add(container);
 			}
@@ -370,8 +370,8 @@ public class ApiFileGenerationTask extends Task {
 			}
 			if (this.manifests != null) {
 				String[] allManifestFiles = this.manifests.split(File.pathSeparator);
-				for (int i = 0, max = allManifestFiles.length; i < max; i++) {
-					File currentManifest = new File(allManifestFiles[i]);
+				for (String allManifestFile : allManifestFiles) {
+					File currentManifest = new File(allManifestFile);
 					Set<String> currentApiPackages = null;
 					if (currentManifest.exists()) {
 						BufferedInputStream inputStream = null;
@@ -431,8 +431,7 @@ public class ApiFileGenerationTask extends Task {
 			allFiles = Util.getAllFiles(root, fileFilter);
 			if (this.sourceLocations != null) {
 				String[] allSourceLocations = this.sourceLocations.split(File.pathSeparator);
-				for (int i = 0, max = allSourceLocations.length; i < max; i++) {
-					String currentSourceLocation = allSourceLocations[i];
+				for (String currentSourceLocation : allSourceLocations) {
 					File[] allFiles2 = Util.getAllFiles(new File(currentSourceLocation), fileFilter);
 					if (allFiles2 != null) {
 						if (allFiles == null) {

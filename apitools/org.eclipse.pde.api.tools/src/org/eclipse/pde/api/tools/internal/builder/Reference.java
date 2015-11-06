@@ -487,8 +487,8 @@ public class Reference implements IReference {
 		}
 		IApiType[] interfaces = type.getSuperInterfaces();
 		if (interfaces != null) {
-			for (int i = 0; i < interfaces.length; i++) {
-				if(resolveInterfaceMethod(interfaces[i], methodName, methodSignature)) {
+			for (IApiType i : interfaces) {
+				if(resolveInterfaceMethod(i, methodName, methodSignature)) {
 					return true;
 				}
 			}
@@ -524,10 +524,10 @@ public class Reference implements IReference {
 				// resolve method in super interfaces rather than class
 				String[] interfacesNames = type.getSuperInterfaceNames();
 				if (interfacesNames != null) {
-					for (int i = 0, max = interfacesNames.length; i < max; i++) {
-						IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, interfacesNames[i]);
+					for (String interfacesName : interfacesNames) {
+						IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, interfacesName);
 						if (classFile == null) {
-							ApiPlugin.logErrorMessage("Class file for " + interfacesNames[i] + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+							ApiPlugin.logErrorMessage("Class file for " + interfacesName + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 							return false;
 						}
 						IApiType superinterface = classFile.getStructure();
@@ -578,10 +578,10 @@ public class Reference implements IReference {
 				if (Flags.isAbstract(type.getModifiers())) {
 					interfacesNames = type.getSuperInterfaceNames();
 					if (interfacesNames != null) {
-						for (int i = 0, max = interfacesNames.length; i < max; i++) {
-							IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, interfacesNames[i]);
+						for (String interfacesName : interfacesNames) {
+							IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, interfacesName);
 							if (classFile == null) {
-								ApiPlugin.logErrorMessage("Class file for " + interfacesNames[i] + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+								ApiPlugin.logErrorMessage("Class file for " + interfacesName + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 								return false;
 							}
 							IApiType superinterface = classFile.getStructure();

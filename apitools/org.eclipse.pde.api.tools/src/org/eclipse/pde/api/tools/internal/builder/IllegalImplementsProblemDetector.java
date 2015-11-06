@@ -62,9 +62,9 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			IApiType type = (IApiType) reference.getMember();
 			IApiType[] inters = type.getSuperInterfaces();
 			IApiType inter = null;
-			for (int j = 0; j < inters.length; j++) {
-				if (inters[j].getName().equals(reference.getReferencedTypeName())) {
-					inter = inters[j];
+			for (IApiType interLoop : inters) {
+				if (interLoop.getName().equals(reference.getReferencedTypeName())) {
+					inter = interLoop;
 					break;
 				}
 			}
@@ -178,11 +178,11 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 		if (interfaces.length == 0) {
 			return false;
 		}
-		for (int i = 0; i < interfaces.length; i++) {
-			if (interfaces[i].getName().equals(iname)) {
+		for (IApiType interfaceLoop : interfaces) {
+			if (interfaceLoop.getName().equals(iname)) {
 				return true;
 			}
-			if (isImplemented(iname, interfaces[i].getSuperInterfaces())) {
+			if (isImplemented(iname, interfaceLoop.getSuperInterfaces())) {
 				return true;
 			}
 		}
@@ -206,19 +206,19 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 		}
 		IApiAnnotations annot = null;
 		IApiComponent comp = null;
-		for (int i = 0; i < inters.length; i++) {
-			comp = inters[i].getApiComponent();
+		for (IApiType inter : inters) {
+			comp = inter.getApiComponent();
 			if (comp == null) {
 				continue;
 			}
 			if (!comp.equals(originalcomponent)) {
-				annot = comp.getApiDescription().resolveAnnotations(Factory.typeDescriptor(inters[i].getName()));
+				annot = comp.getApiDescription().resolveAnnotations(Factory.typeDescriptor(inter.getName()));
 				if (annot != null && RestrictionModifiers.isImplementRestriction(annot.getRestrictions())) {
-					fRestrictedInterfaces.put(entryinterface, inters[i]);
+					fRestrictedInterfaces.put(entryinterface, inter);
 					return true;
 				}
 			}
-			return findRestrictedSuperinterfaces(originalcomponent, entryinterface, inters[i]);
+			return findRestrictedSuperinterfaces(originalcomponent, entryinterface, inter);
 		}
 		return false;
 	}

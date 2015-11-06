@@ -220,15 +220,14 @@ public class APIFreezeTask extends CommonUtilsTask {
 	private IApiScope getScope(IApiBaseline currentBaseline) {
 		IApiComponent[] apiComponents = currentBaseline.getApiComponents();
 		ApiScope scope = new ApiScope();
-		for (int i = 0, max = apiComponents.length; i < max; i++) {
-			IApiComponent apiComponent = apiComponents[i];
+		for (IApiComponent apiComponent : apiComponents) {
 			try {
 				ResolverError[] errors = apiComponent.getErrors();
 				if (errors != null) {
 					if (this.debug) {
 						System.out.println("Resolver errors found for component : " + apiComponent.getSymbolicName()); //$NON-NLS-1$
-						for (int j = 0, max2 = errors.length; j < max2; j++) {
-							System.out.println(errors[j]);
+						for (ResolverError error : errors) {
+							System.out.println(error);
 						}
 					}
 					// If a component has a resolver error we either skip the
@@ -411,9 +410,9 @@ public class APIFreezeTask extends CommonUtilsTask {
 				errorElement.appendChild(report);
 
 				ResolverError[] errors = entry.getValue();
-				for (int j = 0; j < errors.length; j++) {
+				for (ResolverError e : errors) {
 					Element error = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERROR);
-					error.setAttribute(IApiXmlConstants.ATTR_MESSAGE, errors[j].toString());
+					error.setAttribute(IApiXmlConstants.ATTR_MESSAGE, e.toString());
 					report.appendChild(error);
 				}
 			}

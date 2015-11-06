@@ -598,8 +598,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		IMethod Qmethod = type.getMethod(methodname, parameterTypes);
 		IMethod[] methods = type.getMethods();
 		IMethod match = null;
-		for (int i = 0; i < methods.length; i++) {
-			IMethod m = methods[i];
+		for (IMethod m : methods) {
 			if (m.isSimilar(Qmethod)) {
 				match = m;
 				break;
@@ -625,9 +624,9 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		if (!match.exists()) {
 			IField[] fields = type.getFields();
 			// optimistically try to find the first match
-			for (int i = 0; i < fields.length; i++) {
-				if (fields[i].getElementName().equals(field.getName())) {
-					match = fields[i];
+			for (IField loopField : fields) {
+				if (loopField.getElementName().equals(field.getName())) {
+					match = loopField;
 					break;
 				}
 			}
@@ -665,10 +664,9 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			return type;
 		}
 		IType match = null;
-		IType[] types = type.getTypes();
-		for (int i = 0; i < types.length; i++) {
-			if ((types[i].getElementName().equals(apitype.getName()))) {
-				match = types[i];
+		for (IType t : type.getTypes()) {
+			if (t.getElementName().equals(apitype.getName())) {
+				match = t;
 				break;
 			}
 		}
@@ -724,10 +722,10 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					ApiType etype = (ApiType) type.getEnclosingType();
 					IApiMethod[] methods = etype.getMethods();
 					String msig = null;
-					for (int i = 0; i < methods.length; i++) {
-						msig = methods[i].getSignature();
-						if (Signatures.getMethodName(methods[i]).equals(method.getElementName()) && Signatures.matchesSignatures(msig.replace('/', '.'), method.getSignature())) {
-							type.setEnclosingMethodInfo(methods[i].getName(), msig);
+					for (IApiMethod m : methods) {
+						msig = m.getSignature();
+						if (Signatures.getMethodName(m).equals(method.getElementName()) && Signatures.matchesSignatures(msig.replace('/', '.'), method.getSignature())) {
+							type.setEnclosingMethodInfo(m.getName(), msig);
 						}
 					}
 					return method;

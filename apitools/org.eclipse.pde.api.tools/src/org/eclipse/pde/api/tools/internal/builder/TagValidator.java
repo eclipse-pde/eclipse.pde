@@ -428,8 +428,8 @@ public class TagValidator extends Validator {
 		IApiJavadocTag[] tags = ApiPlugin.getJavadocTagManager().getTagsForType(type, member);
 		if (tags.length > 0) {
 			HashSet<String> valid = new HashSet<>(tags.length, 1);
-			for (int i = 0; i < tags.length; i++) {
-				valid.add(tags[i].getTagName());
+			for (IApiJavadocTag tag : tags) {
+				valid.add(tag.getTagName());
 			}
 			return valid;
 		}

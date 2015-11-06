@@ -202,13 +202,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 				IProject project = resource.getProject();
 				IMarker[] markers = project.findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-				for (int i = 0; i < markers.length; i++) {
-					String typeName = markers[i].getAttribute(IApiMarkerConstants.API_USESCAN_TYPE, null);
+				for (IMarker marker : markers) {
+					String typeName = marker.getAttribute(IApiMarkerConstants.API_USESCAN_TYPE, null);
 					IJavaElement adaptor = resource.getAdapter(IJavaElement.class);
 					if (adaptor != null && adaptor instanceof ICompilationUnit) {
 						IType typeroot = ((ICompilationUnit) adaptor).findPrimaryType();
 						if (typeroot != null && typeName != null && typeName.startsWith(typeroot.getFullyQualifiedName())) {
-							markers[i].delete();
+							marker.delete();
 						}
 					}
 				}
@@ -375,12 +375,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						} else {
 							IResourceDelta filters = null;
 							boolean full = false;
-							for (int i = 0; i < deltas.length; i++) {
-								full = shouldFullBuild(deltas[i]);
+							for (IResourceDelta delta : deltas) {
+								full = shouldFullBuild(delta);
 								if (full) {
 									break;
 								}
-								filters = deltas[i].findMember(FILTER_PATH);
+								filters = delta.findMember(FILTER_PATH);
 								if (filters != null) {
 									switch (filters.getKind()) {
 										case IResourceDelta.ADDED:
@@ -456,8 +456,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 				Util.updateMonitor(localMonitor, 0);
 				if (this.buildstate != null) {
-					for (int i = 0, max = projects.length; i < max; i++) {
-						IProject project = projects[i];
+					for (IProject project : projects) {
 						if (Util.isApiProject(project)) {
 							this.buildstate.addApiToolingDependentProject(project.getName());
 						}
@@ -705,8 +704,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	boolean worthDoingFullBuild(IProject[] projects) {
 		Set<String> apiToolingDependentProjects = this.buildstate.getApiToolingDependentProjects();
-		for (int i = 0, max = projects.length; i < max; i++) {
-			IProject currentProject = projects[i];
+		for (IProject currentProject : projects) {
 			if (Util.isApiProject(currentProject)) {
 				if (apiToolingDependentProjects.contains(currentProject.getName())) {
 					continue;
@@ -772,16 +770,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 		IApiProblem[] problems = getAnalyzer().getProblems();
 		String type = null;
-		for (int i = 0; i < problems.length; i++) {
-			int category = problems[i].getCategory();
-			type = getProblemTypeFromCategory(category, problems[i].getKind());
+		for (IApiProblem problem : problems) {
+			int category = problem.getCategory();
+			type = getProblemTypeFromCategory(category, problem.getKind());
 			if (type == null) {
 				continue;
 			}
 			if (ApiPlugin.DEBUG_BUILDER) {
-				System.out.println("ApiAnalysisBuilder: creating marker for: " + problems[i].toString()); //$NON-NLS-1$
+				System.out.println("ApiAnalysisBuilder: creating marker for: " + problem.toString()); //$NON-NLS-1$
 			}
-			createMarkerForProblem(category, type, problems[i]);
+			createMarkerForProblem(category, type, problem);
 		}
 	}
 
@@ -851,16 +849,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			if (category == IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM) {
 				IMarker[] markers = resource.findMarkers(type, true, IResource.DEPTH_ZERO);
-				for (int i = 0; i < markers.length; i++) {
-					String msg = markers[i].getAttribute(IMarker.MESSAGE, null);
+				for (IMarker marker : markers) {
+					String msg = marker.getAttribute(IMarker.MESSAGE, null);
 					if (msg == null || msg.equalsIgnoreCase(problem.getMessage())) {
-						int markerSeverity = markers[i].getAttribute(IMarker.SEVERITY, 0);
+						int markerSeverity = marker.getAttribute(IMarker.SEVERITY, 0);
 						int problemSeverity = ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(problem), this.currentproject);
 						if (markerSeverity == problemSeverity) {
 							return; // Marker already exists
 						}
 					} else {
-						markers[i].delete(); // create the marker afresh
+						marker.delete(); // create the marker afresh
 					}
 				}
 			}
@@ -1037,8 +1035,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			deltas.add(delta);
 		}
-		for (int i = 0; i < projects.length; i++) {
-			delta = getDelta(projects[i]);
+		for (IProject project : projects) {
+			delta = getDelta(project);
 			if (delta != null) {
 				if (ApiPlugin.DEBUG_BUILDER) {
 					System.out.println("ApiAnalysisBuilder: Found a delta: " + delta); //$NON-NLS-1$
@@ -1082,16 +1080,15 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			this.output_locs.put(this.currentproject, blocations);
 			HashSet<IPath> slocations = new HashSet<>();
 			IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
-			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].isArchive()) {
+			for (IPackageFragmentRoot root : roots) {
+				if (root.isArchive()) {
 					continue;
 				}
-				slocations.add(roots[i].getPath());
+				slocations.add(root.getPath());
 			}
 			this.src_locs.put(this.currentproject, slocations);
 			IClasspathEntry[] entries = javaProject.getResolvedClasspath(true);
-			for (int i = 0, l = entries.length; i < l; i++) {
-				IClasspathEntry entry = entries[i];
+			for (IClasspathEntry entry : entries) {
 				IPath path = entry.getPath();
 				IProject p = null;
 				switch (entry.getEntryKind()) {
@@ -1144,10 +1141,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						bins.add(javaProject.getOutputLocation());
 						IClasspathEntry[] source = javaProject.getRawClasspath();
 						IPath entrypath = null;
-						for (int j = 0; j < source.length; j++) {
-							if (source[j].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-								srcs.add(source[j].getPath());
-								entrypath = source[j].getOutputLocation();
+						for (IClasspathEntry element : source) {
+							if (element.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+								srcs.add(element.getPath());
+								entrypath = element.getOutputLocation();
 								if (entrypath != null) {
 									bins.add(entrypath);
 								}
@@ -1186,8 +1183,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	boolean isOptional(IClasspathEntry entry) {
 		IClasspathAttribute[] attribs = entry.getExtraAttributes();
-		for (int i = 0, length = attribs.length; i < length; i++) {
-			IClasspathAttribute attribute = attribs[i];
+		for (IClasspathAttribute attribute : attribs) {
 			if (IClasspathAttribute.OPTIONAL.equals(attribute.getName()) && "true".equals(attribute.getValue())) { //$NON-NLS-1$
 				return true;
 			}

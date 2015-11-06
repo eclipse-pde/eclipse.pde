@@ -382,11 +382,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (externalDependencies != null) {
 				localmonitor.setWorkRemaining(externalDependencies.length);
 				HashMap<String, IApiProblem> problems = new HashMap<>();
-				for (int i = 0; i < externalDependencies.length; i++) {
+				for (IReferenceDescriptor externalDependency : externalDependencies) {
 					Util.updateMonitor(localmonitor, 1);
 					Reference externalReference = null;
 					IApiTypeRoot type = null;
-					IMemberDescriptor referencedMember = externalDependencies[i].getReferencedMember();
+					IMemberDescriptor referencedMember = externalDependency.getReferencedMember();
 					IReferenceTypeDescriptor referenceMemberType = referencedMember.getEnclosingType();
 					if (referenceMemberType != null) {
 						type = apiComponent.findTypeRoot(referenceMemberType.getQualifiedName());
@@ -396,19 +396,19 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							referenceMemberType = (IReferenceTypeDescriptor) referencedMember;
 							type = apiComponent.findTypeRoot(referenceMemberType.getQualifiedName());
 							if (type != null) {
-								externalReference = Reference.typeReference(type.getStructure(), referenceMemberType.getQualifiedName(), externalDependencies[i].getReferenceKind());
+								externalReference = Reference.typeReference(type.getStructure(), referenceMemberType.getQualifiedName(), externalDependency.getReferenceKind());
 							}
 							break;
 						}
 						case IElementDescriptor.METHOD: {
 							if (type != null) {
-								externalReference = Reference.methodReference(type.getStructure(), referenceMemberType.getQualifiedName(), referencedMember.getName(), ((IMethodDescriptor) referencedMember).getSignature(), externalDependencies[i].getReferenceKind());
+								externalReference = Reference.methodReference(type.getStructure(), referenceMemberType.getQualifiedName(), referencedMember.getName(), ((IMethodDescriptor) referencedMember).getSignature(), externalDependency.getReferenceKind());
 							}
 							break;
 						}
 						case IElementDescriptor.FIELD: {
 							if (type != null) {
-								externalReference = Reference.fieldReference(type.getStructure(), referenceMemberType.getQualifiedName(), referencedMember.getName(), externalDependencies[i].getReferenceKind());
+								externalReference = Reference.fieldReference(type.getStructure(), referenceMemberType.getQualifiedName(), referencedMember.getName(), externalDependency.getReferenceKind());
 							}
 							break;
 						}
@@ -416,11 +416,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							break;
 					}
 					if (type == null) {
-						createExternalDependenciesProblem(problems, externalDependencies[i], referenceMemberType.getQualifiedName(), referencedMember, externalDependencies[i].getReferencedMember().getElementType(), IApiProblem.API_USE_SCAN_DELETED);
+						createExternalDependenciesProblem(problems, externalDependency, referenceMemberType.getQualifiedName(), referencedMember, externalDependency.getReferencedMember().getElementType(), IApiProblem.API_USE_SCAN_DELETED);
 					} else {
 						externalReference.resolve();
 						if (externalReference.getResolvedReference() == null) {
-							createExternalDependenciesProblem(problems, externalDependencies[i], referenceMemberType.getQualifiedName(), referencedMember, externalDependencies[i].getReferencedMember().getElementType(), IApiProblem.API_USE_SCAN_UNRESOLVED);
+							createExternalDependenciesProblem(problems, externalDependency, referenceMemberType.getQualifiedName(), referencedMember, externalDependency.getReferencedMember().getElementType(), IApiProblem.API_USE_SCAN_UNRESOLVED);
 						}
 					}
 				}
@@ -566,11 +566,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @throws CoreException
 	 */
 	private void checkCompatibility(String[] changedtypes, IApiComponent reference, IApiComponent component, SubMonitor localMonitor) throws CoreException {
-		for (int i = 0; i < changedtypes.length; i++) {
-			if (changedtypes[i] == null) {
+		for (String changedtype : changedtypes) {
+			if (changedtype == null) {
 				continue;
 			}
-			checkCompatibility(changedtypes[i], reference, component, localMonitor.split(1));
+			checkCompatibility(changedtype, reference, component, localMonitor.split(1));
 			Util.updateMonitor(localMonitor);
 		}
 	}
@@ -602,16 +602,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (context.hasTypes()) {
 				IResource resource = null;
 				String[] types = getApiUseTypes(context);
-				for (int i = 0; i < types.length; i++) {
-					if (types[i] == null) {
+				for (String type : types) {
+					if (type == null) {
 						continue;
 					}
-					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(types[i])));
+					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(type)));
 					if (resource != null) {
-						filters = store.getUnusedFilters(resource, types[i], null);
+						filters = store.getUnusedFilters(resource, type, null);
 						if (autoremove) {
-							for (int j = 0; j < filters.length; j++) {
-								toremove.add(filters[j]);
+							for (IApiProblemFilter filter : filters) {
+								toremove.add(filter);
 							}
 							continue;
 						}
@@ -624,8 +624,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			} else {
 				filters = store.getUnusedFilters(null, null, null);
 				if (autoremove) {
-					for (int i = 0; i < filters.length; i++) {
-						toremove.add(filters[i]);
+					for (IApiProblemFilter filter : filters) {
+						toremove.add(filter);
 					}
 					removeUnusedProblemFilters(store, toremove, monitor);
 				} else {
@@ -671,8 +671,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		IApiProblemFilter filter = null;
 		IApiProblem problem = null;
-		for (int i = 0; i < filters.length; i++) {
-			filter = filters[i];
+		for (IApiProblemFilter f : filters) {
+			filter = f;
 			problem = filter.getUnderlyingProblem();
 			if (problem == null) {
 				return;
@@ -857,11 +857,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private IReferenceTypeDescriptor[] getScopedElements(final String[] typenames) {
 		ArrayList<IReferenceTypeDescriptor> types = new ArrayList<>(typenames.length);
-		for (int i = 0; i < typenames.length; i++) {
-			if (typenames[i] == null) {
+		for (String typename : typenames) {
+			if (typename == null) {
 				continue;
 			}
-			types.add(Util.getType(typenames[i]));
+			types.add(Util.getType(typename));
 		}
 		return types.toArray(new IReferenceTypeDescriptor[types.size()]);
 	}
@@ -1037,21 +1037,21 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + component.getApiTypeContainers().length);
 			if (context.hasTypes()) {
 				String[] typenames = context.getStructurallyChangedTypes();
-				for (int i = 0; i < typenames.length; i++) {
-					if (typenames[i] == null) {
+				for (String typename : typenames) {
+					if (typename == null) {
 						continue;
 					}
-					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, typenames[i]));
-					processType(typenames[i], !tags, !annotations);
+					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, typename));
+					processType(typename, !tags, !annotations);
 					Util.updateMonitor(localMonitor);
 				}
 			} else {
 				try {
 					IPackageFragmentRoot[] roots = fJavaProject.getPackageFragmentRoots();
-					for (int i = 0; i < roots.length; i++) {
-						if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
-							localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, roots[i].getPath().toOSString()));
-							scanSource(roots[i], !tags, !annotations, localMonitor.split(1));
+					for (IPackageFragmentRoot root : roots) {
+						if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+							localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, root.getPath().toOSString()));
+							scanSource(root, !tags, !annotations, localMonitor.split(1));
 							Util.updateMonitor(localMonitor);
 						}
 					}
@@ -1084,8 +1084,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				case IJavaElement.PACKAGE_FRAGMENT: {
 					IParent parent = (IParent) element;
 					IJavaElement[] children = parent.getChildren();
-					for (int i = 0; i < children.length; i++) {
-						scanSource(children[i], tags, annotations, monitor);
+					for (IJavaElement javaElement : children) {
+						scanSource(javaElement, tags, annotations, monitor);
 						Util.updateMonitor(monitor, 0);
 					}
 					break;
@@ -1141,8 +1141,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		TagValidator tv = new TagValidator(cunit, tags, annotations);
 		comp.accept(tv);
 		IApiProblem[] tagProblems = tv.getProblems();
-		for (int i = 0; i < tagProblems.length; i++) {
-			addProblem(tagProblems[i]);
+		for (IApiProblem tagProblem : tagProblems) {
+			addProblem(tagProblem);
 		}
 	}
 
@@ -1182,8 +1182,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("API usage scan: " + (end - start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
-			for (int i = 0; i < illegal.length; i++) {
-				addProblem(illegal[i]);
+			for (IApiProblem element : illegal) {
+				addProblem(element);
 			}
 			Util.updateMonitor(localMonitor);
 		} catch (CoreException ce) {
@@ -1217,18 +1217,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			String[] structtypes = context.getStructurallyChangedTypes();
 			HashSet<String> typenames = new HashSet<>(size + structtypes.length);
 			if (deptypes != null) {
-				for (int i = 0; i < deptypes.length; i++) {
-					if (deptypes[i] == null) {
+				for (String deptype : deptypes) {
+					if (deptype == null) {
 						continue;
 					}
-					typenames.add(deptypes[i]);
+					typenames.add(deptype);
 				}
 			}
-			for (int i = 0; i < structtypes.length; i++) {
-				if (structtypes[i] == null) {
+			for (String structtype : structtypes) {
+				if (structtype == null) {
 					continue;
 				}
-				typenames.add(structtypes[i]);
+				typenames.add(structtype);
 			}
 			return typenames.toArray(new String[typenames.size()]);
 		}
@@ -1280,8 +1280,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						}
 						if (classFile != null) {
 							IRequiredComponentDescription[] components = component.getRequiredComponents();
-							for (int i = 0; i < components.length; i++) {
-								IRequiredComponentDescription description = components[i];
+							for (IRequiredComponentDescription description : components) {
 								if (description.getId().equals(p.getSymbolicName()) && description.isExported()) {
 									reexported = true;
 									break;

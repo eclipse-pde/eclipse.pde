@@ -112,8 +112,8 @@ public class CompareTask extends CommonUtilsTask {
 			if (componentsNames.length == 0) {
 				scope.addElement(currentBaseline);
 			} else {
-				for (int i = 0, max = componentsNames.length; i < max; i++) {
-					String componentName = componentsNames[i];
+				for (String componentsName : componentsNames) {
+					String componentName = componentsName;
 					componentName = componentName.trim();
 					if (componentName.startsWith(Util.REGULAR_EXPRESSION_START)) {
 						// regular expression
@@ -121,8 +121,7 @@ public class CompareTask extends CommonUtilsTask {
 						Pattern pattern = null;
 						try {
 							pattern = Pattern.compile(componentName);
-							for (int j = 0, max2 = apiComponents.length; j < max2; j++) {
-								IApiComponent apiComponent = apiComponents[j];
+							for (IApiComponent apiComponent : apiComponents) {
 								String componentId = apiComponent.getSymbolicName();
 								Matcher matcher = pattern.matcher(componentId);
 								if (matcher.matches()) {

@@ -400,8 +400,8 @@ public class ReferenceExtractor extends ClassVisitor {
 										// package
 										IApiBaseline baseline = comp.getBaseline();
 										IApiComponent[] comps = baseline.resolvePackage(comp, Signatures.getPackageName(owner_sig));
-										for (int i = 0; i < comps.length; i++) {
-											root = (AbstractApiTypeRoot) comps[i].findTypeRoot(owner_sig);
+										for (IApiComponent c : comps) {
+											root = (AbstractApiTypeRoot) c.findTypeRoot(owner_sig);
 											if (root != null) {
 												break;
 											}
@@ -529,8 +529,8 @@ public class ReferenceExtractor extends ClassVisitor {
 					// handle it only for anonymous / local types
 					List<Reference> refs = fAnonymousTypes.get(processName(type.getInternalName()));
 					if (refs != null) {
-						for (Iterator<Reference> iterator = refs.iterator(); iterator.hasNext();) {
-							this.linePositionTracker.addLocation(iterator.next());
+						for (Reference reference : refs) {
+							this.linePositionTracker.addLocation(reference);
 						}
 					}
 					break;
@@ -561,8 +561,7 @@ public class ReferenceExtractor extends ClassVisitor {
 					// iterate the list to find the one that matches the
 					// index
 					LocalLineNumberMarker removeMarker = null;
-					loop: for (Iterator<LocalLineNumberMarker> iterator = list.iterator(); iterator.hasNext();) {
-						LocalLineNumberMarker marker = iterator.next();
+					loop: for (LocalLineNumberMarker marker : list) {
 						if (marker.varIndex == index) {
 							lineNumber = marker.lineNumber;
 							removeMarker = marker;
@@ -581,8 +580,7 @@ public class ReferenceExtractor extends ClassVisitor {
 				}
 				if (signature != null) {
 					List<Reference> references = ReferenceExtractor.this.processSignature(name, signature, IReference.REF_PARAMETERIZED_VARIABLE, METHOD);
-					for (Iterator<Reference> iterator = references.iterator(); iterator.hasNext();) {
-						Reference reference = iterator.next();
+					for (Reference reference : references) {
 						reference.setLineNumber(lineNumber);
 					}
 				} else {
@@ -756,8 +754,7 @@ public class ReferenceExtractor extends ClassVisitor {
 			int currentLineNumber = firstLineInfo.line;
 
 			List<LabelInfo> remainingCatchLabelInfos = new ArrayList<>();
-			for (Iterator<LabelInfo> iterator = this.catchLabelInfos.iterator(); iterator.hasNext();) {
-				LabelInfo catchLabelInfo = iterator.next();
+			for (LabelInfo catchLabelInfo : this.catchLabelInfos) {
 				Integer lineValue = this.lineMap.get(catchLabelInfo.label);
 				if (lineValue != null) {
 					catchLabelInfo.location.setLineNumber(lineValue.intValue());
@@ -767,8 +764,7 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 			// Iterate over List of Labels and SourceLocations.
 			List<Object> computedEntries = new ArrayList<>();
-			for (Iterator<Object> iterator = this.labelsAndLocations.iterator(); iterator.hasNext();) {
-				Object current = iterator.next();
+			for (Object current : this.labelsAndLocations) {
 				if (current instanceof Label) {
 					// label
 					Integer lineValue = this.lineMap.get(current);
@@ -783,14 +779,12 @@ public class ReferenceExtractor extends ClassVisitor {
 				}
 			}
 			List<LabelInfo> remaingEntriesTemp;
-			for (Iterator<Object> iterator = computedEntries.iterator(); iterator.hasNext();) {
-				Object current = iterator.next();
+			for (Object current : computedEntries) {
 				if (current instanceof Label) {
 					// try to set the line number for remaining catch labels
 					if (remainingCatchLabelInfos != null) {
 						remaingEntriesTemp = new ArrayList<>();
-						loop: for (Iterator<LabelInfo> catchLabelInfosIterator = remainingCatchLabelInfos.iterator(); catchLabelInfosIterator.hasNext();) {
-							LabelInfo catchLabelInfo = catchLabelInfosIterator.next();
+						loop: for (LabelInfo catchLabelInfo : remainingCatchLabelInfos) {
 							if (!current.equals(catchLabelInfo.label)) {
 								remaingEntriesTemp.add(catchLabelInfo);
 								continue loop;
@@ -1235,8 +1229,8 @@ public class ReferenceExtractor extends ClassVisitor {
 				// the type is an interface and we need to treat the interfaces
 				// set as extends, not implements
 				Type supertype = null;
-				for (int i = 0; i < interfaces.length; i++) {
-					supertype = Type.getObjectType(interfaces[i]);
+				for (String interfaceName : interfaces) {
+					supertype = Type.getObjectType(interfaceName);
 					this.addTypeReference(supertype, IReference.REF_EXTENDS);
 					this.fSuperStack.add(supertype.getClassName());
 				}
@@ -1247,8 +1241,8 @@ public class ReferenceExtractor extends ClassVisitor {
 					this.addTypeReference(supertype, IReference.REF_EXTENDS);
 					this.fSuperStack.add(supertype.getClassName());
 				}
-				for (int i = 0; i < interfaces.length; i++) {
-					supertype = Type.getObjectType(interfaces[i]);
+				for (String interfaceName : interfaces) {
+					supertype = Type.getObjectType(interfaceName);
 					this.addTypeReference(supertype, IReference.REF_IMPLEMENTS);
 				}
 			}
@@ -1414,15 +1408,14 @@ public class ReferenceExtractor extends ClassVisitor {
 					argumentcount = this.signaturevisitor.argumentcount;
 				} else {
 					Type[] arguments = Type.getArgumentTypes(desc);
-					for (int i = 0; i < arguments.length; i++) {
-						Type type = arguments[i];
+					for (Type type : arguments) {
 						this.addTypeReference(type, IReference.REF_PARAMETER);
 						argumentcount += type.getSize();
 					}
 					this.addTypeReference(Type.getReturnType(desc), IReference.REF_RETURNTYPE);
 					if (exceptions != null) {
-						for (int i = 0; i < exceptions.length; i++) {
-							this.addTypeReference(Type.getObjectType(exceptions[i]), IReference.REF_THROWS);
+						for (String exception : exceptions) {
+							this.addTypeReference(Type.getObjectType(exception), IReference.REF_THROWS);
 						}
 					}
 				}
@@ -1492,8 +1485,8 @@ public class ReferenceExtractor extends ClassVisitor {
 				return superclass;
 			}
 			IApiType ints[] = type.getSuperInterfaces();
-			for (int i = 0; i < ints.length; i++) {
-				IApiType superint = getDefaultDefined(ints[i], name, signature, false);
+			for (IApiType j : ints) {
+				IApiType superint = getDefaultDefined(j, name, signature, false);
 				if (superint != null) {
 					return superint;
 				}

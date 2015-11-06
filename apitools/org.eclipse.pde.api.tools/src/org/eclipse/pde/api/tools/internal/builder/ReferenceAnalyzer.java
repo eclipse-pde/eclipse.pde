@@ -100,8 +100,7 @@ public class ReferenceAnalyzer {
 						IApiProblemDetector[] detectors = fIndexedDetectors[index];
 						boolean added = false;
 						if (detectors != null) {
-							for (int i = 0; i < detectors.length; i++) {
-								IApiProblemDetector detector = detectors[i];
+							for (IApiProblemDetector detector : detectors) {
 								if (detector.considerReference(ref)) {
 									if (!added) {
 										fReferences.add(ref);
@@ -151,8 +150,7 @@ public class ReferenceAnalyzer {
 	 */
 	void indexProblemDetectors(IApiProblemDetector[] detectors) {
 		fIndexedDetectors = new IApiProblemDetector[32][];
-		for (int i = 0; i < detectors.length; i++) {
-			IApiProblemDetector detector = detectors[i];
+		for (IApiProblemDetector detector : detectors) {
 			int kinds = detector.getReferenceKinds();
 			fAllReferenceKinds |= kinds;
 			int mask = 0x1;
@@ -251,8 +249,7 @@ public class ReferenceAnalyzer {
 			// 3. create problems
 			List<IApiProblem> allProblems = new LinkedList<>();
 			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
-			for (int i = 0; i < detectors.length; i++) {
-				IApiProblemDetector detector = detectors[i];
+			for (IApiProblemDetector detector : detectors) {
 				allProblems.addAll(detector.createProblems());
 				if (localMonitor.isCanceled()) {
 					return EMPTY_RESULT;
@@ -303,9 +300,9 @@ public class ReferenceAnalyzer {
 			long start = System.currentTimeMillis();
 			IApiComponent[] components = component.getBaseline().getPrerequisiteComponents(new IApiComponent[] { component });
 			final ProblemDetectorBuilder visitor = new ProblemDetectorBuilder(component, kindmask);
-			for (int i = 0; i < components.length; i++) {
+			for (IApiComponent componentLoop : components) {
 				Util.updateMonitor(monitor);
-				IApiComponent prereq = components[i];
+				IApiComponent prereq = componentLoop;
 				if (!prereq.equals(component)) {
 					visitor.setOwningComponent(prereq);
 					try {
