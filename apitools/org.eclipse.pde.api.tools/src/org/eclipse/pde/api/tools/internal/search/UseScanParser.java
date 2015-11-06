@@ -246,21 +246,21 @@ public class UseScanParser {
 		try {
 			SAXParser parser = getParser();
 			// Treat each top level directory as a producer component
-			for (int i = 0; i < referees.length; i++) {
-				if (referees[i].isDirectory()) {
-					String[] idv = getIdVersion(referees[i].getName());
+			for (File referee : referees) {
+				if (referee.isDirectory()) {
+					String[] idv = getIdVersion(referee.getName());
 					IComponentDescriptor tcomp = Factory.componentDescriptor(idv[0], idv[1]);
 					enterTargetComponent(tcomp);
 					if (visitReferencingComponent) {
 
 						// If the visitor returned true, treat sub-directories
 						// as consumer components
-						origins = getDirectories(referees[i]);
+						origins = getDirectories(referee);
 						origins = sort(origins); // sort to visit in determined
 													// order
-						for (int j = 0; j < origins.length; j++) {
-							if (origins[j].isDirectory()) {
-								idv = getIdVersion(origins[j].getName());
+						for (File origin : origins) {
+							if (origin.isDirectory()) {
+								idv = getIdVersion(origin.getName());
 								IComponentDescriptor rcomp = Factory.componentDescriptor(idv[0], idv[1]);
 								enterReferencingComponent(rcomp);
 								if (visitMembers) {
@@ -268,18 +268,18 @@ public class UseScanParser {
 									// If the visitor returned true, open all
 									// xml files in the directory and process
 									// them to find members
-									localmonitor.subTask(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] { origins[j].getName() }));
-									xmlfiles = Util.getAllFiles(origins[j], pathname -> pathname.isDirectory() || pathname.getName().endsWith(".xml")); //$NON-NLS-1$
+									localmonitor.subTask(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] { origin.getName() }));
+									xmlfiles = Util.getAllFiles(origin, pathname -> pathname.isDirectory() || pathname.getName().endsWith(".xml")); //$NON-NLS-1$
 									if (xmlfiles != null && xmlfiles.length > 0) {
 										xmlfiles = sort(xmlfiles); // sort to
 																	// visit in
 																	// determined
 																	// order
-										for (int k = 0; k < xmlfiles.length; k++) {
+										for (File xmlfile : xmlfiles) {
 											InputStream inputFile = null;
 											try {
-												ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfiles[k]));
-												inputFile = new FileInputStream(xmlfiles[k].getAbsoluteFile());
+												ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfile));
+												inputFile = new FileInputStream(xmlfile.getAbsoluteFile());
 												parser.parse(inputFile, handler);
 											} catch (SAXException e) {
 											} catch (IOException e) {
@@ -492,8 +492,8 @@ public class UseScanParser {
 	 */
 	File[] sort(File[] files) {
 		List<File> sorted = new ArrayList<>(files.length + 2);
-		for (int i = 0; i < files.length; i++) {
-			sorted.add(files[i]);
+		for (File file : files) {
+			sorted.add(file);
 		}
 
 		Collections.sort(sorted, Util.filesorter);

@@ -183,8 +183,8 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 		if (jarPatterns != null && container != null) {
 			if (container.getContainerType() == IApiTypeContainer.ARCHIVE) {
 				String[] pparts = null;
-				for (int i = 0; i < jarPatterns.length; i++) {
-					pparts = jarPatterns[i].split(":"); //$NON-NLS-1$
+				for (String jarPattern : jarPatterns) {
+					pparts = jarPattern.split(":"); //$NON-NLS-1$
 					if (pparts.length != 2) {
 						continue;
 					}
@@ -237,12 +237,12 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 */
 	boolean isIllegalUse(IReference reference) {
 		IApiProblemDetector[] detectors = fAnalyzer.getProblemDetectors(reference.getReferenceKind());
-		for (int i = 0; i < detectors.length; i++) {
-			if (detectors[i].considerReference(reference)) {
+		for (IApiProblemDetector detector : detectors) {
+			if (detector.considerReference(reference)) {
 				Reference ref = (Reference) reference;
 				ref.setFlags(IReference.F_ILLEGAL);
 				try {
-					IApiProblem pb = ((AbstractProblemDetector) detectors[i]).checkAndCreateProblem(reference);
+					IApiProblem pb = ((AbstractProblemDetector) detector).checkAndCreateProblem(reference);
 					if (pb != null && !isFiltered(pb)) {
 						ref.addProblems(pb);
 					} else {
@@ -281,8 +281,8 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	private void prepareScope(IApiElement[] elements) {
 		if (elements != null) {
 			fScope = new ApiScope();
-			for (int i = 0; i < elements.length; i++) {
-				fScope.addElement(elements[i].getApiComponent());
+			for (IApiElement element : elements) {
+				fScope.addElement(element.getApiComponent());
 			}
 		}
 	}

@@ -115,19 +115,19 @@ class MissingRefParser extends UseScanParser {
 		visitor.visitScan();
 		SAXParser parser = getParser();
 		// Treat each top level directory as a producer component
-		for (int i = 0; i < components.length; i++) {
-			if (components[i].isDirectory()) {
-				String[] idv = getIdVersion(components[i].getName());
+		for (File component : components) {
+			if (component.isDirectory()) {
+				String[] idv = getIdVersion(component.getName());
 				IComponentDescriptor targetComponent = Factory.componentDescriptor(idv[0], idv[1]);
 				if (visitor.visitComponent(targetComponent)) {
-					File[] xmlfiles = Util.getAllFiles(components[i], filter);
+					File[] xmlfiles = Util.getAllFiles(component, filter);
 					if (xmlfiles != null && xmlfiles.length > 0) {
 						xmlfiles = sort(xmlfiles); // sort to visit in
 													// determined order
-						for (int k = 0; k < xmlfiles.length; k++) {
+						for (File xmlfile : xmlfiles) {
 							try {
 								MissingRefProblemHandler handler = new MissingRefProblemHandler();
-								parser.parse(xmlfiles[k], handler);
+								parser.parse(xmlfile, handler);
 								List<IApiProblem> apiProblems = handler.getProblems();
 								visitor.addToCurrentReport(apiProblems);
 							} catch (SAXException e) {

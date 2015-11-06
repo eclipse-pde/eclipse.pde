@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.internal.provisional.comparator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -42,8 +41,7 @@ public class ApiScope implements IApiScope {
 	@Override
 	public void accept(ApiScopeVisitor visitor) throws CoreException {
 		IApiElement[] elems = getApiElements();
-		for (int i = 0; i < elems.length; i++) {
-			IApiElement apiElement = elems[i];
+		for (IApiElement apiElement : elems) {
 			int type = apiElement.getType();
 			switch (type) {
 				case IApiElement.API_TYPE_CONTAINER: {
@@ -89,8 +87,8 @@ public class ApiScope implements IApiScope {
 		if (element != null) {
 			IApiComponent component = element.getApiComponent();
 			IApiComponent enclosing = null;
-			for (Iterator<IApiElement> iter = this.elements.iterator(); iter.hasNext();) {
-				enclosing = iter.next().getApiComponent();
+			for (IApiElement iApiElement : this.elements) {
+				enclosing = iApiElement.getApiComponent();
 				if (component.equals(enclosing)) {
 					return true;
 				}

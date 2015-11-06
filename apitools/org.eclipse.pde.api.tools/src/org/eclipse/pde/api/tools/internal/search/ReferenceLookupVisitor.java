@@ -131,8 +131,8 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		try {
 			IApiTypeRoot typeRoot = null;
 			IApiComponent[] comps = currComponent.getBaseline().resolvePackage(currComponent, targetType.getPackage().getName());
-			for (int i = 0; i < comps.length; i++) {
-				typeRoot = comps[i].findTypeRoot(targetType.getQualifiedName());
+			for (IApiComponent comp : comps) {
+				typeRoot = comp.findTypeRoot(targetType.getQualifiedName());
 				if (typeRoot != null) {
 					break;
 				}

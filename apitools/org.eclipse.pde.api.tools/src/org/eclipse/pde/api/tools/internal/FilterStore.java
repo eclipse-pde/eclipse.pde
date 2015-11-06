@@ -91,8 +91,8 @@ public class FilterStore implements IApiFilterStore {
 				globalFilters = new HashSet<>();
 				fFilterMap.put(GLOBAL, globalFilters);
 			}
-			for (int i = 0; i < filters.length; i++) {
-				globalFilters.add(filters[i]);
+			for (IApiProblemFilter filter : filters) {
+				globalFilters.add(filter);
 			}
 		}
 	}
@@ -124,8 +124,8 @@ public class FilterStore implements IApiFilterStore {
 			// stored under GLOBAL
 			Set<IApiProblemFilter> globalFilters = fFilterMap.get(GLOBAL);
 			if (globalFilters != null && globalFilters.size() > 0) {
-				for (int i = 0; i < filters.length; i++) {
-					removed &= globalFilters.remove(filters[i]);
+				for (IApiProblemFilter filter : filters) {
+					removed &= globalFilters.remove(filter);
 				}
 				return removed;
 			}

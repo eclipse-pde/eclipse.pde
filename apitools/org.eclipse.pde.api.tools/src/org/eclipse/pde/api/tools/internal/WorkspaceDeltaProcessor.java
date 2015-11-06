@@ -55,8 +55,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 	 * @param deltas
 	 */
 	void processJavaElementDeltas(IJavaElementDelta[] deltas, IJavaProject project) {
-		for (int i = 0; i < deltas.length; i++) {
-			IJavaElementDelta delta = deltas[i];
+		for (IJavaElementDelta delta : deltas) {
 			switch (delta.getElement().getElementType()) {
 				case IJavaElement.JAVA_PROJECT: {
 					IJavaProject proj = (IJavaProject) delta.getElement();
@@ -98,8 +97,8 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 									IResourceDelta[] resourcedeltas = delta.getResourceDeltas();
 									if (resourcedeltas != null) {
 										IResourceDelta rdelta = null;
-										for (int j = 0; j < resourcedeltas.length; j++) {
-											rdelta = resourcedeltas[j].findMember(new Path(Util.MANIFEST_NAME));
+										for (IResourceDelta resourcedelta : resourcedeltas) {
+											rdelta = resourcedelta.findMember(new Path(Util.MANIFEST_NAME));
 											if (rdelta != null && rdelta.getKind() == IResourceDelta.CHANGED && (rdelta.getFlags() & IResourceDelta.CONTENT) > 0) {
 												if (ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 													System.out.println("--> processing manifest delta"); //$NON-NLS-1$
@@ -229,12 +228,12 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 				IResourceDelta delta = event.getDelta();
 				if (delta != null) {
 					IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.CHANGED);
-					for (int i = 0; i < children.length; i++) {
-						resource = children[i].getResource();
-						if (children[i].getResource().getType() == IResource.PROJECT) {
+					for (IResourceDelta element : children) {
+						resource = element.getResource();
+						if (element.getResource().getType() == IResource.PROJECT) {
 							IProject project = (IProject) resource;
 							if (Util.isApiProject(project) || Util.isJavaProject(project)) {
-								if ((children[i].getFlags() & IResourceDelta.DESCRIPTION) != 0) {
+								if ((element.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
 									IJavaProject jp = (IJavaProject) JavaCore.create(resource);
 									dmanager.clean(jp, true, true);
 									bmanager.disposeWorkspaceBaseline();

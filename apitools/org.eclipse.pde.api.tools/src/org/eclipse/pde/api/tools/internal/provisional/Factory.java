@@ -158,8 +158,8 @@ public class Factory {
 	 */
 	public static IApiTypeContainer newScope(IApiComponent[] components) throws CoreException {
 		LinkedList<IApiTypeContainer> compList = new LinkedList<>();
-		for (int i = 0; i < components.length; i++) {
-			compList.add(components[i]);
+		for (IApiComponent component : components) {
+			compList.add(component);
 		}
 		CompositeApiTypeContainer scope = new CompositeApiTypeContainer(components[0].getBaseline(), compList);
 		return scope;
@@ -195,8 +195,7 @@ public class Factory {
 				IApiType structure = classFile.getStructure();
 				if (structure != null) {
 					IApiMethod[] methods = structure.getMethods();
-					for (int i = 0; i < methods.length; i++) {
-						IApiMethod method = methods[i];
+					for (IApiMethod method : methods) {
 						if (descriptor.getName().equals(method.getName())) {
 							String signature = method.getSignature();
 							String descriptorSignature = descriptor.getSignature().replace('/', '.');

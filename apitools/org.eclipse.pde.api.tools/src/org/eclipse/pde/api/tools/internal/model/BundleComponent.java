@@ -218,8 +218,7 @@ public class BundleComponent extends Component {
 	protected synchronized void doManifestCompaction() {
 		Map<String, String> temp = fManifest;
 		fManifest = new Hashtable<>(MANIFEST_HEADERS.length, 1);
-		for (int i = 0; i < MANIFEST_HEADERS.length; i++) {
-			String header = MANIFEST_HEADERS[i];
+		for (String header : MANIFEST_HEADERS) {
 			String value = temp.get(header);
 			if (value != null) {
 				fManifest.put(header, value);
@@ -419,12 +418,12 @@ public class BundleComponent extends Component {
 		Set<String> names = new HashSet<>();
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		IApiComponent comp = null;
-		for (int i = 0; i < containers.length; i++) {
-			comp = (IApiComponent) containers[i].getAncestor(IApiElement.COMPONENT);
+		for (IApiTypeContainer container : containers) {
+			comp = (IApiComponent) container.getAncestor(IApiElement.COMPONENT);
 			if (comp != null && comp.getSymbolicName().equals(getSymbolicName())) {
-				String[] packageNames = containers[i].getPackageNames();
-				for (int j = 0; j < packageNames.length; j++) {
-					names.add(packageNames[j]);
+				String[] packageNames = container.getPackageNames();
+				for (String packageName : packageNames) {
+					names.add(packageName);
 				}
 			}
 		}
@@ -457,8 +456,8 @@ public class BundleComponent extends Component {
 		HostSpecification host = bundle.getHost();
 		if (host != null) {
 			BundleDescription[] hosts = host.getHosts();
-			for (int i = 0; i < hosts.length; i++) {
-				addSuppliedPackages(packages, supplied, hosts[i].getExportPackages());
+			for (BundleDescription bundleDescription : hosts) {
+				addSuppliedPackages(packages, supplied, bundleDescription.getExportPackages());
 			}
 		}
 		BundleDescription[] fragments = bundle.getFragments();
@@ -481,8 +480,7 @@ public class BundleComponent extends Component {
 	 * @param exportPackages package exports to consider
 	 */
 	protected static void addSuppliedPackages(Set<String> packages, List<ExportPackageDescription> supplied, ExportPackageDescription[] exportPackages) {
-		for (int i = 0; i < exportPackages.length; i++) {
-			ExportPackageDescription pkg = exportPackages[i];
+		for (ExportPackageDescription pkg : exportPackages) {
 			String name = pkg.getName();
 			if (name.equals(".")) { //$NON-NLS-1$
 				// translate . to default package
@@ -501,8 +499,7 @@ public class BundleComponent extends Component {
 	 * @param exportedPackages packages that are exported
 	 */
 	protected static void annotateExportedPackages(IApiDescription apiDesc, ExportPackageDescription[] exportedPackages) {
-		for (int i = 0; i < exportedPackages.length; i++) {
-			ExportPackageDescription pkg = exportedPackages[i];
+		for (ExportPackageDescription pkg : exportedPackages) {
 			boolean internal = ((Boolean) pkg.getDirective("x-internal")).booleanValue(); //$NON-NLS-1$
 			String[] friends = (String[]) pkg.getDirective("x-friends"); //$NON-NLS-1$
 			String pkgName = pkg.getName();
@@ -516,9 +513,9 @@ public class BundleComponent extends Component {
 			}
 			if (friends != null) {
 				apiDesc.setVisibility(pkgDesc, VisibilityModifiers.PRIVATE);
-				for (int j = 0; j < friends.length; j++) {
+				for (String friend : friends) {
 					// annotate the api description for x-friends access levels
-					apiDesc.setAccessLevel(Factory.componentDescriptor(friends[j]), Factory.packageDescriptor(pkgName), IApiAccess.FRIEND);
+					apiDesc.setAccessLevel(Factory.componentDescriptor(friend), Factory.packageDescriptor(pkgName), IApiAccess.FRIEND);
 				}
 			}
 			if (!internal && friends == null) {
@@ -574,8 +571,7 @@ public class BundleComponent extends Component {
 			if (manifest != null) {
 				try {
 					String[] paths = getClasspathEntries(manifest);
-					for (int i = 0; i < paths.length; i++) {
-						String path = paths[i];
+					for (String path : paths) {
 						// don't re-process the same entry twice (except default
 						// entries ".")
 						if (!(".".equals(path))) { //$NON-NLS-1$
@@ -585,8 +581,8 @@ public class BundleComponent extends Component {
 						}
 						IApiTypeContainer container = component.createApiTypeContainer(path);
 						if (container == null) {
-							for (Iterator<IApiComponent> iter = all.iterator(); iter.hasNext();) {
-								other = (BundleComponent) iter.next();
+							for (IApiComponent iApiComponent : all) {
+								other = (BundleComponent) iApiComponent;
 								if (other != component) {
 									container = other.createApiTypeContainer(path);
 								}

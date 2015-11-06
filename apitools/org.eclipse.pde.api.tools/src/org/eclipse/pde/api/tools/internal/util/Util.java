@@ -41,7 +41,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -194,8 +193,8 @@ public final class Util {
 			if (project == null) {
 				return false;
 			}
-			for (int i = 0, max = this.fProjects.length; i < max; i++) {
-				if (project.equals(this.fProjects[i])) {
+			for (IProject fProject : this.fProjects) {
+				if (project.equals(fProject)) {
 					return true;
 				}
 			}
@@ -214,12 +213,7 @@ public final class Util {
 			try {
 				if (fProjects != null) {
 					SubMonitor localmonitor = SubMonitor.convert(monitor, UtilMessages.Util_0, fProjects.length);
-					for (int i = 0, max = fProjects.length; i < max; i++) {
-						// clear last build state for project to force a full
-						// build using our builder
-						// This makes it possible to have only an incremental
-						// build from the java builder
-						IProject currentProject = fProjects[i];
+					for (IProject currentProject : fProjects) {
 						if (this.fBuildType == IncrementalProjectBuilder.FULL_BUILD) {
 							BuildState.setLastBuiltState(currentProject, null);
 						}
@@ -243,8 +237,7 @@ public final class Util {
 
 		private void cancelBuild(Object jobfamily) {
 			Job[] buildJobs = Job.getJobManager().find(jobfamily);
-			for (int i = 0; i < buildJobs.length; i++) {
-				Job curr = buildJobs[i];
+			for (Job curr : buildJobs) {
 				if (curr != this && curr instanceof BuildJob) {
 					BuildJob job = (BuildJob) curr;
 					if (job.isCoveredBy(this)) {
@@ -361,8 +354,7 @@ public final class Util {
 	 */
 	private static void collectAllFiles(File root, ArrayList<File> collector, FileFilter fileFilter) {
 		File[] files = root.listFiles(fileFilter);
-		for (int i = 0; i < files.length; i++) {
-			final File currentFile = files[i];
+		for (final File currentFile : files) {
 			if (currentFile.isDirectory()) {
 				collectAllFiles(currentFile, collector, fileFilter);
 			} else {
@@ -381,8 +373,8 @@ public final class Util {
 		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<IProject> temp = new ArrayList<>();
 		IProject project = null;
-		for (int i = 0, max = allProjects.length; i < max; i++) {
-			project = allProjects[i];
+		for (IProject allProject : allProjects) {
+			project = allProject;
 			if (project.isAccessible()) {
 				try {
 					if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
@@ -411,8 +403,8 @@ public final class Util {
 		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<IProject> temp = new ArrayList<>();
 		IProject project = null;
-		for (int i = 0, max = allProjects.length; i < max; i++) {
-			project = allProjects[i];
+		for (IProject allProject : allProjects) {
+			project = allProject;
 			if (project.isAccessible()) {
 				try {
 					if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
@@ -616,8 +608,7 @@ public final class Util {
 		if (components == null) {
 			return null;
 		}
-		for (int i = 0, max = components.length; i < max; i++) {
-			IApiComponent apiComponent = components[i];
+		for (IApiComponent apiComponent : components) {
 			if (apiComponent != null) {
 				try {
 					IApiTypeRoot classFile = apiComponent.findTypeRoot(typeName);
@@ -1303,8 +1294,7 @@ public final class Util {
 				return null;
 			}
 			List<IMethod> list = new ArrayList<>();
-			for (int i = 0, max = methods.length; i < max; i++) {
-				IMethod method2 = methods[i];
+			for (IMethod method2 : methods) {
 				if (selector.equals(method2.getElementName())) {
 					list.add(method2);
 				}
@@ -1319,8 +1309,7 @@ public final class Util {
 					return list.get(0);
 				default:
 					// need to find a matching parameters
-					for (Iterator<IMethod> iterator = list.iterator(); iterator.hasNext();) {
-						IMethod method2 = iterator.next();
+					for (IMethod method2 : list) {
 						try {
 							if (Signatures.matchesSignatures(method2.getSignature(), signature)) {
 								return method2;
@@ -2052,8 +2041,8 @@ public final class Util {
 	}
 
 	private static void addJarEntries(String jreDir, String[] jarNames, ArrayList<String> paths) {
-		for (int i = 0, max = jarNames.length; i < max; i++) {
-			final String currentName = jreDir + jarNames[i];
+		for (String jarName : jarNames) {
+			final String currentName = jreDir + jarName;
 			File f = new File(currentName);
 			if (f.exists()) {
 				paths.add(toNativePath(currentName));
@@ -2090,8 +2079,8 @@ public final class Util {
 		if (files == null) {
 			return;
 		}
-		for (int i = 0, max = files.length; i < max; i++) {
-			delete(files[i]);
+		for (File file : files) {
+			delete(file);
 		}
 	}
 
@@ -2199,8 +2188,8 @@ public final class Util {
 	public static Set<String> convertAsSet(String[] values) {
 		Set<String> set = new HashSet<>();
 		if (values != null && values.length != 0) {
-			for (int i = 0, max = values.length; i < max; i++) {
-				set.add(values[i]);
+			for (String value : values) {
+				set.add(value);
 			}
 		}
 		return set;
@@ -2522,8 +2511,8 @@ public final class Util {
 				}
 				pattern = Pattern.compile(componentname);
 				String componentid = null;
-				for (int j = 0, max2 = components.length; j < max2; j++) {
-					componentid = components[j].getSymbolicName();
+				for (IApiComponent component : components) {
+					componentid = component.getSymbolicName();
 					if (pattern.matcher(componentid).matches()) {
 						if (debug) {
 							System.out.println(componentid + " matched the pattern " + componentname); //$NON-NLS-1$

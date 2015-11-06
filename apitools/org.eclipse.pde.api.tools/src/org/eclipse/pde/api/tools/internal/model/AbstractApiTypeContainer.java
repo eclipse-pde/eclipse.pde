@@ -52,8 +52,8 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	@Override
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		IApiTypeContainer[] containers = getApiTypeContainers();
-		for (int i = 0; i < containers.length; i++) {
-			containers[i].accept(visitor);
+		for (IApiTypeContainer container : containers) {
+			container.accept(visitor);
 		}
 	}
 
@@ -68,9 +68,9 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		MultiStatus multi = null;
 		IStatus single = null;
 		IApiTypeContainer[] containers = getApiTypeContainers();
-		for (int i = 0; i < containers.length; i++) {
+		for (IApiTypeContainer container : containers) {
 			try {
-				containers[i].close();
+				container.close();
 			} catch (CoreException e) {
 				if (single == null) {
 					single = e.getStatus();
@@ -96,8 +96,8 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		IApiTypeContainer[] containers = getApiTypeContainers();
-		for (int i = 0; i < containers.length; i++) {
-			IApiTypeRoot file = containers[i].findTypeRoot(qualifiedName);
+		for (IApiTypeContainer container : containers) {
+			IApiTypeRoot file = container.findTypeRoot(qualifiedName);
 			if (file != null) {
 				return file;
 			}
@@ -114,18 +114,18 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		String origin = null;
 		IApiComponent comp = null;
-		for (int i = 0; i < containers.length; i++) {
-			comp = (IApiComponent) containers[i].getAncestor(IApiElement.COMPONENT);
+		for (IApiTypeContainer container : containers) {
+			comp = (IApiComponent) container.getAncestor(IApiElement.COMPONENT);
 			if (comp != null) {
 				origin = comp.getSymbolicName();
 			}
 			if (origin == null) {
-				IApiTypeRoot file = containers[i].findTypeRoot(qualifiedName);
+				IApiTypeRoot file = container.findTypeRoot(qualifiedName);
 				if (file != null) {
 					return file;
 				}
 			} else if (origin.equals(id)) {
-				IApiTypeRoot file = containers[i].findTypeRoot(qualifiedName, id);
+				IApiTypeRoot file = container.findTypeRoot(qualifiedName, id);
 				if (file != null) {
 					return file;
 				}
@@ -138,10 +138,10 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	public String[] getPackageNames() throws CoreException {
 		List<String> names = new ArrayList<>();
 		IApiTypeContainer[] containers = getApiTypeContainers();
-		for (int i = 0, max = containers.length; i < max; i++) {
-			String[] packageNames = containers[i].getPackageNames();
-			for (int j = 0, max2 = packageNames.length; j < max2; j++) {
-				names.add(packageNames[j]);
+		for (IApiTypeContainer container : containers) {
+			String[] packageNames = container.getPackageNames();
+			for (String packageName : packageNames) {
+				names.add(packageName);
 			}
 		}
 		String[] result = new String[names.size()];
@@ -211,8 +211,8 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		} else {
 			fApiTypeContainers = new ArrayList<>(containers.length);
 		}
-		for (int i = 0; i < containers.length; i++) {
-			fApiTypeContainers.add(containers[i]);
+		for (IApiTypeContainer container : containers) {
+			fApiTypeContainers.add(container);
 		}
 	}
 

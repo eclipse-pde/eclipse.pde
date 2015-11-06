@@ -126,8 +126,8 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 	 * @return whether there's a match
 	 */
 	private boolean matchesPattern(String name, Pattern[] patterns) {
-		for (int i = 0; i < patterns.length; i++) {
-			if (patterns[i].matcher(name).find()) {
+		for (Pattern pattern : patterns) {
+			if (pattern.matcher(name).find()) {
 				return true;
 			}
 		}

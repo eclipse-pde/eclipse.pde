@@ -221,8 +221,8 @@ public class ProjectComponent extends BundleComponent {
 							// classpath entries
 							IClasspathEntry[] classpathEntries = fProject.getRawClasspath();
 							List<IApiTypeContainer> containers = new ArrayList<>();
-							for (int i = 0; i < classpathEntries.length; i++) {
-								IClasspathEntry classpathEntry = classpathEntries[i];
+							for (IClasspathEntry classpathEntrie : classpathEntries) {
+								IClasspathEntry classpathEntry = classpathEntrie;
 								switch (classpathEntry.getEntryKind()) {
 									case IClasspathEntry.CPE_SOURCE:
 										String containerPath = classpathEntry.getPath().removeFirstSegments(1).toString();
@@ -301,8 +301,7 @@ public class ProjectComponent extends BundleComponent {
 			}
 		} else {
 			List<IApiTypeContainer> containers = new ArrayList<>();
-			for (int j = 0; j < tokens.length; j++) {
-				String currentToken = tokens[j];
+			for (String currentToken : tokens) {
 				IApiTypeContainer container = getApiTypeContainer(currentToken, this);
 				if (container != null && !containers.contains(container)) {
 					containers.add(container);

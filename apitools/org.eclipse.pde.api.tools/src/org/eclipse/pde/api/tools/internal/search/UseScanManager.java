@@ -375,8 +375,8 @@ public class UseScanManager {
 
 		String[] locations = apiUseScanPaths.split(ESCAPE_REGEX + LOCATION_DELIM);
 		ArrayList<String> locationList = new ArrayList<>(locations.length);
-		for (int i = 0; i < locations.length; i++) {
-			String values[] = locations[i].split(ESCAPE_REGEX + STATE_DELIM);
+		for (String location : locations) {
+			String values[] = location.split(ESCAPE_REGEX + STATE_DELIM);
 			if (Boolean.valueOf(values[1]).booleanValue()) {
 				locationList.add(values[0]);
 			}

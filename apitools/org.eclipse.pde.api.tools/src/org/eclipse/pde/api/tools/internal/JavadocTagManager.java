@@ -321,9 +321,9 @@ public final class JavadocTagManager {
 	public synchronized IApiJavadocTag[] getTagsForType(int type, int member) {
 		initializeJavadocTags();
 		List<IApiJavadocTag> list = new ArrayList<>();
-		for (int i = 0; i < tags.length; i++) {
-			if (tags[i].isApplicable(type, member)) {
-				list.add(tags[i]);
+		for (IApiJavadocTag tag : tags) {
+			if (tag.isApplicable(type, member)) {
+				list.add(tag);
 			}
 		}
 		return list.toArray(new IApiJavadocTag[list.size()]);
@@ -399,8 +399,8 @@ public final class JavadocTagManager {
 	public synchronized Set<String> getAllTagNames() {
 		IApiJavadocTag[] tags = getAllTags();
 		HashSet<String> names = new HashSet<>(tags.length);
-		for (int i = 0; i < tags.length; i++) {
-			names.add(tags[i].getTagName());
+		for (IApiJavadocTag tag : tags) {
+			names.add(tag.getTagName());
 		}
 		return names;
 	}
@@ -422,9 +422,7 @@ public final class JavadocTagManager {
 			return RestrictionModifiers.NO_RESTRICTIONS;
 		}
 		initializeJavadocTags();
-		ApiJavadocTag tag = null;
-		for (int i = 0; i < tags.length; i++) {
-			tag = (ApiJavadocTag) tags[i];
+		for (IApiJavadocTag tag : tags) {
 			if (tag.getTagName().equals(tagname) && (tag.isApplicable(type, member))) {
 				return tag.getRestrictionModifier();
 			}

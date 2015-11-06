@@ -549,13 +549,13 @@ public class ApiType extends ApiMember implements IApiType {
 		}
 		buffer.append(Util.LINE_DELIMITER).append("Methods : ").append(Util.LINE_DELIMITER); //$NON-NLS-1$
 		IApiMethod[] methods = getMethods();
-		for (int i = 0; i < methods.length; i++) {
-			buffer.append(methods[i]);
+		for (IApiMethod method : methods) {
+			buffer.append(method);
 		}
 		buffer.append(Util.LINE_DELIMITER).append("Fields : ").append(Util.LINE_DELIMITER); //$NON-NLS-1$
 		IApiField[] fields = getFields();
-		for (int i = 0; i < fields.length; i++) {
-			buffer.append(fields[i]);
+		for (IApiField field : fields) {
+			buffer.append(field);
 		}
 		return String.valueOf(buffer);
 	}

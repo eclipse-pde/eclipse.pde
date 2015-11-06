@@ -298,8 +298,7 @@ public class ApiModelFactory {
 						return NO_COMPONENTS;
 					}
 					List<IApiComponent> components = new ArrayList<>();
-					for (int i = 0; i < files.length; i++) {
-						File bundle = files[i];
+					for (File bundle : files) {
 						IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 						if (component != null) {
 							components.add(component);

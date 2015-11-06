@@ -101,8 +101,8 @@ public class UseReportConverter extends HTMLConvertor {
 		 */
 		private boolean acceptReference(IMemberDescriptor desc, Pattern[] patterns) {
 			if (patterns != null) {
-				for (int i = 0; i < patterns.length; i++) {
-					if (patterns[i].matcher(desc.getPackage().getName()).find()) {
+				for (Pattern pattern : patterns) {
+					if (pattern.matcher(desc.getPackage().getName()).find()) {
 						return false;
 					}
 				}
@@ -629,12 +629,12 @@ public class UseReportConverter extends HTMLConvertor {
 		this.htmlLocation = htmlroot;
 		if (topatterns != null) {
 			ArrayList<Pattern> pats = new ArrayList<>(topatterns.length);
-			for (int i = 0; i < topatterns.length; i++) {
+			for (String topattern : topatterns) {
 				try {
-					pats.add(Pattern.compile(topatterns[i]));
+					pats.add(Pattern.compile(topattern));
 				} catch (PatternSyntaxException pse) {
 					if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
-						System.out.println(NLS.bind(SearchMessages.UseReportConverter_filter_pattern_not_valid, topatterns[i]));
+						System.out.println(NLS.bind(SearchMessages.UseReportConverter_filter_pattern_not_valid, topattern));
 						System.out.println(pse.getMessage());
 					}
 				}
@@ -645,12 +645,12 @@ public class UseReportConverter extends HTMLConvertor {
 		}
 		if (frompatterns != null) {
 			ArrayList<Pattern> pats = new ArrayList<>(frompatterns.length);
-			for (int i = 0; i < frompatterns.length; i++) {
+			for (String frompattern : frompatterns) {
 				try {
-					pats.add(Pattern.compile(frompatterns[i]));
+					pats.add(Pattern.compile(frompattern));
 				} catch (PatternSyntaxException pse) {
 					if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
-						System.out.println(NLS.bind(SearchMessages.UseReportConverter_filter_pattern_not_valid, frompatterns[i]));
+						System.out.println(NLS.bind(SearchMessages.UseReportConverter_filter_pattern_not_valid, frompattern));
 						System.out.println(pse.getMessage());
 					}
 				}
@@ -867,14 +867,14 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	protected void tranformXml(File[] xmlfiles, File xsltFile) {
 		File html = null;
-		for (int i = 0; i < xmlfiles.length; i++) {
+		for (File xmlfile : xmlfiles) {
 			try {
-				File htmlroot = new File(getHtmlLocation(), getHTMLFileLocation(xmlfiles[i]));
+				File htmlroot = new File(getHtmlLocation(), getHTMLFileLocation(xmlfile));
 				if (!htmlroot.exists()) {
 					htmlroot.mkdirs();
 				}
-				html = new File(getNameFromXMLFilename(xmlfiles[i]));
-				applyXSLT(xsltFile, xmlfiles[i], html);
+				html = new File(getNameFromXMLFilename(xmlfile));
+				applyXSLT(xsltFile, xmlfile, html);
 			} catch (TransformerException te) {
 			} catch (Exception e) {
 				ApiPlugin.log(e);
@@ -1028,8 +1028,8 @@ public class UseReportConverter extends HTMLConvertor {
 			if (file.exists()) {
 				String[] missingBundles = getMissingBundles(file);
 				hasMissing = missingBundles.length > 0;
-				for (int i = 0; i < missingBundles.length; i++) {
-					sorted.add(missingBundles[i]);
+				for (String missingBundle : missingBundles) {
+					sorted.add(missingBundle);
 				}
 			}
 			StringBuffer buffer = new StringBuffer();
@@ -1649,8 +1649,8 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(openTD(36));
 			String[] patterns = this.metadata.getApiPatterns();
 			if (patterns != null) {
-				for (int i = 0; i < patterns.length; i++) {
-					buffer.append(patterns[i]).append(BR);
+				for (String pattern : patterns) {
+					buffer.append(pattern).append(BR);
 				}
 			} else {
 				buffer.append(SearchMessages.UseReportConverter_none);
@@ -1662,8 +1662,8 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(openTD(36));
 			patterns = this.metadata.getInternalPatterns();
 			if (patterns != null) {
-				for (int i = 0; i < patterns.length; i++) {
-					buffer.append(patterns[i]).append(BR);
+				for (String pattern : patterns) {
+					buffer.append(pattern).append(BR);
 				}
 			} else {
 				buffer.append(SearchMessages.UseReportConverter_none);
@@ -1675,8 +1675,8 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(openTD(36));
 			patterns = this.metadata.getArchivePatterns();
 			if (patterns != null) {
-				for (int i = 0; i < patterns.length; i++) {
-					buffer.append(patterns[i]).append(BR);
+				for (String pattern : patterns) {
+					buffer.append(pattern).append(BR);
 				}
 			} else {
 				buffer.append(SearchMessages.UseReportConverter_none);
@@ -1687,8 +1687,8 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_filter_pattern).append(CLOSE_TD);
 			buffer.append(openTD(36));
 			if (this.frompatterns != null) {
-				for (int i = 0; i < this.frompatterns.length; i++) {
-					buffer.append(this.frompatterns[i].pattern()).append(BR);
+				for (Pattern frompattern : this.frompatterns) {
+					buffer.append(frompattern.pattern()).append(BR);
 				}
 			} else {
 				buffer.append(SearchMessages.UseReportConverter_none);
@@ -1700,8 +1700,8 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_to_filter_patterns).append(CLOSE_TD);
 			buffer.append(openTD(36));
 			if (this.topatterns != null) {
-				for (int i = 0; i < this.topatterns.length; i++) {
-					buffer.append(this.topatterns[i].pattern()).append(BR);
+				for (Pattern topattern : this.topatterns) {
+					buffer.append(topattern.pattern()).append(BR);
 				}
 			} else {
 				buffer.append(SearchMessages.UseReportConverter_none);

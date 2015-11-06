@@ -87,15 +87,15 @@ public class SystemLibraryApiComponent extends Component {
 	@Override
 	protected IApiDescription createApiDescription() throws CoreException {
 		IApiDescription api = new ApiDescription(getSymbolicName());
-		for (int i = 0; i < fSystemPackages.length; i++) {
-			IPackageDescriptor pkg = Factory.packageDescriptor(fSystemPackages[i]);
+		for (String fSystemPackage : fSystemPackages) {
+			IPackageDescriptor pkg = Factory.packageDescriptor(fSystemPackage);
 			api.setVisibility(pkg, VisibilityModifiers.API);
 		}
 		// have to fill in java.* as well
 		String[] packageNames = getPackageNames();
-		for (int i = 0; i < packageNames.length; i++) {
-			if (packageNames[i].startsWith("java.")) { //$NON-NLS-1$
-				IPackageDescriptor pkg = Factory.packageDescriptor(packageNames[i]);
+		for (String packageName : packageNames) {
+			if (packageName.startsWith("java.")) { //$NON-NLS-1$
+				IPackageDescriptor pkg = Factory.packageDescriptor(packageName);
 				api.setVisibility(pkg, VisibilityModifiers.API);
 			}
 		}
@@ -111,8 +111,7 @@ public class SystemLibraryApiComponent extends Component {
 	@Override
 	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 		List<IApiTypeContainer> libs = new ArrayList<>(fLibraries.length);
-		for (int i = 0; i < fLibraries.length; i++) {
-			LibraryLocation lib = fLibraries[i];
+		for (LibraryLocation lib : fLibraries) {
 			libs.add(new ArchiveApiTypeContainer(this, lib.getSystemLibraryPath().toOSString()));
 		}
 		return libs;

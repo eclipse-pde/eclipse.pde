@@ -134,8 +134,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		if (visitor.visit(this)) {
 			init();
 			String[] packageNames = getPackageNames();
-			for (int i = 0; i < packageNames.length; i++) {
-				String pkg = packageNames[i];
+			for (String pkg : packageNames) {
 				if (visitor.visitPackage(pkg)) {
 					String location = fPackages.get(pkg);
 					if (location == null) {
@@ -148,13 +147,13 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 					File[] files = dir.listFiles((FileFilter) file -> file.isFile() && file.getName().endsWith(Util.DOT_CLASS_SUFFIX));
 					if (files != null) {
 						List<LocalApiTypeRoot> classFiles = new ArrayList<>();
-						for (int j = 0; j < files.length; j++) {
-							String name = files[j].getName();
+						for (File file : files) {
+							String name = file.getName();
 							String typeName = name.substring(0, name.length() - 6);
 							if (pkg.length() > 0) {
 								typeName = pkg + "." + typeName; //$NON-NLS-1$
 							}
-							classFiles.add(new LocalApiTypeRoot(this, files[j].getAbsolutePath(), typeName));
+							classFiles.add(new LocalApiTypeRoot(this, file.getAbsolutePath(), typeName));
 						}
 						Collections.sort(classFiles);
 						for (IApiTypeRoot classFile : classFiles) {
@@ -240,8 +239,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		if (files != null) {
 			boolean hasClassFiles = false;
 			List<File> dirs = new ArrayList<>();
-			for (int i = 0; i < files.length; i++) {
-				File file = files[i];
+			for (File file : files) {
 				if (file.isDirectory()) {
 					dirs.add(file.getAbsoluteFile());
 				} else if (!hasClassFiles) {

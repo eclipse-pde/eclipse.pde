@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -360,8 +359,8 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		 */
 		private boolean acceptReference(IMemberDescriptor desc, Pattern[] patterns) {
 			if (patterns != null) {
-				for (int i = 0; i < patterns.length; i++) {
-					if (patterns[i].matcher(desc.getPackage().getName()).find()) {
+				for (Pattern pattern : patterns) {
+					if (pattern.matcher(desc.getPackage().getName()).find()) {
 						return false;
 					}
 				}
@@ -604,8 +603,8 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			Producer producer = null;
 			File refereehtml = null;
 			String link = null;
-			for (Iterator<String> iter = producerNames.iterator(); iter.hasNext();) {
-				producer = producers.get(iter.next());
+			for (String string : producerNames) {
+				producer = producers.get(string);
 				if (producer != null) {
 					refereehtml = new File(getReportsRoot(), producer.name + File.separator + "index.html"); //$NON-NLS-1$
 					link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
@@ -675,8 +674,8 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			String link = null;
 			File typefile = null;
 			Type2 type = null;
-			for (Iterator<IReferenceTypeDescriptor> iter = producerTypes.iterator(); iter.hasNext();) {
-				type = producer.types.get(iter.next());
+			for (IReferenceTypeDescriptor iReferenceTypeDescriptor : producerTypes) {
+				type = producer.types.get(iReferenceTypeDescriptor);
 				counts = type.counts;
 
 				String fqname = Signatures.getQualifiedTypeSignature((IReferenceTypeDescriptor) type.desc);

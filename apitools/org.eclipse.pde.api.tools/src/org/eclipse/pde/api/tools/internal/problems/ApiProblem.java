@@ -267,8 +267,8 @@ public class ApiProblem implements IApiProblem {
 			return 0;
 		}
 		int hashcode = 0;
-		for (int i = 0; i < fMessageArguments.length; i++) {
-			hashcode += fMessageArguments[i].hashCode();
+		for (String fMessageArgument : fMessageArguments) {
+			hashcode += fMessageArgument.hashCode();
 		}
 		return hashcode;
 	}

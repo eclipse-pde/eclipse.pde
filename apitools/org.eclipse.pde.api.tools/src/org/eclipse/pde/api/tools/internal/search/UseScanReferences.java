@@ -55,8 +55,8 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 		}
 
 		List<IReferenceDescriptor> referenceDescriptorList = new ArrayList<>();
-		for (int i = 0; i < types.length; i++) {
-			List<IReferenceDescriptor> refDescs = fReferencesMap.get(types[i]);
+		for (String type : types) {
+			List<IReferenceDescriptor> refDescs = fReferencesMap.get(type);
 			if (refDescs == null || refDescs.size() == 0) {
 				continue;
 			}

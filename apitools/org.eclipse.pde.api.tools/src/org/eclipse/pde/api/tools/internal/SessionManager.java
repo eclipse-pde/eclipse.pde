@@ -62,8 +62,7 @@ public class SessionManager implements ISessionManager {
 		this.sessions.clear();
 		this.activeSession = null;
 		fireSessionActivated(null);
-		for (int i = 0; i < allSessions.length; i++) {
-			ISession session = allSessions[i];
+		for (ISession session : allSessions) {
 			fireSessionRemoved(session);
 		}
 	}

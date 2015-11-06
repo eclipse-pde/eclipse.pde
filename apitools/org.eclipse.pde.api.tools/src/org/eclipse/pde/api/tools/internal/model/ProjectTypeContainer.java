@@ -126,8 +126,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 		IResource[] members = container.members();
 		List<IContainer> dirs = new ArrayList<>();
 		boolean visitPkg = visitor.visitPackage(pkgName);
-		for (int i = 0; i < members.length; i++) {
-			IResource file = members[i];
+		for (IResource file : members) {
 			switch (file.getType()) {
 				case IResource.FOLDER:
 					dirs.add((IContainer) file);

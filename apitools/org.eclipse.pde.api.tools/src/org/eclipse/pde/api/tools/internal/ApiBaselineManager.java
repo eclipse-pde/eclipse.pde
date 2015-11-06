@@ -21,7 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -259,8 +258,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			File[] baselines = savelocation.toFile().listFiles((FileFilter) pathname -> pathname.getName().endsWith(BASELINE_FILE_EXTENSION));
 			if (baselines != null) {
 				IApiBaseline newbaseline = null;
-				for (int i = 0; i < baselines.length; i++) {
-					File baseline = baselines[i];
+				for (File baseline : baselines) {
 					if (baseline.exists()) {
 						newbaseline = new ApiBaseline(new Path(baseline.getName()).removeFileExtension().toString());
 						handlecache.put(newbaseline.getName(), baseline.getAbsolutePath());
@@ -375,8 +373,8 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		}
 		Element celement = null;
 		IApiComponent[] components = baseline.getApiComponents();
-		for (int i = 0, max = components.length; i < max; i++) {
-			IApiComponent comp = components[i];
+		for (IApiComponent component : components) {
+			IApiComponent comp = component;
 			if (!comp.isSystemComponent()) {
 				celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
 				celement.setAttribute(IApiXmlConstants.ATTR_ID, comp.getSymbolicName());
@@ -542,8 +540,8 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		try {
 			if (baselinecache != null) {
 				// we should first dispose all existing baselines
-				for (Iterator<IApiBaseline> iterator = baselinecache.values().iterator(); iterator.hasNext();) {
-					iterator.next().dispose();
+				for (IApiBaseline iApiBaseline : baselinecache.values()) {
+					iApiBaseline.dispose();
 				}
 				baselinecache.clear();
 			}

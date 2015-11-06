@@ -147,8 +147,8 @@ public class SkippedComponent implements IApiElement {
 		ResolverError error = null;
 		VersionConstraint[] constraints = null;
 		BundleDescription[] bundle = new BundleDescription[1];
-		for (int i = 0; i < rerrors.length; i++) {
-			error = rerrors[i];
+		for (ResolverError rerror : rerrors) {
+			error = rerror;
 			if (error.getType() != ResolverError.MISSING_REQUIRE_BUNDLE) {
 				collector.add(error.toString());
 			}
@@ -157,8 +157,8 @@ public class SkippedComponent implements IApiElement {
 			if (constraints.length == 0) {
 				collector.add(error.toString());
 			}
-			for (int j = 0; j < constraints.length; j++) {
-				collector.add(constraints[j].toString());
+			for (VersionConstraint constraint : constraints) {
+				collector.add(constraint.toString());
 			}
 		}
 		return collector.toArray(new String[collector.size()]);
@@ -171,8 +171,8 @@ public class SkippedComponent implements IApiElement {
 		if (this.errors != null) {
 			StringBuffer buffer = new StringBuffer();
 			String[] problems = resolveRootErrors(this.errors);
-			for (int i = 0; i < problems.length; i++) {
-				buffer.append(problems[i]).append("<br/>"); //$NON-NLS-1$
+			for (String problem : problems) {
+				buffer.append(problem).append("<br/>"); //$NON-NLS-1$
 			}
 			return buffer.toString();
 		}

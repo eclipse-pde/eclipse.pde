@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.internal.provisional.comparator;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -110,28 +109,28 @@ public class ApiComparator {
 			IApiComponent[] apiComponents2 = baseline.getApiComponents();
 			Set<String> apiComponentsIds = new HashSet<>();
 			final Delta globalDelta = new Delta();
-			for (int i = 0, max = apiComponents.length; i < max; i++) {
+			for (IApiComponent apiComponentMainLoop : apiComponents) {
 				Util.updateMonitor(localmonitor);
-				IApiComponent apiComponent = apiComponents[i];
+				IApiComponent apiComponent = apiComponentMainLoop;
 				if (!apiComponent.isSystemComponent()) {
 					String id = apiComponent.getSymbolicName();
-					IApiComponent apiComponent2 = baseline.getApiComponent(id);
+					IApiComponent apiComponentBaseline = baseline.getApiComponent(id);
 					IDelta delta = null;
-					if (apiComponent2 == null) {
+					if (apiComponentBaseline == null) {
 						// report removal of an API component
 						delta = new Delta(null, IDelta.API_BASELINE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT, null, id, id);
 					} else {
 						apiComponentsIds.add(id);
 						String versionString = apiComponent.getVersion();
-						String versionString2 = apiComponent2.getVersion();
-						IDelta bundleVersionChangesDelta = checkBundleVersionChanges(apiComponent2, id, versionString, versionString2);
+						String versionString2 = apiComponentBaseline.getVersion();
+						IDelta bundleVersionChangesDelta = checkBundleVersionChanges(apiComponentBaseline, id, versionString, versionString2);
 						if (bundleVersionChangesDelta != null) {
 							globalDelta.add(bundleVersionChangesDelta);
 						}
 						if (!versionString.equals(versionString2) || force) {
 							long time = System.currentTimeMillis();
 							try {
-								delta = compare(apiComponent, apiComponent2, referenceBaseline, baseline, visibilityModifiers, localmonitor.split(1));
+								delta = compare(apiComponent, apiComponentBaseline, referenceBaseline, baseline, visibilityModifiers, localmonitor.split(1));
 							} finally {
 								if (ApiPlugin.DEBUG_API_COMPARATOR) {
 									System.out.println("Time spent for " + id + " " + versionString + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -145,9 +144,9 @@ public class ApiComparator {
 				}
 			}
 			Util.updateMonitor(localmonitor, 1);
-			for (int i = 0, max = apiComponents2.length; i < max; i++) {
+			for (IApiComponent element : apiComponents2) {
 				Util.updateMonitor(localmonitor);
-				IApiComponent apiComponent = apiComponents2[i];
+				IApiComponent apiComponent = element;
 				if (!apiComponent.isSystemComponent()) {
 					String id = apiComponent.getSymbolicName();
 					if (!apiComponentsIds.contains(id)) {
@@ -269,18 +268,16 @@ public class ApiComparator {
 			Set<String> referenceEEs = Util.convertAsSet(referenceComponent.getExecutionEnvironments());
 			Set<String> componentsEEs = Util.convertAsSet(component2.getExecutionEnvironments());
 			Util.updateMonitor(localmonitor, 1);
-			for (Iterator<String> iterator = referenceEEs.iterator(); iterator.hasNext();) {
+			for (String currentEE : referenceEEs) {
 				Util.updateMonitor(localmonitor);
-				String currentEE = iterator.next();
 				if (!componentsEEs.remove(currentEE)) {
 					globalDelta.add(new Delta(Util.getDeltaComponentVersionsId(referenceComponent), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.EXECUTION_ENVIRONMENT, RestrictionModifiers.NO_RESTRICTIONS, RestrictionModifiers.NO_RESTRICTIONS, 0, 0, null, referenceComponentId, new String[] {
 							currentEE,
 							Util.getComponentVersionsId(referenceComponent) }));
 				}
 			}
-			for (Iterator<String> iterator = componentsEEs.iterator(); iterator.hasNext();) {
+			for (String currentEE : componentsEEs) {
 				Util.updateMonitor(localmonitor);
-				String currentEE = iterator.next();
 				globalDelta.add(new Delta(Util.getDeltaComponentVersionsId(referenceComponent), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.EXECUTION_ENVIRONMENT, RestrictionModifiers.NO_RESTRICTIONS, RestrictionModifiers.NO_RESTRICTIONS, 0, 0, null, referenceComponentId, new String[] {
 						currentEE,
 						Util.getComponentVersionsId(referenceComponent) }));
@@ -564,8 +561,8 @@ public class ApiComparator {
 				return NO_DELTA;
 			}
 			final Delta globalDelta = new Delta();
-			for (Iterator<IDelta> iterator = deltas.iterator(); iterator.hasNext();) {
-				iterator.next().accept(new DeltaVisitor() {
+			for (IDelta iDelta : deltas) {
+				iDelta.accept(new DeltaVisitor() {
 					@Override
 					public void endVisit(IDelta localDelta) {
 						if (localDelta.getChildren().length == 0) {
@@ -654,9 +651,8 @@ public class ApiComparator {
 		final IApiDescription apiDescription2 = component2.getApiDescription();
 		Util.updateMonitor(localmonitor, 1);
 		if (typeRootContainers != null) {
-			for (int i = 0, max = typeRootContainers.length; i < max; i++) {
+			for (IApiTypeContainer container : typeRootContainers) {
 				Util.updateMonitor(localmonitor);
-				IApiTypeContainer container = typeRootContainers[i];
 				try {
 					container.accept(new ApiTypeContainerVisitor() {
 						@Override
@@ -705,8 +701,7 @@ public class ApiComparator {
 												provider = p;
 												providerApiDesc = p.getApiDescription();
 												IRequiredComponentDescription[] required = component2.getRequiredComponents();
-												for (int k = 0; k < required.length; k++) {
-													IRequiredComponentDescription description = required[k];
+												for (IRequiredComponentDescription description : required) {
 													if (description.getId().equals(id2)) {
 														reexported = description.isExported();
 														break;
@@ -812,9 +807,8 @@ public class ApiComparator {
 					final IApiDescription reexportedApiDescription = currentRequiredApiComponent.getApiDescription();
 					IApiTypeContainer[] apiTypeContainers = currentRequiredApiComponent.getApiTypeContainers();
 					if (apiTypeContainers != null) {
-						for (int i = 0, max = apiTypeContainers.length; i < max; i++) {
+						for (IApiTypeContainer container : apiTypeContainers) {
 							Util.updateMonitor(localmonitor);
-							IApiTypeContainer container = apiTypeContainers[i];
 							try {
 								container.accept(new ApiTypeContainerVisitor() {
 									@Override
@@ -921,9 +915,8 @@ public class ApiComparator {
 		}
 		Util.updateMonitor(localmonitor, 1);
 		if (typeRootContainers2 != null) {
-			for (int i = 0, max = typeRootContainers2.length; i < max; i++) {
+			for (IApiTypeContainer container : typeRootContainers2) {
 				Util.updateMonitor(localmonitor);
-				IApiTypeContainer container = typeRootContainers2[i];
 				try {
 					container.accept(new ApiTypeContainerVisitor() {
 						@Override
@@ -977,9 +970,8 @@ public class ApiComparator {
 					IApiTypeContainer[] apiTypeContainers = currentRequiredApiComponent.getApiTypeContainers();
 					final IApiDescription reexportedApiDescription = currentRequiredApiComponent.getApiDescription();
 					if (apiTypeContainers != null) {
-						for (int i = 0, max = apiTypeContainers.length; i < max; i++) {
+						for (IApiTypeContainer container : apiTypeContainers) {
 							Util.updateMonitor(localmonitor);
-							IApiTypeContainer container = apiTypeContainers[i];
 							try {
 								container.accept(new ApiTypeContainerVisitor() {
 									@Override

@@ -88,8 +88,8 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		HashSet<IReferenceDescriptor> writtenReferences = new HashSet<>();
 		XmlReferenceDescriptorWriter writer = new XmlReferenceDescriptorWriter(fLocation);
 		List<IReferenceDescriptor> descriptors = new ArrayList<>(references.length + 1);
-		for (int i = 0; i < references.length; i++) {
-			Reference reference = (Reference) references[i];
+		for (IReference referenceInterface : references) {
+			Reference reference = (Reference) referenceInterface;
 			try {
 				IReferenceDescriptor descriptor = reference.getReferenceDescriptor();
 				descriptors.add(descriptor);
@@ -97,7 +97,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 				// Update counters
 				if (!writtenReferences.contains(descriptor)) {
 					referenceCount++;
-					if ((references[i].getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
+					if ((referenceInterface.getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
 						illegalCount++;
 					}
 					// Though visibility is a bit flag, we want to match the xml
@@ -157,8 +157,8 @@ public class XmlSearchReporter implements IApiSearchReporter {
 			doc.appendChild(root);
 			Element comp = null;
 			SkippedComponent component = null;
-			for (int i = 0; i < elements.length; i++) {
-				component = (SkippedComponent) elements[i];
+			for (IApiElement element : elements) {
+				component = (SkippedComponent) element;
 				comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getComponentId());
 				comp.setAttribute(IApiXmlConstants.ATTR_VERSION, component.getVersion());

@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.internal.comparator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -55,12 +54,12 @@ class TypeParameterDescriptor {
 		if (this.interfaceBounds != null) {
 			buffer.append("interface bounds : "); //$NON-NLS-1$
 			int i = 0;
-			for (Iterator<String> iterator = this.interfaceBounds.iterator(); iterator.hasNext();) {
+			for (String string : this.interfaceBounds) {
 				if (i > 0) {
 					buffer.append(',');
 				}
 				i++;
-				buffer.append(iterator.next());
+				buffer.append(string);
 			}
 			buffer.append(Util.LINE_DELIMITER);
 		}

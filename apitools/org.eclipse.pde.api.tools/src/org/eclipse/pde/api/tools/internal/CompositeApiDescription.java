@@ -40,15 +40,15 @@ public class CompositeApiDescription implements IApiDescription {
 
 	@Override
 	public void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor) {
-		for (int i = 0; i < fDescriptions.length; i++) {
-			fDescriptions[i].accept(visitor, monitor);
+		for (IApiDescription fDescription : fDescriptions) {
+			fDescription.accept(visitor, monitor);
 		}
 	}
 
 	@Override
 	public boolean accept(ApiDescriptionVisitor visitor, IElementDescriptor element, IProgressMonitor monitor) {
-		for (int i = 0; i < fDescriptions.length; i++) {
-			if (fDescriptions[i].accept(visitor, element, monitor)) {
+		for (IApiDescription fDescription : fDescriptions) {
+			if (fDescription.accept(visitor, element, monitor)) {
 				return true;
 			}
 		}
@@ -57,8 +57,8 @@ public class CompositeApiDescription implements IApiDescription {
 
 	@Override
 	public IApiAnnotations resolveAnnotations(IElementDescriptor element) {
-		for (int i = 0; i < fDescriptions.length; i++) {
-			IApiAnnotations ann = fDescriptions[i].resolveAnnotations(element);
+		for (IApiDescription fDescription : fDescriptions) {
+			IApiAnnotations ann = fDescription.resolveAnnotations(element);
 			if (ann != null) {
 				return ann;
 			}
@@ -120,8 +120,8 @@ public class CompositeApiDescription implements IApiDescription {
 	@Override
 	public IApiAccess resolveAccessLevel(IElementDescriptor element, IPackageDescriptor pelement) {
 		IApiAccess access = null;
-		for (int i = 0; i < fDescriptions.length; i++) {
-			access = fDescriptions[i].resolveAccessLevel(element, pelement);
+		for (IApiDescription fDescription : fDescriptions) {
+			access = fDescription.resolveAccessLevel(element, pelement);
 			if (access != null) {
 				return access;
 			}

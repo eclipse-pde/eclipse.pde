@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -180,8 +179,8 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			return;
 		}
 		initializeApiFilters();
-		for (int i = 0; i < filters.length; i++) {
-			IApiProblem problem = filters[i].getUnderlyingProblem();
+		for (IApiProblemFilter filter : filters) {
+			IApiProblem problem = filter.getUnderlyingProblem();
 			String resourcePath = problem.getResourcePath();
 			if (resourcePath == null) {
 				continue;
@@ -208,7 +207,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 					pTypeNames.put(typeName, pfilters);
 				}
 			}
-			fNeedsSaving |= pfilters.add(filters[i]);
+			fNeedsSaving |= pfilters.add(filter);
 		}
 		persistApiFilters();
 	}
@@ -240,8 +239,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			return FilterStore.NO_FILTERS;
 		}
 		List<IApiProblemFilter> allFilters = new ArrayList<>();
-		for (Iterator<Set<IApiProblemFilter>> iterator = pTypeNames.values().iterator(); iterator.hasNext();) {
-			Set<IApiProblemFilter> values = iterator.next();
+		for (Set<IApiProblemFilter> values : pTypeNames.values()) {
 			allFilters.addAll(values);
 		}
 		return allFilters.toArray(new IApiProblemFilter[allFilters.size()]);
@@ -268,9 +266,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			}
 			return false;
 		}
-		IApiProblemFilter filter = null;
-		for (int i = 0, max = filters.length; i < max; i++) {
-			filter = filters[i];
+		for (IApiProblemFilter filter : filters) {
 			if (problemsMatch(filter.getUnderlyingProblem(), problem)) {
 				if (ApiPlugin.DEBUG_FILTER_STORE) {
 					System.out.println("recording filter used: [" + filter.toString() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -321,8 +317,8 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			return false;
 		}
 		boolean success = true;
-		for (int i = 0; i < filters.length; i++) {
-			IApiProblem underlyingProblem = filters[i].getUnderlyingProblem();
+		for (IApiProblemFilter filter : filters) {
+			IApiProblem underlyingProblem = filter.getUnderlyingProblem();
 			String resourcePath = underlyingProblem.getResourcePath();
 			if (resourcePath == null) {
 				continue;
@@ -340,9 +336,9 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 				typeName = GLOBAL;
 			}
 			Set<IApiProblemFilter> pfilters = pTypeNames.get(typeName);
-			if (pfilters != null && pfilters.remove(filters[i])) {
+			if (pfilters != null && pfilters.remove(filter)) {
 				if (ApiPlugin.DEBUG_FILTER_STORE) {
-					System.out.println("removed filter: [" + filters[i] + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println("removed filter: [" + filter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				fNeedsSaving |= true;
 				success &= true;
@@ -726,8 +722,8 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	private boolean matchesCategory(IApiProblem problem, int[] categories) {
 		if (categories != null) {
 			int cat = problem.getCategory();
-			for (int i = 0; i < categories.length; i++) {
-				if (cat == categories[i]) {
+			for (int categorie : categories) {
+				if (cat == categorie) {
 					return true;
 				}
 			}

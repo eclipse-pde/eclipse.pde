@@ -112,8 +112,8 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 		String name = null;
 		File stubFile = null;
 		int eeValue = -1;
-		for (int i = 0; i < allEEsValues.length; i++) {
-			eeValue = allEEsValues[i];
+		for (int allEEsValue : allEEsValues) {
+			eeValue = allEEsValue;
 			name = ProfileModifiers.getName(eeValue);
 			switch (eeValue) {
 				case ProfileModifiers.CDC_1_0_FOUNDATION_1_0:
@@ -173,8 +173,7 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 	@Override
 	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 		List<IApiTypeContainer> libs = new ArrayList<>(fLibraries.length);
-		for (int i = 0; i < fLibraries.length; i++) {
-			LibraryLocation lib = fLibraries[i];
+		for (LibraryLocation lib : fLibraries) {
 			libs.add(new StubArchiveApiTypeContainer(this, lib.getSystemLibraryPath().toOSString()));
 		}
 		return libs;

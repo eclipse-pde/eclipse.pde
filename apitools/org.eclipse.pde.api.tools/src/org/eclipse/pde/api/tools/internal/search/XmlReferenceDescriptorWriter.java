@@ -51,7 +51,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Writes reference descriptions to XML files.
- *
+ * 
  * @since 1.0.1
  */
 public class XmlReferenceDescriptorWriter {
@@ -75,7 +75,7 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param location the absolute path in the local file system to the folder
 	 *            to write the reports to
 	 * @param debug if debugging infos should be written out to the console
@@ -94,7 +94,7 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * Writes the given references to XML files.
-	 *
+	 * 
 	 * @param references
 	 */
 	public void writeReferences(IReferenceDescriptor[] references) {
@@ -122,7 +122,7 @@ public class XmlReferenceDescriptorWriter {
 	 * the same reference, referencer, type, visibility, and member, one will be
 	 * removed (even if the line numbers differ). Updates {@link #fReferenceMap}
 	 * with a map based tree structure as follows:
-	 *
+	 * 
 	 * <pre>
 	 * Returned Map (Referenced Component ID -> rmap)
 	 * rmap (Referencing Component ID -> mmap)
@@ -130,7 +130,7 @@ public class XmlReferenceDescriptorWriter {
 	 * vmap (Reference Type -> tmap)
 	 * tmap (Referenced Member -> Reference Descriptor)
 	 * </pre>
-	 *
+	 * 
 	 * @param references
 	 */
 	private void collateResults(IReferenceDescriptor[] references) throws CoreException {
@@ -191,7 +191,7 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * Resolves the id to use for the component in the mapping
-	 *
+	 * 
 	 * @param component
 	 * @return the id to use for the component in the mapping, includes the
 	 *         version information as well
@@ -206,7 +206,7 @@ public class XmlReferenceDescriptorWriter {
 	/**
 	 * Returns a formatted version of the references xml file name for use
 	 * during conversion via the default XSLT file
-	 *
+	 * 
 	 * @param groupname
 	 * @return a formatted version of the references file name
 	 */
@@ -225,7 +225,7 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * Returns the name for the file of references base on the given type
-	 *
+	 * 
 	 * @param type
 	 * @return
 	 */
@@ -246,7 +246,7 @@ public class XmlReferenceDescriptorWriter {
 	/**
 	 * Writes out the XML for the given api element using the collated
 	 * {@link IReference}s
-	 *
+	 * 
 	 * @param parent
 	 * @throws CoreException
 	 * @throws FileNotFoundException
@@ -303,7 +303,7 @@ public class XmlReferenceDescriptorWriter {
 	/**
 	 * Writes out a group of references under the newly created element with the
 	 * given name
-	 *
+	 * 
 	 * @param origin the name of the bundle that has the references in it
 	 * @param referee the name of the bundle that is referenced
 	 * @param parent
@@ -398,7 +398,7 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * Add member descriptor details to the given element.
-	 *
+	 * 
 	 * @param element XML element
 	 * @param member member to add details for
 	 */
@@ -425,7 +425,7 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * gets the root kind element
-	 *
+	 * 
 	 * @param root
 	 * @param kind
 	 * @return
@@ -447,7 +447,7 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * gets the root kind element
-	 *
+	 * 
 	 * @param root
 	 * @param kind
 	 * @return
@@ -467,7 +467,7 @@ public class XmlReferenceDescriptorWriter {
 	/**
 	 * Writes the attributes from the given {@link IReference} into a new
 	 * {@link Element} that is added to the given parent.
-	 *
+	 * 
 	 * @param document
 	 * @param parent
 	 * @param reference
@@ -502,7 +502,7 @@ public class XmlReferenceDescriptorWriter {
 	/**
 	 * Gets the {@link String} value of the given array by calling
 	 * {@link #toString()} on each of the elements in the array.
-	 *
+	 * 
 	 * @param array the array to convert to a string
 	 * @return the {@link String} or an empty {@link String} never
 	 *         <code>null</code>
@@ -521,7 +521,7 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * Returns the text to set in the attribute for the given {@link IApiMember}
-	 *
+	 * 
 	 * @param member
 	 * @return
 	 * @throws CoreException
@@ -543,7 +543,7 @@ public class XmlReferenceDescriptorWriter {
 	/**
 	 * Sets the alternate component where references were unresolved, or
 	 * <code>null</code> if none.
-	 *
+	 * 
 	 * @param other component descriptor or <code>null</code>
 	 */
 	public void setAlternate(IComponentDescriptor other) {

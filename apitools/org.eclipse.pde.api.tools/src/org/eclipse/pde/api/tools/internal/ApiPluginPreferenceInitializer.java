@@ -53,8 +53,8 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		node.put(IApiProblemTypes.FATAL_PROBLEMS, ApiPlugin.VALUE_ERROR);
 
 		// compatibilities
-		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
-			node.put(ApiPlugin.AllCompatibilityKeys[i], ApiPlugin.VALUE_ERROR);
+		for (String allCompatibilityKey : ApiPlugin.AllCompatibilityKeys) {
+			node.put(allCompatibilityKey, ApiPlugin.VALUE_ERROR);
 		}
 		node.put(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, ApiPlugin.VALUE_DISABLED);
 

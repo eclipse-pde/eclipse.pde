@@ -617,10 +617,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 
 		// Figure out if we need to rebuild (fragments added or removed
 		boolean mustRebuild = false;
-		for (int i = 0; i < allFragments.length; i++) {
+		for (Bundle allFragment : allFragments) {
 			// We only care about
-			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0) {
-				NameVersionDescriptor current = new NameVersionDescriptor(allFragments[i].getSymbolicName(), allFragments[i].getVersion().toString());
+			if (allFragment.getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0) {
+				NameVersionDescriptor current = new NameVersionDescriptor(allFragment.getSymbolicName(), allFragment.getVersion().toString());
 				if (knownFragments.contains(current)) {
 					knownFragments.remove(current);
 				} else {
@@ -640,9 +640,9 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		if (mustRebuild) {
 			IProject[] projects = Util.getApiProjects();
 			if (projects != null) {
-				for (int i = 0; i < projects.length; i++) {
+				for (IProject project : projects) {
 					try {
-						projects[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
+						project.build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
 					} catch (CoreException e) {
 						log(e.getStatus());
 					}
@@ -666,11 +666,11 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 */
 	private String getListOfEEFragments(Bundle[] allFragments) {
 		StringBuffer result = new StringBuffer();
-		for (int i = 0; i < allFragments.length; i++) {
-			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0) {
-				result.append(allFragments[i].getSymbolicName());
+		for (Bundle allFragment : allFragments) {
+			if (allFragment.getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0) {
+				result.append(allFragment.getSymbolicName());
 				result.append(';');
-				result.append(allFragments[i].getVersion().toString());
+				result.append(allFragment.getVersion().toString());
 				result.append(';');
 			}
 		}
@@ -743,8 +743,8 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		if (context != null) {
 			ArrayList<IEclipsePreferences> nodes = new ArrayList<>(context.length);
 			IEclipsePreferences node = null;
-			for (int i = 0; i < context.length; i++) {
-				node = context[i].getNode(PLUGIN_ID);
+			for (IScopeContext element : context) {
+				node = element.getNode(PLUGIN_ID);
 				if (node != null) {
 					nodes.add(node);
 				}

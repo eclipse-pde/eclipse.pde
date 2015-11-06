@@ -295,8 +295,8 @@ public class ApiDescriptionProcessor {
 					}
 					ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
 					TagElement newtag = null;
-					for (int i = 0; i < missingtags.length; i++) {
-						newtag = createNewTagElement(ast, missingtags[i]);
+					for (String missingtag : missingtags) {
+						newtag = createNewTagElement(ast, missingtag);
 						lrewrite.insertLast(newtag, null);
 					}
 				}

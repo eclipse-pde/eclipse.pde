@@ -107,8 +107,8 @@ public class ApiProblemFactory {
 			return 0;
 		}
 		int hashcode = 0;
-		for (int i = 0; i < arguments.length; i++) {
-			hashcode += arguments[i].hashCode();
+		for (String argument : arguments) {
+			hashcode += argument.hashCode();
 		}
 		return hashcode;
 	}

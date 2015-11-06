@@ -189,28 +189,28 @@ public class UseMetadata implements IMetadata {
 			root.appendChild(child);
 			Element sub = null;
 			if (this.apipatterns != null) {
-				for (int i = 0; i < this.apipatterns.length; i++) {
+				for (String apipattern : this.apipatterns) {
 					sub = doc.createElement(PATTERN);
 					child.appendChild(sub);
-					sub.setAttribute(VALUE, apipatterns[i]);
+					sub.setAttribute(VALUE, apipattern);
 				}
 			}
 			child = doc.createElement(INTERNALPATTERNS);
 			root.appendChild(child);
 			if (this.intpatterns != null) {
-				for (int i = 0; i < this.intpatterns.length; i++) {
+				for (String intpattern : this.intpatterns) {
 					sub = doc.createElement(PATTERN);
 					child.appendChild(sub);
-					sub.setAttribute(VALUE, intpatterns[i]);
+					sub.setAttribute(VALUE, intpattern);
 				}
 			}
 			child = doc.createElement(ARCHIVEPATTERNS);
 			root.appendChild(child);
 			if (this.archivepatterns != null) {
-				for (int i = 0; i < this.archivepatterns.length; i++) {
+				for (String archivepattern : this.archivepatterns) {
 					sub = doc.createElement(PATTERN);
 					child.appendChild(sub);
-					sub.setAttribute(VALUE, archivepatterns[i]);
+					sub.setAttribute(VALUE, archivepattern);
 				}
 			}
 

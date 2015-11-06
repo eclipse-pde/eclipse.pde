@@ -400,8 +400,7 @@ public class ApiDescription implements IApiDescription {
 		Map<IElementDescriptor, ManifestNode> map = fPackageMap;
 		ManifestNode parentNode = null;
 		ManifestNode node = null;
-		for (int i = 0; i < path.length; i++) {
-			IElementDescriptor current = path[i];
+		for (IElementDescriptor current : path) {
 			parentNode = node;
 			node = map.get(current);
 			if (node == null) {

@@ -123,9 +123,9 @@ public class ProjectApiDescription extends ApiDescription {
 		void persistXML(Document document, Element parentElement) {
 			if (hasApiVisibility(this)) {
 				Element pkg = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
-				for (int i = 0; i < fFragments.length; i++) {
+				for (IPackageFragment fFragment : fFragments) {
 					Element fragment = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT);
-					fragment.setAttribute(IApiXmlConstants.ATTR_HANDLE, fFragments[i].getHandleIdentifier());
+					fragment.setAttribute(IApiXmlConstants.ATTR_HANDLE, fFragment.getHandleIdentifier());
 					pkg.appendChild(fragment);
 				}
 				pkg.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(this.visibility));
@@ -144,8 +144,8 @@ public class ProjectApiDescription extends ApiDescription {
 			if (fFragments != null) {
 				buffer.append("\nFragments:"); //$NON-NLS-1$
 				IPackageFragment fragment = null;
-				for (int i = 0; i < fFragments.length; i++) {
-					fragment = fFragments[i];
+				for (IPackageFragment fFragment : fFragments) {
+					fragment = fFragment;
 					buffer.append("\n\t").append(fragment.getElementName()); //$NON-NLS-1$
 					buffer.append(" ["); //$NON-NLS-1$
 					buffer.append(fragment.getParent().getElementName());
@@ -343,19 +343,19 @@ public class ProjectApiDescription extends ApiDescription {
 				IJavaElement[] children = null;
 				IJavaElement child = null;
 				ICompilationUnit unit = null;
-				for (int j = 0; j < fragments.length; j++) {
+				for (IPackageFragment fragment : fragments) {
 					if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-						System.out.println("\t" + fragments[j].getElementName()); //$NON-NLS-1$
+						System.out.println("\t" + fragment.getElementName()); //$NON-NLS-1$
 					}
-					IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragments[j].getElementName());
+					IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragment.getElementName());
 					// visit package
 					ManifestNode pkgNode = findNode(packageDescriptor, false);
 					if (pkgNode != null) {
 						IApiAnnotations annotations = resolveAnnotations(pkgNode, packageDescriptor);
 						if (visitor.visitElement(packageDescriptor, annotations)) {
-							children = fragments[j].getChildren();
-							for (int k = 0; k < children.length; k++) {
-								child = children[k];
+							children = fragment.getChildren();
+							for (IJavaElement element : children) {
+								child = element;
 								if (child instanceof ICompilationUnit) {
 									unit = (ICompilationUnit) child;
 									String cuName = unit.getElementName();
@@ -430,8 +430,7 @@ public class ProjectApiDescription extends ApiDescription {
 					IPackageDescriptor pkg = (IPackageDescriptor) element;
 					IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
 					List<IPackageFragment> fragments = new ArrayList<>(1);
-					for (int i = 0; i < roots.length; i++) {
-						IPackageFragmentRoot root = roots[i];
+					for (IPackageFragmentRoot root : roots) {
 						IClasspathEntry entry = root.getRawClasspathEntry();
 						switch (entry.getEntryKind()) {
 							case IClasspathEntry.CPE_SOURCE:
@@ -467,8 +466,7 @@ public class ProjectApiDescription extends ApiDescription {
 					String name = descriptor.getName();
 					if (parentNode instanceof PackageNode) {
 						IPackageFragment[] fragments = ((PackageNode) parentNode).fFragments;
-						for (int i = 0; i < fragments.length; i++) {
-							IPackageFragment fragment = fragments[i];
+						for (IPackageFragment fragment : fragments) {
 							if (fragment.getKind() == IPackageFragmentRoot.K_SOURCE) {
 								ICompilationUnit unit = fragment.getCompilationUnit(name + ".java"); //$NON-NLS-1$
 								try {
@@ -577,8 +575,8 @@ public class ProjectApiDescription extends ApiDescription {
 					try {
 						IPackageFragment[] fragments = getLocalPackageFragments();
 						Set<String> names = new HashSet<>();
-						for (int i = 0; i < fragments.length; i++) {
-							names.add(fragments[i].getElementName());
+						for (IPackageFragment fragment : fragments) {
+							names.add(fragment.getElementName());
 						}
 						ProjectComponent component = getApiComponent();
 						BundleComponent.initializeApiDescription(this, component.getBundleDescription(), names);
@@ -637,15 +635,14 @@ public class ProjectApiDescription extends ApiDescription {
 		List<IJavaElement> local = new ArrayList<>();
 		try {
 			IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
-			for (int i = 0; i < roots.length; i++) {
-				IPackageFragmentRoot root = roots[i];
+			for (IPackageFragmentRoot root : roots) {
 				// only care about roots originating from this project (binary
 				// or source)
 				IResource resource = root.getCorrespondingResource();
 				if (resource != null && resource.getProject().equals(getJavaProject().getProject())) {
 					IJavaElement[] children = root.getChildren();
-					for (int j = 0; j < children.length; j++) {
-						local.add(children[j]);
+					for (IJavaElement element : children) {
+						local.add(element);
 					}
 				}
 			}
