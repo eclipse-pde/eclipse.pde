@@ -414,6 +414,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImageBrowserView_MaxImages;
 
+	public static String ImageBrowserView_PrevPage;
+
+	public static String ImageBrowserView_NextPage;
+
 	public static String ImageBrowserView_Path;
 
 	public static String ImageBrowserView_FilterText;

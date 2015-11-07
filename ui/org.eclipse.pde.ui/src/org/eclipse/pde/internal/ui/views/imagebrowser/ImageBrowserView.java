@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2015 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2016 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,12 +8,15 @@
  *  Contributors:
  *     Christian Pontesegger - initial API and implementation
  *     IBM Corporation - ongoing enhancements
+ *     Alena Laskavaia - Bug 481613 pagination controls
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.views.imagebrowser;
 
 import java.util.*;
 import java.util.List;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.*;
@@ -28,6 +31,9 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.services.ISourceProviderService;
 
@@ -47,7 +53,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	private ScrolledComposite scrolledComposite;
 	private Composite imageComposite;
 	private ComboViewer sourceCombo;
-	int mImageCounter = 0;
+	private int maxImages; // Number of images per page
+	private int page; // Zero based page number
+	private int imageIndex; // Zero base index of currently available image
 	private Label lblPlugin;
 	private Label lblPath;
 	private Label lblWidth;
@@ -61,6 +69,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private Text txtFilter;
 	private IFilter textPatternFilter;
+	private PageNavigationControl pageNavigationControl;
 
 	public ImageBrowserView() {
 		// create default filters
@@ -91,13 +100,15 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 		Composite topComp = new Composite(composite, SWT.NONE);
 		RowLayout layout = new RowLayout();
+		// need to center vertically, otherwise its looks misaligned
+		layout.center = true;
 		topComp.setLayout(layout);
 		topComp.setFont(parent.getFont());
 		topComp.setBackground(composite.getBackground());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		topComp.setLayoutData(gd);
 
-		Composite sourceComp = SWTFactory.createComposite(topComp, 7, 1, SWT.NONE, 0, 0);
+		Composite sourceComp = SWTFactory.createComposite(topComp, 2, 1, SWT.NONE, 0, 0);
 		sourceComp.setLayoutData(new RowData());
 		SWTFactory.createLabel(sourceComp, PDEUIMessages.ImageBrowserView_Source, 1);
 		sourceCombo = new ComboViewer(SWTFactory.createCombo(sourceComp, SWT.READ_ONLY, 1, null));
@@ -105,6 +116,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		sourceCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
+				page = 0; // reset to 1st page
 				scanImages();
 			}
 		});
@@ -115,10 +127,16 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		sourceComboInput.add(new WorkspaceRepository(this));
 		sourceCombo.setInput(sourceComboInput);
 
-		SWTFactory.createHorizontalSpacer(sourceComp, 3);
 
-		SWTFactory.createLabel(sourceComp, PDEUIMessages.ImageBrowserView_Show, 1);
-		Combo typeCombo = SWTFactory.createCombo(sourceComp, SWT.READ_ONLY, 1, new String[] {PDEUIMessages.ImageBrowserView_FilterIcons, PDEUIMessages.ImageBrowserView_FilterDisabled, PDEUIMessages.ImageBrowserView_FilterWizards, PDEUIMessages.ImageBrowserView_FilterAllImages});
+
+		// image type
+		Composite typeComp = SWTFactory.createComposite(topComp, 2, 1, SWT.NONE, 0, 0);
+		typeComp.setLayoutData(new RowData());
+		SWTFactory.createLabel(typeComp, PDEUIMessages.ImageBrowserView_Show, 1);
+		Combo typeCombo = SWTFactory.createCombo(typeComp, SWT.READ_ONLY, 1,
+				new String[] { PDEUIMessages.ImageBrowserView_FilterIcons,
+						PDEUIMessages.ImageBrowserView_FilterDisabled, PDEUIMessages.ImageBrowserView_FilterWizards,
+						PDEUIMessages.ImageBrowserView_FilterAllImages });
 		typeCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -138,29 +156,33 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 					case 3 :
 					default :
 				}
+				page = 0; // reset to 1st page
 				scanImages();
 			}
 		});
 
-		Composite pageComp = SWTFactory.createComposite(topComp, 8, 1, SWT.NONE, 0, 0);
-		((GridLayout) pageComp.getLayout()).marginLeft = 20;
-		pageComp.setLayoutData(new RowData());
-		SWTFactory.createLabel(pageComp, PDEUIMessages.ImageBrowserView_MaxImages, 1);
-		spinMaxImages = new Spinner(pageComp, SWT.BORDER);
+		// max images
+		Composite maxComp = SWTFactory.createComposite(topComp, 2, 1, SWT.NONE, 0, 0);
+		maxComp.setLayoutData(new RowData());
+		SWTFactory.createLabel(maxComp, PDEUIMessages.ImageBrowserView_MaxImages, 1);
+		spinMaxImages = new Spinner(maxComp, SWT.BORDER);
 		spinMaxImages.setMaximum(999);
 		spinMaxImages.setMinimum(1);
 		spinMaxImages.setSelection(250);
+		spinMaxImages.setLayoutData(GridDataFactory.fillDefaults().create());
 		spinMaxImages.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
+				page = 0; // reset to 1st page
 				scanImages();
 			}
 		});
-		SWTFactory.createHorizontalSpacer(pageComp, 3);
 
-		SWTFactory.createLabel(pageComp, PDEUIMessages.ImageBrowserView_FilterText, 1)
+		Composite filterComp = SWTFactory.createComposite(topComp, 2, 1, SWT.NONE, 0, 0);
+		filterComp.setLayoutData(new RowData());
+		SWTFactory.createLabel(filterComp, PDEUIMessages.ImageBrowserView_FilterText, 1)
 				.setToolTipText(PDEUIMessages.ImageBrowserView_FilterTooltip);
-		txtFilter = SWTFactory.createText(pageComp, SWT.BORDER | SWT.SEARCH, 1);
+		txtFilter = SWTFactory.createText(filterComp, SWT.BORDER | SWT.SEARCH, 1);
 		((GridData) txtFilter.getLayoutData()).widthHint = 200;
 		txtFilter.setToolTipText(PDEUIMessages.ImageBrowserView_FilterTooltip);
 		txtFilter.addModifyListener(new ModifyListener() {
@@ -179,6 +201,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				mFilters.remove(textPatternFilter);
 				textPatternFilter = new StringFilter(pattern);
 				mFilters.add(textPatternFilter);
+				page = 0; // reset to 1st page
 				scanImages();
 			}
 		});
@@ -229,6 +252,78 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		txtReference = new Text(infoGroup, SWT.BORDER | SWT.READ_ONLY);
 		txtReference.setBackground(txtReference.getParent().getBackground());
 		txtReference.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+
+		// set original selection
+		sourceCombo.setSelection(new StructuredSelection(sourceComboInput.get(0)), true);
+	}
+
+	/*-
+	 * Control for page navigation, looks like this
+	 *
+	 *
+	 *                           Previous Page 1 2 3 4 5 Next Page
+	 *
+	 */
+	class PageNavigationControl extends Composite {
+		public PageNavigationControl(Composite parent, int style) {
+			super(parent, style);
+			RowLayoutFactory.fillDefaults().extendedMargins(0, 0, 50, 5).applyTo(this);
+			GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.END).grab(true, true).applyTo(this);
+			Color hyperlinkColor = getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND);
+			// Previous Page link
+			Hyperlink prev = new Hyperlink(this, SWT.NONE);
+			prev.setText(PDEUIMessages.ImageBrowserView_PrevPage);
+			prev.setForeground(hyperlinkColor);
+			prev.addHyperlinkListener(new HyperlinkAdapter() {
+				@Override
+				public void linkActivated(HyperlinkEvent e) {
+					if (page > 0)
+						page--;
+					scanImages();
+				}
+			});
+			if (page == 0)
+				prev.setEnabled(false);
+			// Links to individual pages
+			int currentlyAvailable = imageIndex + 1;
+			int curPage = page + 1;
+			int maxPage = curPage;
+			boolean lastPage = currentlyAvailable <= curPage * maxImages;
+			if (!lastPage)
+				maxPage = Math.max(curPage + 1, 5);
+			// we only show link for 5 last pages
+			int start = Math.max(maxPage - 5 + 1, 1);
+			for (int i = start; i <= maxPage; i++) {
+				Hyperlink pageLink = new Hyperlink(this, SWT.NONE);
+				pageLink.setText(String.valueOf(i));
+				if (i != curPage) {
+					final int selectedPage = i;
+					pageLink.setForeground(hyperlinkColor);
+					pageLink.addHyperlinkListener(new HyperlinkAdapter() {
+						@Override
+						public void linkActivated(HyperlinkEvent e) {
+							page = selectedPage - 1;
+							scanImages();
+						}
+					});
+				}
+
+			}
+			// Next Page Link
+			Hyperlink next = new Hyperlink(this, SWT.NONE);
+			next.setText(PDEUIMessages.ImageBrowserView_NextPage);
+			next.setForeground(hyperlinkColor);
+			next.addHyperlinkListener(new HyperlinkAdapter() {
+				@Override
+				public void linkActivated(HyperlinkEvent e) {
+					page++;
+					scanImages();
+				}
+			});
+			if (lastPage)
+				next.setEnabled(false);
+
+		}
 	}
 
 	@Override
@@ -240,21 +335,25 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	}
 
 	@Override
-	public void notifyImage(final ImageElement element) {
+	public synchronized void notifyImage(final ImageElement element) {
 		// make a copy of filter to avoid concurrent modification exception since UI changes mFilters list
 		ArrayList<IFilter> filters = new ArrayList<>(mFilters);
 		for (final IFilter filter : filters) {
 			if (!filter.accept(element))
 				return;
 		}
-
-		mUIJob.addImage(element);
-		mImageCounter--;
+		if (imageIndex >= page * maxImages && imageIndex < (page + 1) * maxImages)
+			mUIJob.addImage(element);
+		imageIndex++;
 	}
 
 	@Override
 	public boolean needsMore() {
-		return mImageCounter > 0;
+		// we will request at least one more image that we can currently show to
+		// adjust page controls properly
+		int requestedImages = (page + 1) * maxImages + 1;
+		int currentlyAvailable = imageIndex + 1;
+		return currentlyAvailable < requestedImages;
 	}
 
 	private void scanImages() {
@@ -278,11 +377,11 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		// then dispose images used in controls
 		disposeImages();
 
+		// set maximum image counter
+		maxImages = spinMaxImages.getSelection();
+		imageIndex = 0;
 		// initialize scan job
 		if (!sourceCombo.getSelection().isEmpty()) {
-			// set maximum image counter
-			mImageCounter = spinMaxImages.getSelection();
-
 			repository = (AbstractRepository) ((IStructuredSelection) sourceCombo.getSelection()).getFirstElement();
 			repository.schedule();
 		}
@@ -353,6 +452,12 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				mElements.clear();
 
 				mPluginImageContainer.layout();
+
+				if (pageNavigationControl!=null)
+					pageNavigationControl.dispose();
+				pageNavigationControl = new PageNavigationControl(imageComposite, SWT.NONE);
+				pageNavigationControl.setBackground(mPluginImageContainer.getBackground());
+
 				imageComposite.layout();
 
 				Rectangle r = scrolledComposite.getClientArea();
