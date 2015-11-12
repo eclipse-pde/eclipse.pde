@@ -19,6 +19,10 @@
       %license
    </license>
 
+   <requires>
+      <import feature="org.eclipse.jdt" version="3.12.0" match="compatible"/>
+   </requires>
+
    <plugin
          id="org.eclipse.pde"
          download-size="0"
