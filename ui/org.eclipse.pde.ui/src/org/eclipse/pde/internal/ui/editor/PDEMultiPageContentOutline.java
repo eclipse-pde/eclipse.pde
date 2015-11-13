@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
@@ -41,9 +40,6 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		listeners = new ArrayList<>();
 		sortingOn = PDEPlugin.getDefault().getPreferenceStore().getBoolean("PDEMultiPageContentOutline.SortingAction.isChecked"); //$NON-NLS-1$
 
-	}
-
-	public void addFocusListener(FocusListener listener) {
 	}
 
 	@Override
@@ -102,9 +98,6 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 	}
 
-	public void removeFocusListener(FocusListener listener) {
-	}
-
 	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		listeners.remove(listener);
@@ -139,6 +132,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 			emptyPage = new EmptyOutlinePage();
 		return emptyPage;
 	}
+
 
 	public void setPageActive(ISortableContentOutlinePage page) {
 		if (page == null) {
