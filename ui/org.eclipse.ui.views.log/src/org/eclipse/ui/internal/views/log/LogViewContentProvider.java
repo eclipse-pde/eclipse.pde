@@ -21,17 +21,21 @@ public class LogViewContentProvider implements ITreeContentProvider {
 		this.logView = logView;
 	}
 
+	@Override
 	public void dispose() { // do nothing
 	}
 
+	@Override
 	public Object[] getChildren(Object element) {
 		return ((AbstractEntry) element).getChildren(element);
 	}
 
+	@Override
 	public Object[] getElements(Object element) {
 		return logView.getElements();
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof LogSession) {
 			return null;
@@ -39,10 +43,12 @@ public class LogViewContentProvider implements ITreeContentProvider {
 		return ((AbstractEntry) element).getParent(element);
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return ((AbstractEntry) element).getChildren(element).length > 0;
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { // do nothing
 	}
 

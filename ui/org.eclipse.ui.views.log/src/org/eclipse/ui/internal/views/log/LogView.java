@@ -148,6 +148,7 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		}
 
+		@Override
 		public void run() {
 			if (fMemento.getInteger(LogView.P_GROUP_BY).intValue() != groupBy) {
 				fMemento.putInteger(LogView.P_GROUP_BY, groupBy);
@@ -169,6 +170,7 @@ public class LogView extends ViewPart implements ILogListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -193,6 +195,7 @@ public class LogView extends ViewPart implements ILogListener {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fFilteredTree, IHelpContextIds.LOG_VIEW);
 		getSite().getWorkbenchWindow().addPerspectiveListener(new IPerspectiveListener2() {
 
+			@Override
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
 				if (!(partRef instanceof IViewReference))
 					return;
@@ -215,10 +218,12 @@ public class LogView extends ViewPart implements ILogListener {
 				}
 			}
 
+			@Override
 			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 				// empty
 			}
 
+			@Override
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 				// empty
 			}
@@ -277,6 +282,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 		MenuManager popupMenuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		IMenuListener listener = new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(fCopyAction);
 				manager.add(new Separator());
@@ -309,6 +315,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private Action createActivateViewAction() {
 		Action action = new Action(Messages.LogView_activate) { //
+			@Override
 			public void run() {
 				fMemento.putString(P_ACTIVATE, isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -319,6 +326,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private Action createClearAction() {
 		Action action = new Action(Messages.LogView_clear) {
+			@Override
 			public void run() {
 				handleClear();
 			}
@@ -332,6 +340,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private Action createCopyAction() {
 		Action action = new Action(Messages.LogView_copy) {
+			@Override
 			public void run() {
 				copyToClipboard(fFilteredTree.getViewer().getSelection());
 			}
@@ -342,6 +351,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private Action createDeleteLogAction() {
 		Action action = new Action(Messages.LogView_delete) {
+			@Override
 			public void run() {
 				doDeleteLog();
 			}
@@ -355,6 +365,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private Action createExportLogAction() {
 		Action action = new Action(Messages.LogView_export) {
+			@Override
 			public void run() {
 				handleExport(true);
 			}
@@ -368,6 +379,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private Action createExportLogEntryAction() {
 		Action action = new Action(Messages.LogView_exportEntry) {
+			@Override
 			public void run() {
 				handleExport(false);
 			}
@@ -381,6 +393,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private Action createFilterAction() {
 		Action action = new Action(Messages.LogView_filter) {
+			@Override
 			public void run() {
 				handleFilter();
 			}
@@ -410,6 +423,7 @@ public class LogView extends ViewPart implements ILogListener {
 			action = new OpenIDELogFileAction(this);
 		} catch (ClassNotFoundException e) {
 			action = new Action() {
+				@Override
 				public void run() {
 					if (fInputFile.exists()) {
 						Job job = getOpenLogFileJob();
@@ -439,6 +453,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private Action createReadLogAction() {
 		Action action = new Action(Messages.LogView_readLog_restore) {
+			@Override
 			public void run() {
 				fInputFile = Platform.getLogFileLocation().toFile();
 				reloadLog();
@@ -456,6 +471,7 @@ public class LogView extends ViewPart implements ILogListener {
 	 */
 	private Action createShowTextFilter() {
 		Action action = new Action(Messages.LogView_show_filter_text) {
+			@Override
 			public void run() {
 				showFilterText(isChecked());
 			}
@@ -503,6 +519,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private void createViewer(Composite parent) {
 		PatternFilter filter = new PatternFilter() {
+			@Override
 			protected boolean isLeafMatch(Viewer viewer, Object element) {
 				if (element instanceof LogEntry) {
 					LogEntry logEntry = (LogEntry) element;
@@ -534,6 +551,7 @@ public class LogView extends ViewPart implements ILogListener {
 		fFilteredTree.getViewer().setLabelProvider(fLabelProvider = new LogViewLabelProvider(this));
 		fLabelProvider.connect(this);
 		fFilteredTree.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e.getSelection());
 				if (fPropertiesAction.isEnabled())
@@ -541,6 +559,7 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		});
 		fFilteredTree.getViewer().addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
 				fPropertiesAction.run();
@@ -556,6 +575,7 @@ public class LogView extends ViewPart implements ILogListener {
 		fColumn1.setText(Messages.LogView_column_message);
 		fColumn1.setWidth(fMemento.getInteger(P_COLUMN_1).intValue());
 		fColumn1.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				MESSAGE_ORDER *= -1;
 				ViewerComparator comparator = getViewerComparator(MESSAGE);
@@ -574,6 +594,7 @@ public class LogView extends ViewPart implements ILogListener {
 		fColumn2.setText(Messages.LogView_column_plugin);
 		fColumn2.setWidth(fMemento.getInteger(P_COLUMN_2).intValue());
 		fColumn2.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PLUGIN_ORDER *= -1;
 				ViewerComparator comparator = getViewerComparator(PLUGIN);
@@ -592,6 +613,7 @@ public class LogView extends ViewPart implements ILogListener {
 		fColumn3.setText(Messages.LogView_column_date);
 		fColumn3.setWidth(fMemento.getInteger(P_COLUMN_3).intValue());
 		fColumn3.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DATE_ORDER *= -1;
 				ViewerComparator comparator = getViewerComparator(DATE);
@@ -624,6 +646,7 @@ public class LogView extends ViewPart implements ILogListener {
 		fTree.setSortDirection(order == ASCENDING ? SWT.UP : SWT.DOWN);
 	}
 
+	@Override
 	public void dispose() {
 		writeSettings();
 		Platform.removeLogListener(this);
@@ -676,6 +699,7 @@ public class LogView extends ViewPart implements ILogListener {
 		fInputFile = path;
 		fDirectory = fInputFile.getParent();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(Messages.LogView_operation_importing, IProgressMonitor.UNKNOWN);
 				readLogFile();
@@ -776,6 +800,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	protected void handleClear() {
 		BusyIndicator.showWhile(fTree.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				elements.clear();
 				groups.clear();
@@ -793,6 +818,7 @@ public class LogView extends ViewPart implements ILogListener {
 	 */
 	protected void reloadLog() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(Messages.LogView_operation_reloading, IProgressMonitor.UNKNOWN);
 				readLogFile();
@@ -830,6 +856,7 @@ public class LogView extends ViewPart implements ILogListener {
 		limitEntriesCount();
 
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				setContentDescription(getTitleSummary());
 			}
@@ -903,6 +930,7 @@ public class LogView extends ViewPart implements ILogListener {
 			return;
 		}
 		Comparator dateComparator = new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				Date l1 = ((LogEntry) o1).getDate();
 				Date l2 = ((LogEntry) o2).getDate();
@@ -992,6 +1020,7 @@ public class LogView extends ViewPart implements ILogListener {
 		return group;
 	}
 
+	@Override
 	public void logging(IStatus status, String plugin) {
 		if (!isPlatformLogOpen())
 			return;
@@ -1026,6 +1055,7 @@ public class LogView extends ViewPart implements ILogListener {
 	 */
 	private void pushBatchedEntries() {
 		Job job = new Job(Messages.LogView_AddingBatchedEvents) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for (int i = 0; i < batchedEntries.size(); i++) {
 					if (!monitor.isCanceled()) {
@@ -1070,6 +1100,7 @@ public class LogView extends ViewPart implements ILogListener {
 		final ViewPart view = this;
 		if (display != null) {
 			display.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (!fTree.isDisposed()) {
 						TreeViewer viewer = fFilteredTree.getViewer();
@@ -1094,6 +1125,7 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
+	@Override
 	public void setFocus() {
 		if (fFilteredTree != null) {
 			if (fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue()) {
@@ -1158,6 +1190,7 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		if (memento == null)
@@ -1216,6 +1249,7 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 		if (this.fMemento == null || memento == null)
 			return;
@@ -1243,6 +1277,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private void addMouseListeners() {
 		Listener tableListener = new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
 					case SWT.MouseExit :
@@ -1274,6 +1309,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 		source.addDragListener(new DragSourceAdapter() {
 
+			@Override
 			public void dragStart(DragSourceEvent event) {
 				ISelection selection = fFilteredTree.getViewer().getSelection();
 				if (selection.isEmpty()) {
@@ -1288,6 +1324,7 @@ public class LogView extends ViewPart implements ILogListener {
 				}
 			}
 
+			@Override
 			public void dragSetData(DragSourceEvent event) {
 				if (!TextTransfer.getInstance().isSupportedType(event.dataType)) {
 					return;
@@ -1328,6 +1365,7 @@ public class LogView extends ViewPart implements ILogListener {
 		fTextLabel.setForeground(c);
 		fTextLabel.setEditable(false);
 		fTextShell.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				onTextShellDispose(e);
 			}
@@ -1420,6 +1458,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private void setComparator(byte sortType) {
 		if (sortType == DATE) {
 			fComparator = new Comparator() {
+				@Override
 				public int compare(Object e1, Object e2) {
 					long date1 = 0;
 					long date2 = 0;
@@ -1443,6 +1482,7 @@ public class LogView extends ViewPart implements ILogListener {
 			};
 		} else if (sortType == PLUGIN) {
 			fComparator = new Comparator() {
+				@Override
 				public int compare(Object e1, Object e2) {
 					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
 						LogEntry entry1 = (LogEntry) e1;
@@ -1454,6 +1494,7 @@ public class LogView extends ViewPart implements ILogListener {
 			};
 		} else {
 			fComparator = new Comparator() {
+				@Override
 				public int compare(Object e1, Object e2) {
 					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
 						LogEntry entry1 = (LogEntry) e1;
@@ -1473,6 +1514,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private ViewerComparator getViewerComparator(byte sortType) {
 		if (sortType == PLUGIN) {
 			return new ViewerComparator() {
+				@Override
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
 						LogEntry entry1 = (LogEntry) e1;
@@ -1484,6 +1526,7 @@ public class LogView extends ViewPart implements ILogListener {
 			};
 		} else if (sortType == MESSAGE) {
 			return new ViewerComparator() {
+				@Override
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
 						LogEntry entry1 = (LogEntry) e1;
@@ -1504,6 +1547,7 @@ public class LogView extends ViewPart implements ILogListener {
 					return -1;
 				}
 
+				@Override
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					long date1 = 0;
 					long date2 = 0;
@@ -1665,6 +1709,7 @@ public class LogView extends ViewPart implements ILogListener {
 	protected Job getOpenLogFileJob() {
 		final Shell shell = getViewSite().getShell();
 		return new Job(Messages.OpenLogDialog_message) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				boolean failed = false;
 				if (fInputFile.length() <= LogReader.MAX_FILE_LENGTH) {
@@ -1680,6 +1725,7 @@ public class LogView extends ViewPart implements ILogListener {
 				if (failed) {
 					final OpenLogDialog openDialog = new OpenLogDialog(shell, fInputFile);
 					Display.getDefault().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							openDialog.create();
 							openDialog.open();

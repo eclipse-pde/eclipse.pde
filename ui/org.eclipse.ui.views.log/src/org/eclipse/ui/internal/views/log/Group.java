@@ -25,6 +25,7 @@ public class Group extends AbstractEntry {
 		this.name = name;
 	}
 
+	@Override
 	public void write(PrintWriter writer) {
 		Object[] children = getChildren(null);
 		for (int i = 0; i < children.length; i++) {
@@ -34,6 +35,7 @@ public class Group extends AbstractEntry {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return name;
 	}

@@ -56,6 +56,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
+		@Override
 		public void run() {
 			doRun();
 
@@ -69,6 +70,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 		 * (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals(Object o) {
 			if (o instanceof ImportConfigurationLogAction) {
 				ImportConfigurationLogAction action = (ImportConfigurationLogAction) o;
@@ -90,6 +92,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		// by default import file selected by user
 		logView.handleImport();
@@ -99,6 +102,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		if (menuUpdateNeeded(toolbarMenu)) {
 			toolbarMenu = new Menu(parent);
@@ -111,6 +115,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		if (menuUpdateNeeded(popupMenu)) {
 			popupMenu = new Menu(parent);
@@ -201,6 +206,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 		(new Separator()).fill(menu, -1);
 		ImportConfigurationLogAction importWorkspaceLogAction = new ImportConfigurationLogAction(Messages.ImportLogAction_reloadWorkspaceLog, Platform.getLogFileLocation().toFile().getAbsolutePath()) {
 
+			@Override
 			public void doRun() {
 				logView.setPlatformLog();
 			}
@@ -215,6 +221,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (toolbarMenu != null) {
 			toolbarMenu.dispose();

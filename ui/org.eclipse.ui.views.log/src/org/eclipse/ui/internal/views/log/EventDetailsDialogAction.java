@@ -81,6 +81,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction {
 			propertyDialog.setComparator(comparator);
 	}
 
+	@Override
 	public void run() {
 		if (propertyDialog != null && propertyDialog.isOpen()) {
 			resetSelection();

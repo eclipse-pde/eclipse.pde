@@ -45,6 +45,7 @@ public final class OpenLogDialog extends TrayDialog {
 	/*
 	 * (non-Javadoc) Method declared on Window.
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(Messages.OpenLogDialog_title);
@@ -54,10 +55,12 @@ public final class OpenLogDialog extends TrayDialog {
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
 	}
 
+	@Override
 	public void create() {
 		super.create();
 		// dialog location
@@ -74,6 +77,7 @@ public final class OpenLogDialog extends TrayDialog {
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite outer = (Composite) super.createDialogArea(parent);
 		Text text = new Text(outer, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL | SWT.NO_FOCUS | SWT.H_SCROLL);
@@ -103,6 +107,7 @@ public final class OpenLogDialog extends TrayDialog {
 	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CLOSE_ID) {
 			storeSettings();
@@ -212,6 +217,7 @@ public final class OpenLogDialog extends TrayDialog {
 
 	private void readLargeFileWithMonitor(final PrintWriter writer) {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(Messages.OpenLogDialog_message, IProgressMonitor.UNKNOWN);
 				try {
@@ -231,6 +237,7 @@ public final class OpenLogDialog extends TrayDialog {
 
 	private void readFileWithMonitor(final PrintWriter writer) {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(Messages.OpenLogDialog_message, IProgressMonitor.UNKNOWN);
 				try {

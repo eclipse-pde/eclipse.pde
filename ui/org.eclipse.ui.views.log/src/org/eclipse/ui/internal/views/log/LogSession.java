@@ -68,6 +68,7 @@ public class LogSession extends Group {
 		}
 	}
 
+	@Override
 	public void write(PrintWriter writer) {
 		writer.write(sessionData);
 		writer.println();

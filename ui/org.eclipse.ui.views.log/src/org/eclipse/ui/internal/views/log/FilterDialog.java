@@ -57,11 +57,13 @@ public class FilterDialog extends TrayDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.LOG_FILTER);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
 		createEventTypesGroup(container);
@@ -109,6 +111,7 @@ public class FilterDialog extends TrayDialog {
 		limit.setText(Messages.LogView_FilterDialog_limitTo);
 		limit.setSelection(memento.getString(LogView.P_USE_LIMIT).equals("true")); //$NON-NLS-1$
 		limit.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				limitText.setEnabled(((Button) e.getSource()).getSelection());
 			}
@@ -116,6 +119,7 @@ public class FilterDialog extends TrayDialog {
 
 		limitText = new Text(comp, SWT.BORDER);
 		limitText.addVerifyListener(new VerifyListener() {
+			@Override
 			public void verifyText(VerifyEvent e) {
 				if (Character.isLetter(e.character)) {
 					e.doit = false;
@@ -123,6 +127,7 @@ public class FilterDialog extends TrayDialog {
 			}
 		});
 		limitText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				try {
 					if (okButton == null)
@@ -143,6 +148,7 @@ public class FilterDialog extends TrayDialog {
 
 		maxLogTailSizeText = new Text(comp, SWT.BORDER);
 		maxLogTailSizeText.addVerifyListener(new VerifyListener() {
+			@Override
 			public void verifyText(VerifyEvent e) {
 				if (Character.isLetter(e.character)) {
 					e.doit = false;
@@ -151,6 +157,7 @@ public class FilterDialog extends TrayDialog {
 		});
 
 		maxLogTailSizeText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				try {
 					if (okButton == null)
@@ -206,6 +213,7 @@ public class FilterDialog extends TrayDialog {
 		gd.horizontalSpan = 2;
 		filterEnabled.setLayoutData(gd);
 		filterEnabled.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setStackTraceFilterEnabled(filterEnabled.getSelection());
 			}
@@ -219,6 +227,7 @@ public class FilterDialog extends TrayDialog {
 		gd.horizontalIndent = 20;
 		filterList.setLayoutData(gd);
 		filterList.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				removeFilter.setEnabled(true);
 			}
@@ -229,6 +238,7 @@ public class FilterDialog extends TrayDialog {
 		addFilter.setLayoutData(gd);
 		addFilter.setText(Messages.FilterDialog_Add);
 		addFilter.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				addFilter();
 			}
@@ -240,6 +250,7 @@ public class FilterDialog extends TrayDialog {
 		removeFilter.setText(Messages.FilterDialog_Remove);
 		removeFilter.setEnabled(false);
 		removeFilter.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				removeFilter();
 			}
@@ -264,6 +275,7 @@ public class FilterDialog extends TrayDialog {
 	private void addFilter() {
 		IInputValidator validator = new IInputValidator() {
 
+			@Override
 			public String isValid(String newText) {
 				return newText.indexOf(';') >= 0 ? Messages.FilterDialog_FilterShouldntContainSemicolon : null;
 			}
@@ -293,11 +305,13 @@ public class FilterDialog extends TrayDialog {
 		removeFilter.setEnabled(enabled && filterList.getSelectionIndex() != -1);
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
+	@Override
 	protected void okPressed() {
 		memento.putString(LogView.P_LOG_OK, okCheckbox.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putString(LogView.P_LOG_INFO, infoCheckbox.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$

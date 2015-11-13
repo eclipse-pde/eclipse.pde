@@ -186,6 +186,7 @@ public class LogEntry extends AbstractEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return getSeverityText();
 	}
@@ -193,6 +194,7 @@ public class LogEntry extends AbstractEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.log.AbstractEntry#getLabel(java.lang.Object)
 	 */
+	@Override
 	public String getLabel(Object obj) {
 		return getSeverityText();
 	}
@@ -370,6 +372,7 @@ public class LogEntry extends AbstractEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.log.AbstractEntry#write(java.io.PrintWriter)
 	 */
+	@Override
 	public void write(PrintWriter writer) {
 		if (session != null) {
 			writer.println(session.getSessionData());

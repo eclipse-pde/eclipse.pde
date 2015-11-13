@@ -37,6 +37,7 @@ public class TailInputStream extends InputStream {
 		}
 	}
 
+	@Override
 	public int read() throws IOException {
 		byte[] b = new byte[1];
 		int len = fRaf.read(b, 0, 1);
@@ -46,14 +47,17 @@ public class TailInputStream extends InputStream {
 		return b[0];
 	}
 
+	@Override
 	public int read(byte[] b) throws IOException {
 		return fRaf.read(b, 0, b.length);
 	}
 
+	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
 		return fRaf.read(b, off, len);
 	}
 
+	@Override
 	public void close() throws IOException {
 		fRaf.close();
 	}

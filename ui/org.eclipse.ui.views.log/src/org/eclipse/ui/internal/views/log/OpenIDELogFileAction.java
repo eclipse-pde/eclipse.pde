@@ -32,6 +32,7 @@ public class OpenIDELogFileAction extends Action {
 		fView = logView;
 	}
 
+	@Override
 	public void run() {
 		IPath logPath = new Path(fView.getLogFile().getAbsolutePath());
 		IFileStore fileStore = EFS.getLocalFileSystem().getStore(logPath);

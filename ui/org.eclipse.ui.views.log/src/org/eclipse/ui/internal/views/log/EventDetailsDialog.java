@@ -117,6 +117,7 @@ public class EventDetailsDialog extends TrayDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.LOG_EVENTDETAILS);
@@ -163,6 +164,7 @@ public class EventDetailsDialog extends TrayDialog {
 		return isOpen;
 	}
 
+	@Override
 	public int open() {
 		isOpen = true;
 		if (sashWeights == null) {
@@ -181,6 +183,7 @@ public class EventDetailsDialog extends TrayDialog {
 		return super.open();
 	}
 
+	@Override
 	public boolean close() {
 		if (clipboard != null) {
 			clipboard.dispose();
@@ -192,6 +195,7 @@ public class EventDetailsDialog extends TrayDialog {
 		return super.close();
 	}
 
+	@Override
 	public void create() {
 		super.create();
 
@@ -209,6 +213,7 @@ public class EventDetailsDialog extends TrayDialog {
 		getButton(IDialogConstants.OK_ID).setFocus();
 	}
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (IDialogConstants.OK_ID == buttonId)
 			okPressed();
@@ -284,6 +289,7 @@ public class EventDetailsDialog extends TrayDialog {
 	private void setComparator(byte sortType, final int sortOrder) {
 		if (sortType == LogView.DATE) {
 			comparator = new Comparator() {
+				@Override
 				public int compare(Object e1, Object e2) {
 					Date date1 = ((LogEntry) e1).getDate();
 					Date date2 = ((LogEntry) e2).getDate();
@@ -294,6 +300,7 @@ public class EventDetailsDialog extends TrayDialog {
 			};
 		} else if (sortType == LogView.PLUGIN) {
 			comparator = new Comparator() {
+				@Override
 				public int compare(Object e1, Object e2) {
 					LogEntry entry1 = (LogEntry) e1;
 					LogEntry entry2 = (LogEntry) e2;
@@ -302,6 +309,7 @@ public class EventDetailsDialog extends TrayDialog {
 			};
 		} else {
 			comparator = new Comparator() {
+				@Override
 				public int compare(Object e1, Object e2) {
 					LogEntry entry1 = (LogEntry) e1;
 					LogEntry entry2 = (LogEntry) e2;
@@ -510,6 +518,7 @@ public class EventDetailsDialog extends TrayDialog {
 		return sashForm;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -559,6 +568,7 @@ public class EventDetailsDialog extends TrayDialog {
 		backButton.setToolTipText(Messages.EventDetailsDialog_previous);
 		backButton.setImage(SharedImages.getImage(SharedImages.DESC_PREV_EVENT));
 		backButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = Messages.EventDetailsDialog_previous;
 			}
@@ -570,6 +580,7 @@ public class EventDetailsDialog extends TrayDialog {
 		copyButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
 		copyButton.setToolTipText(Messages.EventDetailsDialog_copy);
 		copyButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = Messages.EventDetailsDialog_copy;
 			}
@@ -581,6 +592,7 @@ public class EventDetailsDialog extends TrayDialog {
 		nextButton.setToolTipText(Messages.EventDetailsDialog_next);
 		nextButton.setImage(SharedImages.getImage(SharedImages.DESC_NEXT_EVENT));
 		nextButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = Messages.EventDetailsDialog_next;
 			}
@@ -593,6 +605,7 @@ public class EventDetailsDialog extends TrayDialog {
 		gd.horizontalAlignment = SWT.RIGHT;
 		button.setLayoutData(gd);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FilterDialog dialog = new FilterDialog(getShell(), memento);
 				dialog.create();
@@ -604,6 +617,7 @@ public class EventDetailsDialog extends TrayDialog {
 			}
 		});
 		button.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = Messages.EventDetailsDialog_FilterDialog;
 			}
@@ -613,6 +627,7 @@ public class EventDetailsDialog extends TrayDialog {
 		layout.numColumns = 2;
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK button only by default
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);

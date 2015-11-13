@@ -46,12 +46,14 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 		this.logView = logView;
 	}
 
+	@Override
 	public void dispose() {
 		if (consumers.size() == 0) {
 			super.dispose();
 		}
 	}
 
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (element instanceof Group) {
 			return (columnIndex == 0) ? hierarchicalImage : null;
@@ -73,6 +75,7 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 		return null;
 	}
 
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		if ((element instanceof LogSession) && (columnIndex == 2)) {
 			LogSession session = (LogSession) element;
@@ -123,6 +126,7 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 		}
 	}
 
+	@Override
 	public Font getFont(Object element, int columnIndex) {
 		if ((element instanceof LogSession) && (logView.isCurrentLogSession((LogSession) element))) {
 			return JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
