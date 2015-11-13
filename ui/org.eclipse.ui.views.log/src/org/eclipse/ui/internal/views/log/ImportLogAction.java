@@ -52,10 +52,6 @@ public class ImportLogAction extends Action implements IMenuCreator {
 			logView.handleImportPath(location);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.action.Action#run()
-		 */
 		@Override
 		public void run() {
 			doRun();
@@ -66,10 +62,6 @@ public class ImportLogAction extends Action implements IMenuCreator {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object o) {
 			if (o instanceof ImportConfigurationLogAction) {
@@ -88,20 +80,12 @@ public class ImportLogAction extends Action implements IMenuCreator {
 		setMenuCreator(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		// by default import file selected by user
 		logView.handleImport();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
-	 */
 	@Override
 	public Menu getMenu(Control parent) {
 		if (menuUpdateNeeded(toolbarMenu)) {
@@ -111,10 +95,6 @@ public class ImportLogAction extends Action implements IMenuCreator {
 		return toolbarMenu;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-	 */
 	@Override
 	public Menu getMenu(Menu parent) {
 		if (menuUpdateNeeded(popupMenu)) {
@@ -217,10 +197,6 @@ public class ImportLogAction extends Action implements IMenuCreator {
 		item.fill(menu, -1);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (toolbarMenu != null) {

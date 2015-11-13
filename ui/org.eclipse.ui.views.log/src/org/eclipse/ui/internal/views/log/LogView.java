@@ -167,9 +167,6 @@ public class LogView extends ViewPart implements ILogListener {
 		fInputFile = Platform.getLogFileLocation().toFile();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);

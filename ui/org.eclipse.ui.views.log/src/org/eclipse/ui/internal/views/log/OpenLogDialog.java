@@ -42,9 +42,6 @@ public final class OpenLogDialog extends TrayDialog {
 
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Window.
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -52,9 +49,6 @@ public final class OpenLogDialog extends TrayDialog {
 		readConfiguration();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
@@ -74,9 +68,6 @@ public final class OpenLogDialog extends TrayDialog {
 		getButton(IDialogConstants.CLOSE_ID).setFocus();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite outer = (Composite) super.createDialogArea(parent);
@@ -102,11 +93,6 @@ public final class OpenLogDialog extends TrayDialog {
 		return out.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
-	 */
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CLOSE_ID) {
