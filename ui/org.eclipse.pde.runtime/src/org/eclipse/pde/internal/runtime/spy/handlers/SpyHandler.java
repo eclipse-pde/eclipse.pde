@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
  *     Kevin Doyle <kjdoyle@ca.ibm.com> - bug 200727
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 482175
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.handlers;
 
@@ -17,27 +18,19 @@ import org.eclipse.pde.internal.runtime.spy.dialogs.SpyDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-/**
- * @since 3.4
- */
 public class SpyHandler extends AbstractHandler {
 
-	private SpyDialog INSTANCE = null;
+	private SpyDialog spyDialog = null;
 
-	public SpyHandler() { // do nothing
-	}
 
 	public Object execute(ExecutionEvent event) {
-		if (event != null) {
-			if (INSTANCE != null && INSTANCE.getShell() != null && !INSTANCE.getShell().isDisposed()) {
-				INSTANCE.close();
-			}
-			Shell shell = HandlerUtil.getActiveShell(event);
-			SpyDialog dialog = new SpyDialog(shell, event, shell.getDisplay().getCursorLocation());
-			INSTANCE = dialog;
-			dialog.create();
-			dialog.open();
+		if (spyDialog != null && spyDialog.getShell() != null && !spyDialog.getShell().isDisposed()) {
+			spyDialog.close();
 		}
+		Shell shell = HandlerUtil.getActiveShell(event);
+		spyDialog = new SpyDialog(shell, event, shell.getDisplay().getCursorLocation());
+		spyDialog.create();
+		spyDialog.open();
 		return null;
 	}
 
