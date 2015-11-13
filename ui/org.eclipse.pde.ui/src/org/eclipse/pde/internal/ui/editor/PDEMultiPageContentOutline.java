@@ -7,11 +7,13 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Denis Zygann <d.zygann@web.de> - 482155
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
 import java.util.ArrayList;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.ui.*;
@@ -20,8 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.Page;
-import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class PDEMultiPageContentOutline extends Page implements IContentOutlinePage, ISelectionChangedListener, ILaunchingPreferenceConstants {
@@ -30,7 +31,6 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 	private ArrayList<ISelectionChangedListener> listeners;
 	private ISortableContentOutlinePage currentPage;
 	private ISortableContentOutlinePage emptyPage;
-	private IActionBars actionBars;
 	private boolean sortingOn;
 	private PDEFormEditor editor;
 	private ToggleLinkWithEditorAction fToggleLinkWithEditorAction;
@@ -50,6 +50,9 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 	@Override
 	public void createControl(Composite parent) {
 		pagebook = new PageBook(parent, SWT.NONE);
+		if (currentPage != null) {
+			setPageActive(currentPage);
+		}
 	}
 
 	@Override
@@ -94,9 +97,6 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		return selection;
 	}
 
-	@Override
-	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
-	}
 
 	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
@@ -108,18 +108,12 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		setSelection(event.getSelection());
 	}
 
-	@Override
-	public void setActionBars(IActionBars actionBars) {
-		this.actionBars = actionBars;
-		registerToolbarActions(actionBars);
-		if (currentPage != null)
-			setPageActive(currentPage);
 
-	}
-
-	public IActionBars getActionBars() {
-		return actionBars;
-	}
+    @Override
+    public void init(IPageSite pageSite) {
+        super.init(pageSite);
+        registerToolbarActions(pageSite.getActionBars());
+    }
 
 	@Override
 	public void setFocus() {
@@ -141,7 +135,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		if (currentPage != null) {
 			currentPage.removeSelectionChangedListener(this);
 		}
-		//page.init(getSite());
+		// page.init(getSite());
 		page.sort(sortingOn);
 		page.addSelectionChangedListener(this);
 		this.currentPage = page;
@@ -153,7 +147,6 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		if (control == null || control.isDisposed()) {
 			// first time
 			page.createControl(pagebook);
-			page.setActionBars(getActionBars());
 			control = page.getControl();
 		}
 		pagebook.showPage(control);
