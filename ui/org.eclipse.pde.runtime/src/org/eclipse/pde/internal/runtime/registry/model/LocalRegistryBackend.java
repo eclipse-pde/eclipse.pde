@@ -30,9 +30,6 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		this.listener = listener;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#connect()
-	 */
 	@Override
 	public void connect(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
@@ -43,9 +40,6 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		PDERuntimePlugin.getDefault().getBundleContext().addServiceListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#disconnect()
-	 */
 	@Override
 	public void disconnect() {
 		Platform.getExtensionRegistry().removeListener(this);
@@ -62,25 +56,16 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		return (usingBundles != null && Arrays.asList(usingBundles).contains(bundle));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#start(org.osgi.framework.Bundle)
-	 */
 	@Override
 	public void start(long id) throws BundleException {
 		PDERuntimePlugin.getDefault().getBundleContext().getBundle(id).start();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#stop(org.osgi.framework.Bundle)
-	 */
 	@Override
 	public void stop(long id) throws BundleException {
 		PDERuntimePlugin.getDefault().getBundleContext().getBundle(id).stop();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#diagnose(org.osgi.framework.Bundle)
-	 */
 	@Override
 	public MultiStatus diagnose(long id) {
 		PlatformAdmin plaformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
