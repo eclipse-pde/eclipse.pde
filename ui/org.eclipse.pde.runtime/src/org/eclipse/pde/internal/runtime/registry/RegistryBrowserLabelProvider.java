@@ -89,6 +89,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 
 	}
 
+	@Override
 	public void dispose() {
 		fPluginImage.dispose();
 		fActivePluginImage.dispose();
@@ -130,6 +131,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		return (o != null);
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof Bundle) {
 			Bundle bundle = (Bundle) element;
@@ -399,6 +401,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		return new StyledString(element == null ? "" : element.toString()); //$NON-NLS-1$
 	}
 
+	@Override
 	public void update(ViewerCell cell) {
 		StyledString string = getStyledText(cell.getElement());
 		cell.setText(string.getString());
@@ -407,6 +410,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		super.update(cell);
 	}
 
+	@Override
 	public String getText(Object element) {
 		return getStyledText(element).getString();
 	}

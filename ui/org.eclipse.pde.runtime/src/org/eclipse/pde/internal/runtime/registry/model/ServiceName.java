@@ -50,11 +50,13 @@ public class ServiceName extends ModelObject implements Comparable {
 		return result;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		return prime * ServiceName.hashCode(classes);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -64,6 +66,7 @@ public class ServiceName extends ModelObject implements Comparable {
 		return Arrays.equals(classes, other.classes);
 	}
 
+	@Override
 	public int compareTo(Object obj) {
 		if (obj instanceof ServiceName) {
 			// compare first class

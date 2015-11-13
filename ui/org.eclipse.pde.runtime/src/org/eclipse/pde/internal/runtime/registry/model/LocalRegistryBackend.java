@@ -25,6 +25,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 
 	private BackendChangeListener listener;
 
+	@Override
 	public void setRegistryListener(BackendChangeListener listener) {
 		this.listener = listener;
 	}
@@ -32,6 +33,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#connect()
 	 */
+	@Override
 	public void connect(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
@@ -44,6 +46,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#disconnect()
 	 */
+	@Override
 	public void disconnect() {
 		Platform.getExtensionRegistry().removeListener(this);
 		PDERuntimePlugin.getDefault().getBundleContext().removeBundleListener(this);
@@ -62,6 +65,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#start(org.osgi.framework.Bundle)
 	 */
+	@Override
 	public void start(long id) throws BundleException {
 		PDERuntimePlugin.getDefault().getBundleContext().getBundle(id).start();
 	}
@@ -69,6 +73,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#stop(org.osgi.framework.Bundle)
 	 */
+	@Override
 	public void stop(long id) throws BundleException {
 		PDERuntimePlugin.getDefault().getBundleContext().getBundle(id).stop();
 	}
@@ -76,6 +81,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#diagnose(org.osgi.framework.Bundle)
 	 */
+	@Override
 	public MultiStatus diagnose(long id) {
 		PlatformAdmin plaformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
 		State state = plaformAdmin.getState(false);
@@ -102,6 +108,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		return problems;
 	}
 
+	@Override
 	public void initializeBundles(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
@@ -116,6 +123,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		}
 	}
 
+	@Override
 	public void initializeExtensionPoints(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
@@ -131,6 +139,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		listener.addExtensionPoints(extPts);
 	}
 
+	@Override
 	public void initializeServices(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
@@ -407,6 +416,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		return extensionAdapters;
 	}
 
+	@Override
 	public void bundleChanged(BundleEvent event) {
 		Bundle adapter = createBundleAdapter(event.getBundle());
 
@@ -443,6 +453,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		}
 	}
 
+	@Override
 	public void serviceChanged(ServiceEvent event) {
 		ServiceReference ref = event.getServiceReference();
 		ServiceRegistration adapter = createServiceReferenceAdapter(ref);
@@ -469,22 +480,27 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		return result;
 	}
 
+	@Override
 	public void added(IExtension[] extensions) {
 		listener.addExtensions(createExtensionAdapters(extensions));
 	}
 
+	@Override
 	public void removed(IExtension[] extensions) {
 		listener.removeExtensions(createExtensionAdapters(extensions));
 	}
 
+	@Override
 	public void added(IExtensionPoint[] extensionPoints) {
 		listener.addExtensionPoints(createExtensionPointAdapters(extensionPoints));
 	}
 
+	@Override
 	public void removed(IExtensionPoint[] extensionPoints) {
 		listener.removeExtensionPoints(createExtensionPointAdapters(extensionPoints));
 	}
 
+	@Override
 	public void setEnabled(long id, boolean enabled) {
 		State state = PDERuntimePlugin.getDefault().getState();
 		BundleDescription desc = state.getBundle(id);

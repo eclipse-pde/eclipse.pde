@@ -34,6 +34,7 @@ public class ActiveHelpSection implements ISpySection {
 
 	private SpyFormToolkit toolkit;
 
+	@Override
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		this.toolkit = toolkit;
 		final Shell shell = HandlerUtil.getActiveShell(event);

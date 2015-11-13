@@ -210,10 +210,12 @@ public class Bundle extends ModelObject {
 		return (ServiceRegistration[]) result.toArray(new ServiceRegistration[result.size()]);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof Bundle) && (id == ((Bundle) obj).id);
 	}
 
+	@Override
 	public int hashCode() {
 		return (int) id;
 	}

@@ -20,8 +20,10 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 		fRegistryBrowser = registryBrowser;
 	}
 
+	@Override
 	public void modelChanged(final ModelChangeDelta[] delta) {
 		fRegistryBrowser.getSite().getWorkbenchWindow().getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				update(delta);
 			}

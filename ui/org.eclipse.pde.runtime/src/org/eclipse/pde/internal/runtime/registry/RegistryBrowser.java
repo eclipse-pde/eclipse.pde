@@ -48,6 +48,7 @@ public class RegistryBrowser extends ViewPart {
 			this.actionGroupBy = groupBy;
 		}
 
+		@Override
 		public void run() {
 			if (isChecked()) {
 				fMemento.putInteger(GROUP_BY, actionGroupBy);
@@ -104,6 +105,7 @@ public class RegistryBrowser extends ViewPart {
 
 	private DrillDownAdapter fDrillDownAdapter;
 	private ViewerFilter fActiveFilter = new ViewerFilter() {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof ExtensionPoint)
 				element = Platform.getBundle(((ExtensionPoint) element).getNamespaceIdentifier());
@@ -116,6 +118,7 @@ public class RegistryBrowser extends ViewPart {
 	};
 
 	private ViewerFilter fDisabledFilter = new ViewerFilter() {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof Bundle) {
 				return !((Bundle) element).isEnabled();
@@ -133,24 +136,28 @@ public class RegistryBrowser extends ViewPart {
 			super(tree);
 		}
 
+		@Override
 		public void goInto() {
 			super.goInto();
 			fShowPluginsAction.setEnabled(!canGoHome());
 			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 
+		@Override
 		public void goBack() {
 			super.goBack();
 			fShowPluginsAction.setEnabled(!canGoHome());
 			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 
+		@Override
 		public void goHome() {
 			super.goHome();
 			fShowPluginsAction.setEnabled(!canGoHome());
 			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 
+		@Override
 		public void goInto(Object newInput) {
 			super.goInto(newInput);
 			fShowPluginsAction.setEnabled(!canGoHome());
@@ -165,6 +172,7 @@ public class RegistryBrowser extends ViewPart {
 		model.addModelChangeListener(listener);
 
 		initializeModelJob = new Job(PDERuntimeMessages.RegistryBrowser_InitializingView) {
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				model.connect(monitor, true);
 				initializeModelJob = null;
@@ -174,6 +182,7 @@ public class RegistryBrowser extends ViewPart {
 		initializeModelJob.schedule();
 	}
 
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		if (memento == null)
@@ -197,6 +206,7 @@ public class RegistryBrowser extends ViewPart {
 			fMemento.putString(SHOW_ADVANCED_MODE, "false"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void dispose() {
 		if (initializeModelJob != null) {
 			initializeModelJob.cancel();
@@ -210,6 +220,7 @@ public class RegistryBrowser extends ViewPart {
 		super.dispose();
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		// create the sash form that will contain the tree viewer & text viewer
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -244,6 +255,7 @@ public class RegistryBrowser extends ViewPart {
 		fTreeViewer.setLabelProvider(fLabelProvider);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				// let Comparables compare themselves
 				if (e1 instanceof Comparable && e2 instanceof Comparable && e1.getClass().equals(e2.getClass())) {
@@ -276,6 +288,7 @@ public class RegistryBrowser extends ViewPart {
 
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mng) {
 				fillContextMenu(mng);
 			}
@@ -288,6 +301,7 @@ public class RegistryBrowser extends ViewPart {
 
 	private void hookDoubleClickAction() {
 		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 				if (selection.size() == 1) {
@@ -354,6 +368,7 @@ public class RegistryBrowser extends ViewPart {
 		manager.add(fShowAdvancedOperationsAction);
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 		if (memento == null || fMemento == null || fTreeViewer == null)
 			return;
@@ -363,6 +378,7 @@ public class RegistryBrowser extends ViewPart {
 		memento.putMemento(fMemento);
 	}
 
+	@Override
 	public void setFocus() {
 		Text filterText = fFilteredTree.getFilterControl();
 		if (filterText != null) {
@@ -375,8 +391,10 @@ public class RegistryBrowser extends ViewPart {
 	 */
 	private void makeActions() {
 		fRefreshAction = new Action("refresh") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				BusyIndicator.showWhile(fTreeViewer.getTree().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						refresh(fTreeViewer.getInput());
 					}
@@ -389,6 +407,7 @@ public class RegistryBrowser extends ViewPart {
 		fRefreshAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_DISABLED);
 
 		fShowPluginsAction = new Action(PDERuntimeMessages.RegistryView_showRunning_label) {
+			@Override
 			public void run() {
 				if (fShowPluginsAction.isChecked()) {
 					fTreeViewer.addFilter(fActiveFilter);
@@ -401,6 +420,7 @@ public class RegistryBrowser extends ViewPart {
 		fShowPluginsAction.setChecked(fMemento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
 
 		fShowDisabledAction = new Action(PDERuntimeMessages.RegistryView_showDisabled_label) {
+			@Override
 			public void run() {
 				if (fShowDisabledAction.isChecked()) {
 					fTreeViewer.addFilter(fDisabledFilter);
@@ -413,6 +433,7 @@ public class RegistryBrowser extends ViewPart {
 		fShowDisabledAction.setChecked(fMemento.getString(SHOW_DISABLED_MODE).equals("true")); //$NON-NLS-1$
 
 		fCopyAction = new Action(PDERuntimeMessages.RegistryBrowser_copy_label) {
+			@Override
 			public void run() {
 				ITreeSelection selection = (ITreeSelection) fFilteredTree.getViewer().getSelection();
 				if (selection.isEmpty()) {
@@ -437,12 +458,14 @@ public class RegistryBrowser extends ViewPart {
 		fGroupByServicesAction.setChecked(groupBy == SERVICES);
 
 		fShowAdvancedOperationsAction = new Action(PDERuntimeMessages.RegistryView_showAdvanced_label) {
+			@Override
 			public void run() { // do nothing
 			}
 		};
 		fShowAdvancedOperationsAction.setChecked(fMemento.getString(SHOW_ADVANCED_MODE).equals("true")); //$NON-NLS-1$
 
 		fStartAction = new Action(PDERuntimeMessages.RegistryView_startAction_label) {
+			@Override
 			public void run() {
 				try {
 					List bundles = getSelectedBundles();
@@ -457,6 +480,7 @@ public class RegistryBrowser extends ViewPart {
 		};
 
 		fStopAction = new Action(PDERuntimeMessages.RegistryView_stopAction_label) {
+			@Override
 			public void run() {
 				try {
 					List bundles = getSelectedBundles();
@@ -471,6 +495,7 @@ public class RegistryBrowser extends ViewPart {
 		};
 
 		fEnableAction = new Action(PDERuntimeMessages.RegistryView_enableAction_label) {
+			@Override
 			public void run() {
 				List bundles = getSelectedBundles();
 				for (Iterator it = bundles.iterator(); it.hasNext();) {
@@ -481,6 +506,7 @@ public class RegistryBrowser extends ViewPart {
 		};
 
 		fDisableAction = new Action(PDERuntimeMessages.RegistryView_disableAction_label) {
+			@Override
 			public void run() {
 				List bundles = getSelectedBundles();
 				for (Iterator it = bundles.iterator(); it.hasNext();) {
@@ -491,6 +517,7 @@ public class RegistryBrowser extends ViewPart {
 		};
 
 		fDiagnoseAction = new Action(PDERuntimeMessages.RegistryView_diagnoseAction_label) {
+			@Override
 			public void run() {
 				List bundles = getSelectedBundles();
 				for (Iterator it = bundles.iterator(); it.hasNext();) {
@@ -510,6 +537,7 @@ public class RegistryBrowser extends ViewPart {
 		};
 
 		fCollapseAllAction = new Action("collapseAll") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				fTreeViewer.collapseAll();
 			}
@@ -682,6 +710,7 @@ public class RegistryBrowser extends ViewPart {
 			lastRefresh = now;
 		} else {
 			Runnable runnable = new Runnable() {
+				@Override
 				public void run() {
 					try {
 						Thread.sleep(REFRESH_DELAY);
@@ -693,6 +722,7 @@ public class RegistryBrowser extends ViewPart {
 						return;
 
 					fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (!fTreeViewer.getTree().isDisposed()) {
 								fTreeViewer.refresh();
@@ -733,6 +763,7 @@ public class RegistryBrowser extends ViewPart {
 		}
 	}
 
+	@Override
 	public Object getAdapter(Class clazz) {
 		if (ILabelProvider.class.equals(clazz)) {
 			return fLabelProvider;

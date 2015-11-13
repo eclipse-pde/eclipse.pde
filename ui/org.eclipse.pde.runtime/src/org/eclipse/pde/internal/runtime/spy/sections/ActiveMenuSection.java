@@ -170,6 +170,7 @@ public class ActiveMenuSection implements ISpySection {
 		}
 	}
 
+	@Override
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		// do nothing
 	}

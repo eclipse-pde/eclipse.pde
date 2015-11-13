@@ -23,6 +23,7 @@ public class SpyHandler extends AbstractHandler {
 	private SpyDialog spyDialog = null;
 
 
+	@Override
 	public Object execute(ExecutionEvent event) {
 		if (spyDialog != null && spyDialog.getShell() != null && !spyDialog.getShell().isDisposed()) {
 			spyDialog.close();

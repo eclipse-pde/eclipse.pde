@@ -33,6 +33,7 @@ import org.osgi.framework.Bundle;
  */
 public class ActivePartSection implements ISpySection {
 
+	@Override
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		if (window == null) // if we don't have an active workbench, we don't have a valid selection to analyze

@@ -69,6 +69,7 @@ public class Folder {
 		return null;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -77,6 +78,7 @@ public class Folder {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		return ((obj instanceof Folder) && (((Folder) obj).id == id) && (((Folder) obj).parent.equals(parent)));
 	}

@@ -129,14 +129,17 @@ public class ServiceRegistration extends ModelObject implements Comparable {
 		}
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof ServiceRegistration) && (id == (((ServiceRegistration) obj).id));
 	}
 
+	@Override
 	public int hashCode() {
 		return (int) id;
 	}
 
+	@Override
 	public int compareTo(Object obj) {
 		if (obj instanceof ServiceRegistration) {
 			ServiceRegistration other = (ServiceRegistration) obj;

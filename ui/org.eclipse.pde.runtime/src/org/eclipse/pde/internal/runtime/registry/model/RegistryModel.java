@@ -21,6 +21,7 @@ import org.osgi.framework.Version;
 public class RegistryModel {
 
 	private BackendChangeListener backendListener = new BackendChangeListener() {
+		@Override
 		public void addBundle(Bundle adapter) {
 			adapter.setModel(RegistryModel.this);
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.ADDED);
@@ -41,6 +42,7 @@ public class RegistryModel {
 			fireModelChangeEvent(new ModelChangeDelta[] {delta});
 		}
 
+		@Override
 		public void removeBundle(Bundle adapter) {
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.REMOVED);
 
@@ -61,6 +63,7 @@ public class RegistryModel {
 			adapter.setModel(null);
 		}
 
+		@Override
 		public void updateBundle(Bundle adapter, int updated) {
 			adapter.setModel(RegistryModel.this);
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, updated);
@@ -74,6 +77,7 @@ public class RegistryModel {
 			fireModelChangeEvent(new ModelChangeDelta[] {delta});
 		}
 
+		@Override
 		public void addService(ServiceRegistration adapter) {
 			ModelChangeDelta serviceNameDelta = null;
 			if (!serviceNames.contains(adapter.getName())) {
@@ -97,6 +101,7 @@ public class RegistryModel {
 			}
 		}
 
+		@Override
 		public void removeService(ServiceRegistration adapter) {
 			ModelChangeDelta serviceNameDelta = null;
 			if (getServices(adapter.getName().getClasses()).length == 0) {
@@ -118,6 +123,7 @@ public class RegistryModel {
 			}
 		}
 
+		@Override
 		public void updateService(ServiceRegistration adapter) {
 			adapter.setModel(RegistryModel.this);
 			services.put(new Long(adapter.getId()), adapter);
@@ -127,6 +133,7 @@ public class RegistryModel {
 			fireModelChangeEvent(new ModelChangeDelta[] {delta});
 		}
 
+		@Override
 		public void addExtensions(Extension[] extensionAdapters) {
 			for (int i = 0; i < extensionAdapters.length; i++) {
 				extensionAdapters[i].setModel(RegistryModel.this);
@@ -142,6 +149,7 @@ public class RegistryModel {
 			fireModelChangeEvent(delta);
 		}
 
+		@Override
 		public void removeExtensions(Extension[] extensionAdapters) {
 			for (int i = 0; i < extensionAdapters.length; i++) {
 				String id = extensionAdapters[i].getExtensionPointUniqueIdentifier();
@@ -160,6 +168,7 @@ public class RegistryModel {
 			}
 		}
 
+		@Override
 		public void addExtensionPoints(ExtensionPoint[] extensionPointAdapters) {
 			for (int i = 0; i < extensionPointAdapters.length; i++) {
 				extensionPointAdapters[i].setModel(RegistryModel.this);
@@ -173,6 +182,7 @@ public class RegistryModel {
 			fireModelChangeEvent(delta);
 		}
 
+		@Override
 		public void removeExtensionPoints(ExtensionPoint[] extensionPointAdapters) {
 			for (int i = 0; i < extensionPointAdapters.length; i++) {
 				extensionPoints.remove(extensionPointAdapters[i].getUniqueIdentifier());

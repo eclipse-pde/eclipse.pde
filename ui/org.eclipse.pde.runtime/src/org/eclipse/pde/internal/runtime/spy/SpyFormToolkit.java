@@ -50,6 +50,7 @@ public class SpyFormToolkit extends FormToolkit {
 			this.fDialog = dialog;
 		}
 
+		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			String href = (String) e.getHref();
 			if (href.startsWith(CLASS_PROTOCOL_PREFIX)) {
@@ -73,6 +74,7 @@ public class SpyFormToolkit extends FormToolkit {
 			this.image = image;
 		}
 
+		@Override
 		public void run() {
 			FileDialog fileChooser = new FileDialog(PDERuntimePlugin.getActiveWorkbenchShell(), SWT.SAVE);
 			fileChooser.setFileName("image"); //$NON-NLS-1$
@@ -114,6 +116,7 @@ public class SpyFormToolkit extends FormToolkit {
 		this.dialog = dialog;
 	}
 
+	@Override
 	public FormText createFormText(Composite parent, boolean trackFocus) {
 		FormText text = super.createFormText(parent, trackFocus);
 		if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
@@ -130,6 +133,7 @@ public class SpyFormToolkit extends FormToolkit {
 		copyQNameItem.setText(PDERuntimeMessages.SpyFormToolkit_copyQualifiedName);
 
 		SelectionListener listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (e.widget == copyQNameItem) {
 					Clipboard clipboard = null;
@@ -145,6 +149,7 @@ public class SpyFormToolkit extends FormToolkit {
 		};
 		copyQNameItem.addSelectionListener(listener);
 		menu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				String href = (String) formText.getSelectedLinkHref();
 				copyQNameItem.setEnabled(href != null && href.startsWith(CLASS_PROTOCOL_PREFIX));

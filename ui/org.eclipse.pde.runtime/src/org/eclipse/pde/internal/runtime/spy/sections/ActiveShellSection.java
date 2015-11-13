@@ -26,6 +26,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class ActiveShellSection implements ISpySection {
 
+	@Override
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		final Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();

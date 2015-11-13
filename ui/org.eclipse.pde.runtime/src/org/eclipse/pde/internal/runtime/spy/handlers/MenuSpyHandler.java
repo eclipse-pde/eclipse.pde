@@ -29,6 +29,7 @@ public class MenuSpyHandler extends AbstractHandler implements Listener {
 	private Cursor defaultCursor;
 	private Cursor spyCursor;
 
+	@Override
 	public Object execute(ExecutionEvent event) {
 		if (popupDialog != null && popupDialog.getShell() != null && !popupDialog.getShell().isDisposed()) {
 			popupDialog.close();
@@ -51,6 +52,7 @@ public class MenuSpyHandler extends AbstractHandler implements Listener {
 	}
 
 	// TODO clean up this code
+	@Override
 	public void handleEvent(Event event) {
 		switch (event.type) {
 		case SWT.KeyDown:

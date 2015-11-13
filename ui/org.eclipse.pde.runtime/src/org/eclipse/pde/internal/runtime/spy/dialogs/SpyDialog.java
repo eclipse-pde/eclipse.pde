@@ -37,14 +37,17 @@ public class SpyDialog extends PopupDialog {
 	private SpyFormToolkit toolkit;
 
 	private class CloseAction extends Action {
+		@Override
 		public ImageDescriptor getImageDescriptor() {
 			return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE);
 		}
 
+		@Override
 		public String getToolTipText() {
 			return PDERuntimeMessages.SpyDialog_close;
 		}
 
+		@Override
 		public void run() {
 			close();
 		}
@@ -60,17 +63,20 @@ public class SpyDialog extends PopupDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.SPY_DIALOG);
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		getShell().setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 		initializeBounds();
 		return createDialogArea(parent);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		this.composite = (Composite) super.createDialogArea(parent);
 
@@ -119,6 +125,7 @@ public class SpyDialog extends PopupDialog {
 		return composite;
 	}
 
+	@Override
 	protected Point getInitialLocation(Point size) {
 		if (fAnchor == null) {
 			return super.getInitialLocation(size);
@@ -134,6 +141,7 @@ public class SpyDialog extends PopupDialog {
 		return point;
 	}
 
+	@Override
 	public boolean close() {
 		if (toolkit != null)
 			toolkit.dispose();
@@ -141,6 +149,7 @@ public class SpyDialog extends PopupDialog {
 		return super.close();
 	}
 
+	@Override
 	protected Control getFocusControl() {
 		return this.composite;
 	}

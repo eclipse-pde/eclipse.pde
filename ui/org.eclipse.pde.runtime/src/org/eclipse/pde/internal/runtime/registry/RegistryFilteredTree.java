@@ -24,6 +24,7 @@ public class RegistryFilteredTree extends FilteredTree {
 		this.browser = browser;
 	}
 
+	@Override
 	protected void createControl(Composite parent, int treeStyle) {
 		super.createControl(parent, treeStyle);
 
@@ -51,6 +52,7 @@ public class RegistryFilteredTree extends FilteredTree {
 		treeComposite.setLayoutData(data);
 	}
 
+	@Override
 	protected void updateToolbar(boolean visible) {
 		super.updateToolbar(visible);
 

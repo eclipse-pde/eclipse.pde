@@ -24,6 +24,7 @@ public class DiagnosticsDialog extends ErrorDialog {
 		super(parentShell, dialogTitle, message, status, displayMask);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control area = super.createDialogArea(parent);
 		createDropDownList((Composite) area);
@@ -35,6 +36,7 @@ public class DiagnosticsDialog extends ErrorDialog {
 	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	}

@@ -26,6 +26,7 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class ActiveWizardSection implements ISpySection {
 
+	@Override
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		final Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();

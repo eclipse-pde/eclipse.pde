@@ -26,13 +26,16 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		fRegistryBrowser = registryBrowser;
 	}
 
+	@Override
 	public void dispose() { // nothing to dispose
 	}
 
+	@Override
 	public Object[] getElements(Object element) {
 		return getChildren(element);
 	}
 
+	@Override
 	public Object[] getChildren(Object element) {
 		if (element instanceof RegistryModel) {
 			RegistryModel model = (RegistryModel) element;
@@ -142,6 +145,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (!(element instanceof ModelObject)) {
 			return null;
@@ -154,6 +158,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		// Bundle and ServiceRegistration always have children
 		if (element instanceof Bundle)
@@ -165,6 +170,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		return children != null && children.length > 0;
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { // do nothing
 	}
 

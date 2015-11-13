@@ -25,6 +25,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class ActiveFormEditorSection implements ISpySection {
 
+	@Override
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		final IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (!(part instanceof FormEditor))

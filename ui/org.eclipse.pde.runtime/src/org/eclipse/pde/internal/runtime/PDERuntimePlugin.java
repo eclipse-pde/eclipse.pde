@@ -97,6 +97,7 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.fContext = context;
@@ -132,6 +133,7 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		if (packageAdminTracker != null) {
