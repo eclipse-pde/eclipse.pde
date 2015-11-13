@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     EclipseSource Corporation - initial API and implementation
  *     Mickael Istria (Red Hat Inc.) - 434317
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 482175
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.handlers;
 
@@ -22,37 +23,28 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-/**
- * @since 3.5
- */
 public class MenuSpyHandler extends AbstractHandler implements Listener {
 
-	private PopupDialog INSTANCE = null;
+	private PopupDialog popupDialog = null;
 	private Cursor defaultCursor;
 	private Cursor spyCursor;
 
-	public MenuSpyHandler() {
-		// do nothing
-	}
-
 	public Object execute(ExecutionEvent event) {
-		if (event != null) {
-			if (INSTANCE != null && INSTANCE.getShell() != null && !INSTANCE.getShell().isDisposed()) {
-				INSTANCE.close();
-			}
+		if (popupDialog != null && popupDialog.getShell() != null && !popupDialog.getShell().isDisposed()) {
+			popupDialog.close();
+		}
 
-			Shell shell = HandlerUtil.getActiveShell(event);
-			if (shell != null) {
-				Display display = shell.getDisplay();
-				display.addFilter(SWT.Selection, this);
-				display.addFilter(SWT.KeyDown, this);
-				display.addFilter(SWT.Show, this);
-				if (display.getActiveShell() != null) {
-					defaultCursor = display.getActiveShell().getCursor();
-					Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_MENUSPY_OBJ);
-					spyCursor = new Cursor(display, image.getImageData(), 7, 7);
-					display.getActiveShell().setCursor(spyCursor);
-				}
+		Shell shell = HandlerUtil.getActiveShell(event);
+		if (shell != null) {
+			Display display = shell.getDisplay();
+			display.addFilter(SWT.Selection, this);
+			display.addFilter(SWT.KeyDown, this);
+			display.addFilter(SWT.Show, this);
+			if (display.getActiveShell() != null) {
+				defaultCursor = display.getActiveShell().getCursor();
+				Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_MENUSPY_OBJ);
+				spyCursor = new Cursor(display, image.getImageData(), 7, 7);
+				display.getActiveShell().setCursor(spyCursor);
 			}
 		}
 		return null;
@@ -61,17 +53,17 @@ public class MenuSpyHandler extends AbstractHandler implements Listener {
 	// TODO clean up this code
 	public void handleEvent(Event event) {
 		switch (event.type) {
-			case SWT.KeyDown :
-				if (event.keyCode == SWT.ESC)
-					break;
-			case SWT.Show :
-				if (spyCursor != null) {
-					Shell shell = event.display.getActiveShell();
-					if (shell != null) {
-						shell.setCursor(spyCursor);
-					}
+		case SWT.KeyDown:
+			if (event.keyCode == SWT.ESC)
+				break;
+		case SWT.Show:
+			if (spyCursor != null) {
+				Shell shell = event.display.getActiveShell();
+				if (shell != null) {
+					shell.setCursor(spyCursor);
 				}
-				return;
+			}
+			return;
 		}
 		event.display.removeFilter(SWT.Selection, this);
 		event.display.removeFilter(SWT.KeyDown, this);
@@ -95,7 +87,7 @@ public class MenuSpyHandler extends AbstractHandler implements Listener {
 				}
 			}
 			MenuSpyDialog dialog = new MenuSpyDialog(shell, event, shell.getDisplay().getCursorLocation());
-			INSTANCE = dialog;
+			popupDialog = dialog;
 			dialog.create();
 			dialog.open();
 			event.doit = false;
