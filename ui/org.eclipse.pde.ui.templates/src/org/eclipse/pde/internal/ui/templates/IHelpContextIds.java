@@ -27,6 +27,7 @@ public interface IHelpContextIds {
 	public static final String TEMPLATE_RCP_MAIL = PREFIX + "rcp_mail"; //$NON-NLS-1$
 	public static final String TEMPLATE_E4_APPLICATION = PREFIX + "e4Application"; //$NON-NLS-1$
 	public static final String TEMPLATE_E4_VIEW = PREFIX + "e4View"; //$NON-NLS-1$
+	public static final String TEMPLATE_E4_HANDLER = PREFIX + "e4Handler"; //$NON-NLS-1$
 	public static final String TEMPLATE_UNIVERSAL_WELCOME = PREFIX + "template_universal_welcome"; //$NON-NLS-1$
 	// TODO: MP: SPLASH: Update help context ID
 	public static final String TEMPLATE_SPLASH_HANDLERS = PREFIX + "splash_handlers"; //$NON-NLS-1$

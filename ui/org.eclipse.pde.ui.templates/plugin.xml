@@ -530,7 +530,20 @@
                   %pluginContent.e4View.description
                </description>
             </wizard>
-        
+         <wizard
+                  class="org.eclipse.pde.internal.ui.templates.e4.E4HandlerNewWizard"
+                  icon="$nl$/icons/etool16/e4.png"
+                  id="org.eclipse.pde.ui.templates.e4Handler"
+                  java="true"
+                  name="%pluginContent.e4Handler.name"
+                  pureOSGi="false"
+                  rcp="false"
+                  requiresActivator="false"
+                  ui-content="true">
+               <description>
+                  %pluginContent.e4Handler.description
+               </description>
+            </wizard>
    </extension>
    
 </plugin>

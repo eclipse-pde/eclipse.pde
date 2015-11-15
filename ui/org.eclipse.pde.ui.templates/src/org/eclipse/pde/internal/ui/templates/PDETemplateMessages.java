@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - ongoing development
  *     Volker Wegert - bug 243087
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - bug 481340
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates;
 
@@ -16,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class PDETemplateMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.templates.pderesources"; //$NON-NLS-1$
+
 
 	public static String HelpTemplate_sampleText;
 	public static String HelpNewWizard_wiz;
@@ -104,6 +106,7 @@ public class PDETemplateMessages extends NLS {
 	public static String E4ApplicationTemplate_createLifeCycle;
 	public static String E4ApplicationTemplate_lifeCycleClassname;
 
+
 	public static String E4ViewNewWizard_wtitle;
 	public static String E4ViewTemplate_title0;
 	public static String E4ViewTemplate_desc0;
@@ -114,6 +117,14 @@ public class PDETemplateMessages extends NLS {
 	public static String E4ViewTemplate_categoryName;
 	public static String E4ViewTemplate_defaultCategoryName;
 	public static String E4ViewTemplate_select;
+
+	public static String E4HandlerNewWizard_wtitle;
+	public static String E4HandlerTemplate_title;
+	public static String E4HandlerTemplate_desc;
+	public static String E4HandlerTemplate_packageName;
+	public static String E4HandlerTemplate_className;
+	public static String E4HandlerMessage;
+	public static String E4HandlerMessage_default;
 
 	public static String MultiPageEditorNewWizard_wtitle;
 	public static String MultiPageEditorTemplate_title;
