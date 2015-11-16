@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.service.resolver.ResolverError;
@@ -41,6 +39,8 @@ import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+
+import junit.framework.TestCase;
 
 /**
  * Tests the methods in our utility class: {@link Util}
@@ -556,7 +556,6 @@ public class UtilTests extends TestCase {
 				"org.eclipse.ui.win32", //$NON-NLS-1$
 				"org.eclipse.pde.core", //$NON-NLS-1$
 				"org.eclipse.pde.build", //$NON-NLS-1$
-				"org.eclipse.core.runtime.compatibility.registry", //$NON-NLS-1$
 				"org.eclipse.ui.workbench.compatibility", //$NON-NLS-1$
 				"org.eclipse.ltk.ui.refactoring", //$NON-NLS-1$
 				"org.eclipse.jface.text", //$NON-NLS-1$
