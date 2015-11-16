@@ -17,6 +17,9 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.FilteredList;
+import org.eclipse.ui.dialogs.FilteredList.FilterMatcher;
+import org.eclipse.ui.internal.misc.StringMatcher;
 
 public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 
@@ -65,6 +68,27 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 
 	public void setConditionalElements(Object[] elements) {
 		fConditionalElements = elements;
+	}
+
+	@Override
+	protected FilteredList createFilteredList(Composite parent) {
+		final FilteredList list = super.createFilteredList(parent);
+
+		list.setFilterMatcher(new FilterMatcher() {
+			private StringMatcher fMatcher;
+
+			@Override
+			public void setFilter(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
+				fMatcher = new StringMatcher('*' + pattern + '*', ignoreCase, ignoreWildCards);
+			}
+
+			@Override
+			public boolean match(Object element) {
+				return fMatcher.match(list.getLabelProvider().getText(element));
+			}
+		});
+
+		return list;
 	}
 
 }
