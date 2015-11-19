@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,9 +152,9 @@ public class ActiveMenuSection implements ISpySection {
 				field.setAccessible(true);
 				delegate = (IActionDelegate) field.get(pluginAction);
 				if (delegate == null) { // have to invoke createDelegate if we don't have one yet...
-					Method method = clazz.getDeclaredMethod("createDelegate", null); //$NON-NLS-1$
+					Method method = clazz.getDeclaredMethod("createDelegate"); //$NON-NLS-1$
 					method.setAccessible(true);
-					method.invoke(pluginAction, null);
+					method.invoke(pluginAction);
 					delegate = (IActionDelegate) field.get(pluginAction);
 				}
 			}
