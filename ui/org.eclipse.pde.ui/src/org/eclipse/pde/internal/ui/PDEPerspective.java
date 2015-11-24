@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - 482905 Project Explorer
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.pde.internal.ui.views.target.TargetStateView;
 import org.eclipse.ui.*;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 public class PDEPerspective implements IPerspectiveFactory {
 
@@ -31,7 +33,7 @@ public class PDEPerspective implements IPerspectiveFactory {
 	private void addViews() {
 		IFolderLayout topLeft = factory.createFolder("topLeft", //$NON-NLS-1$
 				IPageLayout.LEFT, 0.25f, factory.getEditorArea());
-		topLeft.addView(JavaUI.ID_PACKAGES);
+		topLeft.addView(ProjectExplorer.VIEW_ID);
 		topLeft.addPlaceholder(IPageLayout.ID_PROJECT_EXPLORER);
 		topLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY);
 		topLeft.addView(IPDEUIConstants.PLUGINS_VIEW_ID);
