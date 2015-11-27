@@ -286,7 +286,7 @@ public class FeatureExportOperation extends Job {
 			runScript(getPackagerScriptName(featureID, configs[i][0], configs[i][1], configs[i][2], featureLocation), null, properties, subMonitor.split(2));
 		}
 		properties.put("destination.temp.folder", fBuildTempLocation + "/pde.logs"); //$NON-NLS-1$ //$NON-NLS-2$
-		runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, subMonitor.split(2)); //$NON-NLS-1$				
+		runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, subMonitor.split(2)); //$NON-NLS-1$
 	}
 
 	protected boolean groupedConfigurations() {
