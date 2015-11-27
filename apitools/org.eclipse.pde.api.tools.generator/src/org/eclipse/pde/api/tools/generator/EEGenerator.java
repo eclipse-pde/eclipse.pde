@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2014 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -144,6 +144,7 @@ public class EEGenerator {
 				this.type = CharOperation.replaceOnCopy(ftype, '/', '.');
 			}
 		}
+		@Override
 		public int compareTo(Field field) {
 			return CharOperation.compareTo(this.name, field.name);
 		}
@@ -214,6 +215,7 @@ public class EEGenerator {
 				this.genericSignature = genericsig;
 			}
 		}
+		@Override
 		public int compareTo(Method method) {
 			int compare = CharOperation.compareTo(this.selector, method.selector);
 			if (compare == 0) {
@@ -307,6 +309,7 @@ public class EEGenerator {
 				result.put(typeName, type);
 			}
 		}
+		@Override
 		public int compareTo(Package package1) {
 			return this.name.compareTo(package1.name);
 		}
@@ -774,6 +777,7 @@ public class EEGenerator {
 			}
 			long time = System.currentTimeMillis();
 			this.allFiles = Util.getAllFiles(new File(this.JRElib), new FileFilter() {
+				@Override
 				public boolean accept(File pathname) {
 					return pathname.isDirectory() || pathname.getName().toLowerCase().endsWith(".jar"); //$NON-NLS-1$
 				}
@@ -1048,6 +1052,7 @@ public class EEGenerator {
 			System.out.println("Its generated size is " + this.generatedSize + " bytes."); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println("Ratio : " + (((double) this.generatedSize / (double) this.totalSize) * 100.0) + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		@Override
 		public String toString() {
 			return this.getProfileName();
 		}
@@ -1189,6 +1194,7 @@ public class EEGenerator {
 		 * @see org.objectweb.asm.ClassAdapter#visit(int, int, java.lang.String,
 		 * java.lang.String, java.lang.String, java.lang.String[])
 		 */
+		@Override
 		public void visit(int version, int access, String className, String signature, String superName, String[] interfaces) {
 			this.name = className;
 			this.stub = new StubClass(access, className, superName, interfaces);
@@ -1205,6 +1211,7 @@ public class EEGenerator {
 		 * org.objectweb.asm.ClassAdapter#visitAttribute(org.objectweb.asm.Attribute
 		 * )
 		 */
+		@Override
 		public void visitAttribute(Attribute attr) {
 			if ("Synthetic".equals(attr.type)) { //$NON-NLS-1$
 				this.flags |= IGNORE_CLASS_FILE;
@@ -1220,6 +1227,7 @@ public class EEGenerator {
 		 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String,
 		 * java.lang.String, java.lang.String, java.lang.Object)
 		 */
+		@Override
 		public FieldVisitor visitField(int access, String fieldName, String desc, String signature, Object value) {
 			if (type.getField(fieldName) == null) {
 				return null;
@@ -1233,6 +1241,7 @@ public class EEGenerator {
 		 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String,
 		 * java.lang.String, java.lang.String, int)
 		 */
+		@Override
 		public void visitInnerClass(String innerClassName, String outerName, String innerName, int access) {
 			if (this.name.equals(innerClassName) && (outerName == null)) {
 				// local class
@@ -1246,6 +1255,7 @@ public class EEGenerator {
 		 * java.lang.String, java.lang.String, java.lang.String,
 		 * java.lang.String[])
 		 */
+		@Override
 		public MethodVisitor visitMethod(int access, String methodName, String desc, String signature, String[] exceptions) {
 			if ("<clinit>".equals(methodName)) { //$NON-NLS-1$
 				return null;
@@ -1475,6 +1485,7 @@ public class EEGenerator {
 			}
 			this.methods.add(m);
 		}
+		@Override
 		public int compareTo(Type type) {
 			return this.getSimpleName().compareTo(type.getSimpleName());
 		}

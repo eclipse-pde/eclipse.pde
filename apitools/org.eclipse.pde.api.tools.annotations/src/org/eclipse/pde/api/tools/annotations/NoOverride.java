@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
  * Methods tagged with this annotation are declaring they are not to be
  * overridden by clients. If this annotation is used anywhere other than methods
  * it will be ignored.
- * 
+ *
  * @since 1.0
  */
 @Documented

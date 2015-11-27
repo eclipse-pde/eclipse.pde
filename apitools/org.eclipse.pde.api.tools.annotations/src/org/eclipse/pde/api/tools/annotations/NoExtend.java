@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
  * Classes and interfaces tagged with this annotation are declaring they are not
  * to be extended by clients. If this annotation is used anywhere except classes
  * or interfaces it will be ignored.
- * 
+ *
  * @since 1.0
  */
 @Documented

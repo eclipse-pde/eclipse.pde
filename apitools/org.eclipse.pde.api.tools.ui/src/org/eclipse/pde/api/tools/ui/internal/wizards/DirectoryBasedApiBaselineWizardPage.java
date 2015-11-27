@@ -227,6 +227,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 	 * Initializes the controls of the page if the profile is not
 	 * <code>null</code>
 	 */
+	@Override
 	protected void initialize() {
 		initializing = true;
 		try {

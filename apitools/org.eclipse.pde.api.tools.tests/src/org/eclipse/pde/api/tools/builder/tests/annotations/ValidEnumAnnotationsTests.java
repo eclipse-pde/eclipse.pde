@@ -51,6 +51,7 @@ public class ValidEnumAnnotationsTests extends InvalidEnumAnnotationsTests {
 		x1(true);
 	}
 
+	@Override
 	public void testInvalidEnumTag1F() {
 		x1(false);
 	}

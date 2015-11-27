@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * example a method tagged with this annotation should not be called by clients.
  * If this annotation appears anywhere other than classes, interfaces,
  * annotations, enums, methods and fields it will be ignored.
- * 
+ *
  * @since 1.0
  */
 @Documented

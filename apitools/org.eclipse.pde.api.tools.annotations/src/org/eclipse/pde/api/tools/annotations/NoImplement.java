@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
  * Interfaces tagged with this annotation are declaring they are not to be
  * implemented by clients. If this annotation is used anywhere except for
  * interfaces it will be ignored.
- * 
+ *
  * @since 1.0
  */
 @Documented
