@@ -13,7 +13,7 @@ import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
  *******************************************************************************/
 
 /**
- * 
+ *
  * Image filter that user string pattern like "my*icon", vs PatternFilter which
  * user regular expessions.
  *
