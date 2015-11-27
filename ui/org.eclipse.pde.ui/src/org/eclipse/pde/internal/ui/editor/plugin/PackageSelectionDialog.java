@@ -26,7 +26,6 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 	 */
 	public PackageSelectionDialog(Shell parent, ILabelProvider renderer, IJavaProject jProject, Vector<?> existingPackages, boolean allowJava) {
 		super(parent, renderer);
-		//setElements(jProject, existingPackages, allowJava);
 		setElements(PDEJavaHelper.getPackageFragments(jProject, existingPackages, allowJava));
 		setMultipleSelection(true);
 		setMessage(PDEUIMessages.PackageSelectionDialog_label);
