@@ -27,6 +27,7 @@ public class E4ApplicationNewWizard extends AbstractE4NewPluginTemplateWizard {
 		return new ITemplateSection[] {new E4ApplicationTemplate()};
 	}
 
+	@Override
 	protected String getFilenameToEdit() {
 		return E4ApplicationTemplate.E4_MODEL_FILE;
 	}

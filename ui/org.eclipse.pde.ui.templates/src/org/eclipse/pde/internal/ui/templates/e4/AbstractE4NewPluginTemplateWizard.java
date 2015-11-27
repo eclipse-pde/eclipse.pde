@@ -22,7 +22,7 @@ import org.eclipse.pde.ui.templates.PluginReference;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
 
-/** This abstract class is the basic class for E4 plugins templates. 
+/** This abstract class is the basic class for E4 plugins templates.
  * It removes the dependencies to org.eclipse.ui and add the FieldData for E4 mode management.
  * @author olivier
  *
@@ -50,7 +50,7 @@ public abstract class AbstractE4NewPluginTemplateWizard extends NewPluginTemplat
 
 	@Override
 	public boolean performFinish(IProject project, IPluginModelBase model, IProgressMonitor monitor) {
-		// Must do like ancestor 
+		// Must do like ancestor
 		boolean result = super.performFinish(project, model, monitor);
 
 		// but must then remove the "org.eclipse.ui" dependency which has been generated !
@@ -80,7 +80,7 @@ public abstract class AbstractE4NewPluginTemplateWizard extends NewPluginTemplat
 				// Remove the org.eclipse.core.runtime without any version
 				pb.remove(runtime);
 
-				// And must re-add it with correct version 
+				// And must re-add it with correct version
 				PluginReference pr = new PluginReference(ORG_ECLIPSE_CORE_RUNTIME, runtimeVersion, IMatchRules.GREATER_OR_EQUAL);
 				IPluginImport iimport = model.getPluginFactory().createImport();
 				iimport.setId(pr.getId());
@@ -122,8 +122,8 @@ public abstract class AbstractE4NewPluginTemplateWizard extends NewPluginTemplat
 		}
 	}
 
-	/** This method returns the name of the file to be edited in addition to manifest.mf 
-	 * 
+	/** This method returns the name of the file to be edited in addition to manifest.mf
+	 *
 	 * @return name of file or null if none.
 	 */
 	protected String getFilenameToEdit() {

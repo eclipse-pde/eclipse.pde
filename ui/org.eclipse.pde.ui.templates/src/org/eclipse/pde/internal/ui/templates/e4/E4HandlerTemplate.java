@@ -48,7 +48,7 @@ public class E4HandlerTemplate extends PDETemplateSection {
 	}
 
 	private void createOptions() {
-		// first page	
+		// first page
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.E4HandlerTemplate_packageName, (String) null, 0);
 		addOption("className", PDETemplateMessages.E4HandlerTemplate_className, "HellowWorldHandler", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("message", PDETemplateMessages.E4HandlerMessage, PDETemplateMessages.E4HandlerMessage_default, 0); //$NON-NLS-1$
@@ -65,7 +65,7 @@ public class E4HandlerTemplate extends PDETemplateSection {
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
+		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
 		initializeFields(model.getPluginBase().getId());
 	}
@@ -109,9 +109,9 @@ public class E4HandlerTemplate extends PDETemplateSection {
 
 		IPluginElement element = model.getFactory().createElement(extension);
 		extension.setId(getValue(KEY_PACKAGE_NAME) + ".fragment"); //$NON-NLS-1$
-		
+
 		element.setName("fragment"); //$NON-NLS-1$
-		element.setAttribute("apply", "initial"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		element.setAttribute("apply", "initial"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("uri", E4_FRAGMENT_FILE); //$NON-NLS-1$ //$NON-NLS-2$
 
 		extension.add(element);
@@ -141,9 +141,9 @@ public class E4HandlerTemplate extends PDETemplateSection {
 		result.add(new PluginReference("org.eclipse.jface", null, matchRule)); //$NON-NLS-1$
 		result.add(new PluginReference("org.eclipse.e4.ui.services", null, matchRule)); //$NON-NLS-1$
 		result.add(new PluginReference("org.eclipse.e4.core.di.annotations", null, matchRule)); //$NON-NLS-1$
-		
+
 		return result.toArray(new IPluginReference[result.size()]);
-		
+
 	}
 
 
