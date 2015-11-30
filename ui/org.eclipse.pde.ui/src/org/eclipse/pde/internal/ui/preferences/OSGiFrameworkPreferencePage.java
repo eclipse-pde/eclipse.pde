@@ -42,6 +42,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class OSGiFrameworkPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+	private IPluginExtensionPoint fPluginExtensionPoint = null;
 	/**
 	 * Label provider for the table viewer. Annotates the default framework with bold text
 	 */
@@ -116,15 +117,20 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 
 		Link text = new Link(comp, SWT.WRAP);
-		final IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(OSGiFrameworkManager.POINT_ID);
-		text.setText((point != null && SchemaRegistry.getSchemaURL(point) != null) ? PDEUIMessages.OSGiFrameworkPreferencePage_installed : PDEUIMessages.OSGiFrameworkPreferencePage_installed_nolink);
+
+		if (PDECore.getDefault().areModelsInitialized())
+			fPluginExtensionPoint = PDECore.getDefault().getExtensionsRegistry()
+					.findExtensionPoint(OSGiFrameworkManager.POINT_ID);
+		text.setText((fPluginExtensionPoint != null && SchemaRegistry.getSchemaURL(fPluginExtensionPoint) != null)
+				? PDEUIMessages.OSGiFrameworkPreferencePage_installed
+				: PDEUIMessages.OSGiFrameworkPreferencePage_installed_nolink);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
 		text.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				new ShowDescriptionAction(point, true).run();
+				new ShowDescriptionAction(fPluginExtensionPoint, true).run();
 			}
 		});
 
