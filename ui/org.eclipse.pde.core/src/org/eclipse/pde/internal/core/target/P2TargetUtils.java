@@ -1132,7 +1132,7 @@ public class P2TargetUtils {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 110);
 
 		// resolve IUs
-		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(10));
+		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(40));
 		if (subMonitor.isCanceled()) {
 			return;
 		}
@@ -1142,10 +1142,10 @@ public class P2TargetUtils {
 		if (repoCount == 0) {
 			return;
 		}
-		IQueryable<IInstallableUnit> allMetadata = getQueryableMetadata(repositories, subMonitor.split(10));
+		IQueryable<IInstallableUnit> allMetadata = getQueryableMetadata(repositories, subMonitor.split(5));
 
 		// do an initial slice to add everything the user requested
-		IQueryResult<IInstallableUnit> queryResult = slice(units, allMetadata, target, subMonitor.split(10));
+		IQueryResult<IInstallableUnit> queryResult = slice(units, allMetadata, target, subMonitor.split(5));
 		if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
 			return;
 		}
@@ -1159,7 +1159,7 @@ public class P2TargetUtils {
 			System.arraycopy(units, 0, units2, 0, units.length);
 			units2[units.length] = sourceIU;
 
-			queryResult = slice(units2, allMetadata, target, subMonitor.split(10));
+			queryResult = slice(units2, allMetadata, target, subMonitor.split(5));
 			if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
 				return;
 			}
@@ -1192,11 +1192,11 @@ public class P2TargetUtils {
 		if (subMonitor.isCanceled()) {
 			return;
 		}
-		subMonitor.worked(10);
+		subMonitor.worked(5);
 
 		// execute the provisioning plan
 		IPhaseSet phases = createPhaseSet();
-		IStatus result = engine.perform(plan, phases, subMonitor.split(60));
+		IStatus result = engine.perform(plan, phases, subMonitor.split(50));
 		if (!result.isOK()) {
 			throw new CoreException(result);
 		}

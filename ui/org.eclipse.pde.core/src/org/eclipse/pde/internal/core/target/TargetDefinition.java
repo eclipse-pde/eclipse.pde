@@ -219,11 +219,25 @@ public class TargetDefinition implements ITargetDefinition {
 	public IStatus resolve(IProgressMonitor monitor) {
 		ITargetLocation[] containers = getTargetLocations();
 		int num = 0;
+		// keep a map of synchronizer and number of containers it synchronizes
+		HashMap<P2TargetUtils, Integer> synchronizerNumContainerMap = new HashMap<P2TargetUtils, Integer>();
 		if (containers != null) {
 			num = containers.length;
+			for (ITargetLocation element : containers) {
+				P2TargetUtils synchronizer = element.getAdapter(P2TargetUtils.class);
+				if (synchronizer != null) {
+					if (!synchronizerNumContainerMap.containsKey(synchronizer)) {
+						synchronizerNumContainerMap.put(synchronizer, new Integer(1));
+					}
+					else{
+						Integer numberIU = synchronizerNumContainerMap.get(synchronizer);
+						synchronizerNumContainerMap.put(synchronizer, new Integer(numberIU + 1));
+					}
+				}
+			}
 		}
 		fResolutionStatus = null;
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, num * 10);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, num * 100);
 		try {
 			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_2, null);
 			Set<P2TargetUtils> seen = new HashSet<P2TargetUtils>();
@@ -240,12 +254,14 @@ public class TargetDefinition implements ITargetDefinition {
 					if (synchronizer != null && !seen.contains(synchronizer)) {
 						seen.add(synchronizer);
 						try {
-							synchronizer.synchronize(this, subMonitor.split(4));
+							synchronizer.synchronize(this,
+									subMonitor.split(synchronizerNumContainerMap.get(synchronizer).intValue() * 95));
 						} catch (CoreException e) {
 							status.add(e.getStatus());
 						}
 					}
 				}
+				synchronizerNumContainerMap.clear();
 				if (!status.isOK()) {
 					return fResolutionStatus = status;
 				}
@@ -257,7 +273,11 @@ public class TargetDefinition implements ITargetDefinition {
 						return Status.CANCEL_STATUS;
 					}
 					subMonitor.subTask(Messages.TargetDefinition_4);
-					IStatus s = containers[i].resolve(this, subMonitor.split(6));
+					P2TargetUtils synchronizer = containers[i].getAdapter(P2TargetUtils.class);
+					int totalWork = 5;
+					if (synchronizer == null)
+						totalWork = 100;
+					IStatus s = containers[i].resolve(this, subMonitor.split(totalWork));
 					if (!s.isOK()) {
 						status.add(s);
 					}
