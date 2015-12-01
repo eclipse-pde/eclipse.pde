@@ -42,12 +42,12 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 		}
 	}
 
-	public void updateFoldingRegions(ProjectionAnnotationModel model, Set<?> currentRegions) {
+	public void updateFoldingRegions(ProjectionAnnotationModel model, Set<Position> currentRegions) {
 		Annotation[] deletions = computeDifferences(model, currentRegions);
 
-		Map<ProjectionAnnotation, Object> additionsMap = new HashMap<>();
-		for (Iterator<?> iter = currentRegions.iterator(); iter.hasNext();) {
-			Object position = iter.next();
+		Map<ProjectionAnnotation, Position> additionsMap = new HashMap<>();
+		for (Iterator<Position> iter = currentRegions.iterator(); iter.hasNext();) {
+			Position position = iter.next();
 			additionsMap.put(new ProjectionAnnotation(false), position);
 		}
 
