@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 230232
+ *     Maarten Meijer <mjmeijer@eclipsohpy.com> - bug 426874
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.builders;
 
@@ -118,6 +119,13 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		}
 		return EMPTY_LIST;
 	}
+
+	@Override
+	protected void clean(IProgressMonitor monitor) throws CoreException {
+		// bug 426874 - delete markers set and files created
+		getProject().deleteMarkers(DSMarkerFactory.MARKER_ID, true, IResource.DEPTH_INFINITE);
+	}
+
 
 	private boolean isDSFile(IFile candidate) {
 		try {
