@@ -44,7 +44,7 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 	}
 
 	private void loadElements() {
-		fFrameworks = new HashMap<String, IConfigurationElement>();
+		fFrameworks = new HashMap<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(POINT_ID);
 		for (IConfigurationElement element : elements) {

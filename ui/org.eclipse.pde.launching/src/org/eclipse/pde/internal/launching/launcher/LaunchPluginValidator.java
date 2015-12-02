@@ -49,11 +49,11 @@ public class LaunchPluginValidator {
 	 * @throws CoreException
 	 */
 	public static Set<IPluginModelBase> parsePlugins(ILaunchConfiguration configuration, String attribute) throws CoreException {
-		HashSet<IPluginModelBase> set = new HashSet<IPluginModelBase>();
+		HashSet<IPluginModelBase> set = new HashSet<>();
 		String ids = configuration.getAttribute(attribute, (String) null);
 		if (ids != null) {
 			String[] entries = ids.split(","); //$NON-NLS-1$
-			Map<String, IPluginModelBase> unmatchedEntries = new HashMap<String, IPluginModelBase>();
+			Map<String, IPluginModelBase> unmatchedEntries = new HashMap<>();
 			for (int i = 0; i < entries.length; i++) {
 				int index = entries[i].indexOf('@');
 				if (index < 0) { // if no start levels, assume default
@@ -94,7 +94,7 @@ public class LaunchPluginValidator {
 		// if restarting, no need to check projects for errors
 		if (config.getAttribute(IPDEConstants.RESTART, false))
 			return new IProject[0];
-		ArrayList<IProject> projects = new ArrayList<IProject>();
+		ArrayList<IProject> projects = new ArrayList<>();
 		IPluginModelBase[] models = getSelectedWorkspacePlugins(config);
 		for (IPluginModelBase model : models) {
 			IProject project = model.getUnderlyingResource().getProject();

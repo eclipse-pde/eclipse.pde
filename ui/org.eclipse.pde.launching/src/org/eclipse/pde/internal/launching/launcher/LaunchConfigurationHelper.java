@@ -241,7 +241,7 @@ public class LaunchConfigurationHelper {
 			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
 
 		StringBuffer buffer = new StringBuffer();
-		Set<String> initialBundleSet = new HashSet<String>();
+		Set<String> initialBundleSet = new HashSet<>();
 		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
@@ -307,7 +307,7 @@ public class LaunchConfigurationHelper {
 		String targetProduct = targetConfig == null ? null : targetConfig.getProperty("eclipse.product"); //$NON-NLS-1$
 		String targetSplash = targetConfig == null ? null : targetConfig.getProperty("osgi.splashPath"); //$NON-NLS-1$
 		if (!productID.equals(targetProduct) || targetSplash == null) {
-			ArrayList<String> locations = new ArrayList<String>();
+			ArrayList<String> locations = new ArrayList<>();
 			String plugin = getContributingPlugin(productID);
 			locations.add(plugin);
 			IPluginModelBase model = map.get(plugin);
@@ -325,7 +325,7 @@ public class LaunchConfigurationHelper {
 	}
 
 	private static void resolveLocationPath(String splashPath, Properties properties, Map<String, IPluginModelBase> map) {
-		ArrayList<String> locations = new ArrayList<String>();
+		ArrayList<String> locations = new ArrayList<>();
 		StringTokenizer tok = new StringTokenizer(splashPath, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens())
 			locations.add(tok.nextToken());

@@ -38,7 +38,7 @@ public class RequirementHelper {
 	 * @throws CoreException if there is a problem reading the launch config
 	 */
 	public static String[] getApplicationRequirements(ILaunchConfiguration config) throws CoreException {
-		Set<String> requiredIds = new HashSet<String>();
+		Set<String> requiredIds = new HashSet<>();
 		if (config.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
 			String product = config.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
 			if (product != null) {

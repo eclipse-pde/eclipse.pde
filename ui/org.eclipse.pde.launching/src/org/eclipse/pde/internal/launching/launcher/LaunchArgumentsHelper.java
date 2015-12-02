@@ -168,7 +168,7 @@ public class LaunchArgumentsHelper {
 	}
 
 	public static Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration config) throws CoreException {
-		Map<String, Object> map = new HashMap<String, Object>(2);
+		Map<String, Object> map = new HashMap<>(2);
 		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, (String) null);
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
 		if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
@@ -197,7 +197,7 @@ public class LaunchArgumentsHelper {
 			if (selected == null) {
 				mng.save(optionsFileName, options);
 			} else if (!selected.equals(IPDELauncherConstants.TRACING_NONE)) {
-				HashSet<String> result = new HashSet<String>();
+				HashSet<String> result = new HashSet<>();
 				StringTokenizer tokenizer = new StringTokenizer(selected, ","); //$NON-NLS-1$
 				while (tokenizer.hasMoreTokens()) {
 					result.add(tokenizer.nextToken());
@@ -219,7 +219,7 @@ public class LaunchArgumentsHelper {
 		if (jarPath == null)
 			return null;
 
-		ArrayList<String> entries = new ArrayList<String>();
+		ArrayList<String> entries = new ArrayList<>();
 		entries.add(jarPath);
 
 		String bootstrap = configuration.getAttribute(IPDELauncherConstants.BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$

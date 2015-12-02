@@ -47,8 +47,8 @@ public class BundleLauncherHelper {
 	}
 
 	public static Map<IPluginModelBase, String> getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
-		Set<String> set = new HashSet<String>();
-		Map<IPluginModelBase, String> map = new HashMap<IPluginModelBase, String>();
+		Set<String> set = new HashSet<>();
+		Map<IPluginModelBase, String> map = new HashMap<>();
 
 		// if we are using the eclipse-based launcher, we need special checks
 		if (!osgi) {
@@ -70,8 +70,8 @@ public class BundleLauncherHelper {
 			String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 
 			// Get all available features
-			HashMap<String, IFeatureModel> workspaceFeatureMap = new HashMap<String, IFeatureModel>();
-			HashMap<String, IFeatureModel> externalFeatureMap = new HashMap<String, IFeatureModel>();
+			HashMap<String, IFeatureModel> workspaceFeatureMap = new HashMap<>();
+			HashMap<String, IFeatureModel> externalFeatureMap = new HashMap<>();
 
 			FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 			IFeatureModel[] workspaceFeatureModels = fmm.getWorkspaceModels();
@@ -87,7 +87,7 @@ public class BundleLauncherHelper {
 			}
 
 			// Get the selected features and their plugin resolution
-			Map<String, String> featureResolutionMap = new HashMap<String, String>();
+			Map<String, String> featureResolutionMap = new HashMap<>();
 			Set<String> selectedFeatures = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set<String>) null);
 			if (selectedFeatures != null) {
 				for (String currentSelected : selectedFeatures) {
@@ -99,7 +99,7 @@ public class BundleLauncherHelper {
 			}
 
 			// Get the feature model for each selected feature id and resolve its plugins
-			Set<IPluginModelBase> launchPlugins = new HashSet<IPluginModelBase>();
+			Set<IPluginModelBase> launchPlugins = new HashSet<>();
 			for (String id : featureResolutionMap.keySet()) {
 				IFeatureModel featureModel = null;
 				if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultLocation)) {
@@ -173,8 +173,8 @@ public class BundleLauncherHelper {
 			}
 
 			//remove conflicting duplicates - if they have same version or both are singleton
-			HashMap<String, IPluginModelBase> pluginMap = new HashMap<String, IPluginModelBase>();
-			Set<IPluginModelBase> pluginSet = new HashSet<IPluginModelBase>();
+			HashMap<String, IPluginModelBase> pluginMap = new HashMap<>();
+			Set<IPluginModelBase> pluginSet = new HashSet<>();
 			List<IPluginModelBase> workspaceModels = null;
 			for (IPluginModelBase model : launchPlugins) {
 				String id = model.getPluginBase().getId();
@@ -296,7 +296,7 @@ public class BundleLauncherHelper {
 
 	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Set<String> set, String attribute) throws CoreException {
 		String selected = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
-		Map<IPluginModelBase, String> map = new HashMap<IPluginModelBase, String>();
+		Map<IPluginModelBase, String> map = new HashMap<>();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
@@ -314,7 +314,7 @@ public class BundleLauncherHelper {
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			if (entry != null) {
 				IPluginModelBase[] models = entry.getWorkspaceModels();
-				Set<String> versions = new HashSet<String>();
+				Set<String> versions = new HashSet<>();
 				for (IPluginModelBase model : models) {
 					IPluginBase base = model.getPluginBase();
 					String v = base.getVersion();
@@ -423,7 +423,7 @@ public class BundleLauncherHelper {
 
 	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Set<String> set, String attribute) throws CoreException {
 		String selected = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
-		Map<IPluginModelBase, String> map = new HashMap<IPluginModelBase, String>();
+		Map<IPluginModelBase, String> map = new HashMap<>();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
@@ -529,7 +529,7 @@ public class BundleLauncherHelper {
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			if (!usedefault) {
-				ArrayList<String> list = new ArrayList<String>();
+				ArrayList<String> list = new ArrayList<>();
 				if (version == null) {
 					list.add("org.eclipse.core.contenttype"); //$NON-NLS-1$
 					list.add("org.eclipse.core.jobs"); //$NON-NLS-1$
@@ -597,7 +597,7 @@ public class BundleLauncherHelper {
 	 * @throws CoreException if there is a problem reading the launch config
 	 */
 	public static HashMap<IPluginModelBase, String> getAdditionalPlugins(ILaunchConfiguration config, boolean onlyEnabled) throws CoreException {
-		HashMap<IPluginModelBase, String> resolvedAdditionalPlugins = new HashMap<IPluginModelBase, String>();
+		HashMap<IPluginModelBase, String> resolvedAdditionalPlugins = new HashMap<>();
 		Set<String> userAddedPlugins = config.getAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, (Set<String>) null);
 		String defaultPluginResolution = config.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		if (userAddedPlugins != null) {

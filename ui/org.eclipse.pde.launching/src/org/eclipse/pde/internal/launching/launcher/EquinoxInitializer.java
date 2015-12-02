@@ -88,7 +88,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 
 	private void initializeBundleState() {
 		if (fStartLevels == null)
-			fStartLevels = new HashMap<String, String>();
+			fStartLevels = new HashMap<>();
 		Properties props = TargetPlatformHelper.getConfigIniProperties();
 		if (props != null) {
 			String value = (String) props.get("osgi.bundles"); //$NON-NLS-1$

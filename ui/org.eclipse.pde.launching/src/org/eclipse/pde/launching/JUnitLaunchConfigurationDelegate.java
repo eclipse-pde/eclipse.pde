@@ -359,7 +359,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		fWorkspaceLocation = null;
 		fConfigDir = null;
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
-		fAllBundles = new HashMap<String, IPluginModelBase>(fModels.size());
+		fAllBundles = new HashMap<>(fModels.size());
 		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = iter.next();

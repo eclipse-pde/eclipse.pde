@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.launching.*;
 public class EclipsePluginValidationOperation extends LaunchValidationOperation {
 	public static final int CREATE_EXTENSION_ERROR_CODE = 1000;
 
-	private Map<Object, Object[]> fExtensionErrors = new HashMap<Object, Object[]>(2);
+	private Map<Object, Object[]> fExtensionErrors = new HashMap<>(2);
 	private static Object[] EMPTY = new Object[0];
 
 	public EclipsePluginValidationOperation(ILaunchConfiguration configuration) {

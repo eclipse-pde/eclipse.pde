@@ -22,7 +22,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	private ArrayList<ILaunch> managedLaunches;
 
 	public LaunchListener() {
-		managedLaunches = new ArrayList<ILaunch>();
+		managedLaunches = new ArrayList<>();
 	}
 
 	public void manage(ILaunch launch) {

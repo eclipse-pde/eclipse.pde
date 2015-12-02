@@ -40,7 +40,7 @@ public class ProductValidationOperation extends LaunchValidationOperation {
 
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		List<IExecutionEnvironment> result = new ArrayList<IExecutionEnvironment>(envs.length);
+		List<IExecutionEnvironment> result = new ArrayList<>(envs.length);
 		for (IExecutionEnvironment env : envs) {
 			IVMInstall[] compatible = env.getCompatibleVMs();
 			for (IVMInstall element : compatible) {

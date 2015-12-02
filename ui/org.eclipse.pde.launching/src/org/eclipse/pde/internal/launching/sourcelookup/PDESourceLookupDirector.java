@@ -33,12 +33,12 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	/**
 	 * Cache of source containers by location and id (String & String)
 	 */
-	private Map<String, ISourceContainer[]> fSourceContainerMap = new HashMap<String, ISourceContainer[]>();
+	private Map<String, ISourceContainer[]> fSourceContainerMap = new HashMap<>();
 
 	private static Set<String> fFilteredTypes;
 
 	static {
-		fFilteredTypes = new HashSet<String>(3);
+		fFilteredTypes = new HashSet<>(3);
 		fFilteredTypes.add(ProjectSourceContainer.TYPE_ID);
 		fFilteredTypes.add(WorkspaceSourceContainer.TYPE_ID);
 		fFilteredTypes.add("org.eclipse.debug.ui.containerType.workingSet"); //$NON-NLS-1$
@@ -86,7 +86,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 			return containers;
 		}
 
-		ArrayList<IRuntimeClasspathEntry> result = new ArrayList<IRuntimeClasspathEntry>();
+		ArrayList<IRuntimeClasspathEntry> result = new ArrayList<>();
 		ModelEntry entry = PluginRegistry.findEntry(id);
 
 		boolean match = false;

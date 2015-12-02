@@ -183,7 +183,7 @@ public class LauncherUtils {
 			timeStamp = launch.getAttribute(TIMESTAMP, "0"); //$NON-NLS-1$
 			autoAdd = launch.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			useDefault = launch.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-			final ArrayList<IProject> projects = new ArrayList<IProject>();
+			final ArrayList<IProject> projects = new ArrayList<>();
 			if (useDefault)
 				handleUseDefault(timeStamp, projects);
 			else if (autoAdd)
@@ -228,7 +228,7 @@ public class LauncherUtils {
 					if (path == null)
 						continue;
 					file = path.toFile();
-					Stack<File> files = new Stack<File>();
+					Stack<File> files = new Stack<>();
 					files.push(file);
 					while (!files.isEmpty()) {
 						file = files.pop();

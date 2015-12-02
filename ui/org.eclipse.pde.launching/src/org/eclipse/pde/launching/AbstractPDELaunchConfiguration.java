@@ -229,7 +229,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 *                necessary configuration files
 	 */
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		ArrayList<String> programArgs = new ArrayList<String>();
+		ArrayList<String> programArgs = new ArrayList<>();
 
 		// add tracing, if turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
@@ -239,7 +239,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 		// add the program args specified by the user
 		String[] userArgs = LaunchArgumentsHelper.getUserProgramArgumentArray(configuration);
-		ArrayList<String> userDefined = new ArrayList<String>();
+		ArrayList<String> userDefined = new ArrayList<>();
 		for (String userArg : userArgs) {
 			// be forgiving if people have tracing turned on and forgot
 			// to remove the -debug from the program args field.

@@ -37,11 +37,11 @@ public class VMHelper {
 	 */
 	public static String getDefaultEEName(ILaunchConfiguration configuration) throws CoreException {
 		// List of all valid EEs, removed if they don't match
-		List<IExecutionEnvironment> validEEs = new LinkedList<IExecutionEnvironment>(); // Use a list to keep order
+		List<IExecutionEnvironment> validEEs = new LinkedList<>(); // Use a list to keep order
 		validEEs.addAll(Arrays.asList(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments()));
 
 		// Find EEs that do not have a compatible JRE (are unbound)
-		Set<String> unboundEEs = new HashSet<String>();
+		Set<String> unboundEEs = new HashSet<>();
 		for (Iterator<IExecutionEnvironment> iterator = validEEs.iterator(); iterator.hasNext();) {
 			IExecutionEnvironment current = iterator.next();
 			if (current.getCompatibleVMs().length == 0) {

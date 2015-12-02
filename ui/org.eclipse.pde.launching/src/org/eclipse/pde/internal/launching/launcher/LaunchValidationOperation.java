@@ -53,7 +53,7 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 			return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 
 		// add java profiles for those EE's that have a .profile file in the current system bundle
-		ArrayList<Dictionary<String, String>> result = new ArrayList<Dictionary<String, String>>(envs.length);
+		ArrayList<Dictionary<String, String>> result = new ArrayList<>(envs.length);
 		for (IExecutionEnvironment env : envs) {
 			Properties profileProps = getJavaProfileProperties(env.getId());
 			if (profileProps != null) {
@@ -80,7 +80,7 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		List<IExecutionEnvironment> result = new ArrayList<IExecutionEnvironment>(envs.length);
+		List<IExecutionEnvironment> result = new ArrayList<>(envs.length);
 		for (IExecutionEnvironment env : envs) {
 			IVMInstall[] compatible = env.getCompatibleVMs();
 			for (IVMInstall element : compatible) {

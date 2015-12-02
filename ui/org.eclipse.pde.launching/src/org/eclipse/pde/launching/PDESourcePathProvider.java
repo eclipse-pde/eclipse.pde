@@ -43,7 +43,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 
 	@Override
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
-		List<IRuntimeClasspathEntry> sourcePath = new ArrayList<IRuntimeClasspathEntry>();
+		List<IRuntimeClasspathEntry> sourcePath = new ArrayList<>();
 		sourcePath.add(getJREEntry(configuration));
 		IProject[] projects = getJavaProjects(configuration);
 		for (IProject project : projects) {
@@ -89,7 +89,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 
 	@Override
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
-		List<IRuntimeClasspathEntry> all = new ArrayList<IRuntimeClasspathEntry>(entries.length);
+		List<IRuntimeClasspathEntry> all = new ArrayList<>(entries.length);
 		for (IRuntimeClasspathEntry entrie : entries) {
 			if (entrie.getType() == IRuntimeClasspathEntry.PROJECT) {
 				// a project resolves to itself for source lookup (rather than
