@@ -285,9 +285,10 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
-		SubMonitor subMonitor = SubMonitor.convert(monitor, "", autoValidate ? 3 : 4); //$NON-NLS-1$
-		if (autoValidate)
+		SubMonitor subMonitor = SubMonitor.convert(monitor, autoValidate ? 3 : 4);
+		if (autoValidate) {
 			validatePluginDependencies(configuration, subMonitor.split(1));
+		}
 		validateProjectDependencies(configuration, subMonitor.split(1));
 		LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
 		clear(configuration, subMonitor.split(1));
