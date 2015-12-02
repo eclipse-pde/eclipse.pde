@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -217,10 +217,10 @@ public class LauncherUtils {
 		try {
 			long timeStamp = 0;
 			IClasspathEntry[] entries = jp.getResolvedClasspath(true);
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+			for (IClasspathEntry entrie : entries) {
+				if (entrie.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					File file;
-					IPath location = entries[i].getOutputLocation();
+					IPath location = entrie.getOutputLocation();
 					if (location == null)
 						location = jp.getOutputLocation();
 					IResource res = project.getWorkspace().getRoot().findMember(location);
@@ -235,8 +235,8 @@ public class LauncherUtils {
 						if (file.isDirectory()) {
 							File[] children = file.listFiles();
 							if (children != null) {
-								for (int j = 0; j < children.length; j++)
-									files.push(children[j]);
+								for (File element : children)
+									files.push(element);
 							}
 						} else if (file.getName().endsWith(".class") && timeStamp < file.lastModified()) //$NON-NLS-1$
 							timeStamp = file.lastModified();
@@ -244,8 +244,7 @@ public class LauncherUtils {
 				}
 			}
 			IFile[] otherFiles = new IFile[] {PDEProject.getManifest(project), PDEProject.getBuildProperties(project)};
-			for (int i = 0; i < otherFiles.length; i++) {
-				IFile file = otherFiles[i];
+			for (IFile file : otherFiles) {
 				if (file != null) {
 					long fileTimeStamp = file.getRawLocation().toFile().lastModified();
 					if (timeStamp < fileTimeStamp)

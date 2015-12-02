@@ -156,12 +156,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 		// add the program args specified by the user
 		String[] userArgs = LaunchArgumentsHelper.getUserProgramArgumentArray(configuration);
-		for (int i = 0; i < userArgs.length; i++) {
+		for (String userArg : userArgs) {
 			// be forgiving if people have tracing turned on and forgot
 			// to remove the -debug from the program args field.
-			if (userArgs[i].equals("-debug") && programArgs.contains("-debug")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (userArg.equals("-debug") && programArgs.contains("-debug")) //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
-			programArgs.add(userArgs[i]);
+			programArgs.add(userArg);
 		}
 
 		if (!configuration.getAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, false)) {
@@ -368,8 +368,8 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 		// implicitly add the plug-ins required for JUnit testing if necessary
 		String[] requiredPlugins = getRequiredPlugins(configuration);
-		for (int i = 0; i < requiredPlugins.length; i++) {
-			String id = requiredPlugins[i];
+		for (String requiredPlugin : requiredPlugins) {
+			String id = requiredPlugin;
 			if (!fAllBundles.containsKey(id)) {
 				IPluginModelBase model = findPlugin(id);
 				fAllBundles.put(id, model);

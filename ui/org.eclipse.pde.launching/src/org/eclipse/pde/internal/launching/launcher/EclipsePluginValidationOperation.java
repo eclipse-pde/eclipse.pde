@@ -46,17 +46,17 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 	private void validateExtensions() {
 		try {
 			String[] required = RequirementHelper.getApplicationRequirements(fLaunchConfiguration);
-			for (int i = 0; i < required.length; i++) {
-				BundleDescription bundle = getState().getBundle(required[i], null);
+			for (String element : required) {
+				BundleDescription bundle = getState().getBundle(element, null);
 				if (bundle == null) {
-					String message = NLS.bind(PDEMessages.EclipsePluginValidationOperation_pluginMissing, required[i]);
+					String message = NLS.bind(PDEMessages.EclipsePluginValidationOperation_pluginMissing, element);
 					Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, CREATE_EXTENSION_ERROR_CODE, message, null);
 					IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 					Object extensionError = null;
 					if (statusHandler == null)
 						extensionError = status.getMessage();
 					else
-						extensionError = statusHandler.handleStatus(status, required[i]);
+						extensionError = statusHandler.handleStatus(status, element);
 					fExtensionErrors.put(extensionError, EMPTY);
 				}
 			}

@@ -92,9 +92,9 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		boolean match = false;
 
 		IPluginModelBase[] models = entry.getWorkspaceModels();
-		for (int i = 0; i < models.length; i++) {
-			if (isPerfectMatch(models[i], new Path(location))) {
-				IResource resource = models[i].getUnderlyingResource();
+		for (IPluginModelBase model : models) {
+			if (isPerfectMatch(model, new Path(location))) {
+				IResource resource = model.getUnderlyingResource();
 				// if the plug-in matches a workspace model,
 				// add the project and any libraries not coming via a container
 				// to the list of source containers, in that order
@@ -120,12 +120,12 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 			}
 
 			models = entry.getExternalModels();
-			for (int i = 0; i < models.length; i++) {
-				if (isPerfectMatch(models[i], new Path(location))) {
+			for (IPluginModelBase model : models) {
+				if (isPerfectMatch(model, new Path(location))) {
 					// try all source zips found in the source code locations
-					IClasspathEntry[] entries = PDEClasspathContainer.getExternalEntries(models[i]);
-					for (int j = 0; j < entries.length; j++) {
-						IRuntimeClasspathEntry rte = convertClasspathEntry(entries[j]);
+					IClasspathEntry[] entries = PDEClasspathContainer.getExternalEntries(model);
+					for (IClasspathEntry entrie : entries) {
+						IRuntimeClasspathEntry rte = convertClasspathEntry(entrie);
 						if (rte != null)
 							result.add(rte);
 					}
@@ -161,8 +161,8 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	private ISourceContainer getArchiveSourceContainer(String location) throws JavaModelException {
 		IWorkspaceRoot root = PDELaunchingPlugin.getWorkspace().getRoot();
 		IFile[] containers = root.findFilesForLocationURI(URIUtil.toURI(location));
-		for (int i = 0; i < containers.length; i++) {
-			IJavaElement element = JavaCore.create(containers[i]);
+		for (IFile container : containers) {
+			IJavaElement element = JavaCore.create(container);
 			if (element instanceof IPackageFragmentRoot) {
 				IPackageFragmentRoot archive = (IPackageFragmentRoot) element;
 				IPath path = archive.getSourceAttachmentPath();
@@ -192,8 +192,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		result.add(JavaRuntime.newProjectRuntimeClasspathEntry(jProject));
 
 		IClasspathEntry[] entries = jProject.getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
+		for (IClasspathEntry entry : entries) {
 			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 				IRuntimeClasspathEntry rte = convertClasspathEntry(entry);
 				if (rte != null)
@@ -203,8 +202,8 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 
 		// Add additional entries from contributed classpath container resolvers
 		IBundleClasspathResolver[] resolvers = PDECore.getDefault().getClasspathContainerResolverManager().getBundleClasspathResolvers(project);
-		for (int i = 0; i < resolvers.length; i++) {
-			result.addAll(resolvers[i].getAdditionalSourceEntries(jProject));
+		for (IBundleClasspathResolver resolver : resolvers) {
+			result.addAll(resolver.getAdditionalSourceEntries(jProject));
 		}
 	}
 
@@ -213,8 +212,8 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		Iterator<ISourceContainer[]> iterator = fSourceContainerMap.values().iterator();
 		while (iterator.hasNext()) {
 			ISourceContainer[] containers = iterator.next();
-			for (int i = 0; i < containers.length; i++) {
-				containers[i].dispose();
+			for (ISourceContainer container : containers) {
+				container.dispose();
 			}
 		}
 		fSourceContainerMap.clear();

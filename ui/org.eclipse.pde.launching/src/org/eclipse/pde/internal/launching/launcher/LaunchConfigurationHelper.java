@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -315,8 +315,8 @@ public class LaunchConfigurationHelper {
 				BundleDescription desc = model.getBundleDescription();
 				if (desc != null) {
 					BundleDescription[] fragments = desc.getFragments();
-					for (int i = 0; i < fragments.length; i++)
-						locations.add(fragments[i].getSymbolicName());
+					for (BundleDescription fragment : fragments)
+						locations.add(fragment.getSymbolicName());
 				}
 			}
 			resolveLocationPath(locations, properties, map);
@@ -401,8 +401,8 @@ public class LaunchConfigurationHelper {
 		if (extensions != null) {
 			StringBuffer buffer = new StringBuffer();
 			String[] extensionsArray = extensions.split(","); //$NON-NLS-1$
-			for (int i = 0; i < extensionsArray.length; i++) {
-				String bundle = TargetPlatformHelper.stripPathInformation(extensionsArray[i]);
+			for (String element : extensionsArray) {
+				String bundle = TargetPlatformHelper.stripPathInformation(element);
 				String url = getBundleURL(bundle, map, true);
 				if (url != null) {
 					if (buffer.length() > 0) {
@@ -506,11 +506,11 @@ public class LaunchConfigurationHelper {
 		// contributing plug-in
 		String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
-		for (int i = 0; i < extensions.length; i++) {
-			String id = extensions[i].getUniqueIdentifier();
+		for (IExtension extension : extensions) {
+			String id = extension.getUniqueIdentifier();
 			if (id == null)
 				continue;
-			IConfigurationElement[] children = extensions[i].getConfigurationElements();
+			IConfigurationElement[] children = extension.getConfigurationElements();
 			if (children.length != 1)
 				continue;
 			if (!"product".equals(children[0].getName())) //$NON-NLS-1$

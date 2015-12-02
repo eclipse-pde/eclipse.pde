@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,9 +75,9 @@ public class OSGiLaunchConfigurationInitializer {
 		StringBuffer explugins = new StringBuffer();
 		StringBuffer wsplugins = new StringBuffer();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
-		for (int i = 0; i < models.length; i++) {
-			boolean inWorkspace = models[i].getUnderlyingResource() != null;
-			appendBundle(inWorkspace ? wsplugins : explugins, models[i]);
+		for (IPluginModelBase model : models) {
+			boolean inWorkspace = model.getUnderlyingResource() != null;
+			appendBundle(inWorkspace ? wsplugins : explugins, model);
 		}
 		configuration.setAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, wsplugins.toString());
 		configuration.setAttribute(IPDELauncherConstants.TARGET_BUNDLES, explugins.toString());

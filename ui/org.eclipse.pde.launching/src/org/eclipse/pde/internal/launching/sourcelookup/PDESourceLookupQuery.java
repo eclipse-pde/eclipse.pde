@@ -257,9 +257,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 				BundleDescription desc = state.getBundle(id, null);
 				if (desc != null) {
 					BundleDescription[] fragments = desc.getFragments();
-					for (int i = 0; i < fragments.length; i++) {
-						location = fragments[i].getLocation();
-						id = fragments[i].getSymbolicName();
+					for (BundleDescription fragment : fragments) {
+						location = fragment.getLocation();
+						id = fragment.getSymbolicName();
 						result = findSourceElement(getSourceContainers(location, id), typeName);
 						if (result != null)
 							return result;
@@ -271,8 +271,8 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	}
 
 	private Object findSourceElement(ISourceContainer[] containers, String typeName) throws CoreException {
-		for (int i = 0; i < containers.length; i++) {
-			Object[] result = containers[i].findSourceElements(typeName);
+		for (ISourceContainer container : containers) {
+			Object[] result = container.findSourceElements(typeName);
 			if (result.length > 0)
 				return result[0];
 		}

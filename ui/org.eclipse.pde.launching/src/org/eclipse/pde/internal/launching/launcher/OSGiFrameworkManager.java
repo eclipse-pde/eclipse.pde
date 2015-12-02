@@ -47,11 +47,11 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 		fFrameworks = new HashMap<String, IConfigurationElement>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(POINT_ID);
-		for (int i = 0; i < elements.length; i++) {
-			String id = elements[i].getAttribute(ATT_ID);
-			if (id == null || elements[i].getAttribute(ATT_NAME) == null || elements[i].getAttribute(ATT_DELEGATE) == null)
+		for (IConfigurationElement element : elements) {
+			String id = element.getAttribute(ATT_ID);
+			if (id == null || element.getAttribute(ATT_NAME) == null || element.getAttribute(ATT_DELEGATE) == null)
 				continue;
-			fFrameworks.put(id, elements[i]);
+			fFrameworks.put(id, element);
 		}
 	}
 

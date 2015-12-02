@@ -201,8 +201,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		// For p2 target, add "-Declipse.p2.data.area=@config.dir/p2" unless already specified by user
 		Map<IPluginModelBase, String> bundleMap = BundleLauncherHelper.getMergedBundleMap(configuration, false);
 		if (bundleMap.containsKey("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$
-			for (int i = 0; i < vmArgs.length; i++) {
-				String arg = vmArgs[i];
+			for (String arg : vmArgs) {
 				if (arg.startsWith("-Declipse.p2.data.area=")) { //$NON-NLS-1$
 					return vmArgs;
 				}
@@ -241,12 +240,12 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		// add the program args specified by the user
 		String[] userArgs = LaunchArgumentsHelper.getUserProgramArgumentArray(configuration);
 		ArrayList<String> userDefined = new ArrayList<String>();
-		for (int i = 0; i < userArgs.length; i++) {
+		for (String userArg : userArgs) {
 			// be forgiving if people have tracing turned on and forgot
 			// to remove the -debug from the program args field.
-			if (userArgs[i].equals("-debug") && programArgs.contains("-debug")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (userArg.equals("-debug") && programArgs.contains("-debug")) //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
-			userDefined.add(userArgs[i]);
+			userDefined.add(userArg);
 		}
 
 		if (!configuration.getAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, false)) {

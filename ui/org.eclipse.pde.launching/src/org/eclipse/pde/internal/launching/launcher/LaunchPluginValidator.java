@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,18 +67,18 @@ public class LaunchPluginValidator {
 				ModelEntry entry = PluginRegistry.findEntry(id);
 				if (entry != null) {
 					IPluginModelBase matchingModels[] = attribute.equals(IPDELauncherConstants.SELECTED_TARGET_PLUGINS) ? entry.getExternalModels() : entry.getWorkspaceModels();
-					for (int j = 0; j < matchingModels.length; j++) {
-						if (matchingModels[j].isEnabled()) {
+					for (IPluginModelBase matchingModel : matchingModels) {
+						if (matchingModel.isEnabled()) {
 							// TODO Very similar logic to BundleLauncherHelper
 							// the logic here is this (see bug 225644)
 							// a) if we come across a bundle that has the right version, immediately add it
 							// b) if there's no version, add it
 							// c) if there's only one instance of that bundle in the list of ids... add it
-							if (version == null || matchingModels[j].getPluginBase().getVersion().equals(version)) {
-								set.add(matchingModels[j]);
+							if (version == null || matchingModel.getPluginBase().getVersion().equals(version)) {
+								set.add(matchingModel);
 							} else if (matchingModels.length == 1) {
 								if (unmatchedEntries.remove(id) == null) {
-									unmatchedEntries.put(id, matchingModels[j]);
+									unmatchedEntries.put(id, matchingModel);
 								}
 							}
 						}
@@ -96,8 +96,8 @@ public class LaunchPluginValidator {
 			return new IProject[0];
 		ArrayList<IProject> projects = new ArrayList<IProject>();
 		IPluginModelBase[] models = getSelectedWorkspacePlugins(config);
-		for (int i = 0; i < models.length; i++) {
-			IProject project = models[i].getUnderlyingResource().getProject();
+		for (IPluginModelBase model : models) {
+			IProject project = model.getUnderlyingResource().getProject();
 			if (project.hasNature(JavaCore.NATURE_ID))
 				projects.add(project);
 		}

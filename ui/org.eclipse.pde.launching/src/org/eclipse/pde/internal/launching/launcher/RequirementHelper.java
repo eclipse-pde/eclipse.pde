@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,14 +71,14 @@ public class RequirementHelper {
 	private static void getProductRequirements(String product, Collection<String> requiredIds) {
 		PDEExtensionRegistry registry = PDECore.getDefault().getExtensionsRegistry();
 		IExtension[] extensions = registry.findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
-		for (int i = 0; i < extensions.length; i++) {
+		for (IExtension extension : extensions) {
 
-			if (product.equals(extensions[i].getUniqueIdentifier()) || product.equals(extensions[i].getSimpleIdentifier())) {
-				requiredIds.add(extensions[i].getNamespaceIdentifier());
+			if (product.equals(extension.getUniqueIdentifier()) || product.equals(extension.getSimpleIdentifier())) {
+				requiredIds.add(extension.getNamespaceIdentifier());
 
-				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-				for (int j = 0; j < elements.length; j++) {
-					String application = elements[j].getAttribute("application"); //$NON-NLS-1$
+				IConfigurationElement[] elements = extension.getConfigurationElements();
+				for (IConfigurationElement element : elements) {
+					String application = element.getAttribute("application"); //$NON-NLS-1$
 					if (application != null && application.length() > 0) {
 						getApplicationRequirements(application, requiredIds);
 					}
@@ -92,9 +92,9 @@ public class RequirementHelper {
 	private static void getApplicationRequirements(String application, Collection<String> requiredIds) {
 		PDEExtensionRegistry registry = PDECore.getDefault().getExtensionsRegistry();
 		IExtension[] extensions = registry.findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
-		for (int i = 0; i < extensions.length; i++) {
-			if (application.equals(extensions[i].getUniqueIdentifier()) || application.equals(extensions[i].getSimpleIdentifier())) {
-				requiredIds.add(extensions[i].getNamespaceIdentifier());
+		for (IExtension extension : extensions) {
+			if (application.equals(extension.getUniqueIdentifier()) || application.equals(extension.getSimpleIdentifier())) {
+				requiredIds.add(extension.getNamespaceIdentifier());
 				// Only one extension should match the application so break out of the looop
 				break;
 			}

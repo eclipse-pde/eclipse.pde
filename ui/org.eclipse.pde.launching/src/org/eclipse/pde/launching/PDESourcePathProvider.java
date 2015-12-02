@@ -46,8 +46,8 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 		List<IRuntimeClasspathEntry> sourcePath = new ArrayList<IRuntimeClasspathEntry>();
 		sourcePath.add(getJREEntry(configuration));
 		IProject[] projects = getJavaProjects(configuration);
-		for (int i = 0; i < projects.length; i++) {
-			sourcePath.add(JavaRuntime.newProjectRuntimeClasspathEntry(JavaCore.create(projects[i])));
+		for (IProject project : projects) {
+			sourcePath.add(JavaRuntime.newProjectRuntimeClasspathEntry(JavaCore.create(project)));
 		}
 		return sourcePath.toArray(new IRuntimeClasspathEntry[sourcePath.size()]);
 	}
@@ -90,20 +90,20 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	@Override
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		List<IRuntimeClasspathEntry> all = new ArrayList<IRuntimeClasspathEntry>(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getType() == IRuntimeClasspathEntry.PROJECT) {
+		for (IRuntimeClasspathEntry entrie : entries) {
+			if (entrie.getType() == IRuntimeClasspathEntry.PROJECT) {
 				// a project resolves to itself for source lookup (rather than
 				// the class file output locations)
-				all.add(entries[i]);
+				all.add(entrie);
 				// also add non-JRE libraries
-				IResource resource = entries[i].getResource();
+				IResource resource = entrie.getResource();
 				if (resource instanceof IProject) {
 					addBinaryPackageFragmentRoots(JavaCore.create((IProject) resource), all);
 				}
 			} else {
-				IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
-				for (int j = 0; j < resolved.length; j++) {
-					all.add(resolved[j]);
+				IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entrie, configuration);
+				for (IRuntimeClasspathEntry element : resolved) {
+					all.add(element);
 				}
 			}
 		}

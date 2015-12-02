@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,14 +53,14 @@ public class VMHelper {
 		// Iterate through all launch models
 		boolean isOSGiLaunch = configuration instanceof EquinoxLaunchConfiguration; // TODO Test this
 		IPluginModelBase[] plugins = BundleLauncherHelper.getMergedBundles(configuration, isOSGiLaunch);
-		for (int i = 0; i < plugins.length; i++) {
+		for (IPluginModelBase plugin : plugins) {
 			if (validEEs.isEmpty()) {
 				break; // No valid EEs left, short circuit
 			}
-			if (plugins[i].isFragmentModel()) {
+			if (plugin.isFragmentModel()) {
 				continue; // The default EE shouldn't depend on fragments
 			}
-			BundleDescription desc = plugins[i].getBundleDescription();
+			BundleDescription desc = plugin.getBundleDescription();
 			if (desc != null) {
 
 				// List of all the BREEs that a valid environment must match
@@ -69,8 +69,8 @@ public class VMHelper {
 
 					// See if the BREE matches an unbound EE, if so skip this plug-in as we cannot launch it
 					boolean isUnbound = false;
-					for (int j = 0; j < bundleEnvs.length; j++) {
-						if (unboundEEs.contains(bundleEnvs[j])) {
+					for (String bundleEnv : bundleEnvs) {
+						if (unboundEEs.contains(bundleEnv)) {
 							isUnbound = true;
 							break;
 						}
@@ -84,17 +84,17 @@ public class VMHelper {
 						IExecutionEnvironment currentEE = iterator.next();
 						boolean isValid = false;
 						// To be valid, an EE must match at least one BREE
-						for (int j = 0; j < bundleEnvs.length; j++) {
+						for (String bundleEnv : bundleEnvs) {
 							if (isValid) {
 								break; // sub environment was valid
 							}
-							if (bundleEnvs[j].equals(currentEE.getId())) {
+							if (bundleEnv.equals(currentEE.getId())) {
 								isValid = true;
 								break; // No need to check subEnvironments at all
 							}
 							IExecutionEnvironment[] currentSubEE = currentEE.getSubEnvironments();
-							for (int k = 0; k < currentSubEE.length; k++) {
-								if (bundleEnvs[j].equals(currentSubEE[k].getId())) {
+							for (IExecutionEnvironment element : currentSubEE) {
+								if (bundleEnv.equals(element.getId())) {
 									isValid = true;
 									break; // No need to check other subEnvironments
 								}
@@ -196,9 +196,9 @@ public class VMHelper {
 	public static IVMInstall getVMInstall(String name) {
 		if (name != null) {
 			IVMInstall[] installs = VMUtil.getAllVMInstances();
-			for (int i = 0; i < installs.length; i++) {
-				if (installs[i].getName().equals(name))
-					return installs[i];
+			for (IVMInstall install : installs) {
+				if (install.getName().equals(name))
+					return install;
 			}
 		}
 		return JavaRuntime.getDefaultVMInstall();

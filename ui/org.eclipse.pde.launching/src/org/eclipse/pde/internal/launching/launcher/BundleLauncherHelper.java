@@ -57,8 +57,8 @@ public class BundleLauncherHelper {
 
 			if (configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
 				IPluginModelBase[] models = PluginRegistry.getActiveModels();
-				for (int i = 0; i < models.length; i++) {
-					addBundleToMap(map, models[i], "default:default"); //$NON-NLS-1$
+				for (IPluginModelBase model : models) {
+					addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
 				}
 				return map;
 			}
@@ -75,23 +75,22 @@ public class BundleLauncherHelper {
 
 			FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 			IFeatureModel[] workspaceFeatureModels = fmm.getWorkspaceModels();
-			for (int i = 0; i < workspaceFeatureModels.length; i++) {
-				String id = workspaceFeatureModels[i].getFeature().getId();
-				workspaceFeatureMap.put(id, workspaceFeatureModels[i]);
+			for (IFeatureModel workspaceFeatureModel : workspaceFeatureModels) {
+				String id = workspaceFeatureModel.getFeature().getId();
+				workspaceFeatureMap.put(id, workspaceFeatureModel);
 			}
 
 			IFeatureModel[] externalFeatureModels = fmm.getExternalModels();
-			for (int i = 0; i < externalFeatureModels.length; i++) {
-				String id = externalFeatureModels[i].getFeature().getId();
-				externalFeatureMap.put(id, externalFeatureModels[i]);
+			for (IFeatureModel externalFeatureModel : externalFeatureModels) {
+				String id = externalFeatureModel.getFeature().getId();
+				externalFeatureMap.put(id, externalFeatureModel);
 			}
 
 			// Get the selected features and their plugin resolution
 			Map<String, String> featureResolutionMap = new HashMap<String, String>();
 			Set<String> selectedFeatures = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set<String>) null);
 			if (selectedFeatures != null) {
-				for (Iterator<String> iterator = selectedFeatures.iterator(); iterator.hasNext();) {
-					String currentSelected = iterator.next();
+				for (String currentSelected : selectedFeatures) {
 					String[] attributes = currentSelected.split(":"); //$NON-NLS-1$
 					if (attributes.length > 1) {
 						featureResolutionMap.put(attributes[0], attributes[1]);
@@ -101,9 +100,7 @@ public class BundleLauncherHelper {
 
 			// Get the feature model for each selected feature id and resolve its plugins
 			Set<IPluginModelBase> launchPlugins = new HashSet<IPluginModelBase>();
-			for (Iterator<String> iterator = featureResolutionMap.keySet().iterator(); iterator.hasNext();) {
-				String id = iterator.next();
-
+			for (String id : featureResolutionMap.keySet()) {
 				IFeatureModel featureModel = null;
 				if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultLocation)) {
 					featureModel = workspaceFeatureMap.get(id);
@@ -123,21 +120,21 @@ public class BundleLauncherHelper {
 					pluginResolution = defaultPluginResolution;
 				}
 
-				for (int i = 0; i < featurePlugins.length; i++) {
-					ModelEntry modelEntry = PluginRegistry.findEntry(featurePlugins[i].getId());
+				for (IFeaturePlugin featurePlugin : featurePlugins) {
+					ModelEntry modelEntry = PluginRegistry.findEntry(featurePlugin.getId());
 					if (modelEntry != null) {
-						IPluginModelBase model = findModel(modelEntry, featurePlugins[i].getVersion(), pluginResolution);
+						IPluginModelBase model = findModel(modelEntry, featurePlugin.getVersion(), pluginResolution);
 						if (model != null)
 							launchPlugins.add(model);
 					}
 				}
 
 				IFeatureImport[] featureImports = featureModel.getFeature().getImports();
-				for (int i = 0; i < featureImports.length; i++) {
-					if (featureImports[i].getType() == IFeatureImport.PLUGIN) {
-						ModelEntry modelEntry = PluginRegistry.findEntry(featureImports[i].getId());
+				for (IFeatureImport featureImport : featureImports) {
+					if (featureImport.getType() == IFeatureImport.PLUGIN) {
+						ModelEntry modelEntry = PluginRegistry.findEntry(featureImport.getId());
 						if (modelEntry != null) {
-							IPluginModelBase model = findModel(modelEntry, featureImports[i].getVersion(), pluginResolution);
+							IPluginModelBase model = findModel(modelEntry, featureImport.getVersion(), pluginResolution);
 							if (model != null)
 								launchPlugins.add(model);
 						}
@@ -151,8 +148,8 @@ public class BundleLauncherHelper {
 			// Get any plug-ins required by the application/product set on the config
 			if (!osgi) {
 				String[] applicationIds = RequirementHelper.getApplicationRequirements(configuration);
-				for (int i = 0; i < applicationIds.length; i++) {
-					ModelEntry modelEntry = PluginRegistry.findEntry(applicationIds[i]);
+				for (String applicationId : applicationIds) {
+					ModelEntry modelEntry = PluginRegistry.findEntry(applicationId);
 					if (modelEntry != null) {
 						IPluginModelBase model = findModel(modelEntry, null, defaultPluginResolution);
 						if (model != null)
@@ -179,8 +176,7 @@ public class BundleLauncherHelper {
 			HashMap<String, IPluginModelBase> pluginMap = new HashMap<String, IPluginModelBase>();
 			Set<IPluginModelBase> pluginSet = new HashSet<IPluginModelBase>();
 			List<IPluginModelBase> workspaceModels = null;
-			for (Iterator<IPluginModelBase> iterator = launchPlugins.iterator(); iterator.hasNext();) {
-				IPluginModelBase model = iterator.next();
+			for (IPluginModelBase model : launchPlugins) {
 				String id = model.getPluginBase().getId();
 				if (pluginMap.containsKey(id)) {
 					IPluginModelBase existing = pluginMap.get(id);
@@ -198,8 +194,7 @@ public class BundleLauncherHelper {
 			pluginMap.clear();
 
 			// Create the start levels for the selected plugins and add them to the map
-			for (Iterator<IPluginModelBase> iterator = pluginSet.iterator(); iterator.hasNext();) {
-				IPluginModelBase model = iterator.next();
+			for (IPluginModelBase model : pluginSet) {
 				addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
 			}
 			return map;
@@ -320,8 +315,8 @@ public class BundleLauncherHelper {
 			if (entry != null) {
 				IPluginModelBase[] models = entry.getWorkspaceModels();
 				Set<String> versions = new HashSet<String>();
-				for (int i = 0; i < models.length; i++) {
-					IPluginBase base = models[i].getPluginBase();
+				for (IPluginModelBase model : models) {
+					IPluginBase base = model.getPluginBase();
 					String v = base.getVersion();
 					if (versions.add(v)) { // don't add exact same version more than once
 
@@ -330,7 +325,7 @@ public class BundleLauncherHelper {
 						// b) no version
 						// c) all else fails, if there's just one bundle available, use it
 						if (base.getVersion().equals(version) || version == null || models.length == 1)
-							addBundleToMap(map, models[i], token.substring(index + 1));
+							addBundleToMap(map, model, token.substring(index + 1));
 					}
 				}
 			}
@@ -446,15 +441,15 @@ public class BundleLauncherHelper {
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			if (entry != null) {
 				IPluginModelBase[] models = entry.getExternalModels();
-				for (int i = 0; i < models.length; i++) {
-					if (models[i].isEnabled()) {
-						IPluginBase base = models[i].getPluginBase();
+				for (IPluginModelBase model : models) {
+					if (model.isEnabled()) {
+						IPluginBase base = model.getPluginBase();
 						// match only if...
 						// a) if we have the same version
 						// b) no version
 						// c) all else fails, if there's just one bundle available, use it
 						if (base.getVersion().equals(version) || version == null || models.length == 1)
-							addBundleToMap(map, models[i], token.substring(index + 1));
+							addBundleToMap(map, model, token.substring(index + 1));
 					}
 				}
 			}
@@ -606,8 +601,7 @@ public class BundleLauncherHelper {
 		Set<String> userAddedPlugins = config.getAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, (Set<String>) null);
 		String defaultPluginResolution = config.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		if (userAddedPlugins != null) {
-			for (Iterator<String> iterator = userAddedPlugins.iterator(); iterator.hasNext();) {
-				String addedPlugin = iterator.next();
+			for (String addedPlugin : userAddedPlugins) {
 				String[] pluginData = addedPlugin.split(":"); //$NON-NLS-1$
 				boolean checked = Boolean.valueOf(pluginData[3]).booleanValue();
 				if (!onlyEnabled || checked) {

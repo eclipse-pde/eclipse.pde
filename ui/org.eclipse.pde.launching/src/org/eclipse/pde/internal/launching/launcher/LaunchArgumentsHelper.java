@@ -175,8 +175,8 @@ public class LaunchArgumentsHelper {
 			ModelEntry entry = PluginRegistry.findEntry("org.eclipse.jdt.debug"); //$NON-NLS-1$
 			if (entry != null) {
 				IPluginModelBase[] models = entry.getExternalModels();
-				for (int i = 0; i < models.length; i++) {
-					File file = new File(models[i].getInstallLocation());
+				for (IPluginModelBase model : models) {
+					File file = new File(model.getInstallLocation());
 					if (!file.isFile())
 						file = new File(file, "jdi.jar"); //$NON-NLS-1$
 					if (file.exists()) {
@@ -263,9 +263,9 @@ public class LaunchArgumentsHelper {
 						return name.indexOf(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER) >= 0;
 					}
 				});
-				for (int i = 0; i < files.length; i++) {
-					if (files[i].isFile()) {
-						return files[i].getPath();
+				for (File file : files) {
+					if (file.isFile()) {
+						return file.getPath();
 					}
 				}
 
@@ -282,22 +282,22 @@ public class LaunchArgumentsHelper {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jProject = JavaCore.create(project);
 				IClasspathEntry[] entries = jProject.getRawClasspath();
-				for (int i = 0; i < entries.length; i++) {
-					int kind = entries[i].getEntryKind();
+				for (IClasspathEntry entrie : entries) {
+					int kind = entrie.getEntryKind();
 					if (kind == IClasspathEntry.CPE_SOURCE || kind == IClasspathEntry.CPE_LIBRARY) {
-						IPackageFragmentRoot[] roots = jProject.findPackageFragmentRoots(entries[i]);
-						for (int j = 0; j < roots.length; j++) {
-							if (roots[j].getPackageFragment(packageName).exists()) {
+						IPackageFragmentRoot[] roots = jProject.findPackageFragmentRoots(entrie);
+						for (IPackageFragmentRoot root : roots) {
+							if (root.getPackageFragment(packageName).exists()) {
 								// if source folder, find the output folder
 								if (kind == IClasspathEntry.CPE_SOURCE) {
-									IPath path = entries[i].getOutputLocation();
+									IPath path = entrie.getOutputLocation();
 									if (path == null)
 										path = jProject.getOutputLocation();
 									path = path.removeFirstSegments(1);
 									return project.getLocation().append(path).toOSString();
 								}
 								// else if is a library jar, then get the location of the jar itself
-								IResource jar = roots[j].getResource();
+								IResource jar = root.getResource();
 								if (jar != null) {
 									return jar.getLocation().toOSString();
 								}
@@ -334,8 +334,8 @@ public class LaunchArgumentsHelper {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jProject = JavaCore.create(project);
 				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-				for (int i = 0; i < roots.length; i++) {
-					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE && roots[i].getPackageFragment("org.eclipse.core.launcher").exists()) { //$NON-NLS-1$
+				for (IPackageFragmentRoot root : roots) {
+					if (root.getKind() == IPackageFragmentRoot.K_SOURCE && root.getPackageFragment("org.eclipse.core.launcher").exists()) { //$NON-NLS-1$
 						IPath path = jProject.getOutputLocation().removeFirstSegments(1);
 						return project.getLocation().append(path).toOSString();
 					}

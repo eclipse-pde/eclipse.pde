@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,11 +41,10 @@ public class ProductValidationOperation extends LaunchValidationOperation {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 		List<IExecutionEnvironment> result = new ArrayList<IExecutionEnvironment>(envs.length);
-		for (int i = 0; i < envs.length; i++) {
-			IExecutionEnvironment env = envs[i];
+		for (IExecutionEnvironment env : envs) {
 			IVMInstall[] compatible = env.getCompatibleVMs();
-			for (int j = 0; j < compatible.length; j++) {
-				if (compatible[j].equals(install)) {
+			for (IVMInstall element : compatible) {
+				if (element.equals(install)) {
 					result.add(env);
 					break;
 				}
