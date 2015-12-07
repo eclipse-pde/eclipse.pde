@@ -135,12 +135,13 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class key) {
+	public <T> T getAdapter(Class<T> key) {
 		if (fProjectionSupport != null) {
 			Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), key);
 			if (adapter != null) {
-				return adapter;
+				return (T) adapter;
 			}
 		}
 		return super.getAdapter(key);
