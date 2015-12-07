@@ -177,27 +177,27 @@ public class BundleLauncherHelper {
 
 			//remove conflicting duplicates - if they have same version or both are singleton
 			HashMap<String, IPluginModelBase> pluginMap = new HashMap<String, IPluginModelBase>();
+			Set<IPluginModelBase> pluginSet = new HashSet<IPluginModelBase>();
 			List<IPluginModelBase> workspaceModels = null;
-			for (Iterator<IPluginModelBase> iterator = launchPlugins.iterator(); iterator.hasNext();) {
-				IPluginModelBase model = iterator.next();
+			for (IPluginModelBase model : launchPlugins) {
 				String id = model.getPluginBase().getId();
 				if (pluginMap.containsKey(id)) {
 					IPluginModelBase existing = pluginMap.get(id);
 					if (model.getPluginBase().getVersion().equalsIgnoreCase(existing.getPluginBase().getVersion()) || (isSingleton(model) && isSingleton(existing))) {
 						if (workspaceModels == null)
 							workspaceModels = Arrays.asList(PluginRegistry.getWorkspaceModels());
-						if (!workspaceModels.contains(existing)) { //if existing model is external 							
-							pluginMap.put(id, model); // launch the workspace model 
+						if (!workspaceModels.contains(existing)) { //if existing model is external
+							pluginSet.add(model);// launch the workspace model
 							continue;
 						}
 					}
 				}
-				pluginMap.put(id, model);
+				pluginSet.add(model);
 			}
+			pluginMap.clear();
 
 			// Create the start levels for the selected plugins and add them to the map
-			for (Iterator<IPluginModelBase> iterator = pluginMap.values().iterator(); iterator.hasNext();) {
-				IPluginModelBase model = iterator.next();
+			for (IPluginModelBase model : pluginSet) {
 				addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
 			}
 			return map;
