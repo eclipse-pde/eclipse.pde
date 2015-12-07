@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 477658
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
@@ -183,10 +184,8 @@ public class FeatureExportOperation extends Job {
 			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
 			runner.setExecutionTargets(targets);
 			runner.run(subMonitor.split(1));
-		} catch (FactoryConfigurationError e) {
-		} catch (ParserConfigurationException e) {
-		} catch (CoreException e) {
-		} catch (IOException e) {
+		} catch (FactoryConfigurationError | ParserConfigurationException | CoreException | IOException e) {
+			PDECore.logException(e);
 		} finally {
 			if (scriptFile != null && scriptFile.exists()) {
 				scriptFile.delete();
