@@ -229,10 +229,11 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
-			return new ManifestHyperlinkDetector(this);
+			return (T) new ManifestHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
 

@@ -590,10 +590,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
-			return new BundleHyperlinkDetector(this);
+			return (T) new BundleHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
 

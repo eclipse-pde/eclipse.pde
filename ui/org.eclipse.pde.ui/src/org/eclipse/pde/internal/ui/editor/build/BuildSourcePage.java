@@ -143,10 +143,11 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
-			return new BuildHyperlinkDetector(this);
+			return (T) new BuildHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
 

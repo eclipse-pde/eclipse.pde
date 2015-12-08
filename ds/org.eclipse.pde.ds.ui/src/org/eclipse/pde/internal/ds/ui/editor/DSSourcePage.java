@@ -123,10 +123,11 @@ public class DSSourcePage extends XMLSourcePage {
 
 
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
-			return new DSHyperlinkDetector(this);
+			return (T) new DSHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
 
