@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Hashtable;
@@ -167,14 +166,6 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	public PDECore() {
 		inst = this;
-	}
-
-	public URL getInstallURL() {
-		try {
-			return FileLocator.resolve(getDefault().getBundle().getEntry("/")); //$NON-NLS-1$
-		} catch (IOException e) {
-			return null;
-		}
 	}
 
 	public IPluginModelBase findPluginInHost(String id) {
