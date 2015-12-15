@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Manumitting Technologies Inc - bug 324310
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 484445
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
@@ -282,12 +284,19 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 	 * text field.
 	 */
 	protected void doReload() {
-		IRunnableWithProgress op = new ReloadOperation(nametext.getText().trim(), locationcombo.getText().trim());
+		String location = locationcombo.getText().trim();
+		IRunnableWithProgress op = new ReloadOperation(nametext.getText().trim(), location);
 		try {
 			getContainer().run(true, true, op);
+			// If no name has been set, the directories' name is taken as name.
+			if (nametext.getText().isEmpty()) {
+				nametext.setText(String.valueOf(Paths.get(location).getFileName()));
+			}
 			treeviewer.setInput(getCurrentComponents());
 			treeviewer.refresh();
 			setPageComplete(pageValid());
+			nametext.setFocus();
+			nametext.selectAll();
 		} catch (InvocationTargetException ite) {
 		} catch (InterruptedException ie) {
 		}
