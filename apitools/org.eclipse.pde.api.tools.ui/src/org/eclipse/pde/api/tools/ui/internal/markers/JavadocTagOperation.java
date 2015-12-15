@@ -13,9 +13,7 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
@@ -169,23 +167,5 @@ public class JavadocTagOperation {
 			return ((MethodDeclaration) body).isConstructor();
 		}
 		return false;
-	}
-
-	/**
-	 * Updates the given monitor with the given tick count and polls for
-	 * cancellation. If the monitor is cancelled an
-	 * {@link OperationCanceledException} is thrown
-	 *
-	 * @param monitor
-	 * @param ticks
-	 * @throws OperationCanceledException
-	 */
-	protected void updateMonitor(final IProgressMonitor monitor, int ticks) throws OperationCanceledException {
-		if (monitor != null) {
-			monitor.worked(ticks);
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
-		}
 	}
 }
