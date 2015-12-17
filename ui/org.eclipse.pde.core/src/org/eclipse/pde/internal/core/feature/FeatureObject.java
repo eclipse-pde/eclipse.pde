@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,18 +11,12 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Node;
 
@@ -79,6 +73,8 @@ public abstract class FeatureObject extends PlatformObject implements IFeatureOb
 
 	@Override
 	public String getLabel() {
+		if (label == null)
+			return ""; //$NON-NLS-1$
 		return label;
 	}
 
