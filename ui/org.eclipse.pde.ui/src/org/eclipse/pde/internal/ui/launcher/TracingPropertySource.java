@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alena Laskavaia - Bug 453392 - No debug options help
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -33,10 +34,12 @@ public class TracingPropertySource {
 	private abstract class PropertyEditor {
 		private String key;
 		private String label;
+		private String comment;
 
-		public PropertyEditor(String key, String label) {
+		public PropertyEditor(String key, String label, String comment) {
 			this.key = key;
 			this.label = label;
+			this.comment = comment;
 		}
 
 		public String getKey() {
@@ -45,6 +48,10 @@ public class TracingPropertySource {
 
 		public String getLabel() {
 			return label;
+		}
+
+		public String getComment() {
+			return comment;
 		}
 
 		abstract void create(Composite parent, boolean enabled);
@@ -56,13 +63,67 @@ public class TracingPropertySource {
 			fModified = true;
 			fBlock.getTab().scheduleUpdateJob();
 		}
+
+		/**
+		 * Creates a comment decorator for the options, currently it is a
+		 * tooltip, but technically it can be label or decorator on control
+		 *
+		 * @param target
+		 *            - the control to be decorated
+		 * @param enabled
+		 */
+		protected void createCommentDecorator(Control target, boolean enabled) {
+			String commentText = getFormattedComment();
+			if (!commentText.isEmpty()) {
+				target.setToolTipText(commentText);
+			}
+		}
+
+		/**
+		 * Takes the comment lines prefixed by # and formats them. If two or
+		 * more lines sequentially start with # without empty lines in between
+		 * it will be joined. Empty line between comment sections will be
+		 * preserved
+		 *
+		 * @return formatted comment
+		 */
+		protected String getFormattedComment() {
+			String commentOrig = getComment();
+			if (commentOrig == null || commentOrig.trim().isEmpty())
+				return ""; //$NON-NLS-1$
+
+			String lines[] = commentOrig.trim().split("\\r?\\n"); //$NON-NLS-1$
+			StringBuilder commentBuilder = new StringBuilder();
+			boolean needsSpace = false;
+			for (String string : lines) {
+				// remove leading hash and trim spaces around
+				string = string.replaceFirst("^#", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+				if (string.isEmpty()) {
+					commentBuilder.append("\n\n"); //$NON-NLS-1$
+					needsSpace = false;
+				} else {
+					if (needsSpace)
+						commentBuilder.append(" "); //$NON-NLS-1$
+					commentBuilder.append(string);
+					needsSpace = true;
+				}
+			}
+
+			String processed = commentBuilder.toString().trim();
+			int k = processed.lastIndexOf("\n\n"); //$NON-NLS-1$
+			if (k > 0) { // multi section comment, just keep last section
+				// since we trimmed the string k guaranteed to be >0 and <length-2 (unless -1)
+				return processed.substring(k + 2);
+			}
+			return processed;
+		}
 	}
 
 	private class BooleanEditor extends PropertyEditor {
 		private Button checkbox;
 
-		public BooleanEditor(String key, String label) {
-			super(key, label);
+		public BooleanEditor(String key, String label, String comment) {
+			super(key, label, comment);
 		}
 
 		@Override
@@ -72,6 +133,7 @@ public class TracingPropertySource {
 			td.colspan = 2;
 			checkbox.setLayoutData(td);
 			checkbox.setEnabled(enabled);
+			createCommentDecorator(checkbox, enabled);
 		}
 
 		public void update() {
@@ -95,8 +157,8 @@ public class TracingPropertySource {
 	private class TextEditor extends PropertyEditor {
 		private Text text;
 
-		public TextEditor(String key, String label) {
-			super(key, label);
+		public TextEditor(String key, String label, String comment) {
+			super(key, label, comment);
 		}
 
 		@Override
@@ -111,6 +173,7 @@ public class TracingPropertySource {
 			//gd.widthHint = 100;
 			text.setLayoutData(td);
 			text.setEnabled(enabled);
+			createCommentDecorator(label, enabled);
 		}
 
 		public void update() {
@@ -169,6 +232,8 @@ public class TracingPropertySource {
 		fDescriptors = new Vector<>();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
+		layout.rightMargin = 10;
+		layout.leftMargin = 10;
 		parent.setLayout(layout);
 		boolean bordersNeeded = false;
 		Object[] sortedKeys = getSortedKeys(fTemplate.size());
@@ -180,11 +245,12 @@ public class TracingPropertySource {
 			String value = (String) fTemplate.get(key);
 			String lvalue = null;
 			String masterValue = fMasterOptions.getProperty(key);
+			String commentValue = fMasterOptions.getProperty("#" + key); //$NON-NLS-1$
 			PropertyEditor editor;
 			if (value != null)
 				lvalue = value.toLowerCase(Locale.ENGLISH);
 			if (lvalue != null && (lvalue.equals("true") || lvalue.equals("false"))) { //$NON-NLS-1$ //$NON-NLS-2$
-				editor = new BooleanEditor(shortKey, shortKey);
+				editor = new BooleanEditor(shortKey, shortKey, commentValue);
 				if (masterValue != null) {
 					Integer mvalue = new Integer(masterValue.equals("true") //$NON-NLS-1$
 					? 1
@@ -192,7 +258,7 @@ public class TracingPropertySource {
 					fValues.put(shortKey, mvalue);
 				}
 			} else {
-				editor = new TextEditor(shortKey, shortKey);
+				editor = new TextEditor(shortKey, shortKey, commentValue);
 				if (masterValue != null) {
 					fValues.put(shortKey, masterValue);
 				}

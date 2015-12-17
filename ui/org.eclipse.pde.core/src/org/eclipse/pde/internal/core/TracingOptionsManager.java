@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alena Laskavaia - Bug 453392 - No debug options help
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -37,13 +39,8 @@ public class TracingOptionsManager {
 
 	private void addToTemplate(Properties temp, IPluginModelBase model) {
 		Properties modelOptions = getOptions(model);
-		if (modelOptions == null)
-			return;
-		for (Enumeration<?> keys = modelOptions.keys(); keys.hasMoreElements();) {
-			String key = keys.nextElement().toString();
-			String value = modelOptions.getProperty(key);
-			if (key != null && value != null)
-				temp.setProperty(key, value);
+		if (modelOptions != null) {
+			temp.putAll(modelOptions);
 		}
 	}
 
@@ -161,41 +158,70 @@ public class TracingOptionsManager {
 		String location = model.getInstallLocation();
 		if (location == null)
 			return null;
-
-		File pluginLocation = new File(location);
-		InputStream stream = null;
-		ZipFile jarFile = null;
 		try {
+			File pluginLocation = new File(location);
+			Properties modelOptions = new Properties();
 			if (pluginLocation.isDirectory()) {
 				File file = new File(pluginLocation, ICoreConstants.OPTIONS_FILENAME);
-				if (file.exists())
-					stream = new FileInputStream(file);
+				if (file.exists()) {
+					try (InputStream stream = new FileInputStream(file)) {
+						modelOptions.load(stream);
+					}
+					try (InputStream stream = new FileInputStream(file)) {
+						loadComments(stream, modelOptions);
+					}
+					return modelOptions;
+				}
 			} else {
-				jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(ICoreConstants.OPTIONS_FILENAME);
-				if (manifestEntry != null) {
-					stream = jarFile.getInputStream(manifestEntry);
+				try (ZipFile jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ)) {
+					ZipEntry manifestEntry = jarFile.getEntry(ICoreConstants.OPTIONS_FILENAME);
+					if (manifestEntry != null) {
+						try (InputStream stream = jarFile.getInputStream(manifestEntry)) {
+							modelOptions.load(stream);
+						}
+						try (InputStream stream = jarFile.getInputStream(manifestEntry)) {
+							loadComments(stream, modelOptions);
+						}
+						return modelOptions;
+					}
 				}
 			}
-			if (stream != null) {
-				Properties modelOptions = new Properties();
-				modelOptions.load(stream);
-				return modelOptions;
-			}
-		} catch (FileNotFoundException e) {
-			PDECore.logException(e);
 		} catch (IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-				if (jarFile != null)
-					jarFile.close();
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
 		}
 		return null;
+	}
+
+	/**
+	 * Loads the comments from the properties files. This is simple version
+	 * which won't cover 100% of the cases but hopefully cover 99%. It will find
+	 * single or multiline comments starting with # (not !) and attach to the
+	 * following property key by creating fake property with the key #key and
+	 * value of the comment. Properties object which will receive these comments
+	 * cannot be saved back properly without some special handling. It won't
+	 * support cases when: key is split in multiple lines; key use escape
+	 * characters; comment uses ! start char
+	 */
+	private void loadComments(InputStream stream, Properties modelOptions) throws IOException {
+		String prevComment = ""; //$NON-NLS-1$
+		try (BufferedReader bufferedReader = new BufferedReader(
+				new InputStreamReader(stream, Charset.defaultCharset()))) {
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				if (line.startsWith("#") || line.trim().isEmpty()) { //$NON-NLS-1$
+					prevComment += "\n" + line.trim(); //$NON-NLS-1$
+				} else {
+					if (prevComment.trim().isEmpty())
+						continue;
+
+					int eq = line.indexOf('=');
+					if (eq >= 0) {
+						String key = line.substring(0, eq).trim();
+						modelOptions.put("#" + key, prevComment); //$NON-NLS-1$
+					}
+					prevComment = ""; //$NON-NLS-1$
+				}
+			}
+		}
 	}
 }

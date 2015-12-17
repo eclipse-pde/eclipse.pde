@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - ongoing enhancements
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 262885
+ *     Alena Laskavaia - Bug 453392 - No debug options help
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -266,7 +267,10 @@ public class TracingBlock {
 			if (changes) {
 				HashMap<String, String> atts = new HashMap<>(fMasterOptions.size());
 				for (Entry<Object, Object> entry : fMasterOptions.entrySet()) {
-					atts.put((String) entry.getKey(), (String) entry.getValue());
+					String key = (String) entry.getKey();
+					// these are comment keys which we don't want to save
+					if (!key.startsWith("#")) //$NON-NLS-1$
+						atts.put(key, (String) entry.getValue());
 				}
 				config.setAttribute(IPDELauncherConstants.TRACING_OPTIONS, atts);
 			}
