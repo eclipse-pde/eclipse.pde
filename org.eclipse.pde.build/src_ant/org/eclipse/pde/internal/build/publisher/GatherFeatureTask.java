@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alena Laskavaia - Bug 432399 - Export feature not exporting empty folders
  *******************************************************************************/
 package org.eclipse.pde.internal.build.publisher;
 
 import java.io.File;
 import java.util.*;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.apache.tools.ant.types.selectors.FilenameSelector;
@@ -113,7 +115,9 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		}
 
 		FileSet fileSet = createFileSet(buildResultFolder, include, exclude);
-		computer.addFiles(buildResultFolder, fileSet.getDirectoryScanner().getIncludedFiles());
+		DirectoryScanner directoryScanner = fileSet.getDirectoryScanner();
+		computer.addFiles(buildResultFolder, directoryScanner.getIncludedFiles());
+		computer.addFiles(buildResultFolder, directoryScanner.getIncludedDirectories());
 		return computer;
 	}
 
