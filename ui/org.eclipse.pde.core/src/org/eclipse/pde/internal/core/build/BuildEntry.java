@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 
 public class BuildEntry extends BuildObject implements IBuildEntry {
-	private Vector<String> tokens = new Vector<String>();
+	private Vector<String> tokens = new Vector<>();
 	private String name;
 
 	public BuildEntry(String name) {
@@ -101,7 +101,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		IPath rootPath = getRootPath();
 		if (rootPath != null) {
 			// translation required for source. and output. entries
-			Vector<String> vector = new Vector<String>();
+			Vector<String> vector = new Vector<>();
 			while (elements.hasMoreElements()) {
 				String e = elements.nextElement();
 				vector.add(toRelative(e, rootPath));

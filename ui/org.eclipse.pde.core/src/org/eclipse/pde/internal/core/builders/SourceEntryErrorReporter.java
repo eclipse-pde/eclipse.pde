@@ -35,7 +35,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 	class ProjectFolder {
 		IPath fPath;
 		String fToken;
-		ArrayList<String> fLibs = new ArrayList<String>(1);
+		ArrayList<String> fLibs = new ArrayList<>(1);
 		String dupeLibName = null;
 
 		public ProjectFolder(IPath path) {
@@ -96,7 +96,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	class OutputFolder extends ProjectFolder {
 
-		private ArrayList<SourceFolder> fSourceFolders = new ArrayList<SourceFolder>();
+		private ArrayList<SourceFolder> fSourceFolders = new ArrayList<>();
 		/**
 		 * True when there is no corresponding source - i.e. a class file folder or library
 		 */
@@ -245,7 +245,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					String lib = fLibs[i];
 					List<EncodingEntry> encodings = fCustomEncodings.get(lib);
 					if (encodings == null) {
-						encodings = new ArrayList<EncodingEntry>();
+						encodings = new ArrayList<>();
 						fCustomEncodings.put(lib, encodings);
 					}
 					encodings.add(entry);
@@ -256,20 +256,20 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	}
 
-	private HashMap<IPath, SourceFolder> fSourceFolderMap = new HashMap<IPath, SourceFolder>(4);
-	private HashMap<IPath, OutputFolder> fOutputFolderMap = new HashMap<IPath, OutputFolder>(4);
+	private HashMap<IPath, SourceFolder> fSourceFolderMap = new HashMap<>(4);
+	private HashMap<IPath, OutputFolder> fOutputFolderMap = new HashMap<>(4);
 	private IBuild fBuild = null;
 
 	/**
 	 * Maps library name to default encoding for that library (or not present if there is no
 	 * explicit default encoding specified).
 	 */
-	Map<String, String> fDefaultLibraryEncodings = new HashMap<String, String>();
+	Map<String, String> fDefaultLibraryEncodings = new HashMap<>();
 
 	/**
 	 * Maps library name to custom {@link EncodingEntry}'s for this library.
 	 */
-	Map<String, List<EncodingEntry>> fCustomEncodings = new HashMap<String, List<EncodingEntry>>();
+	Map<String, List<EncodingEntry>> fCustomEncodings = new HashMap<>();
 
 	public void initialize(ArrayList<?> sourceEntries, ArrayList<?> outputEntries, IClasspathEntry[] cpes, IProject project) {
 
@@ -281,7 +281,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		} catch (JavaModelException e) {
 		}
 
-		List<String> pluginLibraryNames = new ArrayList<String>(1);
+		List<String> pluginLibraryNames = new ArrayList<>(1);
 		IPluginModelBase pluginModel = PluginRegistry.findModel(fProject);
 		if (pluginModel != null) {
 			IPluginLibrary[] pluginLibraries = pluginModel.getPluginBase().getLibraries();
@@ -396,7 +396,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			IPath outputPath = iterator.next();
 			OutputFolder outputFolder = fOutputFolderMap.get(outputPath);
 			ArrayList<SourceFolder> sourceFolders = outputFolder.getSourceFolders();
-			ArrayList<String> outputFolderLibs = new ArrayList<String>(outputFolder.getLibs());
+			ArrayList<String> outputFolderLibs = new ArrayList<>(outputFolder.getLibs());
 
 			if (sourceFolders.size() == 0) {
 				if (!outputFolder.isLibrary()) {
@@ -472,8 +472,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		}
 
 		class MissingOutputEntry {
-			private List<String> fSrcFolders = new ArrayList<String>(1);
-			private List<String> fOutputFolders = new ArrayList<String>(1);
+			private List<String> fSrcFolders = new ArrayList<>(1);
+			private List<String> fOutputFolders = new ArrayList<>(1);
 
 			public String getOutputList() {
 				return generateList(fOutputFolders);
@@ -510,9 +510,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
-		HashMap<String, MissingOutputEntry> missingOutputEntryErrors = new HashMap<String, MissingOutputEntry>(4);
+		HashMap<String, MissingOutputEntry> missingOutputEntryErrors = new HashMap<>(4);
 
-		List<SourceFolder> toValidate = new ArrayList<SourceFolder>(); // list of source folders to perform encoding validation on
+		List<SourceFolder> toValidate = new ArrayList<>(); // list of source folders to perform encoding validation on
 		for (Iterator<IPath> iterator = fSourceFolderMap.keySet().iterator(); iterator.hasNext();) {
 			IPath sourcePath = iterator.next();
 			SourceFolder sourceFolder = fSourceFolderMap.get(sourcePath);
@@ -624,7 +624,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					String lib = name.substring(PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX.length());
 					String[] tokens = entry.getTokens();
 					if (tokens.length > 0) {
-						List<EncodingEntry> encodings = new ArrayList<EncodingEntry>();
+						List<EncodingEntry> encodings = new ArrayList<>();
 						for (int j = 0; j < tokens.length; j++) {
 							String special = tokens[j];
 							int index = special.indexOf('[');
@@ -650,7 +650,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 						if (workspace == null) {
 							prepareError(name, null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_5, lib), PDEMarkerFactory.B_REMOVAL, fEncodingSeverity, PDEMarkerFactory.CAT_OTHER);
 						} else {
-							Map<IResource, String> map = new HashMap<IResource, String>();
+							Map<IResource, String> map = new HashMap<>();
 							Iterator<EncodingEntry> iter = workspace.iterator();
 							while (iter.hasNext()) {
 								EncodingEntry ee = iter.next();

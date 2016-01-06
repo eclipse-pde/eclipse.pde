@@ -77,7 +77,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 
 	@Override
 	public IPluginLibrary[] getLibraries() {
-		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
+		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode requiresNode = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (requiresNode != null) {
 			IDocumentElementNode[] children = requiresNode.getChildNodes();
@@ -122,7 +122,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 
 	@Override
 	public IPluginImport[] getImports() {
-		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
+		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode requiresNode = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (requiresNode != null) {
 			IDocumentElementNode[] children = requiresNode.getChildNodes();
@@ -240,7 +240,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 
 	@Override
 	public IPluginExtensionPoint[] getExtensionPoints() {
-		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
+		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof IPluginExtensionPoint)
@@ -251,7 +251,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 
 	@Override
 	public IPluginExtension[] getExtensions() {
-		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
+		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof IPluginExtension)

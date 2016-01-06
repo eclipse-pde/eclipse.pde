@@ -21,7 +21,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	private static final long serialVersionUID = 1L;
 	private boolean fUseIcoFile;
-	private Map<String, String> fIcons = new HashMap<String, String>();
+	private Map<String, String> fIcons = new HashMap<>();
 	private String fLauncherName;
 
 	public LauncherInfo(IProductModel model) {

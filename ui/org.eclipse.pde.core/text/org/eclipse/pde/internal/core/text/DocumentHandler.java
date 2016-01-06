@@ -22,7 +22,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class DocumentHandler extends DefaultHandler {
 
-	protected Stack<IDocumentElementNode> fDocumentNodeStack = new Stack<IDocumentElementNode>();
+	protected Stack<IDocumentElementNode> fDocumentNodeStack = new Stack<>();
 	protected int fHighestOffset = 0;
 	private Locator fLocator;
 	private IDocumentElementNode fLastError;
@@ -122,7 +122,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 		}
 		String text = doc.get(fHighestOffset + 1, endOffset - fHighestOffset - 1);
 
-		ArrayList<Position> commentPositions = new ArrayList<Position>();
+		ArrayList<Position> commentPositions = new ArrayList<>();
 		for (int idx = 0; idx < text.length();) {
 			idx = text.indexOf("<!--", idx); //$NON-NLS-1$
 			if (idx == -1)

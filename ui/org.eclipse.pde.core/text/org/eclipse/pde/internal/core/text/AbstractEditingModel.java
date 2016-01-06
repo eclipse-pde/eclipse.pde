@@ -20,7 +20,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 
 public abstract class AbstractEditingModel extends PlatformObject implements IEditingModel, IModelChangeProviderExtension {
-	private ArrayList<IModelChangedListener> fListeners = new ArrayList<IModelChangedListener>();
+	private ArrayList<IModelChangedListener> fListeners = new ArrayList<>();
 	protected boolean fReconciling;
 	protected boolean fInSync = true;
 	protected boolean fLoaded = false;

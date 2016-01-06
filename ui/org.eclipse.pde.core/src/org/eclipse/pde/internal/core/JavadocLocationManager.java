@@ -66,7 +66,7 @@ public class JavadocLocationManager {
 	private synchronized void initialize() {
 		if (fLocations != null)
 			return;
-		fLocations = new HashMap<String, Set<String>>();
+		fLocations = new HashMap<>();
 
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(JAVADOC_ID, false);
 		for (int i = 0; i < extensions.length; i++) {
@@ -128,7 +128,7 @@ public class JavadocLocationManager {
 					continue;
 				Set<String> set = fLocations.get(path);
 				if (set == null) {
-					set = new HashSet<String>();
+					set = new HashSet<>();
 					fLocations.put(path, set);
 				}
 				set.add(id);

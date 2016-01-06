@@ -30,9 +30,9 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private ListenerList fListeners = new ListenerList();
 
-	private Vector<ISchemaElement> fElements = new Vector<ISchemaElement>();
+	private Vector<ISchemaElement> fElements = new Vector<>();
 
-	private Vector<DocumentSection> fDocSections = new Vector<DocumentSection>();
+	private Vector<DocumentSection> fDocSections = new Vector<>();
 
 	private Vector<ISchemaInclude> fIncludes;
 
@@ -101,7 +101,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	public void addInclude(ISchemaInclude include) {
 		if (fIncludes == null)
-			fIncludes = new Vector<ISchemaInclude>();
+			fIncludes = new Vector<>();
 		fIncludes.add(include);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT, new Object[] {include}, null));
 	}
@@ -196,7 +196,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	@Override
 	public ISchemaElement[] getCandidateChildren(ISchemaElement element) {
-		Vector<Object> candidates = new Vector<Object>();
+		Vector<Object> candidates = new Vector<>();
 		ISchemaType type = element.getType();
 		if (type instanceof ISchemaComplexType) {
 			ISchemaCompositor compositor = ((ISchemaComplexType) type).getCompositor();
@@ -492,7 +492,7 @@ public class Schema extends PlatformObject implements ISchema {
 			return new SchemaSimpleType(attribute.getSchema(), "string"); //$NON-NLS-1$
 		}
 		SchemaSimpleType type = new SchemaSimpleType(attribute.getSchema(), baseName);
-		Vector<ISchemaEnumeration> items = new Vector<ISchemaEnumeration>();
+		Vector<ISchemaEnumeration> items = new Vector<>();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -781,7 +781,7 @@ public class Schema extends PlatformObject implements ISchema {
 		String location = getAttribute(node, "schemaLocation"); //$NON-NLS-1$
 		SchemaInclude include = new SchemaInclude(this, location, fAbbreviated, fSearchPath);
 		if (fIncludes == null)
-			fIncludes = new Vector<ISchemaInclude>();
+			fIncludes = new Vector<>();
 		fIncludes.add(include);
 	}
 
@@ -842,8 +842,8 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	private void reset() {
-		fElements = new Vector<ISchemaElement>();
-		fDocSections = new Vector<DocumentSection>();
+		fElements = new Vector<>();
+		fDocSections = new Vector<>();
 		fIncludes = null;
 		fPointID = null;
 		fPluginID = null;
@@ -937,7 +937,7 @@ public class Schema extends PlatformObject implements ISchema {
 		if (root == null)
 			return;
 		NodeList children = root.getChildNodes();
-		fReferences = new Vector<SchemaElementReference>();
+		fReferences = new Vector<>();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {

@@ -25,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class PluginHandler extends DefaultHandler {
 	private Document fDocument;
 	private Element fRootElement;
-	private Stack<Element> fOpenElements = new Stack<Element>();
+	private Stack<Element> fOpenElements = new Stack<>();
 
 	private String fSchemaVersion;
 	private boolean fAbbreviated;

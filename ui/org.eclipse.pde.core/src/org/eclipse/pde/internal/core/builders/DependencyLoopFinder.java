@@ -26,9 +26,9 @@ public class DependencyLoopFinder {
 	}
 
 	public static DependencyLoop[] findLoops(IPlugin root, IPlugin[] candidates, boolean onlyCandidates) {
-		Vector<DependencyLoop> loops = new Vector<DependencyLoop>();
+		Vector<DependencyLoop> loops = new Vector<>();
 
-		Vector<IPlugin> path = new Vector<IPlugin>();
+		Vector<IPlugin> path = new Vector<>();
 		findLoops(loops, path, root, candidates, onlyCandidates, new Vector<String>());
 		return loops.toArray(new DependencyLoop[loops.size()]);
 	}

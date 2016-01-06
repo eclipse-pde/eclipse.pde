@@ -81,14 +81,14 @@ public class PDEXMLHelper {
 
 	public synchronized void recycleSAXParser(SAXParser parser) {
 		if (fSAXParserQueue.size() < fSAXPoolLimit) {
-			SoftReference<SAXParser> reference = new SoftReference<SAXParser>(parser);
+			SoftReference<SAXParser> reference = new SoftReference<>(parser);
 			fSAXParserQueue.add(reference);
 		}
 	}
 
 	public synchronized void recycleDOMParser(DocumentBuilder parser) {
 		if (fDOMParserQueue.size() < fDOMPoolLimit) {
-			SoftReference<DocumentBuilder> reference = new SoftReference<DocumentBuilder>(parser);
+			SoftReference<DocumentBuilder> reference = new SoftReference<>(parser);
 			fDOMParserQueue.add(reference);
 		}
 	}

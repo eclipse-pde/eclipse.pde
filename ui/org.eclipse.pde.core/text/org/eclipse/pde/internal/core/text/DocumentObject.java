@@ -337,7 +337,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 
 	@Override
 	public ArrayList<IDocumentElementNode> getChildNodesList(Class<?>[] classes, boolean match) {
-		ArrayList<IDocumentElementNode> filteredChildren = new ArrayList<IDocumentElementNode>();
+		ArrayList<IDocumentElementNode> filteredChildren = new ArrayList<>();
 		ArrayList<?> children = getChildNodesList();
 		Iterator<?> iterator = children.iterator();
 		while (iterator.hasNext()) {

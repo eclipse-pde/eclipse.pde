@@ -53,7 +53,7 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 
 	@Override
 	public IPluginObject[] getChildren() {
-		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
+		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode[] nodes = getChildNodes();
 		for (int i = 0; i < nodes.length; i++)
 			result.add(nodes[i]);

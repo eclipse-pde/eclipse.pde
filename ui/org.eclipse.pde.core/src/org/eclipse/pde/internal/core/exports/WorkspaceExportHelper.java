@@ -77,7 +77,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	 */
 	public Set<IProject> checkForErrors(Object[] exportedItems) throws CoreException {
 		IProject[] projects = getExportedWorkspaceProjects(exportedItems);
-		Set<IProject> projectsWithErrors = new HashSet<IProject>(projects.length);
+		Set<IProject> projectsWithErrors = new HashSet<>(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			IMarker[] markers = projects[i].findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 			if (markers.length > 0) {
@@ -108,7 +108,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	 */
 	public Map<String, Map<String, Set<IPath>>> getWorkspaceOutputFolders(Object[] exportedItems) throws CoreException {
 		IProject[] projects = getExportedWorkspaceProjects(exportedItems);
-		Map<String, Map<String, Set<IPath>>> result = new HashMap<String, Map<String, Set<IPath>>>(projects.length);
+		Map<String, Map<String, Set<IPath>>> result = new HashMap<>(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			IFile buildFile = PDEProject.getBuildProperties(projects[i]);
 			if (buildFile.exists()) {
@@ -130,13 +130,13 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	}
 
 	private Map<String, Set<IPath>> getPluginOutputFolders(IBuildModel buildModel, IJavaProject javaProject) throws JavaModelException {
-		Map<String, Set<IPath>> outputEntries = new HashMap<String, Set<IPath>>();
+		Map<String, Set<IPath>> outputEntries = new HashMap<>();
 
 		IBuildEntry[] buildEntries = buildModel.getBuild().getBuildEntries();
 		for (int i = 0; i < buildEntries.length; i++) {
 			String name = buildEntries[i].getName();
 			if (name.startsWith(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX)) {
-				Set<IPath> outputPaths = new HashSet<IPath>();
+				Set<IPath> outputPaths = new HashSet<>();
 
 				String[] sourceFolders = buildEntries[i].getTokens();
 				for (int j = 0; j < sourceFolders.length; j++) {
@@ -166,7 +166,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	private IProject[] getExportedWorkspaceProjects(Object[] exportedItems) throws CoreException {
 		if (fWorkspaceProjects == null) {
 			// TODO This won't work for nested features either
-			Set<IProject> projects = new HashSet<IProject>();
+			Set<IProject> projects = new HashSet<>();
 			for (int i = 0; i < exportedItems.length; i++) {
 				if (exportedItems[i] instanceof IPluginModelBase) {
 					IPath installLocation = new Path(((IPluginModelBase) exportedItems[i]).getInstallLocation());

@@ -79,7 +79,7 @@ public class TargetPersistence38Helper {
 				String nodeName = element.getNodeName();
 				if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATIONS)) {
 					NodeList locations = element.getChildNodes();
-					List<ITargetLocation> bundleContainers = new ArrayList<ITargetLocation>();
+					List<ITargetLocation> bundleContainers = new ArrayList<>();
 					for (int j = 0; j < locations.getLength(); ++j) {
 						Node locationNode = locations.item(j);
 						if (locationNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -100,7 +100,7 @@ public class TargetPersistence38Helper {
 					definition.setTargetLocations(bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INCLUDE_BUNDLES) || nodeName.equalsIgnoreCase(TargetPersistence35Helper.OPTIONAL_BUNDLES)) {
 					NodeList children = element.getChildNodes();
-					List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>();
+					List<NameVersionDescriptor> included = new ArrayList<>();
 					for (int j = 0; j < children.getLength(); ++j) {
 						Node child = children.item(j);
 						if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -121,7 +121,7 @@ public class TargetPersistence38Helper {
 					if (previousIncluded == null || previousIncluded.length == 0) {
 						definition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
 					} else {
-						List<NameVersionDescriptor> allIncluded = new ArrayList<NameVersionDescriptor>();
+						List<NameVersionDescriptor> allIncluded = new ArrayList<>();
 						for (int j = 0; j < previousIncluded.length; j++) {
 							allIncluded.add(previousIncluded[j]);
 						}
@@ -167,7 +167,7 @@ public class TargetPersistence38Helper {
 					}
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.IMPLICIT)) {
 					NodeList implicitEntries = element.getChildNodes();
-					List<NameVersionDescriptor> implicit = new ArrayList<NameVersionDescriptor>(implicitEntries.getLength());
+					List<NameVersionDescriptor> implicit = new ArrayList<>(implicitEntries.getLength());
 					for (int j = 0; j < implicitEntries.getLength(); ++j) {
 						Node entry = implicitEntries.item(j);
 						if (entry.getNodeType() == Node.ELEMENT_NODE) {

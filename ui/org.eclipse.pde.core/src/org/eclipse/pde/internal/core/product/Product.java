@@ -29,10 +29,10 @@ public class Product extends ProductObject implements IProduct {
 	private String fVersion;
 	private IAboutInfo fAboutInfo;
 
-	private TreeMap<String, IProductObject> fPlugins = new TreeMap<String, IProductObject>();
-	private TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<String, IProductObject>();
-	private TreeMap<String, IProductObject> fConfigurationProperties = new TreeMap<String, IProductObject>();
-	private List<IProductObject> fFeatures = new ArrayList<IProductObject>();
+	private TreeMap<String, IProductObject> fPlugins = new TreeMap<>();
+	private TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<>();
+	private TreeMap<String, IProductObject> fConfigurationProperties = new TreeMap<>();
+	private List<IProductObject> fFeatures = new ArrayList<>();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
 	private boolean fUseFeatures;
@@ -43,7 +43,7 @@ public class Product extends ProductObject implements IProduct {
 	private IArgumentsInfo fLauncherArgs;
 	private IIntroInfo fIntroInfo;
 	private ILicenseInfo fLicenseInfo;
-	private List<IProductObject> fRepositories = new ArrayList<IProductObject>();
+	private List<IProductObject> fRepositories = new ArrayList<>();
 	private IPreferencesInfo fPreferencesInfo;
 	private ICSSInfo fCSSInfo;
 
@@ -466,7 +466,7 @@ public class Product extends ProductObject implements IProduct {
 	@Override
 	public void removePlugins(IProductPlugin[] plugins) {
 		boolean modified = false;
-		LinkedList<Object> removedConfigurations = new LinkedList<Object>();
+		LinkedList<Object> removedConfigurations = new LinkedList<>();
 		for (int i = 0; i < plugins.length; i++) {
 			final String id = plugins[i].getId();
 			if (fPlugins.remove(id) != null) {

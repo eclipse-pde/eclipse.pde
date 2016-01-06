@@ -24,7 +24,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	@Override
 	public String[] getContentFilters() {
 		IDocumentElementNode[] children = getChildNodes();
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		for (int i = 0; i < children.length; i++) {
 			PluginObjectNode node = (PluginObjectNode) children[i];
 			if (node.getName().equals(P_EXPORTED)) {

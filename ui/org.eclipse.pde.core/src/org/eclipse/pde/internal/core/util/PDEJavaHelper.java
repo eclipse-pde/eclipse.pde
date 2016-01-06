@@ -113,7 +113,7 @@ public class PDEJavaHelper {
 	}
 
 	public static IPackageFragmentRoot[] getNonJRERoots(IJavaProject project) {
-		ArrayList<IPackageFragmentRoot> result = new ArrayList<IPackageFragmentRoot>();
+		ArrayList<IPackageFragmentRoot> result = new ArrayList<>();
 		try {
 			IPackageFragmentRoot[] roots = project.getAllPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
@@ -228,7 +228,7 @@ public class PDEJavaHelper {
 
 	private static IPackageFragment searchWorkspaceForPackage(String packageName, IPluginModelBase base) {
 		IPluginLibrary[] libs = base.getPluginBase().getLibraries();
-		ArrayList<IPath> libPaths = new ArrayList<IPath>();
+		ArrayList<IPath> libPaths = new ArrayList<>();
 		IPath path = new Path(base.getInstallLocation());
 		if (libs.length == 0) {
 			libPaths.add(path);
@@ -266,7 +266,7 @@ public class PDEJavaHelper {
 	}
 
 	public static HashMap<String, IPackageFragment> getPackageFragmentsHash(IJavaProject jProject, Collection<?> existingPackages, boolean allowJava) {
-		HashMap<String, IPackageFragment> map = new HashMap<String, IPackageFragment>();
+		HashMap<String, IPackageFragment> map = new HashMap<>();
 		try {
 			IPackageFragmentRoot[] roots = getRoots(jProject);
 			for (int i = 0; i < roots.length; i++) {
@@ -288,7 +288,7 @@ public class PDEJavaHelper {
 	}
 
 	private static IPackageFragmentRoot[] getRoots(IJavaProject jProject) {
-		ArrayList<IPackageFragmentRoot> result = new ArrayList<IPackageFragmentRoot>();
+		ArrayList<IPackageFragmentRoot> result = new ArrayList<>();
 		try {
 			IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {

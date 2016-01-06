@@ -244,7 +244,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 			if (prev instanceof Comment) {
 				String comment = prev.getNodeValue();
 				if (result == null)
-					result = new Vector<String>();
+					result = new Vector<>();
 				result.add(comment);
 			} else
 				break;

@@ -200,8 +200,8 @@ public final class BundleProjectService implements IBundleProjectService {
 	 */
 	public Map<IBundleImporter, ScmUrlImportDescription[]> getImportDescriptions(IPluginModelBase[] models) throws CoreException {
 		// build manifests
-		List<Map<String, String>> manifests = new ArrayList<Map<String, String>>();
-		List<IPluginModelBase> plugins = new ArrayList<IPluginModelBase>();
+		List<Map<String, String>> manifests = new ArrayList<>();
+		List<IPluginModelBase> plugins = new ArrayList<>();
 		for (int i = 0; i < models.length; i++) {
 			String location = models[i].getInstallLocation();
 			if (location != null) {
@@ -215,12 +215,12 @@ public final class BundleProjectService implements IBundleProjectService {
 		if (!manifests.isEmpty()) {
 			@SuppressWarnings("rawtypes")
 			Map[] marray = manifests.toArray(new Map[manifests.size()]);
-			Map<IBundleImporter, ScmUrlImportDescription[]> result = new HashMap<IBundleImporter, ScmUrlImportDescription[]>();
+			Map<IBundleImporter, ScmUrlImportDescription[]> result = new HashMap<>();
 			IBundleImporter[] importers = Team.getBundleImporters();
 			for (int i = 0; i < importers.length; i++) {
 				IBundleImporter importer = importers[i];
 				ScmUrlImportDescription[] descriptions = importer.validateImport(marray);
-				List<ScmUrlImportDescription> descriptioonList = new ArrayList<ScmUrlImportDescription>();
+				List<ScmUrlImportDescription> descriptioonList = new ArrayList<>();
 				for (int j = 0; j < descriptions.length; j++) {
 					ScmUrlImportDescription description = descriptions[j];
 					if (description != null) {

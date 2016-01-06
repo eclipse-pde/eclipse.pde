@@ -86,7 +86,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 
 	@Override
 	public void validateContent(IProgressMonitor monitor) {
-		List<String> elements = new ArrayList<String>();
+		List<String> elements = new ArrayList<>();
 		Element element = getDocumentRoot();
 		if (element != null) {
 			NodeList children = element.getChildNodes();
@@ -152,7 +152,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 				StringTokenizer text = new StringTokenizer(textNode.getData(), "<>", true); //$NON-NLS-1$
 
 				int lineNumber = getLine(element);
-				Stack<StackEntry> stack = new Stack<StackEntry>();
+				Stack<StackEntry> stack = new Stack<>();
 				boolean errorReported = false;
 				while (text.hasMoreTokens()) {
 					if (errorReported)

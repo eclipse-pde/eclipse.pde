@@ -67,7 +67,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 			File site = getSite(dir);
 			File[] files = site.listFiles();
 			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
-			List<TargetBundle> bundles = new ArrayList<TargetBundle>(files.length);
+			List<TargetBundle> bundles = new ArrayList<>(files.length);
 			for (int i = 0; i < files.length; i++) {
 				if (localMonitor.isCanceled()) {
 					return new TargetBundle[0];

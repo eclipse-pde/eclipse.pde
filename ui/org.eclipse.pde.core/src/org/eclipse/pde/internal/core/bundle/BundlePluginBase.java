@@ -278,7 +278,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		if (bundle == null)
 			return new IPluginLibrary[0];
 		if (libraries == null) {
-			libraries = new ArrayList<IPluginLibrary>();
+			libraries = new ArrayList<>();
 			String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
 			if (value != null) {
 				try {
@@ -301,7 +301,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	@Override
 	public IPluginImport[] getImports() {
 		if (imports == null) {
-			imports = new ArrayList<IPluginImport>();
+			imports = new ArrayList<>();
 			BundleDescription description = model.getBundleDescription();
 			if (description != null) {
 				BundleSpecification[] required = description.getRequiredBundles();

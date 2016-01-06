@@ -69,7 +69,7 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 
 	private ArrayList<IFeatureModel> add(ArrayList<IFeatureModel> list, IFeatureModel model) {
 		if (list == null)
-			list = new ArrayList<IFeatureModel>();
+			list = new ArrayList<>();
 		list.add(model);
 		return list;
 	}

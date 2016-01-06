@@ -85,7 +85,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 	private IClasspathEntry[] computePluginEntries() {
-		ArrayList<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
+		ArrayList<IClasspathEntry> entries = new ArrayList<>();
 		try {
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc == null)
@@ -102,7 +102,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				entries.addAll(classpathEntries);
 			}
 
-			HashSet<BundleDescription> added = new HashSet<BundleDescription>();
+			HashSet<BundleDescription> added = new HashSet<>();
 
 			// to avoid cycles, e.g. when a bundle imports a package it exports
 			added.add(desc);
@@ -132,7 +132,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 			// add Import-Package
 			// sort by symbolicName_version to get a consistent order
-			Map<String, BundleDescription> sortedMap = new TreeMap<String, BundleDescription>();
+			Map<String, BundleDescription> sortedMap = new TreeMap<>();
 			Iterator<BundleDescription> iter = map.keySet().iterator();
 			while (iter.hasNext()) {
 				BundleDescription bundle = iter.next();
@@ -162,7 +162,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 */
 	synchronized private static List<IClasspathContributor> getClasspathContributors() {
 		if (fClasspathContributors == null) {
-			fClasspathContributors = new ArrayList<IClasspathContributor>();
+			fClasspathContributors = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.core.pluginClasspathContributors"); //$NON-NLS-1$
 			for (int i = 0; i < elements.length; i++) {
@@ -177,7 +177,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 	private Map<BundleDescription, ArrayList<Rule>> retrieveVisiblePackagesFromState(BundleDescription desc) {
-		Map<BundleDescription, ArrayList<Rule>> visiblePackages = new HashMap<BundleDescription, ArrayList<Rule>>();
+		Map<BundleDescription, ArrayList<Rule>> visiblePackages = new HashMap<>();
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, desc, visiblePackages);
 		if (desc.getHost() != null)
@@ -195,7 +195,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				continue;
 			ArrayList<Rule> list = visiblePackages.get(exporter);
 			if (list == null) {
-				list = new ArrayList<Rule>();
+				list = new ArrayList<>();
 				visiblePackages.put(exporter, list);
 			}
 			Rule rule = getRule(helper, desc, exports[i]);
@@ -414,7 +414,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 						BundleDescription bundleDesc = model.getBundleDescription();
 						if (added.contains(bundleDesc))
 							continue;
-						Map<BundleDescription, ArrayList<Rule>> rules = new HashMap<BundleDescription, ArrayList<Rule>>();
+						Map<BundleDescription, ArrayList<Rule>> rules = new HashMap<>();
 						findExportedPackages(bundleDesc, desc, rules);
 						addDependency(bundleDesc, added, rules, entries, true);
 					}
@@ -427,12 +427,12 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	protected final void findExportedPackages(BundleDescription desc, BundleDescription projectDesc, Map<BundleDescription, ArrayList<Rule>> map) {
 		if (desc != null) {
-			Stack<BaseDescription> stack = new Stack<BaseDescription>();
+			Stack<BaseDescription> stack = new Stack<>();
 			stack.add(desc);
 			while (!stack.isEmpty()) {
 				BundleDescription bdesc = (BundleDescription) stack.pop();
 				ExportPackageDescription[] expkgs = bdesc.getExportPackages();
-				ArrayList<Rule> rules = new ArrayList<Rule>();
+				ArrayList<Rule> rules = new ArrayList<>();
 				for (int i = 0; i < expkgs.length; i++) {
 					Rule rule = new Rule();
 					rule.discouraged = restrictPackage(projectDesc, expkgs[i]);

@@ -45,7 +45,7 @@ public class PluginExportTask extends BaseExportTask {
 
 	public void setPlugins(String plugins) {
 		StringTokenizer tok = new StringTokenizer(plugins, ","); //$NON-NLS-1$
-		ArrayList<IPluginModelBase> models = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> models = new ArrayList<>();
 		while (tok.hasMoreTokens()) {
 			String id = tok.nextToken().trim();
 			IPluginModelBase model = PluginRegistry.findModel(id);

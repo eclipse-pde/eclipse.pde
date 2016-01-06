@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
 
 public class SiteBundle extends VersionableObject implements ISiteBundle {
 	private static final long serialVersionUID = 1L;
-	private Vector<ISiteCategory> fCategories = new Vector<ISiteCategory>();
+	private Vector<ISiteCategory> fCategories = new Vector<>();
 
 	@Override
 	public boolean isValid() {

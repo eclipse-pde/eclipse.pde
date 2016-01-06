@@ -72,7 +72,7 @@ public class TargetDefinition implements ITargetDefinition {
 	public static final int MODE_FEATURE = 1;
 
 	// cache of features found for a given location, maps a string path location to a array of IFeatureModels (IFeatureModel[])
-	private Map<String, TargetFeature[]> fFeaturesInLocation = new HashMap<String, TargetFeature[]>();
+	private Map<String, TargetFeature[]> fFeaturesInLocation = new HashMap<>();
 
 	// internal cache for features.  A target managed by features will contain a set of features as well as a set of plug-ins that don't belong to a feature
 	private TargetFeature[] fFeatures;
@@ -220,7 +220,7 @@ public class TargetDefinition implements ITargetDefinition {
 		ITargetLocation[] containers = getTargetLocations();
 		int num = 0;
 		// keep a map of synchronizer and number of containers it synchronizes
-		HashMap<P2TargetUtils, Integer> synchronizerNumContainerMap = new HashMap<P2TargetUtils, Integer>();
+		HashMap<P2TargetUtils, Integer> synchronizerNumContainerMap = new HashMap<>();
 		if (containers != null) {
 			num = containers.length;
 			for (ITargetLocation element : containers) {
@@ -240,7 +240,7 @@ public class TargetDefinition implements ITargetDefinition {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, num * 100);
 		try {
 			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_2, null);
-			Set<P2TargetUtils> seen = new HashSet<P2TargetUtils>();
+			Set<P2TargetUtils> seen = new HashSet<>();
 			if (containers != null) {
 				// Process synchronizers first, then perform resolves against the individual
 				// containers. A synchronizer may be shared among several containers, do we
@@ -381,7 +381,7 @@ public class TargetDefinition implements ITargetDefinition {
 		if (isResolved()) {
 			ITargetLocation[] containers = getTargetLocations();
 			if (containers != null) {
-				List<TargetBundle> all = new ArrayList<TargetBundle>();
+				List<TargetBundle> all = new ArrayList<>();
 				for (int i = 0; i < containers.length; i++) {
 					ITargetLocation container = containers[i];
 					TargetBundle[] bundles = container.getBundles();
@@ -417,9 +417,9 @@ public class TargetDefinition implements ITargetDefinition {
 		boolean containsFeatures = false;
 
 		// If there are any included features that are missing, add errors as resolved bundles (the same thing we would do for missing bundles)
-		List<NameVersionDescriptor> missingFeatures = new ArrayList<NameVersionDescriptor>();
+		List<NameVersionDescriptor> missingFeatures = new ArrayList<>();
 
-		List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>();
+		List<NameVersionDescriptor> included = new ArrayList<>();
 		// For feature filters, get the list of included bundles, for bundle filters just add them to the list
 		for (int i = 0; i < filter.length; i++) {
 			if (filter[i].getType() == NameVersionDescriptor.TYPE_PLUGIN) {
@@ -500,22 +500,22 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	static List<TargetBundle> getMatchingBundles(TargetBundle[] collection, NameVersionDescriptor[] included, boolean handleMissingBundles) {
 		if (included == null) {
-			ArrayList<TargetBundle> result = new ArrayList<TargetBundle>();
+			ArrayList<TargetBundle> result = new ArrayList<>();
 			result.addAll(Arrays.asList(collection));
 			return result;
 		}
 		// map bundles names to available versions
-		Map<String, List<TargetBundle>> bundleMap = new HashMap<String, List<TargetBundle>>(collection.length);
+		Map<String, List<TargetBundle>> bundleMap = new HashMap<>(collection.length);
 		for (int i = 0; i < collection.length; i++) {
 			TargetBundle resolved = collection[i];
 			List<TargetBundle> list = bundleMap.get(resolved.getBundleInfo().getSymbolicName());
 			if (list == null) {
-				list = new ArrayList<TargetBundle>(3);
+				list = new ArrayList<>(3);
 				bundleMap.put(resolved.getBundleInfo().getSymbolicName(), list);
 			}
 			list.add(resolved);
 		}
-		List<TargetBundle> resolved = new ArrayList<TargetBundle>();
+		List<TargetBundle> resolved = new ArrayList<>();
 
 		for (int i = 0; i < included.length; i++) {
 			BundleInfo info = new BundleInfo(included[i].getId(), included[i].getVersion(), null, BundleInfo.NO_LEVEL, false);
@@ -862,7 +862,7 @@ public class TargetDefinition implements ITargetDefinition {
 			return models; /*(IFeatureModel[])models.toArray(new IFeatureModel[models.size()]);*/
 		}
 
-		models = ExternalFeatureModelManager.createFeatures(path, new ArrayList<Object>(), monitor);
+		models = ExternalFeatureModelManager.createFeatures(path, new ArrayList<>(), monitor);
 		fFeaturesInLocation.put(path, models);
 		return models;
 	}
@@ -880,7 +880,7 @@ public class TargetDefinition implements ITargetDefinition {
 		ITargetLocation[] containers = getTargetLocations();
 
 		// collect up all features from all containers and remove duplicates.
-		Map<NameVersionDescriptor, TargetFeature> result = new HashMap<NameVersionDescriptor, TargetFeature>();
+		Map<NameVersionDescriptor, TargetFeature> result = new HashMap<>();
 		if (containers != null && containers.length > 0) {
 			for (int i = 0; i < containers.length; i++) {
 				TargetFeature[] currentFeatures = containers[i].getFeatures();
@@ -917,7 +917,7 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 
 		TargetBundle[] allBundles = getAllBundles();
-		Map<String, TargetBundle> remaining = new HashMap<String, TargetBundle>();
+		Map<String, TargetBundle> remaining = new HashMap<>();
 		for (int i = 0; i < allBundles.length; i++) {
 			remaining.put(allBundles[i].getBundleInfo().getSymbolicName(), allBundles[i]);
 		}
@@ -956,13 +956,13 @@ public class TargetDefinition implements ITargetDefinition {
 		NameVersionDescriptor[] included = getIncluded();
 
 		if (included == null) {
-			Set<Object> result = new HashSet<Object>();
+			Set<Object> result = new HashSet<>();
 			result.addAll(Arrays.asList(allFeatures));
 			result.addAll(Arrays.asList(allExtraBundles));
 			return result;
 		}
 
-		Set<Object> result = new HashSet<Object>();
+		Set<Object> result = new HashSet<>();
 		for (int i = 0; i < included.length; i++) {
 			if (included[i].getType() == NameVersionDescriptor.TYPE_PLUGIN) {
 				for (int j = 0; j < allExtraBundles.length; j++) {

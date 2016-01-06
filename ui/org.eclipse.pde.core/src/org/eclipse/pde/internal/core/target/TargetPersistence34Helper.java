@@ -87,7 +87,7 @@ public class TargetPersistence34Helper {
 		}
 
 		ITargetLocation oldStylePrimaryContainer = null;
-		List<ITargetLocation> bundleContainers = new ArrayList<ITargetLocation>();
+		List<ITargetLocation> bundleContainers = new ArrayList<>();
 		NodeList list = root.getChildNodes();
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
@@ -167,7 +167,7 @@ public class TargetPersistence34Helper {
 					}
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.IMPLICIT)) {
 					NodeList implicitEntries = element.getChildNodes();
-					List<NameVersionDescriptor> implicit = new ArrayList<NameVersionDescriptor>(implicitEntries.getLength());
+					List<NameVersionDescriptor> implicit = new ArrayList<>(implicitEntries.getLength());
 					for (int j = 0; j < implicitEntries.getLength(); ++j) {
 						Node entry = implicitEntries.item(j);
 						if (entry.getNodeType() == Node.ELEMENT_NODE) {
@@ -224,9 +224,9 @@ public class TargetPersistence34Helper {
 	 * @return list of bundle containers
 	 */
 	private static List<ITargetLocation> deserializeBundleContainersFromOldStyleElement(Element content, ITargetDefinition definition, ITargetLocation primaryContainer, boolean useAll) throws CoreException {
-		List<ITargetLocation> containers = new ArrayList<ITargetLocation>();
+		List<ITargetLocation> containers = new ArrayList<>();
 		NodeList list = content.getChildNodes();
-		List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>(list.getLength());
+		List<NameVersionDescriptor> included = new ArrayList<>(list.getLength());
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {

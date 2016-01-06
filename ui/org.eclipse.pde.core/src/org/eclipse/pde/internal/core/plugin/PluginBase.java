@@ -32,8 +32,8 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 	private static final Version maxVersion = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
-	private ArrayList<IPluginLibrary> fLibraries = new ArrayList<IPluginLibrary>();
-	private ArrayList<IPluginImport> fImports = new ArrayList<IPluginImport>();
+	private ArrayList<IPluginLibrary> fLibraries = new ArrayList<>();
+	private ArrayList<IPluginImport> fImports = new ArrayList<>();
 	private String fProviderName;
 	private String fId;
 	private String fVersion;
@@ -215,7 +215,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		if (root == null)
 			return new BundleDescription[0];
 		ExportPackageDescription[] packages = root.getResolvedImports();
-		ArrayList<BundleDescription> resolvedImports = new ArrayList<BundleDescription>(packages.length);
+		ArrayList<BundleDescription> resolvedImports = new ArrayList<>(packages.length);
 		for (int i = 0; i < packages.length; i++)
 			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
 				resolvedImports.add(packages[i].getExporter());
@@ -280,8 +280,8 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 	@Override
 	public void reset() {
-		fLibraries = new ArrayList<IPluginLibrary>();
-		fImports = new ArrayList<IPluginImport>();
+		fLibraries = new ArrayList<>();
+		fImports = new ArrayList<>();
 		fProviderName = null;
 		fSchemaVersion = null;
 		fVersion = ""; //$NON-NLS-1$

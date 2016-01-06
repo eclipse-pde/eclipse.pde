@@ -24,11 +24,11 @@ import org.w3c.dom.NodeList;
 public class Site extends SiteObject implements ISite {
 	private static final long serialVersionUID = 1L;
 	final static String INDENT = "   "; //$NON-NLS-1$
-	private Vector<ISiteObject> features = new Vector<ISiteObject>();
-	private Vector<ISiteObject> bundles = new Vector<ISiteObject>();
-	private Vector<ISiteObject> archives = new Vector<ISiteObject>();
-	private Vector<ISiteObject> categoryDefs = new Vector<ISiteObject>();
-	private Vector<ISiteObject> repositoryReferences = new Vector<ISiteObject>();
+	private Vector<ISiteObject> features = new Vector<>();
+	private Vector<ISiteObject> bundles = new Vector<>();
+	private Vector<ISiteObject> archives = new Vector<>();
+	private Vector<ISiteObject> categoryDefs = new Vector<>();
+	private Vector<ISiteObject> repositoryReferences = new Vector<>();
 
 	private String type;
 	private String url;

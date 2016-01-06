@@ -172,7 +172,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (parentSchema != null) {
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
 			if (severity != CompilerFlags.IGNORE) {
-				HashSet<String> allowedElements = new HashSet<String>();
+				HashSet<String> allowedElements = new HashSet<>();
 				computeAllowedElements(parentSchema.getType(), allowedElements);
 				if (!allowedElements.contains(elementName)) {
 					reportIllegalElement(element, severity);
@@ -327,7 +327,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			Attr attr = (Attr) attrs.item(i);
 			ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 			if (attInfo == null) {
-				HashSet<String> allowedElements = new HashSet<String>();
+				HashSet<String> allowedElements = new HashSet<>();
 				computeAllowedElements(schemaElement.getType(), allowedElements);
 				if (allowedElements.contains(attr.getName())) {
 					validateJavaAttribute(element, attr);
@@ -502,7 +502,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			}
 		}
 
-		ArrayList<String> paths = new ArrayList<String>();
+		ArrayList<String> paths = new ArrayList<>();
 		if (location.indexOf("$nl$") != -1) { //$NON-NLS-1$
 			StringTokenizer tokenizer = new StringTokenizer(TargetPlatform.getNL(), "_"); //$NON-NLS-1$
 			String language = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;

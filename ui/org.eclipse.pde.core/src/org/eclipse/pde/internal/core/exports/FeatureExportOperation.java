@@ -428,7 +428,7 @@ public class FeatureExportOperation extends Job {
 
 	protected HashMap<String, String> createAntBuildProperties(String[][] configs) {
 		if (fAntBuildProperties == null) {
-			fAntBuildProperties = new HashMap<String, String>(15);
+			fAntBuildProperties = new HashMap<>(15);
 
 			List<?> defaultProperties = AntCorePlugin.getPlugin().getPreferences().getProperties();
 			ListIterator<?> li = defaultProperties.listIterator();
@@ -781,7 +781,7 @@ public class FeatureExportOperation extends Job {
 	}
 
 	protected String[] getPaths() {
-		Map<String, String> map = new HashMap<String, String>(); // merge workspace and external features using workspace over external
+		Map<String, String> map = new HashMap<>(); // merge workspace and external features using workspace over external
 		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] models = fmm.getExternalModels();
 		for (int i = 0; i < models.length; i++) {
@@ -949,7 +949,7 @@ public class FeatureExportOperation extends Job {
 	}
 
 	private Dictionary<String, String> getEnvironment(String[] config) {
-		Dictionary<String, String> environment = new Hashtable<String, String>(4);
+		Dictionary<String, String> environment = new Hashtable<>(4);
 		environment.put("osgi.os", config[0]); //$NON-NLS-1$
 		environment.put("osgi.ws", config[1]); //$NON-NLS-1$
 		environment.put("osgi.arch", config[2]); //$NON-NLS-1$
@@ -1058,7 +1058,7 @@ public class FeatureExportOperation extends Job {
 					if (bundle == null)
 						continue;
 
-					List<String[]> configs = new ArrayList<String[]>();
+					List<String[]> configs = new ArrayList<>();
 					if (configurations.length > 1)
 						configs.add(GENERIC_CONFIG);
 					configs.addAll(Arrays.asList(configurations));

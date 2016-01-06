@@ -76,7 +76,7 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 
 	@Override
 	protected String[] getSpecificAttributes() {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 
 		String pluginID = getPluginId();
 		if (pluginID != null && pluginID.trim().length() > 0)

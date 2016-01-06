@@ -274,7 +274,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		fBundleProjectService = context.registerService(IBundleProjectService.class.getName(), BundleProjectService.getDefault(), new Hashtable<String, Object>());
 
 		// Register the debug options listener service (tracing)
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, PDECore.PLUGIN_ID);
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 

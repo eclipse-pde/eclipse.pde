@@ -30,7 +30,7 @@ import org.eclipse.pde.internal.core.util.PropertiesUtil;
 public class Build implements IBuild {
 
 	private BuildModel fModel;
-	private HashMap<String, IBuildEntry> fEntries = new HashMap<String, IBuildEntry>();
+	private HashMap<String, IBuildEntry> fEntries = new HashMap<>();
 
 	public Build(BuildModel model) {
 		fModel = model;

@@ -164,7 +164,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	@Override
 	public SAXParserFactory getXMLParser() {
 		if (xmlTracker == null) {
-			xmlTracker = new ServiceTracker<Object, Object>(PDECore.getDefault().getBundleContext(), SAXParserFactory.class.getName(), null);
+			xmlTracker = new ServiceTracker<>(PDECore.getDefault().getBundleContext(), SAXParserFactory.class.getName(), null);
 			xmlTracker.open();
 		}
 		return (SAXParserFactory) xmlTracker.getService();

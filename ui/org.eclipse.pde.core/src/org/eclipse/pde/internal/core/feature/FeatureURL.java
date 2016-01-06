@@ -24,7 +24,7 @@ import org.w3c.dom.NodeList;
 public class FeatureURL extends FeatureObject implements IFeatureURL {
 	private static final long serialVersionUID = 1L;
 	private IFeatureURLElement fUpdate;
-	private Vector<IFeatureURLElement> fDiscoveries = new Vector<IFeatureURLElement>();
+	private Vector<IFeatureURLElement> fDiscoveries = new Vector<>();
 
 	@Override
 	public void addDiscovery(IFeatureURLElement discovery) throws CoreException {

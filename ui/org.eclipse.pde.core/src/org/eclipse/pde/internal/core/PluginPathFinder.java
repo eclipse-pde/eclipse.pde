@@ -68,7 +68,7 @@ public class PluginPathFinder {
 	 * @return array of ".../plugins" or ".../features" Files
 	 */
 	private static File[] getSites(String platformHome, boolean features) {
-		HashSet<File> sites = new HashSet<File>();
+		HashSet<File> sites = new HashSet<>();
 		File file = new File(platformHome, features ? "features" : "plugins"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!features && !file.exists())
 			file = new File(platformHome);
@@ -223,7 +223,7 @@ public class PluginPathFinder {
 	 * @return URLs for features or plugins on the site
 	 */
 	private static URL[] getExtensionPluginURLs(IPlatformConfiguration config, boolean features) {
-		ArrayList<URL> extensionPlugins = new ArrayList<URL>();
+		ArrayList<URL> extensionPlugins = new ArrayList<>();
 		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
 			URL url = sites[i].getURL();
@@ -250,7 +250,7 @@ public class PluginPathFinder {
 	 * @return URLs to plugins/features
 	 */
 	public static URL[] scanLocations(File[] sites) {
-		HashSet<URL> result = new HashSet<URL>();
+		HashSet<URL> result = new HashSet<>();
 		for (int i = 0; i < sites.length; i++) {
 			if (!sites[i].exists())
 				continue;

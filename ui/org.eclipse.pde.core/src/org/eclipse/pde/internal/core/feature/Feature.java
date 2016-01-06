@@ -30,10 +30,10 @@ public class Feature extends VersionableObject implements IFeature {
 	private String fProviderName;
 	private IFeatureURL fUrl;
 	private IFeatureInfo[] fInfos = new IFeatureInfo[3];
-	private Vector<IFeatureData> fData = new Vector<IFeatureData>();
-	private Vector<IFeatureChild> fChildren = new Vector<IFeatureChild>();
-	private Vector<IFeaturePlugin> fPlugins = new Vector<IFeaturePlugin>();
-	private Vector<IFeatureImport> fImports = new Vector<IFeatureImport>();
+	private Vector<IFeatureData> fData = new Vector<>();
+	private Vector<IFeatureChild> fChildren = new Vector<>();
+	private Vector<IFeaturePlugin> fPlugins = new Vector<>();
+	private Vector<IFeatureImport> fImports = new Vector<>();
 	private String fOs;
 	private String fWs;
 	private String fNl;
@@ -278,9 +278,9 @@ public class Feature extends VersionableObject implements IFeature {
 	@Override
 	public void computeImports() throws CoreException {
 		// some existing imports may valid and can be preserved
-		Vector<IFeatureImport> preservedImports = new Vector<IFeatureImport>(fImports.size());
+		Vector<IFeatureImport> preservedImports = new Vector<>(fImports.size());
 		// new imports
-		ArrayList<IFeatureImport> newImports = new ArrayList<IFeatureImport>();
+		ArrayList<IFeatureImport> newImports = new ArrayList<>();
 		IPluginModelBase model = null;
 		for (int i = 0; i < fPlugins.size(); i++) {
 			IFeaturePlugin fp = fPlugins.get(i);

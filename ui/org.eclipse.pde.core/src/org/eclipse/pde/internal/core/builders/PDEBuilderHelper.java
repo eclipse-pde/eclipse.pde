@@ -49,7 +49,7 @@ public class PDEBuilderHelper {
 	}
 
 	public static ArrayList<String> getSourceEntries(IBuild build) {
-		ArrayList<String> sourceEntryKeys = new ArrayList<String>();
+		ArrayList<String> sourceEntryKeys = new ArrayList<>();
 		IBuildEntry[] entries = build.getBuildEntries();
 		for (int i = 0; i < entries.length; i++) {
 			String name = entries[i].getName();

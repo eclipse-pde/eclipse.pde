@@ -113,11 +113,11 @@ public class CompositeManifestHeader extends ManifestHeader {
 		element.setHeader(this);
 		if (fSort) {
 			if (fElementMap == null)
-				fElementMap = new TreeMap<String, PDEManifestElement>();
+				fElementMap = new TreeMap<>();
 			fElementMap.put(element.getValue(), element);
 		} else {
 			if (fManifestElements == null)
-				fManifestElements = new ArrayList<Object>(1);
+				fManifestElements = new ArrayList<>(1);
 			fManifestElements.add(element);
 		}
 		if (update) {
@@ -181,7 +181,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	public Vector<String> getElementNames() {
 		PDEManifestElement[] elements = getElements();
-		Vector<String> vector = new Vector<String>(elements.length);
+		Vector<String> vector = new Vector<>(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			vector.add(elements[i].getValue());
 		}
@@ -295,7 +295,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 		// Add the element to the list
 		if (fManifestElements == null) {
 			// Initialize the element list if not defined
-			fManifestElements = new ArrayList<Object>(1);
+			fManifestElements = new ArrayList<>(1);
 			// Add the element to the end of the list
 			fManifestElements.add(element);
 		} else {

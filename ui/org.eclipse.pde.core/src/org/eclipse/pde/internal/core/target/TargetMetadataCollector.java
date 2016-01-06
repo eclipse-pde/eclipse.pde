@@ -49,7 +49,7 @@ public class TargetMetadataCollector {
 			definition = service.getWorkspaceTargetDefinition();
 		}
 
-		Set<URI> repos = new HashSet<URI>();
+		Set<URI> repos = new HashSet<>();
 
 		ITargetLocation[] containers = definition.getTargetLocations();
 		if (containers != null) {

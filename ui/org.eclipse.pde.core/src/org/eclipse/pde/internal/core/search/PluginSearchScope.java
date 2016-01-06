@@ -72,7 +72,7 @@ public class PluginSearchScope {
 	}
 
 	protected final IPluginModelBase[] addRelevantModels(IPluginModelBase[] models) {
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		for (int i = 0; i < models.length; i++) {
 			if (models[i].getUnderlyingResource() != null) {
 				addWorkspaceModel(models[i], result);

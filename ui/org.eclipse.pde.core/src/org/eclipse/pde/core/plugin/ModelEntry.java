@@ -33,12 +33,12 @@ public class ModelEntry extends PlatformObject {
 	/**
 	 * The list of workspace models with the same entry ID
 	 */
-	protected ArrayList<IPluginModelBase> fWorkspaceEntries = new ArrayList<IPluginModelBase>(1);
+	protected ArrayList<IPluginModelBase> fWorkspaceEntries = new ArrayList<>(1);
 
 	/**
 	 * The list of external models with the same entry ID
 	 */
-	protected ArrayList<IPluginModelBase> fExternalEntries = new ArrayList<IPluginModelBase>(1);
+	protected ArrayList<IPluginModelBase> fExternalEntries = new ArrayList<>(1);
 
 	/**
 	 * Constructor
@@ -143,7 +143,7 @@ public class ModelEntry extends PlatformObject {
 			return getWorkspaceModels();
 
 		if (fExternalEntries.size() > 0) {
-			ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>(fExternalEntries.size());
+			ArrayList<IPluginModelBase> list = new ArrayList<>(fExternalEntries.size());
 			for (int i = 0; i < fExternalEntries.size(); i++) {
 				IPluginModelBase model = fExternalEntries.get(i);
 				if (model.isEnabled())

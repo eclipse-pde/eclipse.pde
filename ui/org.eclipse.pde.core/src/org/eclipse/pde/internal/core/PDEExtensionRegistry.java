@@ -33,7 +33,7 @@ public class PDEExtensionRegistry {
 	private PDERegistryStrategy fStrategy = null;
 
 	private IPluginModelBase[] fModels = null;
-	private ArrayList<IRegistryChangeListener> fListeners = new ArrayList<IRegistryChangeListener>();
+	private ArrayList<IRegistryChangeListener> fListeners = new ArrayList<>();
 
 	private static final String EXTENSION_DIR = ".extensions"; //$NON-NLS-1$
 
@@ -113,7 +113,7 @@ public class PDEExtensionRegistry {
 			return activeOnly ? PluginRegistry.getActiveModels() : PluginRegistry.getAllModels();
 		}
 		IExtension[] exts = point.getExtensions();
-		HashSet<IPluginModelBase> plugins = new HashSet<IPluginModelBase>();
+		HashSet<IPluginModelBase> plugins = new HashSet<>();
 		for (int i = 0; i < exts.length; i++) {
 			IPluginModelBase base = getPlugin(exts[i].getContributor(), false);
 			if (base != null && !plugins.contains(base) && (!activeOnly || base.isEnabled()))
@@ -173,7 +173,7 @@ public class PDEExtensionRegistry {
 		if (contributor == null)
 			return new IPluginExtension[0];
 		IExtension[] extensions = getRegistry().getExtensions(fStrategy.createContributor(base));
-		ArrayList<PluginExtension> list = new ArrayList<PluginExtension>();
+		ArrayList<PluginExtension> list = new ArrayList<>();
 		for (int i = 0; i < extensions.length; i++) {
 			PluginExtension extension = new PluginExtension(extensions[i]);
 			extension.setModel(getExtensionsModel(base));
@@ -188,7 +188,7 @@ public class PDEExtensionRegistry {
 		if (contributor == null)
 			return new IPluginExtensionPoint[0];
 		IExtensionPoint[] extensions = getRegistry().getExtensionPoints(fStrategy.createContributor(base));
-		ArrayList<PluginExtensionPoint> list = new ArrayList<PluginExtensionPoint>();
+		ArrayList<PluginExtensionPoint> list = new ArrayList<>();
 		for (int i = 0; i < extensions.length; i++) {
 			PluginExtensionPoint point = new PluginExtensionPoint(extensions[i]);
 			point.setModel(getExtensionsModel(base));
@@ -205,7 +205,7 @@ public class PDEExtensionRegistry {
 	}
 
 	public IExtension[] findExtensions(String extensionPointId, boolean activeOnly) {
-		ArrayList<IExtension> list = new ArrayList<IExtension>();
+		ArrayList<IExtension> list = new ArrayList<>();
 		IExtensionPoint point = getExtensionPoint(extensionPointId);
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();

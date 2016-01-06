@@ -22,7 +22,7 @@ import org.eclipse.text.edits.*;
 
 public class XMLTextChangeListener extends AbstractTextChangeListener {
 
-	private ArrayList<TextEdit> fOperationList = new ArrayList<TextEdit>();
+	private ArrayList<TextEdit> fOperationList = new ArrayList<>();
 	private HashMap<TextEdit, String> fReadableNames = null;
 
 	public XMLTextChangeListener(IDocument document) {
@@ -34,7 +34,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		// if we are not generating names, leave the HashMap null
 		// this way a null test on the map can be used to determine if names should be generated
 		if (generateReadableNames)
-			fReadableNames = new HashMap<TextEdit, String>();
+			fReadableNames = new HashMap<>();
 	}
 
 	@Override

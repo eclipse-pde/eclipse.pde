@@ -119,7 +119,7 @@ public class ExternalFeatureModelManager {
 			return new IFeatureModel[0];
 		}
 
-		List<IFeatureModel> result = new ArrayList<IFeatureModel>();
+		List<IFeatureModel> result = new ArrayList<>();
 		TargetFeature[] features = target.getAllFeatures();
 		if (features != null) {
 			for (int i = 0; i < features.length; i++) {
@@ -192,7 +192,7 @@ public class ExternalFeatureModelManager {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
-		Map<String, TargetFeature> uniqueFeatures = new HashMap<String, TargetFeature>();
+		Map<String, TargetFeature> uniqueFeatures = new HashMap<>();
 		for (int i = 0; i < featurePaths.length; i++) {
 			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {

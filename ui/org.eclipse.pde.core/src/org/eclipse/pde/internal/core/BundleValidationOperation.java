@@ -52,8 +52,8 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 	}
 
 	public Map<Object, Object[]> getResolverErrors() {
-		Set<String> alreadyDuplicated = new HashSet<String>();
-		Map<Object, Object[]> map = new HashMap<Object, Object[]>();
+		Set<String> alreadyDuplicated = new HashSet<>();
+		Map<Object, Object[]> map = new HashMap<>();
 		BundleDescription[] bundles = fState.getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			BundleDescription desc = bundles[i];

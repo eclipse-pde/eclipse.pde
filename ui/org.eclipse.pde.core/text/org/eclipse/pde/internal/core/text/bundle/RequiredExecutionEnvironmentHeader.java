@@ -45,7 +45,7 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 	}
 
 	public void addExecutionEnvironments(Object[] envs) {
-		ArrayList<ExecutionEnvironment> list = new ArrayList<ExecutionEnvironment>(envs.length);
+		ArrayList<ExecutionEnvironment> list = new ArrayList<>(envs.length);
 		for (int i = 0; i < envs.length; i++) {
 			ExecutionEnvironment env = null;
 			if (envs[i] instanceof ExecutionEnvironment) {

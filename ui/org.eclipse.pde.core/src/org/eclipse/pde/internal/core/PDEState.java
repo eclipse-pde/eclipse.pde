@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 public class PDEState extends MinimalState {
 
 	private PDEAuxiliaryState fAuxiliaryState;
-	private ArrayList<IPluginModelBase> fTargetModels = new ArrayList<IPluginModelBase>();
+	private ArrayList<IPluginModelBase> fTargetModels = new ArrayList<>();
 
 	/**
 	 * Creates a new PDE State containing bundles from the given URLs.
@@ -104,7 +104,7 @@ public class PDEState extends MinimalState {
 	}
 
 	private IPluginModelBase[] createTargetModels(BundleDescription[] bundleDescriptions) {
-		HashMap<String, IPluginModelBase> models = new HashMap<String, IPluginModelBase>((4 / 3) * bundleDescriptions.length + 1);
+		HashMap<String, IPluginModelBase> models = new HashMap<>((4 / 3) * bundleDescriptions.length + 1);
 		for (int i = 0; i < bundleDescriptions.length; i++) {
 			BundleDescription desc = bundleDescriptions[i];
 			IPluginModelBase base = createExternalModel(desc);

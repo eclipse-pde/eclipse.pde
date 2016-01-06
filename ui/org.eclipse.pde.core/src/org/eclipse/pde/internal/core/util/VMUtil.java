@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.PDECore;
 public class VMUtil {
 
 	public static IVMInstall[] getAllVMInstances() {
-		ArrayList<IVMInstall> res = new ArrayList<IVMInstall>();
+		ArrayList<IVMInstall> res = new ArrayList<>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstall[] installs = types[i].getVMInstalls();

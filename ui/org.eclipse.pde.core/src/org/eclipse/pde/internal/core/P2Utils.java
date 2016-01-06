@@ -212,7 +212,7 @@ public class P2Utils {
 		}
 
 		// Parse the osgi bundle list for start levels
-		Map<String, String> osgiStartLevels = new HashMap<String, String>();
+		Map<String, String> osgiStartLevels = new HashMap<>();
 		if (osgiBundleList != null) {
 			StringTokenizer tokenizer = new StringTokenizer(osgiBundleList, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
@@ -232,8 +232,8 @@ public class P2Utils {
 			}
 		}
 
-		List<BundleInfo> bundleInfo = new ArrayList<BundleInfo>(bundles.size());
-		List<BundleInfo> sourceInfo = new ArrayList<BundleInfo>(bundles.size());
+		List<BundleInfo> bundleInfo = new ArrayList<>(bundles.size());
+		List<BundleInfo> sourceInfo = new ArrayList<>(bundles.size());
 		for (Iterator<?> iterator = bundles.keySet().iterator(); iterator.hasNext();) {
 			IPluginModelBase currentModel = (IPluginModelBase) iterator.next();
 			IPluginBase base = currentModel.getPluginBase();
@@ -375,7 +375,7 @@ public class P2Utils {
 
 		// Create the profile
 		IProfile profile = null;
-		Map<String, String> props = new HashMap<String, String>();
+		Map<String, String> props = new HashMap<>();
 //		props.setProperty(IProfile.PROP_INSTALL_FOLDER, registryArea.getAbsolutePath());
 		props.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 		// Set up environment and nationalization properties so OS specific fragments are installed
@@ -385,7 +385,7 @@ public class P2Utils {
 		profile = registry.addProfile(profileID, props);
 
 		// Create metadata for the bundles
-		Collection<IInstallableUnit> ius = new ArrayList<IInstallableUnit>(bundles.size());
+		Collection<IInstallableUnit> ius = new ArrayList<>(bundles.size());
 		for (Iterator<?> iterator = bundles.iterator(); iterator.hasNext();) {
 			IPluginModelBase model = (IPluginModelBase) iterator.next();
 			BundleDescription bundle = model.getBundleDescription();
@@ -445,7 +445,7 @@ public class P2Utils {
 
 		//Process the required bundles
 		BundleSpecification requiredBundles[] = bd.getRequiredBundles();
-		ArrayList<IRequirement> reqsDeps = new ArrayList<IRequirement>();
+		ArrayList<IRequirement> reqsDeps = new ArrayList<>();
 		if (isFragment)
 			reqsDeps.add(MetadataFactory.createRequirement(CAPABILITY_NS_OSGI_BUNDLE, bd.getHost().getName(), fromOSGiVersionRange(bd.getHost().getVersionRange()), null, false, false));
 		for (int j = 0; j < requiredBundles.length; j++)
@@ -467,7 +467,7 @@ public class P2Utils {
 		iu.setRequirements((reqsDeps.toArray(new IRequirement[reqsDeps.size()])));
 
 		// Create set of provided capabilities
-		ArrayList<IProvidedCapability> providedCapabilities = new ArrayList<IProvidedCapability>();
+		ArrayList<IProvidedCapability> providedCapabilities = new ArrayList<>();
 		providedCapabilities.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, bd.getSymbolicName(), fromOSGiVersion(bd.getVersion())));
 		providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_OSGI_BUNDLE, bd.getSymbolicName(), fromOSGiVersion(bd.getVersion())));
 

@@ -23,7 +23,7 @@ import org.w3c.dom.NodeList;
 
 public class SiteFeature extends VersionableObject implements ISiteFeature {
 	private static final long serialVersionUID = 1L;
-	private Vector<ISiteCategory> fCategories = new Vector<ISiteCategory>();
+	private Vector<ISiteCategory> fCategories = new Vector<>();
 	private String fType;
 	private String fUrl;
 	private String fOS;

@@ -37,8 +37,8 @@ public class TargetLocationTypeManager {
 
 	private TargetLocationTypeManager() {
 		//singleton
-		fExtentionMap = new HashMap<String, IConfigurationElement>(4);
-		fFactoryMap = new HashMap<String, ITargetLocationFactory>(4);
+		fExtentionMap = new HashMap<>(4);
+		fFactoryMap = new HashMap<>(4);
 		readExtentions();
 	}
 

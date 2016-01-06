@@ -42,7 +42,7 @@ public class ClasspathComputer {
 
 	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, Map<?, ?> sourceLibraryMap, boolean clear, boolean overrideCompliance) throws CoreException {
 		IJavaProject javaProject = JavaCore.create(project);
-		ArrayList<IClasspathEntry> result = new ArrayList<IClasspathEntry>();
+		ArrayList<IClasspathEntry> result = new ArrayList<>();
 		IBuild build = getBuild(project);
 
 		// add JRE and set compliance options
@@ -67,7 +67,7 @@ public class ClasspathComputer {
 
 	private static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, Map<?, ?> sourceLibraryMap, ArrayList<IClasspathEntry> result) throws CoreException {
 
-		HashSet<IPath> paths = new HashSet<IPath>();
+		HashSet<IPath> paths = new HashSet<>();
 
 		// keep existing source folders
 		if (!clear) {
@@ -293,7 +293,7 @@ public class ClasspathComputer {
 	private static void setMinimumCompliance(Map<String, String> map, String key, String minimumValue, boolean override) {
 		if (minimumValue != null && (override || !map.containsKey(key))) {
 			if (fSeverityTable == null) {
-				fSeverityTable = new HashMap<String, Integer>(3);
+				fSeverityTable = new HashMap<>(3);
 				fSeverityTable.put(JavaCore.IGNORE, new Integer(SEVERITY_IGNORE));
 				fSeverityTable.put(JavaCore.WARNING, new Integer(SEVERITY_WARNING));
 				fSeverityTable.put(JavaCore.ERROR, new Integer(SEVERITY_ERROR));

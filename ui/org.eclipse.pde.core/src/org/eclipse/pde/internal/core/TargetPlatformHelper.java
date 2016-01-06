@@ -154,7 +154,7 @@ public class TargetPlatformHelper {
 
 	private static synchronized String getSymbolicName(String path) {
 		if (fCachedLocations == null)
-			fCachedLocations = new HashMap<String, String>();
+			fCachedLocations = new HashMap<>();
 
 		if (fCachedLocations.containsKey(path)) {
 			return fCachedLocations.get(path);
@@ -245,7 +245,7 @@ public class TargetPlatformHelper {
 	}
 
 	public static Set<String> getApplicationNameSet() {
-		TreeSet<String> result = new TreeSet<String>();
+		TreeSet<String> result = new TreeSet<>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			String id = extensions[i].getUniqueIdentifier();
@@ -268,7 +268,7 @@ public class TargetPlatformHelper {
 	}
 
 	public static TreeSet<String> getProductNameSet() {
-		TreeSet<String> result = new TreeSet<String>();
+		TreeSet<String> result = new TreeSet<>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
@@ -289,7 +289,7 @@ public class TargetPlatformHelper {
 	}
 
 	public static Dictionary<String, String> getTargetEnvironment() {
-		Dictionary<String, String> result = new Hashtable<String, String>();
+		Dictionary<String, String> result = new Hashtable<>();
 		result.put(ICoreConstants.OSGI_OS, TargetPlatform.getOS());
 		result.put(ICoreConstants.OSGI_WS, TargetPlatform.getWS());
 		result.put(ICoreConstants.OSGI_NL, TargetPlatform.getNL());
@@ -312,7 +312,7 @@ public class TargetPlatformHelper {
 		}
 
 		// add java profiles for those EE's that have a .profile file in the current system bundle
-		ArrayList<Dictionary<String, String>> result = new ArrayList<Dictionary<String, String>>(profiles.length);
+		ArrayList<Dictionary<String, String>> result = new ArrayList<>(profiles.length);
 		for (int i = 0; i < profiles.length; i++) {
 			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profiles[i]);
 			if (environment != null) {
@@ -491,7 +491,7 @@ public class TargetPlatformHelper {
 	}
 
 	public static Map<Long, String> getPatchMap(PDEState state) {
-		HashMap<Long, String> properties = new HashMap<Long, String>();
+		HashMap<Long, String> properties = new HashMap<>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
@@ -508,7 +508,7 @@ public class TargetPlatformHelper {
 	}
 
 	public static HashMap<Long, String[]> getBundleClasspaths(PDEState state) {
-		HashMap<Long, String[]> properties = new HashMap<Long, String[]>();
+		HashMap<Long, String[]> properties = new HashMap<>();
 		BundleDescription[] bundles = state.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			properties.put(new Long(bundles[i].getBundleId()), getValue(bundles[i], state));
@@ -539,7 +539,7 @@ public class TargetPlatformHelper {
 
 	public static String[] getFeaturePaths() {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		for (int i = 0; i < models.length; i++) {
 			String location = models[i].getInstallLocation();
 			if (location != null)

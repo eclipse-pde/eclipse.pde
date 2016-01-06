@@ -139,7 +139,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	void load(Node node) {
 		fName = node.getNodeName();
 		if (fAttributes == null)
-			fAttributes = new Hashtable<String, IPluginAttribute>();
+			fAttributes = new Hashtable<>();
 		NamedNodeMap attributes = node.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node attribute = attributes.item(i);
@@ -150,7 +150,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 
 		if (fChildren == null)
-			fChildren = new ArrayList<IPluginObject>();
+			fChildren = new ArrayList<>();
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -243,7 +243,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 
 	protected Hashtable<String, IPluginAttribute> getAttributeMap() {
 		if (fAttributes == null) {
-			fAttributes = new Hashtable<String, IPluginAttribute>();
+			fAttributes = new Hashtable<>();
 			if (fElement != null) {
 				String[] names = fElement.getAttributeNames();
 				for (int i = 0; i < names.length; i++) {
@@ -276,7 +276,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	@Override
 	protected ArrayList<IPluginObject> getChildrenList() {
 		if (fChildren == null) {
-			fChildren = new ArrayList<IPluginObject>();
+			fChildren = new ArrayList<>();
 			if (fElement != null) {
 				IConfigurationElement[] elements = fElement.getChildren();
 				for (int i = 0; i < elements.length; i++) {

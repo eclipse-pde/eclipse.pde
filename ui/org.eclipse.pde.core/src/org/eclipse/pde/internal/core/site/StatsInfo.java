@@ -26,8 +26,8 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 
 	public static final String P_URL = "url"; //$NON-NLS-1$
 	private String fURL;
-	private Vector<ISiteObject> featureArtifacts = new Vector<ISiteObject>();
-	private Vector<ISiteObject> bundleArtifacts = new Vector<ISiteObject>();
+	private Vector<ISiteObject> featureArtifacts = new Vector<>();
+	private Vector<ISiteObject> bundleArtifacts = new Vector<>();
 
 	public StatsInfo() {
 		super();

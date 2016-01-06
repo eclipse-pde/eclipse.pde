@@ -57,7 +57,7 @@ public class FeatureModelManager {
 
 	public FeatureModelManager() {
 		fWorkspaceManager = new WorkspaceFeatureModelManager();
-		fListeners = new ArrayList<IFeatureModelListener>();
+		fListeners = new ArrayList<>();
 	}
 
 	public synchronized void shutdown() {
@@ -126,7 +126,7 @@ public class FeatureModelManager {
 	public IFeatureModel[] getModels() {
 		init();
 		IFeatureModel[] allModels = fActiveModels.getAll();
-		ArrayList<IFeatureModel> valid = new ArrayList<IFeatureModel>(allModels.length);
+		ArrayList<IFeatureModel> valid = new ArrayList<>(allModels.length);
 		for (int i = 0; i < allModels.length; i++) {
 			if (allModels[i].isValid()) {
 				valid.add(allModels[i]);
@@ -215,7 +215,7 @@ public class FeatureModelManager {
 	public IFeatureModel[] findFeatureModels(String id) {
 		init();
 		IFeatureModel[] models = fActiveModels.get(id);
-		ArrayList<IFeatureModel> valid = new ArrayList<IFeatureModel>(models.length);
+		ArrayList<IFeatureModel> valid = new ArrayList<>(models.length);
 		for (int i = 0; i < models.length; i++) {
 			if (models[i].isValid()) {
 				valid.add(models[i]);
@@ -270,7 +270,7 @@ public class FeatureModelManager {
 				if (idver != null) {
 					// may need to activate another model
 					if (affectedIdVers == null)
-						affectedIdVers = new HashSet<Idver>();
+						affectedIdVers = new HashSet<>();
 					affectedIdVers.add(idver);
 					delta.add(model, IFeatureModelDelta.REMOVED);
 				} else {
@@ -289,7 +289,7 @@ public class FeatureModelManager {
 					delta.add(model, IFeatureModelDelta.ADDED);
 					// may need to deactivate another model
 					if (affectedIdVers == null)
-						affectedIdVers = new HashSet<Idver>();
+						affectedIdVers = new HashSet<>();
 					affectedIdVers.add(idver);
 				} else {
 					if (!model.isValid()) {
@@ -312,7 +312,7 @@ public class FeatureModelManager {
 					FeatureTable.Idver idver = fInactiveModels.add(model);
 					// may need to activate this model
 					if (affectedIdVers == null)
-						affectedIdVers = new HashSet<Idver>();
+						affectedIdVers = new HashSet<>();
 					affectedIdVers.add(idver);
 				}
 			}
@@ -334,7 +334,7 @@ public class FeatureModelManager {
 					// version changed
 					FeatureTable.Idver idver = fActiveModels.add(model);
 					if (affectedIdVers == null)
-						affectedIdVers = new HashSet<Idver>();
+						affectedIdVers = new HashSet<>();
 					affectedIdVers.add(oldIdver);
 					affectedIdVers.add(idver);
 				}

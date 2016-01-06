@@ -33,7 +33,7 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 
 public class PluginRebuilder implements IStateDeltaListener, IResourceChangeListener {
 
-	private Set<String> fProjectNames = new HashSet<String>();
+	private Set<String> fProjectNames = new HashSet<>();
 
 	private boolean fTouchWorkspace = false;
 

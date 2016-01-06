@@ -123,7 +123,7 @@ public class PDEManifestElement extends BundleObject {
 	@SuppressWarnings("unchecked")
 	private TreeMap<String, Serializable> addTableValue(TreeMap<String, Serializable> table, String key, String value) {
 		if (table == null) {
-			table = new TreeMap<String, Serializable>();
+			table = new TreeMap<>();
 		}
 		Object curValue = table.get(key);
 		if (curValue != null) {
@@ -132,7 +132,7 @@ public class PDEManifestElement extends BundleObject {
 			if (curValue instanceof ArrayList) {
 				newList = (ArrayList<Object>) curValue;
 			} else {
-				newList = new ArrayList<Object>(5);
+				newList = new ArrayList<>(5);
 				newList.add(curValue);
 			}
 			newList.add(value);
@@ -145,7 +145,7 @@ public class PDEManifestElement extends BundleObject {
 
 	private TreeMap<String, Serializable> setTableValue(TreeMap<String, Serializable> table, String key, String value) {
 		if (table == null) {
-			table = new TreeMap<String, Serializable>();
+			table = new TreeMap<>();
 		}
 		if (value == null || value.trim().length() == 0)
 			table.remove(key);

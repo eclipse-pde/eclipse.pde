@@ -17,7 +17,7 @@ import org.eclipse.text.edits.TextEdit;
 
 public abstract class AbstractTextChangeListener implements IModelTextChangeListener {
 
-	protected HashMap<Object, TextEdit> fOperationTable = new HashMap<Object, TextEdit>();
+	protected HashMap<Object, TextEdit> fOperationTable = new HashMap<>();
 	protected IDocument fDocument;
 	protected String fSep;
 

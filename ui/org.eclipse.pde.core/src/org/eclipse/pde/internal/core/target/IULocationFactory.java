@@ -55,9 +55,9 @@ public class IULocationFactory implements ITargetLocationFactory {
 			String includeConfigurePhase = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_CONFIGURE_PHASE);
 
 			NodeList list = location.getChildNodes();
-			List<String> ids = new ArrayList<String>();
-			List<String> versions = new ArrayList<String>();
-			List<URI> repos = new ArrayList<URI>();
+			List<String> ids = new ArrayList<>();
+			List<String> versions = new ArrayList<>();
+			List<URI> repos = new ArrayList<>();
 			for (int i = 0; i < list.getLength(); ++i) {
 				Node node = list.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {

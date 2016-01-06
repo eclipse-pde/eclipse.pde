@@ -205,7 +205,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 			IPluginBase base = getPluginBase();
 			if (base != null) {
 				if (fCache)
-					fExtensions = new ArrayList<IPluginExtension>(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getPluginModel())));
+					fExtensions = new ArrayList<>(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getPluginModel())));
 				else
 					return Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getPluginModel()));
 			} else {
@@ -220,7 +220,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 			IPluginBase base = getPluginBase();
 			if (base != null) {
 				if (fCache)
-					fExtensionPoints = new ArrayList<IPluginExtensionPoint>(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getPluginModel())));
+					fExtensionPoints = new ArrayList<>(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getPluginModel())));
 				else
 					return Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getPluginModel()));
 			} else {
@@ -236,9 +236,9 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 	protected void processChild(Node child) {
 		String name = child.getNodeName();
 		if (fExtensions == null)
-			fExtensions = new ArrayList<IPluginExtension>();
+			fExtensions = new ArrayList<>();
 		if (fExtensionPoints == null)
-			fExtensionPoints = new ArrayList<IPluginExtensionPoint>();
+			fExtensionPoints = new ArrayList<>();
 
 		if (name.equals("extension")) { //$NON-NLS-1$
 			PluginExtension extension = new PluginExtension();

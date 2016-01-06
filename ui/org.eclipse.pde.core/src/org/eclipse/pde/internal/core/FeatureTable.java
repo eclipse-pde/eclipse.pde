@@ -91,9 +91,9 @@ class FeatureTable {
 
 	public FeatureTable() {
 
-		fModel2idver = new HashMap<IFeatureModel, Idver>();
-		fIdver2models = new HashMap<Idver, ArrayList<IFeatureModel>>();
-		fId2idvers = new HashMap<String, ArrayList<Idver>>();
+		fModel2idver = new HashMap<>();
+		fIdver2models = new HashMap<>();
+		fId2idvers = new HashMap<>();
 	}
 
 	public synchronized Idver get(IFeatureModel model) {
@@ -120,7 +120,7 @@ class FeatureTable {
 		ArrayList<Idver> idvers = fId2idvers.get(id);
 		if (idvers == null)
 			return NO_MODELS;
-		ArrayList<IFeatureModel> allModels = new ArrayList<IFeatureModel>();
+		ArrayList<IFeatureModel> allModels = new ArrayList<>();
 		for (int i = 0; i < idvers.size(); i++) {
 			Idver idver = idvers.get(i);
 			ArrayList<IFeatureModel> models = fIdver2models.get(idver);
@@ -195,14 +195,14 @@ class FeatureTable {
 
 		ArrayList<IFeatureModel> models = fIdver2models.get(idver);
 		if (models == null) {
-			models = new ArrayList<IFeatureModel>(1);
+			models = new ArrayList<>(1);
 			fIdver2models.put(idver, models);
 		}
 		models.add(model);
 
 		ArrayList<Idver> idvers = fId2idvers.get(id);
 		if (idvers == null) {
-			idvers = new ArrayList<Idver>(1);
+			idvers = new ArrayList<>(1);
 			fId2idvers.put(id, idvers);
 		}
 		idvers.add(idver);

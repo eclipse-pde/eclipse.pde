@@ -109,7 +109,7 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 
 	protected ArrayList<IPluginObject> getChildrenList() {
 		if (fChildren == null)
-			fChildren = new ArrayList<IPluginObject>(1);
+			fChildren = new ArrayList<>(1);
 		return fChildren;
 	}
 

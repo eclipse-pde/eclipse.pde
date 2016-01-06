@@ -54,7 +54,7 @@ public class PDEAuxiliaryState {
 	 * Constructor
 	 */
 	protected PDEAuxiliaryState() {
-		fPluginInfos = new HashMap<String, PluginInfo>();
+		fPluginInfos = new HashMap<>();
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class PDEAuxiliaryState {
 	 * @param state state containing plugin infos to initialize this state with
 	 */
 	protected PDEAuxiliaryState(PDEAuxiliaryState state) {
-		fPluginInfos = new HashMap<String, PluginInfo>(state.fPluginInfos);
+		fPluginInfos = new HashMap<>(state.fPluginInfos);
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class PDEAuxiliaryState {
 			info.bundleSourceEntry = element.getAttribute(ATTR_BUNDLE_SOURCE);
 
 		NodeList libs = element.getChildNodes();
-		ArrayList<String> list = new ArrayList<String>(libs.getLength());
+		ArrayList<String> list = new ArrayList<>(libs.getLength());
 		for (int i = 0; i < libs.getLength(); i++) {
 			if (libs.item(i).getNodeType() == Node.ELEMENT_NODE) {
 				Element lib = (Element) libs.item(i);

@@ -24,7 +24,7 @@ import org.osgi.framework.Constants;
 public class PDEManager {
 
 	public static IFragmentModel[] findFragmentsFor(IPluginModelBase model) {
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
+		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		BundleDescription desc = getBundleDescription(model);
 		if (desc != null) {
 			BundleDescription[] fragments = desc.getFragments();
@@ -67,7 +67,7 @@ public class PDEManager {
 	}
 
 	public static URL[] getNLLookupLocations(IPluginModelBase model) {
-		ArrayList<URL> urls = new ArrayList<URL>();
+		ArrayList<URL> urls = new ArrayList<>();
 		addNLLocation(model, urls);
 		if (model instanceof IPluginModel) {
 			IFragmentModel[] fragments = findFragmentsFor(model);

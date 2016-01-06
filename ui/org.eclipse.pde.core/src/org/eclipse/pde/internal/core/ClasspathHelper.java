@@ -126,7 +126,7 @@ public class ClasspathHelper {
 
 	private static String getDevEntries(boolean checkExcluded) {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		ArrayList<IPath> list = new ArrayList<IPath>();
+		ArrayList<IPath> list = new ArrayList<>();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			if (id == null || id.trim().length() == 0)
@@ -160,7 +160,7 @@ public class ClasspathHelper {
 			return null;
 		IPath[] paths = getDevPaths(model, false, null);
 		String entry = writeEntry(paths);
-		Hashtable<String, String> map = new Hashtable<String, String>(2);
+		Hashtable<String, String> map = new Hashtable<>(2);
 		map.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put(id, entry.length() > 0 ? entry : "bin"); //$NON-NLS-1$
 		return map;
@@ -170,7 +170,7 @@ public class ClasspathHelper {
 	private static Map<IPath, ArrayList<IPath>> getClasspathMap(IProject project, boolean checkExcluded, boolean absolutePaths) throws JavaModelException {
 		List<Path> excluded = getFoldersToExclude(project, checkExcluded);
 		IJavaProject jProject = JavaCore.create(project);
-		HashMap<IPath, ArrayList<IPath>> map = new HashMap<IPath, ArrayList<IPath>>();
+		HashMap<IPath, ArrayList<IPath>> map = new HashMap<>();
 		IClasspathEntry[] entries = jProject.getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {
 			// most of the paths we get will be project relative, so we need to make the paths relative
@@ -207,7 +207,7 @@ public class ClasspathHelper {
 					continue;
 				ArrayList<IPath> list = map.get(source);
 				if (list == null)
-					list = new ArrayList<IPath>();
+					list = new ArrayList<>();
 				list.add(output);
 				map.put(source, list);
 			}
@@ -223,7 +223,7 @@ public class ClasspathHelper {
 				IPath ceSource = resolvedEntry.getKey();
 				ArrayList<IPath> list = map.get(ceSource);
 				if (list == null) {
-					list = new ArrayList<IPath>();
+					list = new ArrayList<>();
 					map.put(ceSource, list);
 				}
 				list.addAll(resolvedEntry.getValue());
@@ -235,7 +235,7 @@ public class ClasspathHelper {
 
 	// find the corresponding paths for a library name.  Searches for source folders first, but includes any libraries on the buildpath with the same name
 	private static IPath[] findLibrary(String libName, IProject project, Map<IPath, ArrayList<IPath>> classpathMap, IBuild build) {
-		ArrayList<IPath> paths = new ArrayList<IPath>();
+		ArrayList<IPath> paths = new ArrayList<>();
 		IBuildEntry entry = (build != null) ? build.getEntry(IBuildEntry.JAR_PREFIX + libName) : null;
 		if (entry != null) {
 			String[] resources = entry.getTokens();
@@ -274,7 +274,7 @@ public class ClasspathHelper {
 	}
 
 	private static IPath[] getDevPaths(IPluginModelBase model, boolean checkExcluded, Map<?, ?> pluginsMap) {
-		ArrayList<IPath> result = new ArrayList<IPath>();
+		ArrayList<IPath> result = new ArrayList<>();
 		IProject project = model.getUnderlyingResource().getProject();
 		IPluginBase base = model.getPluginBase();
 		IPluginLibrary[] libraries = base.getLibraries();
@@ -300,7 +300,7 @@ public class ClasspathHelper {
 								// works (see bug 237025)
 								if (!classpathMap.isEmpty()) {
 									Iterator<ArrayList<IPath>> iterator = classpathMap.values().iterator();
-									List<IPath> collect = new ArrayList<IPath>();
+									List<IPath> collect = new ArrayList<>();
 									while (iterator.hasNext()) {
 										collect.addAll(iterator.next());
 									}
@@ -410,7 +410,7 @@ public class ClasspathHelper {
 	}
 
 	private static List<Path> getFoldersToExclude(IProject project, boolean checkExcluded) {
-		ArrayList<Path> list = new ArrayList<Path>();
+		ArrayList<Path> list = new ArrayList<>();
 		if (checkExcluded) {
 			IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 			if (pref != null) {

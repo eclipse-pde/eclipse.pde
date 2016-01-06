@@ -225,7 +225,7 @@ public class ProjectModifyOperation {
 				// add entries not already present
 				IClasspathEntry[] entries = getSourceFolderEntries(javaProject, description);
 				IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
-				List<IClasspathEntry> add = new ArrayList<IClasspathEntry>();
+				List<IClasspathEntry> add = new ArrayList<>();
 				for (int i = 0; i < entries.length; i++) {
 					IClasspathEntry entry = entries[i];
 					boolean present = false;
@@ -260,7 +260,7 @@ public class ProjectModifyOperation {
 					add.add(ClasspathComputer.createContainerEntry());
 				}
 				if (!add.isEmpty()) {
-					List<IClasspathEntry> all = new ArrayList<IClasspathEntry>();
+					List<IClasspathEntry> all = new ArrayList<>();
 					for (int i = 0; i < rawClasspath.length; i++) {
 						all.add(rawClasspath[i]);
 					}
@@ -353,7 +353,7 @@ public class ProjectModifyOperation {
 		if (folders == null || folders.length == 0) {
 			return new IClasspathEntry[0];
 		}
-		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
+		List<IClasspathEntry> entries = new ArrayList<>();
 		for (int i = 0; i < folders.length; i++) {
 			IBundleClasspathEntry folder = folders[i];
 			if (folder.getSourcePath() == null) {
@@ -408,12 +408,12 @@ public class ProjectModifyOperation {
 		IProject project = description.getProject();
 		IProjectDescription projectDescription = project.getDescription();
 		String[] curr = projectDescription.getNatureIds();
-		Set<String> before = new HashSet<String>();
+		Set<String> before = new HashSet<>();
 		for (int i = 0; i < curr.length; i++) {
 			before.add(curr[i]);
 		}
 		String[] natureIds = description.getNatureIds();
-		Set<String> after = new HashSet<String>();
+		Set<String> after = new HashSet<>();
 		for (int i = 0; i < natureIds.length; i++) {
 			after.add(natureIds[i]);
 		}
@@ -707,7 +707,7 @@ public class ProjectModifyOperation {
 		// collect unique entries
 		IBundleClasspathEntry[] libs = description.getBundleClasspath();
 		if (libs != null && libs.length > 0) {
-			Set<String> names = new LinkedHashSet<String>();
+			Set<String> names = new LinkedHashSet<>();
 			for (int i = 0; i < libs.length; i++) {
 				IPath lib = libs[i].getLibrary();
 				String libName = "."; //$NON-NLS-1$

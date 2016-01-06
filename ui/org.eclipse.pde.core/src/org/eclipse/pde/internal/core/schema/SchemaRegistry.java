@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class SchemaRegistry {
 
-	private HashMap<String, ISchemaDescriptor> fRegistry = new HashMap<String, ISchemaDescriptor>();
+	private HashMap<String, ISchemaDescriptor> fRegistry = new HashMap<>();
 
 	public ISchema getSchema(String extPointID) {
 		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPointID);

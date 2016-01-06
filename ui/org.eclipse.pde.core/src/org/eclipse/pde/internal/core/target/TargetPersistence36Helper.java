@@ -64,7 +64,7 @@ public class TargetPersistence36Helper {
 				String nodeName = element.getNodeName();
 				if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATIONS)) {
 					NodeList locations = element.getChildNodes();
-					List<ITargetLocation> bundleContainers = new ArrayList<ITargetLocation>();
+					List<ITargetLocation> bundleContainers = new ArrayList<>();
 					for (int j = 0; j < locations.getLength(); ++j) {
 						Node locationNode = locations.item(j);
 						if (locationNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -77,7 +77,7 @@ public class TargetPersistence36Helper {
 					definition.setTargetLocations(bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INCLUDE_BUNDLES) || nodeName.equalsIgnoreCase(TargetPersistence35Helper.OPTIONAL_BUNDLES)) {
 					NodeList children = element.getChildNodes();
-					List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>();
+					List<NameVersionDescriptor> included = new ArrayList<>();
 					for (int j = 0; j < children.getLength(); ++j) {
 						Node child = children.item(j);
 						if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -98,7 +98,7 @@ public class TargetPersistence36Helper {
 					if (previousIncluded == null || previousIncluded.length == 0) {
 						definition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
 					} else {
-						List<NameVersionDescriptor> allIncluded = new ArrayList<NameVersionDescriptor>();
+						List<NameVersionDescriptor> allIncluded = new ArrayList<>();
 						for (int j = 0; j < previousIncluded.length; j++) {
 							allIncluded.add(previousIncluded[j]);
 						}
@@ -144,7 +144,7 @@ public class TargetPersistence36Helper {
 					}
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.IMPLICIT)) {
 					NodeList implicitEntries = element.getChildNodes();
-					List<NameVersionDescriptor> implicit = new ArrayList<NameVersionDescriptor>(implicitEntries.getLength());
+					List<NameVersionDescriptor> implicit = new ArrayList<>(implicitEntries.getLength());
 					for (int j = 0; j < implicitEntries.getLength(); ++j) {
 						Node entry = implicitEntries.item(j);
 						if (entry.getNodeType() == Node.ELEMENT_NODE) {
@@ -203,9 +203,9 @@ public class TargetPersistence36Helper {
 			String includeAllPlatforms = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS);
 			String includeSource = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_SOURCE);
 			NodeList list = location.getChildNodes();
-			List<String> ids = new ArrayList<String>();
-			List<String> versions = new ArrayList<String>();
-			List<URI> repos = new ArrayList<URI>();
+			List<String> ids = new ArrayList<>();
+			List<String> versions = new ArrayList<>();
+			List<URI> repos = new ArrayList<>();
 			for (int i = 0; i < list.getLength(); ++i) {
 				Node node = list.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {

@@ -109,7 +109,7 @@ public class P2TargetUtils {
 	/**
 	 * Table mapping {@link ITargetDefinition} to synchronizer (P2TargetUtils) instance.
 	 */
-	private static Map<ITargetDefinition, P2TargetUtils> synchronizers = new HashMap<ITargetDefinition, P2TargetUtils>();
+	private static Map<ITargetDefinition, P2TargetUtils> synchronizers = new HashMap<>();
 
 	/**
 	 * The profile to be synchronized
@@ -158,7 +158,7 @@ public class P2TargetUtils {
 	 * and returns a list of profile identifiers that were deleted.
 	 */
 	public static List<String> cleanOrphanedTargetDefinitionProfiles() throws CoreException {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		IProfileRegistry registry = getProfileRegistry();
 		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		if (registry != null && tps != null) {
@@ -501,7 +501,7 @@ public class P2TargetUtils {
 		IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
 		IQueryResult<?> queryResult = fProfile.query(propertyQuery, null);
 		Iterator<?> iterator = queryResult.iterator();
-		Set<NameVersionDescriptor> installedIUs = new HashSet<NameVersionDescriptor>();
+		Set<NameVersionDescriptor> installedIUs = new HashSet<>();
 		while (iterator.hasNext()) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
 			installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
@@ -767,7 +767,7 @@ public class P2TargetUtils {
 		if (registry == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AbstractTargetHandle_0));
 		}
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		properties.put(IProfile.PROP_INSTALL_FOLDER, INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
 		properties.put(IProfile.PROP_CACHE, BUNDLE_POOL.toOSString());
 		properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
@@ -892,7 +892,7 @@ public class P2TargetUtils {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, repoCount);
 
 
-		List<IMetadataRepository> result = new ArrayList<IMetadataRepository>(repoCount);
+		List<IMetadataRepository> result = new ArrayList<>(repoCount);
 		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		for (int i = 0; i < repoCount; ++i) {
 			try {
@@ -1000,7 +1000,7 @@ public class P2TargetUtils {
 	 * @return the phase set to execute, includes the configuration phase if {@link #getIncludeConfigurePhase()} is <code>true<code>
 	 */
 	private IPhaseSet createPhaseSet() {
-		ArrayList<Phase> phases = new ArrayList<Phase>(4);
+		ArrayList<Phase> phases = new ArrayList<>(4);
 		phases.add(new Collect(100));
 		phases.add(new Property(1));
 		phases.add(new Uninstall(50, true));
@@ -1087,7 +1087,7 @@ public class P2TargetUtils {
 		// compute the set of source bundles we could possibly need for the bundles in the profile
 		IRequirement bundleRequirement = MetadataFactory.createRequirement("org.eclipse.equinox.p2.eclipse.type", "bundle", null, null, false, false, false); //$NON-NLS-1$ //$NON-NLS-2$
 		IQueryResult<IInstallableUnit> profileIUs = queryable.query(QueryUtil.createIUAnyQuery(), null);
-		ArrayList<IRequirement> requirements = new ArrayList<IRequirement>();
+		ArrayList<IRequirement> requirements = new ArrayList<>();
 		for (Iterator<IInstallableUnit> i = profileIUs.iterator(); i.hasNext();) {
 			IInstallableUnit profileIU = i.next();
 			if (profileIU.satisfies(bundleRequirement)) {
@@ -1220,7 +1220,7 @@ public class P2TargetUtils {
 		if (getIncludeAllEnvironments()) {
 			slicer = new PermissiveSlicer(allMetadata, new HashMap<String, String>(), true, false, true, true, false);
 		} else {
-			Map<String, String> props = new HashMap<String, String>();
+			Map<String, String> props = new HashMap<>();
 			props.put("osgi.os", definition.getOS() != null ? definition.getOS() : Platform.getOS()); //$NON-NLS-1$
 			props.put("osgi.ws", definition.getWS() != null ? definition.getWS() : Platform.getWS()); //$NON-NLS-1$
 			props.put("osgi.arch", definition.getArch() != null ? definition.getArch() : Platform.getOSArch()); //$NON-NLS-1$
@@ -1259,7 +1259,7 @@ public class P2TargetUtils {
 	 * @exception CoreException
 	 */
 	private URI[] getArtifactRepositories(ITargetDefinition target) throws CoreException {
-		Set<URI> result = new HashSet<URI>();
+		Set<URI> result = new HashSet<>();
 		ITargetLocation[] containers = target.getTargetLocations();
 		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
 		for (int i = 0; i < containers.length; i++) {
@@ -1360,7 +1360,7 @@ public class P2TargetUtils {
 	 */
 	private IInstallableUnit[] getRootIUs(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 
-		HashSet<IInstallableUnit> result = new HashSet<IInstallableUnit>();
+		HashSet<IInstallableUnit> result = new HashSet<>();
 		ITargetLocation[] containers = definition.getTargetLocations();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, containers.length * 10);
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
@@ -1389,7 +1389,7 @@ public class P2TargetUtils {
 	 * @exception CoreException
 	 */
 	private URI[] getMetadataRepositories(ITargetDefinition target) throws CoreException {
-		Set<URI> result = new HashSet<URI>();
+		Set<URI> result = new HashSet<>();
 		ITargetLocation[] containers = target.getTargetLocations();
 		IMetadataRepositoryManager manager = getRepoManager();
 		for (int i = 0; i < containers.length; i++) {
@@ -1454,7 +1454,7 @@ public class P2TargetUtils {
 		protected List<ProvisioningAction> getActions(InstallableUnitOperand operand) {
 			IInstallableUnit unit = operand.second();
 			if (unit != null && unit.getTouchpointType().getId().equals(NATIVE_TYPE)) {
-				ArrayList<ProvisioningAction> list = new ArrayList<ProvisioningAction>(1);
+				ArrayList<ProvisioningAction> list = new ArrayList<>(1);
 				list.add(new CollectNativesAction());
 				return list;
 			}
@@ -1463,7 +1463,7 @@ public class P2TargetUtils {
 
 		@Override
 		protected IStatus initializePhase(IProgressMonitor monitor, IProfile profile, Map<String, Object> parameters) {
-			parameters.put(NATIVE_ARTIFACTS, new ArrayList<Object>());
+			parameters.put(NATIVE_ARTIFACTS, new ArrayList<>());
 			parameters.put(PARM_PROFILE, profile);
 			return null;
 		}

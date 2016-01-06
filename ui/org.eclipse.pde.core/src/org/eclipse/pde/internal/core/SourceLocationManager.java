@@ -184,7 +184,7 @@ public class SourceLocationManager implements ICoreConstants {
 	 */
 	@SuppressWarnings("deprecation")
 	public List<SourceLocation> getUserLocations() {
-		List<SourceLocation> userLocations = new ArrayList<SourceLocation>();
+		List<SourceLocation> userLocations = new ArrayList<>();
 		String pref = PDECore.getDefault().getPreferencesManager().getString(P_SOURCE_LOCATIONS);
 		if (pref.length() > 0) {
 			parseSavedSourceLocations(pref, userLocations);
@@ -346,7 +346,7 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return array of source locations that were added via extension point
 	 */
 	private static List<SourceLocation> processExtensions() {
-		ArrayList<SourceLocation> result = new ArrayList<SourceLocation>();
+		ArrayList<SourceLocation> result = new ArrayList<>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(PDECore.PLUGIN_ID + ".source", false); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] children = extensions[i].getConfigurationElements();

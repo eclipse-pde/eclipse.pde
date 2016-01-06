@@ -26,7 +26,7 @@ public abstract class AbstractKeyValueTextChangeListener extends AbstractTextCha
 	public AbstractKeyValueTextChangeListener(IDocument document, boolean generateReadableNames) {
 		super(document);
 		if (generateReadableNames)
-			fReadableNames = new HashMap<TextEdit, String>();
+			fReadableNames = new HashMap<>();
 	}
 
 	@Override

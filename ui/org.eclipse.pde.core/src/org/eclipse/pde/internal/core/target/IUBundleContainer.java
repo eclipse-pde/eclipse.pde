@@ -200,7 +200,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		// that all IU containers will return the same thing for getFeatures.  In practice this is
 		// ok because we remove duplicates in TargetDefinition#getAllFeatures.
 
-		Set<NameVersionDescriptor> features = new HashSet<NameVersionDescriptor>();
+		Set<NameVersionDescriptor> features = new HashSet<>();
 		IQueryResult<IInstallableUnit> queryResult = fSynchronizer.getProfile().query(QueryUtil.createIUAnyQuery(), null);
 		if (queryResult.isEmpty()) {
 			return new TargetFeature[0];
@@ -225,7 +225,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		TargetFeature[] allFeatures = ((TargetDefinition) target).resolveFeatures(getLocation(false), new NullProgressMonitor());
 
 		// Build a final set of the models for the features in the profile.
-		List<TargetFeature> result = new ArrayList<TargetFeature>();
+		List<TargetFeature> result = new ArrayList<>();
 		for (int i = 0; i < allFeatures.length; i++) {
 			NameVersionDescriptor candidate = new NameVersionDescriptor(allFeatures[i].getId(), allFeatures[i].getVersion(), NameVersionDescriptor.TYPE_FEATURE);
 			if (features.contains(candidate)) {
@@ -250,7 +250,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	IInstallableUnit[] cacheIUs(ITargetDefinition target) throws CoreException {
 		IProfile profile = fSynchronizer.getProfile();
-		ArrayList<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
+		ArrayList<IInstallableUnit> result = new ArrayList<>();
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		for (int i = 0; i < fIds.length; i++) {
 			IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(fIds[i], fVersions[i]);
@@ -397,7 +397,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	private Map<BundleInfo, TargetBundle> generateResolvedBundles(IQueryable<IInstallableUnit> source, IQueryable<IInstallableUnit> metadata, IFileArtifactRepository artifacts) throws CoreException {
 		OSGiBundleQuery query = new OSGiBundleQuery();
 		IQueryResult<IInstallableUnit> queryResult = source.query(query, null);
-		Map<BundleInfo, TargetBundle> bundles = new LinkedHashMap<BundleInfo, TargetBundle>();
+		Map<BundleInfo, TargetBundle> bundles = new LinkedHashMap<>();
 		for (Iterator<IInstallableUnit> i = queryResult.iterator(); i.hasNext();) {
 			IInstallableUnit unit = i.next();
 			generateBundle(unit, artifacts, bundles);
@@ -490,8 +490,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @param unit unit to remove from the list of root IUs
 	 */
 	public synchronized void removeInstallableUnit(IInstallableUnit unit) {
-		List<String> newIds = new ArrayList<String>(fIds.length);
-		List<Version> newVersions = new ArrayList<Version>(fIds.length);
+		List<String> newIds = new ArrayList<>(fIds.length);
+		List<Version> newVersions = new ArrayList<>(fIds.length);
 		for (int i = 0; i < fIds.length; i++) {
 			if (!fIds[i].equals(unit.getId()) || !fVersions[i].equals(unit.getVersion())) {
 				newIds.add(fIds[i]);
@@ -677,7 +677,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	IInstallableUnit[] getRootIUs(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		IQueryable<IInstallableUnit> repos = P2TargetUtils.getQueryableMetadata(getRepositories(), monitor);
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
-		List<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
+		List<IInstallableUnit> result = new ArrayList<>();
 		for (int j = 0; j < fIds.length; j++) {
 			// For versions such as 0.0.0, the IU query may return multiple IUs, so we check which is the latest version
 			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[j], fVersions[j]));

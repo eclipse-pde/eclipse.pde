@@ -29,7 +29,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 
 	public ChoiceRestriction(ChoiceRestriction source) {
 		this(source.getSchema());
-		children = new Vector<ISchemaEnumeration>();
+		children = new Vector<>();
 		Object[] choices = source.getChildren();
 		for (int i = 0; i < choices.length; i++) {
 			children.add(new SchemaEnumeration(this, ((ISchemaEnumeration) choices[i]).getName()));
@@ -49,7 +49,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 	public String[] getChoicesAsStrings() {
 		if (children == null)
 			return new String[0];
-		Vector<String> result = new Vector<String>();
+		Vector<String> result = new Vector<>();
 		for (int i = 0; i < children.size(); i++) {
 			ISchemaEnumeration enumeration = children.get(i);
 			result.addElement(enumeration.getName());

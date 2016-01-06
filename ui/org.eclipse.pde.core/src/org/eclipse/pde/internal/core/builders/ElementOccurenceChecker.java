@@ -59,7 +59,7 @@ public class ElementOccurenceChecker {
 	 */
 	private static HashMap<String, Integer> countXMLChildrenByTagName(Element element) {
 		NodeList children = element.getChildNodes();
-		HashMap<String, Integer> tagNameMap = new HashMap<String, Integer>();
+		HashMap<String, Integer> tagNameMap = new HashMap<>();
 
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -79,7 +79,7 @@ public class ElementOccurenceChecker {
 	}
 
 	private static HashSet<ElementOccurrenceResult> processChildrenMax(ISchemaElement sElement, HashMap<String, Integer> tagNameMap, Element element) {
-		HashSet<ElementOccurrenceResult> elementSet = new HashSet<ElementOccurrenceResult>();
+		HashSet<ElementOccurrenceResult> elementSet = new HashSet<>();
 		// Get this element's compositor
 		ISchemaCompositor compositor = ((ISchemaComplexType) sElement.getType()).getCompositor();
 		// Track multiplicity
@@ -90,7 +90,7 @@ public class ElementOccurenceChecker {
 	}
 
 	private static HashSet<ElementOccurrenceResult> processChildrenMin(ISchemaElement sElement, HashMap<String, Integer> tagNameMap) {
-		HashSet<ElementOccurrenceResult> elementSet = new HashSet<ElementOccurrenceResult>();
+		HashSet<ElementOccurrenceResult> elementSet = new HashSet<>();
 		// Get this element's compositor
 		ISchemaCompositor compositor = ((ISchemaComplexType) sElement.getType()).getCompositor();
 		// Track multiplicity

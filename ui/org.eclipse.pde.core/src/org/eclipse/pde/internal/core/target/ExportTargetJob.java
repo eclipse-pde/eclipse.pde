@@ -76,7 +76,7 @@ public class ExportTargetJob extends Job {
 		NameVersionDescriptor[] included = target.getIncluded();
 		if (included == null)
 			return;
-		filter = new HashMap<String, NameVersionDescriptor[]>();
+		filter = new HashMap<>();
 		for (int i = 0; i < included.length; i++) {
 			NameVersionDescriptor inclusion = included[i];
 			NameVersionDescriptor[] versions = filter.get(inclusion.getId());
@@ -222,7 +222,7 @@ public class ExportTargetJob extends Job {
 		exporter.addSource(createRepoDescriptor(P2TargetUtils.getBundlePool().getLocation(), null, RepositoryDescriptor.KIND_ARTIFACT));
 
 		IQueryResult<?> ius = P2TargetUtils.getIUs(target, monitor);
-		ArrayList<IInstallableUnit> toExport = new ArrayList<IInstallableUnit>();
+		ArrayList<IInstallableUnit> toExport = new ArrayList<>();
 		for (Iterator<?> i = ius.iterator(); i.hasNext();) {
 			IInstallableUnit iu = (IInstallableUnit) i.next();
 			if (shouldExport(iu))

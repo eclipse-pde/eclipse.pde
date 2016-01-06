@@ -49,7 +49,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		if (ClasspathUtilCore.hasBundleStructure(model)) {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
-				ArrayList<String> list = new ArrayList<String>();
+				ArrayList<String> list = new ArrayList<>();
 				ExportPackageDescription[] exports = desc.getExportPackages();
 				for (int i = 0; i < exports.length; i++) {
 					list.add(exports[i].getName());
@@ -99,7 +99,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		fType = getNodeAttribute(node, "type"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
-		Vector<String> exports = new Vector<String>();
+		Vector<String> exports = new Vector<>();
 		boolean all = false;
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -177,7 +177,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	private ArrayList<String> createArrayList(String[] array) {
 		if (array == null)
 			return null;
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		for (int i = 0; i < array.length; i++) {
 			list.add(array[i]);
 		}

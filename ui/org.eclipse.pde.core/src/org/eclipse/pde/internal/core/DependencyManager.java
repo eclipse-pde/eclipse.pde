@@ -96,7 +96,7 @@ public class DependencyManager {
 	 * @return set
 	 */
 	private static Set<String> toSet(String[] array) {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		if (array != null) {
 			for (int i = 0; i < array.length; i++) {
 				set.add(array[i]);
@@ -121,7 +121,7 @@ public class DependencyManager {
 	 * @return a set of bundle IDs
 	 */
 	private static Set<String> getDependencies(Object[] selected, String[] implicit, State state, boolean removeSelf, boolean includeOptional, Set<String> excludeFragments) {
-		Set<String> set = new TreeSet<String>();
+		Set<String> set = new TreeSet<>();
 		for (int i = 0; i < selected.length; i++) {
 			if (!(selected[i] instanceof IPluginModelBase))
 				continue;

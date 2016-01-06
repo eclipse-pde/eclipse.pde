@@ -57,8 +57,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		fPreviousSibling = null;
 		fIndent = 0;
 
-		fChildren = new ArrayList<IDocumentElementNode>();
-		fAttributes = new TreeMap<String, IDocumentAttributeNode>();
+		fChildren = new ArrayList<>();
+		fAttributes = new TreeMap<>();
 		fTag = null;
 		fTextNode = null;
 	}
@@ -372,7 +372,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	@Override
 	public IDocumentAttributeNode[] getNodeAttributes() {
 		// Used by text edit operations
-		ArrayList<IDocumentAttributeNode> list = new ArrayList<IDocumentAttributeNode>();
+		ArrayList<IDocumentAttributeNode> list = new ArrayList<>();
 		Iterator<IDocumentAttributeNode> iter = fAttributes.values().iterator();
 		while (iter.hasNext())
 			list.add(iter.next());

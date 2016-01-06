@@ -29,7 +29,7 @@ public class ExportPackageObject extends PackageObject {
 
 	private static final long serialVersionUID = 1L;
 
-	private TreeMap<String, PackageFriend> fFriends = new TreeMap<String, PackageFriend>();
+	private TreeMap<String, PackageFriend> fFriends = new TreeMap<>();
 
 	public ExportPackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
 		super(header, element, versionAttribute);

@@ -201,7 +201,7 @@ public class ManifestUtils {
 				return new IPackageFragmentRoot[0];
 			}
 		}
-		List<IPackageFragmentRoot> pkgFragRoots = new LinkedList<IPackageFragmentRoot>();
+		List<IPackageFragmentRoot> pkgFragRoots = new LinkedList<>();
 		for (int j = 0; j < libs.length; j++) {
 			String lib = libs[j];
 			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=230469
@@ -248,7 +248,7 @@ public class ManifestUtils {
 	 */
 	public static void writeManifest(Map<String, String> manifestToWrite, Writer out) throws IOException {
 		// replaces any eventual existing file
-		manifestToWrite = new Hashtable<String, String>(manifestToWrite);
+		manifestToWrite = new Hashtable<>(manifestToWrite);
 
 		// The manifest-version header is not used by OSGi but must be the first header according to the JDK Jar specification
 		writeEntry(out, MANIFEST_VERSION, manifestToWrite.remove(MANIFEST_VERSION));
@@ -316,7 +316,7 @@ public class ManifestUtils {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(UtilMessages.ErrorReadingOldStyleManifest, pluginLocation.getAbsolutePath())));
 		}
 
-		Map<String, String> map = new HashMap<String, String>(convert.size(), 1.0f);
+		Map<String, String> map = new HashMap<>(convert.size(), 1.0f);
 		Enumeration<String> keys = convert.keys();
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();

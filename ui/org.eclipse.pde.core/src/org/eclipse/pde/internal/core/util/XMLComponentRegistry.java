@@ -46,7 +46,7 @@ public class XMLComponentRegistry {
 	 */
 	public static final int F_ATTRIBUTE_COMPONENT = 8;
 
-	private static ArrayList<Object> fConsumers = new ArrayList<Object>();
+	private static ArrayList<Object> fConsumers = new ArrayList<>();
 
 	private Map<String, HashMap<String, String>> fSchemaComponentMap;
 
@@ -107,7 +107,7 @@ public class XMLComponentRegistry {
 			}
 			HashMap<String, String> previousValue = targetMap.get(key);
 			if (previousValue == null) {
-				HashMap<String, String> newValue = new HashMap<String, String>();
+				HashMap<String, String> newValue = new HashMap<>();
 				newValue.put(valueKey, value);
 				targetMap.put(key, newValue);
 			} else {

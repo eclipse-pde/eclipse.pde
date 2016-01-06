@@ -61,7 +61,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				StateObjectFactory stateObjectFactory = Platform.getPlatformAdmin().getFactory();
 				Map<String, String> manifest = ManifestUtils.loadManifest(new File(fModel.getInstallLocation()));
 				TargetWeaver.weaveManifest(manifest);
-				Hashtable<String, String> dictionaryManifest = new Hashtable<String, String>(manifest);
+				Hashtable<String, String> dictionaryManifest = new Hashtable<>(manifest);
 				stateObjectFactory.createBundleDescription(null, dictionaryManifest, null, 1);
 			} catch (BundleException e) {
 				if (e.getType() == BundleException.MANIFEST_ERROR) {
@@ -706,7 +706,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		ImportPackageSpecification[] imports = desc.getImportPackages();
 		if (desc.hasDynamicImports()) {
-			List<ImportPackageSpecification> staticImportsList = new ArrayList<ImportPackageSpecification>();
+			List<ImportPackageSpecification> staticImportsList = new ArrayList<>();
 			for (int i = 0; i < imports.length; ++i) {
 				if (!imports[i].getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC))
 					staticImportsList.add(imports[i]);
@@ -775,7 +775,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private HashMap<String, ExportPackageDescription> getAvailableExportedPackages(State state) {
 		BundleDescription[] bundles = state.getBundles();
 
-		HashMap<String, ExportPackageDescription> exported = new HashMap<String, ExportPackageDescription>();
+		HashMap<String, ExportPackageDescription> exported = new HashMap<>();
 		for (int i = 0; i < bundles.length; i++) {
 			ExportPackageDescription[] exports = bundles[i].getExportPackages();
 			for (int j = 0; j < exports.length; j++) {
@@ -850,7 +850,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private Set<String> getExportedPackages() {
 		if (fProjectPackages == null) {
-			fProjectPackages = new HashSet<String>();
+			fProjectPackages = new HashSet<>();
 			addProjectPackages(fProject);
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc != null) {

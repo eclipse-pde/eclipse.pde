@@ -81,7 +81,7 @@ public class MinimalState {
 	public BundleDescription addBundle(Map<String, String> manifest, File bundleLocation, long bundleId) throws CoreException {
 		try {
 			// OSGi requires a dictionary over any map
-			Hashtable<String, String> dictionaryManifest = new Hashtable<String, String>(manifest);
+			Hashtable<String, String> dictionaryManifest = new Hashtable<>(manifest);
 			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, dictionaryManifest, bundleLocation.getAbsolutePath(), bundleId == -1 ? getNextId() : bundleId);
 			// new bundle
 			if (bundleId == -1) {
@@ -137,7 +137,7 @@ public class MinimalState {
 		if (initializePlatformProperties()) {
 			return fState.resolve(false);
 		}
-		List<BundleDescription> bundles = new ArrayList<BundleDescription>();
+		List<BundleDescription> bundles = new ArrayList<>();
 		for (int i = 0; i < symbolicNames.length; i++) {
 			BundleDescription[] descriptions = fState.getBundles(symbolicNames[i]);
 			for (int j = 0; j < descriptions.length; j++) {

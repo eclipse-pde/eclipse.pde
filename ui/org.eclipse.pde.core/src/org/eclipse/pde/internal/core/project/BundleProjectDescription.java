@@ -63,7 +63,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private IBundleProjectService fService;
 	private String[] fLaunchShortcuts;
 	private String fExportWizard;
-	private Map<String, String> fHeaders = new HashMap<String, String>();
+	private Map<String, String> fHeaders = new HashMap<>();
 	private Map<?, ?> fReadHeaders = null;
 
 	/**
@@ -214,7 +214,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 			elements = parseHeader(headers, Constants.BUNDLE_CLASSPATH);
 			IBundleClasspathEntry[] classpath = null;
 			if (elements != null && elements.length > 0) {
-				List<IBundleClasspathEntry> collect = new ArrayList<IBundleClasspathEntry>();
+				List<IBundleClasspathEntry> collect = new ArrayList<>();
 				for (int i = 0; i < elements.length; i++) {
 					String libName = elements[i].getValue();
 					IBundleClasspathEntry[] entries = getClasspathEntries(project, build, libName);
@@ -311,7 +311,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				if (entry != null) {
 					String[] tokens = entry.getTokens();
 					if (tokens != null && tokens.length > 0) {
-						List<String> strings = new ArrayList<String>();
+						List<String> strings = new ArrayList<>();
 						for (int i = 0; i < tokens.length; i++) {
 							strings.add(tokens[i]);
 						}

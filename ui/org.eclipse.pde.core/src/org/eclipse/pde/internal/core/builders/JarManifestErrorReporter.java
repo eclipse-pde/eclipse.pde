@@ -108,7 +108,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	 */
 	protected void parseManifest(IDocument document, IProgressMonitor monitor) {
 		try {
-			fHeaders = new HashMap<String, JarManifestHeader>();
+			fHeaders = new HashMap<>();
 			JarManifestHeader header = null;
 			int l = 0;
 			for (; l < document.getNumberOfLines(); l++) {

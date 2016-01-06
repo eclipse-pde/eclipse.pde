@@ -27,7 +27,7 @@ public class PDESchemaHelper {
 	 * @return A map with the ids as keys and respective {@link IConfigurationElement} as pairs
 	 */
 	public static Map<String, IConfigurationElement> getValidAttributes(ISchemaAttribute attribute) {
-		Map<String, IConfigurationElement> attributeMap = new HashMap<String, IConfigurationElement>();
+		Map<String, IConfigurationElement> attributeMap = new HashMap<>();
 
 		// TODO support multiple
 
@@ -75,7 +75,7 @@ public class PDESchemaHelper {
 		}
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(path[0], true);
 
-		List<IConfigurationElement> members = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> members = new ArrayList<>();
 		for (int i = 0; i < extensions.length; i++) {
 			// handle the core style identifier case
 			if (path.length == 2) {
@@ -108,7 +108,7 @@ public class PDESchemaHelper {
 				}
 				return;
 			}
-			members = new ArrayList<IConfigurationElement>();
+			members = new ArrayList<>();
 			for (Iterator<IConfigurationElement> iterator = parents.iterator(); iterator.hasNext();) {
 				IConfigurationElement element = iterator.next();
 				members.addAll(keepGoing(element, path[i]));

@@ -42,8 +42,8 @@ public class PDEClasspathContainer {
 		}
 	}
 
-	private static HashMap<IPath, IAccessRule> ACCESSIBLE_RULES = new HashMap<IPath, IAccessRule>();
-	private static HashMap<IPath, IAccessRule> DISCOURAGED_RULES = new HashMap<IPath, IAccessRule>();
+	private static HashMap<IPath, IAccessRule> ACCESSIBLE_RULES = new HashMap<>();
+	private static HashMap<IPath, IAccessRule> DISCOURAGED_RULES = new HashMap<>();
 
 	private static final IAccessRule EXCLUDE_ALL_RULE = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
 
@@ -62,7 +62,7 @@ public class PDEClasspathContainer {
 	}
 
 	public static IClasspathEntry[] getExternalEntries(IPluginModelBase model) {
-		ArrayList<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
+		ArrayList<IClasspathEntry> entries = new ArrayList<>();
 		addExternalPlugin(model, new Rule[0], entries);
 		return entries.toArray(new IClasspathEntry[entries.size()]);
 	}

@@ -83,7 +83,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	}
 
 	private static Set<String> loadStates() {
-		Set<String> set = new TreeSet<String>();
+		Set<String> set = new TreeSet<>();
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IProject project = root.getProject(PROXY_PROJECT_NAME);
 		try {
@@ -130,7 +130,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	}
 
 	public IClasspathEntry[] computeContainerClasspathEntries() throws CoreException {
-		ArrayList<IClasspathEntry> result = new ArrayList<IClasspathEntry>();
+		ArrayList<IClasspathEntry> result = new ArrayList<>();
 
 		IPluginModelBase[] wModels = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < wModels.length; i++) {
@@ -162,7 +162,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 
 		if (result.size() > 1) {
 			// sort
-			Map<String, IClasspathEntry> map = new TreeMap<String, IClasspathEntry>();
+			Map<String, IClasspathEntry> map = new TreeMap<>();
 			for (int i = 0; i < result.size(); i++) {
 				IClasspathEntry entry = result.get(i);
 				String key = entry.getPath().lastSegment().toString();
@@ -322,7 +322,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 
 	public void addPluginModelListener(IPluginModelListener listener) {
 		if (fListeners == null)
-			fListeners = new ArrayList<IPluginModelListener>();
+			fListeners = new ArrayList<>();
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}

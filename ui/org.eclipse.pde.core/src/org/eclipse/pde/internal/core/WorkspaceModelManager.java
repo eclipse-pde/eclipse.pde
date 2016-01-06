@@ -182,7 +182,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 	protected void addChange(Object model, int eventType) {
 		if (model instanceof IModel) {
 			if (fChangedModels == null)
-				fChangedModels = new ArrayList<ModelChange>();
+				fChangedModels = new ArrayList<>();
 			ModelChange change = new ModelChange((IModel) model, eventType);
 			if (!fChangedModels.contains(change))
 				fChangedModels.add(change);
@@ -202,9 +202,9 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 			return;
 		}
 
-		ArrayList<IModel> added = new ArrayList<IModel>();
-		ArrayList<IModel> removed = new ArrayList<IModel>();
-		ArrayList<IModel> changed = new ArrayList<IModel>();
+		ArrayList<IModel> added = new ArrayList<>();
+		ArrayList<IModel> removed = new ArrayList<>();
+		ArrayList<IModel> changed = new ArrayList<>();
 		for (ListIterator<ModelChange> li = changedModels.listIterator(); li.hasNext();) {
 			ModelChange change = li.next();
 			switch (change.type) {

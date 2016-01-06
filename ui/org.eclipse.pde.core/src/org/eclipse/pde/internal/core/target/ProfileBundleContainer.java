@@ -120,7 +120,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		if (source == null) {
 			source = new BundleInfo[0];
 		}
-		List<TargetBundle> all = new ArrayList<TargetBundle>();
+		List<TargetBundle> all = new ArrayList<>();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, infos.length + source.length);
 		// Add executable bundles
 		for (int i = 0; i < infos.length; i++) {
@@ -176,7 +176,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	protected TargetBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
 		URL[] files = PluginPathFinder.getPlatformXMLPaths(home, false);
 		if (files.length > 0) {
-			List<TargetBundle> all = new ArrayList<TargetBundle>(files.length);
+			List<TargetBundle> all = new ArrayList<>(files.length);
 			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
 			for (int i = 0; i < files.length; i++) {
 				if (localMonitor.isCanceled()) {

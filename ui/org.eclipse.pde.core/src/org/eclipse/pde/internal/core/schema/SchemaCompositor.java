@@ -29,7 +29,7 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 	public static final String P_KIND = "p_kind"; //$NON-NLS-1$
 
 	private int kind;
-	private Vector<ISchemaObject> children = new Vector<ISchemaObject>();
+	private Vector<ISchemaObject> children = new Vector<>();
 
 	public SchemaCompositor(ISchemaObject parent, int kind) {
 		super(parent, ""); //$NON-NLS-1$

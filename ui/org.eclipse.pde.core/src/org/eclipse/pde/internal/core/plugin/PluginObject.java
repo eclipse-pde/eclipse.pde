@@ -205,7 +205,7 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 			if (prev instanceof Comment) {
 				String comment = prev.getNodeValue();
 				if (result == null)
-					result = new Vector<String>();
+					result = new Vector<>();
 				result.add(0, comment);
 			} else
 				break;

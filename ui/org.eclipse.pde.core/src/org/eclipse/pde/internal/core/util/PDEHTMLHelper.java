@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 public class PDEHTMLHelper {
 
-	public final static HashMap<String, String> fgEntityLookup = new HashMap<String, String>(6);
+	public final static HashMap<String, String> fgEntityLookup = new HashMap<>(6);
 	static {
 		fgEntityLookup.put("lt", "<"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgEntityLookup.put("gt", ">"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -50,7 +50,7 @@ public class TracingOptionsManager {
 	public synchronized Hashtable<String, Object> getTemplateTable(String pluginId) {
 		if (template == null)
 			template = createTemplate();
-		Hashtable<String, Object> defaults = new Hashtable<String, Object>();
+		Hashtable<String, Object> defaults = new Hashtable<>();
 		for (Enumeration<Object> keys = template.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
 			if (belongsTo(key, pluginId)) {

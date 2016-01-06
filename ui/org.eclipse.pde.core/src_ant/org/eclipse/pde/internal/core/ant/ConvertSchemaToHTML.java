@@ -211,7 +211,7 @@ public class ConvertSchemaToHTML extends Task {
 			return null;
 		}
 		String[] paths = this.additionalSearchPaths.split(","); //$NON-NLS-1$
-		List<IPath> result = new ArrayList<IPath>(paths.length);
+		List<IPath> result = new ArrayList<>(paths.length);
 		for (int i = 0; i < paths.length; i++) {
 			IPath path = new Path(paths[i]);
 			if (path.isValidPath(paths[i])) {

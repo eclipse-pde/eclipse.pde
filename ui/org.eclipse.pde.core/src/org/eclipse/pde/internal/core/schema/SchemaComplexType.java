@@ -26,7 +26,7 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 	public static final String P_COMPOSITOR = "compositorProperty"; //$NON-NLS-1$
 	private boolean mixed;
 	private ISchemaCompositor compositor;
-	private Vector<ISchemaAttribute> attributes = new Vector<ISchemaAttribute>();
+	private Vector<ISchemaAttribute> attributes = new Vector<>();
 
 	public SchemaComplexType(ISchema schema) {
 		this(schema, null);

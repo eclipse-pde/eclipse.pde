@@ -67,7 +67,7 @@ public class PluginModelDelta {
 
 	private ArrayList<ModelEntry> addEntry(ArrayList<ModelEntry> list, ModelEntry entry) {
 		if (list == null)
-			list = new ArrayList<ModelEntry>();
+			list = new ArrayList<>();
 		list.add(entry);
 		return list;
 	}

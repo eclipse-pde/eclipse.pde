@@ -32,7 +32,7 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 			IModel model = new WorkspaceFeatureModel(featureXml);
 			loadModel(model, false);
 			if (fModels == null)
-				fModels = new HashMap<IProject, IModel>();
+				fModels = new HashMap<>();
 			fModels.put(project, model);
 			if (notify)
 				addChange(model, IModelProviderEvent.MODELS_ADDED);

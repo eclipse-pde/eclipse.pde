@@ -76,8 +76,8 @@ public class XMLErrorReporter extends DefaultHandler {
 			fTextDocument = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE).getDocument();
 			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, null);
 			fFindReplaceAdapter = new FindReplaceDocumentAdapter(fTextDocument);
-			fOffsetTable = new HashMap<Element, ElementData>();
-			fElementStack = new Stack<Element>();
+			fOffsetTable = new HashMap<>();
+			fElementStack = new Stack<>();
 			removeFileMarkers();
 		} catch (CoreException e) {
 			PDECore.log(e);
@@ -268,7 +268,7 @@ public class XMLErrorReporter extends DefaultHandler {
 			col = fTextDocument.getLineLength(line);
 		String text = fTextDocument.get(fHighestOffset + 1, fTextDocument.getLineOffset(line) - fHighestOffset - 1);
 
-		ArrayList<Position> commentPositions = new ArrayList<Position>();
+		ArrayList<Position> commentPositions = new ArrayList<>();
 		for (int idx = 0; idx < text.length();) {
 			idx = text.indexOf("<!--", idx); //$NON-NLS-1$
 			if (idx == -1)

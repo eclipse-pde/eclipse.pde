@@ -144,7 +144,7 @@ public class TargetPersistence35Helper {
 					}
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.IMPLICIT)) {
 					NodeList implicitEntries = element.getChildNodes();
-					List<NameVersionDescriptor> implicit = new ArrayList<NameVersionDescriptor>(implicitEntries.getLength());
+					List<NameVersionDescriptor> implicit = new ArrayList<>(implicitEntries.getLength());
 					for (int j = 0; j < implicitEntries.getLength(); ++j) {
 						Node entry = implicitEntries.item(j);
 						if (entry.getNodeType() == Node.ELEMENT_NODE) {
@@ -194,9 +194,9 @@ public class TargetPersistence35Helper {
 			String includeMode = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_MODE);
 			String includeAllPlatforms = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS);
 			NodeList list = location.getChildNodes();
-			List<String> ids = new ArrayList<String>();
-			List<String> versions = new ArrayList<String>();
-			List<URI> repos = new ArrayList<URI>();
+			List<String> ids = new ArrayList<>();
+			List<String> versions = new ArrayList<>();
+			List<URI> repos = new ArrayList<>();
 			for (int i = 0; i < list.getLength(); ++i) {
 				Node node = list.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -244,7 +244,7 @@ public class TargetPersistence35Helper {
 				Element element = (Element) node;
 				if (element.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.INCLUDE_BUNDLES) || element.getNodeName().equalsIgnoreCase(OPTIONAL_BUNDLES)) {
 					if (includedBundles == null) {
-						includedBundles = new ArrayList<NameVersionDescriptor>();
+						includedBundles = new ArrayList<>();
 					}
 					includedBundles.addAll(deserializeBundles(element));
 				}
@@ -265,7 +265,7 @@ public class TargetPersistence35Helper {
 
 	private static List/*NameVersionDescriptor*/<NameVersionDescriptor> deserializeBundles(Element bundleContainer) {
 		NodeList nodes = bundleContainer.getChildNodes();
-		List<NameVersionDescriptor> bundles = new ArrayList<NameVersionDescriptor>(nodes.getLength());
+		List<NameVersionDescriptor> bundles = new ArrayList<>(nodes.getLength());
 		for (int j = 0; j < nodes.getLength(); ++j) {
 			Node include = nodes.item(j);
 			if (include.getNodeType() == Node.ELEMENT_NODE) {

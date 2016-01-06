@@ -92,7 +92,7 @@ class ExternalLibraryCache {
 
 		File fCacheDir = new File(getLibraryCacheDir(), getBundleLibsCacheDirName(desc));
 
-		List<File> files = new ArrayList<File>();
+		List<File> files = new ArrayList<>();
 
 		for (int i = 0; i < libs.length; i++) {
 			String libName = libs[i].getName();
@@ -131,7 +131,7 @@ class ExternalLibraryCache {
 			return;
 
 		// build a list with all potential directory names for quick check
-		Set<String> bundleKeys = new HashSet<String>();
+		Set<String> bundleKeys = new HashSet<>();
 
 		for (int i = 0; i < targetModels.length; i++) {
 			if (targetModels[i].isEnabled()) {

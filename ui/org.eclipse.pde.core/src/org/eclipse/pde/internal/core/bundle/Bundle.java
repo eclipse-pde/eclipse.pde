@@ -19,7 +19,7 @@ import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
 	private static final long serialVersionUID = 1L;
-	private Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap<String, IManifestHeader>();
+	private Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap<>();
 
 	@Override
 	public void setHeader(String key, String value) {
@@ -96,7 +96,7 @@ public class Bundle extends BundleObject implements IBundle {
 	 * @return a map containing all key/value pairs of manifest headers as strings, values may be empty strings, but not <code>null</code>
 	 */
 	protected Map<String, String> getHeaders() {
-		Map<String, String> result = new HashMap<String, String>(fDocumentHeaders.values().size());
+		Map<String, String> result = new HashMap<>(fDocumentHeaders.values().size());
 		for (Iterator<IManifestHeader> iterator = fDocumentHeaders.values().iterator(); iterator.hasNext();) {
 			IManifestHeader currentHeader = iterator.next();
 			if (currentHeader.getValue() != null) {

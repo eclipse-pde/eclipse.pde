@@ -52,7 +52,7 @@ public class PluginSearchOperation {
 	}
 
 	private ArrayList<IIdentifiable> findMatch(IPluginModelBase model) {
-		ArrayList<IIdentifiable> result = new ArrayList<IIdentifiable>();
+		ArrayList<IIdentifiable> result = new ArrayList<>();
 		int searchLimit = fInput.getSearchLimit();
 		switch (fInput.getSearchElement()) {
 			case PluginSearchInput.ELEMENT_PLUGIN :

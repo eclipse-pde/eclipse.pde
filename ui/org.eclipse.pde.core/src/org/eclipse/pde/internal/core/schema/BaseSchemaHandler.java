@@ -32,7 +32,7 @@ public class BaseSchemaHandler extends DefaultHandler {
 	}
 
 	protected void reset() {
-		fElementList = new LinkedList<String>();
+		fElementList = new LinkedList<>();
 	}
 
 	@Override

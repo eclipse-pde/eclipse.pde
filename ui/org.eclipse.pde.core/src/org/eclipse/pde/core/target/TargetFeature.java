@@ -96,7 +96,7 @@ public class TargetFeature {
 	 * @return a list of name version descriptors, possibly empty
 	 */
 	public NameVersionDescriptor[] getDependentFeatures() {
-		List<NameVersionDescriptor> result = new ArrayList<NameVersionDescriptor>();
+		List<NameVersionDescriptor> result = new ArrayList<>();
 		IFeature feature = featureModel.getFeature();
 		IFeatureImport[] featureImports = feature.getImports();
 		for (int i = 0; i < featureImports.length; i++) {

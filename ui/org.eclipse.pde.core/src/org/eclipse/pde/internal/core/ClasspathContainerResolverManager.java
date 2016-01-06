@@ -37,7 +37,7 @@ public class ClasspathContainerResolverManager {
 	 * @return all classpath resolvers that support the nature, possibly empty
 	 */
 	public IBundleClasspathResolver[] getBundleClasspathResolvers(IProject project) {
-		List<Object> result = new ArrayList<Object>();
+		List<Object> result = new ArrayList<>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(POINT_ID);

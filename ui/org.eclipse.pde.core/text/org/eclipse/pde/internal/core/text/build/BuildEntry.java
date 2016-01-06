@@ -30,7 +30,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	private int fOffset = -1;
 	private IBuildModel fModel;
 	private String fName;
-	private ArrayList<Object> fTokens = new ArrayList<Object>();
+	private ArrayList<Object> fTokens = new ArrayList<>();
 	private String fLineDelimiter;
 
 	public BuildEntry(String name, IBuildModel model) {

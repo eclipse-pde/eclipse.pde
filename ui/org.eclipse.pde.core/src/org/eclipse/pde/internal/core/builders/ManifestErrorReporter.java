@@ -141,7 +141,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 
 	protected NodeList getChildrenByName(Element element, String name) {
 		class NodeListImpl implements NodeList {
-			ArrayList<Node> nodes = new ArrayList<Node>();
+			ArrayList<Node> nodes = new ArrayList<>();
 
 			@Override
 			public int getLength() {

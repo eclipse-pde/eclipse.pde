@@ -146,7 +146,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			TargetBundle[] bundles = container.getBundles();
 			IFeature feature = model.getFeature();
 			IFeaturePlugin[] plugins = feature.getPlugins();
-			List<NameVersionDescriptor> matchInfos = new ArrayList<NameVersionDescriptor>(plugins.length);
+			List<NameVersionDescriptor> matchInfos = new ArrayList<>(plugins.length);
 			for (int i = 0; i < plugins.length; i++) {
 				if (monitor.isCanceled()) {
 					return new TargetBundle[0];

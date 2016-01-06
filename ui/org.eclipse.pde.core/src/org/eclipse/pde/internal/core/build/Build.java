@@ -20,7 +20,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 
 public class Build extends BuildObject implements IBuild {
-	protected ArrayList<IBuildEntry> fEntries = new ArrayList<IBuildEntry>();
+	protected ArrayList<IBuildEntry> fEntries = new ArrayList<>();
 
 	@Override
 	public void add(IBuildEntry entry) throws CoreException {

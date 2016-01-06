@@ -35,7 +35,7 @@ public class UpdateManagerHelper {
 				fPath = path.setDevice(path.getDevice().toUpperCase(Locale.ENGLISH));
 			else
 				fPath = path;
-			fPlugins = new ArrayList<IPluginModelBase>();
+			fPlugins = new ArrayList<>();
 		}
 
 		public IPath getPath() {
@@ -70,7 +70,7 @@ public class UpdateManagerHelper {
 			IPlatformConfiguration platformConfiguration = ConfiguratorUtils.getPlatformConfiguration(null);
 
 			// Compute local sites
-			ArrayList<LocalSite> sites = new ArrayList<LocalSite>();
+			ArrayList<LocalSite> sites = new ArrayList<>();
 			for (int i = 0; i < models.length; i++) {
 				IPath path = new Path(models[i].getInstallLocation()).removeLastSegments(2);
 				addToSite(path, models[i], sites);

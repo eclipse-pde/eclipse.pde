@@ -30,7 +30,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 	private org.w3c.dom.Document fDocument;
 	private Element fRootElement;
 
-	protected Stack<Element> fElementStack = new Stack<Element>();
+	protected Stack<Element> fElementStack = new Stack<>();
 	protected boolean fAbbreviated;
 
 	public XMLDefaultHandler() {

@@ -34,7 +34,7 @@ import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 
 public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
-	private ArrayList<IExtensionDeltaListener> fExtensionListeners = new ArrayList<IExtensionDeltaListener>();
+	private ArrayList<IExtensionDeltaListener> fExtensionListeners = new ArrayList<>();
 	private ArrayList<ModelChange> fChangedExtensions = null;
 
 	/**
@@ -96,7 +96,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
 		if (model != null) {
 			if (fModels == null)
-				fModels = new HashMap<IProject, IModel>();
+				fModels = new HashMap<>();
 			fModels.put(project, model);
 			if (notify)
 				addChange(model, IModelProviderEvent.MODELS_ADDED);
@@ -433,7 +433,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * @return an array of URLs to workspace plug-ins
 	 */
 	protected URL[] getPluginPaths() {
-		ArrayList<URL> list = new ArrayList<URL>();
+		ArrayList<URL> list = new ArrayList<>();
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (isPluginProject(projects[i])) {
@@ -483,7 +483,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
 	protected void addExtensionChange(IPluginModelBase plugin, int type) {
 		if (fChangedExtensions == null)
-			fChangedExtensions = new ArrayList<ModelChange>();
+			fChangedExtensions = new ArrayList<>();
 		ModelChange change = new ModelChange(plugin, type);
 		fChangedExtensions.add(change);
 	}

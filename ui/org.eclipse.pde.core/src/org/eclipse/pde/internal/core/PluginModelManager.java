@@ -40,8 +40,8 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	class UpdateClasspathsJob extends Job {
 
-		private List<IJavaProject> fProjects = new ArrayList<IJavaProject>();
-		private List<IClasspathContainer> fContainers = new ArrayList<IClasspathContainer>();
+		private List<IJavaProject> fProjects = new ArrayList<>();
+		private List<IClasspathContainer> fContainers = new ArrayList<>();
 
 		/**
 		 * Constructs a new job.
@@ -209,7 +209,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 
-		Set<String> addedBSNs = new HashSet<String>();
+		Set<String> addedBSNs = new HashSet<>();
 		// Adds to the master table and the state newly created plug-ins in the workspace
 		// (ie. new plug-in project or a closed project that has just been re-opened).
 		// Also, if the target location changes, we add all plug-ins from the new target
@@ -266,7 +266,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @param runAsynch whether classpath updates should be done in an asynchronous job
 	 */
 	private void updateAffectedEntries(StateDelta delta, boolean runAsynch) {
-		Map<IJavaProject, RequiredPluginsClasspathContainer> map = new HashMap<IJavaProject, RequiredPluginsClasspathContainer>();
+		Map<IJavaProject, RequiredPluginsClasspathContainer> map = new HashMap<>();
 		if (delta == null) {
 			// if the delta is null, then the entire target changed.
 			// Therefore, we should update the classpath for all workspace plug-ins.
@@ -392,7 +392,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public void addPluginModelListener(IPluginModelListener listener) {
 		if (fListeners == null)
-			fListeners = new ArrayList<IPluginModelListener>();
+			fListeners = new ArrayList<>();
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}
@@ -404,7 +404,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public void addStateDeltaListener(IStateDeltaListener listener) {
 		if (fStateListeners == null)
-			fStateListeners = new ArrayList<IStateDeltaListener>();
+			fStateListeners = new ArrayList<>();
 		if (!fStateListeners.contains(listener))
 			fStateListeners.add(listener);
 	}
@@ -642,7 +642,7 @@ public class PluginModelManager implements IModelProviderListener {
 		URL[] externalURLs = new URL[0];
 		TargetBundle[] bundles = target.getBundles();
 		if (bundles != null) {
-			List<URL> urls = new ArrayList<URL>(bundles.length);
+			List<URL> urls = new ArrayList<>(bundles.length);
 			for (int i = 0; i < bundles.length; i++) {
 				if (bundles[i].getStatus().isOK()) {
 					try {
@@ -785,7 +785,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @return <code>true</code> if the two plug-in lists differ, <code>false</code> if they match
 	 */
 	private boolean isSavedExternalPluginListDifferent(URL[] newUrls) {
-		Set<String> newExternal = new HashSet<String>();
+		Set<String> newExternal = new HashSet<>();
 		for (int i = 0; i < newUrls.length; i++) {
 			newExternal.add(newUrls[i].toString());
 		}
@@ -800,7 +800,7 @@ public class PluginModelManager implements IModelProviderListener {
 
 		BufferedReader reader = null;
 		try {
-			Set<String> previousExternal = new HashSet<String>();
+			Set<String> previousExternal = new HashSet<>();
 			reader = new BufferedReader(new FileReader(saveLocation));
 			while (reader.ready()) {
 				String url = reader.readLine();
@@ -1055,7 +1055,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public IPluginModelBase[] getActiveModels(boolean includeFragments) {
 		int size = getEntryTable().size();
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>(size);
+		ArrayList<IPluginModelBase> result = new ArrayList<>(size);
 		Iterator<LocalModelEntry> iter = getEntryTable().values().iterator();
 		while (iter.hasNext()) {
 			ModelEntry entry = iter.next();
@@ -1106,7 +1106,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public IPluginModelBase[] getAllModels(boolean includeFragments) {
 		int size = getEntryTable().size();
-		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>(size);
+		ArrayList<IPluginModelBase> result = new ArrayList<>(size);
 		Iterator<LocalModelEntry> iter = getEntryTable().values().iterator();
 		while (iter.hasNext()) {
 			ModelEntry entry = iter.next();
