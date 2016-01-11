@@ -147,7 +147,6 @@ public class PluginConfigurationSection extends TableSection {
 		buffer.append("org.eclipse.equinox.ds@2:start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.equinox.event@2:start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.equinox.simpleconfigurator@1:start,"); //$NON-NLS-1$
-		buffer.append("org.eclipse.equinox.p2.reconciler.dropins@start"); //$NON-NLS-1$
 		return buffer.toString();
 	}
 
