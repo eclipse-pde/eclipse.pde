@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,7 @@ import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.xml.sax.SAXException;
 
 /**
@@ -291,6 +290,9 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 			return fResolutionStatus = status;
 		} finally {
+			// keep a list of resolved targets with key as handle
+			TargetPlatformHelper.addTargetDefinitionMap(this);
+
 			subMonitor.done();
 			if (monitor != null) {
 				monitor.done();

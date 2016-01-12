@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2016 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.*;
 import java.util.List;
+import java.util.Map.Entry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -26,8 +27,10 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.StyledString.Styler;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.*;
@@ -91,6 +94,33 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		}
 
 		@Override
+		public String getToolTipText(Object element) {
+			ITargetDefinition targetDef = (ITargetDefinition) element;
+			if (targetDef.isResolved())
+				return null;
+			if (!isResolved(targetDef)) {
+				String name = targetDef.getName();
+				return NLS.bind(Messages.TargetStatus_UnresolvedTarget, name);
+
+			}
+			return null;
+		}
+
+		@Override
+		public Point getToolTipShift(Object object) {
+			return new Point(5, 5);
+		}
+
+		@Override
+		public int getToolTipDisplayDelayTime(Object object) {
+			return 100;
+		}
+
+		@Override
+		public int getToolTipTimeDisplayed(Object object) {
+			return 5000;
+		}
+		@Override
 		public void update(ViewerCell cell) {
 			final Object element = cell.getElement();
 			Styler style = new Styler() {
@@ -133,8 +163,38 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 			cell.setText(styledString.toString());
 			cell.setStyleRanges(styledString.getStyleRanges());
+			if (fTableViewer.getChecked(targetDef) && !targetDef.isResolved())
+				performResolve(targetDef);
 			cell.setImage(getImage(targetDef));
 			super.update(cell);
+		}
+
+		/**
+		 * checks the resolution status of current target or any other previous
+		 * target with the same handle
+		 */
+		private boolean isResolved(ITargetDefinition target) {
+			boolean isResolved = false;
+			if (target.equals(fActiveTarget) && target.isResolved()) {
+				isResolved = true;
+
+			} else {
+				// checked earlier status of earlier resolved targets
+				HashMap<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper
+						.getTargetDefinitionMap();
+				for (Entry<ITargetHandle, List<TargetDefinition>> entry : targetFlagMap.entrySet()) {
+					if (entry.getKey().equals(target.getHandle())) {
+						if (entry.getValue().size() > 0) {
+							if (entry.getValue().get(0).isContentEquivalent(target)) {
+								isResolved = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			return isResolved;
+
 		}
 
 		private Image getImage(ITargetDefinition target) {
@@ -146,14 +206,36 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				} else if (target.getStatus().getSeverity() == IStatus.ERROR) {
 					flag = SharedLabelProvider.F_ERROR;
 				}
-			} else if (fPrevious != null && target.getHandle().equals(fPrevious.getHandle()) && fPrevious.isResolved()) {
-				// If the user hasn't made any changes to the workspace target, display any errors
-				if (fPrevious.getStatus().getSeverity() == IStatus.WARNING) {
-					flag = SharedLabelProvider.F_WARNING;
-				} else if (fPrevious.getStatus().getSeverity() == IStatus.ERROR) {
-					flag = SharedLabelProvider.F_ERROR;
+
+			} else {
+				// checked earlier status of earlier resolved targets
+				boolean isResolved = false;
+				HashMap<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper
+						.getTargetDefinitionMap();
+				for (Entry<ITargetHandle, List<TargetDefinition>> entry : targetFlagMap.entrySet()) {
+					if (entry.getKey().equals(target.getHandle())) {
+						if (entry.getValue().size() > 0) {
+							if (entry.getValue().get(0).isContentEquivalent(target)) {
+								int value = entry.getValue().get(0).getStatus().getSeverity();
+								if (value == IStatus.WARNING) {
+									flag = SharedLabelProvider.F_WARNING;
+								} else if (value == IStatus.ERROR) {
+									flag = SharedLabelProvider.F_ERROR;
+								}
+								isResolved = true;
+							}
+							else
+								isResolved = false;
+							break;
+
+						}
+					}
 				}
+				if (isResolved == false)
+					flag = SharedLabelProvider.F_WARNING;
 			}
+			if (target.getTargetLocations() == null)
+				flag = 0;
 			if (fRunningHost != null && fRunningHost.isContentEquivalent(target)) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_BRANDING, flag);
 			}
@@ -256,6 +338,45 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		return container;
 	}
 
+	/**
+	 * Performs resolve of selected target in fTableViewer
+	 *
+	 */
+	private void performResolve(Object element) {
+		if (!(element instanceof ITargetDefinition)) {
+			return;
+		}
+		final ITargetDefinition target = (ITargetDefinition) element;
+		if (target.isResolved())
+			return;
+		Job resolveJob = new Job(PDEUIMessages.TargetEditor_1) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				target.resolve(monitor);
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+				// Don't return any problems because we don't want an
+				// error dialog
+				return Status.OK_STATUS;
+			}
+		};
+		resolveJob.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (!fTableViewer.getControl().isDisposed())
+							fTableViewer.refresh(true);
+						if (!fDetails.getControl().isDisposed())
+							fDetails.refresh(true);
+					}
+				});
+			}
+		});
+		resolveJob.schedule();
+	}
 	private void createTargetProfilesGroup(Composite container) {
 
 		// Start loading the default target as it is often fast enough to finish before UI is done rendering
@@ -303,6 +424,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				if (event.getChecked()) {
 					fTableViewer.setCheckedElements(new Object[] {event.getElement()});
 					handleActivate();
+					// resolve the target if not already resolved
+					performResolve(event.getElement());
 				} else {
 					handleActivate();
 				}
@@ -331,6 +454,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 		});
 
+		ColumnViewerToolTipSupport.enableFor(fTableViewer, ToolTip.NO_RECREATE);
 		// add the targets
 		ITargetPlatformService service = getTargetService();
 		if (service != null) {
@@ -602,6 +726,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 			fRemoved.addAll(selected);
 			fTargets.removeAll(selected);
+			for (ITargetDefinition element : selected) {
+				TargetPlatformHelper.getTargetDefinitionMap().remove(element.getHandle());
+			}
 			// Quick hack because the first refresh loses the checkedState, which is being used to bold the active target
 			fTableViewer.refresh(false);
 			fTableViewer.refresh(true);
@@ -820,6 +947,18 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			IJobChangeListener listener = new JobChangeAdapter() {
 				@Override
 				public void done(IJobChangeEvent event) {
+					Display.getDefault().syncExec(new Runnable() {
+						@Override
+						public void run() {
+								// once resolve finishes, update the target tree
+								// viewer as well as location
+								if (!fTableViewer.getControl().isDisposed())
+									fTableViewer.refresh(true);
+								if (!fDetails.getControl().isDisposed())
+									fDetails.refresh(true);
+						}
+					});
+
 					if (event.getResult().getSeverity() == IStatus.OK) {
 						if (fActiveTarget != null) {
 							PDEPreferencesManager pref = new PDEPreferencesManager(PDEPlugin.getPluginId());

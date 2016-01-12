@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.core.target.ITargetDefinition;
-import org.eclipse.pde.core.target.ITargetPlatformService;
-
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
@@ -43,9 +44,40 @@ public class EditTargetDefinitionWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		// Do nothing, edited target is available
+		// update the cache to remove all other targets with same handle except
+		// this.
+		HashMap<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper.getTargetDefinitionMap();
+		for (Map.Entry<ITargetHandle, List<TargetDefinition>> entry : targetFlagMap.entrySet()) {
+			if (entry.getKey().equals(fDefinition.getHandle())) {
+				 List<TargetDefinition> targets = targetFlagMap.get(fDefinition.getHandle());
+				for (Iterator<TargetDefinition> iterator = targets.iterator(); iterator.hasNext();) {
+					TargetDefinition target = iterator.next();
+					if (!target.equals(fDefinition)) {
+						iterator.remove();
+					}
+				}
+			}
+		}
 		return true;
 
+	}
+
+	@Override
+	public boolean performCancel() {
+		// update the cache to remove this target with this handle
+		HashMap<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper.getTargetDefinitionMap();
+		for (Map.Entry<ITargetHandle, List<TargetDefinition>> entry : targetFlagMap.entrySet()) {
+			if (entry.getKey().equals(fDefinition.getHandle())) {
+				List<TargetDefinition> targets = targetFlagMap.get(fDefinition.getHandle());
+				for (Iterator<TargetDefinition> iterator = targets.iterator(); iterator.hasNext();) {
+					TargetDefinition target = iterator.next();
+					if (target.equals(fDefinition)) {
+						iterator.remove();
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.util.*;
 import org.osgi.framework.*;
 
@@ -36,6 +37,7 @@ public class TargetPlatformHelper {
 	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
 
 	private static Map<String, String> fCachedLocations;
+	private static HashMap<ITargetHandle, List<TargetDefinition>> fgCachedTargetDefinitionMap = new HashMap<>();
 
 	public static Properties getConfigIniProperties() {
 		File iniFile = new File(TargetPlatform.getLocation(), "configuration/config.ini"); //$NON-NLS-1$
@@ -486,6 +488,16 @@ public class TargetPlatformHelper {
 			if (subMon.isCanceled()) {
 				return null;
 			}
+			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+			String memento = target.getHandle().getMemento();
+			if (memento != null) {
+				// Same target has been re-resolved upon loading, clear the preference  and
+				// update the target so listeners can react to the change - see TargetStatus
+				if (memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
+					preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
+					preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
+				}
+			}
 		}
 		return target;
 	}
@@ -604,5 +616,27 @@ public class TargetPlatformHelper {
 			}
 		}
 		return result.toString();
+	}
+
+	public static HashMap<ITargetHandle, List<TargetDefinition>> getTargetDefinitionMap() {
+		return fgCachedTargetDefinitionMap;
+	}
+
+	/**
+	 * Add a list of resolved targets with handle as key. Uses this information
+	 * in target platform preference page, target location and target status
+	 * bar.
+	 */
+	public static void addTargetDefinitionMap(TargetDefinition targetDefinition) {
+		if (fgCachedTargetDefinitionMap.containsKey(targetDefinition.getHandle())) {
+			List<TargetDefinition> targets = fgCachedTargetDefinitionMap.get(targetDefinition.getHandle());
+			if (!targets.contains(targetDefinition))
+				targets.add(0, targetDefinition);
+
+		} else {
+			List<TargetDefinition> target = new ArrayList<>();
+			target.add(targetDefinition);
+			fgCachedTargetDefinitionMap.put(targetDefinition.getHandle(), target);
+		}
 	}
 }

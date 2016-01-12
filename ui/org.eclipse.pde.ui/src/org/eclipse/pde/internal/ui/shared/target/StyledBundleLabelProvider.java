@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import com.ibm.icu.text.MessageFormat;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.metadata.TranslationSupport;
@@ -19,6 +21,7 @@ import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -273,6 +276,27 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 					flag = SharedLabelProvider.F_WARNING;
 				} else if (status.getSeverity() == IStatus.ERROR) {
 					flag = SharedLabelProvider.F_ERROR;
+				}
+			} else {
+				HashMap<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper
+						.getTargetDefinitionMap();
+				for (List<TargetDefinition> targetDefinitionValues : targetFlagMap.values()) {
+					if (targetDefinitionValues.size() > 0) {
+						ITargetLocation[] locs = targetDefinitionValues.get(0).getTargetLocations();
+						if (locs != null) {
+							for (int i = 0; i < locs.length; i++) {
+								if (container.equals(locs[i])) {
+									IStatus status = locs[i].getStatus();
+									if (status.getSeverity() == IStatus.WARNING
+											|| status.getSeverity() == IStatus.INFO) {
+										flag = SharedLabelProvider.F_WARNING;
+									} else if (status.getSeverity() == IStatus.ERROR) {
+										flag = SharedLabelProvider.F_ERROR;
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 			if (element instanceof FeatureBundleContainer) {

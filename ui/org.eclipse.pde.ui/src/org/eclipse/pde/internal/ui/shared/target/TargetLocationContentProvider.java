@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.ui.shared.target.IUContentProvider.IUWrapper;
 
 /**
@@ -48,17 +49,35 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 					}
 				} else {
 					// Always check for provider last to avoid hurting performance
-					ITreeContentProvider provider = (ITreeContentProvider) Platform.getAdapterManager().getAdapter(parentElement, ITreeContentProvider.class);
+					ITreeContentProvider provider = Platform.getAdapterManager().getAdapter(parentElement, ITreeContentProvider.class);
 					if (provider != null) {
 						Object[] provided = provider.getChildren(parentElement);
 						return provided != null ? provided : new Object[0];
+					}
+				}
+			} else {
+				HashMap<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper
+						.getTargetDefinitionMap();
+				for (List<TargetDefinition> targetDefinitionValues : targetFlagMap.values()) {
+					if (targetDefinitionValues.size() > 0) {
+						ITargetLocation[] locs = targetDefinitionValues.get(0).getTargetLocations();
+						if (locs != null) {
+							for (int i = 0; i < locs.length; i++) {
+								if (location.equals(locs[i])) {
+									IStatus status = locs[i].getStatus();
+									if (!status.isOK() && !status.isMultiStatus()) {
+										return new Object[] { status };
+									}
+								}
+							}
+						}
 					}
 				}
 			}
 		} else if (parentElement instanceof IStatus) {
 			return ((IStatus) parentElement).getChildren();
 		} else {
-			ITreeContentProvider provider = (ITreeContentProvider) Platform.getAdapterManager().getAdapter(parentElement, ITreeContentProvider.class);
+			ITreeContentProvider provider = Platform.getAdapterManager().getAdapter(parentElement, ITreeContentProvider.class);
 			if (provider != null) {
 				Object[] provided = provider.getChildren(parentElement);
 				return provided != null ? provided : new Object[0];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,13 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.internal.core.*;
@@ -99,6 +101,10 @@ public class TargetStatus {
 							flag = SharedLabelProvider.F_ERROR;
 							statusMessage = getStatusMessage(status).toString();
 						}
+					} else {
+						flag = SharedLabelProvider.F_WARNING;
+						result = NLS.bind(Messages.TargetStatus_UnresolvedTarget, name);
+						statusMessage = NLS.bind('\n' + Messages.TargetStatus_UnresolvedTargetStatus, name);
 					}
 					if (fRunningHost != null && fRunningHost.isContentEquivalent(target)) {
 						newImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_BRANDING, flag);
