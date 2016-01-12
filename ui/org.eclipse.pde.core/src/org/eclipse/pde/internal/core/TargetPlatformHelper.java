@@ -36,7 +36,7 @@ public class TargetPlatformHelper {
 	public static final String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
 	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
 
-	private static Map<String, String> fCachedLocations;
+	private static Map<String, String> fgCachedLocations;
 	private static HashMap<ITargetHandle, List<TargetDefinition>> fgCachedTargetDefinitionMap = new HashMap<>();
 
 	public static Properties getConfigIniProperties() {
@@ -155,11 +155,11 @@ public class TargetPlatformHelper {
 	}
 
 	private static synchronized String getSymbolicName(String path) {
-		if (fCachedLocations == null)
-			fCachedLocations = new HashMap<>();
+		if (fgCachedLocations == null)
+			fgCachedLocations = new HashMap<>();
 
-		if (fCachedLocations.containsKey(path)) {
-			return fCachedLocations.get(path);
+		if (fgCachedLocations.containsKey(path)) {
+			return fgCachedLocations.get(path);
 		}
 
 		// TODO Loading the entire manifest to get a name is an unecessary performance hit
@@ -169,7 +169,7 @@ public class TargetPlatformHelper {
 				Map<String, String> manifest = ManifestUtils.loadManifest(file);
 				String name = manifest.get(Constants.BUNDLE_SYMBOLICNAME);
 				if (name != null) {
-					fCachedLocations.put(path, name);
+					fgCachedLocations.put(path, name);
 					return name;
 				}
 			} catch (CoreException e) {
