@@ -13,6 +13,7 @@
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218648
  *     Tuukka Lehtonen <tuukka.lehtonen@semantum.fi>  - bug 247907
  *     Eike Stepper <stepper@esc-net.de>              - bug 429372
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 485843
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
@@ -1291,8 +1292,8 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		};
 		int[] tableEvents = new int[] {SWT.MouseDown, SWT.MouseMove, SWT.MouseHover, SWT.MouseExit};
-		for (int i = 0; i < tableEvents.length; i++) {
-			fTree.addListener(tableEvents[i], tableListener);
+		for (int tableEvent : tableEvents) {
+			fTree.addListener(tableEvent, tableListener);
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 485843
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -45,9 +46,7 @@ public class LogFilesManager {
 		ILogFileProvider[] providers = (ILogFileProvider[]) logFileProviders.toArray(new ILogFileProvider[logFileProviders.size()]);
 		Map result = new HashMap(providers.length);
 
-		for (int i = 0; i < providers.length; i++) {
-			ILogFileProvider provider = providers[i];
-
+		for (ILogFileProvider provider : providers) {
 			Map sources = provider.getLogSources();
 			result.putAll(sources);
 		}

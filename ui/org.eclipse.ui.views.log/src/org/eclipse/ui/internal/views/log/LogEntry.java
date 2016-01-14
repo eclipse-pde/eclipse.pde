@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 209474, 207344
  *     Eike Stepper <stepper@esc-net.de>              - bug 429372
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 485843
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -357,8 +358,8 @@ public class LogEntry extends AbstractEntry {
 		}
 		IStatus[] schildren = status.getChildren();
 		if (schildren.length > 0) {
-			for (int i = 0; i < schildren.length; i++) {
-				addChild(new LogEntry(schildren[i], session));
+			for (IStatus element : schildren) {
+				addChild(new LogEntry(element, session));
 			}
 		}
 	}

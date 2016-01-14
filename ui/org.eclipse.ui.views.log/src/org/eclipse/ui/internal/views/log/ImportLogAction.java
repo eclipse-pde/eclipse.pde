@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218293
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 485843
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -176,9 +177,9 @@ public class ImportLogAction extends Action implements IMenuCreator {
 			ActionContributionItem actionItem = new ActionContributionItem(action);
 			actionItem.fill(menu, -1);
 		} else {
-			for (int i = 0; i < actions.length; i++) {
-				actions[i].setChecked(actions[i].getId().equals(previouslyCheckedActionId) && !logView.isPlatformLogOpen());
-				ActionContributionItem item = new ActionContributionItem(actions[i]);
+			for (ImportConfigurationLogAction action : actions) {
+				action.setChecked(action.getId().equals(previouslyCheckedActionId) && !logView.isPlatformLogOpen());
+				ActionContributionItem item = new ActionContributionItem(action);
 				item.fill(menu, -1);
 			}
 		}
