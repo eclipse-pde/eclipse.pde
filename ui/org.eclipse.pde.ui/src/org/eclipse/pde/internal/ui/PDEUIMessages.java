@@ -2892,8 +2892,6 @@ public class PDEUIMessages extends NLS {
 	public static String UpdatesSection_LocationColumn;
 	public static String UpdatesSection_EnabledColumn;
 
-	public static String UpdateTargetJob_UpdateJobName;
-
 	public static String CustomizationPage_title;
 
 	public static String PreferencesSection_title;
