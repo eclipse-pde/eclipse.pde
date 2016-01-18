@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -235,7 +235,7 @@ public class DeltaProcessor {
 					case IDelta.STATIC_TO_NON_STATIC:
 						return !Util.isVisible(delta.getNewModifiers());
 					case IDelta.DECREASE_ACCESS:
-						return !Util.isVisible(delta.getOldModifiers()) || RestrictionModifiers.isExtendRestriction(restrictions);
+						return !Util.isVisible(delta.getOldModifiers()) || ( Flags.isProtected(delta.getOldModifiers()) && RestrictionModifiers.isExtendRestriction(restrictions));
 					case IDelta.NON_FINAL_TO_FINAL:
 						return !Util.isVisible(delta.getOldModifiers()) || !Util.isVisible(delta.getNewModifiers()) || RestrictionModifiers.isExtendRestriction(restrictions) || RestrictionModifiers.isOverrideRestriction(restrictions);
 					default:
@@ -306,7 +306,9 @@ public class DeltaProcessor {
 						// not visible
 						return true;
 					case IDelta.DECREASE_ACCESS:
-						return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
+						// if the initial flag was protected, decrease access is
+						// compatible if class is extend restricted.
+						return Flags.isProtected(delta.getOldModifiers()) && RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
 					default:
 						break;
 				}
@@ -361,7 +363,7 @@ public class DeltaProcessor {
 					case IDelta.STATIC_TO_NON_STATIC:
 						return !Util.isVisible(delta.getNewModifiers());
 					case IDelta.DECREASE_ACCESS:
-						return RestrictionModifiers.isExtendRestriction(restrictions);
+						return Flags.isProtected(delta.getOldModifiers()) && RestrictionModifiers.isExtendRestriction(restrictions);
 					default:
 						break;
 				}
@@ -502,7 +504,7 @@ public class DeltaProcessor {
 						}
 						return true;
 					case IDelta.DECREASE_ACCESS:
-						return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
+						return (Flags.isProtected(delta.getOldModifiers()) && RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions()));
 					default:
 						break;
 				}

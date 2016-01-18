@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -323,6 +323,74 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		xPublicToPackageVisibility(false);
 	}
 
+	/**
+	 * Tests making a public inner class to package-access inner class in
+	 * no-extend class.
+	 */
+	private void xPublicToPackageInnerClass(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackageInnerClass.java"); //$NON-NLS-1$
+		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.DECREASE_ACCESS) };
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[] { PACKAGE_PREFIX + "PublicToPackageInnerClass.A", "bundle.a_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+
+	public void testPublicToPackageInnerClassI() throws Exception {
+		xPublicToPackageInnerClass(true);
+	}
+
+	public void testPublicToPackageInnerClassF() throws Exception {
+		xPublicToPackageInnerClass(false);
+	}
+
+	/**
+	 * Tests making a public inner class to protected inner class in no-extend
+	 * class.
+	 */
+	private void xPublicToProtectedInnerClass(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToProtectedInnerClass.java"); //$NON-NLS-1$
+		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.DECREASE_ACCESS) };
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[] { PACKAGE_PREFIX + "PublicToProtectedInnerClass.A", "bundle.a_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+
+	public void testPublicToProtectedInnerClassI() throws Exception {
+		xPublicToProtectedInnerClass(true);
+	}
+
+	public void testPublicToProtectedInnerClassF() throws Exception {
+		xPublicToProtectedInnerClass(false);
+	}
+
+	/**
+	 * Tests making a public inner class to private inner class in no-extend
+	 * class.
+	 */
+	private void xPublicToPrivateInnerClass(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateInnerClass.java"); //$NON-NLS-1$
+		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.DECREASE_ACCESS) };
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[] { PACKAGE_PREFIX + "PublicToPrivateInnerClass.A", "bundle.a_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+
+	public void testPublicToPrivateInnerClassI() throws Exception {
+		xPublicToPrivateInnerClass(true);
+	}
+
+	public void testPublicToPrivateInnerClassF() throws Exception {
+		xPublicToPrivateInnerClass(false);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */

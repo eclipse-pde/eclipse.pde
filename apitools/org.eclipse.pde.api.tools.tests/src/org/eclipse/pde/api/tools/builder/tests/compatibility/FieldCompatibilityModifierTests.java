@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -679,5 +679,74 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 
 	public void testAddNoReferenceF() throws Exception {
 		xAddNoReference(false);
+	}
+
+	/**
+	 * Tests changing a public field to package in @noextend class
+	 */
+	private void xPublicToPackage2(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackage2.java"); //$NON-NLS-1$
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.DECREASE_ACCESS)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[] { PACKAGE_PREFIX + "PublicToPackage2", "FIELD" }; //$NON-NLS-1$ //$NON-NLS-2$
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+
+	public void testPublicToPackage2I() throws Exception {
+		xPublicToPackage2(true);
+	}
+
+	public void testPublicToPackage2F() throws Exception {
+		xPublicToPackage2(false);
+	}
+
+	/**
+	 * Tests changing a public field to private in @noextend class
+	 */
+	private void xPublicToPrivate2(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivate2.java"); //$NON-NLS-1$
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.DECREASE_ACCESS)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[] { PACKAGE_PREFIX + "PublicToPrivate2", "FIELD" }; //$NON-NLS-1$ //$NON-NLS-2$
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+
+	public void testPublicToPrivate2I() throws Exception {
+		xPublicToPrivate2(true);
+	}
+
+	public void testPublicToPrivate2F() throws Exception {
+		xPublicToPrivate2(false);
+	}
+
+	/**
+	 * Tests changing a public field to protected in @noextend class
+	 */
+	private void xPublicToProtected2(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToProtected2.java"); //$NON-NLS-1$
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.DECREASE_ACCESS)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[] { PACKAGE_PREFIX + "PublicToProtected2", "FIELD" }; //$NON-NLS-1$ //$NON-NLS-2$
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+
+	public void testPublicToProtected2I() throws Exception {
+		xPublicToProtected2(true);
+	}
+
+	public void testPublicToProtected2F() throws Exception {
+		xPublicToProtected2(false);
 	}
 }
