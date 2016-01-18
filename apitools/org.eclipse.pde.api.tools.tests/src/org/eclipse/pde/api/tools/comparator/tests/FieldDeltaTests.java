@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -22,6 +19,9 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Delta tests for field
@@ -1629,14 +1629,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
-		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags()); //$NON-NLS-1$
 		assertTrue("Not visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
@@ -1713,14 +1707,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
-		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags()); //$NON-NLS-1$
 		assertTrue("Not visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
@@ -1738,7 +1726,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
@@ -1767,7 +1755,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$

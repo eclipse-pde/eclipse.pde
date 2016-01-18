@@ -2240,15 +2240,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertTrue("Not no delta", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
 	}
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244620

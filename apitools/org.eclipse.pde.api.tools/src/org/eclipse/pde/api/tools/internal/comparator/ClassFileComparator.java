@@ -1079,8 +1079,11 @@ public class ClassFileComparator {
 		IApiField field2 = this.type2.getField(name);
 		if (field2 == null) {
 			if (Flags.isPrivate(access) || Util.isDefault(access)) {
-				this.addDelta(getElementType(this.type1), IDelta.REMOVED, IDelta.FIELD, this.currentDescriptorRestrictions, access, 0, this.type1, name, new String[] {
-						Util.getDescriptorName(this.type1), name });
+				if (!(this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription())) {
+					// report non-API delta:
+					this.addDelta(getElementType(this.type1), IDelta.REMOVED, IDelta.FIELD, this.currentDescriptorRestrictions, access, 0, this.type1, name, new String[] {
+							Util.getDescriptorName(this.type1), name });
+				}
 			} else {
 				boolean found = false;
 				if (this.component2 != null) {
@@ -1217,6 +1220,11 @@ public class ClassFileComparator {
 					this.addDelta(getElementType(this.type2), IDelta.REMOVED, field2.isEnumConstant() ? IDelta.API_ENUM_CONSTANT : IDelta.API_FIELD, restrictions, access, access2, this.type1, name, new String[] {
 							Util.getDescriptorName(this.type2), name });
 				}
+				return;
+			}
+			if ((Flags.isPrivate(access) || Util.isDefault(access) || (Flags.isProtected(access) && RestrictionModifiers.isExtendRestriction(this.initialDescriptorRestrictions)))
+					&& (Flags.isPrivate(access2) || Util.isDefault(access2) || (Flags.isProtected(access2) && RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions)))) {
+				// don't report non-API deltas
 				return;
 			}
 		}
@@ -1359,12 +1367,17 @@ public class ClassFileComparator {
 		String methodDisplayName = getMethodDisplayName(method, this.type1);
 		if (method2 == null) {
 			if (method.isClassInitializer()) {
-				// report delta: removal of a clinit method
-				this.addDelta(getElementType(this.type1), IDelta.REMOVED, IDelta.CLINIT, this.currentDescriptorRestrictions, access, 0, this.type1, this.type1.getName(), Util.getDescriptorName(type1));
+				if (!(this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription())) {
+					// report non-API delta: removal of a clinit method
+					this.addDelta(getElementType(this.type1), IDelta.REMOVED, IDelta.CLINIT, this.currentDescriptorRestrictions, access, 0, this.type1, this.type1.getName(), Util.getDescriptorName(type1));
+				}
 				return;
 			} else if (Flags.isPrivate(access) || Util.isDefault(access)) {
-				this.addDelta(getElementType(this.type1), IDelta.REMOVED, getTargetType(method), Flags.isAbstract(this.type2.getModifiers()) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions, access, 0, this.type1, getKeyForMethod(method, this.type1), new String[] {
-						Util.getDescriptorName(this.type1), methodDisplayName });
+				if (!(this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription())) {
+					// report non-API delta:
+					this.addDelta(getElementType(this.type1), IDelta.REMOVED, getTargetType(method), Flags.isAbstract(this.type2.getModifiers()) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions, access, 0, this.type1, getKeyForMethod(method, this.type1), new String[] {
+							Util.getDescriptorName(this.type1), methodDisplayName });
+				}
 				return;
 			}
 			// if null we need to walk the hierarchy of descriptor2
@@ -1577,6 +1590,11 @@ public class ClassFileComparator {
 					}
 					return;
 				}
+			}
+			if ((Flags.isPrivate(access) || Util.isDefault(access) || (Flags.isProtected(access) && RestrictionModifiers.isExtendRestriction(this.initialDescriptorRestrictions)))
+					&& (Flags.isPrivate(access2) || Util.isDefault(access2) || (Flags.isProtected(access2) && RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions)))) {
+				// don't report non-API deltas
+				return;
 			}
 		}
 		if (this.component.hasApiDescription() && !method.isConstructor() && !method.isClassInitializer() && !(type1.isInterface() || type1.isAnnotation())) {
@@ -1948,16 +1966,21 @@ public class ClassFileComparator {
 			this.addDelta(getElementType(type), IDelta.ADDED, IDelta.ENUM_CONSTANT, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, 0, access, this.type1, name, new String[] {
 					Util.getDescriptorName(type), name });
 		} else {
-			this.addDelta(getElementType(type), IDelta.ADDED, IDelta.FIELD, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, 0, access, this.type1, name, new String[] {
-					Util.getDescriptorName(type), name });
+			if (!(this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) || Flags.isPublic(access) || Flags.isProtected(access)) {
+				// report non-API delta:
+				this.addDelta(getElementType(type), IDelta.ADDED, IDelta.FIELD, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, 0, access, this.type1, name, new String[] {
+						Util.getDescriptorName(type), name });
+			}
 		}
 	}
 
 	private void reportMethodAddition(IApiMethod method, IApiType type) {
 		int access = method.getModifiers();
 		if (method.isClassInitializer()) {
-			// report delta: addition of clinit method
-			this.addDelta(getElementType(type), IDelta.ADDED, IDelta.CLINIT, this.currentDescriptorRestrictions, 0, access, this.type1, type.getName(), Util.getDescriptorName(type1));
+			if (!(this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription())) {
+				// report non-API delta: addition of clinit method
+				this.addDelta(getElementType(type), IDelta.ADDED, IDelta.CLINIT, this.currentDescriptorRestrictions, 0, access, this.type1, type.getName(), Util.getDescriptorName(type1));
+			}
 			return;
 		}
 		if (Flags.isSynthetic(access)) {
@@ -2144,7 +2167,9 @@ public class ClassFileComparator {
 							Util.getDescriptorName(type), methodDisplayName });
 				}
 			}
-		} else {
+		} else if (!(this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription())) {
+			// report non-API deltas for private and package-accessible methods
+			// as well:
 			this.addDelta(getElementType(type), IDelta.ADDED, method.isConstructor() ? IDelta.CONSTRUCTOR : IDelta.METHOD, restrictionsForMethodAddition, this.initialDescriptorRestrictions, 0, method.getModifiers(), this.type1, getKeyForMethod(method, type), new String[] {
 					Util.getDescriptorName(type), methodDisplayName });
 		}
