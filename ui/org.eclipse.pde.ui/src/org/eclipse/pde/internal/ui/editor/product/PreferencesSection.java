@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Rapicorp Corporation and others.
+ * Copyright (c) 2016 Rapicorp Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,9 +103,19 @@ public class PreferencesSection extends PDESection {
 	private String getWizardConfigText() {
 		IPreferencesInfo info = getPreferencesInfo();
 		String[] bindings = new String[2];
-		bindings[0] = info.getSourceFilePath() == null ? PDEUIMessages.PreferencesSection_epf : "<br></br><b>" + TextProcessor.process(info.getSourceFilePath()) + "</b><br></br><br></br>"; //$NON-NLS-1$ //$NON-NLS-2$
-		bindings[1] = info.getPreferenceCustomizationPath() == null ? PDEUIMessages.PreferencesSection_customize : "<br></br><b>" + TextProcessor.process(info.getPreferenceCustomizationPath()) + "</b><br></br>"; //$NON-NLS-1$ //$NON-NLS-2$
-		return getOverwrite() ? NLS.bind(PDEUIMessages.PreferencesSection_generate_overwrite, bindings) : NLS.bind(PDEUIMessages.PreferencesSection_generate_merge, bindings);
+		bindings[0] = info.getSourceFilePath() == null ? null : TextProcessor.process(info.getSourceFilePath());
+		bindings[1] = info.getPreferenceCustomizationPath() == null ? null : TextProcessor.process(info.getPreferenceCustomizationPath());
+
+		boolean isOverwrite = getOverwrite();
+		if (bindings[0] == null && bindings[1] == null)
+			return isOverwrite ? PDEUIMessages.PreferencesSection_generate_overwrite1 : PDEUIMessages.PreferencesSection_generate_merge1;
+		if (bindings[0] == null && bindings[1] != null)
+			return isOverwrite ? NLS.bind(PDEUIMessages.PreferencesSection_generate_overwrite2, bindings[1]) : NLS.bind(PDEUIMessages.PreferencesSection_generate_merge2, bindings[1]);
+		if (bindings[0] != null && bindings[1] == null)
+			return isOverwrite ? NLS.bind(PDEUIMessages.PreferencesSection_generate_overwrite3, bindings[0]) : NLS.bind(PDEUIMessages.PreferencesSection_generate_merge3, bindings[0]);
+		if (bindings[0] != null && bindings[1] != null)
+			return isOverwrite ? NLS.bind(PDEUIMessages.PreferencesSection_generate_overwrite4, bindings) : NLS.bind(PDEUIMessages.PreferencesSection_generate_merge4, bindings);
+		return null;
 	}
 
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 IBM Corporation and others.
+ * Copyright (c) 2014, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2892,15 +2892,17 @@ public class PDEUIMessages extends NLS {
 	
 	public static String PreferencesSection_title;
 	public static String PreferencesSection_description;
-	public static String PreferencesSection_generate_overwrite;
-	public static String PreferencesSection_generate_merge;
 	public static String PreferencesSection_errorNoDefiningPlugin;
 	public static String PreferencesSection_errorNoDefiningPluginTitle;
 	public static String PreferencesSection_errorReading;
-	public static String PreferencesSection_epf;
-	public static String PreferencesSection_customize;
-	public static String PreferencesSection_merge;
-	public static String PreferencesSection_overwrite;
+	public static String PreferencesSection_generate_overwrite1;
+	public static String PreferencesSection_generate_overwrite2;
+	public static String PreferencesSection_generate_overwrite3;
+	public static String PreferencesSection_generate_overwrite4;
+	public static String PreferencesSection_generate_merge1;
+	public static String PreferencesSection_generate_merge2;
+	public static String PreferencesSection_generate_merge3;
+	public static String PreferencesSection_generate_merge4;
 
 	public static String ConvertPreferencesWizardPage_title;
 	public static String ConvertPreferencesWizardPage_description;
