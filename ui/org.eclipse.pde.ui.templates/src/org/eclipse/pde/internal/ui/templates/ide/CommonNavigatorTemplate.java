@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Cypal Solutions.
+ * Copyright (c) 2008, 2016 Cypal Solutions.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Cypal Solutions - initial implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473694
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473694, 486261
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
@@ -170,9 +170,9 @@ public class CommonNavigatorTemplate extends PDETemplateSection {
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList<PluginReference> result = new ArrayList<>();
-		result.add(new PluginReference("org.eclipse.core.resources", null, 0)); //$NON-NLS-1$
-		result.add(new PluginReference("org.eclipse.ui.navigator", null, 0)); //$NON-NLS-1$
-		result.add(new PluginReference("org.eclipse.ui.navigator.resources", null, 0)); //$NON-NLS-1$
+		result.add(new PluginReference("org.eclipse.core.resources")); //$NON-NLS-1$
+		result.add(new PluginReference("org.eclipse.ui.navigator")); //$NON-NLS-1$
+		result.add(new PluginReference("org.eclipse.ui.navigator.resources")); //$NON-NLS-1$
 		return result.toArray(new IPluginReference[result.size()]);
 	}
 

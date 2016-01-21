@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486261
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.rcp;
 
@@ -14,14 +15,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
-import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
-import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.PluginReference;
 
@@ -113,7 +108,7 @@ public class HelloNonUIRCPTemplate extends PDETemplateSection {
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] dep = new IPluginReference[1];
-		dep[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
+		dep[0] = new PluginReference("org.eclipse.core.runtime"); //$NON-NLS-1$
 		return dep;
 	}
 

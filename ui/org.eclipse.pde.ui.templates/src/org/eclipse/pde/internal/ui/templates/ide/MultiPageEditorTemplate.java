@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 486247
+ *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 486247, 486261
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
@@ -39,12 +39,12 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] dep = new IPluginReference[6];
-		dep[0] = new PluginReference("org.eclipse.jface.text", null, 0); //$NON-NLS-1$
-		dep[1] = new PluginReference("org.eclipse.core.resources", null, 0); //$NON-NLS-1$
-		dep[2] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
-		dep[3] = new PluginReference("org.eclipse.ui.editors", null, 0); //$NON-NLS-1$
-		dep[4] = new PluginReference("org.eclipse.ui.ide", null, 0); //$NON-NLS-1$
-		dep[5] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
+		dep[0] = new PluginReference("org.eclipse.jface.text"); //$NON-NLS-1$
+		dep[1] = new PluginReference("org.eclipse.core.resources"); //$NON-NLS-1$
+		dep[2] = new PluginReference("org.eclipse.ui"); //$NON-NLS-1$
+		dep[3] = new PluginReference("org.eclipse.ui.editors"); //$NON-NLS-1$
+		dep[4] = new PluginReference("org.eclipse.ui.ide"); //$NON-NLS-1$
+		dep[5] = new PluginReference("org.eclipse.core.runtime"); //$NON-NLS-1$
 		return dep;
 	}
 

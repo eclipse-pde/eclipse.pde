@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 486247
+ *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 486247, 486261
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.templates.ide;
@@ -248,10 +248,10 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		// add the dependencies for the splash handler extension template
 		IPluginReference[] dependencies = new IPluginReference[4];
-		dependencies[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
-		dependencies[1] = new PluginReference("org.eclipse.swt", null, 0); //$NON-NLS-1$
-		dependencies[2] = new PluginReference("org.eclipse.jface", null, 0); //$NON-NLS-1$
-		dependencies[3] = new PluginReference("org.eclipse.ui.workbench", null, 0); //$NON-NLS-1$
+		dependencies[0] = new PluginReference("org.eclipse.core.runtime"); //$NON-NLS-1$
+		dependencies[1] = new PluginReference("org.eclipse.swt"); //$NON-NLS-1$
+		dependencies[2] = new PluginReference("org.eclipse.jface"); //$NON-NLS-1$
+		dependencies[3] = new PluginReference("org.eclipse.ui.workbench"); //$NON-NLS-1$
 
 		return dependencies;
 	}

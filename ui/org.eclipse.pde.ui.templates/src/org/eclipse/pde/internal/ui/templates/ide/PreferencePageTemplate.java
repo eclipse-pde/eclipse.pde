@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 486247
+ *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 486247, 486261
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
@@ -80,8 +80,8 @@ public class PreferencePageTemplate extends PDETemplateSection {
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		PluginReference[] deps = new PluginReference[2];
-		deps[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
-		deps[1] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
+		deps[0] = new PluginReference("org.eclipse.core.runtime"); //$NON-NLS-1$
+		deps[1] = new PluginReference("org.eclipse.ui"); //$NON-NLS-1$
 		return deps;
 	}
 

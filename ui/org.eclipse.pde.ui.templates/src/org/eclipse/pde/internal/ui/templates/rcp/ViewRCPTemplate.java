@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel - bug 265231
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 265231, 486261
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.rcp;
 
@@ -220,8 +220,8 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] dep = new IPluginReference[2];
-		dep[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
-		dep[1] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
+		dep[0] = new PluginReference("org.eclipse.core.runtime"); //$NON-NLS-1$
+		dep[1] = new PluginReference("org.eclipse.ui"); //$NON-NLS-1$
 		return dep;
 	}
 

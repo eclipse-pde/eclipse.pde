@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Peter Friese <peter.friese@itemis.de> - bug 241074
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - bug 466680
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486261
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -193,9 +194,9 @@ public class PluginClassCodeGenerator {
 	public IPluginReference[] getDependencies() {
 		ArrayList<PluginReference> result = new ArrayList<>();
 		if (fPluginData.isUIPlugin())
-			result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
+			result.add(new PluginReference("org.eclipse.ui")); //$NON-NLS-1$
 		if (!fPluginData.isLegacy() && fPluginData.getOSGiFramework() == null)
-			result.add(new PluginReference(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, null, 0));
+			result.add(new PluginReference(IPDEBuildConstants.BUNDLE_CORE_RUNTIME));
 		return result.toArray(new IPluginReference[result.size()]);
 	}
 

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 486247
+ *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 486247, 486261
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
@@ -43,8 +43,8 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		// add required dependencies
 		IPluginReference[] dep = new IPluginReference[2];
-		dep[0] = new PluginReference("org.eclipse.ui.console", null, 0); //$NON-NLS-1$
-		dep[1] = new PluginReference("org.eclipse.jdt.ui", null, 0); //$NON-NLS-1$
+		dep[0] = new PluginReference("org.eclipse.ui.console"); //$NON-NLS-1$
+		dep[1] = new PluginReference("org.eclipse.jdt.ui"); //$NON-NLS-1$
 		return dep;
 	}
 

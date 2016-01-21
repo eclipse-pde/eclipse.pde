@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486261
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
@@ -46,7 +47,7 @@ public class DecoratorTemplate extends PDETemplateSection {
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		// Additional dependency required to decorate resource objects
 		IPluginReference[] dep = new IPluginReference[1];
-		dep[0] = new PluginReference("org.eclipse.core.resources", null, 0); //$NON-NLS-1$
+		dep[0] = new PluginReference("org.eclipse.core.resources"); //$NON-NLS-1$
 		return dep;
 	}
 

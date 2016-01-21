@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473694
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473694, 486261
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.templates.ide;
@@ -133,9 +133,9 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 		// We really need Eclipse 3.2 or higher but since Universal
 		// appears in 3.2 for the first time, just depending on
 		// its presence has the same effect.
-		result.add(new PluginReference("org.eclipse.ui.intro", null, 0)); //$NON-NLS-1$
-		result.add(new PluginReference("org.eclipse.ui.intro.universal", null, 0)); //$NON-NLS-1$
-		result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
+		result.add(new PluginReference("org.eclipse.ui.intro")); //$NON-NLS-1$
+		result.add(new PluginReference("org.eclipse.ui.intro.universal")); //$NON-NLS-1$
+		result.add(new PluginReference("org.eclipse.ui")); //$NON-NLS-1$
 
 		return result.toArray(new IPluginReference[result.size()]);
 	}

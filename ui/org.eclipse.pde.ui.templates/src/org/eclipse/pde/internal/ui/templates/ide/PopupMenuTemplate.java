@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486261
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
@@ -14,19 +15,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
-import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
-import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.AbstractTemplateSection;
-import org.eclipse.pde.ui.templates.ITemplateSection;
-import org.eclipse.pde.ui.templates.PluginReference;
+import org.eclipse.pde.ui.templates.*;
 
 public class PopupMenuTemplate extends PDETemplateSection {
 
@@ -160,8 +152,8 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] result = new IPluginReference[2];
-		result[0] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
-		result[1] = new PluginReference("org.eclipse.core.resources", null, 0); //$NON-NLS-1$
+		result[0] = new PluginReference("org.eclipse.ui"); //$NON-NLS-1$
+		result[1] = new PluginReference("org.eclipse.core.resources"); //$NON-NLS-1$
 		return result;
 	}
 
