@@ -35,6 +35,20 @@ public class PluginReference implements IPluginReference {
 	 *
 	 * Constructs a plug-in reference to be used in the PDE template framework
 	 *
+	 * @see #PluginReference(String id, String version, int match)
+	 *
+	 * @param id
+	 *            the id of the plug-in
+	 * @since 3.8
+	 */
+	public PluginReference(String id) {
+		this(id, null, 0);
+	}
+
+	/**
+	 *
+	 * Constructs a plug-in reference to be used in the PDE template framework
+	 *
 	 * @param id
 	 * 			the id of the plug-in
 	 * @param version
