@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - Bug 185477
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486261
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486261, 463272
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
@@ -202,7 +202,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		return new IPluginReference[] { new PluginReference("org.eclipse.ui") };//$NON-NLS-1$
+		return null;
 	}
 
 	/**
