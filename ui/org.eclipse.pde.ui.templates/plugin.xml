@@ -22,7 +22,7 @@
       <wizard
             name="%newExtension.templates.hello.name"
             template="org.eclipse.pde.ui.templates.helloWorld"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             id="org.eclipse.pde.ui.newExtension.hello">
          <description>
@@ -32,7 +32,7 @@
       <wizard
             name="%newExtension.templates.helloCmd.name"
             template="org.eclipse.pde.ui.templates.helloWorldCmd"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             id="org.eclipse.pde.ui.newExtension.helloCmd">
          <description>
@@ -42,7 +42,7 @@
       <wizard
             name="%newExtension.templates.view.name"
             template="org.eclipse.pde.ui.templates.view"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             id="org.eclipse.pde.ui.newExtension.view">
          <description>
@@ -51,7 +51,7 @@
       </wizard>
       <wizard
             category="templates"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             id="org.eclipse.pde.ui.newExtension.commonNavigator"
             name="%newExtension.template.commonNavigator.name"
             template="org.eclipse.pde.ui.templates.commonNavigator">
@@ -62,7 +62,7 @@
       <wizard
             name="%newExtension.templates.multiPageEditor.name"
             template="org.eclipse.pde.ui.templates.multiPageEditor"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             id="org.eclipse.pde.ui.newExtension.multiPageEditor">
          <description>
@@ -73,7 +73,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.newWizard.name"
             template="org.eclipse.pde.ui.templates.new"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             id="org.eclipse.pde.ui.newExtension.newWizard">
          <description>
@@ -84,7 +84,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.preferences.name"
             template="org.eclipse.pde.ui.templates.preferences"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             id="org.eclipse.pde.ui.newExtension.preferences">
          <description>
@@ -95,7 +95,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.propertyPages.name"
             template="org.eclipse.pde.ui.templates.propertyPage"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             id="org.eclipse.pde.ui.newExtension.propertyPages">
          <description>
@@ -106,7 +106,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.popupMenus.name"
             template="org.eclipse.pde.ui.templates.popup"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             id="org.eclipse.pde.ui.newExtension.popupMenus">
          <description>
@@ -117,7 +117,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.editor.name"
             template="org.eclipse.pde.ui.templates.editor"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             id="org.eclipse.pde.ui.newExtension.editor">
          <description>
@@ -128,7 +128,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.help.name"
             template="org.eclipse.pde.ui.templates.help"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             id="org.eclipse.pde.ui.newExtension.help">
          <description>
@@ -137,7 +137,7 @@
       </wizard>
       <wizard
             template="org.eclipse.pde.ui.templates.builder"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             category="templates"
             availableAsShortcut="true"
             name="%newExtension.templates.builder.name"
@@ -149,7 +149,7 @@
       <wizard
             availableAsShortcut="true"
             category="templates"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             id="org.eclipse.pde.ui.newExtension.decorator"
             name="%newExtension.templates.decorator.name"
             template="org.eclipse.pde.ui.templates.decorator">
@@ -160,7 +160,7 @@
       <wizard
             availableAsShortcut="true"
             category="templates"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             id="org.eclipse.pde.ui.newExtension.importWizard"
             name="%newExtension.templates.importWizard.name"
             template="org.eclipse.pde.ui.templates.importWizard">
@@ -171,7 +171,7 @@
       <wizard
             availableAsShortcut="true"
             category="templates"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             id="org.eclipse.pde.ui.newExtension.universalWelcome"
             name="%newExtension.templates.universalWelcome.name"
             template="org.eclipse.pde.ui.templates.universalWelcome">
@@ -182,7 +182,7 @@
       <wizard
       		availableAsShortcut="true"
             category="templates"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             id="org.eclipse.pde.ui.newExtension.perspective"
             name="%template.perspective.name"
             template="org.eclipse.pde.ui.templates.perspective">
@@ -193,7 +193,7 @@
       <wizard
             availableAsShortcut="true"
             category="templates"
-            icon="$nl$/icons/etool16/newex_wiz.gif"
+            icon="$nl$/icons/etool16/newex_wiz.png"
             id="org.eclipse.pde.ui.newExtension.splash"
             name="%wizard.name.splash.handler"
             template="org.eclipse.pde.ui.templates.splashHandlers">
@@ -306,7 +306,7 @@
          point="org.eclipse.pde.ui.pluginContent">
       <wizard
             name="%pluginContent.helloWorldCmd.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.ide.HelloWorldCmdNewWizard"
             id="org.eclipse.pde.ui.pluginContent.helloWorldCmd">
          <description>
@@ -315,7 +315,7 @@
       </wizard>
       <wizard
             name="%pluginContent.intro.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.rcp.IntroNewWizard"
             id="org.eclipse.pde.ui.pluginContent.intro"
             rcp="true">
@@ -325,7 +325,7 @@
       </wizard>
       <wizard
             name="%pluginContent.mail.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.rcp.MailNewWizard"
             id="org.eclipse.pde.ui.pluginContent.rcpmail"
             requiresActivator="true"
@@ -336,7 +336,7 @@
       </wizard>
       <wizard
             name="%pluginContent.helloRCP.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.rcp.HelloRCPNewWizard"
             id="org.eclipse.pde.ui.pluginContent.helloRCP"
             rcp="true">
@@ -346,7 +346,7 @@
       </wizard>
       <wizard
             class="org.eclipse.pde.internal.ui.templates.rcp.HelloNonUIRCPNewWizard"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             id="org.eclipse.pde.ui.pluginContent.helloNonUIRCP"
             name="%pluginContent.helloNonUIRCP.name"
             rcp="true"
@@ -357,7 +357,7 @@
       </wizard>
       <wizard
             class="org.eclipse.pde.internal.ui.templates.osgi.HelloOSGiNewWizard"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             id="org.eclipse.pde.ui.pluginContent.helloOSGi"
             name="%pluginContent.helloOSGi.name"
             pureOSGi="true"
@@ -369,7 +369,7 @@
       </wizard>
       <wizard
             name="%pluginContent.viewRCP.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.rcp.ViewRCPNewWizard"
             id="org.eclipse.pde.ui.pluginContent.viewRCP"
             rcp="true">
@@ -379,7 +379,7 @@
       </wizard>
       <wizard
             name="%pluginContent.view.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.ide.ViewNewWizard"
             id="org.eclipse.pde.ui.pluginContent.view">
          <description>
@@ -388,7 +388,7 @@
       </wizard>
       <wizard
             name="%pluginContent.multiPageEditor.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.ide.MultiPageEditorNewWizard"
             id="org.eclipse.pde.ui.pluginContent.multiPageEditor">
          <description>
@@ -397,7 +397,7 @@
       </wizard>
       <wizard
             name="%pluginContent.propertyPages.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.ide.PropertyPageNewWizard"
             id="org.eclipse.pde.ui.pluginContent.propertyPages">
          <description>
@@ -406,7 +406,7 @@
       </wizard>
       <wizard
             name="%pluginContent.popupMenus.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.ide.PopupMenuNewWizard"
             id="org.eclipse.pde.ui.pluginContent.popupMenus">
          <description>
@@ -415,7 +415,7 @@
       </wizard>
       <wizard
             name="%pluginContent.editor.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.ide.EditorNewWizard"
             id="org.eclipse.pde.ui.pluginContent.editor">
          <description>
@@ -424,7 +424,7 @@
       </wizard>
       <wizard
             name="%pluginContent.builder.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             class="org.eclipse.pde.internal.ui.templates.ide.BuilderNewWizard"
             id="org.eclipse.pde.ui.pluginContent.builder">
          <description>
@@ -433,7 +433,7 @@
       </wizard>
       <wizard
             class="org.eclipse.pde.internal.ui.templates.ide.HelpNewWizard"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             id="org.eclipse.pde.ui.pluginContent.helpContent"
             java="false"
             name="%pluginContent.help.name"
@@ -445,7 +445,7 @@
       </wizard>
       <wizard
             class="org.eclipse.pde.internal.ui.templates.osgi.HelloOSGiServiceNewWizard"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             id="org.eclipse.pde.ui.pluginContent.helloOSGiService"
             name="%pluginContent.helloOSGiService.name"
             pureOSGi="true"
@@ -457,7 +457,7 @@
       </wizard>
       <wizard
             class="org.eclipse.pde.internal.ui.templates.osgi.OSGiPreferencesServiceNewWizard"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             id="org.eclipse.pde.ui.pluginContent.OSGiPreferencesService"
             name="%pluginContent.OSGiPreferencesService.name"
             pureOSGi="true"
@@ -469,7 +469,7 @@
       </wizard>
       <wizard
             class="org.eclipse.pde.internal.ui.templates.osgi.OSGiSimpleLogServiceNewWizard"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             id="org.eclipse.pde.ui.pluginContent.OSGiSimpleLogService"
             name="%pluginContent.OSGiSimpleLogService.name"
             pureOSGi="true"
@@ -481,7 +481,7 @@
       </wizard>
       <wizard
             class="org.eclipse.pde.internal.ui.templates.osgi.HelloServiceComponentTemplateWizard"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             id="org.eclipse.pde.ui.ds.DSTemplateWizard"
             name="%pluginContent.helloDSOSGIService.name"
             pureOSGi="true"
@@ -493,7 +493,7 @@
       </wizard>
       <wizard
             class="org.eclipse.pde.internal.ui.templates.osgi.OSGiEventAdminTemplateWizard"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
             id="org.eclipse.pde.ui.ds.OSGiEventAdminTemplateWizard"
             name="%pluginContent.OSGiEventAdminService.name"
             pureOSGi="true"
