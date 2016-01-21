@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.SearchablePluginsManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 
@@ -102,6 +101,12 @@ public class LaunchPluginValidator {
 				projects.add(project);
 		}
 
+		// add workspace feature project too (if any)
+		IProject[] allProjects = PDECore.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < allProjects.length; i++) {
+			if (WorkspaceModelManager.isFeatureProject(allProjects[i]) && !projects.contains(allProjects[i]))
+				projects.add(allProjects[i]);
+		}
 		// add fake "Java Search" project
 		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 		IJavaProject proxy = manager.getProxyProject();
