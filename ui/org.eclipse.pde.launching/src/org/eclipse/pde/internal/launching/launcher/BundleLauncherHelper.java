@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -159,8 +159,7 @@ public class BundleLauncherHelper {
 			}
 
 			// Get all required plugins
-			// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-			Set<String> additionalIds = DependencyManager.getDependencies(launchPlugins.toArray(), false, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
+			Set<String> additionalIds = DependencyManager.getDependencies(launchPlugins.toArray(), false, null);
 			Iterator<String> it = additionalIds.iterator();
 			while (it.hasNext()) {
 				String id = it.next();
