@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 486247
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.templates.ide;
@@ -245,11 +246,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		// Ensure schema version was defined
-		if (schemaVersion == null) {
-			return super.getDependencies(schemaVersion);
-		}
-		// Create the dependencies for the splash handler extension template addition
+		// add the dependencies for the splash handler extension template
 		IPluginReference[] dependencies = new IPluginReference[4];
 		dependencies[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
 		dependencies[1] = new PluginReference("org.eclipse.swt", null, 0); //$NON-NLS-1$

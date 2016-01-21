@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,24 +12,14 @@ package org.eclipse.pde.internal.ui.templates.ide;
 
 import java.io.File;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
-import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
-import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.BooleanOption;
-import org.eclipse.pde.ui.templates.PluginReference;
-import org.eclipse.pde.ui.templates.TemplateOption;
+import org.eclipse.pde.ui.templates.*;
 
 public class DecoratorTemplate extends PDETemplateSection {
 	public static final String DECORATOR_CLASS_NAME = "decoratorClassName"; //$NON-NLS-1$
@@ -55,12 +45,9 @@ public class DecoratorTemplate extends PDETemplateSection {
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		// Additional dependency required to decorate resource objects
-		if (schemaVersion != null) {
-			IPluginReference[] dep = new IPluginReference[1];
-			dep[0] = new PluginReference("org.eclipse.core.resources", null, 0); //$NON-NLS-1$
-			return dep;
-		}
-		return super.getDependencies(schemaVersion);
+		IPluginReference[] dep = new IPluginReference[1];
+		dep[0] = new PluginReference("org.eclipse.core.resources", null, 0); //$NON-NLS-1$
+		return dep;
 	}
 
 	@Override
