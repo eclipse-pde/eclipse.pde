@@ -7,10 +7,9 @@ public class TagRule extends MultiLineRule {
 	public TagRule(IToken token) {
 		super("<", ">", token);
 	}
-	protected boolean sequenceDetected(
-		ICharacterScanner scanner,
-		char[] sequence,
-		boolean eofAllowed) {
+	
+	@Override
+	protected boolean sequenceDetected(ICharacterScanner scanner, char[] sequence, boolean eofAllowed) {
 		int c = scanner.read();
 		if (sequence[0] == '<') {
 			if (c == '?') {
