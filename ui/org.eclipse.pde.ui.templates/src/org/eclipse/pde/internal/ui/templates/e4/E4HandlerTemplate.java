@@ -128,12 +128,8 @@ public class E4HandlerTemplate extends PDETemplateSection {
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-
-
 		ArrayList<PluginReference> result = new ArrayList<>();
 
-		//if (schemaVersion != null)
-		//	result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
 		final int matchRule = IMatchRules.GREATER_OR_EQUAL;
 
 		result.add(new PluginReference("javax.inject", null, matchRule)); //$NON-NLS-1$
