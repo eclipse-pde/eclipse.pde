@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,9 +48,6 @@ public class PluginReference implements IPluginReference {
 		this.match = match;
 	}
 
-	/*
-	 * @see IPluginReference#equals(Object)
-	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IPluginReference) {
@@ -70,49 +67,31 @@ public class PluginReference implements IPluginReference {
 		return super.hashCode();
 	}
 
-	/*
-	 * @see IPluginReference#getMatch()
-	 */
 	@Override
 	public int getMatch() {
 		return match;
 	}
 
-	/*
-	 * @see IPluginReference#getVersion()
-	 */
 	@Override
 	public String getVersion() {
 		return version;
 	}
 
-	/*
-	 * @see IPluginReference#setMatch(int)
-	 */
 	@Override
 	public void setMatch(int match) throws CoreException {
 		this.match = match;
 	}
 
-	/*
-	 * @see IPluginReference#setVersion(String)
-	 */
 	@Override
 	public void setVersion(String version) throws CoreException {
 		this.version = version;
 	}
 
-	/*
-	 * @see IIdentifiable#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * @see IIdentifiable#setId(String)
-	 */
 	@Override
 	public void setId(String id) throws CoreException {
 		this.id = id;
