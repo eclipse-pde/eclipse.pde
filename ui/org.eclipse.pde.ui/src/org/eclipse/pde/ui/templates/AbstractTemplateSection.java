@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Les Jones <lesojones@gmail.com> - Bug 185477
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
-
-import java.util.zip.ZipEntry;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -82,17 +80,12 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * following keys: <samp>pluginClass </samp>, <samp>pluginId </samp> and
 	 * <samp>pluginName </samp>.
 	 *
-	 * @see ITemplateSection#getReplacementString(String,String)
 	 */
 	@Override
 	public String getReplacementString(String fileName, String key) {
 		String result = getKeyValue(key);
 		return result != null ? result : key;
 	}
-
-	/**
-	 * @see IVariableProvider#getValue(String)
-	 */
 
 	@Override
 	public Object getValue(String key) {
@@ -136,17 +129,11 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 		return null;
 	}
 
-	/**
-	 * @see ITemplateSection#getTemplateLocation()
-	 */
 	@Override
 	public URL getTemplateLocation() {
 		return null;
 	}
 
-	/**
-	 * @see ITemplateSection#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return ""; //$NON-NLS-1$
@@ -187,12 +174,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	public void addPages(Wizard wizard) {
 	}
 
-	/**
-	 * Tests if wizard pages for this template section have been added.
-	 *
-	 * @return <code>true</code> if wizard pages for this section have been
-	 *         added, <code>false</code> otherwise.
-	 */
+
 	@Override
 	public boolean getPagesAdded() {
 		return pagesAdded;
@@ -211,8 +193,6 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	/**
 	 * The default implementation of the interface method. The returned value is
 	 * 1.
-	 *
-	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
 	@Override
 	public int getNumberOfWorkUnits() {
@@ -221,8 +201,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		return new IPluginReference[] {new PluginReference("org.eclipse.ui", //$NON-NLS-1$
-				null, 0)};
+		return new IPluginReference[] { new PluginReference("org.eclipse.ui", null, 0) };//$NON-NLS-1$
 	}
 
 	/**
@@ -389,8 +368,6 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * required files found in the template location and then call
 	 * <samp>updateModel </samp> to add the required manifest entires.
 	 *
-	 * @see ITemplateSection#execute(IProject, IPluginModelBase,
-	 *      IProgressMonitor)
 	 */
 	@Override
 	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
