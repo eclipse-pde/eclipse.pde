@@ -222,10 +222,8 @@ public class $className$ extends ViewPart {
 		}
 	}
 %endif
-	class NameSorter extends ViewerSorter {
-	}
 
-	/**
+/**
 	 * The constructor.
 	 */
 	public $className$() {
@@ -246,7 +244,6 @@ public class $className$ extends ViewPart {
 %endif
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());
 %if contextHelp
 
