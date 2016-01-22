@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private URL fURL;
 
-	private ListenerList fListeners = new ListenerList();
+	private ListenerList<IModelChangedListener> fListeners = new ListenerList<>();
 
 	private Vector<ISchemaElement> fElements = new Vector<>();
 
@@ -172,9 +172,9 @@ public class Schema extends PlatformObject implements ISchema {
 	public void fireModelChanged(IModelChangedEvent event) {
 		if (!fNotificationEnabled)
 			return;
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IModelChangedListener) listeners[i]).modelChanged(event);
+
+		for (IModelChangedListener listener : fListeners) {
+			listener.modelChanged(event);
 		}
 	}
 

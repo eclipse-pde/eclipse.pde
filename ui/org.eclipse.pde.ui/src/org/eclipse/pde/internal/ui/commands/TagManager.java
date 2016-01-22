@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.ListenerList;
 public class TagManager {
 
 	private Hashtable<Command, String> fCommandToTags = new Hashtable<>();
-	private ListenerList fListeners = new ListenerList();
+	private ListenerList<Listener> fListeners = new ListenerList<>();
 
 	public void update(Command command, String tags) {
 		if ((tags == null) || ("".equals(tags))) { //$NON-NLS-1$
@@ -88,9 +88,7 @@ public class TagManager {
 	}
 
 	private void fireTagManagerChanged() {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			Listener listener = (Listener) listeners[i];
+		for (Listener listener : fListeners) {
 			listener.tagManagerChanged();
 		}
 	}

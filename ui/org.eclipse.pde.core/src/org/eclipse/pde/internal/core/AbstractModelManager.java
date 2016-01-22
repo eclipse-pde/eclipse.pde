@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.pde.core.IModelProviderListener;
 
 public abstract class AbstractModelManager {
 
-	private ListenerList fListeners = new ListenerList();
+	private ListenerList<IModelProviderListener> fListeners = new ListenerList<>();
 
 	public synchronized void removeModelProviderListener(IModelProviderListener listener) {
 		// TODO see bug 214613... investigate why FeatureModelManager is being bad
@@ -30,9 +30,8 @@ public abstract class AbstractModelManager {
 	}
 
 	public void fireModelProviderEvent(IModelProviderEvent event) {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IModelProviderListener) listeners[i]).modelsChanged(event);
+		for (IModelProviderListener listener : fListeners) {
+			listener.modelsChanged(event);
 		}
 	}
 

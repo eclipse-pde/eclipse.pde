@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class ExternalFeatureModelManager {
 		}
 	}
 
-	private ListenerList fListeners = new ListenerList();
+	private ListenerList<IModelProviderListener> fListeners = new ListenerList<>();
 
 	private IFeatureModel[] fModels;
 
@@ -68,9 +68,7 @@ public class ExternalFeatureModelManager {
 	}
 
 	private void fireModelProviderEvent(IModelProviderEvent e) {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IModelProviderListener listener = (IModelProviderListener) listeners[i];
+		for (IModelProviderListener listener : fListeners) {
 			listener.modelsChanged(e);
 		}
 	}

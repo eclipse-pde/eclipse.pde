@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public class TargetContentsGroup {
 	private static final int GROUP_BY_NONE = 0;
 	private static final int GROUP_BY_FILE_LOC = 1;
 	private static final int GROUP_BY_CONTAINER = 2;
-	private ListenerList fChangeListeners = new ListenerList();
+	private ListenerList<ITargetChangedListener> fChangeListeners = new ListenerList<>();
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given composite.
@@ -154,9 +154,8 @@ public class TargetContentsGroup {
 	 * Informs the target content listeners that check state has changed
 	 */
 	public void contentChanged() {
-		Object[] listeners = fChangeListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((ITargetChangedListener) listeners[i]).contentsChanged(fTargetDefinition, this, false, false);
+		for (ITargetChangedListener listener : fChangeListeners) {
+			listener.contentsChanged(fTargetDefinition, this, false, false);
 		}
 	}
 

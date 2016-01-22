@@ -59,7 +59,7 @@ public class TargetLocationsGroup {
 	private Button fShowContentButton;
 
 	private ITargetDefinition fTarget;
-	private ListenerList fChangeListeners = new ListenerList();
+	private ListenerList<ITargetChangedListener> fChangeListeners = new ListenerList<>();
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given composite.
@@ -585,9 +585,8 @@ public class TargetLocationsGroup {
 	 * and is dirty.
 	 */
 	private void contentsChanged(boolean force) {
-		Object[] listeners = fChangeListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((ITargetChangedListener) listeners[i]).contentsChanged(fTarget, this, true, force);
+		for (ITargetChangedListener listener : fChangeListeners) {
+			listener.contentsChanged(fTarget, this, true, force);
 		}
 	}
 
