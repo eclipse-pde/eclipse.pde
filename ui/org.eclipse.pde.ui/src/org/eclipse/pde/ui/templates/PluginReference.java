@@ -39,7 +39,7 @@ public class PluginReference implements IPluginReference {
 	 *
 	 * @param id
 	 *            the id of the plug-in
-	 * @since 3.8
+	 * @since 3.9
 	 */
 	public PluginReference(String id) {
 		this(id, null, 0);
