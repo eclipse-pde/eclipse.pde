@@ -287,6 +287,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 							for (int i = 0; i < locs.length; i++) {
 								if (container.equals(locs[i])) {
 									IStatus status = locs[i].getStatus();
+									if (status == null)
+										continue;
 									if (status.getSeverity() == IStatus.WARNING
 											|| status.getSeverity() == IStatus.INFO) {
 										flag = SharedLabelProvider.F_WARNING;
