@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		if (querySpecification.getLimitTo() != S_LIMIT_REF && querySpecification.getLimitTo() != S_LIMIT_ALL)
 			return;
 
-		String search;
+		String search = null;
 		if (querySpecification instanceof ElementQuerySpecification) {
 			IJavaElement element = ((ElementQuerySpecification) querySpecification).getElement();
 			if (element instanceof IType)
@@ -85,11 +85,13 @@ public class ClassSearchParticipant implements IQueryParticipant {
 				fSearchFor = S_FOR_TYPES;
 			else if (type == IJavaElement.PACKAGE_FRAGMENT || type == IJavaElement.PACKAGE_FRAGMENT_ROOT)
 				fSearchFor = S_FOR_PACKAGES;
-		} else {
+		} else if (querySpecification instanceof PatternQuerySpecification){
 			fSearchFor = ((PatternQuerySpecification) querySpecification).getSearchFor();
 			search = ((PatternQuerySpecification) querySpecification).getPattern();
 		}
 		if (fSearchFor != S_FOR_TYPES && fSearchFor != S_FOR_PACKAGES)
+			return;
+		if (search == null)
 			return;
 		fSearchPattern = PatternConstructor.createPattern(search, true);
 		fSearchRequestor = requestor;
