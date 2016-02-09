@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import org.w3c.dom.Element;
-
 import java.io.StringReader;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -31,6 +31,8 @@ public class PluginHandler extends DefaultHandler {
 	private boolean fAbbreviated;
 	private Locator fLocator;
 	private boolean fPop;
+
+	private static final Pattern VERSION_RE = Pattern.compile("version\\s*=\\s*\"([^\"]+)\""); //$NON-NLS-1$
 
 	public PluginHandler(boolean abbreviated) {
 		fAbbreviated = abbreviated;
@@ -100,8 +102,9 @@ public class PluginHandler extends DefaultHandler {
 	public void processingInstruction(String target, String data) throws SAXException {
 		if ("eclipse".equals(target)) { //$NON-NLS-1$
 			// Data should be of the form: version="<version>"
-			if (data.length() > 10 && data.substring(0, 9).equals("version=\"") && data.charAt(data.length() - 1) == '\"') { //$NON-NLS-1$
-				fSchemaVersion = TargetPlatformHelper.getSchemaVersionForTargetVersion(data.substring(9, data.length() - 1));
+			Matcher matcher = VERSION_RE.matcher(data);
+			if (matcher.matches()) {
+				fSchemaVersion = TargetPlatformHelper.getSchemaVersionForTargetVersion(matcher.group(1));
 			} else {
 				fSchemaVersion = TargetPlatformHelper.getSchemaVersion();
 			}
