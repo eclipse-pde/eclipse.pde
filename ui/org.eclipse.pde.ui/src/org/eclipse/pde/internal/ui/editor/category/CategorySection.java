@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2016 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,6 +7,7 @@
 * Contributors:
 *   EclipseSource - initial API and implementation
 *   IBM Corporation - ongoing enhancements
+*   Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
@@ -30,7 +31,6 @@ import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -54,7 +54,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private TreeViewer fCategoryViewer;
 	private LabelProvider fSiteLabelProvider;
 
-	class CategoryContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+	class CategoryContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			// model = (ISite) inputElement;

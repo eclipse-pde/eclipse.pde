@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2015 IBM Corporation and others.
+ *  Copyright (c) 2003, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
-
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -24,7 +23,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -46,7 +44,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	protected TableViewer fImportListViewer;
 	private boolean fRefreshNeeded = true;
 
-	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object element) {
 			return new Object[0];

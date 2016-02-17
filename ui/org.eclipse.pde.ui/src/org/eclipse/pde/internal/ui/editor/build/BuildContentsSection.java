@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.build;
@@ -23,7 +24,6 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
@@ -41,7 +41,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 	protected IResource fOriginalResource, fParentResource;
 	protected boolean isChecked;
 
-	public class TreeContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+	public class TreeContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object parent) {
