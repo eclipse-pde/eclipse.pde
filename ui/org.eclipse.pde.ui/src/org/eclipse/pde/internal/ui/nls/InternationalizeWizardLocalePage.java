@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.nls;
-
-import java.util.Locale;
 
 import java.util.*;
 import java.util.List;
@@ -25,7 +24,6 @@ import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
@@ -68,7 +66,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 
 	private ILabelProvider fLabelProvider = PDEPlugin.getDefault().getLabelProvider();
 
-	private class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	private class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((InternationalizeModelTable) inputElement).getModels();

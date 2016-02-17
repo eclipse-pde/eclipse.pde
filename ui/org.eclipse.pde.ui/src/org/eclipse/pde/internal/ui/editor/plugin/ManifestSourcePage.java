@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - Bug 214511
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -22,7 +23,6 @@ import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
 import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
@@ -84,7 +84,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		}
 	}
 
-	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+	class ContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getChildren(Object parent) {

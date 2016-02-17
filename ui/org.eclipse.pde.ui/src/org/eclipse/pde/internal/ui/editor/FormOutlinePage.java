@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
@@ -17,7 +18,6 @@ import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -29,7 +29,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	private ViewerComparator fViewerComparator;
 	private boolean fSorted;
 
-	public class BasicContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+	public class BasicContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getElements(Object obj) {
 			return getPages();

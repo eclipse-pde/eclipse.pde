@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Ketan Padegaonkar <KetanPadegaonkar@gmail.com> - bug 233682
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -30,7 +31,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
 import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
@@ -48,7 +48,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class ExtensionPointsSection extends TableSection {
 	private TableViewer pointTable;
 
-	class TableContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	class TableContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
