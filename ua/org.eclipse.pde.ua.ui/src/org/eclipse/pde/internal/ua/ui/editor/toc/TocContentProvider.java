@@ -16,12 +16,11 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.internal.ua.core.toc.text.TocModel;
 import org.eclipse.pde.internal.ua.core.toc.text.TocObject;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 
 /**
  * TocContentProvider
  */
-public class TocContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+public class TocContentProvider implements ITreeContentProvider {
 
 	/**
 	 *

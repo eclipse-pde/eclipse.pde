@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.ui.editor.ctxhelp;
 
@@ -15,7 +16,6 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpModel;
 import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 
 /**
  * Content provider for the tree section of the context help editor.  Gets the children of
@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
  * @since 3.4
  * @see CtxHelpTreeSection
  */
-public class CtxHelpContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+public class CtxHelpContentProvider implements ITreeContentProvider {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
