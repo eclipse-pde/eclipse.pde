@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *     Marc-Andre Laperle (Ericsson) - Handle double click (Bug 328467)
  *     Fabian Miehe - Bug 440420
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -31,7 +32,6 @@ import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
@@ -65,7 +65,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	private SortAction fSortAction;
 	private Action fOpenAction;
 
-	class ImportContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	class ImportContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {

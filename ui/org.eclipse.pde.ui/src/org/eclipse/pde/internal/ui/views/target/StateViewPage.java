@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Anyware Technologies - ongoing enhancements
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.target;
 
@@ -25,7 +26,6 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.views.dependencies.DependenciesViewComparator;
@@ -88,7 +88,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		}
 	}
 
-	class StateContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+	class StateContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getChildren(Object parentElement) {

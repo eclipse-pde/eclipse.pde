@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - bug 191365
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
@@ -19,11 +20,10 @@ import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
-public class PluginsContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+public class PluginsContentProvider implements ITreeContentProvider {
 
 	private PluginsView fView;
 	private StandardJavaElementContentProvider fJavaProvider;

@@ -27,7 +27,6 @@ import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
@@ -92,7 +91,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		}
 	}
 
-	private class SelectedContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	private class SelectedContentProvider implements IStructuredContentProvider {
 		/**
 		 * @return the list of selected plug-ins
 		 */

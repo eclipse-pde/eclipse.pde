@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.samples;
 
@@ -14,7 +15,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -49,7 +49,7 @@ public class SelectionPage extends WizardPage {
 		}
 	}
 
-	class SampleProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	class SampleProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object input) {
 			return wizard.getSamples();

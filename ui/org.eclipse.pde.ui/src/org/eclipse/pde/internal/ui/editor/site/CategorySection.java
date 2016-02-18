@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 181878
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
-
-import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.isite.ISiteFeature;
 
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
@@ -22,6 +19,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
@@ -30,7 +28,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -68,7 +65,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	private IStructuredSelection cachedSelection;
 
-	class CategoryContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+	class CategoryContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			// model = (ISite) inputElement;

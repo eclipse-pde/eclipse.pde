@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
@@ -24,7 +25,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class PluginListPage extends BasePluginListPage {
-	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	class PluginContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			return PluginRegistry.getActiveModels();
@@ -62,8 +62,6 @@ public class PluginListPage extends BasePluginListPage {
 				} catch (InterruptedException e) {
 				}
 			}
-
-			super.inputChanged(viewer, oldInput, newInput);
 		}
 	}
 

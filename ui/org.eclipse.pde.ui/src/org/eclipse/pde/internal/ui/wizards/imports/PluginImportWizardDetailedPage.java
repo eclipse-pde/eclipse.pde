@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 114080
  *     EclipseSource Corporation - ongoing enhancements
  *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
@@ -29,7 +30,6 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SourcePluginFilter;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -45,7 +45,7 @@ import org.osgi.framework.Version;
 
 public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
-	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object element) {
 			return fModels;

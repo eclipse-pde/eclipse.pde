@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 
@@ -16,8 +17,9 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizard;
@@ -34,7 +36,6 @@ import org.eclipse.pde.internal.core.util.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.contentassist.XMLInsertionComputer;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
@@ -114,7 +115,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		}
 	}
 
-	class TemplateContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	class TemplateContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IPluginExtensionPoint) {
@@ -137,7 +138,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		}
 	}
 
-	class PointContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	class PointContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			ArrayList<IPluginExtensionPoint> extPoints = new ArrayList<>();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech> - bug 241503
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -16,7 +17,6 @@ import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.builders.DependencyLoop;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -28,7 +28,7 @@ public class LoopDialog extends TrayDialog {
 	private TreeViewer fLoopViewer;
 	private Image fLoopImage;
 
-	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+	class ContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getChildren(Object parentElement) {

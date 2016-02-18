@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2015 IBM Corporation and others.
+ *  Copyright (c) 2003, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
@@ -26,7 +27,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
@@ -44,7 +44,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private IStructuredSelection fInitialSelection;
 	private Label fCounterLabel;
 
-	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	class PluginContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();

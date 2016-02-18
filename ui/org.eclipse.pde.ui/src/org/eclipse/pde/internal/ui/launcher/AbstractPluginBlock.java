@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Ian Bull <irbull@cs.uvic.ca> - bug 204404 and bug 207064
  *     EclipseSource Corporation - ongoing enhancements
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -32,7 +33,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.FilterableCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.PreRefreshNotifier;
@@ -218,7 +218,7 @@ public abstract class AbstractPluginBlock {
 		}
 	}
 
-	class PluginContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+	class PluginContentProvider implements ITreeContentProvider {
 		@Override
 		public boolean hasChildren(Object parent) {
 			return !(parent instanceof IPluginModelBase);

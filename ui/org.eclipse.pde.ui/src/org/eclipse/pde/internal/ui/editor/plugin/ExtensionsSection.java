@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Sascha Becher <s.becher@qualitype.com> - bug 360894
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *     Brian de Alwis (MTI) - bug 429420
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -42,7 +43,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.*;
 import org.eclipse.pde.internal.ui.editor.contentassist.XMLElementProposalComputer;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.pde.internal.ui.search.ExtensionsPatternFilter;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
@@ -102,7 +102,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	private static final String[] VALID_IMAGE_TYPES = {"png", "bmp", "ico", "gif", "jpg", "tiff"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	private static final String MENU_NEW_ID = "NewMenu"; //$NON-NLS-1$
 
-	class ExtensionContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+	class ExtensionContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getChildren(Object parent) {
 			Object[] children = null;
