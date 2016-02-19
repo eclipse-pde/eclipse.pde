@@ -24,7 +24,11 @@
 
   <properties>
   	<testSuite>${project.artifactId}</testSuite>
+  	<testClass>org.eclipse.pde.ui.tests.nls.AllNLSTests</testClass>
+<!--
+	REPLACE ABOVE LINE WITH THE FOLLOWING ONE TO RUN ALL TESTS
   	<testClass>org.eclipse.pde.ui.tests.AllPDETests</testClass>
+-->
   </properties>
 
   <build>
