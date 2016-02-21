@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 488057
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.ui.editor.toc;
 
@@ -48,23 +49,22 @@ public class TocHTMLTitleUtil {
 		if (titlePattern == null) {
 			initPattern();
 		}
+		String title = null;
 
-		try {
-			FileChannel fc = new FileInputStream(f).getChannel();
-
+		try (FileInputStream inputStream = new FileInputStream(f)) {
+			FileChannel fc = inputStream.getChannel();
 			MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 
 			CharBuffer cb = Charset.forName("8859_1").newDecoder().decode(bb); //$NON-NLS-1$
 
 			Matcher m = titlePattern.matcher(cb);
-			String title = null;
+
 			if (m.find()) {
 				title = m.group(1);
 			}
-
-			return title;
 		} catch (IOException e) {
 			return null;
 		}
+		return title;
 	}
 }
