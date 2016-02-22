@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.osgi.service.component.annotations.*;
+
+@Component
 public class DictionaryImpl implements Dictionary {
 
 	private List fWords = new ArrayList(Arrays.asList("$word1$", "$word2$", "$word3$"));

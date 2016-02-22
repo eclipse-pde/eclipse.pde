@@ -3,8 +3,9 @@ package $packageName$;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
+import org.osgi.service.component.annotations.*;
 
-// referenced in component.xml
+@Component
 public class ServiceComponent implements CommandProvider {
 	
 	private DictionaryService dictionary;
@@ -39,6 +40,7 @@ public class ServiceComponent implements CommandProvider {
 		return buffer.toString();
 	}
 	
+	@Reference
 	public void setDictionary(DictionaryService d) {
 		dictionary = d;
 	}
