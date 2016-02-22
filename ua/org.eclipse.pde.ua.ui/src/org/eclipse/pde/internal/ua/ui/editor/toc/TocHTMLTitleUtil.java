@@ -51,8 +51,8 @@ public class TocHTMLTitleUtil {
 		}
 		String title = null;
 
-		try (FileInputStream inputStream = new FileInputStream(f)) {
-			FileChannel fc = inputStream.getChannel();
+		try (FileInputStream inputStream = new FileInputStream(f); FileChannel fc = inputStream.getChannel()) {
+
 			MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 
 			CharBuffer cb = Charset.forName("8859_1").newDecoder().decode(bb); //$NON-NLS-1$
