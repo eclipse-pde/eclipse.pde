@@ -23,6 +23,7 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
+            category="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
             class="org.eclipse.pde.ds.internal.annotations.DSAnnotationPropertyPage"
             id="org.eclipse.pde.ds.annotations"
             name="%property.page.name">
@@ -43,6 +44,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.ds.internal.annotations.DSAnnotationPropertyPage"
             id="org.eclipse.pde.ds.annotations"
             name="%preference.page.name">
