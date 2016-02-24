@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.*;
 @Component
 public class DictionaryImpl implements Dictionary {
 
-	private List fWords = new ArrayList(Arrays.asList("$word1$", "$word2$", "$word3$"));
+	private List<String> fWords = new ArrayList<String>(Arrays.asList("$word1$", "$word2$", "$word3$"));
 	private String fLanguage = "en_US";
 	
 	public String getLanguage() {
@@ -20,6 +20,7 @@ public class DictionaryImpl implements Dictionary {
 		return fWords.contains(word);
 	}
 	
+	@Override
 	public String toString() {
 		return fLanguage;
 	}
