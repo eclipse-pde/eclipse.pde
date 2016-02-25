@@ -54,6 +54,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.build.IBuildModelFactory;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
@@ -92,6 +93,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			return false;
 
 		if (!PDE.hasPluginNature(project.getProject()))
+			return false;
+
+		if (WorkspaceModelManager.isBinaryProject(project.getProject()))
 			return false;
 
 		try {
