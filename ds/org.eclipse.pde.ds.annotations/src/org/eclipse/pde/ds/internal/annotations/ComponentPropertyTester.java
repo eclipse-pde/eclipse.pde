@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Ecliptical Software Inc. and others.
+ * Copyright (c) 2015, 2016 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.ds.internal.annotations;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IAnnotation;
@@ -41,6 +42,7 @@ public class ComponentPropertyTester extends PropertyTester {
 
 	private static final Debug debug = Debug.getDebug("component-property-tester"); //$NON-NLS-1$
 
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (!"containsComponentWithImplicitName".equals(property)) //$NON-NLS-1$
 			return false;
@@ -51,7 +53,7 @@ public class ComponentPropertyTester extends PropertyTester {
 		IJavaElement element = (IJavaElement) receiver;
 		IJavaProject javaProject = element.getJavaProject();
 
-		boolean enabled = Platform.getPreferencesService().getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, true, new IScopeContext[] { new ProjectScope(javaProject.getProject()), InstanceScope.INSTANCE });
+		boolean enabled = Platform.getPreferencesService().getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, new IScopeContext[] { new ProjectScope(javaProject.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
 		if (!enabled)
 			return false;
 

@@ -160,5 +160,11 @@
             type="org.eclipse.jdt.core.IParent">
       </propertyTester>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.pde.ds.internal.annotations.PreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

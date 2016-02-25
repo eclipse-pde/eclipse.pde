@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2016 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 	private IWorkingCopyManager wcManager;
 
+	@Override
 	public void init(IWorkbench workbench) {
 		// do nothing
 	}
@@ -121,11 +122,13 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		link.setFont(composite.getFont());
 		link.setText("<A>" + text + "</A>"); //$NON-NLS-1$ //$NON-NLS-2$
 		link.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (PreferencesUtil.createPreferenceDialogOn(getShell(), Activator.PLUGIN_ID, new String[] { Activator.PLUGIN_ID }, null).open() == Window.OK)
 					refreshWidgets();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
@@ -205,7 +208,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 	private void refreshWidgets() {
 		IEclipsePreferences prefs = wcManager.getWorkingCopy(InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID));
 
-		boolean enableValue = prefs.getBoolean(Activator.PREF_ENABLED, true);
+		boolean enableValue = prefs.getBoolean(Activator.PREF_ENABLED, false);
 		String pathValue = prefs.get(Activator.PREF_PATH, Activator.DEFAULT_PATH);
 		String errorLevel = prefs.get(Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.toString());
 		String missingUnbindMethodLevel = prefs.get(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, errorLevel);
@@ -283,7 +286,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		if (element instanceof IProject)
 			return (IProject) element;
 
-		return (IProject) element.getAdapter(IProject.class);
+		return element.getAdapter(IProject.class);
 	}
 
 	@Override

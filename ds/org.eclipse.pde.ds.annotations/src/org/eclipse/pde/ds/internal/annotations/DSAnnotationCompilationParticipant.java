@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2016 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -88,7 +89,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 	@Override
 	public boolean isActive(IJavaProject project) {
-		boolean enabled = Platform.getPreferencesService().getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, true, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE });
+		boolean enabled = Platform.getPreferencesService().getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
 		if (!enabled)
 			return false;
 
