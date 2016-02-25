@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -326,6 +326,8 @@ public class PDEModelUtility {
 			IBaseModel editModel;
 			if (modification.isFullBundleModification())
 				editModel = prepareBundlePluginModel(files, documents, !performEdits);
+			else if (documents[0] == null)
+				return new TextFileChange[0];
 			else
 				editModel = prepareAbstractEditingModel(files[0], documents[0], !performEdits);
 
