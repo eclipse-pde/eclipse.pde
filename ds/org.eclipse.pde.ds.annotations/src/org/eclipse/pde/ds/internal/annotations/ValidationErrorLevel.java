@@ -6,7 +6,7 @@ public enum ValidationErrorLevel {
 
 	warning,
 
-	none;
+	ignore;
 
 	public boolean isError() {
 		return this == error;
@@ -16,7 +16,7 @@ public enum ValidationErrorLevel {
 		return this == warning;
 	}
 
-	public boolean isNone() {
-		return this == none;
+	public boolean isIgnore() {
+		return this == ignore;
 	}
 }

@@ -304,7 +304,7 @@ class AnnotationVisitor extends ASTVisitor {
 	public boolean visit(TypeDeclaration type) {
 		if (!Modifier.isPublic(type.getModifiers())) {
 			// non-public types cannot be (or have nested) components
-			if (errorLevel.isNone())
+			if (errorLevel.isIgnore())
 				return false;
 
 			Annotation annotation = findComponentAnnotation(type);
@@ -325,7 +325,7 @@ class AnnotationVisitor extends ASTVisitor {
 					|| (isNested = (!type.isPackageMemberTypeDeclaration() && !isNestedPublicStatic(type)))
 					|| (noDefaultConstructor = !hasDefaultConstructor(type))) {
 				// interfaces, abstract types, non-static/non-public nested types, or types with no default constructor cannot be components
-				if (errorLevel != ValidationErrorLevel.none) {
+				if (errorLevel != ValidationErrorLevel.ignore) {
 					if (isInterface)
 						reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_interface, type.getName().getIdentifier()), type.getName().getIdentifier());
 					else if (isAbstract)
@@ -585,11 +585,11 @@ class AnnotationVisitor extends ASTVisitor {
 		if ((value = params.get("service")) instanceof Object[]) { //$NON-NLS-1$
 			Object[] elements = (Object[]) value;
 			services = new LinkedHashSet<>(elements.length);
-			Map<String, Integer> serviceDuplicates = errorLevel.isNone() ? null : new HashMap<>();
+			Map<String, Integer> serviceDuplicates = errorLevel.isIgnore() ? null : new HashMap<>();
 			for (int i = 0; i < elements.length; ++i) {
 				ITypeBinding serviceType = (ITypeBinding) elements[i];
 				String serviceName = serviceType.getBinaryName();
-				if (!errorLevel.isNone()) {
+				if (!errorLevel.isIgnore()) {
 					if (serviceDuplicates.containsKey(serviceName)) {
 						reportProblem(annotation, "service", i, problems, Messages.AnnotationProcessor_duplicateServiceDeclaration, serviceName); //$NON-NLS-1$
 						Integer pos = serviceDuplicates.put(serviceName, null);
@@ -752,7 +752,7 @@ class AnnotationVisitor extends ASTVisitor {
 						property.setPropertyValue(null);
 					}
 
-					if (!errorLevel.isNone()) {
+					if (!errorLevel.isIgnore()) {
 						String expected = property.getPropertyType() == null || property.getPropertyType().length() == 0 || IDSConstants.VALUE_PROPERTY_TYPE_STRING.equals(property.getPropertyType()) ? Messages.AnnotationProcessor_stringOrEmpty : property.getPropertyType();
 						String actual = propertyType == null || IDSConstants.VALUE_PROPERTY_TYPE_STRING.equals(propertyType) ? Messages.AnnotationProcessor_stringOrEmpty : propertyType;
 						if (!actual.equals(expected))
@@ -927,7 +927,7 @@ class AnnotationVisitor extends ASTVisitor {
 						activate = method.getName().getIdentifier();
 						activateAnnotation = methodAnnotation;
 						validateLifeCycleMethod(methodAnnotation, "activate", method, problems); //$NON-NLS-1$
-					} else if (!errorLevel.isNone()) {
+					} else if (!errorLevel.isIgnore()) {
 						reportProblem(methodAnnotation, null, problems, Messages.AnnotationProcessor_duplicateActivateMethod, method.getName().getIdentifier());
 						if (activateAnnotation != null) {
 							reportProblem(activateAnnotation, null, problems, Messages.AnnotationProcessor_duplicateActivateMethod, activate);
@@ -943,7 +943,7 @@ class AnnotationVisitor extends ASTVisitor {
 						deactivate = method.getName().getIdentifier();
 						deactivateAnnotation = methodAnnotation;
 						validateLifeCycleMethod(methodAnnotation, "deactivate", method, problems); //$NON-NLS-1$
-					} else if (!errorLevel.isNone()) {
+					} else if (!errorLevel.isIgnore()) {
 						reportProblem(methodAnnotation, null, problems, Messages.AnnotationProcessor_duplicateDeactivateMethod, method.getName().getIdentifier());
 						if (deactivateAnnotation != null) {
 							reportProblem(deactivateAnnotation, null, problems, Messages.AnnotationProcessor_duplicateDeactivateMethod, deactivate);
@@ -959,7 +959,7 @@ class AnnotationVisitor extends ASTVisitor {
 						modified = method.getName().getIdentifier();
 						modifiedAnnotation = methodAnnotation;
 						validateLifeCycleMethod(methodAnnotation, "modified", method, problems); //$NON-NLS-1$
-					} else if (!errorLevel.isNone()) {
+					} else if (!errorLevel.isIgnore()) {
 						reportProblem(methodAnnotation, null, problems, Messages.AnnotationProcessor_duplicateModifiedMethod, method.getName().getIdentifier());
 						if (modifiedAnnotation != null) {
 							reportProblem(modifiedAnnotation, null, problems, Messages.AnnotationProcessor_duplicateModifiedMethod, modified);
@@ -1204,22 +1204,22 @@ class AnnotationVisitor extends ASTVisitor {
 	}
 
 	private void validateComponentName(Annotation annotation, String name, Collection<DSAnnotationProblem> problems) {
-		if (!errorLevel.isNone() && !PID_PATTERN.matcher(name).matches())
+		if (!errorLevel.isIgnore() && !PID_PATTERN.matcher(name).matches())
 			reportProblem(annotation, "name", problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentName, name), name); //$NON-NLS-1$
 	}
 
 	private void validateComponentService(Annotation annotation, ITypeBinding componentType, ITypeBinding serviceType, int index, Collection<DSAnnotationProblem> problems) {
-		if (!errorLevel.isNone() && !componentType.isAssignmentCompatible(serviceType))
+		if (!errorLevel.isIgnore() && !componentType.isAssignmentCompatible(serviceType))
 			reportProblem(annotation, "service", problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentService, serviceType.getName()), serviceType.getName()); //$NON-NLS-1$
 	}
 
 	private void validateComponentFactory(Annotation annotation, String factory, Collection<DSAnnotationProblem> problems) {
-		if (!errorLevel.isNone() && !PID_PATTERN.matcher(factory).matches())
+		if (!errorLevel.isIgnore() && !PID_PATTERN.matcher(factory).matches())
 			reportProblem(annotation, "factory", problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentFactoryName, factory), factory); //$NON-NLS-1$
 	}
 
 	private void validateComponentProperty(Annotation annotation, String name, String type, String value, int index, Collection<DSAnnotationProblem> problems) {
-		if (errorLevel.isNone())
+		if (errorLevel.isIgnore())
 			return;
 
 		if (PROPERTY_TYPES.contains(type)) {
@@ -1252,7 +1252,7 @@ class AnnotationVisitor extends ASTVisitor {
 	}
 
 	private void validateComponentPropertyFiles(Annotation annotation, IProject project, String[] files, Collection<DSAnnotationProblem> problems) {
-		if (errorLevel.isNone())
+		if (errorLevel.isIgnore())
 			return;
 
 		for (int i = 0; i < files.length; ++i) {
@@ -1264,17 +1264,17 @@ class AnnotationVisitor extends ASTVisitor {
 	}
 
 	private void validateComponentXMLNS(Annotation annotation, String xmlns, boolean requiresV12, Collection<DSAnnotationProblem> problems) {
-		if (!errorLevel.isNone() && (requiresV12 || !NAMESPACE_1_1.equals(xmlns)) && !NAMESPACE_1_2.equals(xmlns))
+		if (!errorLevel.isIgnore() && (requiresV12 || !NAMESPACE_1_1.equals(xmlns)) && !NAMESPACE_1_2.equals(xmlns))
 			reportProblem(annotation, "xmlns", problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentDescriptorNamespace, xmlns), xmlns); //$NON-NLS-1$
 	}
 
 	private void validateComponentConfigPID(Annotation annotation, String configPid, Collection<DSAnnotationProblem> problems) {
-		if (!errorLevel.isNone() && !PID_PATTERN.matcher(configPid).matches())
+		if (!errorLevel.isIgnore() && !PID_PATTERN.matcher(configPid).matches())
 			reportProblem(annotation, "configurationPid", problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentConfigurationPid, configPid), configPid); //$NON-NLS-1$
 	}
 
 	private void validateLifeCycleMethod(Annotation annotation, String methodName, MethodDeclaration method, Collection<DSAnnotationProblem> problems) {
-		if (errorLevel.isNone())
+		if (errorLevel.isIgnore())
 			return;
 
 		IMethodBinding methodBinding = method.resolveBinding();
@@ -1346,7 +1346,7 @@ class AnnotationVisitor extends ASTVisitor {
 		Object value;
 		if ((value = params.get("service")) instanceof ITypeBinding) { //$NON-NLS-1$
 			serviceType = (ITypeBinding) value;
-			if (!errorLevel.isNone() && argTypes.length > 0) {
+			if (!errorLevel.isIgnore() && argTypes.length > 0) {
 				ITypeBinding[] typeArgs;
 				if (!(ServiceReference.class.getName().equals(argTypes[0].getErasure().getQualifiedName())
 						&& ((typeArgs = argTypes[0].getTypeArguments()).length == 0 || serviceType.isAssignmentCompatible(typeArgs[0])))
@@ -1391,7 +1391,7 @@ class AnnotationVisitor extends ASTVisitor {
 			name = methodName;
 		}
 
-		if (!errorLevel.isNone()) {
+		if (!errorLevel.isIgnore()) {
 			if (names.containsKey(name)) {
 				reportProblem(annotation, "name", problems, NLS.bind(Messages.AnnotationProcessor_duplicateReferenceName, name), name); //$NON-NLS-1$
 				Annotation duplicate = names.put(name, null);
@@ -1431,7 +1431,7 @@ class AnnotationVisitor extends ASTVisitor {
 				unbind = null;
 			} else {
 				unbind = unbindValue;
-				if (!errorLevel.isNone()) {
+				if (!errorLevel.isIgnore()) {
 					IMethodBinding unbindMethod = findUnbindMethod(methodBinding.getDeclaringClass(), serviceType, unbind, true);
 					if (unbindMethod == null)
 						reportProblem(annotation, "unbind", problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceUnbind, unbind), unbind); //$NON-NLS-1$
@@ -1470,7 +1470,7 @@ class AnnotationVisitor extends ASTVisitor {
 				updated = null;
 			} else {
 				updated = updatedValue;
-				if (!errorLevel.isNone()) {
+				if (!errorLevel.isIgnore()) {
 					IMethodBinding updatedMethod = findUpdatedMethod(methodBinding.getDeclaringClass(), updated, true);
 					if (updatedMethod == null)
 						reportProblem(annotation, ATTRIBUTE_REFERENCE_UPDATED, problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceUpdated, updated), updated); //$NON-NLS-1$
@@ -1585,7 +1585,7 @@ class AnnotationVisitor extends ASTVisitor {
 	}
 
 	private void validateReferenceBindMethod(Annotation annotation, ITypeBinding serviceType, IMethodBinding methodBinding, Collection<DSAnnotationProblem> problems) {
-		if (errorLevel.isNone())
+		if (errorLevel.isIgnore())
 			return;
 
 		String returnTypeName = methodBinding.getReturnType().getName();
@@ -1612,7 +1612,7 @@ class AnnotationVisitor extends ASTVisitor {
 	}
 
 	private void validateReferenceTarget(Annotation annotation, String target, Collection<DSAnnotationProblem> problems) {
-		if (errorLevel.isNone())
+		if (errorLevel.isIgnore())
 			return;
 
 		try {
@@ -1725,7 +1725,7 @@ class AnnotationVisitor extends ASTVisitor {
 	}
 
 	private void reportProblem(Annotation annotation, String member, int valueIndex, ValidationErrorLevel errorLevel, Collection<DSAnnotationProblem> problems, String message, String... args) {
-		if (errorLevel.isNone())
+		if (errorLevel.isIgnore())
 			return;
 
 		Expression memberValue = annotation;

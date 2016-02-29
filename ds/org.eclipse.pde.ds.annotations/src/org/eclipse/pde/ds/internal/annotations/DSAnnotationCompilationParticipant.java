@@ -513,7 +513,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		ProjectContext projectContext = processingContext.get(javaProject);
 		ProjectState state = projectContext.getState();
 
-		parser.setIgnoreMethodBodies(state.getErrorLevel() == ValidationErrorLevel.none);
+		parser.setIgnoreMethodBodies(state.getErrorLevel() == ValidationErrorLevel.ignore);
 
 		ICompilationUnit[] cuArr = fileMap.keySet().toArray(new ICompilationUnit[fileMap.size()]);
 		parser.createASTs(cuArr, new String[0], new AnnotationProcessor(projectContext, fileMap), null);

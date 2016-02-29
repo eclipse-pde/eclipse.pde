@@ -187,7 +187,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		errorLevelCombo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
 		errorLevelCombo.add(Messages.DSAnnotationPropertyPage_errorLevelError);
 		errorLevelCombo.add(Messages.DSAnnotationPropertyPage_errorLevelWarning);
-		errorLevelCombo.add(Messages.DSAnnotationPropertyPage_errorLevelNone);
+		errorLevelCombo.add(Messages.DSAnnotationPropertyPage_errorLevelIgnore);
 		errorLevelCombo.select(0);
 
 		Label missingUnbindMethodLabel = new Label(composite, SWT.RIGHT);
@@ -198,7 +198,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		missingUnbindMethodCombo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
 		missingUnbindMethodCombo.add(Messages.DSAnnotationPropertyPage_errorLevelError);
 		missingUnbindMethodCombo.add(Messages.DSAnnotationPropertyPage_errorLevelWarning);
-		missingUnbindMethodCombo.add(Messages.DSAnnotationPropertyPage_errorLevelNone);
+		missingUnbindMethodCombo.add(Messages.DSAnnotationPropertyPage_errorLevelIgnore);
 		missingUnbindMethodCombo.select(0);
 
 		Dialog.applyDialogFont(composite);

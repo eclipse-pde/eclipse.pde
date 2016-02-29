@@ -108,7 +108,7 @@ public class Messages extends NLS {
 
 	public static String DSAnnotationPropertyPage_errorLevelLabel_text;
 
-	public static String DSAnnotationPropertyPage_errorLevelNone;
+	public static String DSAnnotationPropertyPage_errorLevelIgnore;
 
 	public static String DSAnnotationPropertyPage_errorLevelWarning;
 
