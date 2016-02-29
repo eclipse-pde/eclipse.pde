@@ -160,7 +160,14 @@ public class BundleComponent extends Component {
 		super(baseline);
 		fLocation = location;
 		fBundleId = bundleid;
-		fWorkspaceBinary = isBinary() && ApiBaselineManager.WORKSPACE_API_BASELINE_ID.equals(baseline.getName());
+		fWorkspaceBinary = isBinary() && ApiBaselineManager.WORKSPACE_API_BASELINE_ID.equals(baseline.getName())
+		/*
+		 * Workaround for bad architecture, see bug 488694: We don't know if the
+		 * bundle is from the workspace , from a host workspace, or from a
+		 * target platform. If it's a file, then it's certainly not from a
+		 * workspace project, and hence can't be an imported binary bundle.
+		 */
+				&& !new File(location).isFile();
 	}
 
 	@Override
