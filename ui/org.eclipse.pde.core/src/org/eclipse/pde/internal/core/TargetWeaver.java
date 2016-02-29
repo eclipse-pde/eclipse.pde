@@ -156,7 +156,26 @@ public class TargetWeaver {
 			if (model.getBundleDescription() != null) {
 				id = model.getBundleDescription().getSymbolicName();
 			}
-			if (id != null) {
+			/*
+			 * Workaround for bug 332112: Do not hack the source path for
+			 * bundles that are not coming from the host workspace.
+			 *
+			 * Since we don't actually know what the host workspace is and where
+			 * its projects are located, we have to guess:
+			 *
+			 * - If the bundle is not a folder, then it can't be a bundle from
+			 * the host workspace.
+			 *
+			 * - If the model has an underlying resource, then it's probably
+			 * from the local workspace.
+			 *
+			 * The architectural bug is that this weaving takes place at the
+			 * wrong level. It should already be done while the target platform
+			 * resolves bundles from the host workspace.
+			 */
+			if (id != null
+					&& !new File(model.getInstallLocation()).isFile()
+					&& model.getUnderlyingResource() == null) {
 				String property = properties.getProperty(id, null);
 				if (property != null) {
 					return ""; //$NON-NLS-1$
