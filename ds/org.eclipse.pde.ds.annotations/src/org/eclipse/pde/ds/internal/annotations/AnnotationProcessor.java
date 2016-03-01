@@ -985,13 +985,19 @@ class AnnotationVisitor extends ASTVisitor {
 		}
 
 		if (activate == null) {
-			removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_ACTIVATE, "activate"); //$NON-NLS-1$
+			// only remove activate="activate" if method not found
+			if (!"activate".equals(component.getActivateMethod()) //$NON-NLS-1$
+					|| !hasLifeCycleMethod(typeBinding, "activate")) //$NON-NLS-1$
+				removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_ACTIVATE, null); //$NON-NLS-1$
 		} else {
 			component.setActivateMethod(activate);
 		}
 
 		if (deactivate == null) {
-			removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_DEACTIVATE, "deactivate"); //$NON-NLS-1$
+			// only remove deactivate="deactivate" if method not found
+			if (!"deactivate".equals(component.getDeactivateMethod()) //$NON-NLS-1$
+					|| !hasLifeCycleMethod(typeBinding, "deactivate")) //$NON-NLS-1$
+				removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_DEACTIVATE, null); //$NON-NLS-1$
 		} else {
 			component.setDeactivateMethod(deactivate);
 		}
@@ -1332,6 +1338,58 @@ class AnnotationVisitor extends ASTVisitor {
 			if (isDuplicate)
 				reportProblem(annotation, methodName, problems, NLS.bind(Messages.AnnotationProcessor_duplicateLifeCycleMethodParameterType, methodName, paramTypeName), paramTypeName);
 		}
+	}
+
+	private boolean hasLifeCycleMethod(ITypeBinding componentClass, String methodName) {
+		for (IMethodBinding methodBinding : componentClass.getDeclaredMethods()) {
+			if (methodName.equals(methodBinding.getName())
+					&& Void.TYPE.getName().equals(methodBinding.getReturnType().getName())) {
+				ITypeBinding[] paramTypeBindings = methodBinding.getParameterTypes();
+
+				// every argument must be either Map, ComponentContext, or BundleContext
+				boolean hasMap = false;
+				boolean hasCompCtx = false;
+				boolean hasBundleCtx = false;
+				boolean hasInt = false;
+				boolean isInvalid = false;
+				for (ITypeBinding paramTypeBinding : paramTypeBindings) {
+					String paramTypeName = paramTypeBinding.getErasure().getQualifiedName();
+
+					if (Map.class.getName().equals(paramTypeName)) {
+						if (hasMap)
+							isInvalid = true;
+						else
+							hasMap = true;
+					} else if (ComponentContext.class.getName().equals(paramTypeName)) {
+						if (hasCompCtx)
+							isInvalid = true;
+						else
+							hasCompCtx = true;
+					} else if (BundleContext.class.getName().equals(paramTypeName)) {
+						if (hasBundleCtx)
+							isInvalid = true;
+						else
+							hasBundleCtx = true;
+					} else if ("deactivate".equals(methodName) //$NON-NLS-1$
+							&& (Integer.class.getName().equals(paramTypeName) || Integer.TYPE.getName().equals(paramTypeName))) {
+						if (hasInt)
+							isInvalid = true;
+						else
+							hasInt = true;
+					} else {
+						isInvalid = true;
+					}
+
+					if (isInvalid)
+						break;
+				}
+
+				if (!isInvalid)
+					return true;
+			}
+		}
+
+		return false;
 	}
 
 	private boolean processReference(MethodDeclaration method, IMethodBinding methodBinding, Annotation annotation, IAnnotationBinding annotationBinding, Map<String, IDSReference> refMap, IDSDocumentFactory factory, Collection<IDSReference> collector, Map<String, Annotation> names, Collection<DSAnnotationProblem> problems) {
