@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2016 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1191,7 +1191,7 @@ class AnnotationVisitor extends ASTVisitor {
 			}
 		} catch (IOException e) {
 			if (debug.isDebugging())
-				debug.trace("Error reading property element body.", e);
+				debug.trace("Error reading property element body.", e); //$NON-NLS-1$
 		} finally {
 			try {
 				reader.close();
@@ -1464,7 +1464,7 @@ class AnnotationVisitor extends ASTVisitor {
 		}
 
 		String updated;
-		if ((value = params.get(ATTRIBUTE_REFERENCE_UPDATED)) instanceof String) { //$NON-NLS-1$
+		if ((value = params.get(ATTRIBUTE_REFERENCE_UPDATED)) instanceof String) {
 			String updatedValue = (String) value;
 			if ("-".equals(updatedValue)) { //$NON-NLS-1$
 				updated = null;
@@ -1473,19 +1473,19 @@ class AnnotationVisitor extends ASTVisitor {
 				if (!errorLevel.isIgnore()) {
 					IMethodBinding updatedMethod = findUpdatedMethod(methodBinding.getDeclaringClass(), updated, true);
 					if (updatedMethod == null)
-						reportProblem(annotation, ATTRIBUTE_REFERENCE_UPDATED, problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceUpdated, updated), updated); //$NON-NLS-1$
+						reportProblem(annotation, ATTRIBUTE_REFERENCE_UPDATED, problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceUpdated, updated), updated);
 				}
 			}
 		} else {
 			String updatedCandidate;
 			if (methodName.startsWith("bind")) { //$NON-NLS-1$
-				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName.substring("bind".length()); //$NON-NLS-1$ //$NON-NLS-2$
+				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName.substring("bind".length()); //$NON-NLS-1$
 			} else if (methodName.startsWith("set")) { //$NON-NLS-1$
-				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName.substring("set".length()); //$NON-NLS-1$ //$NON-NLS-2$
+				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName.substring("set".length()); //$NON-NLS-1$
 			} else if (methodName.startsWith("add")) { //$NON-NLS-1$
-				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName.substring("add".length()); //$NON-NLS-1$ //$NON-NLS-2$
+				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName.substring("add".length()); //$NON-NLS-1$
 			} else {
-				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName; //$NON-NLS-1$
+				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName;
 			}
 
 			IMethodBinding updatedMethod = findUpdatedMethod(methodBinding.getDeclaringClass(), updatedCandidate, false);
