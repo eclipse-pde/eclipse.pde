@@ -296,7 +296,8 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			if (!deleteStatuses.isEmpty())
 				Activator.getDefault().getLog().log(new MultiStatus(Activator.PLUGIN_ID, 0, deleteStatuses.toArray(new IStatus[deleteStatuses.size()]), "Error deleting generated files.", null)); //$NON-NLS-1$
 
-			updateProject(project.getProject(), retained, abandoned);
+			if (!retained.isEmpty() || !abandoned.isEmpty())
+				updateProject(project.getProject(), retained, abandoned);
 		}
 
 		if (debug.isDebugging())
