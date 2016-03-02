@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
@@ -47,6 +49,8 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbenchPreferencePage {
 
+	private static final int OPTIONS_INDENT = 20;
+
 	private Link workspaceLink;
 
 	private Button projectCheckbox;
@@ -56,6 +60,10 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 	private ControlEnableState configBlockEnableState;
 
 	private Button enableCheckbox;
+
+	private Composite optionBlockControl;
+
+	private ControlEnableState optionBlockEnableState;
 
 	private Text pathText;
 
@@ -93,10 +101,10 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 			layout.marginWidth = 0;
 			layout.numColumns = 2;
 			composite.setLayout(layout);
-			composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+			composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 			projectCheckbox = new Button(composite, SWT.CHECK);
-			projectCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+			projectCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, true, false));
 			projectCheckbox.setText(Messages.DSAnnotationPropertyPage_projectCheckbox_text);
 			projectCheckbox.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -107,7 +115,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 			});
 
 			workspaceLink = createLink(composite, Messages.DSAnnotationPropertyPage_workspaceLink_text);
-			workspaceLink.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+			workspaceLink.setLayoutData(new GridData(SWT.END, SWT.TOP, false, false));
 
 			Label horizontalLine = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 			horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
@@ -140,6 +148,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -147,7 +156,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		composite.setFont(parent.getFont());
 
 		configBlockControl = createPreferenceContent(composite);
-		configBlockControl.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+		configBlockControl.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		if (isProjectPreferencePage()) {
 			boolean useProjectSettings = hasProjectSpecificOptions(getProject());
@@ -162,39 +171,53 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 	private Control createPreferenceContent(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight = 0;
+		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		composite.setFont(parent.getFont());
 
 		enableCheckbox = new Button(composite, SWT.CHECK);
-		enableCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		enableCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, true, false));
 		enableCheckbox.setText(Messages.DSAnnotationPropertyPage_enableCheckbox_text);
+		enableCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				enableOptions(enableCheckbox.getSelection());
+			}
+		});
 
-		Label pathLabel = new Label(composite, SWT.RIGHT);
-		pathLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		optionBlockControl = new Composite(composite, SWT.NONE);
+		optionBlockControl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		layout = new GridLayout(2, false);
+		layout.marginLeft = OPTIONS_INDENT;
+		layout.marginWidth = 0;
+		optionBlockControl.setLayout(layout);
+		optionBlockControl.setFont(composite.getFont());
+
+		Label pathLabel = new Label(optionBlockControl, SWT.LEFT);
+		pathLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		pathLabel.setText(Messages.DSAnnotationPropertyPage_pathLabel_text);
 
-		pathText = new Text(composite, SWT.BORDER | SWT.SINGLE);
+		pathText = new Text(optionBlockControl, SWT.BORDER | SWT.SINGLE);
 		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		Label errorLevelLabel = new Label(composite, SWT.RIGHT);
-		errorLevelLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		Label errorLevelLabel = new Label(optionBlockControl, SWT.LEFT);
+		errorLevelLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		errorLevelLabel.setText(Messages.DSAnnotationPropertyPage_errorLevelLabel_text);
 
-		errorLevelCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		errorLevelCombo = new Combo(optionBlockControl, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		errorLevelCombo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
 		errorLevelCombo.add(Messages.DSAnnotationPropertyPage_errorLevelError);
 		errorLevelCombo.add(Messages.DSAnnotationPropertyPage_errorLevelWarning);
 		errorLevelCombo.add(Messages.DSAnnotationPropertyPage_errorLevelIgnore);
 		errorLevelCombo.select(0);
 
-		Label missingUnbindMethodLabel = new Label(composite, SWT.RIGHT);
-		missingUnbindMethodLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		Label missingUnbindMethodLabel = new Label(optionBlockControl, SWT.LEFT);
+		missingUnbindMethodLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		missingUnbindMethodLabel.setText(Messages.DSAnnotationPropertyPage_missingUnbindMethodLevelLabel_text);
 
-		missingUnbindMethodCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		missingUnbindMethodCombo = new Combo(optionBlockControl, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		missingUnbindMethodCombo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
 		missingUnbindMethodCombo.add(Messages.DSAnnotationPropertyPage_errorLevelError);
 		missingUnbindMethodCombo.add(Messages.DSAnnotationPropertyPage_errorLevelWarning);
@@ -224,6 +247,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		}
 
 		enableCheckbox.setSelection(enableValue);
+		enableOptions(enableValue && configBlockEnableState == null);
 		pathText.setText(pathValue);
 		errorLevelCombo.select(getEnumIndex(errorLevel, ValidationErrorLevel.values(), 0));
 		missingUnbindMethodCombo.select(getEnumIndex(missingUnbindMethodLevel, ValidationErrorLevel.values(), 0));
@@ -266,8 +290,20 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 			}
 		} else {
 			if (configBlockEnableState == null) {
-				configBlockEnableState = ControlEnableState.disable(configBlockControl);
+				configBlockEnableState = ControlEnableState.disable(configBlockControl, Arrays.asList(optionBlockControl));
 			}
+		}
+	}
+
+	private void enableOptions(boolean enable) {
+		if (enable) {
+			if (optionBlockEnableState != null) {
+				optionBlockEnableState.restore();
+				optionBlockEnableState = null;
+			}
+		} else {
+			if (optionBlockEnableState == null)
+				optionBlockEnableState = ControlEnableState.disable(optionBlockControl);
 		}
 	}
 
