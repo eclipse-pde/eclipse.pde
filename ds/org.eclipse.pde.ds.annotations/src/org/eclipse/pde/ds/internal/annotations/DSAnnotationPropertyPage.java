@@ -341,7 +341,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 				prefs.remove(key);
 			}
 		} catch (BackingStoreException e) {
-			Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to restore default values.", e)); //$NON-NLS-1$
+			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to restore default values.", e)); //$NON-NLS-1$
 		}
 
 		refreshWidgets();
@@ -359,7 +359,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 						prefs.remove(key);
 					}
 				} catch (BackingStoreException e) {
-					Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to reset project preferences.", e)); //$NON-NLS-1$
+					Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to reset project preferences.", e)); //$NON-NLS-1$
 				}
 
 				prefs = null;
@@ -389,7 +389,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		try {
 			wcManager.applyChanges();
 		} catch (BackingStoreException e) {
-			Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to save preferences.", e)); //$NON-NLS-1$
+			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to save preferences.", e)); //$NON-NLS-1$
 			return false;
 		}
 

@@ -93,7 +93,8 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		if (!enabled)
 			return false;
 
-		if (!PDE.hasPluginNature(project.getProject()))
+		IProject iproject = project.getProject();
+		if (!iproject.isOpen() || !PDE.hasPluginNature(iproject))
 			return false;
 
 		if (WorkspaceModelManager.isBinaryProject(project.getProject()))
@@ -103,7 +104,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			IType annotationType = project.findType(COMPONENT_ANNOTATION);
 			return annotationType != null && annotationType.isAnnotation();
 		} catch (JavaModelException e) {
-			Activator.getDefault().getLog().log(e.getStatus());
+			Activator.log(e);
 		}
 
 		return false;
@@ -174,14 +175,14 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				state = ref.get();
 			}
 		} catch (CoreException e) {
-			Activator.getDefault().getLog().log(e.getStatus());
+			Activator.log(e);
 		}
 
 		if (state == null) {
 			try {
 				state = loadState(project.getProject());
 			} catch (IOException e) {
-				Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error loading project state.", e)); //$NON-NLS-1$
+				Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error loading project state.", e)); //$NON-NLS-1$
 			}
 
 			if (state == null) {
@@ -193,7 +194,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			try {
 				project.getProject().setSessionProperty(PROP_STATE, new SoftReference<>(state));
 			} catch (CoreException e) {
-				Activator.getDefault().getLog().log(e.getStatus());
+				Activator.log(e);
 			}
 		}
 
@@ -244,7 +245,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 					if (cu != null && cu.getElementType() == IJavaElement.COMPILATION_UNIT && (file = cu.getResource()) != null && file.exists())
 						exists = true;
 				} catch (JavaModelException e) {
-					Activator.getDefault().getLog().log(e.getStatus());
+					Activator.log(e);
 				}
 
 				if (!exists) {
@@ -271,7 +272,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				try {
 					saveState(project.getProject(), state);
 				} catch (IOException e) {
-					Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error saving file mappings.", e)); //$NON-NLS-1$
+					Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error saving file mappings.", e)); //$NON-NLS-1$
 				}
 			}
 
@@ -294,7 +295,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			}
 
 			if (!deleteStatuses.isEmpty())
-				Activator.getDefault().getLog().log(new MultiStatus(Activator.PLUGIN_ID, 0, deleteStatuses.toArray(new IStatus[deleteStatuses.size()]), "Error deleting generated files.", null)); //$NON-NLS-1$
+				Activator.log(new MultiStatus(Activator.PLUGIN_ID, 0, deleteStatuses.toArray(new IStatus[deleteStatuses.size()]), "Error deleting generated files.", null)); //$NON-NLS-1$
 
 			if (!retained.isEmpty() || !abandoned.isEmpty())
 				updateProject(project.getProject(), retained, abandoned);
