@@ -88,5 +88,6 @@
     <module>ui/org.eclipse.pde.ui.tests</module>
     <module>ui/org.eclipse.ui.trace</module>
     <module>ui/org.eclipse.ui.views.log</module>
+    <module>features/org.eclipse.pde-feature</module>
   </modules>
 </project>
