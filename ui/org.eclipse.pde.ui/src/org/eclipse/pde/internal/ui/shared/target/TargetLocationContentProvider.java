@@ -65,6 +65,8 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 							for (int i = 0; i < locs.length; i++) {
 								if (location.equals(locs[i])) {
 									IStatus status = locs[i].getStatus();
+									if (status == null)
+										continue;
 									if (!status.isOK() && !status.isMultiStatus()) {
 										return new Object[] { status };
 									}
