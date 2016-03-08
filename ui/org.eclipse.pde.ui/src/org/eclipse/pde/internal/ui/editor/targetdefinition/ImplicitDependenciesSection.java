@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
-
-import org.eclipse.pde.core.target.NameVersionDescriptor;
-
-import org.eclipse.pde.core.target.*;
 
 import java.util.*;
 import java.util.List;
@@ -21,10 +18,10 @@ import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -107,7 +104,8 @@ public class ImplicitDependenciesSection extends SectionPart {
 		Table table = toolkit.createTable(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewer = new TableViewer(table);
-		fViewer.setContentProvider(new DefaultTableProvider() {
+		fViewer.setContentProvider(new IStructuredContentProvider() {
+
 			@Override
 			public Object[] getElements(Object inputElement) {
 				NameVersionDescriptor[] bundles = getTarget().getImplicitDependencies();

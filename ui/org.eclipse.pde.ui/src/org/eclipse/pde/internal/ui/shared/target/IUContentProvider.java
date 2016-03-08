@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
@@ -18,13 +19,12 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 
 /**
  * Content Provider for the  {@link IUBundleContainer} target location
  *
  */
-public class IUContentProvider extends DefaultTableProvider implements ITreeContentProvider {
+public class IUContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getElements(Object inputElement) {

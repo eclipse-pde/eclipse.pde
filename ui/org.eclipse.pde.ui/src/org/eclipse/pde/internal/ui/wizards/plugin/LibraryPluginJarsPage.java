@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -111,12 +110,13 @@ public class LibraryPluginJarsPage extends WizardPage {
 		data.horizontalSpan = 2;
 		l.setLayoutData(data);
 		fTableViewer = new TableViewer(control, SWT.MULTI | SWT.BORDER);
-		fTableViewer.setContentProvider(new DefaultTableProvider() {
+		fTableViewer.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				return fJarPaths.toArray();
 			}
 		});
+
 		fTableViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object obj) {

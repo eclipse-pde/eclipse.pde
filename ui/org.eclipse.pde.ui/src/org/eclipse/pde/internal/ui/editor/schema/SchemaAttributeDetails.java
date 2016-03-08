@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *	   Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 201965 [Schema][Editors] Inappropriate selection behaviour after delete attempt in non-editable editor
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -19,7 +21,6 @@ import org.eclipse.pde.internal.core.schema.SchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
@@ -51,13 +52,14 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		super(section, false, true);
 	}
 
-	class SchemaAttributeContentProvider extends DefaultTableProvider {
+	class SchemaAttributeContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			ISchemaSimpleType type = fAttribute.getType();
 			ISchemaRestriction restriction = type.getRestriction();
-			if (restriction != null)
+			if (restriction != null) {
 				return restriction.getChildren();
+			}
 			return new Object[0];
 		}
 	}

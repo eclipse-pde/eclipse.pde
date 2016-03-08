@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     EclipseSource Corporation - ongoing enhancements
  *     Anyware Technologies - ongoing enhancements
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -42,7 +43,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
@@ -86,7 +86,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	private static String DOWN = PDEUIMessages.RequiresSection_down;
 	private Object entrySelectedObject = null;
 
-	class ContentProvider extends DefaultTableProvider {
+	class ContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {

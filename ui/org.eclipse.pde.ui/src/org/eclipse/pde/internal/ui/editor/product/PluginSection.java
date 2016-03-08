@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     EclipseSource Corporation - ongoing enhancements
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *     Simon Scholz <simon.scholz@vogella.com> - bug 440275, 444808
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -34,7 +35,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.DependencyCalculator;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
@@ -55,7 +55,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginSection extends TableSection implements IPluginModelListener {
 
-	class ContentProvider extends DefaultTableProvider {
+	class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			return getProduct().getPlugins();
