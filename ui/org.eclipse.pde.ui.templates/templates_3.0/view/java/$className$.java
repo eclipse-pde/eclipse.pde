@@ -66,28 +66,7 @@ public class $className$ extends ViewPart {
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
-
-	/*
-	 * The content provider class is responsible for
-	 * providing objects to the view. It can wrap
-	 * existing objects in adapters or simply return
-	 * objects as-is. These objects may be sensitive
-	 * to the current input of the view, or ignore
-	 * it and always show the same content 
-	 * (like Task List, for example).
-	 */
 	 
-%if viewType == "tableViewer"
-	class ViewContentProvider implements IStructuredContentProvider {
-		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-		}
-		public void dispose() {
-		}
-		public Object[] getElements(Object parent) {
-			return new String[] { "One", "Two", "Three" };
-		}
-	}
-%else
 %  if viewType =="treeViewer"
 	class TreeObject implements IAdaptable {
 		private String name;
@@ -135,14 +114,9 @@ public class $className$ extends ViewPart {
 		}
 	}
 
-	class ViewContentProvider implements IStructuredContentProvider, 
-										   ITreeContentProvider {
+	class ViewContentProvider implements ITreeContentProvider {
 		private TreeParent invisibleRoot;
 
-		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-		}
-		public void dispose() {
-		}
 		public Object[] getElements(Object parent) {
 			if (parent.equals(getViewSite())) {
 				if (invisibleRoot==null) initialize();
@@ -194,7 +168,7 @@ public class $className$ extends ViewPart {
 		}
 	}
 %  endif
-%endif
+
 %if viewType == "tableViewer"
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
@@ -204,8 +178,7 @@ public class $className$ extends ViewPart {
 			return getImage(obj);
 		}
 		public Image getImage(Object obj) {
-			return PlatformUI.getWorkbench().
-					getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
 	}
 %else
@@ -242,9 +215,15 @@ public class $className$ extends ViewPart {
 		drillDownAdapter = new DrillDownAdapter(viewer);
 %  endif
 %endif
-		viewer.setContentProvider(new ViewContentProvider());
-		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setInput(getViewSite());
+		
+%if viewType == "tableViewer"
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
+		viewer.setInput(new String[] { "One", "Two", "Three" });
+%else
+	viewer.setContentProvider(new ViewContentProvider());
+	viewer.setInput(getViewSite());
+%endif
+	viewer.setLabelProvider(new ViewLabelProvider());
 %if contextHelp
 
 		// Create the help context id for the viewer's control
