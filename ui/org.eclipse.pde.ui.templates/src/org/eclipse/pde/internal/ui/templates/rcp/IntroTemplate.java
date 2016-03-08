@@ -202,7 +202,8 @@ public class IntroTemplate extends PDETemplateSection {
 		property = model.getFactory().createElement(element);
 		property.setName("property"); //$NON-NLS-1$
 		property.setAttribute("name", "windowImages"); //$NON-NLS-1$ //$NON-NLS-2$
-		property.setAttribute("value", "icons/alt_window_16.gif,icons/alt_window_32.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		property.setAttribute("value", //$NON-NLS-1$
+				"icons/eclipse16.png,icons/eclipse32.png,icons/eclipse48.png,icons/eclipse64.png, icons/eclipse128.png,icons/eclipse256.png,icons/eclipse512.png"); //$NON-NLS-1$
 		element.add(property);
 
 		extension.add(element);
