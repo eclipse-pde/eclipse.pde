@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,15 @@
  *
  * Contributors:
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 212758
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.util.List;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -73,8 +74,7 @@ public class PluginImportFinishDialog extends TitleAreaDialog {
 		fPluginList = pluginList;
 	}
 
-	static private class PluginImportTableContentProvider extends DefaultTableProvider {
-
+	static private class PluginImportTableContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((List<?>) inputElement).toArray();

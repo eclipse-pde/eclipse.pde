@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2015 IBM Corporation and others.
+ *  Copyright (c) 2003, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.properties;
 
@@ -23,7 +24,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -39,7 +39,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	private Image fImage;
 	private CheckboxTableViewer fViewer;
 
-	class ContentProvider extends DefaultTableProvider {
+	class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object input) {
 			return getOutputFolders();
@@ -54,7 +54,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	}
 
 	private String[] getOutputFolders() {
-		IProject project = (IProject) getElement().getAdapter(IProject.class);
+		IProject project = getElement().getAdapter(IProject.class);
 		ArrayList<String> list = new ArrayList<>();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -127,7 +127,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 
 	private void initialize() {
 		fViewer.setAllChecked(true);
-		Preferences pref = getPreferences((IProject) getElement().getAdapter(IProject.class));
+		Preferences pref = getPreferences(getElement().getAdapter(IProject.class));
 		if (pref != null) {
 			String binExcludes = pref.get(ICoreConstants.SELFHOSTING_BIN_EXCLUDES, ""); //$NON-NLS-1$
 			StringTokenizer tokenizer = new StringTokenizer(binExcludes, ","); //$NON-NLS-1$
@@ -149,7 +149,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 
 	@Override
 	public boolean performOk() {
-		Preferences pref = getPreferences((IProject) getElement().getAdapter(IProject.class));
+		Preferences pref = getPreferences(getElement().getAdapter(IProject.class));
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < fViewer.getTable().getItemCount(); i++) {
 			Object object = fViewer.getElementAt(i);

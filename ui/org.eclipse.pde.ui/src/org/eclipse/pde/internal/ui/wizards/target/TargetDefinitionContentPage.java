@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Simon Scholz <simon.scholz@vogella.com> - bug 440275
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
@@ -34,7 +35,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.shared.target.*;
 import org.eclipse.pde.internal.ui.util.LocaleUtil;
 import org.eclipse.swt.SWT;
@@ -646,7 +646,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		gd.heightHint = 250;
 		fElementViewer.getControl().setLayoutData(gd);
 		fElementViewer.getControl().setFont(container.getFont());
-		fElementViewer.setContentProvider(new DefaultTableProvider() {
+		fElementViewer.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				ITargetDefinition target = getTargetDefinition();

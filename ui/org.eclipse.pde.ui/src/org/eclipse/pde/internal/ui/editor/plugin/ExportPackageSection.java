@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 200756
  *     Joern Dinkla <devnull@dinkla.com> - bug 200757
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.plugin;
@@ -36,7 +37,6 @@ import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.CalculateUsesAction;
@@ -59,7 +59,7 @@ public class ExportPackageSection extends TableSection {
 	private static final int PROPERTIES_INDEX = 2;
 	private static final int CALCULATE_USE_INDEX = 3;
 
-	class ExportPackageContentProvider extends DefaultTableProvider {
+	class ExportPackageContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			if (fHeader == null) {
