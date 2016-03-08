@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class OpenIDELogFileAction extends Action {
 		IPath logPath = new Path(fView.getLogFile().getAbsolutePath());
 		IFileStore fileStore = EFS.getLocalFileSystem().getStore(logPath);
 		if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
-			IWorkbenchWindow ww = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow();
+			IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			IWorkbenchPage page = ww.getActivePage();
 			try {
 				IDE.openEditorOnFileStore(page, fileStore);
