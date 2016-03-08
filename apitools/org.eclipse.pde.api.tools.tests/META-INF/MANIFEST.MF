@@ -45,3 +45,4 @@ Export-Package: org.eclipse.pde.api.tools.anttasks.tests,
 Bundle-Activator: org.eclipse.pde.api.tools.tests.ApiTestsPlugin
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
+Import-Package: org.eclipse.equinox.frameworkadmin

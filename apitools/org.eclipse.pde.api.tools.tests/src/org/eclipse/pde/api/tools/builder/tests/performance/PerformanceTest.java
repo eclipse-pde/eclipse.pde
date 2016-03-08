@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,6 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.jar.JarFile;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -38,6 +35,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Base class for performance tests
@@ -90,7 +90,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	private static Class<?>[] getAllTestClasses() {
 		Class<?>[] classes = new Class[] {
 				FullSourceBuildTests.class, ApiDescriptionTests.class,
-				IncrementalBuildTests.class, ExternalDependencyPerfTests.class };
+				IncrementalBuildTests.class, ExternalDependencyPerfTests.class, UseScanTests.class };
 		return classes;
 	}
 
