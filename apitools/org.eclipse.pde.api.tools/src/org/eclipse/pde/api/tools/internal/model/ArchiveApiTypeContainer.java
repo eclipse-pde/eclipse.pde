@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	static class ArchiveApiTypeRoot extends AbstractApiTypeRoot implements Comparable<Object> {
 
 		private String fTypeName;
+		private byte[] fContents = null;
 
 		/**
 		 * Constructs a new handle to an {@link IApiTypeRoot} in the archive.
@@ -91,6 +92,9 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 
 		@Override
 		public byte[] getContents() throws CoreException {
+			if (fContents != null) {
+				return fContents;
+			}
 			ArchiveApiTypeContainer archive = (ArchiveApiTypeContainer) getParent();
 			ZipFile zipFile;
 			try {
@@ -110,7 +114,8 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 						return null;
 					}
 					try {
-						return Util.getInputStreamAsByteArray(stream, -1);
+						fContents = Util.getInputStreamAsByteArray(stream, -1);
+						return fContents;
 					} catch (IOException ioe) {
 						abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
 						return null;
