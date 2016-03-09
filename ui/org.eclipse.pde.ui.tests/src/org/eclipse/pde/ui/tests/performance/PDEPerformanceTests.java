@@ -18,6 +18,7 @@ public class PDEPerformanceTests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Performance Test Suite for org.eclipse.pde.ui"); //$NON-NLS-1$
+		suite.addTest(PDEModelManagerPerfTest.suite());
 		suite.addTest(SchemaLoaderPerfTest.suite());
 		suite.addTest(SchemaTraversePerfTest.suite());
 		suite.addTest(OpenManifestEditorPerfTest.suite());
