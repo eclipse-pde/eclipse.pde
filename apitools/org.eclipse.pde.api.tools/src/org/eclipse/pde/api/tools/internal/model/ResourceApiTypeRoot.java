@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,12 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 	 */
 	private IFile fFile;
 
+	// when class file is changed, the object is changed too
+	// can store the contents in the class field for optimisation.
+	byte[] fContents = null;
+
+	private long localTimeStamp ;
+
 	/**
 	 * Constructs an {@link IApiTypeRoot} on the underlying file.
 	 *
@@ -46,9 +52,14 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 
 	@Override
 	public byte[] getContents() throws CoreException {
+		if (fContents != null && fFile.getLocalTimeStamp() == localTimeStamp) {
+			return fContents;
+		}
+		localTimeStamp = fFile.getLocalTimeStamp();
 		InputStream stream = fFile.getContents(true);
 		try {
-			return Util.getInputStreamAsByteArray(stream, -1);
+			fContents = Util.getInputStreamAsByteArray(stream, -1);
+			return fContents;
 		} catch (IOException ioe) {
 			abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
 			return null;
