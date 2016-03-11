@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
@@ -36,7 +37,7 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 	// can store the contents in the class field for optimisation.
 	byte[] fContents = null;
 
-	private long localTimeStamp ;
+	private long modifiedTimeStamp = IResource.NULL_STAMP;
 
 	/**
 	 * Constructs an {@link IApiTypeRoot} on the underlying file.
@@ -52,10 +53,10 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 
 	@Override
 	public byte[] getContents() throws CoreException {
-		if (fContents != null && fFile.getLocalTimeStamp() == localTimeStamp) {
+		if (fContents != null && fFile.getModificationStamp() == modifiedTimeStamp && modifiedTimeStamp != IResource.NULL_STAMP) {
 			return fContents;
 		}
-		localTimeStamp = fFile.getLocalTimeStamp();
+		modifiedTimeStamp = fFile.getModificationStamp();
 		InputStream stream = fFile.getContents(true);
 		try {
 			fContents = Util.getInputStreamAsByteArray(stream, -1);
