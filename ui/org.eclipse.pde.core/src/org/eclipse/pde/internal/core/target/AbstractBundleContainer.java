@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -48,6 +49,8 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 * The Java VM Arguments specified by this bundle container
 	 */
 	private String[] fVMArgs;
+
+	static private HashMap<AbstractBundleContainer, String[]> hash = new HashMap<>();
 
 	/**
 	 * Resolves any string substitution variables in the given text returning
@@ -203,8 +206,13 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 
 	@Override
 	public String[] getVMArguments() {
+		
+		for (AbstractBundleContainer key : hash.keySet()) {
+			if (key.equals(this)) {
+				return hash.get(key);
+			}
+		}
 		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$
-
 		if (fVMArgs == null) {
 			try {
 				FrameworkAdmin fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
@@ -241,8 +249,10 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 
 		}
 		if (fVMArgs == null || fVMArgs.length == 0) {
+			hash.put(this, null);
 			return null;
 		}
+		hash.put(this, fVMArgs);
 		return fVMArgs;
 	}
 

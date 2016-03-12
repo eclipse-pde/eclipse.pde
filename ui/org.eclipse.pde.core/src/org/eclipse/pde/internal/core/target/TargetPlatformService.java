@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -46,6 +48,10 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * the workspace.
 	 */
 	private ITargetDefinition fWorkspaceTarget;
+	/**
+	 * vm arguments for default target
+	 */
+	private StringBuffer fVMArguments = null;
 
 	/**
 	 * Collects target files in the workspace
@@ -577,6 +583,27 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 		// initialize vm arguments from the default container
 		ITargetLocation[] containers = target.getTargetLocations();
+		Job job = new Job(Messages.TargetPlatformService_6) {
+			@Override
+			public IStatus run(IProgressMonitor monitor) {
+				fVMArguments = getVMArguments(containers);
+				return Status.OK_STATUS;
+			}
+		};
+		job.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
+				if (fVMArguments != null)
+					target.setVMArguments(fVMArguments.toString().trim());
+
+			}
+		});
+		job.schedule();
+
+		return target;
+	}
+
+	private StringBuffer getVMArguments(ITargetLocation[] containers) {
 		StringBuffer arguments = new StringBuffer(""); //$NON-NLS-1$
 		for (int i = 0; i < containers.length; i++) {
 			String[] vmargs = containers[i].getVMArguments();
@@ -586,11 +613,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 				arguments.append(vmargs[j]).append(' ');
 			}
 		}
-		target.setVMArguments(arguments.toString().trim());
-
-		return target;
+		return arguments;
 	}
-
 	@Override
 	public IStatus compareWithTargetPlatform(ITargetDefinition target) throws CoreException {
 		if (!target.isResolved()) {
