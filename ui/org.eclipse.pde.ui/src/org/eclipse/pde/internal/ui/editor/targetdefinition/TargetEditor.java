@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,8 @@
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -218,12 +219,29 @@ public class TargetEditor extends FormEditor {
 
 					@Override
 					public void linkEntered(HyperlinkEvent e) {
-						hyperlink.setForeground(getToolkit().getHyperlinkGroup().getActiveForeground());
+						HyperlinkGroup hyperlinkGroup = getHyperlinkGroup();
+
+						if (hyperlinkGroup != null) {
+							hyperlink.setForeground(hyperlinkGroup.getActiveForeground());
+						}
 					}
 
 					@Override
 					public void linkExited(HyperlinkEvent e) {
-						hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
+						HyperlinkGroup hyperlinkGroup = getHyperlinkGroup();
+
+						if (hyperlinkGroup != null) {
+							hyperlink.setForeground(hyperlinkGroup.getForeground());
+						}
+					}
+
+					private HyperlinkGroup getHyperlinkGroup() {
+						FormToolkit toolkit = getToolkit();
+						HyperlinkGroup hyperlinkGroup = null;
+						if (toolkit != null) {
+							hyperlinkGroup = toolkit.getHyperlinkGroup();
+						}
+						return hyperlinkGroup;
 					}
 				});
 				return hyperlink;
