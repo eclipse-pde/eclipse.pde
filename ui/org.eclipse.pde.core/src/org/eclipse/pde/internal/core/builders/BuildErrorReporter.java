@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -659,8 +659,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						validateBinIncludes(binIncludes, attValue.getNodeValue());
 					}
 				} else {
-					// Default if not specified
-					validateBinIncludes(binIncludes, "Application.e4xmi"); //$NON-NLS-1$
+					if (fProject.exists(new Path("Application.e4xmi"))) { //$NON-NLS-1$
+						// Default if not specified
+						validateBinIncludes(binIncludes, "Application.e4xmi"); //$NON-NLS-1$
+					}
 				}
 			}
 
