@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.model.ApiField;
 import org.eclipse.pde.api.tools.internal.model.ApiMethod;
@@ -19,11 +17,14 @@ import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 
+import junit.framework.TestCase;
+
 /**
  * Test class for the {@link Signatures} utility class
  *
  * @since 1.0.0
  */
+@SuppressWarnings("nls")
 public class SignaturesTests extends TestCase {
 
 	/**
@@ -52,6 +53,7 @@ public class SignaturesTests extends TestCase {
 		assertEquals("wrong converstion", "(QJokes;)V;", Signatures.dequalifySignature("(Lfoo.test.Jokes;)V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals("wrong conversion", "(QDiff;)Z", Signatures.dequalifySignature("(LDiff;)Z")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals("Wrong conversion", "(QList<QString;>;)QList;", Signatures.dequalifySignature("(Ljava.util.List<Ljava.lang.String;>;)Ljava.util.List;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertEquals("Wrong conversion", "(QList<+QCharSequence;>;)QList;", Signatures.dequalifySignature("(Ljava.util.List<+Ljava.lang.CharSequence;>;)Ljava.util.List;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -77,6 +79,8 @@ public class SignaturesTests extends TestCase {
 		assertEquals("Signature processed incorrectly", "(I[QString;J)[QInteger;", Signatures.processMethodSignature(method)); //$NON-NLS-1$ //$NON-NLS-2$
 		method = type.addMethod("m4", "(ILjava.util.List;J)[Ljava.lang.Integer;", "(ILjava.util.List<Ljava.lang.String;>;J)[Ljava.lang.Integer;", Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals("Signature procesed incorrectly", "(IQList<QString;>;J)[QInteger;", Signatures.processMethodSignature(method)); //$NON-NLS-1$ //$NON-NLS-2$
+		method = type.addMethod("m5", "(ILjava.util.List;J)[Ljava.lang.Integer;", "(ILjava.util.List<+Ljava.lang.CharSequence;>;J)[Ljava.lang.Integer;", Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertEquals("Signature procesed incorrectly", "(IQList<+QCharSequence;>;J)[QInteger;", Signatures.processMethodSignature(method)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -105,6 +109,8 @@ public class SignaturesTests extends TestCase {
 		assertEquals("Wrong method signature returned", "m3(int, String[], long)", Signatures.getMethodSignature(method)); //$NON-NLS-1$ //$NON-NLS-2$
 		method = type.addMethod("m4", "(ILjava.util.List;J)[Ljava.lang.Integer;", "(ILjava.util.List<Ljava.lang.String;>;J)[Ljava.lang.Integer;", Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals("Wrong method signature returned", "m4(int, List<String>, long)", Signatures.getMethodSignature(method)); //$NON-NLS-1$ //$NON-NLS-2$
+		method = type.addMethod("m5", "(ILjava.util.List;J)[Ljava.lang.Integer;", "(ILjava.util.List<+Ljava.lang.CharSequence;>;J)[Ljava.lang.Integer;", Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertEquals("Wrong method signature returned", "m5(int, List<? extends CharSequence>, long)", Signatures.getMethodSignature(method)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -137,7 +143,7 @@ public class SignaturesTests extends TestCase {
 	 * Tests the {@link Signatures#getQualifiedMethodSignature(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor, boolean)} method
 	 * @throws Exception
 	 */
-	public void testGetQialifiedMethodSignature2() throws Exception {
+	public void testGetQualifiedMethodSignature2() throws Exception {
 		ApiType type = new ApiType(null, "x.y.z.Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		ApiMethod method = type.addMethod("m1", "()V;", null, Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Wrong qualified method signature returned", "x.y.z.Parent.m1() : void", Signatures.getQualifiedMethodSignature((IMethodDescriptor) method.getHandle(), false, true)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -262,6 +268,58 @@ public class SignaturesTests extends TestCase {
 		assertTrue("Signatures should match", Signatures.matchesSignatures("(ILjava.util.List<Ljava.lang.String;>;)V;", "(ILjava.util.List<QString;>;)V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertTrue("Signatures should not match", !Signatures.matchesSignatures("(ILjava.lang.String;)V;", "(Ljava.lang.String;I)V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertTrue("Signatures should not match", !Signatures.matchesSignatures("(ILjava.util.List<Ljava.lang.String;>;)V;", "(ILjava.util.List;)V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	public void testMatchesInnerClasses() {
+		assertTrue("Signatures should match", Signatures.matchesSignatures("(QInnerMost;)V", "(Lmy.package.Class$InnerMost;)V"));
+		assertTrue("Signatures should match", Signatures.matchesSignatures("(QInnerMost;)V", "(Lmy.package.Class$Inner$InnerMost;)V"));
+	}
+
+	public void testMatchesArgumentPackages() {
+		assertTrue("Same packages should match", Signatures.matchesSignatures("(Lmy.package.Class;)V", "(Lmy.package.Class;)V"));
+		assertFalse("Differing packages should not match", Signatures.matchesSignatures("(Lmy.package.Class;)V", "(Lother.package.Class;)V"));
+		assertFalse("Differing packages should not match", Signatures.matchesSignatures("(Lmy.package.Class$InnerMost;)V", "(Lother.package.Class$InnerMost;)V"));
+	}
+
+	public void testMatchesGenericsBug456945_ex1() {
+		// This is the example from bug 456945
+		assertTrue("Signatures should match", Signatures.matchesSignatures("(QIterable<+QCharSequence;>;QIAcceptor<QResult;>;)V", "(Ljava.lang.Iterable<+Ljava.lang.CharSequence;>;Lorg.eclipse.xtext.util.IAcceptor<Lorg.eclipse.xtext.xbase.compiler.CompilationTestHelper$Result;>;)V"));
+	}
+
+	public void testMatchesGenericsBug456945_ex2() {
+		// Modified example that included parameterized return type
+		assertTrue("Wildcard signatures should match", Signatures.matchesSignatures("(QIterable<+QCharSequence;>;QIAcceptor<QResult;>;)QT;", "(Ljava.lang.Iterable<+Ljava.lang.CharSequence;>;Lorg.eclipse.xtext.util.IAcceptor<Lorg.eclipse.xtext.xbase.compiler.CompilationTestHelper$Result;>;)TT;"));
+	}
+
+	public void testMatchesGenericsBug334281_c1() {
+		// Example from bug 334281 comment 1
+		assertTrue("Wildcard signatures should match", Signatures.matchesSignatures("(QClass<+QITmfEvent;>;QTmfTimeRange;JII)V", "(Ljava.lang.Class<+Lorg.eclipse.linuxtools.tmf.core.event.ITmfEvent;>;Lorg.eclipse.linuxtools.tmf.core.timestamp.TmfTimeRange;JII)V"));
+		// and heck, let's ensure arrays work too
+		assertTrue("Array wildcard signatures should match", Signatures.matchesSignatures("(QClass<[+QITmfEvent;>;QTmfTimeRange;JII)V", "(Ljava.lang.Class<[+Lorg.eclipse.linuxtools.tmf.core.event.ITmfEvent;>;Lorg.eclipse.linuxtools.tmf.core.timestamp.TmfTimeRange;JII)V"));
+	}
+
+	public void testMatchesMismatchedGenericTypes() {
+		assertFalse("Different generic type names should not match", Signatures.matchesSignatures("(QIterable<QCharSequence;>;)V", "(QList<QCharSequence;>;)V"));
+	}
+
+	/** Tests the {@link Signatures#matches(String, String)} method */
+	public void testTypeMatches() {
+		assertTrue("Signatures should match", Signatures.matches("I", "I"));
+		assertTrue("Signatures should match", Signatures.matches("QClass;", "Ljava.lang.Class;"));
+		assertTrue("Signatures should match", Signatures.matches("Ljava.lang.Class;", "Ljava.lang.Class;"));
+		assertTrue("Signatures should match", Signatures.matches("QClass;", "QClass;"));
+		assertTrue("Signatures should match", Signatures.matches("QClass<QITmfEvent;>;", "Ljava.lang.Class<Lorg.eclipse.linuxtools.tmf.core.event.ITmfEvent;>;"));
+		assertFalse("Signatures should not match", Signatures.matches("QIterable<QCharSequence;>;", "QList<QCharSequence;>;"));
+		assertFalse("Signatures should not match", Signatures.matches("QList<QCharSequence;>;", "Ljava.lang.Iterable<QCharSequence;>;"));
+		assertFalse("Differing packages should not match", Signatures.matches("Lmy.package.Class;", "Lother.package.Class;"));
+		assertFalse("Differing packages should not match", Signatures.matches("Lmy.package.Class$InnerMost;", "Lother.package.Class$InnerMost;"));
+		assertTrue("Inner class should match", Signatures.matches("QInnerMost;", "Lmy.package.Class$InnerMost;"));
+		assertTrue("Signatures should match", Signatures.matches("QInnerMost;", "Lmy.package.Class$Inner$InnerMost;")); //$NON-NLS-1$
+		assertTrue("Super signatures should match", Signatures.matches("QClass<-QITmfEvent;>;", "Ljava.lang.Class<-Lorg.eclipse.linuxtools.tmf.core.event.ITmfEvent;>;"));
+		assertTrue("Extends signatures should match", Signatures.matches("QClass<+QITmfEvent;>;", "Ljava.lang.Class<+Lorg.eclipse.linuxtools.tmf.core.event.ITmfEvent;>;"));
+		assertTrue("Unbound wildcard signatures should match", Signatures.matches("QClass<*>;", "Ljava.lang.Class<*>;"));
+		assertFalse("Different wildcard signatures should not match", Signatures.matches("QClass<+QITmfEvent;>;", "Ljava.lang.Class<-Lorg.eclipse.linuxtools.tmf.core.event.ITmfEvent;>;"));
+		assertFalse("Different wildcard signatures should not match", Signatures.matches("QClass<+QITmfEvent;>;", "Ljava.lang.Class<*>;"));
 	}
 
 	/**

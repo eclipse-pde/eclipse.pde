@@ -40,14 +40,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -74,7 +77,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -88,10 +90,12 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
@@ -1276,54 +1280,145 @@ public final class Util {
 		}
 		if (method.exists()) {
 			return method;
-		} else {
-			// if the method is not null and it doesn't exist, it might be the
-			// default constructor
-			if (selector.equals(type.getElementName()) && parameterTypes.length == 0) {
+		}
+		// if the method is not null and it doesn't exist, it might be the
+		// default constructor or a constructor in inner type
+		if (selector.equals(type.getElementName())) {
+			if (parameterTypes.length == 0) {
 				return null;
 			}
-			// try to check by selector
-			IMethod[] methods = null;
+			// Perhaps a constructor on an inner type?
+			IJavaElement parent = type.getParent();
+			if (parent instanceof IType) {
+				String parentTypeSig = Signature.createTypeSignature(((IType) parent).getFullyQualifiedName(), true);
+				if (Signatures.matches(parentTypeSig, parameterTypes[0])) {
+					IMethod constructor = type.getMethod(selector, Arrays.copyOfRange(parameterTypes, 1, parameterTypes.length));
+					try {
+						if (constructor.exists() && constructor.isConstructor()) {
+							return constructor;
+						}
+						String contructorSig = Signature.createMethodSignature(Arrays.copyOfRange(parameterTypes, 1, parameterTypes.length), Signature.getReturnType(signature));
+						IMethod[] methods = type.findMethods(constructor);
+						if (methods != null) {
+							if (methods.length == 1 && methods[0].isConstructor()) {
+								return methods[0];
+							}
+							// findMethods() checks simple type names, so
+							// it's possible to have multiple matches with
+							// different package names
+							for (IMethod m : methods) {
+								try {
+									if (m.isConstructor() && m.getNumberOfParameters() == parameterTypes.length - 1 && Signatures.matchesSignatures(generateBinarySignature(m), contructorSig)) {
+										return m;
+									}
+								} catch (JavaModelException e) {
+									// ignore
+								}
+							}
+						}
+					} catch (JavaModelException e) {
+						// ignore
+					}
+				}
+			}
+		}
+		// Let JDT have a go
+		IMethod[] methods = type.findMethods(method);
+		if (methods != null && methods.length == 1) {
+			/* exact match found */
+			return methods[0];
+		}
+		if (methods == null || methods.length == 0) {
+			/* no methods found: may be due to type erasure */
 			try {
 				methods = type.getMethods();
 			} catch (JavaModelException e) {
-				ApiPlugin.log(e);
-				// do not default to the enclosing type - see bug 224713
-				ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(UtilMessages.Util_6, new String[] {
-						selector, descriptor })));
+				ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind("Unable to retrieve methods for {0}", type.getFullyQualifiedName()), e)); //$NON-NLS-1$
 				return null;
 			}
-			List<IMethod> list = new ArrayList<>();
-			for (IMethod method2 : methods) {
-				if (selector.equals(method2.getElementName())) {
-					list.add(method2);
+		}
+
+		/*
+		 * findMethods() checks simple type names, so it's possible to have
+		 * multiple matches with different package names. Or we may need to
+		 * check with type erasure.
+		 */
+		for (IMethod m : methods) {
+			try {
+				if (!m.getElementName().equals(selector) || m.getNumberOfParameters() != parameterTypes.length) {
+					continue;
 				}
-			}
-			switch (list.size()) {
-				case 0:
-					// do not default to the enclosing type - see bug 224713
-					ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(UtilMessages.Util_6, new String[] {
-							selector, descriptor })));
-					return null;
-				case 1:
-					return list.get(0);
-				default:
-					// need to find a matching parameters
-					for (IMethod method2 : list) {
-						try {
-							if (Signatures.matchesSignatures(method2.getSignature(), signature)) {
-								return method2;
-							}
-						} catch (JavaModelException e) {
-							// ignore
-						}
-					}
+				if (Signatures.matchesSignatures(generateBinarySignature(m), signature)) {
+					return m;
+				}
+			} catch (JavaModelException e) {
+				// ignore
 			}
 		}
-		// do not default to the enclosing type - see bug 224713
+
+		/*
+		 * Unclear what circumstances that this could happen, so provide more
+		 * information to help understand why
+		 */
+		StringBuilder sb = new StringBuilder();
+		for (IMethod m : methods) {
+			sb.append('\n').append(m.getHandleIdentifier());
+		}
 		ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(UtilMessages.Util_6, new String[] {
-				selector, descriptor })));
+				selector, descriptor }) + sb.toString()));
+		// do not default to the enclosing type - see bug 224713
 		return null;
+	}
+
+	/**
+	 * Generate the binary signature for the provided method. This is the
+	 * type-erased signature written out to the .class file.
+	 *
+	 * @param method the method
+	 * @return the method signature as would be encoded in a .class file
+	 * @throws JavaModelException
+	 */
+	private static String generateBinarySignature(IMethod method) throws JavaModelException {
+		ITypeParameter[] typeTPs = method.getDeclaringType().getTypeParameters();
+		ITypeParameter[] methodTPs = method.getTypeParameters();
+		if (typeTPs.length == 0 && methodTPs.length == 0) {
+			return method.getSignature();
+		}
+		Map<String, String> lookup = new HashMap<>();
+		Stream.concat(Stream.of(typeTPs), Stream.of(methodTPs)).forEach(tp -> {
+			try {
+				String sigs[] = tp.getBoundsSignatures();
+				lookup.put(tp.getElementName(), sigs.length == 1 ? sigs[0] : "Ljava.lang.Object;"); //$NON-NLS-1$
+			} catch (JavaModelException e) {
+				/* ignore */
+			}
+		});
+		String[] parameterTypes = Stream.of(method.getParameterTypes()).map(p -> expandParameterType(p, lookup)).toArray(String[]::new);
+		return Signature.createMethodSignature(parameterTypes, expandParameterType(method.getReturnType(), lookup));
+	}
+
+	/**
+	 * Rewrite a parameter type signature with type erasure and using the
+	 * parameterized type bounds lookup table. For example:
+	 * 
+	 * <pre>
+	 *     expand("QList&lt;QE;&gt;;", {"E" &rarr; "Ljava.lang.Object;"}) = "QList;"
+	 *     expand("QE;", {"E" &rarr; "Ljava.lang.Object;"}) = "Ljava.lang.Object;"
+	 * </pre>
+	 *
+	 * @param parameterTypeSig the type signature for a parameter
+	 * @param bounds the type bounds as expressed on the method and class
+	 * @return a rewritten parameter type signature as would be found in the .class file
+	 */
+	private static String expandParameterType(String parameterTypeSig, Map<String, String> bounds) {
+		String erased = Signature.getTypeErasure(parameterTypeSig);
+		if (erased.charAt(0) == Signature.C_UNRESOLVED || erased.charAt(0) == Signature.C_TYPE_VARIABLE) {
+			String repl = bounds.get(Signature.getSignatureSimpleName(erased));
+			if (repl != null) {
+				return repl;
+			}
+		}
+		return erased;
 	}
 
 	/**

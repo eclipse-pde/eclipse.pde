@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
@@ -618,12 +619,13 @@ public final class Signatures {
 	}
 
 	/**
-	 * Returns if the given signatures match. Where signatures are considered to
-	 * match iff the return type, name and parameters are the same.
+	 * Returns if the given method signatures match, where method signatures are
+	 * considered to match iff the return type, name and parameters are the
+	 * same.
 	 *
-	 * @param signature
-	 * @param signature2
-	 * @return true if the signatures are equal, false otherwise
+	 * @param signature a method signature
+	 * @param signature2 a method signature
+	 * @return true if the method signatures are equal, false otherwise
 	 */
 	public static boolean matchesSignatures(String signature, String signature2) {
 		if (!matches(Signature.getReturnType(signature), Signature.getReturnType(signature2))) {
@@ -645,42 +647,67 @@ public final class Signatures {
 	}
 
 	/**
-	 * Returns if the two types match. Types are considered to match iff the
-	 * type name and array count (if any) are the same
+	 * Returns if the given type signatures match. Type signatures are
+	 * considered to match iff the type name and array count (if any) are the
+	 * same
 	 *
-	 * @param type
-	 * @param type2
-	 * @return true if the type names match, false otherwise
+	 * @param type a type signature
+	 * @param type2 a type signature
+	 * @return true if the type signatures match, false otherwise
 	 */
-	private static boolean matches(String type, String type2) {
-		if (Signature.getArrayCount(type) == Signature.getArrayCount(type2)) {
-			String el1 = Signature.getElementType(type);
-			String el2 = Signature.getElementType(type2);
-			String[] typeargs1 = Signature.getTypeArguments(el1);
-			String[] typeargs2 = Signature.getTypeArguments(el2);
-			if (typeargs1.length == typeargs2.length) {
-				if (typeargs1.length > 0) {
-					for (int i = 0; i < typeargs1.length; i++) {
-						if (!matches(typeargs1[i], typeargs2[i])) {
-							return false;
-						}
-					}
-					return true;
-				} else {
-					String signatureSimpleName = Signature.getSignatureSimpleName(el1);
-					String signatureSimpleName2 = Signature.getSignatureSimpleName(el2);
-					if (signatureSimpleName.equals(signatureSimpleName2)) {
-						return true;
-					}
-					int index = signatureSimpleName2.lastIndexOf('.');
-					if (index != -1) {
-						// the right side is a member type
-						return signatureSimpleName.equals(signatureSimpleName2.subSequence(index + 1, signatureSimpleName2.length()));
-					}
-				}
+	public static boolean matches(String type, String type2) {
+		if (Signature.getArrayCount(type) != Signature.getArrayCount(type2)) {
+			return false;
+		}
+		String el1 = Signature.getElementType(type);
+		String el2 = Signature.getElementType(type2);
+		if (Signature.getTypeSignatureKind(el1) == Signature.TYPE_VARIABLE_SIGNATURE || Signature.getTypeSignatureKind(el2) == Signature.TYPE_VARIABLE_SIGNATURE) {
+			// E.g., "TT;" vs "QT;"
+			return el1.substring(1).equals(el2.substring(1));
+		} else if (Signature.getTypeSignatureKind(el1) != Signature.getTypeSignatureKind(el2)) {
+			return false;
+		}
+		// we know the type signature kinds are the same
+		if (Signature.getTypeSignatureKind(el1) == Signature.WILDCARD_TYPE_SIGNATURE) {
+			if (el1.charAt(0) != el2.charAt(0)) {
+				return false;
+			} else if (el1.charAt(0) == Signature.C_STAR) {
+				// there should be nothing else to these signatures
+				return el1.length() == 1 && el2.length() == 1;
+			}
+			// Strip off the Signature.C_EXTEND/C_SUPER
+			el1 = el1.substring(1);
+			el2 = el2.substring(1);
+		}
+		if (Signature.getTypeSignatureKind(el1) != Signature.BASE_TYPE_SIGNATURE && Signature.getTypeSignatureKind(el1) != Signature.CLASS_TYPE_SIGNATURE) {
+			ApiPlugin.logErrorMessage("Signatures#matches: Unhandled signature kind: " + el1); //$NON-NLS-1$
+			return false;
+		}
+		String[] typeargs1 = Signature.getTypeArguments(el1);
+		String[] typeargs2 = Signature.getTypeArguments(el2);
+		if (typeargs1.length != typeargs2.length) {
+			return false;
+		}
+		String erased1 = Signature.getTypeErasure(el1);
+		String erased2 = Signature.getTypeErasure(el2);
+		if (el1.charAt(0) != Signature.C_UNRESOLVED && el2.charAt(0) != Signature.C_UNRESOLVED) {
+			if (!erased1.equals(erased2)) {
+				return false;
+			}
+		} else {
+			// If an inner type, we want just the inner type name
+			String signatureSimpleName = Signature.getSimpleName(Signature.getSignatureSimpleName(erased1));
+			String signatureSimpleName2 = Signature.getSimpleName(Signature.getSignatureSimpleName(erased2));
+			if (!signatureSimpleName.equals(signatureSimpleName2)) {
+				return false;
 			}
 		}
-		return false;
+		for (int i = 0; i < typeargs1.length; i++) {
+			if (!matches(typeargs1[i], typeargs2[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
