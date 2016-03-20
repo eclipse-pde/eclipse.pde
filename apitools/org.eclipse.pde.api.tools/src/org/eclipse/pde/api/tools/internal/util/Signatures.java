@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,8 @@ import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeParameter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
@@ -485,17 +487,18 @@ public final class Signatures {
 	 * Creates a method signature from a specified {@link MethodDeclaration}
 	 *
 	 * @param node
+	 * @param erased if true then perform type erasure
 	 * @return the signature for the given method node or <code>null</code>
 	 */
-	public static String getMethodSignatureFromNode(MethodDeclaration node) {
+	public static String getMethodSignatureFromNode(MethodDeclaration node, boolean erased) {
 		Assert.isNotNull(node);
 		List<SingleVariableDeclaration> params = node.parameters();
-		List<String> rparams = Signatures.getParametersTypeNames(params);
+		List<String> rparams = Signatures.getParametersTypeNames(params, erased);
 		if (rparams.size() == params.size()) {
 			if (!node.isConstructor()) {
 				Type returnType = getType(node);
 				if (returnType != null) {
-					String rtype = Signatures.getTypeSignature(returnType);
+					String rtype = Signatures.getTypeSignature(returnType, erased);
 					if (rtype != null) {
 						return Signature.createMethodSignature(rparams.toArray(new String[rparams.size()]), rtype);
 					}
@@ -514,13 +517,14 @@ public final class Signatures {
 	 * elements in the returned list are of type {@link String}
 	 *
 	 * @param rawparams
+	 * @param erased if true then perform type erasure
 	 * @return a listing of signatures for the specified parameters
 	 */
-	private static List<String> getParametersTypeNames(List<SingleVariableDeclaration> rawparams) {
+	private static List<String> getParametersTypeNames(List<SingleVariableDeclaration> rawparams, boolean erased) {
 		List<String> rparams = new ArrayList<>(rawparams.size());
 		String pname = null;
 		for (SingleVariableDeclaration param : rawparams) {
-			pname = Signatures.getTypeSignature(getType(param));
+			pname = Signatures.getTypeSignature(getType(param), erased);
 			if (pname != null) {
 				rparams.add(pname);
 			}
@@ -589,25 +593,65 @@ public final class Signatures {
 	 * Processes the signature for the given {@link Type}
 	 *
 	 * @param type the type to process
+	 * @param erased if true then perform type erasure
 	 * @return the signature for the type or <code>null</code> if one could not
 	 *         be derived
 	 */
-	public static String getTypeSignature(Type type) {
+	public static String getTypeSignature(Type type, boolean erased) {
 		switch (type.getNodeType()) {
 			case ASTNode.SIMPLE_TYPE: {
-				return Signature.createTypeSignature(((SimpleType) type).getName().getFullyQualifiedName(), false);
+				String fullyQualifiedName = ((SimpleType) type).getName().getFullyQualifiedName();
+				if (!fullyQualifiedName.contains(".") && erased) { //$NON-NLS-1$
+					// check if generic parameter
+					ASTNode parent = type.getParent();
+					while (parent != null) {
+						try {
+							List<?> typeParameters = null;
+							if (parent.getNodeType() == ASTNode.METHOD_DECLARATION) {
+								MethodDeclaration md = (MethodDeclaration) parent;
+								typeParameters = md.typeParameters();
+							} else if (parent.getNodeType() == ASTNode.TYPE_DECLARATION) {
+								TypeDeclaration td = (TypeDeclaration) parent;
+								typeParameters = td.typeParameters();
+							}
+							if (typeParameters != null) {
+								for (Object o : typeParameters) {
+									if (o instanceof TypeParameter) {
+										TypeParameter typeParameter = (TypeParameter) o;
+										if (fullyQualifiedName.equals(typeParameter.getName().getFullyQualifiedName())) {
+											if (typeParameter.typeBounds().isEmpty()) {
+												return Signature.createTypeSignature("Object", false); //$NON-NLS-1$
+											} else {
+												// the erasure of a type
+												// variable is the erasure of
+												// its leftmost bound
+												SimpleType bound = (SimpleType) typeParameter.typeBounds().get(0);
+												return getTypeSignature(bound, erased);
+											}
+										}
+									}
+								}
+							}
+						} catch (UnsupportedOperationException e) {
+							// thrown if code is JLS2
+						}
+						parent = parent.getParent();
+					}
+
+				}
+				return Signature.createTypeSignature(fullyQualifiedName, false);
 			}
 			case ASTNode.QUALIFIED_TYPE: {
 				return Signature.createTypeSignature(((QualifiedType) type).getName().getFullyQualifiedName(), false);
 			}
 			case ASTNode.ARRAY_TYPE: {
 				ArrayType a = (ArrayType) type;
-				return Signature.createArraySignature(getTypeSignature(a.getElementType()), a.getDimensions());
+				return Signature.createArraySignature(getTypeSignature(a.getElementType(), erased), a.getDimensions());
 			}
 			case ASTNode.PARAMETERIZED_TYPE: {
 				// we don't need to care about the other scoping types only the
 				// base type
-				return getTypeSignature(((ParameterizedType) type).getType());
+				return getTypeSignature(((ParameterizedType) type).getType(), erased);
 			}
 			case ASTNode.PRIMITIVE_TYPE: {
 				return Signature.createTypeSignature(((PrimitiveType) type).getPrimitiveTypeCode().toString(), false);

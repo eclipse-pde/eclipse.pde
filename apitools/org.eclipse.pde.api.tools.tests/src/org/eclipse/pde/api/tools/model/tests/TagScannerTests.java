@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.pde.api.tools.model.tests;
 
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -34,8 +32,11 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 import com.ibm.icu.text.MessageFormat;
+
+import junit.framework.TestCase;
 
 /**
  * Class tests that the tag scanner for the API tools correctly scans source for
@@ -1243,4 +1244,23 @@ public class TagScannerTests extends TestCase {
 		assertNotNull("There should be API annotations for the non-default method", description); //$NON-NLS-1$
 		assertTrue("The annotations for the non-default method should be API", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
+
+	/**
+	 * Tests resolving methods with generic type parameters. The resolution
+	 * process calls into {@link Signatures#getMethodSignatureFromNode}
+	 *
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=484268
+	 */
+	public void testGenericMethodWithBounds() throws Exception {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/TestGenericMethod1.java", manifest); //$NON-NLS-1$
+		IApiAnnotations description = manifest.resolveAnnotations(
+				Factory.methodDescriptor("a.b.c.TestGenericMethod1", "m1", "(QObject;)I")); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		assertNotNull("there should be annotations for method 'm1'", description); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(
+				Factory.methodDescriptor("a.b.c.TestGenericMethod1", "m2", "(QCollection;)I")); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		assertNotNull("There should be API annotations for the non-default method", description); //$NON-NLS-1$
+	}
+
 }

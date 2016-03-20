@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,7 +127,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		@Override
 		public boolean visit(MethodDeclaration node) {
 			if (node.getName().getFullyQualifiedName().equals(membername)) {
-				String sig = Signatures.getMethodSignatureFromNode(node);
+				String sig = Signatures.getMethodSignatureFromNode(node, true);
 				if (signature.equals(sig)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the method: " + membername + " [" + signature + "] must have a javadoc node", docnode); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

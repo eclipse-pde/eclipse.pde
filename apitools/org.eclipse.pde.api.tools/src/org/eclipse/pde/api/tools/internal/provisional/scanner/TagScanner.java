@@ -220,7 +220,7 @@ public class TagScanner {
 		 * @since 1.0.600
 		 */
 		void scanMethodAnnotation(String name, MethodDeclaration node) {
-			String signature = Signatures.getMethodSignatureFromNode(node);
+			String signature = Signatures.getMethodSignatureFromNode(node, true);
 			if (signature != null) {
 				String methodname = node.getName().getFullyQualifiedName();
 				if (node.isConstructor()) {
@@ -444,7 +444,7 @@ public class TagScanner {
 		void scanMethodJavaDoc(MethodDeclaration node) {
 			Javadoc doc = node.getJavadoc();
 			if (doc != null) {
-				String signature = Signatures.getMethodSignatureFromNode(node);
+				String signature = Signatures.getMethodSignatureFromNode(node, true);
 				if (signature != null) {
 					String methodname = node.getName().getFullyQualifiedName();
 					if (node.isConstructor()) {

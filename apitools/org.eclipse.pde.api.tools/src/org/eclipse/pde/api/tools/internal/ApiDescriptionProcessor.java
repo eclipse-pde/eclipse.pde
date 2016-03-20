@@ -257,7 +257,7 @@ public class ApiDescriptionProcessor {
 
 		@Override
 		public boolean visit(MethodDeclaration node) {
-			String signature = Signatures.getMethodSignatureFromNode(node);
+			String signature = Signatures.getMethodSignatureFromNode(node, true);
 			if (signature != null) {
 				updateDocNode(findDescriptorByName(node.getName().getFullyQualifiedName(), signature), node, getType(), IApiJavadocTag.MEMBER_METHOD);
 			}
