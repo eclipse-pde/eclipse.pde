@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,13 +57,13 @@ public class InstallEEDescriptionProblemResolution implements IMarkerResolution2
 					IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 					try {
 						handlerService.executeCommand(ApiErrorsWarningsConfigurationBlock.P2_INSTALL_COMMAND_HANDLER, null);
-					} catch (@SuppressWarnings("unused") ExecutionException ex) {
+					} catch (ExecutionException ex) {
 						ApiErrorsWarningsConfigurationBlock.handleCommandException();
-					} catch (@SuppressWarnings("unused") NotDefinedException ex) {
+					} catch (NotDefinedException ex) {
 						ApiErrorsWarningsConfigurationBlock.handleCommandException();
-					} catch (@SuppressWarnings("unused") NotEnabledException ex) {
+					} catch (NotEnabledException ex) {
 						ApiErrorsWarningsConfigurationBlock.handleCommandException();
-					} catch (@SuppressWarnings("unused") NotHandledException ex) {
+					} catch (NotHandledException ex) {
 						ApiErrorsWarningsConfigurationBlock.handleCommandException();
 					}
 				}
