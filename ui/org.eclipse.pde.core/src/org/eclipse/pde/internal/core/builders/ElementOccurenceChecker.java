@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -68,9 +68,9 @@ public class ElementOccurenceChecker {
 				if (tagNameMap.containsKey(key)) {
 					int value = tagNameMap.get(key).intValue();
 					value++;
-					tagNameMap.put(key, new Integer(value));
+					tagNameMap.put(key, Integer.valueOf(value));
 				} else {
-					tagNameMap.put(key, new Integer(1));
+					tagNameMap.put(key, Integer.valueOf(1));
 				}
 			}
 		}
@@ -264,7 +264,7 @@ public class ElementOccurenceChecker {
 		for (int i = 0; i < compositor.getChildCount(); i++) {
 			if (schemaObject[i] instanceof ISchemaElement) {
 				String name = schemaObject[i].getName();
-				siblings.put(name, new Integer(childElementCount));
+				siblings.put(name, Integer.valueOf(childElementCount));
 			} else if (schemaObject[i] instanceof ISchemaCompositor) {
 				updateChoiceElementChildren((ISchemaCompositor) schemaObject[i], siblings, childElementCount);
 			}

@@ -178,7 +178,7 @@ public class DSPropertiesSection extends TableSection {
 	private void updateTitle() {
 		int itemCount = fPropertiesTable.getTable().getItemCount();
 		getSection().setText(
-				NLS.bind(Messages.DSPropertiesSection_title, new Integer(
+				NLS.bind(Messages.DSPropertiesSection_title, Integer.valueOf(
 						itemCount)));
 	}
 

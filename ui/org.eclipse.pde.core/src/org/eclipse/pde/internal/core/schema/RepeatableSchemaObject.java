@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -43,14 +43,14 @@ public abstract class RepeatableSchemaObject extends SchemaObject implements ISc
 	}
 
 	public void setMaxOccurs(int newMaxOccurs) {
-		Integer oldValue = new Integer(maxOccurs);
+		Integer oldValue = Integer.valueOf(maxOccurs);
 		maxOccurs = newMaxOccurs;
-		getSchema().fireModelObjectChanged(this, P_MAX_OCCURS, oldValue, new Integer(maxOccurs));
+		getSchema().fireModelObjectChanged(this, P_MAX_OCCURS, oldValue, Integer.valueOf(maxOccurs));
 	}
 
 	public void setMinOccurs(int newMinOccurs) {
-		Integer oldValue = new Integer(minOccurs);
+		Integer oldValue = Integer.valueOf(minOccurs);
 		minOccurs = newMinOccurs;
-		getSchema().fireModelObjectChanged(this, P_MIN_OCCURS, oldValue, new Integer(minOccurs));
+		getSchema().fireModelObjectChanged(this, P_MIN_OCCURS, oldValue, Integer.valueOf(minOccurs));
 	}
 }

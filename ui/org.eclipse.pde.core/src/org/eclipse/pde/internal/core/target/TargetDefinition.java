@@ -226,11 +226,11 @@ public class TargetDefinition implements ITargetDefinition {
 				P2TargetUtils synchronizer = element.getAdapter(P2TargetUtils.class);
 				if (synchronizer != null) {
 					if (!synchronizerNumContainerMap.containsKey(synchronizer)) {
-						synchronizerNumContainerMap.put(synchronizer, new Integer(1));
+						synchronizerNumContainerMap.put(synchronizer, Integer.valueOf(1));
 					}
 					else{
 						Integer numberIU = synchronizerNumContainerMap.get(synchronizer);
-						synchronizerNumContainerMap.put(synchronizer, new Integer(numberIU + 1));
+						synchronizerNumContainerMap.put(synchronizer, Integer.valueOf(numberIU + 1));
 					}
 				}
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,9 +99,9 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	}
 
 	public void setKind(int newKind) {
-		Integer oldValue = new Integer(kind);
+		Integer oldValue = Integer.valueOf(kind);
 		kind = newKind;
-		getSchema().fireModelObjectChanged(this, P_KIND, oldValue, new Integer(kind));
+		getSchema().fireModelObjectChanged(this, P_KIND, oldValue, Integer.valueOf(kind));
 	}
 
 	public void setTranslatableProperty(boolean translatable) {
@@ -130,9 +130,9 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	}
 
 	public void setUse(int newUse) {
-		Integer oldValue = new Integer(use);
+		Integer oldValue = Integer.valueOf(use);
 		use = newUse;
-		getSchema().fireModelObjectChanged(this, P_USE, oldValue, new Integer(use));
+		getSchema().fireModelObjectChanged(this, P_USE, oldValue, Integer.valueOf(use));
 	}
 
 	public void setValue(String value) {

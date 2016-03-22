@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -880,10 +880,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					IMarker.CHAR_START, IMarker.CHAR_END, IMarker.SOURCE_ID,
 					IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID }, new Object[] {
 					problem.getMessage(),
-					new Integer(ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(problem), this.currentproject)),
-					new Integer(line), new Integer(problem.getCharStart()),
-					new Integer(problem.getCharEnd()),
-					ApiAnalysisBuilder.SOURCE, new Integer(problem.getId()) });
+					Integer.valueOf(ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(problem), this.currentproject)),
+					Integer.valueOf(line), Integer.valueOf(problem.getCharStart()),
+					Integer.valueOf(problem.getCharEnd()),
+					ApiAnalysisBuilder.SOURCE, Integer.valueOf(problem.getId()) });
 			// add message arguments, if any
 			String[] args = problem.getMessageArguments();
 			if (args.length > 0) {

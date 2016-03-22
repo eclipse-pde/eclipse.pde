@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,7 +112,7 @@ public class TestReporter implements IApiSearchReporter {
 				this.test.reportFailure("Expecting [" + refs.size() + "] but reported [" + references.length + "] references"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			for (int i = 0; i < references.length; i++) {
-				if (!refs.remove(new Integer(references[i].getReferenceKind()))) {
+				if (!refs.remove(Integer.valueOf(references[i].getReferenceKind()))) {
 					this.test.reportFailure("Reference [" + Reference.getReferenceText(references[i].getReferenceKind()) + "] was not expected"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}

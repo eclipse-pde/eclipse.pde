@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1153,7 +1153,7 @@ public class EEGenerator {
 				return integer.intValue();
 			}
 			int value = this.poolIndex++;
-			this.pool.put(name, new Integer(value));
+			this.pool.put(name, Integer.valueOf(value));
 			return value;
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -255,7 +255,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
 					IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] {
 					(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier()),
-					new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID) }, lineNumber, // 0-based
+					Integer.valueOf(IApiMarkerConstants.API_USAGE_MARKER_ID) }, lineNumber, // 0-based
 					charStart, charEnd, getElementType(reference), getProblemKind(), getProblemFlags(reference));
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
@@ -998,7 +998,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			lineNumber--;
 		}
 		String ltypename = getTypeName(reference.getMember());
-		return ApiProblemFactory.newApiUsageProblem(null, ltypename, getQualifiedMessageArgs(reference), new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID) }, lineNumber, IApiProblem.NO_CHARRANGE, IApiProblem.NO_CHARRANGE, getElementType(reference), getProblemKind(), getProblemFlags(reference));
+		return ApiProblemFactory.newApiUsageProblem(null, ltypename, getQualifiedMessageArgs(reference), new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { Integer.valueOf(IApiMarkerConstants.API_USAGE_MARKER_ID) }, lineNumber, IApiProblem.NO_CHARRANGE, IApiProblem.NO_CHARRANGE, getElementType(reference), getProblemKind(), getProblemFlags(reference));
 	}
 
 	/**

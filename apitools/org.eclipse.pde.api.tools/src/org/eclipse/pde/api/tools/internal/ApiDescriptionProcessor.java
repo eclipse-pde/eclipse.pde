@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -225,7 +225,7 @@ public class ApiDescriptionProcessor {
 			if (node.isInterface()) {
 				type = IApiJavadocTag.TYPE_INTERFACE;
 			}
-			typeStack.push(new Integer(type));
+			typeStack.push(Integer.valueOf(type));
 			updateDocNode(findDescriptorByName(node.getName().getFullyQualifiedName(), null), node, getType(), IApiJavadocTag.MEMBER_NONE);
 			return true;
 		}

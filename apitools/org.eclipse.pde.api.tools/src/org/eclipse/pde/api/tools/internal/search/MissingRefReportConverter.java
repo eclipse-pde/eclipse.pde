@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -257,7 +257,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 			List<IApiProblem> list = null;
 			TreeMap<String, List<IApiProblem>> types = null;
 			for (IApiProblem pb : apipbs) {
-				Integer key = new Integer(pb.getKind());
+				Integer key = Integer.valueOf(pb.getKind());
 				types = this.apiProblems.get(key);
 				if (types == null) {
 					types = new TreeMap<>(missingcompare);

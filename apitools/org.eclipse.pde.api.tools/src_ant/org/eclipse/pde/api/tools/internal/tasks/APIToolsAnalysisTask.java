@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -488,7 +488,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 								IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
 								IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] {
 								id,
-								new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID), }, 0, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_BASELINE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT);
+								Integer.valueOf(IApiMarkerConstants.COMPATIBILITY_MARKER_ID), }, 0, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_BASELINE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT);
 						allProblems.put(id, new IApiProblem[] { problem });
 					}
 				}

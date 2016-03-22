@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -91,13 +91,13 @@ public class PDELabelUtility {
 			int limit = 100;
 			// Check the set for the numbers encountered and generate the
 			// lowest number accordingly
-			if (set.contains(new Integer(0)) == false) {
+			if (set.contains(Integer.valueOf(0)) == false) {
 				// Use base
 			} else {
 				for (int x = 1; x < limit; x++) {
 					// Check if the number was already used to auto-generate an
 					// existing item
-					if (set.contains(new Integer(x)) == false) {
+					if (set.contains(Integer.valueOf(x)) == false) {
 						if (bracketed)
 							base.append(" ("); //$NON-NLS-1$
 						base.append(x);
@@ -167,13 +167,13 @@ public class PDELabelUtility {
 				}
 				// Convert the number we found into an actual number
 				if (buffer.length() > 0) {
-					set.add(new Integer(buffer.toString()));
+					set.add(Integer.valueOf(buffer.toString()));
 				}
 
 			} else {
 				// No number to parse
 				// Assume it is just base
-				set.add(new Integer(0));
+				set.add(Integer.valueOf(0));
 			}
 		}
 	}

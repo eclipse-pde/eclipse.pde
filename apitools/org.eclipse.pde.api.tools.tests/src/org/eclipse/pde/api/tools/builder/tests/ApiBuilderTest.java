@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -468,10 +468,10 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			// compare id's
 			ArrayList<Integer> messages = new ArrayList<Integer>();
 			for (int i = 0; i < length; i++) {
-				messages.add(new Integer(problems[i].getProblemId()));
+				messages.add(Integer.valueOf(problems[i].getProblemId()));
 			}
 			for (int i = 0; i < expectedProblemIds.length; i++) {
-				assertTrue("Missing expected problem: " + expectedProblemIds[i], messages.remove(new Integer(expectedProblemIds[i]))); //$NON-NLS-1$
+				assertTrue("Missing expected problem: " + expectedProblemIds[i], messages.remove(Integer.valueOf(expectedProblemIds[i]))); //$NON-NLS-1$
 			}
 		}
 		if (fLineMappings != null) {

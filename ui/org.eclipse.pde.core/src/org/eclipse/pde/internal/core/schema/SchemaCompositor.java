@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -129,7 +129,7 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 
 	public void setKind(int kind) {
 		if (this.kind != kind) {
-			Integer oldValue = new Integer(this.kind);
+			Integer oldValue = Integer.valueOf(this.kind);
 			this.kind = kind;
 			switch (kind) {
 				case ALL :
@@ -145,7 +145,7 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 					fName = PDECoreMessages.SchemaCompositor_sequence;
 					break;
 			}
-			getSchema().fireModelObjectChanged(this, P_KIND, oldValue, new Integer(kind));
+			getSchema().fireModelObjectChanged(this, P_KIND, oldValue, Integer.valueOf(kind));
 		}
 	}
 

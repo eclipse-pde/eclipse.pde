@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -50,8 +50,8 @@ public class JavaEditorOpener {
 		try {
 			IMarker marker = file.createMarker(NewSearchUI.SEARCH_MARKER);
 			HashMap<String, Integer> attributes = new HashMap<>(4);
-			attributes.put(IMarker.CHAR_START, new Integer(offset));
-			attributes.put(IMarker.CHAR_END, new Integer(offset + length));
+			attributes.put(IMarker.CHAR_START, Integer.valueOf(offset));
+			attributes.put(IMarker.CHAR_END, Integer.valueOf(offset + length));
 			marker.setAttributes(attributes);
 			IDE.gotoMarker(editor, marker);
 			marker.delete();

@@ -148,7 +148,7 @@ public class TracingPropertySource {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					int value = checkbox.getSelection() ? 1 : 0;
-					valueModified(new Integer(value));
+					valueModified(Integer.valueOf(value));
 				}
 			});
 		}
@@ -252,7 +252,7 @@ public class TracingPropertySource {
 			if (lvalue != null && (lvalue.equals("true") || lvalue.equals("false"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				editor = new BooleanEditor(shortKey, shortKey, commentValue);
 				if (masterValue != null) {
-					Integer mvalue = new Integer(masterValue.equals("true") //$NON-NLS-1$
+					Integer mvalue = Integer.valueOf(masterValue.equals("true") //$NON-NLS-1$
 					? 1
 							: 0);
 					fValues.put(shortKey, mvalue);

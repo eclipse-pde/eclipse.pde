@@ -286,7 +286,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	}
 
 	private void updateCount() {
-		fCounterLabel.setText(NLS.bind(PDEUIMessages.ImportWizard_expressPage_total, new Integer(fImportListViewer.getTable().getItemCount()).toString()));
+		fCounterLabel.setText(NLS.bind(PDEUIMessages.ImportWizard_expressPage_total, Integer.valueOf(fImportListViewer.getTable().getItemCount()).toString()));
 		fCounterLabel.getParent().layout();
 	}
 

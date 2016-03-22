@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class XmlReferenceDescriptorWriter {
 	public static final String TYPE_REFERENCES = "type_references"; //$NON-NLS-1$
 	public static final String METHOD_REFERENCES = "method_references"; //$NON-NLS-1$
 	public static final String FIELD_REFERENCES = "field_references"; //$NON-NLS-1$
-	private static final Integer V_ILLEGAL = new Integer(VisibilityModifiers.ILLEGAL_API);
+	private static final Integer V_ILLEGAL = Integer.valueOf(VisibilityModifiers.ILLEGAL_API);
 	private String fLocation = null;
 	private HashMap<String, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>>> fReferenceMap = null;
 	private DocumentBuilder parser = null;
@@ -166,14 +166,14 @@ public class XmlReferenceDescriptorWriter {
 			if ((references[i].getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
 				visibility = V_ILLEGAL;
 			} else {
-				visibility = new Integer(references[i].getVisibility());
+				visibility = Integer.valueOf(references[i].getVisibility());
 			}
 			vmap = mmap.get(visibility);
 			if (vmap == null) {
 				vmap = new HashMap<>();
 				mmap.put(visibility, vmap);
 			}
-			type = new Integer(references[i].getReferenceType());
+			type = Integer.valueOf(references[i].getReferenceType());
 			tmap = vmap.get(type);
 			if (tmap == null) {
 				tmap = new HashMap<>();
@@ -474,7 +474,7 @@ public class XmlReferenceDescriptorWriter {
 	 */
 	private void writeReference(Document document, Element parent, IReferenceDescriptor reference) throws CoreException {
 		Element kelement = null;
-		Integer kind = new Integer(reference.getReferenceKind());
+		Integer kind = Integer.valueOf(reference.getReferenceKind());
 		kelement = findKindElement(parent, kind);
 		if (kelement == null) {
 			kelement = document.createElement(IApiXmlConstants.REFERENCE_KIND);

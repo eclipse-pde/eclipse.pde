@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -411,7 +411,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 			for (int i = 0; i < poolSize; i++) {
 				String readUtf = inputStream.readUTF();
 				int index = inputStream.readShort();
-				pool.put(new Integer(index), readUtf);
+				pool.put(Integer.valueOf(index), readUtf);
 			}
 			int access = 0;
 			// access flag was added in version 2 of the stub format
@@ -419,7 +419,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 				access = inputStream.readChar();
 			}
 			int classIndex = inputStream.readShort();
-			String name = pool.get(new Integer(classIndex));
+			String name = pool.get(Integer.valueOf(classIndex));
 			StringBuffer simpleSig = new StringBuffer();
 			simpleSig.append('L');
 			simpleSig.append(name);
@@ -427,28 +427,28 @@ public class TypeStructureBuilder extends ClassVisitor {
 			type = new ApiType(apiComponent, name.replace('/', '.'), simpleSig.toString(), null, access, null, archiveApiTypeRoot);
 			int superclassNameIndex = inputStream.readShort();
 			if (superclassNameIndex != -1) {
-				String superclassName = pool.get(new Integer(superclassNameIndex));
+				String superclassName = pool.get(Integer.valueOf(superclassNameIndex));
 				type.setSuperclassName(superclassName.replace('/', '.'));
 			}
 			int interfacesLength = inputStream.readShort();
 			if (interfacesLength != 0) {
 				String[] names = new String[interfacesLength];
 				for (int i = 0; i < names.length; i++) {
-					String interfaceName = pool.get(new Integer(inputStream.readShort()));
+					String interfaceName = pool.get(Integer.valueOf(inputStream.readShort()));
 					names[i] = interfaceName.replace('/', '.');
 				}
 				type.setSuperInterfaceNames(names);
 			}
 			int fieldsLength = inputStream.readShort();
 			for (int i = 0; i < fieldsLength; i++) {
-				String fieldName = pool.get(new Integer(inputStream.readShort()));
+				String fieldName = pool.get(Integer.valueOf(inputStream.readShort()));
 				type.addField(fieldName, null, null, 0, null);
 			}
 			int methodsLength = inputStream.readShort();
 			for (int i = 0; i < methodsLength; i++) {
 				int isPolymorphic = 0;
-				String methodSelector = pool.get(new Integer(inputStream.readShort()));
-				String methodSignature = pool.get(new Integer(inputStream.readShort()));
+				String methodSelector = pool.get(Integer.valueOf(inputStream.readShort()));
+				String methodSignature = pool.get(Integer.valueOf(inputStream.readShort()));
 				if (currentVersion == 3) {
 					isPolymorphic = inputStream.readByte();
 				}

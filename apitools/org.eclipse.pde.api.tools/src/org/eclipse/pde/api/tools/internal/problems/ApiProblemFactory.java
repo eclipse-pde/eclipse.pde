@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -412,7 +412,7 @@ public class ApiProblemFactory {
 		if (fMessages == null) {
 			fMessages = loadMessageTemplates(Locale.getDefault());
 		}
-		String pattern = fMessages.get(new Integer(messageid));
+		String pattern = fMessages.get(Integer.valueOf(messageid));
 		if (pattern == null) {
 			return MessageFormat.format(BuilderMessages.ApiProblemFactory_problem_message_not_found, Integer.toString(messageid));
 		}
@@ -460,7 +460,7 @@ public class ApiProblemFactory {
 			String key = keys.nextElement();
 			try {
 				int messageID = Integer.parseInt(key);
-				templates.put(new Integer(messageID), bundle.getString(key));
+				templates.put(Integer.valueOf(messageID), bundle.getString(key));
 			} catch (NumberFormatException e) {
 				// key is not a number
 				templates.put(key, bundle.getString(key));

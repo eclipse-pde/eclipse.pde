@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -73,9 +73,9 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 	@Override
 	public void setSiteType(int type) throws CoreException {
 		ensureModelEditable();
-		Integer oldValue = new Integer(this.fSiteType);
+		Integer oldValue = Integer.valueOf(this.fSiteType);
 		this.fSiteType = type;
-		firePropertyChanged(this, P_URL, oldValue, new Integer(type));
+		firePropertyChanged(this, P_URL, oldValue, Integer.valueOf(type));
 	}
 
 	@Override

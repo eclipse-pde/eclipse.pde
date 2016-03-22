@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -294,9 +294,9 @@ public class ClasspathComputer {
 		if (minimumValue != null && (override || !map.containsKey(key))) {
 			if (fSeverityTable == null) {
 				fSeverityTable = new HashMap<>(3);
-				fSeverityTable.put(JavaCore.IGNORE, new Integer(SEVERITY_IGNORE));
-				fSeverityTable.put(JavaCore.WARNING, new Integer(SEVERITY_WARNING));
-				fSeverityTable.put(JavaCore.ERROR, new Integer(SEVERITY_ERROR));
+				fSeverityTable.put(JavaCore.IGNORE, Integer.valueOf(SEVERITY_IGNORE));
+				fSeverityTable.put(JavaCore.WARNING, Integer.valueOf(SEVERITY_WARNING));
+				fSeverityTable.put(JavaCore.ERROR, Integer.valueOf(SEVERITY_ERROR));
 			}
 			String currentValue = map.get(key);
 			int current = currentValue != null && fSeverityTable.containsKey(currentValue) ? fSeverityTable.get(currentValue).intValue() : 0;

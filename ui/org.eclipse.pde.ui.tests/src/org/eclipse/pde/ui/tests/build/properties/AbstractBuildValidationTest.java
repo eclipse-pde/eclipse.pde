@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,7 +93,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 				String markerEntry = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
 				IMarkerResolution[] resolutions = resGen.getResolutions(marker);
 				String quickFixindex = getProperty(expectedValues, markerEntry, "quickfix");
-				resolutions[new Integer(quickFixindex.trim()).intValue()].run(marker);
+				resolutions[Integer.parseInt(quickFixindex.trim())].run(marker);
 				buildProject(marker.getResource().getProject());
 				assertFalse("Quick fix verification failed for the project " + buildProperty.getProject().getName() , marker.exists());
 			}
@@ -141,7 +141,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 			message = "Marker line number for build.properties" + projectName;
 			int lineNumber;
 			try {
-				lineNumber = new Integer(getProperty(expectedValues, markerEntry, IMarker.LINE_NUMBER)).intValue();
+				lineNumber = Integer.parseInt(getProperty(expectedValues, markerEntry, IMarker.LINE_NUMBER));
 			} catch (Exception e) {
 				message = "Could not read expected line number for the project " + projectName;
 				lineNumber = 0;

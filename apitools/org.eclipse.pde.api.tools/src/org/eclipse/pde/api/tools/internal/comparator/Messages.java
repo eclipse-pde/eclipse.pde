@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class Messages extends NLS {
 			String key = keys.nextElement();
 			try {
 				int messageID = Integer.parseInt(key);
-				templates.put(new Integer(messageID), bundle.getString(key));
+				templates.put(Integer.valueOf(messageID), bundle.getString(key));
 			} catch (NumberFormatException e) {
 				// key ill-formed
 			} catch (MissingResourceException e) {
@@ -78,7 +78,7 @@ public class Messages extends NLS {
 		if (fMessages == null) {
 			fMessages = loadMessageTemplates(Locale.getDefault());
 		}
-		Integer key = new Integer(getKey(delta));
+		Integer key = Integer.valueOf(getKey(delta));
 		String message = fMessages.get(key);
 		if (message == null) {
 			return MessageFormat.format(Messages.problem_message_not_found, String.valueOf(key));

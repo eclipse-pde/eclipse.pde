@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class OSGiLessAnalysisTests extends TestCase {
 																		IApiProblem.NO_FLAGS));
 		assertEquals("Wrong number of problems", 4, problems.length); //$NON-NLS-1$
 		for (int i = 0; i < problems.length; i++) {
-			expectedIds.remove(new Integer(problems[i].getId()));
+			expectedIds.remove(Integer.valueOf(problems[i].getId()));
 		}
 		assertTrue("Did not find expected problems", expectedIds.isEmpty()); //$NON-NLS-1$
 		baseline.dispose();

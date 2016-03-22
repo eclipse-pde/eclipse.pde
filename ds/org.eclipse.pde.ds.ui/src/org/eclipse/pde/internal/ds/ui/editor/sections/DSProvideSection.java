@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2016 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -358,7 +358,7 @@ public class DSProvideSection extends TableSection implements
 		int itemCount = fProvidesTable.getTable().getItemCount();
 		getSection().setText(
 				NLS.bind(Messages.DSProvideSection_title,
-						new Integer(
+						Integer.valueOf(
 						itemCount)));
 	}
 

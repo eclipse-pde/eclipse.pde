@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -576,7 +576,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		button.setData(data);
 		button.setSelection(Boolean.valueOf(data.key.getStoredValue(fLookupOrder, false, fManager)).booleanValue());
 		button.addSelectionListener(selectionlistener);
-		Integer mapkey = new Integer(tabkind);
+		Integer mapkey = Integer.valueOf(tabkind);
 		HashSet<Control> controls = fControlMap.get(mapkey);
 		if (controls == null) {
 			controls = new HashSet<>(8);
@@ -620,7 +620,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		if (value != null)
 			index = Integer.parseInt(value);
 		combo.select(data.getSelection(SEVERITIES[index]));
-		Integer mapkey = new Integer(tabkind);
+		Integer mapkey = Integer.valueOf(tabkind);
 		HashSet<Control> controls = fControlMap.get(mapkey);
 		if (controls == null) {
 			controls = new HashSet<>(8);
@@ -646,7 +646,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		if (value != null)
 			text.setText(value);
 		text.addModifyListener(modifylistener);
-		Integer mapkey = new Integer(tabkind);
+		Integer mapkey = Integer.valueOf(tabkind);
 		HashSet<Control> controls = fControlMap.get(mapkey);
 		if (controls == null) {
 			controls = new HashSet<>(8);

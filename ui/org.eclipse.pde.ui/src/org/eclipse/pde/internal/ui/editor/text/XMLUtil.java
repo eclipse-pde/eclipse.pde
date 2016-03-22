@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -188,9 +188,9 @@ public abstract class XMLUtil {
 		String counterKey = getCounterKey(elementInfo);
 		Integer counter = counters.get(counterKey);
 		if (counter == null) {
-			counter = new Integer(1);
+			counter = Integer.valueOf(1);
 		} else
-			counter = new Integer(counter.intValue() + 1);
+			counter = Integer.valueOf(counter.intValue() + 1);
 		counters.put(counterKey, counter);
 		return counter.intValue();
 	}

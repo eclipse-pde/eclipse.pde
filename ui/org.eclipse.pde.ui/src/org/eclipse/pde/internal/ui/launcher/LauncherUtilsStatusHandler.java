@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 eXXcellent solutions gmbh, EclipseSource Corporation,
+ * Copyright (c) 2009, 2016 eXXcellent solutions gmbh, EclipseSource Corporation,
  * IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -171,7 +171,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 				result[0] = dialog.open();
 			}
 		});
-		return new Integer(result[0]);
+		return Integer.valueOf(result[0]);
 	}
 
 	private static void generateErrorDialog(final String title, final String message, final ILaunchConfiguration launchConfig, final String mode) {

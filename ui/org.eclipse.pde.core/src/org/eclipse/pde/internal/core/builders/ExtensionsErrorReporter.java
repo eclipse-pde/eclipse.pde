@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,7 +125,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	 */
 	private void reportMaxOccurenceViolation(ElementOccurrenceResult result, int severity) {
 		Element childElement = result.getElement();
-		String allowedOccurrences = new Integer(result.getAllowedOccurrences()).toString();
+		String allowedOccurrences = Integer.valueOf(result.getAllowedOccurrences()).toString();
 		String message = NLS.bind(PDECoreMessages.ExtensionsErrorReporter_maxOccurrence, new String[] {allowedOccurrences, childElement.getNodeName()});
 		report(message, getLine(childElement), severity, PDEMarkerFactory.P_ILLEGAL_XML_NODE, childElement, null, PDEMarkerFactory.CAT_FATAL);
 	}
@@ -138,7 +138,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	private void reportMinOccurenceViolation(Element parentElement, ElementOccurrenceResult result, int severity) {
 
 		ISchemaElement childElement = result.getSchemaElement();
-		String allowedOccurrences = new Integer(result.getAllowedOccurrences()).toString();
+		String allowedOccurrences = Integer.valueOf(result.getAllowedOccurrences()).toString();
 		String message = NLS.bind(PDECoreMessages.ExtensionsErrorReporter_minOccurrence, new String[] {allowedOccurrences, childElement.getName()});
 		report(message, getLine(parentElement), severity, PDEMarkerFactory.CAT_FATAL);
 	}

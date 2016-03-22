@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,17 +169,17 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	@Override
 	public void setMatch(int match) throws CoreException {
 		ensureModelEditable();
-		Integer oldValue = new Integer(this.fMatch);
+		Integer oldValue = Integer.valueOf(this.fMatch);
 		this.fMatch = match;
-		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
+		firePropertyChanged(P_MATCH, oldValue, Integer.valueOf(match));
 	}
 
 	@Override
 	public void setSearchLocation(int searchLocation) throws CoreException {
 		ensureModelEditable();
-		Integer oldValue = new Integer(this.fSearchLocation);
+		Integer oldValue = Integer.valueOf(this.fSearchLocation);
 		this.fSearchLocation = searchLocation;
-		firePropertyChanged(P_SEARCH_LOCATION, oldValue, new Integer(searchLocation));
+		firePropertyChanged(P_SEARCH_LOCATION, oldValue, Integer.valueOf(searchLocation));
 	}
 
 	@Override

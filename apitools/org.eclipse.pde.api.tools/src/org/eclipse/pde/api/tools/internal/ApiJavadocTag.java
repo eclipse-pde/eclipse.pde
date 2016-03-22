@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,6 +155,6 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 * @return a new key that can be used for map lookups
 	 */
 	private Integer getTagKey(int type, int member) {
-		return new Integer((type | member) + hashCode());
+		return Integer.valueOf((type | member) + hashCode());
 	}
 }

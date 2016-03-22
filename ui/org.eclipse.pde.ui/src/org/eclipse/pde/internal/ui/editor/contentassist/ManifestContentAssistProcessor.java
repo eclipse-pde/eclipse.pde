@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -299,7 +299,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		int equals = currentValue.lastIndexOf('=');
 		if (equals == -1 || semicolon > equals) {
 			String[] validAtts = new String[] {Constants.RESOLUTION_DIRECTIVE, Constants.VERSION_ATTRIBUTE};
-			Integer[] validTypes = new Integer[] {new Integer(F_TYPE_DIRECTIVE), new Integer(F_TYPE_ATTRIBUTE)};
+			Integer[] validTypes = new Integer[] {Integer.valueOf(F_TYPE_DIRECTIVE), Integer.valueOf(F_TYPE_ATTRIBUTE)};
 			return handleAttrsAndDirectives(value, initializeNewList(validAtts), initializeNewList(validTypes), offset);
 		}
 		String attributeValue = removeLeadingSpaces(currentValue.substring(semicolon + 1));
@@ -375,7 +375,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		int equals = currentValue.lastIndexOf('=');
 		if (equals == -1 || semicolon > equals) {
 			String[] validAttrs = new String[] {Constants.BUNDLE_VERSION_ATTRIBUTE, Constants.RESOLUTION_DIRECTIVE, Constants.VISIBILITY_DIRECTIVE};
-			Integer[] validTypes = new Integer[] {new Integer(F_TYPE_ATTRIBUTE), new Integer(F_TYPE_DIRECTIVE), new Integer(F_TYPE_DIRECTIVE)};
+			Integer[] validTypes = new Integer[] {Integer.valueOf(F_TYPE_ATTRIBUTE), Integer.valueOf(F_TYPE_DIRECTIVE), Integer.valueOf(F_TYPE_DIRECTIVE)};
 			return handleAttrsAndDirectives(value, initializeNewList(validAttrs), initializeNewList(validTypes), offset);
 		}
 		String attributeValue = removeLeadingSpaces(currentValue.substring(semicolon + 1));
@@ -477,7 +477,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			int equals = currentValue.lastIndexOf('=');
 			if (equals == -1 || semicolon > equals) {
 				String[] validAttrs = new String[] {Constants.VERSION_ATTRIBUTE, ICoreConstants.INTERNAL_DIRECTIVE, ICoreConstants.FRIENDS_DIRECTIVE};
-				Integer[] validTypes = new Integer[] {new Integer(F_TYPE_ATTRIBUTE), new Integer(F_TYPE_DIRECTIVE), new Integer(F_TYPE_DIRECTIVE)};
+				Integer[] validTypes = new Integer[] {Integer.valueOf(F_TYPE_ATTRIBUTE), Integer.valueOf(F_TYPE_DIRECTIVE), Integer.valueOf(F_TYPE_DIRECTIVE)};
 				return handleAttrsAndDirectives(value, initializeNewList(validAttrs), initializeNewList(validTypes), offset);
 			}
 			String attributeValue = removeLeadingSpaces(currentValue.substring(semicolon + 1));
@@ -540,7 +540,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			if (semicolon > equals) {
 				// we know we are looking for a directive
 				String[] validDirectives = new String[] {Constants.EXCLUDE_DIRECTIVE, Constants.INCLUDE_DIRECTIVE};
-				Integer[] validTypes = new Integer[] {new Integer(F_TYPE_DIRECTIVE), new Integer(F_TYPE_DIRECTIVE)};
+				Integer[] validTypes = new Integer[] {Integer.valueOf(F_TYPE_DIRECTIVE), Integer.valueOf(F_TYPE_DIRECTIVE)};
 				return handleAttrsAndDirectives(currentValue, initializeNewList(validDirectives), initializeNewList(validTypes), offset);
 			}
 			int quote = currentValue.lastIndexOf('"');

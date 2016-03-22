@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -341,7 +341,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		String[] ees = StubApiComponent.getInstalledMetadata();
 		if (ees.length < 1) {
-			IApiProblem problem = ApiProblemFactory.newApiUsageProblem(Path.EMPTY.toString(), null, new String[] { fJavaProject.getElementName() }, new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID) }, -1, -1, -1, IElementDescriptor.RESOURCE, IApiProblem.MISSING_EE_DESCRIPTIONS);
+			IApiProblem problem = ApiProblemFactory.newApiUsageProblem(Path.EMPTY.toString(), null, new String[] { fJavaProject.getElementName() }, new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { Integer.valueOf(IApiMarkerConstants.API_USAGE_MARKER_ID) }, -1, -1, -1, IElementDescriptor.RESOURCE, IApiProblem.MISSING_EE_DESCRIPTIONS);
 			addProblem(problem);
 		}
 	}
@@ -721,7 +721,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID,
 							IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] {
 							((ApiProblemFilter) filter).getHandle(),
-							new Integer(IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID) }, lineNumber, charStart, charEnd, problem.getElementKind(), IApiProblem.UNUSED_PROBLEM_FILTERS));
+							Integer.valueOf(IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID) }, lineNumber, charStart, charEnd, problem.getElementKind(), IApiProblem.UNUSED_PROBLEM_FILTERS));
 		}
 	}
 
@@ -1649,7 +1649,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					IApiMarkerConstants.API_MARKER_ATTR_ID,
 					IApiMarkerConstants.MARKER_ATTR_HANDLE_ID }, new Object[] {
 					version,
-					new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID),
+					Integer.valueOf(IApiMarkerConstants.SINCE_TAG_MARKER_ID),
 					member.getHandleIdentifier() }, lineNumber, charStart, charEnd, info.getElementType(), kind);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
@@ -1717,7 +1717,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
 					IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] {
 					member == null ? null : member.getHandleIdentifier(),
-					new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID), }, lineNumber, charStart, charEnd, IApiProblem.CATEGORY_COMPATIBILITY, delta.getElementType(), delta.getKind(), delta.getFlags());
+					Integer.valueOf(IApiMarkerConstants.COMPATIBILITY_MARKER_ID), }, lineNumber, charStart, charEnd, IApiProblem.CATEGORY_COMPATIBILITY, delta.getElementType(), delta.getKind(), delta.getFlags());
 			return apiProblem;
 
 		} catch (CoreException e) {
@@ -1734,7 +1734,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private void createApiComponentResolutionProblem(final IApiComponent component, final String message) {
 		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem(Path.EMPTY.toString(), new String[] {
-				component.getSymbolicName(), message }, new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { new Integer(IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.API_COMPONENT_RESOLUTION);
+				component.getSymbolicName(), message }, new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { Integer.valueOf(IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.API_COMPONENT_RESOLUTION);
 		addProblem(problem);
 	}
 
@@ -2078,7 +2078,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			printWriter.print("- "); //$NON-NLS-1$
 			printWriter.println(deltas[i].getMessage());
 			if (i == max - 1 && max < deltas.length) {
-				printWriter.println(NLS.bind(BuilderMessages.BaseApiAnalyzer_more_version_problems, new Integer(deltas.length - max)));
+				printWriter.println(NLS.bind(BuilderMessages.BaseApiAnalyzer_more_version_problems, Integer.valueOf(deltas.length - max)));
 			}
 		}
 		printWriter.flush();
@@ -2172,7 +2172,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				IApiMarkerConstants.API_MARKER_ATTR_ID,
 				IApiMarkerConstants.VERSION_NUMBERING_ATTR_DESCRIPTION, }, new Object[] {
 				version,
-				new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
+				Integer.valueOf(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
 				description }, lineNumber, charStart, charEnd, IElementDescriptor.RESOURCE, kind);
 	}
 
@@ -2190,7 +2190,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (ApiPlugin.DEBUG_API_ANALYZER) {
 			System.out.println("Checking if the default API baseline is set"); //$NON-NLS-1$
 		}
-		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(), new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { new Integer(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISSING);
+		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(), new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISSING);
 		addProblem(problem);
 	}
 

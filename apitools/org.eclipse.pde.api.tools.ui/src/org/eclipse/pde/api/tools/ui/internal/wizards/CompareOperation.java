@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,8 +85,8 @@ public class CompareOperation extends Job {
 				}
 				int size = this.selection.size();
 				String description = NLS.bind(ActionMessages.CompareWithAction_compared_with_against, new Object[] {
-						new Integer(size), baselineName,
-						new Integer(delta.getChildren().length) });
+						Integer.valueOf(size), baselineName,
+						Integer.valueOf(delta.getChildren().length) });
 				if (size == 0) {
 					description = ActionMessages.CompareWithAction_compared_against_nothing;
 				} else if (size == 1) {
@@ -95,7 +95,7 @@ public class CompareOperation extends Job {
 					description = NLS.bind(ActionMessages.CompareWithAction_compared_project_with, new Object[] {
 							elementName,
 							baselineName,
-							new Integer(delta.getChildren().length) });
+							Integer.valueOf(delta.getChildren().length) });
 				}
 				ApiPlugin.getDefault().getSessionManager().addSession(new DeltaSession(description, delta, baselineName), true);
 				return Status.OK_STATUS;

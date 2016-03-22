@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -504,11 +504,11 @@ public class FeatureBlock {
 
 		private Object getLocationIndex(String location) {
 			if (location.equalsIgnoreCase(IPDELauncherConstants.LOCATION_DEFAULT)) {
-				return new Integer(0);
+				return Integer.valueOf(0);
 			} else if (location.equalsIgnoreCase(IPDELauncherConstants.LOCATION_WORKSPACE)) {
-				return new Integer(1);
+				return Integer.valueOf(1);
 			} else if (location.equalsIgnoreCase(IPDELauncherConstants.LOCATION_EXTERNAL)) {
-				return new Integer(2);
+				return Integer.valueOf(2);
 			}
 			return null;
 		}
@@ -883,13 +883,13 @@ public class FeatureBlock {
 		column1.setText(PDEUIMessages.FeatureBlock_features);
 		column1.setWidth(400);
 		column1.addSelectionListener(fListener);
-		column1.setData(COLUMN_ID, new Integer(COLUMN_FEATURE_NAME));
+		column1.setData(COLUMN_ID, Integer.valueOf(COLUMN_FEATURE_NAME));
 
 		TreeColumn column2 = new TreeColumn(fTree.getTree(), SWT.CENTER);
 		column2.setText(PDEUIMessages.FeatureBlock_pluginResolution);
 		column2.setWidth(100);
 		column2.addSelectionListener(fListener);
-		column2.setData(COLUMN_ID, new Integer(COLUMN_PLUGIN_RESOLUTION));
+		column2.setData(COLUMN_ID, Integer.valueOf(COLUMN_PLUGIN_RESOLUTION));
 
 		fTree.getTree().setHeaderVisible(true);
 		fTree.setLabelProvider(new FeatureTreeLabelProvider());
@@ -1117,7 +1117,7 @@ public class FeatureBlock {
 		if (fCounter != null) {
 			int checked = fTree.getCheckedLeafCount();
 			int total = fFeatureModels.values().size() + fAdditionalPlugins.size();
-			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
+			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, Integer.valueOf(checked), Integer.valueOf(total)));
 		}
 	}
 

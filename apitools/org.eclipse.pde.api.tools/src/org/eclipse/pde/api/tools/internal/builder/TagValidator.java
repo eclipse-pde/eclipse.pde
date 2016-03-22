@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -460,7 +460,7 @@ public class TagValidator extends Validator {
 					tag.getTagName(), context }, new String[] {
 					IApiMarkerConstants.API_MARKER_ATTR_ID,
 					IApiMarkerConstants.MARKER_ATTR_HANDLE_ID }, new Object[] {
-					new Integer(markerid),
+					Integer.valueOf(markerid),
 					fCompilationUnit.getHandleIdentifier() }, linenumber, charstart, charend, IApiProblem.CATEGORY_USAGE, element, kind, IApiProblem.NO_FLAGS);
 
 			addProblem(problem);
@@ -760,7 +760,7 @@ public class TagValidator extends Validator {
 					name, context }, new String[] {
 					IApiMarkerConstants.API_MARKER_ATTR_ID,
 					IApiMarkerConstants.MARKER_ATTR_HANDLE_ID }, new Object[] {
-					new Integer(markerid),
+					Integer.valueOf(markerid),
 					fCompilationUnit.getHandleIdentifier() }, linenumber, charstart, charend, IApiProblem.CATEGORY_USAGE, element, kind, IApiProblem.NO_FLAGS);
 
 			addProblem(problem);

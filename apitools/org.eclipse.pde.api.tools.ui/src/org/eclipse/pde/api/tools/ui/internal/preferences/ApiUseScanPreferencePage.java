@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -213,7 +213,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		});
 
 		HashMap<String, Object> linkdata = new HashMap<String, Object>();
-		linkdata.put(ApiErrorsWarningsPreferencePage.INITIAL_TAB, new Integer(ApiErrorsWarningsConfigurationBlock.API_USE_SCANS_PAGE_ID));
+		linkdata.put(ApiErrorsWarningsPreferencePage.INITIAL_TAB, Integer.valueOf(ApiErrorsWarningsConfigurationBlock.API_USE_SCANS_PAGE_ID));
 		PreferenceLinkArea apiErrorLinkArea = new PreferenceLinkArea(comp, SWT.NONE, ApiErrorsWarningsPreferencePage.ID, PreferenceMessages.ApiUseScanPreferencePage_9, (IWorkbenchPreferenceContainer) getContainer(), linkdata);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		data.widthHint = 250;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class SelectSessionAction extends Action implements IMenuCreator {
 			final ISession session = sessions[i];
 			MenuItem item = new MenuItem(menu, SWT.RADIO);
 			Object[] labelparams = new Object[] {
-					new Integer(i + 1), session.getDescription() };
+					Integer.valueOf(i + 1), session.getDescription() };
 			item.setText(NLS.bind(ActionMessages.SelectSessionActionEntry_label, labelparams));
 			item.setSelection(session == active);
 			item.addSelectionListener(new SelectionAdapter() {

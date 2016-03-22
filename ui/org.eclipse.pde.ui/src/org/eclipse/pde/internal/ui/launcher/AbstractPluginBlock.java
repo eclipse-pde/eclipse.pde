@@ -292,7 +292,7 @@ public abstract class AbstractPluginBlock {
 		if (fCounter != null) {
 			int checked = fNumExternalChecked + fNumWorkspaceChecked;
 			int total = getWorkspaceModels().length + getExternalModels().length;
-			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
+			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, Integer.valueOf(checked), Integer.valueOf(total)));
 		}
 	}
 

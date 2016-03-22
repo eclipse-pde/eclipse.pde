@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,17 +132,17 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 	@Override
 	public void setMatch(int match) throws CoreException {
 		ensureModelEditable();
-		Integer oldValue = new Integer(this.fMatch);
+		Integer oldValue = Integer.valueOf(this.fMatch);
 		this.fMatch = match;
-		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
+		firePropertyChanged(P_MATCH, oldValue, Integer.valueOf(match));
 	}
 
 	@Override
 	public void setIdMatch(int idMatch) throws CoreException {
 		ensureModelEditable();
-		Integer oldValue = new Integer(this.fIdMatch);
+		Integer oldValue = Integer.valueOf(this.fIdMatch);
 		this.fIdMatch = idMatch;
-		firePropertyChanged(P_ID_MATCH, oldValue, new Integer(idMatch));
+		firePropertyChanged(P_ID_MATCH, oldValue, Integer.valueOf(idMatch));
 	}
 
 	@Override
@@ -153,9 +153,9 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 	@Override
 	public void setType(int type) throws CoreException {
 		ensureModelEditable();
-		Integer oldValue = new Integer(this.fType);
+		Integer oldValue = Integer.valueOf(this.fType);
 		this.fType = type;
-		firePropertyChanged(P_TYPE, oldValue, new Integer(type));
+		firePropertyChanged(P_TYPE, oldValue, Integer.valueOf(type));
 	}
 
 	@Override
