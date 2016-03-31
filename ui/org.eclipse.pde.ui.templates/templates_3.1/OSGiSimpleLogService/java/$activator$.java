@@ -11,10 +11,7 @@ public class $activator$ implements BundleActivator {
 	private ServiceTracker simpleLogServiceTracker;
 	private SimpleLogService simpleLogService;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		// register the service
 		context.registerService(
@@ -34,10 +31,7 @@ public class $activator$ implements BundleActivator {
 			simpleLogService.log("$startLogMessage$");
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if(simpleLogService != null)
 			simpleLogService.log("$stopLogMessage$");

@@ -1,7 +1,7 @@
 package $packageName$;
 
 public interface SimpleLogService {
-
-	public void log(String message);
 	
+	void log(String message);
+
 }
