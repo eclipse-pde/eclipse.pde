@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 
 		fRefLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaElementReferenceDetails_reference);
 		fRefLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		fReferenceLink = toolkit.createHyperlink(parent, new String(), SWT.NONE);
+		fReferenceLink = toolkit.createHyperlink(parent, "", SWT.NONE); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fReferenceLink.setLayoutData(gd);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,7 +93,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 			if (fFoldingStructureProvider != null) {
 				fFoldingStructureProvider.initialize();
 				IReconciler rec = getSourceViewerConfiguration().getReconciler(getSourceViewer());
-				IReconcilingStrategy startegy = rec.getReconcilingStrategy(new String());
+				IReconcilingStrategy startegy = rec.getReconcilingStrategy(""); //$NON-NLS-1$
 				if (startegy instanceof ReconcilingStrategy) {
 					((ReconcilingStrategy) startegy).addParticipant(fFoldingStructureProvider);
 				}

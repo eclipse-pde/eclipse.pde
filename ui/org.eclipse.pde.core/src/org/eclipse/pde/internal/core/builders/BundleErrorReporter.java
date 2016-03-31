@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1198,7 +1198,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			location = location.substring(0, index);
 		} else {
 			fileName = location;
-			location = new String();
+			location = ""; //$NON-NLS-1$
 		}
 
 		// Header introduced in OSGi R4 - warn if R3 manifest

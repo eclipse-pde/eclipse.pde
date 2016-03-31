@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -366,7 +366,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		IManifestHeader mheader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 		// always create header.  When available, ImportPackageHeader will help with formatting (see bug 149976)
 		if (mheader == null) {
-			bundle.setHeader(Constants.IMPORT_PACKAGE, new String());
+			bundle.setHeader(Constants.IMPORT_PACKAGE, ""); //$NON-NLS-1$
 			mheader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 		}
 		if (mheader instanceof ImportPackageHeader) {

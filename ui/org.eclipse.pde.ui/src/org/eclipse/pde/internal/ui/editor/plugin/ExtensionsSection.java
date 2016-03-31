@@ -1064,7 +1064,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		if (obj != null) {
 			return obj.toString();
 		}
-		return new String();
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override

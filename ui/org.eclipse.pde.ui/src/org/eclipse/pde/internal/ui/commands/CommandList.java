@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -137,7 +137,7 @@ public class CommandList {
 				return cat.getId();
 			}
 		}
-		return new String();
+		return ""; //$NON-NLS-1$
 	}
 
 	private class CollapseAction extends Action {
@@ -160,7 +160,7 @@ public class CommandList {
 		fCCP = cv;
 		fToolkit = cv.getToolkit();
 		createTree(parent);
-		fComImgServ = (ICommandImageService) PlatformUI.getWorkbench().getAdapter(ICommandImageService.class);
+		fComImgServ = PlatformUI.getWorkbench().getAdapter(ICommandImageService.class);
 	}
 
 	private void createTree(Composite parent) {
