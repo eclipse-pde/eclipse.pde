@@ -68,8 +68,6 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 			result.add("templates_3.2" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (version >= 3.1)
 			result.add("templates_3.1" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (version >= 3.0)
-			result.add("templates_3.0" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return result.toArray(new String[result.size()]);
 	}
 
