@@ -39,6 +39,7 @@ public class PDERuntimePluginImages {
 	public static final String IMG_CONTEXTID_OBJ = "contextid_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_SAVE_IMAGE_AS_OBJ = "save_image_as_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_COPY_QNAME = "cpyqual_menu.gif"; //$NON-NLS-1$
+	public static final String IMG_UP_NAV = "up_nav.png"; //$NON-NLS-1$
 
 	public static final ImageDescriptor CLASS_OBJ = create(PATH_OBJ, IMG_CLASS_OBJ);
 	public static final ImageDescriptor INTERFACE_OBJ = create(PATH_OBJ, IMG_INTERFACE_OBJ);
@@ -50,6 +51,7 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor CONTEXTID_OBJ = create(PATH_OBJ, IMG_CONTEXTID_OBJ);
 	public static final ImageDescriptor SAVE_IMAGE_AS_OBJ = create(PATH_OBJ, IMG_SAVE_IMAGE_AS_OBJ);
 	public static final ImageDescriptor COPY_QNAME = create(PATH_LCL, IMG_COPY_QNAME);
+	public static final ImageDescriptor UP_NAV = create(PATH_LCL, IMG_UP_NAV);
 
 	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(PATH_DCL, "refresh.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REFRESH = create(PATH_LCL, "refresh.gif"); //$NON-NLS-1$

@@ -46,6 +46,12 @@
             id="org.eclipse.pde.runtime.spy.commands.menuSpyCommand"
             name="%spy-menu-command.name">
       </command>
+      <command
+            categoryId="org.eclipse.pde.runtime.spy.commands.category"
+            description="%spy-layout-command.description"
+            id="org.eclipse.pde.runtime.spy.commands.layoutSpyCommand"
+            name="%spy-layout-command.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.commandImages">
@@ -56,6 +62,10 @@
       <image
             commandId="org.eclipse.pde.runtime.spy.commands.menuSpyCommand"
             icon="$nl$/icons/obj16/menuspy_obj.gif">
+      </image>
+      <image
+            commandId="org.eclipse.pde.runtime.spy.commands.layoutSpyCommand"
+            icon="$nl$/icons/obj16/layoutspy_obj.png">
       </image>
    </extension>
    <extension
@@ -87,6 +97,12 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+M2+F2">
       </key>
+      <key
+            commandId="org.eclipse.pde.runtime.spy.commands.layoutSpyCommand"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+M3+F9">
+      </key>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -97,6 +113,10 @@
       <handler
             class="org.eclipse.pde.internal.runtime.spy.handlers.MenuSpyHandler"
             commandId="org.eclipse.pde.runtime.spy.commands.menuSpyCommand">
+      </handler>
+      <handler
+            class="org.eclipse.pde.internal.runtime.spy.handlers.LayoutSpyHandler"
+            commandId="org.eclipse.pde.runtime.spy.commands.layoutSpyCommand">
       </handler>
    </extension>
 
