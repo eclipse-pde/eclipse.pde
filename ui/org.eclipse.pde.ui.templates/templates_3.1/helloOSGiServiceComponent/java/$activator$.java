@@ -15,15 +15,12 @@ public class $activator$ implements BundleActivator, ServiceListener {
 	private ServiceTracker<DictionaryService, DictionaryService> dictionaryServiceTracker;
 	private BundleContext fContext;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		fContext = context;
 		service = new DictionaryServiceImpl();
 
-		Hashtable<String, Object> props = new Hashtable<String, Object>();
+		Hashtable<String, Object> props = new Hashtable<>();
 		// register the service
 		context.registerService(DictionaryService.class.getName(), service, props);
 
@@ -38,10 +35,8 @@ public class $activator$ implements BundleActivator, ServiceListener {
 		service = dictionaryServiceTracker.getService();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
+	
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		// close the service tracker
 		dictionaryServiceTracker.close();
@@ -51,6 +46,7 @@ public class $activator$ implements BundleActivator, ServiceListener {
 		fContext = null;
 	}
 
+	@Override
 	public void serviceChanged(ServiceEvent ev) {
 		ServiceReference<?> sr = ev.getServiceReference();
 		switch(ev.getType()) {
