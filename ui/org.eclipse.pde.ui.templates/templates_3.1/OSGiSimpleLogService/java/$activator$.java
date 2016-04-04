@@ -1,46 +1,52 @@
 package $packageName$;
 
-import java.util.Hashtable;
-
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-public class $activator$ implements BundleActivator {
+public class $activator$ implements BundleActivator, ServiceTrackerCustomizer<SimpleLogService, SimpleLogService> {
 
-	private ServiceTracker simpleLogServiceTracker;
-	private SimpleLogService simpleLogService;
+	private ServiceTracker<SimpleLogService, SimpleLogService> simpleLogServiceTracker;
+	private BundleContext bundleContext;
 	
 	@Override
 	public void start(BundleContext context) throws Exception {
-		// register the service
-		context.registerService(
-				SimpleLogService.class.getName(), 
-				new SimpleLogServiceImpl(), 
-				new Hashtable());
+		bundleContext = context;
 		
 		// create a tracker and track the log service
 		simpleLogServiceTracker = 
-			new ServiceTracker(context, SimpleLogService.class.getName(), null);
+			new ServiceTracker<SimpleLogService, SimpleLogService>(context, SimpleLogService.class.getName(), this);
 		simpleLogServiceTracker.open();
-		
-		// grab the service
-		simpleLogService = (SimpleLogService) simpleLogServiceTracker.getService();
-
-		if(simpleLogService != null)
-			simpleLogService.log("$startLogMessage$");
 	}
 	
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		if(simpleLogService != null)
-			simpleLogService.log("$stopLogMessage$");
-		
 		// close the service tracker
 		simpleLogServiceTracker.close();
 		simpleLogServiceTracker = null;
-		
-		simpleLogService = null;
+	}
+	
+	@Override
+	public SimpleLogService addingService(ServiceReference<SimpleLogService> reference) {
+		// grab the service
+		SimpleLogService simpleLogService = bundleContext.getService(reference);
+
+		if (simpleLogService != null)
+			simpleLogService.log("$startLogMessage$");
+	
+		return simpleLogService;
 	}
 
+	@Override
+	public void modifiedService(ServiceReference<SimpleLogService> reference, SimpleLogService service) {
+		// do nothing
+	}
+
+	@Override
+	public void removedService(ServiceReference<SimpleLogService> reference, SimpleLogService simpleLogService) {
+		if (simpleLogService != null)
+			simpleLogService.log("$stopLogMessage$");
+		
+		bundleContext.ungetService(reference);
+	}
 }

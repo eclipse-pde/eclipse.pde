@@ -1,5 +1,8 @@
 package $packageName$;
 
+import org.osgi.service.component.annotations.*;
+
+@Component
 public class SimpleLogServiceImpl implements SimpleLogService {
 
 	@Override
