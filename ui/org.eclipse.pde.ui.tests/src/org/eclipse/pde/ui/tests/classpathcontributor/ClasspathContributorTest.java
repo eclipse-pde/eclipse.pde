@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathcontributor;
 
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
-
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,6 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 
 /**

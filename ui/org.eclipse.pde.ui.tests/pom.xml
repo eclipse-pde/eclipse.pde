@@ -24,11 +24,7 @@
 
   <properties>
   	<testSuite>${project.artifactId}</testSuite>
-  	<testClass>org.eclipse.pde.ui.tests.nls.AllNLSTests</testClass>
-<!--
-	REPLACE ABOVE LINE WITH THE FOLLOWING ONE TO RUN ALL TESTS
-  	<testClass>org.eclipse.pde.ui.tests.AllPDETests</testClass>
--->
+  	<testClass>org.eclipse.pde.ui.tests.AllPDEMinimalTests</testClass>
   </properties>
 
   <build>
@@ -47,6 +43,16 @@
               <artifactId>org.eclipse.equinox.event</artifactId>
               <version>0.0.0</version>
             </dependency>
+             <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.osgi.compatibility.state</artifactId>
+              <version>0.0.0</version>
+            </dependency> 
+             <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.osgi.compatibility.plugins.feature</artifactId>
+              <version>0.0.0</version>
+            </dependency> 
           </dependencies>
         </configuration>
       </plugin>
