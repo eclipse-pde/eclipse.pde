@@ -205,15 +205,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		}
 	}
 
-	public void listFiles(File file) {
-		System.out.println(file.getName());
-		File[] contents = file.listFiles();
-		if (contents == null)
-			return;
-		for (File child : contents) {
-			listFiles(child);
-		}
-	}
 	/**
 	 * Tests that a target definition based on the default target platform
 	 * restricted to a subset of bundles contains the right set. In this case
@@ -224,31 +215,17 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testMissingVersionRestrictedDefaultTargetPlatform() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
-		System.out.println("container for testMissingVersionRestrictedDefaultTargetPlatform=" + container);
-		File f = new File(TargetPlatform.getDefaultLocation());
-		System.out.println("Start printing contents of default target");
-		listFiles(f);
-		System.out.println("End printing contents of default target");
-
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.jdt.launching", "xyz"),
 				new NameVersionDescriptor("org.eclipse.jdt.debug", "abc")
 		};
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.setIncluded(restrictions);
-		IStatus sta = definition.resolve(null);
-		System.out.println(
-				"Resolve status is " + sta.getCode() + " sev " + sta.getSeverity() + " msg  " + sta.getMessage()
-				+ "all bun =" + definition.getAllBundles().length);
-
-		for ( int i =0; i < definition.getAllBundles().length;i++){
-			System.out.println("index=" + i + " " + definition.getAllBundles()[i]);
-		}//test
+		definition.resolve(null);
 		TargetBundle[] bundles = definition.getBundles();
 
 		assertEquals("Wrong number of bundles", 2, bundles.length);
 		for (TargetBundle rb : bundles) {
-			System.out.println("rb=" + rb);
 			assertEquals("Should be a missing bundle version", TargetBundle.STATUS_VERSION_DOES_NOT_EXIST, rb.getStatus().getCode());
 			assertEquals("Should be an error", IStatus.ERROR, rb.getStatus().getSeverity());
 		}
