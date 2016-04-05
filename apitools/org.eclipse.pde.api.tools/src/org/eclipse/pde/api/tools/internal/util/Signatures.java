@@ -625,7 +625,7 @@ public final class Signatures {
 												// the erasure of a type
 												// variable is the erasure of
 												// its leftmost bound
-												SimpleType bound = (SimpleType) typeParameter.typeBounds().get(0);
+												Type bound = (Type) typeParameter.typeBounds().get(0);
 												return getTypeSignature(bound, erased);
 											}
 										}
