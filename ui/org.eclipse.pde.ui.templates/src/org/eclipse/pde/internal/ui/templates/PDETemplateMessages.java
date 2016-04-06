@@ -31,9 +31,6 @@ public class PDETemplateMessages extends NLS {
 	public static String EditorTemplate_fileExtension;
 	public static String EditorTemplate_defaultEditorName;
 
-	public static String HelloWorldNewWizard_wtitle;
-	public static String HelloWorldTemplate_title;
-	public static String HelloWorldTemplate_desc;
 	public static String HelloRCPNewWizard_title;
 	public static String HelloRCPTemplate_title;
 	public static String HelloRCPTemplate_desc;
