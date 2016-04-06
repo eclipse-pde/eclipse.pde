@@ -20,16 +20,6 @@
             id="templates">
       </category>
       <wizard
-            name="%newExtension.templates.hello.name"
-            template="org.eclipse.pde.ui.templates.helloWorld"
-            icon="$nl$/icons/etool16/newex_wiz.png"
-            category="templates"
-            id="org.eclipse.pde.ui.newExtension.hello">
-         <description>
-            %newExtension.templates.hello.desc
-         </description>
-      </wizard>
-      <wizard
             name="%newExtension.templates.helloCmd.name"
             template="org.eclipse.pde.ui.templates.helloWorldCmd"
             icon="$nl$/icons/etool16/newex_wiz.png"
