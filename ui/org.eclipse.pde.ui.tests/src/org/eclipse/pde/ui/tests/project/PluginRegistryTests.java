@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,9 +51,10 @@ public class PluginRegistryTests extends TestCase {
 	}
 
 	public void testMatchCompatible() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.core", "3.6.0", IMatchRules.COMPATIBLE, null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", "3.6.0", IMatchRules.COMPATIBLE,
+				null);
 		assertNotNull(model);
-		assertEquals("org.eclipse.pde.core", model.getPluginBase().getId());
+		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}
 
 	public void testMatchCompatibleNone() {
@@ -62,10 +63,10 @@ public class PluginRegistryTests extends TestCase {
 	}
 
 	public void testMatchEquivalent() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.core", "3.11.0", IMatchRules.EQUIVALENT,
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", "3.10.0", IMatchRules.EQUIVALENT,
 				null);
 		assertNotNull(model);
-		assertEquals("org.eclipse.pde.core", model.getPluginBase().getId());
+		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}
 
 	public void testMatchPrefix() {
@@ -135,10 +136,11 @@ public class PluginRegistryTests extends TestCase {
 	}
 
 	public void testSingleRangeMatch() {
-		IPluginModelBase[] models = PluginRegistry.findModels("org.eclipse.pde.core", new VersionRange("[1.0.0,4.0.0)"), null);
+		IPluginModelBase[] models = PluginRegistry.findModels("org.eclipse.jdt.debug",
+				new VersionRange("[1.0.0,4.0.0)"), null);
 		assertNotNull(models);
 		assertEquals(1, models.length);
-		assertEquals("org.eclipse.pde.core", models[0].getPluginBase().getId());
+		assertEquals("org.eclipse.jdt.debug", models[0].getPluginBase().getId());
 	}
 
 	public void testWorkspaceOverTarget() throws CoreException {
