@@ -74,6 +74,7 @@
     <module>ds/org.eclipse.pde.ds.core</module>
     <module>ds/org.eclipse.pde.ds.tests</module>
     <module>ds/org.eclipse.pde.ds.ui</module>
+    <module>ds/org.eclipse.pde.ds.lib</module>
     <module>ds/org.eclipse.pde.ds.annotations</module>
     <module>ua/org.eclipse.pde.ua.core</module>
     <module>ua/org.eclipse.pde.ua.tests</module>

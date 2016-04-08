@@ -111,15 +111,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Modified;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 @SuppressWarnings("restriction")
 public class AnnotationProcessor extends ASTRequestor {
@@ -231,15 +222,17 @@ public class AnnotationProcessor extends ASTRequestor {
 @SuppressWarnings("restriction")
 class AnnotationVisitor extends ASTVisitor {
 
+	private static final String COMPONENT_CONTEXT = "org.osgi.service.component.ComponentContext"; //$NON-NLS-1$
+
 	private static final String COMPONENT_ANNOTATION = DSAnnotationCompilationParticipant.COMPONENT_ANNOTATION;
 
-	private static final String ACTIVATE_ANNOTATION = Activate.class.getName();
+	private static final String ACTIVATE_ANNOTATION = "org.osgi.service.component.annotations.Activate"; //$NON-NLS-1$
 
-	private static final String MODIFIED_ANNOTATION = Modified.class.getName();
+	private static final String MODIFIED_ANNOTATION = "org.osgi.service.component.annotations.Modified"; //$NON-NLS-1$
 
-	private static final String DEACTIVATE_ANNOTATION = Deactivate.class.getName();
+	private static final String DEACTIVATE_ANNOTATION = "org.osgi.service.component.annotations.Deactivate"; //$NON-NLS-1$
 
-	private static final String REFERENCE_ANNOTATION = Reference.class.getName();
+	private static final String REFERENCE_ANNOTATION = "org.osgi.service.component.annotations.Reference"; //$NON-NLS-1$
 
 	private static final Pattern PID_PATTERN = Pattern.compile("[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*"); //$NON-NLS-1$
 
@@ -664,9 +657,7 @@ class AnnotationVisitor extends ASTVisitor {
 		String configPolicy = null;
 		if ((value = params.get("configurationPolicy")) instanceof IVariableBinding) { //$NON-NLS-1$
 			IVariableBinding configPolicyBinding = (IVariableBinding) value;
-			ConfigurationPolicy configPolicyLiteral = ConfigurationPolicy.valueOf(configPolicyBinding.getName());
-			if (configPolicyLiteral != null)
-				configPolicy = configPolicyLiteral.toString();
+			configPolicy = DSEnums.getConfigurationPolicy(configPolicyBinding.getName());
 		}
 
 		String configPid = null;
@@ -1315,7 +1306,7 @@ class AnnotationVisitor extends ASTVisitor {
 					isDuplicate = true;
 				else
 					hasMap = true;
-			} else if (ComponentContext.class.getName().equals(paramTypeName)) {
+			} else if (COMPONENT_CONTEXT.equals(paramTypeName)) {
 				if (hasCompCtx)
 					isDuplicate = true;
 				else
@@ -1360,7 +1351,7 @@ class AnnotationVisitor extends ASTVisitor {
 							isInvalid = true;
 						else
 							hasMap = true;
-					} else if (ComponentContext.class.getName().equals(paramTypeName)) {
+					} else if (COMPONENT_CONTEXT.equals(paramTypeName)) {
 						if (hasCompCtx)
 							isInvalid = true;
 						else
@@ -1463,17 +1454,13 @@ class AnnotationVisitor extends ASTVisitor {
 		String cardinality = null;
 		if ((value = params.get("cardinality")) instanceof IVariableBinding) { //$NON-NLS-1$
 			IVariableBinding cardinalityBinding = (IVariableBinding) value;
-			ReferenceCardinality cardinalityLiteral = ReferenceCardinality.valueOf(cardinalityBinding.getName());
-			if (cardinalityLiteral != null)
-				cardinality = cardinalityLiteral.toString();
+			cardinality = DSEnums.getReferenceCardinality(cardinalityBinding.getName());
 		}
 
 		String policy = null;
 		if ((value = params.get("policy")) instanceof IVariableBinding) { //$NON-NLS-1$
 			IVariableBinding policyBinding = (IVariableBinding) value;
-			ReferencePolicy policyLiteral = ReferencePolicy.valueOf(policyBinding.getName());
-			if (policyLiteral != null)
-				policy = policyLiteral.toString();
+			policy = DSEnums.getReferencePolicy(policyBinding.getName());
 		}
 
 		String target = null;
@@ -1517,10 +1504,7 @@ class AnnotationVisitor extends ASTVisitor {
 		String policyOption = null;
 		if ((value = params.get("policyOption")) instanceof IVariableBinding) { //$NON-NLS-1$
 			IVariableBinding policyOptionBinding = (IVariableBinding) value;
-			ReferencePolicyOption policyOptionLiteral = ReferencePolicyOption.valueOf(policyOptionBinding.getName());
-			if (policyOptionLiteral != null) {
-				policyOption = policyOptionLiteral.toString();
-			}
+			policyOption = DSEnums.getReferencePolicyOption(policyOptionBinding.getName());
 		}
 
 		String updated;

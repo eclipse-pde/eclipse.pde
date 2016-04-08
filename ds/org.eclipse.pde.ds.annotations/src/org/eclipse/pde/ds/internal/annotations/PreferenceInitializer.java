@@ -21,6 +21,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IEclipsePreferences defaults = DefaultScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		defaults.putBoolean(Activator.PREF_ENABLED, false);
 		defaults.put(Activator.PREF_PATH, Activator.DEFAULT_PATH);
+		defaults.putBoolean(Activator.PREF_CLASSPATH, true);
 		defaults.put(Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.toString());
 		defaults.put(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, ValidationErrorLevel.error.toString());
 	}

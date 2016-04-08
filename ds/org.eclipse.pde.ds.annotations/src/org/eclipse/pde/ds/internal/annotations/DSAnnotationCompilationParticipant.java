@@ -27,6 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
@@ -40,11 +41,16 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -66,7 +72,6 @@ import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.service.component.annotations.Component;
 
 @SuppressWarnings("restriction")
 public class DSAnnotationCompilationParticipant extends CompilationParticipant {
@@ -75,11 +80,15 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 	private static final String AP_MANIFEST_KEY = "Bundle-ActivationPolicy"; //$NON-NLS-1$
 
-	static final String COMPONENT_ANNOTATION = Component.class.getName();
+	static final String COMPONENT_ANNOTATION = "org.osgi.service.component.annotations.Component"; //$NON-NLS-1$
+
+	static final String ANNOTATIONS_PACKAGE = COMPONENT_ANNOTATION.substring(0, COMPONENT_ANNOTATION.lastIndexOf('.'));
 
 	private static final QualifiedName PROP_STATE = new QualifiedName(Activator.PLUGIN_ID, "state"); //$NON-NLS-1$
 
 	private static final String STATE_FILENAME = "state.dat"; //$NON-NLS-1$
+
+	static final String BUILDPATH_PROBLEM_MARKER = "org.eclipse.pde.ds.annotations.buildpath_problem"; //$NON-NLS-1$
 
 	private static final Debug debug = Debug.getDebug("ds-annotation-builder"); //$NON-NLS-1$
 
@@ -92,7 +101,8 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 	@Override
 	public boolean isActive(IJavaProject project) {
-		boolean enabled = Platform.getPreferencesService().getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
+		IPreferencesService prefs = Platform.getPreferencesService();
+		boolean enabled = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
 		if (!enabled)
 			return false;
 
@@ -102,6 +112,10 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 		if (WorkspaceModelManager.isBinaryProject(project.getProject()))
 			return false;
+
+		boolean autoClasspath = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_CLASSPATH, true, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
+		if (autoClasspath)
+			return true;
 
 		try {
 			IType annotationType = project.findType(COMPONENT_ANNOTATION);
@@ -131,13 +145,14 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			result = NEEDS_FULL_BUILD;
 		}
 
-		String path = Platform.getPreferencesService().getString(Activator.PLUGIN_ID, Activator.PREF_PATH, Activator.DEFAULT_PATH, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE });
+		IPreferencesService prefs = Platform.getPreferencesService();
+		String path = prefs.getString(Activator.PLUGIN_ID, Activator.PREF_PATH, Activator.DEFAULT_PATH, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
 		if (!path.equals(state.getPath())) {
 			state.setPath(path);
 			result = NEEDS_FULL_BUILD;
 		}
 
-		String errorLevelStr = Platform.getPreferencesService().getString(Activator.PLUGIN_ID, Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.toString(), new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE });
+		String errorLevelStr = prefs.getString(Activator.PLUGIN_ID, Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.toString(), new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
 		ValidationErrorLevel errorLevel = getEnumValue(errorLevelStr, ValidationErrorLevel.class, ValidationErrorLevel.error);
 
 		if (errorLevel != state.getErrorLevel()) {
@@ -145,13 +160,15 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			result = NEEDS_FULL_BUILD;
 		}
 
-		String missingUnbindMethodLevelStr = Platform.getPreferencesService().getString(Activator.PLUGIN_ID, Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, errorLevelStr, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE });
+		String missingUnbindMethodLevelStr = prefs.getString(Activator.PLUGIN_ID, Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, errorLevelStr, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
 		ValidationErrorLevel missingUnbindMethodLevel = getEnumValue(missingUnbindMethodLevelStr, ValidationErrorLevel.class, errorLevel);
 
 		if (missingUnbindMethodLevel != state.getMissingUnbindMethodLevel()) {
 			state.setMissingUnbindMethodLevel(missingUnbindMethodLevel);
 			result = NEEDS_FULL_BUILD;
 		}
+
+		Activator.getDefault().listenForClasspathPreferenceChanges(project);
 
 		return result;
 	}
@@ -269,7 +286,53 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 					retained.addAll(dsKeys);
 			}
 
-			abandoned.removeAll(retained);
+			try {
+				IMarker[] cpMarkers = project.getProject().findMarkers(BUILDPATH_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+
+				if (retained.isEmpty()) {
+					for (IMarker marker : cpMarkers) {
+						marker.delete();
+					}
+				} else {
+					abandoned.removeAll(retained);
+
+					// check if we need a permanent annotations classpath entry
+					boolean markerNeeded = false;
+					IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
+					for (int i = roots.length - 1; i >= 0; --i) {
+						IPackageFragmentRoot root = roots[i];
+						IPackageFragment fragment = root.getPackageFragment(ANNOTATIONS_PACKAGE);
+						if (fragment.exists()) {
+							IClasspathEntry entry = root.getResolvedClasspathEntry();
+							IClasspathAttribute[] attrs = entry.getExtraAttributes();
+							for (IClasspathAttribute attr : attrs) {
+								if (Activator.CP_ATTRIBUTE.equals(attr.getName()) && Boolean.parseBoolean(attr.getValue())) {
+									markerNeeded = true;
+									break;
+								}
+							}
+
+							break;
+						}
+					}
+
+					if (markerNeeded) {
+						if (cpMarkers.length == 0) {
+							IMarker marker = project.getProject().createMarker(BUILDPATH_PROBLEM_MARKER);
+							marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+							marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+							marker.setAttribute(IMarker.MESSAGE, Messages.DSAnnotationCompilationParticipant_buildpathProblemMarker_message);
+							marker.setAttribute(IMarker.LOCATION, Messages.DSAnnotationCompilationParticipant_buildpathProblemMarker_location);
+						}
+					} else {
+						for (IMarker marker : cpMarkers) {
+							marker.delete();
+						}
+					}
+				}
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
 
 			if (projectContext.isChanged()) {
 				try {

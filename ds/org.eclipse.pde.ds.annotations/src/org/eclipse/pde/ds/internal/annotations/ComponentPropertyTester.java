@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
+import java.awt.Component;
+
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
@@ -25,7 +27,6 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
-import org.osgi.service.component.annotations.Component;
 
 /**
  * Tests if a type (or any nested type) has a {@link Component} annotation with
@@ -36,9 +37,9 @@ public class ComponentPropertyTester extends PropertyTester {
 
 	private static final String COMPONENT_ANNOTATION = DSAnnotationCompilationParticipant.COMPONENT_ANNOTATION;
 
-	private static final String COMPONENT_PACKAGE = COMPONENT_ANNOTATION.substring(0, COMPONENT_ANNOTATION.lastIndexOf('.'));
+	private static final String COMPONENT_PACKAGE = DSAnnotationCompilationParticipant.ANNOTATIONS_PACKAGE;
 
-	private static final String COMPONENT_NAME = Component.class.getSimpleName();
+	private static final String COMPONENT_NAME = "Component"; //$NON-NLS-1$
 
 	private static final Debug debug = Debug.getDebug("component-property-tester"); //$NON-NLS-1$
 

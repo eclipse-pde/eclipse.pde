@@ -166,5 +166,29 @@
             class="org.eclipse.pde.ds.internal.annotations.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.pde.core.pluginClasspathContributors">
+      <contributor
+            class="org.eclipse.pde.ds.internal.annotations.DSAnnotationClasspathContributor">
+      </contributor>
+   </extension>
+   <extension
+         id="buildpath_problem"
+         name="%buildpathProblem.marker.name"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            class="org.eclipse.pde.ds.internal.annotations.BuildPathMarkerResolutionGenerator"
+            markerType="org.eclipse.pde.ds.annotations.buildpath_problem">
+      </markerResolutionGenerator>
+   </extension>
 
 </plugin>

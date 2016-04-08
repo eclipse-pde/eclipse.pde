@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
+import java.util.HashMap;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -32,10 +35,16 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String DEFAULT_PATH = "OSGI-INF"; //$NON-NLS-1$
 
+	public static final String CP_ATTRIBUTE = "org.eclipse.pde.ds.annotations.cp"; //$NON-NLS-1$
+
+	public static final String PREF_CLASSPATH = "classpath"; //$NON-NLS-1$
+
 	// The shared instance
 	private static Activator plugin;
 
 	private DSAnnotationPreferenceListener dsPrefListener;
+
+	private final HashMap<IJavaProject, ProjectClasspathPreferenceChangeListener> projectPrefListeners = new HashMap<>();
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -48,6 +57,14 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		dsPrefListener.dispose();
+
+		synchronized (projectPrefListeners) {
+			for (ProjectClasspathPreferenceChangeListener listener : projectPrefListeners.values()) {
+				listener.dispose();
+			}
+
+			projectPrefListeners.clear();
+		}
 
 		plugin = null;
 		super.stop(context);
@@ -70,4 +87,18 @@ public class Activator extends AbstractUIPlugin {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e));
 	}
 
+	void listenForClasspathPreferenceChanges(IJavaProject project) {
+		synchronized (projectPrefListeners) {
+			if (!projectPrefListeners.containsKey(project))
+				projectPrefListeners.put(project, new ProjectClasspathPreferenceChangeListener(project));
+		}
+	}
+
+	void disposeProjectClasspathPreferenceChangeListener(IJavaProject project) {
+		synchronized (projectPrefListeners) {
+			ProjectClasspathPreferenceChangeListener listener = projectPrefListeners.remove(project);
+			if (listener != null)
+				listener.dispose();
+		}
+	}
 }

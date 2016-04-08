@@ -88,6 +88,18 @@ public class Messages extends NLS {
 
 	public static String AnnotationProcessor_unknownServiceTypeLabel;
 
+	public static String BuildPathMarkerResolutionGenerator_additionalBundleResolution_description;
+
+	public static String BuildPathMarkerResolutionGenerator_additionalBundleResolution_label;
+
+	public static String BuildPathMarkerResolutionGenerator_extraLibraryResolution_description;
+
+	public static String BuildPathMarkerResolutionGenerator_extraLibraryResolution_label;
+
+	public static String BuildPathMarkerResolutionGenerator_packageImportResolution_description;
+
+	public static String BuildPathMarkerResolutionGenerator_packageImportResolution_label;
+
 	public static String ComponentMoveParticipant_name;
 
 	public static String ComponentRefactoringHelper_checkConditionsTaskLabel;
@@ -98,9 +110,15 @@ public class Messages extends NLS {
 
 	public static String ComponentRenameParticipant_name;
 
+	public static String DSAnnotationCompilationParticipant_buildpathProblemMarker_location;
+
+	public static String DSAnnotationCompilationParticipant_buildpathProblemMarker_message;
+
 	public static String DSAnnotationPreferenceListener_jobName;
 
 	public static String DSAnnotationPreferenceListener_taskName;
+
+	public static String DSAnnotationPropertyPage_classpathCheckbox_text;
 
 	public static String DSAnnotationPropertyPage_enableCheckbox_text;
 
@@ -123,6 +141,8 @@ public class Messages extends NLS {
 	public static String DSAnnotationPropertyPage_workspaceLink_text;
 
 	public static String DSAnnotationPropertyPage_enableBAPLGenerationLabel_text;
+
+	public static String ProjectClasspathPreferenceChangeListener_jobName;
 
 	static {
 		// initialize resource bundle

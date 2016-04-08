@@ -14,18 +14,18 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ui.PlatformUI;
 
 public class DSAnnotationPreferenceListener implements IPreferenceChangeListener {
@@ -35,33 +35,29 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 	}
 
 	@Override
-	public void preferenceChange(PreferenceChangeEvent event) {
+	public void preferenceChange(final PreferenceChangeEvent event) {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
-		if (!ws.isAutoBuilding())
+		if (!ws.isAutoBuilding() && !Activator.PREF_CLASSPATH.equals(event.getKey()))
 			return;
 
-		Job job = new Job(Messages.DSAnnotationPreferenceListener_jobName) {
+		WorkspaceJob job = new WorkspaceJob(Messages.DSAnnotationPreferenceListener_jobName) {
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					ws.run(new IWorkspaceRunnable() {
-						@Override
-						public void run(IProgressMonitor monitor) throws CoreException {
-							IProject[] projects = ws.getRoot().getProjects();
-							ArrayList<IProject> managedProjects = new ArrayList<>(projects.length);
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				IProject[] projects = ws.getRoot().getProjects();
+				ArrayList<IProject> managedProjects = new ArrayList<>(projects.length);
 
-							for (IProject project : projects) {
-								if (project.isOpen() && DSAnnotationCompilationParticipant.isManaged(project))
-									managedProjects.add(project);
-							}
+				for (IProject project : projects) {
+					if (project.isOpen() && DSAnnotationCompilationParticipant.isManaged(project))
+						managedProjects.add(project);
+				}
 
-							SubMonitor progress = SubMonitor.convert(monitor, Messages.DSAnnotationPreferenceListener_taskName, managedProjects.size());
-							for (IProject project : managedProjects)
-								project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(1));
-						}
-					}, monitor);
-				} catch (CoreException e) {
-					return e.getStatus();
+				SubMonitor progress = SubMonitor.convert(monitor, Messages.DSAnnotationPreferenceListener_taskName, managedProjects.size());
+				for (IProject project : managedProjects) {
+					if (Activator.PREF_CLASSPATH.equals(event.getKey())) {
+						ProjectClasspathPreferenceChangeListener.updateClasspathContainer(JavaCore.create(project), progress.newChild(1));
+					} else {
+						project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(1));
+					}
 				}
 
 				return Status.OK_STATUS;
