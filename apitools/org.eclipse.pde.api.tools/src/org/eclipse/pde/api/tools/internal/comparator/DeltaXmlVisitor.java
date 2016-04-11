@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 
 	protected void processLeafDelta(IDelta delta) {
 		Element deltaElement = fDoc.createElement(IApiXmlConstants.DELTA_ELEMENT_NAME);
-		deltaElement.setAttribute(IApiXmlConstants.ATTR_FLAGS, Integer.toString(delta.getFlags()));
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_FLAGS, Util.getDeltaFlagsName(delta.getFlags()));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_KIND, Util.getDeltaKindName(delta));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE, Util.getDeltaElementType(delta));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_KEY, delta.getKey());
