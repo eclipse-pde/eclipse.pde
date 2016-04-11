@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,8 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 			case IDelta.REEXPORTED_API_TYPE:
 			case IDelta.REEXPORTED_TYPE:
 			case IDelta.DEPRECATION:
+			case IDelta.ARRAY_TO_VARARGS:
+			case IDelta.VALUE:
 				buffer.append('#').append(delta.getKey());
 				break;
 			case IDelta.MAJOR_VERSION:
@@ -110,7 +112,11 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 			case IDelta.API_COMPONENT:
 				buffer.append(Util.getDeltaKindName(delta.getKind())).append('#').append(delta.getKey());
 				break;
+			case IDelta.EXECUTION_ENVIRONMENT:
+				buffer.append(delta.getComponentId()).append(':').append(Util.getDeltaFlagsName(delta.getFlags())).append('=').append(delta.getArguments()[0]);
+				break;
 			default:
+				buffer.append(delta.getElementType()).append('|').append(Util.getDeltaKindName(delta.getKind())).append('|').append(Util.getDeltaFlagsName(delta.getFlags())).append('|').append(Util.getDeltaArgumentString(delta));
 				break;
 		}
 
@@ -145,27 +151,12 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 							}
 						}
 						if ((this.flags & CHECK_OTHER) != 0) {
-							switch (delta.getFlags()) {
-								case IDelta.TYPE_MEMBER:
-								case IDelta.METHOD:
-								case IDelta.CONSTRUCTOR:
-								case IDelta.ENUM_CONSTANT:
-								case IDelta.METHOD_WITH_DEFAULT_VALUE:
-								case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
-								case IDelta.FIELD:
-								case IDelta.TYPE:
-								case IDelta.API_TYPE:
-								case IDelta.API_METHOD:
-								case IDelta.API_FIELD:
-								case IDelta.API_CONSTRUCTOR:
-								case IDelta.API_ENUM_CONSTANT:
-								case IDelta.REEXPORTED_TYPE:
-									if (!checkExclude(delta)) {
-										super.processLeafDelta(delta);
-									}
-									break;
-								default:
-									break;
+							if (delta.getFlags() == IDelta.OVERRIDEN_METHOD && delta.getElementType() == IDelta.INTERFACE_ELEMENT_TYPE) {
+								// org.eclipse.core.resources.IWorkspaceRunnable#run(..)
+								return;
+							}
+							if (!checkExclude(delta)) {
+								super.processLeafDelta(delta);
 							}
 						}
 					} else if (Flags.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions())) {
@@ -181,53 +172,23 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 							}
 						}
 						if ((this.flags & CHECK_OTHER) != 0) {
-							switch (delta.getFlags()) {
-								case IDelta.TYPE_MEMBER:
-								case IDelta.METHOD:
-								case IDelta.CONSTRUCTOR:
-								case IDelta.ENUM_CONSTANT:
-								case IDelta.FIELD:
-								case IDelta.TYPE:
-								case IDelta.API_TYPE:
-								case IDelta.API_METHOD:
-								case IDelta.API_FIELD:
-								case IDelta.API_CONSTRUCTOR:
-								case IDelta.API_ENUM_CONSTANT:
-								case IDelta.REEXPORTED_TYPE:
-									if (!checkExclude(delta)) {
-										super.processLeafDelta(delta);
-									}
-									break;
-								default:
-									break;
+							if (!checkExclude(delta)) {
+								super.processLeafDelta(delta);
 							}
 						}
 					}
 					if (delta.getElementType() == IDelta.API_BASELINE_ELEMENT_TYPE && ((this.flags & CHECK_OTHER) != 0)) {
-						switch (delta.getKind()) {
-							case IDelta.ADDED:
-								if (delta.getFlags() == IDelta.API_COMPONENT) {
-									if (!checkExclude(delta)) {
-										super.processLeafDelta(delta);
-									}
-								}
-								break;
-							default:
-								break;
+						if (delta.getFlags() == IDelta.API_COMPONENT) {
+							if (!checkExclude(delta)) {
+								super.processLeafDelta(delta);
+							}
 						}
 					}
 					break;
 				case IDelta.CHANGED:
 					if ((this.flags & CHECK_OTHER) != 0) {
-						switch (delta.getFlags()) {
-							case IDelta.MAJOR_VERSION:
-							case IDelta.MINOR_VERSION:
-								if (!checkExclude(delta)) {
-									super.processLeafDelta(delta);
-								}
-								break;
-							default:
-								break;
+						if (!checkExclude(delta)) {
+							super.processLeafDelta(delta);
 						}
 					}
 					break;
@@ -242,73 +203,20 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 							default:
 								break;
 						}
+					} else if ((this.flags & CHECK_OTHER) != 0) {
+						if (!checkExclude(delta)) {
+							super.processLeafDelta(delta);
+						}
 					}
 					break;
 				default:
 					break;
 			}
 		} else if ((this.flags & CHECK_OTHER) != 0) {
-			switch (delta.getKind()) {
-				case IDelta.ADDED:
-					switch (delta.getFlags()) {
-						case IDelta.TYPE_MEMBER:
-						case IDelta.METHOD:
-						case IDelta.CONSTRUCTOR:
-						case IDelta.ENUM_CONSTANT:
-						case IDelta.METHOD_WITH_DEFAULT_VALUE:
-						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
-						case IDelta.FIELD:
-						case IDelta.TYPE:
-						case IDelta.API_TYPE:
-						case IDelta.API_METHOD:
-						case IDelta.API_FIELD:
-						case IDelta.API_CONSTRUCTOR:
-						case IDelta.API_ENUM_CONSTANT:
-						case IDelta.REEXPORTED_TYPE:
-							if (Util.isVisible(delta.getNewModifiers())) {
-								if (!checkExclude(delta)) {
-									super.processLeafDelta(delta);
-								}
-							}
-							break;
-						default:
-							break;
-					}
-					break;
-				case IDelta.REMOVED:
-					switch (delta.getFlags()) {
-						case IDelta.TYPE_MEMBER:
-						case IDelta.METHOD:
-						case IDelta.CONSTRUCTOR:
-						case IDelta.ENUM_CONSTANT:
-						case IDelta.METHOD_WITH_DEFAULT_VALUE:
-						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
-						case IDelta.FIELD:
-						case IDelta.TYPE:
-						case IDelta.API_TYPE:
-						case IDelta.API_METHOD:
-						case IDelta.API_FIELD:
-						case IDelta.API_CONSTRUCTOR:
-						case IDelta.API_ENUM_CONSTANT:
-						case IDelta.REEXPORTED_API_TYPE:
-						case IDelta.REEXPORTED_TYPE:
-							if (Util.isVisible(delta.getOldModifiers())) {
-								if (!checkExclude(delta)) {
-									super.processLeafDelta(delta);
-								}
-							}
-							break;
-						case IDelta.API_COMPONENT:
-							if (!checkExclude(delta)) {
-								super.processLeafDelta(delta);
-							}
-							break;
-						default:
-							break;
-					}
-					break;
-				default:
-					break;
+			if (Util.isVisible(delta.getNewModifiers())) {
+				if (!checkExclude(delta)) {
+					super.processLeafDelta(delta);
+				}
 			}
 		}
 	}

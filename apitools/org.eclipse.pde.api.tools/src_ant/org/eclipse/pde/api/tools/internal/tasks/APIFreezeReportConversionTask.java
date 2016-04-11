@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -154,7 +154,7 @@ public class APIFreezeReportConversionTask extends Task {
 				} else {
 					this.componentID = value;
 				}
-				this.flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_FLAGS));
+				this.flags = Util.getDeltaFlagValue(attributes.getValue(IApiXmlConstants.ATTR_FLAGS));
 				this.elementType = Util.getDeltaElementTypeValue(attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE));
 				this.typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 				this.key = attributes.getValue(IApiXmlConstants.ATTR_KEY);
@@ -209,6 +209,7 @@ public class APIFreezeReportConversionTask extends Task {
 					case IDelta.METHOD:
 					case IDelta.METHOD_WITH_DEFAULT_VALUE:
 					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
+					case IDelta.ARRAY_TO_VARARGS:
 						int indexOf = this.key.indexOf('(');
 						if (indexOf == -1) {
 							return null;
@@ -235,8 +236,10 @@ public class APIFreezeReportConversionTask extends Task {
 					case IDelta.API_FIELD:
 					case IDelta.ENUM_CONSTANT:
 					case IDelta.API_ENUM_CONSTANT:
-						buffer.append('#');
-						buffer.append(this.key);
+						buffer.append('#').append(this.key);
+						break;
+					case IDelta.VALUE:
+						buffer.append('#').append(this.key).append('(').append(Messages.deltaReportTask_compile_time_constant).append(')');
 						break;
 					case IDelta.TYPE_MEMBER:
 					case IDelta.API_TYPE:
@@ -297,6 +300,9 @@ public class APIFreezeReportConversionTask extends Task {
 						break;
 					case IDelta.API_BASELINE_ELEMENT_TYPE:
 						buffer.append(this.key);
+						break;
+					case IDelta.EXECUTION_ENVIRONMENT:
+						buffer.append(this.key).append('#').append(arguments[0]).append('(').append(Messages.deltaReportTask_entry_execution_environment).append(')');
 						break;
 					default:
 						break;

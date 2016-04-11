@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -141,6 +142,21 @@ public final class Util {
 	public static final String DOT_TAR_GZ = ".tar.gz"; //$NON-NLS-1$
 	public static final String DOT_JAR = ".jar"; //$NON-NLS-1$
 	public static final String DOT_ZIP = ".zip"; //$NON-NLS-1$
+	public static Map<Integer, String> flagsNames = new HashMap<>();
+
+	static {
+		Field[] declaredFields = IDelta.class.getDeclaredFields();
+		for (Field field : declaredFields) {
+			try {
+				if (Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers())) {
+					Integer value = Integer.valueOf(field.getInt(null));
+					flagsNames.put(value, field.getName());
+				}
+			} catch (IllegalAccessException e) {
+				// ignore
+			}
+		}
+	}
 
 	public static final char VERSION_SEPARATOR = '(';
 
@@ -687,6 +703,30 @@ public final class Util {
 	}
 
 	/**
+	 * Return an int value that represents the given flag value. Returns -1 if
+	 * the flag value cannot be determined.
+	 *
+	 * @param flagName the given element type
+	 * @return an int that represents the given flag value constant.
+	 */
+	public static int getDeltaFlagValue(String flagName) {
+		Class<IDelta> IDeltaClass = IDelta.class;
+		try {
+			Field field = IDeltaClass.getField(flagName);
+			return field.getInt(null);
+		} catch (SecurityException e) {
+			// ignore
+		} catch (IllegalArgumentException e) {
+			// ignore
+		} catch (NoSuchFieldException e) {
+			// ignore
+		} catch (IllegalAccessException e) {
+			// ignore
+		}
+		return -1;
+	}
+
+	/**
 	 * Return a string that represents the given element type Returns
 	 * {@link #UNKNOWN_ELEMENT_KIND} if the element type cannot be determined.
 	 *
@@ -729,141 +769,9 @@ public final class Util {
 	 * @return a string that represents the given flags.
 	 */
 	public static String getDeltaFlagsName(int flags) {
-		switch (flags) {
-			case IDelta.ABSTRACT_TO_NON_ABSTRACT:
-				return "ABSTRACT_TO_NON_ABSTRACT"; //$NON-NLS-1$
-			case IDelta.ANNOTATION_DEFAULT_VALUE:
-				return "ANNOTATION_DEFAULT_VALUE"; //$NON-NLS-1$
-			case IDelta.API_COMPONENT:
-				return "API_COMPONENT"; //$NON-NLS-1$
-			case IDelta.ARRAY_TO_VARARGS:
-				return "ARRAY_TO_VARARGS"; //$NON-NLS-1$
-			case IDelta.CHECKED_EXCEPTION:
-				return "CHECKED_EXCEPTION"; //$NON-NLS-1$
-			case IDelta.CLASS_BOUND:
-				return "CLASS_BOUND"; //$NON-NLS-1$
-			case IDelta.CLINIT:
-				return "CLINIT"; //$NON-NLS-1$
-			case IDelta.CONSTRUCTOR:
-				return "CONSTRUCTOR"; //$NON-NLS-1$
-			case IDelta.CONTRACTED_SUPERINTERFACES_SET:
-				return "CONTRACTED_SUPERINTERFACES_SET"; //$NON-NLS-1$
-			case IDelta.DECREASE_ACCESS:
-				return "DECREASE_ACCESS"; //$NON-NLS-1$
-			case IDelta.ENUM_CONSTANT:
-				return "ENUM_CONSTANT"; //$NON-NLS-1$
-			case IDelta.EXECUTION_ENVIRONMENT:
-				return "EXECUTION_ENVIRONMENT"; //$NON-NLS-1$
-			case IDelta.EXPANDED_SUPERINTERFACES_SET:
-				return "EXPANDED_SUPERINTERFACES_SET"; //$NON-NLS-1$
-			case IDelta.FIELD:
-				return "FIELD"; //$NON-NLS-1$
-			case IDelta.FIELD_MOVED_UP:
-				return "FIELD_MOVED_UP"; //$NON-NLS-1$
-			case IDelta.FINAL_TO_NON_FINAL:
-				return "FINAL_TO_NON_FINAL"; //$NON-NLS-1$
-			case IDelta.FINAL_TO_NON_FINAL_NON_STATIC:
-				return "FINAL_TO_NON_FINAL_NON_STATIC"; //$NON-NLS-1$
-			case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT:
-				return "FINAL_TO_NON_FINAL_STATIC_CONSTANT"; //$NON-NLS-1$
-			case IDelta.FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT:
-				return "FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT"; //$NON-NLS-1$
-			case IDelta.INCREASE_ACCESS:
-				return "INCREASE_ACCESS"; //$NON-NLS-1$
-			case IDelta.INTERFACE_BOUND:
-				return "INTERFACE_BOUND"; //$NON-NLS-1$
-			case IDelta.METHOD:
-				return "METHOD"; //$NON-NLS-1$
-			case IDelta.METHOD_MOVED_UP:
-				return "METHOD_MOVED_UP"; //$NON-NLS-1$
-			case IDelta.METHOD_WITH_DEFAULT_VALUE:
-				return "METHOD_WITH_DEFAULT_VALUE"; //$NON-NLS-1$
-			case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
-				return "METHOD_WITHOUT_DEFAULT_VALUE"; //$NON-NLS-1$
-			case IDelta.NATIVE_TO_NON_NATIVE:
-				return "NATIVE_TO_NON_NATIVE"; //$NON-NLS-1$
-			case IDelta.NON_ABSTRACT_TO_ABSTRACT:
-				return "NON_ABSTRACT_TO_ABSTRACT"; //$NON-NLS-1$
-			case IDelta.NON_FINAL_TO_FINAL:
-				return "NON_FINAL_TO_FINAL"; //$NON-NLS-1$
-			case IDelta.NON_NATIVE_TO_NATIVE:
-				return "NON_NATIVE_TO_NATIVE"; //$NON-NLS-1$
-			case IDelta.NON_STATIC_TO_STATIC:
-				return "NON_STATIC_TO_STATIC"; //$NON-NLS-1$
-			case IDelta.NON_SYNCHRONIZED_TO_SYNCHRONIZED:
-				return "NON_SYNCHRONIZED_TO_SYNCHRONIZED"; //$NON-NLS-1$
-			case IDelta.NON_TRANSIENT_TO_TRANSIENT:
-				return "NON_TRANSIENT_TO_TRANSIENT"; //$NON-NLS-1$
-			case IDelta.OVERRIDEN_METHOD:
-				return "OVERRIDEN_METHOD"; //$NON-NLS-1$
-			case IDelta.STATIC_TO_NON_STATIC:
-				return "STATIC_TO_NON_STATIC"; //$NON-NLS-1$
-			case IDelta.SUPERCLASS:
-				return "SUPERCLASS"; //$NON-NLS-1$
-			case IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED:
-				return "SYNCHRONIZED_TO_NON_SYNCHRONIZED"; //$NON-NLS-1$
-			case IDelta.TYPE_CONVERSION:
-				return "TYPE_CONVERSION"; //$NON-NLS-1$
-			case IDelta.TRANSIENT_TO_NON_TRANSIENT:
-				return "TRANSIENT_TO_NON_TRANSIENT"; //$NON-NLS-1$
-			case IDelta.TYPE:
-				return "TYPE"; //$NON-NLS-1$
-			case IDelta.TYPE_ARGUMENTS:
-				return "TYPE_ARGUMENTS"; //$NON-NLS-1$
-			case IDelta.TYPE_MEMBER:
-				return "TYPE_MEMBER"; //$NON-NLS-1$
-			case IDelta.TYPE_PARAMETER:
-				return "TYPE_PARAMETER"; //$NON-NLS-1$
-			case IDelta.TYPE_PARAMETER_NAME:
-				return "TYPE_PARAMETER_NAME"; //$NON-NLS-1$
-			case IDelta.TYPE_PARAMETERS:
-				return "TYPE_PARAMETERS"; //$NON-NLS-1$
-			case IDelta.TYPE_VISIBILITY:
-				return "TYPE_VISIBILITY"; //$NON-NLS-1$
-			case IDelta.UNCHECKED_EXCEPTION:
-				return "UNCHECKED_EXCEPTION"; //$NON-NLS-1$
-			case IDelta.VALUE:
-				return "VALUE"; //$NON-NLS-1$
-			case IDelta.VARARGS_TO_ARRAY:
-				return "VARARGS_TO_ARRAY"; //$NON-NLS-1$
-			case IDelta.RESTRICTIONS:
-				return "RESTRICTIONS"; //$NON-NLS-1$
-			case IDelta.API_TYPE:
-				return "API_TYPE"; //$NON-NLS-1$
-			case IDelta.NON_VOLATILE_TO_VOLATILE:
-				return "NON_VOLATILE_TO_VOLATILE"; //$NON-NLS-1$
-			case IDelta.VOLATILE_TO_NON_VOLATILE:
-				return "VOLATILE_TO_NON_VOLATILE"; //$NON-NLS-1$
-			case IDelta.MINOR_VERSION:
-				return "MINOR_VERSION"; //$NON-NLS-1$
-			case IDelta.MAJOR_VERSION:
-				return "MAJOR_VERSION"; //$NON-NLS-1$
-			case IDelta.API_FIELD:
-				return "API_FIELD"; //$NON-NLS-1$
-			case IDelta.API_METHOD:
-				return "API_METHOD"; //$NON-NLS-1$
-			case IDelta.API_CONSTRUCTOR:
-				return "API_CONSTRUCTOR"; //$NON-NLS-1$
-			case IDelta.API_ENUM_CONSTANT:
-				return "API_ENUM_CONSTANT"; //$NON-NLS-1$
-			case IDelta.API_METHOD_WITH_DEFAULT_VALUE:
-				return "API_METHOD_WITH_DEFAULT_VALUE"; //$NON-NLS-1$
-			case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE:
-				return "API_METHOD_WITHOUT_DEFAULT_VALUE"; //$NON-NLS-1$
-			case IDelta.TYPE_ARGUMENT:
-				return "TYPE_ARGUMENT"; //$NON-NLS-1$
-			case IDelta.SUPER_INTERFACE_WITH_METHODS:
-				return "SUPER_INTERFACE_WITH_METHODS"; //$NON-NLS-1$
-			case IDelta.REEXPORTED_API_TYPE:
-				return "REEXPORTED_API_TYPE"; //$NON-NLS-1$
-			case IDelta.REEXPORTED_TYPE:
-				return "REEXPORTED_TYPE"; //$NON-NLS-1$
-			case IDelta.METHOD_MOVED_DOWN:
-				return "METHOD_MOVED_DOWN"; //$NON-NLS-1$
-			case IDelta.DEPRECATION:
-				return "DEPRECATION"; //$NON-NLS-1$
-			default:
-				break;
+		String fieldName = flagsNames.get(Integer.valueOf(flags));
+		if (fieldName != null) {
+			return fieldName;
 		}
 		return UNKNOWN_FLAGS;
 	}
@@ -1400,7 +1308,7 @@ public final class Util {
 	/**
 	 * Rewrite a parameter type signature with type erasure and using the
 	 * parameterized type bounds lookup table. For example:
-	 * 
+	 *
 	 * <pre>
 	 *     expand("QList&lt;QE;&gt;;", {"E" &rarr; "Ljava.lang.Object;"}) = "QList;"
 	 *     expand("QE;", {"E" &rarr; "Ljava.lang.Object;"}) = "Ljava.lang.Object;"
@@ -2372,8 +2280,18 @@ public final class Util {
 					default:
 						return arguments[0];
 				}
+			case IDelta.EXECUTION_ENVIRONMENT:
+				StringBuilder builder = new StringBuilder();
+				int i = 0;
+				for (String argument : arguments) {
+					if (i != 0) {
+						builder.append(',');
+					}
+					builder.append(argument);
+					i++;
+				}
+				return String.valueOf(builder);
 			default:
-				break;
 		}
 		return EMPTY_STRING;
 	}
