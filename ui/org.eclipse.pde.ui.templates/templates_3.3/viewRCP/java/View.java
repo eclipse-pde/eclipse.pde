@@ -1,8 +1,6 @@
 package $packageName$;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -55,10 +53,6 @@ public class View extends ViewPart {
 	}
 	
 	private List<String> createInitialDataModel() {
-		List<String> input = new ArrayList<>();
-		input.add("One");
-		input.add("Two");
-		input.add("Three");
-		return input;
+		return Arrays.asList("One", "Two", "Three");
 	}
 }

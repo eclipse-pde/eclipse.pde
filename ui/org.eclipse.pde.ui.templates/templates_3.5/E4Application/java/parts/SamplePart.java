@@ -1,11 +1,14 @@
 package $packageName$.parts;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -39,11 +42,8 @@ public class SamplePart {
 
 		tableViewer = new TableViewer(parent);
 
-		tableViewer.add("Sample item 1");
-		tableViewer.add("Sample item 2");
-		tableViewer.add("Sample item 3");
-		tableViewer.add("Sample item 4");
-		tableViewer.add("Sample item 5");
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());;
+		tableViewer.setInput(createInitialDataModel());
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -55,5 +55,9 @@ public class SamplePart {
 	@Persist
 	public void save() {
 		dirty.setDirty(false);
+	}
+	
+	private List<String> createInitialDataModel() {
+		return Arrays.asList("Sample item 1", "Sample item 2", "Sample item 3", "Sample item 4", "Sample item 5");
 	}
 }
