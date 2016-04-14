@@ -28,6 +28,8 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL = "validationErrorLevel.missingImplicitUnbindMethod"; //$NON-NLS-1$
 
+	public static final String PREF_GENERATE_BAPL = "generateBundleActivationPolicyLazy"; //$NON-NLS-1$
+
 	public static final String DEFAULT_PATH = "OSGI-INF"; //$NON-NLS-1$
 
 	// The shared instance

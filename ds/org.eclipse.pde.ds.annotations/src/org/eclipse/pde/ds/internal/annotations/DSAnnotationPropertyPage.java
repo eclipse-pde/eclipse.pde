@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ecliptical Software Inc. - initial API and implementation
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 490062
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
@@ -70,6 +71,8 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 	private Combo errorLevelCombo;
 
 	private Combo missingUnbindMethodCombo;
+
+	private Button enableBAPLGeneration;
 
 	private IWorkingCopyManager wcManager;
 
@@ -224,6 +227,13 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		missingUnbindMethodCombo.add(Messages.DSAnnotationPropertyPage_errorLevelIgnore);
 		missingUnbindMethodCombo.select(0);
 
+		Label enableBAPLGenerationLabel = new Label(optionBlockControl, SWT.LEFT);
+		enableBAPLGenerationLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		enableBAPLGenerationLabel.setText(Messages.DSAnnotationPropertyPage_enableBAPLGenerationLabel_text);
+
+		enableBAPLGeneration = new Button(optionBlockControl, SWT.CHECK);
+		enableBAPLGeneration.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+
 		Dialog.applyDialogFont(composite);
 		return composite;
 	}
@@ -235,6 +245,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		String pathValue = prefs.get(Activator.PREF_PATH, Activator.DEFAULT_PATH);
 		String errorLevel = prefs.get(Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.toString());
 		String missingUnbindMethodLevel = prefs.get(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, errorLevel);
+		boolean generateBAPL = prefs.getBoolean(Activator.PREF_GENERATE_BAPL, true);
 
 		if (useProjectSettings()) {
 			IScopeContext scopeContext = new ProjectScope(getProject());
@@ -244,6 +255,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 			pathValue = prefs.get(Activator.PREF_PATH, pathValue);
 			errorLevel = prefs.get(Activator.PREF_VALIDATION_ERROR_LEVEL, errorLevel);
 			missingUnbindMethodLevel = prefs.get(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, missingUnbindMethodLevel);
+			generateBAPL = prefs.getBoolean(Activator.PREF_GENERATE_BAPL, generateBAPL);
 		}
 
 		enableCheckbox.setSelection(enableValue);
@@ -251,6 +263,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		pathText.setText(pathValue);
 		errorLevelCombo.select(getEnumIndex(errorLevel, ValidationErrorLevel.values(), 0));
 		missingUnbindMethodCombo.select(getEnumIndex(missingUnbindMethodLevel, ValidationErrorLevel.values(), 0));
+		enableBAPLGeneration.setSelection(generateBAPL);
 
 		setErrorMessage(null);
 	}
@@ -384,6 +397,8 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 			errorLevelIndex = missingUnbindMethodCombo.getSelectionIndex();
 			prefs.put(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, levels[Math.max(Math.min(errorLevelIndex, levels.length - 1), 0)].toString());
+
+			prefs.putBoolean(Activator.PREF_GENERATE_BAPL, enableBAPLGeneration.getSelection());
 		}
 
 		try {

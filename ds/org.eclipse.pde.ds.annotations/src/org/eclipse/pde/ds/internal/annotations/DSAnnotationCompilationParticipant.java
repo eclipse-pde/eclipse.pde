@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ecliptical Software Inc. - initial API and implementation
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 490062
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
@@ -71,6 +72,8 @@ import org.osgi.service.component.annotations.Component;
 public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 	private static final String DS_MANIFEST_KEY = "Service-Component"; //$NON-NLS-1$
+
+	private static final String AP_MANIFEST_KEY = "Bundle-ActivationPolicy"; //$NON-NLS-1$
 
 	static final String COMPONENT_ANNOTATION = Component.class.getName();
 
@@ -327,7 +330,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (model instanceof IBundlePluginModelBase)
-					updateManifest((IBundlePluginModelBase) model, retained, abandoned);
+					updateManifest((IBundlePluginModelBase) model, retained, abandoned, project);
 			}
 		}, null);
 
@@ -341,7 +344,8 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		}, null);
 	}
 
-	private void updateManifest(IBundlePluginModelBase model, Collection<String> retained, Collection<String> abandoned) {
+	private void updateManifest(IBundlePluginModelBase model, Collection<String> retained, Collection<String> abandoned,
+			IProject project) {
 		IBundleModel bundleModel = model.getBundleModel();
 		LinkedHashSet<IPath> entries = new LinkedHashSet<>();
 		collectManifestEntries(bundleModel, entries);
@@ -376,6 +380,17 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 		// note: contrary to javadoc, setting header value to null does *not* remove it; setting it to empty string does
 		bundleModel.getBundle().setHeader(DS_MANIFEST_KEY, value);
+
+		boolean generateBAPL = Platform.getPreferencesService().getBoolean(Activator.PLUGIN_ID,
+				Activator.PREF_GENERATE_BAPL, true,
+				new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE });
+		if (generateBAPL) {
+			if (debug.isDebugging())
+				debug.trace(String.format("Setting manifest header in %s to %s: %s", //$NON-NLS-1$
+						model.getUnderlyingResource().getFullPath(), AP_MANIFEST_KEY, "lazy")); //$NON-NLS-1$
+
+			bundleModel.getBundle().setHeader(AP_MANIFEST_KEY, "lazy"); //$NON-NLS-1$
+		}
 	}
 
 	private void collectManifestEntries(IBundleModel bundleModel, Collection<IPath> entries) {

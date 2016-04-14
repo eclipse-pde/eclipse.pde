@@ -122,6 +122,8 @@ public class Messages extends NLS {
 
 	public static String DSAnnotationPropertyPage_workspaceLink_text;
 
+	public static String DSAnnotationPropertyPage_enableBAPLGenerationLabel_text;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
