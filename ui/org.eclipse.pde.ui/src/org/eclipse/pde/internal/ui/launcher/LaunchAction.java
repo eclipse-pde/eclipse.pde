@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,7 +161,47 @@ public class LaunchAction extends Action {
 				previousHasSubArgument = hasSubArgument;
 			}
 		}
-		return initialArgs.toString();
+		String arguments = null;
+		try {
+			arguments = removeDuplicateArguments(initialArgs);
+		} catch (Exception e) {
+			PDEPlugin.log(e);
+			return initialArgs.toString();
+		}
+		return arguments;
+	}
+
+	private String removeDuplicateArguments(StringBuffer initialArgs) {
+		String[] progArguments = { '-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS, '-' + IEnvironment.P_ARCH,
+				'-' + IEnvironment.P_NL };
+		String defaultStart = "${target."; //$NON-NLS-1$ // see
+											// LaunchArgumentHelper
+		ArrayList<String> userArgsList = new ArrayList<>(
+				Arrays.asList(DebugPlugin.splitArguments(initialArgs.toString())));
+		for (int i = 0; i < progArguments.length; i++) {
+			int index1 = userArgsList.indexOf(progArguments[i]);
+			int index2 = userArgsList.lastIndexOf(progArguments[i]);
+			if (index1 != index2) {
+				String s1 = userArgsList.get(index1 + 1);
+				String s2 = userArgsList.get(index2 + 1);
+				// in case of duplicate remove initial program arguments
+				if (s1.startsWith(defaultStart) && !s2.startsWith(defaultStart)) {
+					userArgsList.remove(index1);
+					userArgsList.remove(index1);
+				} else if (s2.startsWith(defaultStart) && !s1.startsWith(defaultStart)) {
+					userArgsList.remove(index2);
+					userArgsList.remove(index2);
+				}
+			}
+		}
+		StringBuffer arguments = new StringBuffer();
+		for (Iterator<String> iterator = userArgsList.iterator(); iterator.hasNext();) {
+			Object userArg = iterator.next();
+			arguments.append(userArg);
+			if(iterator.hasNext())
+				arguments.append(' ');
+		}
+		return arguments.toString();
 	}
 
 	private String getJREContainer(String os) {
