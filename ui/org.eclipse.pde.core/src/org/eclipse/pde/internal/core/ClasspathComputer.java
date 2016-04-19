@@ -322,10 +322,10 @@ public class ClasspathComputer {
 	public static IClasspathEntry createEntryUsingPreviousEntry(IJavaProject javaProject, String ee, IPath path) throws CoreException {
 		IClasspathEntry[] entries = javaProject.getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {
+			if (path.isPrefixOf(entries[i].getPath()) && path.equals(PDECore.JRE_CONTAINER_PATH)) {
+				return JavaCore.newContainerEntry(getEEPath(ee), entries[i].getAccessRules(), entries[i].getExtraAttributes(), entries[i].isExported());
+			}
 			if (entries[i].getPath().equals(path)) {
-				if (path.equals(PDECore.JRE_CONTAINER_PATH))
-					return JavaCore.newContainerEntry(getEEPath(ee), entries[i].getAccessRules(), entries[i].getExtraAttributes(), entries[i].isExported());
-
 				return JavaCore.newContainerEntry(path, entries[i].getAccessRules(), entries[i].getExtraAttributes(), entries[i].isExported());
 			}
 		}
