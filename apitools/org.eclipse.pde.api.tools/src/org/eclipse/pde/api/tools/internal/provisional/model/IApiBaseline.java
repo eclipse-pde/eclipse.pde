@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.model;
+
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -73,6 +75,15 @@ public interface IApiBaseline extends IApiElement {
 	 */
 	public IApiComponent getApiComponent(String id);
 
+	/**
+	 * Returns all the API components in this baseline (sorted from higher to
+	 * lower version) with the given symbolic name or empty set if multiple
+	 * components not present.
+	 *
+	 * @param id component symbolic name
+	 * @return API components or empty set
+	 */
+	public Set<IApiComponent> getAllApiComponents(String id);
 	/**
 	 * Returns the API component in this baseline for the given project or
 	 * <code>null</code> if none.

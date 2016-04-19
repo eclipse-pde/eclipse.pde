@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -61,6 +64,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -130,6 +134,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * </p>
 	 */
 	private HashMap<String, IApiComponent> fComponentsById = null;
+	/**
+	 * Maps component id's to all components sorted from higher to lower version.
+	 */
+	private HashMap<String, Set<IApiComponent>> fAllComponentsById = null;
 	/**
 	 * Maps project name's to components.
 	 * <p>
@@ -320,6 +328,32 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (fComponentsById == null) {
 			fComponentsById = new HashMap<>();
 		}
+		if (fAllComponentsById == null) {
+			fAllComponentsById = new HashMap<>();
+		}
+
+		IApiComponent comp = fComponentsById.get(component.getSymbolicName());
+
+		// if more than 1 components, store all of them
+		if (comp != null) {
+			if (fAllComponentsById.containsKey(component.getSymbolicName())) {
+				Set<IApiComponent> allComponents = fAllComponentsById.get(component.getSymbolicName());
+				if (!allComponents.contains(component)) {
+					allComponents.add(component);
+				}
+			} else {
+				TreeSet<IApiComponent> allComponents = new TreeSet<>(new Comparator<IApiComponent>() {
+					@Override
+					public int compare(IApiComponent comp1, IApiComponent comp2) {
+						return new Version(comp2.getVersion()).compareTo(new Version(comp1.getVersion()));
+			        	}
+				});
+				allComponents.add(comp);
+				allComponents.add(component);
+				fAllComponentsById.put(component.getSymbolicName(), allComponents);
+			}
+		}
+
 		fComponentsById.put(component.getSymbolicName(), component);
 		if (component instanceof ProjectComponent) {
 			ProjectComponent projectApiComponent = (ProjectComponent) component;
@@ -630,6 +664,18 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	@Override
+	public Set<IApiComponent> getAllApiComponents(String id) {
+		loadBaselineInfos();
+		if (fAllComponentsById == null) {
+			return Collections.emptySet();
+		}
+		if (fAllComponentsById.get(id) == null) {
+			return Collections.emptySet();
+		}
+		return fAllComponentsById.get(id);
+	}
+
+	@Override
 	public String getExecutionEnvironment() {
 		return fExecutionEnvironment;
 	}
@@ -729,6 +775,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (fComponentsById != null) {
 			fComponentsById.clear();
 			fComponentsById = null;
+		}
+		if (fAllComponentsById != null) {
+			fAllComponentsById.clear();
+			fAllComponentsById = null;
 		}
 		if (fComponentsByProjectNames != null) {
 			fComponentsByProjectNames.clear();

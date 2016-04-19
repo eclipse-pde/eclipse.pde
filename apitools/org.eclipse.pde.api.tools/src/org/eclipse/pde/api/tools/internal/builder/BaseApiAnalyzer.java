@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
@@ -225,6 +226,25 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			boolean checkfilters = false;
 			if (baseline != null) {
 				IApiComponent reference = baseline.getApiComponent(component.getSymbolicName());
+				if (reference != null) {
+					Version baselineVersion = new Version(reference.getVersion());
+					Version compVer = new Version(component.getVersion());
+					// If the baseline's component's major version doesn't match
+					// the component version get all the versions of that
+					// component in baseline and select the best match.
+					if (baselineVersion.getMajor() != compVer.getMajor()) {
+						Set<IApiComponent> baselineAllComponents = baseline.getAllApiComponents(component.getSymbolicName());
+						if (!baselineAllComponents.isEmpty()) {
+							for (IApiComponent baselineComp : baselineAllComponents) {
+								if (new Version(baselineComp.getVersion()).getMajor() == compVer.getMajor()) {
+									reference = baselineComp;
+									break;
+								}
+							}
+						}
+					}
+				}
+
 				this.fBuildState = state;
 				if (fBuildState == null) {
 					fBuildState = getBuildState();
