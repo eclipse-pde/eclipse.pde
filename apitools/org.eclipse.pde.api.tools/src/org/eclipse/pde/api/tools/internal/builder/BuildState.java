@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ import org.eclipse.pde.core.build.IBuildModel;
 public class BuildState {
 	private static final IDelta[] EMPTY_DELTAS = new IDelta[0];
 	private static final String[] NO_REEXPORTED_COMPONENTS = new String[0];
-	private static final int VERSION = 0x20;
+	private static final int VERSION = 33;
 
 	private Map<String, Set<IDelta>> compatibleChanges;
 	private Map<String, Set<IDelta>> breakingChanges;
@@ -234,7 +234,8 @@ public class BuildState {
 		int kind = in.readInt(); // delta.getKind()
 		int flags = in.readInt(); // delta.getFlags()
 		int restrictions = in.readInt(); // delta.getRestrictions()
-		int modifiers = in.readInt(); // delta.getModifiers()
+		int oldModifiers = in.readInt(); // delta.getOldModifier()
+		int newModifiers = in.readInt(); // delta.getNewModifier()
 		String typeName = in.readUTF(); // delta.getTypeName()
 		String key = in.readUTF(); // delta.getKey()
 		int length = in.readInt(); // arguments.length;
@@ -250,8 +251,7 @@ public class BuildState {
 			datas = new String[1];
 			datas[0] = typeName.replace('$', '.');
 		}
-		int oldModifiers = modifiers & Delta.MODIFIERS_MASK;
-		int newModifiers = modifiers >>> Delta.NEW_MODIFIERS_OFFSET;
+		
 		int previousRestrictions = restrictions >>> Delta.PREVIOUS_RESTRICTIONS_OFFSET;
 		int currentRestrictions = restrictions & Delta.RESTRICTIONS_MASK;
 		return new Delta(componentID, elementType, kind, flags, currentRestrictions, previousRestrictions, oldModifiers, newModifiers, typeName, key, datas);
@@ -278,8 +278,8 @@ public class BuildState {
 		out.writeInt(delta.getKind());
 		out.writeInt(delta.getFlags());
 		out.writeInt(delta.getCurrentRestrictions());
-		int modifiers = (delta.getNewModifiers() << Delta.NEW_MODIFIERS_OFFSET) | delta.getOldModifiers();
-		out.writeInt(modifiers);
+		out.writeInt(delta.getOldModifiers());
+		out.writeInt(delta.getNewModifiers());
 		out.writeUTF(delta.getTypeName());
 		out.writeUTF(delta.getKey());
 		String[] arguments = delta.getArguments();

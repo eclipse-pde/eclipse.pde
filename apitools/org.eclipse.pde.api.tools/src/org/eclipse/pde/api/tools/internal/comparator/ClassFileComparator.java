@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2160,8 +2160,9 @@ public class ClassFileComparator {
 							}
 						}
 					}
-					this.addDelta(getElementType(type), IDelta.ADDED, found ? IDelta.METHOD_MOVED_DOWN : IDelta.METHOD, restrictionsForMethodAddition, this.initialDescriptorRestrictions, 0, method.getModifiers(), this.type1, getKeyForMethod(method, type), new String[] {
+					this.addDelta(getElementType(type), IDelta.ADDED, found ? IDelta.METHOD_MOVED_DOWN : IDelta.METHOD, restrictionsForMethodAddition, this.initialDescriptorRestrictions, 0, method.isDefaultMethod() ? (method.getModifiers() | Flags.AccDefaultMethod) : method.getModifiers(), this.type1, getKeyForMethod(method, type), new String[] {
 							Util.getDescriptorName(type), methodDisplayName });
+
 				} else {
 					this.addDelta(getElementType(type), IDelta.ADDED, found ? IDelta.OVERRIDEN_METHOD : IDelta.METHOD, restrictionsForMethodAddition, this.initialDescriptorRestrictions, 0, method.getModifiers(), this.type1, getKeyForMethod(method, type), new String[] {
 							Util.getDescriptorName(type), methodDisplayName });

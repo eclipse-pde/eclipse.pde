@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class Delta implements IDelta {
 	private static final IDelta[] EMPTY_CHILDREN = new IDelta[0];
 	private static final int INITIAL_SIZE = 4;
-	public static final int MODIFIERS_MASK = 0xFFFF;
-	public static final int NEW_MODIFIERS_OFFSET = 16;
 
 	public static final int RESTRICTIONS_MASK = 0xFFFF;
 	public static final int PREVIOUS_RESTRICTIONS_OFFSET = 16;
@@ -87,7 +85,8 @@ public class Delta implements IDelta {
 	private String key;
 
 	private int kind;
-	private int modifiers;
+	private int oldModifiers;
+	private int newModifiers;
 	private int restrictions;
 
 	private String typeName;
@@ -120,7 +119,8 @@ public class Delta implements IDelta {
 		this.elementType = elementType;
 		this.kind = kind;
 		this.flags = flags;
-		this.modifiers = (newModifiers & MODIFIERS_MASK) << NEW_MODIFIERS_OFFSET | (oldModifiers & MODIFIERS_MASK);
+		this.oldModifiers = oldModifiers;
+		this.newModifiers = newModifiers;
 		this.typeName = typeName == null ? Util.EMPTY_STRING : typeName;
 		this.restrictions = (previousRestrictions & RESTRICTIONS_MASK) << PREVIOUS_RESTRICTIONS_OFFSET | (restrictions & RESTRICTIONS_MASK);
 		this.key = key;
@@ -196,7 +196,10 @@ public class Delta implements IDelta {
 		if (this.kind != other.kind) {
 			return false;
 		}
-		if (this.modifiers != other.modifiers) {
+		if (this.oldModifiers != other.oldModifiers) {
+			return false;
+		}
+		if (this.newModifiers != other.newModifiers) {
 			return false;
 		}
 		if (this.restrictions != other.restrictions) {
@@ -307,12 +310,12 @@ public class Delta implements IDelta {
 
 	@Override
 	public int getNewModifiers() {
-		return (this.modifiers >>> NEW_MODIFIERS_OFFSET);
+		return this.newModifiers;
 	}
 
 	@Override
 	public int getOldModifiers() {
-		return this.modifiers & MODIFIERS_MASK;
+		return this.oldModifiers;
 	}
 
 	@Override
@@ -340,7 +343,8 @@ public class Delta implements IDelta {
 		result = prime * result + ((this.key == null) ? 0 : this.key.hashCode());
 		result = prime * result + ((this.typeName == null) ? 0 : this.typeName.hashCode());
 		result = prime * result + this.kind;
-		result = prime * result + this.modifiers;
+		result = prime * result + this.oldModifiers;
+		result = prime * result + this.newModifiers;
 		result = prime * result + this.restrictions;
 		result = prime * result + ((this.componentID == null) ? 0 : this.componentID.hashCode());
 		return result;

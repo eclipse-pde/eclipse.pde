@@ -569,6 +569,10 @@ public class DeltaProcessor {
 					case IDelta.FIELD:
 					case IDelta.METHOD:
 					case IDelta.SUPER_INTERFACE_WITH_METHODS:
+						boolean isDefault = Flags.isDefaultMethod(delta.getNewModifiers());
+						if (isDefault == true) {
+							return true;
+						}
 						return RestrictionModifiers.isImplementRestriction(delta.getPreviousRestrictions()) || RestrictionModifiers.isImplementRestriction(delta.getCurrentRestrictions());
 					case IDelta.TYPE_PARAMETER:
 						return false;
