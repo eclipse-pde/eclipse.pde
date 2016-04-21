@@ -1106,14 +1106,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					IJavaElement[] children = parent.getChildren();
 					for (IJavaElement javaElement : children) {
 						scanSource(javaElement, tags, annotations, monitor);
-						Util.updateMonitor(monitor, 0);
+						Util.updateMonitor(monitor);
 					}
 					break;
 				}
 				case IJavaElement.COMPILATION_UNIT: {
 					ICompilationUnit unit = (ICompilationUnit) element;
 					processType(unit, tags, annotations);
-					Util.updateMonitor(monitor, 0);
+					Util.updateMonitor(monitor);
 					break;
 				}
 				default:
@@ -1121,7 +1121,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 		} finally {
 			if (monitor != null) {
-				Util.updateMonitor(monitor);
 				monitor.done();
 			}
 		}

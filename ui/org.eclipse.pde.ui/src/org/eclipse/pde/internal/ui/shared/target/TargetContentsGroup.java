@@ -807,11 +807,8 @@ public class TargetContentsGroup {
 				subMonitor.worked(10);
 
 				// Get all dependency bundles
-				// exclude "org.eclipse.ui.workbench.compatibility" - it is only
-				// needed for pre-3.0 bundles
 				dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(),
-						implicitIDs.toArray(new String[implicitIDs.size()]), state.getState(),
-						new String[] { "org.eclipse.ui.workbench.compatibility" })); //$NON-NLS-1$
+						implicitIDs.toArray(new String[implicitIDs.size()]), state.getState(), null));
 				subMonitor.worked(50);
 			}
 		};

@@ -556,7 +556,6 @@ public class UtilTests extends TestCase {
 				"org.eclipse.ui.win32", //$NON-NLS-1$
 				"org.eclipse.pde.core", //$NON-NLS-1$
 				"org.eclipse.pde.build", //$NON-NLS-1$
-				"org.eclipse.ui.workbench.compatibility", //$NON-NLS-1$
 				"org.eclipse.ltk.ui.refactoring", //$NON-NLS-1$
 				"org.eclipse.jface.text", //$NON-NLS-1$
 				"org.apache.commons.el", //$NON-NLS-1$

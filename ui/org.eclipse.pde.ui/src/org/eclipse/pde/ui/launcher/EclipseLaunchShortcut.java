@@ -87,7 +87,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 					// bug 180043
 					project = ((IFile) object).getProject();
 				} else if (object instanceof IAdaptable) {
-					project = (IProject) ((IAdaptable) object).getAdapter(IProject.class);
+					project = ((IAdaptable) object).getAdapter(IProject.class);
 				}
 				if (project != null && project.isOpen())
 					model = PluginRegistry.findModel(project);
@@ -283,8 +283,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	private void initializePluginsList(ILaunchConfigurationWorkingCopy wc) {
 		StringBuffer wsplugins = new StringBuffer();
 		StringBuffer explugins = new StringBuffer();
-		// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-		Set<?> plugins = DependencyManager.getSelfAndDependencies(fModel, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
+		Set<?> plugins = DependencyManager.getSelfAndDependencies(fModel, null);
 		Iterator<?> iter = plugins.iterator();
 		while (iter.hasNext()) {
 			String id = iter.next().toString();

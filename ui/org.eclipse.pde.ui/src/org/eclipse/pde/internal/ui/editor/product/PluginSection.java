@@ -359,8 +359,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			HostSpecification host = bundles[i].getHost();
-			if (host != null && !("org.eclipse.ui.workbench.compatibility".equals(bundles[i].getSymbolicName())) //$NON-NLS-1$
-					&& calculator.containsPluginId(host.getName())) {
+			if (host != null && calculator.containsPluginId(host.getName())) {
 				calculator.findDependency(bundles[i]);
 			}
 		}

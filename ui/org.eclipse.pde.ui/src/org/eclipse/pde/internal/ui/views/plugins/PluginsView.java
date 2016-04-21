@@ -635,8 +635,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 		IPluginModelBase[] models = new IPluginModelBase[selection.size()];
 		System.arraycopy(selection.toArray(), 0, models, 0, selection.size());
-		// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-		Set<?> set = DependencyManager.getSelfandDependencies(models, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
+		Set<?> set = DependencyManager.getSelfandDependencies(models, null);
 		Object[] symbolicNames = set.toArray();
 		ArrayList<IPluginModelBase> result = new ArrayList<>(set.size());
 		for (int i = 0; i < symbolicNames.length; i++) {

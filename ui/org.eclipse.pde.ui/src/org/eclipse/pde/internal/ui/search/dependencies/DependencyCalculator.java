@@ -120,7 +120,7 @@ public class DependencyCalculator {
 	protected void addFragments(BundleDescription desc) {
 		BundleDescription[] fragments = desc.getFragments();
 		for (int i = 0; i < fragments.length; i++)
-			if (fragments[i].isResolved() && !fragments[i].getSymbolicName().equals("org.eclipse.ui.workbench.compatibility")) { //$NON-NLS-1$
+			if (fragments[i].isResolved()) {
 				findDependencies(fragments[i]);
 			}
 	}
