@@ -690,7 +690,7 @@ public class UseReportConverter extends HTMLConvertor {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.UseReportConverter_preparing_report_metadata, 11);
 		try {
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_html_root);
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 			File htmlRoot = new File(getHtmlLocation());
 			if (!htmlRoot.exists()) {
 				if (!htmlRoot.mkdirs()) {
@@ -700,7 +700,7 @@ public class UseReportConverter extends HTMLConvertor {
 				htmlRoot.mkdirs();
 			}
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_xml_root);
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 			if (getXmlLocation() == null) {
 				throw new Exception(SearchMessages.missing_xml_files_location);
 			}
@@ -710,7 +710,7 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_xslt_file);
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 			File xsltFile = null;
 			if (xslt != null) {
 				// we will use the default XSLT transform from the ant jar when
@@ -727,7 +727,7 @@ public class UseReportConverter extends HTMLConvertor {
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_writing_not_searched);
 			this.hasmissing = writeMissingBundlesPage(htmlRoot);
 			writeNotSearchedPage(htmlRoot);
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 			if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 				System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				System.out.println("Parsing use scan..."); //$NON-NLS-1$
@@ -735,7 +735,7 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_parsing_use_scan);
 			List<?> result = parse(localmonitor.split(5));
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 			if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 				System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				System.out.println("Sorting reports and writing index..."); //$NON-NLS-1$
@@ -743,7 +743,7 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_writing_root_index);
 			writeIndexPage(result);
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 			if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 				System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}

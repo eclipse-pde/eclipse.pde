@@ -238,7 +238,7 @@ public class UseScanParser {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.UseScanParser_parsing, 8);
 		localmonitor.subTask(SearchMessages.UseReportConverter_collecting_dir_info);
 		File[] referees = getDirectories(reportsRoot);
-		Util.updateMonitor(localmonitor, 1);
+		localmonitor.split(1);
 		File[] origins = null;
 		File[] xmlfiles = null;
 		localmonitor.setWorkRemaining(referees.length);
@@ -302,7 +302,7 @@ public class UseScanParser {
 							}
 						}
 					}
-					Util.updateMonitor(localmonitor, 1);
+					localmonitor.split(1);
 					endComponent();
 				}
 			}

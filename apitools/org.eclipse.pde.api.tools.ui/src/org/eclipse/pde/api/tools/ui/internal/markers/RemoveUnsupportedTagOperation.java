@@ -38,7 +38,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.progress.UIJob;
@@ -86,9 +85,9 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 					}
 					if (!compilationUnit.isConsistent()) {
 						compilationUnit.reconcile(ICompilationUnit.NO_AST, false, null, null);
-						Util.updateMonitor(localMonitor, 1);
+						localMonitor.split(1);
 					}
-					Util.updateMonitor(localMonitor, 1);
+					localMonitor.split(1);
 					ASTParser parser = ASTParser.newParser(AST.JLS8);
 					parser.setSource(compilationUnit);
 					Integer charStartAttribute = null;
@@ -101,7 +100,7 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 					final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 					NodeFinder finder = new NodeFinder(intValue);
 					unit.accept(finder);
-					Util.updateMonitor(localMonitor, 1);
+					localMonitor.split(1);
 					BodyDeclaration node = finder.getNode();
 					if (node != null) {
 						unit.recordModifications();
@@ -126,11 +125,11 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 							}
 							ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
 							lrewrite.remove(tag, null);
-							Util.updateMonitor(localMonitor, 1);
+							localMonitor.split(1);
 						}
 						TextEdit edit = rewrite.rewriteAST();
 						compilationUnit.applyTextEdit(edit, monitor);
-						Util.updateMonitor(localMonitor, 1);
+						localMonitor.split(1);
 					}
 				}
 			} catch (JavaModelException jme) {

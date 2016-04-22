@@ -35,7 +35,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.search.SearchMessages;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -209,7 +208,7 @@ public final class ApiSearchEngine {
 					IApiComponent comp = (IApiComponent) element;
 					comp.accept(visitor);
 					comp.close();
-					Util.updateMonitor(localmonitor, 1);
+					localmonitor.split(1);
 					break;
 				}
 				case IApiElement.FIELD:
@@ -230,7 +229,7 @@ public final class ApiSearchEngine {
 				default:
 					break;
 			}
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 		} finally {
 			localmonitor.done();
 		}

@@ -284,7 +284,7 @@ public class ApiUseScanJob extends Job {
 		for (int i = 0; i < components.length; i++) {
 			IApiComponent component = components[i];
 			localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_checking_component, component.getSymbolicName()));
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 			if (acceptComponent(component, pattern, true)) {
 				ids.add(component.getSymbolicName());
 			}
@@ -417,10 +417,9 @@ public class ApiUseScanJob extends Job {
 	 */
 	void cleanReportLocation(String location, IProgressMonitor monitor) {
 		File file = new File(location);
-		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_deleting_old_reports, IProgressMonitor.UNKNOWN);
+		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_deleting_old_reports, 1);
 		if (file.exists()) {
-			Util.updateMonitor(localmonitor, 0);
-			scrubReportLocation(file, localmonitor);
+			scrubReportLocation(file, localmonitor.split(1));
 			localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_deleting_root_folder, file.getName()));
 		}
 	}
@@ -432,14 +431,16 @@ public class ApiUseScanJob extends Job {
 	 * @param monitor
 	 */
 	void scrubReportLocation(File file, IProgressMonitor monitor) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor);
 		if (file.exists() && file.isDirectory()) {
 			File[] files = file.listFiles();
 			if (files != null) {
+				subMonitor.setWorkRemaining(files.length);
 				for (int i = 0; i < files.length; i++) {
-					monitor.subTask(NLS.bind(Messages.ApiUseScanJob_deleteing_file, files[i].getPath()));
-					Util.updateMonitor(monitor, 0);
+					SubMonitor iterationMonitor = subMonitor.split(1);
+					iterationMonitor.subTask(NLS.bind(Messages.ApiUseScanJob_deleteing_file, files[i].getPath()));
 					if (files[i].isDirectory()) {
-						scrubReportLocation(files[i], monitor);
+						scrubReportLocation(files[i], iterationMonitor);
 					} else {
 						files[i].delete();
 					}
@@ -458,13 +459,12 @@ public class ApiUseScanJob extends Job {
 	private IApiBaseline createBaseline(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_reading_target, 10);
 		definition.resolve(localmonitor.split(2));
-		Util.updateMonitor(localmonitor, 1);
 		TargetBundle[] bundles = definition.getBundles();
 		List<IApiComponent> components = new ArrayList<IApiComponent>();
 		IApiBaseline profile = ApiModelFactory.newApiBaseline(definition.getName());
 		localmonitor.setWorkRemaining(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 			if (bundles[i].getStatus().isOK() && !bundles[i].isSourceBundle()) {
 				IApiComponent component = ApiModelFactory.newApiComponent(profile, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
 				if (component != null) {

@@ -351,27 +351,28 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		final IProject[] projects = getRequiredProjects(true);
 		IApiBaseline baseline = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 		try {
+			SubMonitor switchMonitor = localMonitor.split(4);
 			switch (kind) {
 				case FULL_BUILD: {
 					if (ApiPlugin.DEBUG_BUILDER) {
 						System.out.println("ApiAnalysisBuilder: Performing full build as requested"); //$NON-NLS-1$
 					}
-					buildAll(baseline, wbaseline, localMonitor.split(1));
+					buildAll(baseline, wbaseline, switchMonitor);
 					break;
 				}
 				case AUTO_BUILD:
 				case INCREMENTAL_BUILD: {
 					this.buildstate = BuildState.getLastBuiltState(currentproject);
 					if (this.buildstate == null) {
-						buildAll(baseline, wbaseline, localMonitor.split(1));
+						buildAll(baseline, wbaseline, switchMonitor);
 						break;
 					} else if (worthDoingFullBuild(projects)) {
-						buildAll(baseline, wbaseline, localMonitor.split(1));
+						buildAll(baseline, wbaseline, switchMonitor);
 						break;
 					} else {
 						IResourceDelta[] deltas = getDeltas(projects);
 						if (deltas.length < 1) {
-							buildAll(baseline, wbaseline, localMonitor.split(1));
+							buildAll(baseline, wbaseline, switchMonitor);
 						} else {
 							IResourceDelta filters = null;
 							boolean full = false;
@@ -405,16 +406,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								if (ApiPlugin.DEBUG_BUILDER) {
 									System.out.println("ApiAnalysisBuilder: Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
 								}
-								buildAll(baseline, wbaseline, localMonitor.split(1));
+								buildAll(baseline, wbaseline, switchMonitor);
 							} else {
-								State state = (State) JavaModelManager.getJavaModelManager().getLastBuiltState(this.currentproject, localMonitor.split(1));
+								switchMonitor.setWorkRemaining(2);
+								State state = (State) JavaModelManager.getJavaModelManager().getLastBuiltState(this.currentproject, switchMonitor.split(1));
 								if (state == null) {
-									buildAll(baseline, wbaseline, localMonitor.split(1));
+									buildAll(baseline, wbaseline, switchMonitor.split(1));
 									break;
 								}
 								BuildState.setLastBuiltState(this.currentproject, null);
 								IncrementalApiBuilder builder = new IncrementalApiBuilder(this);
-								builder.build(baseline, wbaseline, deltas, state, this.buildstate, localMonitor.split(1));
+								builder.build(baseline, wbaseline, deltas, state, this.buildstate, switchMonitor.split(1));
 							}
 						}
 					}
@@ -424,7 +426,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					break;
 				}
 			}
-			Util.updateMonitor(localMonitor, 0);
+			localMonitor.split(1);
 
 		} catch (OperationCanceledException oce) {
 			// do nothing, but don't forward it
@@ -440,7 +442,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			ApiPlugin.log(e);
 		} finally {
 			try {
-				Util.updateMonitor(localMonitor, 0);
+				localMonitor.split(1);
 				if (this.analyzer != null) {
 					this.analyzer.dispose();
 					this.analyzer = null;
@@ -454,7 +456,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						baseline.close();
 					}
 				}
-				Util.updateMonitor(localMonitor, 0);
+				localMonitor.split(1);
 				if (this.buildstate != null) {
 					for (IProject project : projects) {
 						if (Util.isApiProject(project)) {
@@ -483,11 +485,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					}
 					BuildState.saveBuiltState(this.currentproject, this.buildstate);
 					this.buildstate = null;
-					Util.updateMonitor(monitor, 0);
+					localMonitor.split(1);
 				}
-				if (localMonitor != null) {
-					localMonitor.done();
-				}
+				SubMonitor.done(monitor);
 			} catch (OperationCanceledException oce) {
 				// do nothing, but don't forward it
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
@@ -734,15 +734,15 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			IPluginModelBase currentModel = getCurrentModel();
 			if (currentModel != null) {
 				localMonitor.subTask(BuilderMessages.building_workspace_profile);
-				Util.updateMonitor(localMonitor, 1);
+				localMonitor.split(1);
 				String id = currentModel.getBundleDescription().getSymbolicName();
 				// Compatibility checks
 				IApiComponent apiComponent = wbaseline.getApiComponent(id);
 				if (apiComponent != null) {
 					getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, new BuildContext(), localMonitor.split(1));
-					Util.updateMonitor(localMonitor, 1);
+					localMonitor.split(1);
 					createMarkers();
-					Util.updateMonitor(localMonitor, 1);
+					localMonitor.split(1);
 				}
 			}
 		} finally {
@@ -972,10 +972,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			cleanupUnsupportedTagMarkers(this.currentproject);
 			cleanupUnsupportedAnnotationMarkers(this.currentproject);
 			this.currentproject.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 			// clean up the .api_settings
 			cleanupApiDescription(this.currentproject);
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 		} finally {
 			BuildState.setLastBuiltState(this.currentproject, null);
 			localmonitor.done();

@@ -91,43 +91,79 @@ public class ExportSessionAction extends Action {
 				progress.subTask(ActionMessages.CompareDialogCollectingElementTaskName);
 				boolean isHtmlFile = lowerCase.endsWith(HTML_FILE_EXTENSION);
 				File xmlOutputFile = null;
+				progress.subTask(ActionMessages.CompareDialogComputeDeltasTaskName);
+				File reportFile = new File(reportFileName);
 				try {
-					progress.subTask(ActionMessages.CompareDialogComputeDeltasTaskName);
-					File reportFile = new File(reportFileName);
+					progress.split(25);
+					BufferedWriter writer = null;
 					try {
-						progress.worked(25);
-						Util.updateMonitor(progress);
-						BufferedWriter writer = null;
-						try {
-							if (isHtmlFile) {
-								xmlOutputFile = Util.createTempFile(String.valueOf(System.currentTimeMillis()), XML_FILE_EXTENSION);
-							} else {
-								xmlOutputFile = reportFile;
+						if (isHtmlFile) {
+							xmlOutputFile = Util.createTempFile(String.valueOf(System.currentTimeMillis()),
+									XML_FILE_EXTENSION);
+						} else {
+							xmlOutputFile = reportFile;
+						}
+						if (xmlOutputFile.exists()) {
+							xmlOutputFile.delete();
+						} else {
+							File parent = xmlOutputFile.getParentFile();
+							if (!parent.exists() && !parent.mkdirs()) {
+								return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
+										ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
 							}
-							if (xmlOutputFile.exists()) {
-								xmlOutputFile.delete();
+						}
+						writer = new BufferedWriter(new FileWriter(xmlOutputFile));
+						DeltaXmlVisitor visitor = new DeltaXmlVisitor();
+						Object data = activeSession.getModel().getRoot().getData();
+						if (data instanceof IDelta) {
+							IDelta delta = (IDelta) data;
+							progress.split(25);
+							delta.accept(visitor);
+							writer.write(visitor.getXML());
+							writer.flush();
+							progress.worked(25);
+						}
+					} catch (IOException e) {
+						ApiPlugin.log(e);
+					} catch (CoreException e) {
+						ApiPlugin.log(e);
+					} finally {
+						if (writer != null) {
+							try {
+								writer.close();
+							} catch (IOException e) {
+								// ignore
+							}
+						}
+					}
+					if (isHtmlFile) {
+						// remaining part is to convert the xml file to html
+						// using XSLT
+						progress.split(10);
+						Source xmlSource = new StreamSource(xmlOutputFile);
+						InputStream stream = ApiPlugin.class.getResourceAsStream(DELTAS_XSLT_TRANSFORM_PATH);
+						Source xsltSource = new StreamSource(stream);
+						try {
+							if (reportFile.exists()) {
+								reportFile.delete();
 							} else {
-								File parent = xmlOutputFile.getParentFile();
+								File parent = reportFile.getParentFile();
 								if (!parent.exists() && !parent.mkdirs()) {
 									return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
 								}
 							}
-							writer = new BufferedWriter(new FileWriter(xmlOutputFile));
-							DeltaXmlVisitor visitor = new DeltaXmlVisitor();
-							Object data = activeSession.getModel().getRoot().getData();
-							if (data instanceof IDelta) {
-								IDelta delta = (IDelta) data;
-								progress.worked(25);
-								Util.updateMonitor(progress);
-								delta.accept(visitor);
-								writer.write(visitor.getXML());
-								writer.flush();
-								progress.worked(25);
-							}
+							writer = new BufferedWriter(new FileWriter(reportFile));
+							Result result = new StreamResult(writer);
+							// create an instance of TransformerFactory
+							TransformerFactory transFact = TransformerFactory.newInstance();
+							Transformer trans = transFact.newTransformer(xsltSource);
+							trans.transform(xmlSource, result);
+						} catch (TransformerConfigurationException e) {
+							ApiUIPlugin.log(e);
+						} catch (TransformerException e) {
+							ApiUIPlugin.log(e);
 						} catch (IOException e) {
-							ApiPlugin.log(e);
-						} catch (CoreException e) {
-							ApiPlugin.log(e);
+							ApiUIPlugin.log(e);
 						} finally {
 							if (writer != null) {
 								try {
@@ -137,57 +173,16 @@ public class ExportSessionAction extends Action {
 								}
 							}
 						}
-						if (isHtmlFile) {
-							// remaining part is to convert the xml file to html
-							// using XSLT
-							Util.updateMonitor(progress);
-							Source xmlSource = new StreamSource(xmlOutputFile);
-							InputStream stream = ApiPlugin.class.getResourceAsStream(DELTAS_XSLT_TRANSFORM_PATH);
-							Source xsltSource = new StreamSource(stream);
-							try {
-								if (reportFile.exists()) {
-									reportFile.delete();
-								} else {
-									File parent = reportFile.getParentFile();
-									if (!parent.exists() && !parent.mkdirs()) {
-										return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
-									}
-								}
-								writer = new BufferedWriter(new FileWriter(reportFile));
-								Result result = new StreamResult(writer);
-								// create an instance of TransformerFactory
-								TransformerFactory transFact = TransformerFactory.newInstance();
-								Transformer trans = transFact.newTransformer(xsltSource);
-								trans.transform(xmlSource, result);
-							} catch (TransformerConfigurationException e) {
-								ApiUIPlugin.log(e);
-							} catch (TransformerException e) {
-								ApiUIPlugin.log(e);
-							} catch (IOException e) {
-								ApiUIPlugin.log(e);
-							} finally {
-								if (writer != null) {
-									try {
-										writer.close();
-									} catch (IOException e) {
-										// ignore
-									}
-								}
-							}
-						}
-						progress.worked(25);
-						return Status.OK_STATUS;
-					} catch (OperationCanceledException e) {
-						// ignore
-						if (xmlOutputFile != null && xmlOutputFile.exists()) {
-							xmlOutputFile.delete();
-						}
-						if (reportFile.exists()) {
-							reportFile.delete();
-						}
 					}
-				} finally {
-					monitor.done();
+					return Status.OK_STATUS;
+				} catch (OperationCanceledException e) {
+					// ignore
+					if (xmlOutputFile != null && xmlOutputFile.exists()) {
+						xmlOutputFile.delete();
+					}
+					if (reportFile.exists()) {
+						reportFile.delete();
+					}
 				}
 				return Status.CANCEL_STATUS;
 			}

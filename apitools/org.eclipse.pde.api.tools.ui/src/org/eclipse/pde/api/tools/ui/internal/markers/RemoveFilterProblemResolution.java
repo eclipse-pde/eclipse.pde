@@ -95,7 +95,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 			IResource resource = null;
 			// collate the filters by IApiComponent
 			for (int i = 0; i < markers.length; i++) {
-				Util.updateMonitor(localmonitor, 1);
+				localmonitor.split(1);
 				filter = ApiMarkerResolutionGenerator.resolveFilter(markers[i]);
 				if (filter == null) {
 					continue;
@@ -123,7 +123,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 				} catch (CoreException ce) {
 					ApiPlugin.log(ce);
 				}
-				Util.updateMonitor(localmonitor, 1);
+				localmonitor.split(1);
 			}
 			// touch resources to mark them as needing build
 			HashSet<IProject> pjs = new HashSet<IProject>();

@@ -96,7 +96,7 @@ public class ProjectUpdateChange extends Change {
 			 */
 			BuildState.setLastBuiltState(this.fProject, null);
 		}
-		Util.updateMonitor(localmonitor, 1);
+		localmonitor.split(1);
 		return null;
 	}
 }

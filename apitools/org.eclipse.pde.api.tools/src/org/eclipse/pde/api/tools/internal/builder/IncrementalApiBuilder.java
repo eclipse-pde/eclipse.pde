@@ -270,10 +270,8 @@ public class IncrementalApiBuilder {
 	 * @param monitor
 	 */
 	void build(final IProject project, final IApiBaseline baseline, final IApiBaseline wbaseline, final State state, BuildState buildstate, IProgressMonitor monitor) {
-		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 6);
-		Util.updateMonitor(localmonitor, 1);
+		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 3);
 		localmonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, project.getName()));
-		Util.updateMonitor(localmonitor, 0);
 		if (this.context.hasTypes()) {
 			IPluginModelBase currentModel = this.builder.getCurrentModel();
 			if (currentModel != null) {
@@ -283,11 +281,9 @@ public class IncrementalApiBuilder {
 					return;
 				}
 				extClean(project, buildstate, localmonitor.split(1));
-				Util.updateMonitor(localmonitor, 1);
 				this.builder.getAnalyzer().analyzeComponent(buildstate, null, null, baseline, comp, this.context, localmonitor.split(1));
-				Util.updateMonitor(localmonitor, 1);
+				localmonitor.split(1);
 				this.builder.createMarkers();
-				Util.updateMonitor(localmonitor, 1);
 			}
 		}
 	}
@@ -538,13 +534,14 @@ public class IncrementalApiBuilder {
 	 * @param monitor
 	 */
 	void extClean(final IProject project, BuildState state, IProgressMonitor monitor) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 3);
 		// clean up the state -
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=271110
 		String[] types = this.context.getRemovedTypes();
 		for (String type : types) {
 			state.cleanup(type);
 		}
-		Util.updateMonitor(monitor, 0);
+		subMonitor.split(1);
 		IResource resource = project.findMember(ApiAnalysisBuilder.MANIFEST_PATH);
 		if (resource != null) {
 			try {
@@ -559,7 +556,7 @@ public class IncrementalApiBuilder {
 						marker.delete();
 					}
 				}
-				Util.updateMonitor(monitor, 0);
+				subMonitor.split(1);
 				// TODO we should find a way to cache markers to type names,
 				// that way to get all
 				// the manifest markers for a given type name is time of O(1)
@@ -570,7 +567,7 @@ public class IncrementalApiBuilder {
 						marker.delete();
 					}
 				}
-				Util.updateMonitor(monitor, 0);
+				subMonitor.split(1);
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
 			}

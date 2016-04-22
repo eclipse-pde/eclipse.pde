@@ -266,18 +266,18 @@ public class ApiModelFactory {
 			ApiPlugin plugin = ApiPlugin.getDefault();
 			if (plugin != null) {
 				service = (ITargetPlatformService) ApiPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
-				Util.updateMonitor(subMonitor, 1);
+				subMonitor.split(1);
 				ITargetLocation container = service.newProfileLocation(installLocation, null);
 				ITargetDefinition definition = service.newTarget();
 				subMonitor.subTask(Messages.resolving_target_definition);
 				container.resolve(definition, subMonitor.split(30));
-				Util.updateMonitor(subMonitor, 1);
+				subMonitor.split(1);
 				TargetBundle[] bundles = container.getBundles();
 				List<IApiComponent> components = new ArrayList<>();
 				if (bundles.length > 0) {
 					subMonitor.setWorkRemaining(bundles.length);
 					for (int i = 0; i < bundles.length; i++) {
-						Util.updateMonitor(subMonitor, 1);
+						subMonitor.split(1);
 						if (!bundles[i].isSourceBundle()) {
 							IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
 							if (component != null) {
@@ -326,13 +326,13 @@ public class ApiModelFactory {
 			if (!result.isOK()) {
 				throw new CoreException(result);
 			}
-			Util.updateMonitor(subMonitor, 1);
+			subMonitor.split(1);
 			TargetBundle[] bundles = definition.getBundles();
 			List<IApiComponent> components = new ArrayList<>();
 			if (bundles.length > 0) {
 				subMonitor.setWorkRemaining(bundles.length);
 				for (int i = 0; i < bundles.length; i++) {
-					Util.updateMonitor(subMonitor, 1);
+					subMonitor.split(1);
 					if (!bundles[i].isSourceBundle()) {
 						IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
 						if (component != null) {

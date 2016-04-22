@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -40,8 +41,9 @@ public class CompositeApiDescription implements IApiDescription {
 
 	@Override
 	public void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, fDescriptions.length);
 		for (IApiDescription fDescription : fDescriptions) {
-			fDescription.accept(visitor, monitor);
+			fDescription.accept(visitor, subMonitor.split(1));
 		}
 	}
 

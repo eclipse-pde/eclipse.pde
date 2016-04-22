@@ -628,7 +628,7 @@ public class TagScanner {
 				}
 			}
 		}
-		Util.updateMonitor(localmonitor);
+		localmonitor.split(1);
 		Map<String, String> loptions = options;
 		if (loptions == null) {
 			loptions = JavaCore.getOptions();

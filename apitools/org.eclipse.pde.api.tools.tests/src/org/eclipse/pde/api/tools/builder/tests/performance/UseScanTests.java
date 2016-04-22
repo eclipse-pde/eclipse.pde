@@ -31,7 +31,6 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
-import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
@@ -130,13 +129,13 @@ public class UseScanTests extends PerformanceTestCase {
 	private IApiBaseline createBaseline(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, "", 10); //$NON-NLS-1$
 		definition.resolve(localmonitor.split(2));
-		Util.updateMonitor(localmonitor, 1);
+		localmonitor.split(1);
 		TargetBundle[] bundles = definition.getBundles();
 		List<IApiComponent> components = new ArrayList<IApiComponent>();
 		IApiBaseline profile = ApiModelFactory.newApiBaseline(definition.getName());
 		localmonitor.setWorkRemaining(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
-			Util.updateMonitor(localmonitor, 1);
+			localmonitor.split(1);
 			if (bundles[i].getStatus().isOK() && !bundles[i].isSourceBundle()) {
 				IApiComponent component = ApiModelFactory.newApiComponent(profile,
 						URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());

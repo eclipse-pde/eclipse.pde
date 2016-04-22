@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -31,7 +32,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -225,39 +225,31 @@ public class ReferenceAnalyzer {
 	 * @throws CoreException
 	 */
 	public IApiProblem[] analyze(IApiComponent component, IApiTypeContainer scope, IProgressMonitor monitor) throws CoreException {
+		SubMonitor localMonitor = SubMonitor.convert(monitor, 4);
 		// build problem detectors
-		IApiProblemDetector[] detectors = buildProblemDetectors(component, ProblemDetectorBuilder.K_ALL, monitor);
+		IApiProblemDetector[] detectors = buildProblemDetectors(component, ProblemDetectorBuilder.K_ALL, localMonitor.split(1));
 		// analyze
 		try {
 			// 1. extract references
-			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.ReferenceAnalyzer_analyzing_api, 3);
 			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
-			extractReferences(scope, localMonitor);
-			localMonitor.worked(1);
-			if (localMonitor.isCanceled()) {
-				return EMPTY_RESULT;
-			}
+			extractReferences(scope, localMonitor.split(1));
 			// 2. resolve problematic references
 			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
 			if (fReferences.size() != 0) {
-				ReferenceResolver.resolveReferences(fReferences, localMonitor);
-			}
-			localMonitor.worked(1);
-			if (localMonitor.isCanceled()) {
-				return EMPTY_RESULT;
+				ReferenceResolver.resolveReferences(fReferences, localMonitor.split(1));
 			}
 			// 3. create problems
 			List<IApiProblem> allProblems = new LinkedList<>();
 			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
+			SubMonitor loopMonitor = localMonitor.split(1).setWorkRemaining(detectors.length);
 			for (IApiProblemDetector detector : detectors) {
+				loopMonitor.split(1);
 				allProblems.addAll(detector.createProblems());
-				if (localMonitor.isCanceled()) {
-					return EMPTY_RESULT;
-				}
 			}
 			IApiProblem[] array = allProblems.toArray(new IApiProblem[allProblems.size()]);
-			localMonitor.worked(1);
 			return array;
+		} catch (OperationCanceledException e) {
+			return EMPTY_RESULT;
 		} finally {
 			// clean up
 			fIndexedDetectors = null;
@@ -300,13 +292,14 @@ public class ReferenceAnalyzer {
 			long start = System.currentTimeMillis();
 			IApiComponent[] components = component.getBaseline().getPrerequisiteComponents(new IApiComponent[] { component });
 			final ProblemDetectorBuilder visitor = new ProblemDetectorBuilder(component, kindmask);
+			SubMonitor loopMonitor = SubMonitor.convert(monitor, components.length);
 			for (IApiComponent componentLoop : components) {
-				Util.updateMonitor(monitor);
+				SubMonitor iterationMonitor = loopMonitor.split(1);
 				IApiComponent prereq = componentLoop;
 				if (!prereq.equals(component)) {
 					visitor.setOwningComponent(prereq);
 					try {
-						prereq.getApiDescription().accept(visitor, monitor);
+						prereq.getApiDescription().accept(visitor, iterationMonitor);
 					} catch (CoreException e) {
 						ApiPlugin.log(e.getStatus());
 					}

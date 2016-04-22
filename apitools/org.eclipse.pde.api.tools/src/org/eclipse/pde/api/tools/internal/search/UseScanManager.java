@@ -143,7 +143,7 @@ public class UseScanManager {
 				if (unavailableMembers.size() > 0) {
 					fetch(apiComponent, unavailableMembers.toArray(new String[unavailableMembers.size()]), references, monitor);
 				}
-				Util.updateMonitor(localmonitor, 1);
+				localmonitor.split(1);
 				return references.getExternalDependenciesTo(apiUseTypes);
 			} else {
 				fetch(apiComponent, null, references, localmonitor.split(8)); // full
@@ -153,7 +153,7 @@ public class UseScanManager {
 																					// triggered
 																					// so
 																					// re-fetch
-				Util.updateMonitor(localmonitor, 1);
+				localmonitor.split(1);
 				return references.getAllExternalDependencies();
 			}
 		} finally {
@@ -182,9 +182,9 @@ public class UseScanManager {
 			}
 			if (locations != null) {
 				IStringVariableManager stringManager = null;
-				localmonitor.setWorkRemaining(locations.length * 2);
+				localmonitor.setWorkRemaining(locations.length);
 				for (int i = 0; i < locations.length; i++) {
-					Util.updateMonitor(localmonitor, 1);
+					SubMonitor iterationMonitor = localmonitor.split(1);
 					File file = new File(locations[i]);
 					if (!file.exists()) {
 						continue;
@@ -223,8 +223,7 @@ public class UseScanManager {
 							}
 							throw new Exception(message);
 						}
-						parser.parse(locations[i], localmonitor.split(2), visitor);
-						Util.updateMonitor(localmonitor);
+						parser.parse(locations[i], iterationMonitor, visitor);
 					} catch (Exception e) {
 						ApiPlugin.log(e); // log the exception and continue with
 											// next location
@@ -239,8 +238,6 @@ public class UseScanManager {
 			}
 		} catch (Exception e) {
 			ApiPlugin.log(e);
-		} finally {
-			localmonitor.done();
 		}
 	}
 

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.api.tools.internal.descriptors.NamedElementDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -35,7 +36,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -295,8 +295,9 @@ public class ApiDescription implements IApiDescription {
 		List<IElementDescriptor> elements = new ArrayList<>(childrenMap.keySet());
 		Collections.sort(elements, fgComparator);
 		Iterator<IElementDescriptor> iterator = elements.iterator();
+		SubMonitor loopMonitor = SubMonitor.convert(monitor, elements.size());
 		while (iterator.hasNext()) {
-			Util.updateMonitor(monitor);
+			loopMonitor.split(1);
 			IElementDescriptor element = iterator.next();
 			ManifestNode node = childrenMap.get(element);
 			visitNode(visitor, node);

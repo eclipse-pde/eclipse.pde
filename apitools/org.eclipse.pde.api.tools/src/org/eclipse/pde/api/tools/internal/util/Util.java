@@ -1114,35 +1114,6 @@ public final class Util {
 		return null;
 	}
 
-	/**
-	 * Updates a given progress monitor the given amount of work. Throws an
-	 * {@link OperationCanceledException} if the monitor has been canceled.
-	 *
-	 * @param monitor
-	 * @param work
-	 * @throws OperationCanceledException
-	 */
-	public static void updateMonitor(IProgressMonitor monitor, int work) throws OperationCanceledException {
-		if (monitor == null) {
-			return;
-		}
-		if (monitor.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		monitor.worked(work);
-	}
-
-	/**
-	 * Updates the given monitor 0 work ticks. This method is used to poll for
-	 * cancellation without advancing the work done.
-	 *
-	 * @param monitor
-	 * @throws OperationCanceledException
-	 */
-	public static void updateMonitor(IProgressMonitor monitor) throws OperationCanceledException {
-		updateMonitor(monitor, 0);
-	}
-
 	private static IMember getMethod(IType type, String key) {
 		boolean isGeneric = false;
 		int indexOfTypeVariable = key.indexOf('<');

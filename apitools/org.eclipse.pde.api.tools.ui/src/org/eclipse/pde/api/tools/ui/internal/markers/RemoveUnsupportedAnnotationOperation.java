@@ -38,7 +38,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
 import org.eclipse.ui.PartInitException;
@@ -137,9 +136,9 @@ public class RemoveUnsupportedAnnotationOperation extends UIJob {
 					}
 					if (!compilationUnit.isConsistent()) {
 						compilationUnit.reconcile(ICompilationUnit.NO_AST, false, null, null);
-						Util.updateMonitor(localMonitor, 1);
+						localMonitor.split(1);
 					}
-					Util.updateMonitor(localMonitor, 1);
+					localMonitor.split(1);
 					ASTParser parser = ASTParser.newParser(AST.JLS8);
 					parser.setSource(compilationUnit);
 					Integer charStartAttribute = null;
@@ -149,17 +148,17 @@ public class RemoveUnsupportedAnnotationOperation extends UIJob {
 					final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 					AnnotationFinder finder = new AnnotationFinder(intValue);
 					unit.accept(finder);
-					Util.updateMonitor(localMonitor, 1);
+					localMonitor.split(1);
 					if (finder.fNode != null) {
 						unit.recordModifications();
 						AST ast = unit.getAST();
 						ASTRewrite rewrite = ASTRewrite.create(ast);
 						TextEditGroup group = new TextEditGroup("Removing API tools annotations"); //$NON-NLS-1$
 						rewrite.remove(finder.fNode, group);
-						Util.updateMonitor(localMonitor, 1);
+						localMonitor.split(1);
 						TextEdit edit = rewrite.rewriteAST();
 						compilationUnit.applyTextEdit(edit, monitor);
-						Util.updateMonitor(localMonitor, 1);
+						localMonitor.split(1);
 					}
 				}
 			} catch (JavaModelException jme) {

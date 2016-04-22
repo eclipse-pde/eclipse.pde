@@ -431,7 +431,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 							pchange.add(new DeleteResourceChange(cxml.getFullPath(), true));
 						}
 					}
-					Util.updateMonitor(localmonitor, 1);
+					localmonitor.split(1);
 				}
 			}
 		};
