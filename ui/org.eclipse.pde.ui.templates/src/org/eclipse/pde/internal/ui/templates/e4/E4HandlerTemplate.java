@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 OPCoach
+ * Copyright (c) 2015, 2016 OPCoach
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation (bug #481340)
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 492292
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.templates.e4;
@@ -50,7 +51,7 @@ public class E4HandlerTemplate extends PDETemplateSection {
 	private void createOptions() {
 		// first page
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.E4HandlerTemplate_packageName, (String) null, 0);
-		addOption("className", PDETemplateMessages.E4HandlerTemplate_className, "HellowWorldHandler", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("className", PDETemplateMessages.E4HandlerTemplate_className, "HelloWorldHandler", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("message", PDETemplateMessages.E4HandlerMessage, PDETemplateMessages.E4HandlerMessage_default, 0); //$NON-NLS-1$
 
 	}
