@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,10 +29,10 @@ import junit.framework.TestSuite;
 
 public class FieldDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
-		// return new TestSuite(FieldDeltaTests.class);
-		TestSuite suite = new TestSuite(FieldDeltaTests.class.getName());
-		suite.addTest(new FieldDeltaTests("test78")); //$NON-NLS-1$
-		return suite;
+		return new TestSuite(FieldDeltaTests.class);
+//		TestSuite suite = new TestSuite(FieldDeltaTests.class.getName());
+//		suite.addTest(new FieldDeltaTests("test75"));
+//		return suite;
 	}
 
 	public FieldDeltaTests(String name) {
@@ -1809,31 +1809,6 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-
-	/**
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=490770 Non-compile time
-	 * constant to compile time constant
-	 */
-	public void test78() {
-		deployBundles("test78"); //$NON-NLS-1$
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after,
-				VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
-	}
-
 	/**
 	 * Check decrease field visibility - public to private
 	 */
