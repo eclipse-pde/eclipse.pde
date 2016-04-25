@@ -68,12 +68,9 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 			File[] files = site.listFiles();
 			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
 			List<TargetBundle> bundles = new ArrayList<>(files.length);
-			for (int i = 0; i < files.length; i++) {
-				if (localMonitor.isCanceled()) {
-					return new TargetBundle[0];
-				}
+			for (File file : files) {
 				try {
-					TargetBundle rb = new TargetBundle(files[i]);
+					TargetBundle rb = new TargetBundle(file);
 					bundles.add(rb);
 				} catch (CoreException e) {
 					// If an old style conversion fails because the service is not available, log the error.
@@ -82,9 +79,8 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 						PDECore.log(e);
 					}
 				}
-				localMonitor.worked(1);
+				localMonitor.step(1);
 			}
-			localMonitor.done();
 			return bundles.toArray(new TargetBundle[bundles.size()]);
 		}
 		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
@@ -92,10 +88,25 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 
 	@Override
 	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
-		if (definition instanceof TargetDefinition) {
-			return ((TargetDefinition) definition).resolveFeatures(getLocation(false), monitor);
+		File dir = getDirectory();
+		if (!dir.isDirectory()) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
+					NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
 		}
-		return new TargetFeature[0];
+		File site = getFeatureSite(dir);
+		File[] files = site.listFiles();
+		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
+		List<TargetFeature> features = new ArrayList<>(files.length);
+		for (File file : files) {
+			try {
+				TargetFeature rf = new TargetFeature(file);
+				features.add(rf);
+			} catch (CoreException e) {
+				// ignore non-feature files
+			}
+			localMonitor.step(1);
+		}
+		return features.toArray(new TargetFeature[features.size()]);
 	}
 
 	/**
@@ -135,6 +146,22 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	 */
 	private File getSite(File root) {
 		File file = new File(root, IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
+		if (file.exists()) {
+			return file;
+		}
+		return root;
+	}
+
+	/**
+	 * Returns the directory to scan for features - a "features" sub directory
+	 * if present.
+	 *
+	 * @param root
+	 *            the location the container specifies as a root directory
+	 * @return the given directory or its plug-ins sub directory if present
+	 */
+	private File getFeatureSite(File root) {
+		File file = new File(root, IPDEBuildConstants.DEFAULT_FEATURE_LOCATION);
 		if (file.exists()) {
 			return file;
 		}
