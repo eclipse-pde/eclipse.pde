@@ -241,9 +241,6 @@ public class TargetDefinition implements ITargetDefinition {
 			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_2, null);
 			Set<P2TargetUtils> seen = new HashSet<>();
 			if (containers != null) {
-				// clear all previous maps
-				P2TargetUtils.fgTargetArtifactRepo.clear();
-				P2TargetUtils.fgArtifactKeyRepoFile.clear();
 				// Process synchronizers first, then perform resolves against the individual
 				// containers. A synchronizer may be shared among several containers, do we
 				// keep track of the synchronizers processed.

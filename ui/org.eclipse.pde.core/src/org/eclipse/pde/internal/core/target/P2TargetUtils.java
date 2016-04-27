@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2015 EclipseSource Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,16 +110,6 @@ public class P2TargetUtils {
 	 * Table mapping {@link ITargetDefinition} to synchronizer (P2TargetUtils) instance.
 	 */
 	private static Map<ITargetDefinition, P2TargetUtils> synchronizers = new HashMap<>();
-
-	/**
-	 * Table mapping of  ITargetDefinition and IFileArtifactRepository
-	 */
-	public static HashMap<ITargetDefinition, IFileArtifactRepository> fgTargetArtifactRepo = new HashMap<>();
-
-	/**
-	 * Table mapping IArtifactKey to table map of IFileArtifactRepository and IFileArtifactRepository
-	 */
-	public static HashMap<IArtifactKey, HashMap<IFileArtifactRepository, File>> fgArtifactKeyRepoFile = new HashMap<>();
 
 	/**
 	 * The profile to be synchronized
