@@ -39,7 +39,7 @@ public class ExportTargetJob extends Job {
 	private ITargetDefinition fTarget;
 
 	public ExportTargetJob(ITargetDefinition target, URI destination, boolean clearDestinationDirectory) {
-		super("Export Current Target Definition Job"); //$NON-NLS-1$
+		super("Export Current Target Definition"); //$NON-NLS-1$
 		fTarget = target;
 		fDestination = destination;
 		fclearDestinationDirectory = clearDestinationDirectory;
