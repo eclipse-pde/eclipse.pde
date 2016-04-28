@@ -189,7 +189,7 @@
     </p2.remove.iu>
     <p2.repo2runnable
       destination="file://${installDeltapack}/eclipse"
-      failonerror="true">
+      failonerror="false">
       <source>
         <repository location="file://${featureTemp}" />
       </source>
