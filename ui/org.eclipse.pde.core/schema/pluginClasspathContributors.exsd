@@ -84,9 +84,9 @@ The additional classpath entries are only stored as long as the project classpat
 &lt;pre&gt;
   &lt;extension
     point=&quot;org.eclipse.pde.core.pluginClasspathContributors&quot;&gt;
-    &lt;contribtor
+    &lt;contributor
       class=&quot;at.bestsolution.efxclipse.tooling.pde.core.JavaFXClassPathExtender&quot;&gt;
-    &lt;/contribtor&gt;
+    &lt;/contributor&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
