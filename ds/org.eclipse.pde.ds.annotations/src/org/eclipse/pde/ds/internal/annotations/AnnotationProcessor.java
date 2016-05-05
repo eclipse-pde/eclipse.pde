@@ -1490,7 +1490,7 @@ class AnnotationVisitor extends ASTVisitor {
 			} else {
 				unbind = unbindValue;
 				if (!errorLevel.isIgnore()) {
-					IMethodBinding unbindMethod = findUnbindMethod(methodBinding.getDeclaringClass(), serviceType, unbind, true);
+					IMethodBinding unbindMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, unbind, true);
 					if (unbindMethod == null)
 						reportProblem(annotation, "unbind", problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceUnbind, unbind), unbind); //$NON-NLS-1$
 				}
@@ -1503,7 +1503,7 @@ class AnnotationVisitor extends ASTVisitor {
 				unbindCandidate = "un" + methodName; //$NON-NLS-1$
 			}
 
-			IMethodBinding unbindMethod = findUnbindMethod(methodBinding.getDeclaringClass(), serviceType, unbindCandidate, false);
+			IMethodBinding unbindMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, unbindCandidate, false);
 			if (unbindMethod == null) {
 				unbind = null;
 				reportProblem(annotation, null, missingUnbindMethodLevel, problems, NLS.bind(Messages.AnnotationProcessor_noImplicitReferenceUnbind, unbindCandidate), unbindCandidate);
@@ -1529,7 +1529,7 @@ class AnnotationVisitor extends ASTVisitor {
 			} else {
 				updated = updatedValue;
 				if (!errorLevel.isIgnore()) {
-					IMethodBinding updatedMethod = findUpdatedMethod(methodBinding.getDeclaringClass(), updated, true);
+					IMethodBinding updatedMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, updated, true);
 					if (updatedMethod == null)
 						reportProblem(annotation, ATTRIBUTE_REFERENCE_UPDATED, problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceUpdated, updated), updated);
 				}
@@ -1546,7 +1546,7 @@ class AnnotationVisitor extends ASTVisitor {
 				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName;
 			}
 
-			IMethodBinding updatedMethod = findUpdatedMethod(methodBinding.getDeclaringClass(), updatedCandidate, false);
+			IMethodBinding updatedMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, updatedCandidate, false);
 			if (updatedMethod == null)
 				updated = null;
 			else
@@ -1685,7 +1685,7 @@ class AnnotationVisitor extends ASTVisitor {
 		}
 	}
 
-	private IMethodBinding findUnbindMethod(ITypeBinding componentClass, ITypeBinding serviceType, String name, boolean recurse) {
+	private IMethodBinding findReferenceMethod(ITypeBinding componentClass, ITypeBinding serviceType, String name, boolean recurse) {
 		ITypeBinding testedClass = componentClass;
 
 		IMethodBinding candidate = null;
@@ -1731,37 +1731,6 @@ class AnnotationVisitor extends ASTVisitor {
 
 						// we have a candidate
 						candidate = declaredMethod;
-					}
-				}
-			}
-		} while (recurse && (testedClass = testedClass.getSuperclass()) != null);
-
-		return candidate;
-	}
-
-	private IMethodBinding findUpdatedMethod(ITypeBinding componentClass, String name, boolean recurse) {
-		ITypeBinding testedClass = componentClass;
-
-		IMethodBinding candidate = null;
-		do {
-			for (IMethodBinding declaredMethod : testedClass.getDeclaredMethods()) {
-				if (name.equals(declaredMethod.getName())
-						&& Void.TYPE.getName().equals(declaredMethod.getReturnType().getName())
-						&& (testedClass == componentClass
-						|| Modifier.isPublic(declaredMethod.getModifiers())
-						|| Modifier.isProtected(declaredMethod.getModifiers())
-						|| (!Modifier.isPrivate(declaredMethod.getModifiers())
-								&& testedClass.getPackage().isEqualTo(componentClass.getPackage())))) {
-					ITypeBinding[] paramTypes = declaredMethod.getParameterTypes();
-					if (paramTypes.length == 1) {
-						if (ServiceReference.class.getName().equals(paramTypes[0].getErasure().getQualifiedName()))
-							// we have the winner
-							return declaredMethod;
-
-						if (candidate == null && Map.class.getName().equals(paramTypes[0].getErasure().getQualifiedName())) {
-							// we have a candidate
-							candidate = declaredMethod;
-						}
 					}
 				}
 			}
