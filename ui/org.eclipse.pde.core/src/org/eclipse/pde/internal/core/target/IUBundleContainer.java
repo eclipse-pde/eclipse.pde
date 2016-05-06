@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -290,7 +290,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		// query for bundles
 		IFileArtifactRepository artifacts = null;
 		try {
-			artifacts = P2TargetUtils.getBundlePool();
+			if (P2TargetUtils.fgTargetArtifactRepo.containsKey(target)) {
+				artifacts = P2TargetUtils.fgTargetArtifactRepo.get(target);
+			} else {
+				artifacts = P2TargetUtils.getBundlePool();
+				P2TargetUtils.fgTargetArtifactRepo.put(target, artifacts);
+			}
 		} catch (CoreException e) {
 			if (PDECore.DEBUG_TARGET_PROFILE) {
 				System.out.println("Bundle pool repository could not be loaded"); //$NON-NLS-1$
@@ -417,7 +422,20 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	private void generateBundle(IInstallableUnit unit, IFileArtifactRepository repo, Map<BundleInfo, TargetBundle> bundles) throws CoreException {
 		Collection<IArtifactKey> artifacts = unit.getArtifacts();
 		for (Iterator<IArtifactKey> iterator2 = artifacts.iterator(); iterator2.hasNext();) {
-			File file = repo.getArtifactFile(iterator2.next());
+			IArtifactKey artifactKey = iterator2.next();
+			File file = null;
+			if (P2TargetUtils.fgArtifactKeyRepoFile.containsKey(artifactKey)) {
+				if (P2TargetUtils.fgArtifactKeyRepoFile.get(artifactKey).containsKey(repo))
+					file = P2TargetUtils.fgArtifactKeyRepoFile.get(artifactKey).get(repo);
+			}
+			if( file == null){
+				file = repo.getArtifactFile(artifactKey);
+				if (file != null) {
+					HashMap<IFileArtifactRepository, File> repoFile = new HashMap<>();
+					repoFile.put(repo, file);
+					P2TargetUtils.fgArtifactKeyRepoFile.put(artifactKey, repoFile);
+				}
+			}
 			if (file != null) {
 				TargetBundle bundle = new TargetBundle(file);
 				bundles.put(bundle.getBundleInfo(), bundle);
