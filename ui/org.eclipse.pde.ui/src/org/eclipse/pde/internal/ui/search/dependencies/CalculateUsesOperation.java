@@ -95,15 +95,12 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 	protected void findReferences(ITypeRoot[] roots, Set<String> pkgs, IProgressMonitor monitor, boolean binary) throws JavaModelException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, roots.length);
 		for (int i = 0; i < roots.length; i++) {
-			findReferences(roots[i].findPrimaryType(), pkgs, binary);
-			subMonitor.worked(1);
-			if (subMonitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
+			findReferences(roots[i].findPrimaryType(), pkgs, binary, subMonitor.split(1));
 		}
 	}
 
-	protected void findReferences(IType type, Set<String> pkgs, boolean binary) throws JavaModelException {
+	protected void findReferences(IType type, Set<String> pkgs, boolean binary, IProgressMonitor monitor)
+			throws JavaModelException {
 		if (type == null)
 			return;
 		// ignore private classes
@@ -111,29 +108,34 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 			return;
 
 		IMethod[] methods = type.getMethods();
+		IField[] fields = type.getFields();
+		IType[] subTypes = type.getTypes();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, methods.length * 3 + fields.length + 2 + subTypes.length);
+
 		for (int i = 0; i < methods.length; i++) {
 			if (!Flags.isPrivate(methods[i].getFlags())) {
 				String methodSignature = methods[i].getSignature();
-				addPackages(Signature.getThrownExceptionTypes(methodSignature), pkgs, type, binary);
-				addPackages(Signature.getParameterTypes(methodSignature), pkgs, type, binary);
-				addPackage(Signature.getReturnType(methodSignature), pkgs, type, binary);
+				addPackages(Signature.getThrownExceptionTypes(methodSignature), pkgs, type, binary,
+						subMonitor.split(1));
+				addPackages(Signature.getParameterTypes(methodSignature), pkgs, type, binary, subMonitor.split(1));
+				addPackage(Signature.getReturnType(methodSignature), pkgs, type, binary, subMonitor.split(1));
 			}
 		}
-		IField[] fields = type.getFields();
-		for (int i = 0; i < fields.length; i++)
+		for (int i = 0; i < fields.length; i++) {
 			if (!Flags.isPrivate(fields[i].getFlags()))
-				addPackage(fields[i].getTypeSignature(), pkgs, type, binary);
-		addPackage(type.getSuperclassTypeSignature(), pkgs, type, binary);
-		addPackages(type.getSuperInterfaceTypeSignatures(), pkgs, type, binary);
+				addPackage(fields[i].getTypeSignature(), pkgs, type, binary, subMonitor.split(1));
+		}
+		addPackage(type.getSuperclassTypeSignature(), pkgs, type, binary, subMonitor.split(1));
+		addPackages(type.getSuperInterfaceTypeSignatures(), pkgs, type, binary, subMonitor.split(1));
 
 		// make sure to check sub classes defined in the class
-		IType[] subTypes = type.getTypes();
 		for (int i = 0; i < subTypes.length; i++) {
-			findReferences(subTypes[i], pkgs, binary);
+			findReferences(subTypes[i], pkgs, binary, subMonitor.split(1));
 		}
 	}
 
-	protected final void addPackage(String typeSignature, Set<String> pkgs, IType type, boolean binary) throws JavaModelException {
+	protected final void addPackage(String typeSignature, Set<String> pkgs, IType type, boolean binary,
+			IProgressMonitor monitor) throws JavaModelException {
 		if (typeSignature == null)
 			return;
 		if (binary)
@@ -162,9 +164,11 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected final void addPackages(String[] typeSignatures, Set<String> pkgs, IType type, boolean binary) throws JavaModelException {
+	protected final void addPackages(String[] typeSignatures, Set<String> pkgs, IType type, boolean binary,
+			IProgressMonitor monitor) throws JavaModelException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, typeSignatures.length);
 		for (int i = 0; i < typeSignatures.length; i++)
-			addPackage(typeSignatures[i], pkgs, type, binary);
+			addPackage(typeSignatures[i], pkgs, type, binary, subMonitor.split(1));
 	}
 
 	protected void handleSetUsesDirectives(Map<String, HashSet<String>> pkgsAndUses) {
