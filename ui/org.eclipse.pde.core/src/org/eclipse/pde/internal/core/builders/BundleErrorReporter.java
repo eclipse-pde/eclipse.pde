@@ -11,7 +11,6 @@
  *     Brock Janiczak <brockj@tpg.com.au> - bug 169373
  *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 150225
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 209432, 214156
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 259958
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -830,9 +829,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				/* The exported package does not exist in the bundle.  Allow project folders to be packages (see bug 166680 comment 17)*/
 				if (!getExportedPackages().contains(name) && !(fProject.getFolder(name.replace('.', '/')).exists())) {
 					message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name);
-					IMarker marker = report(message, getPackageLine(header, elements[i]),
-							CompilerFlags.P_MISSING_EXPORT_PKGS, PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST,
-							PDEMarkerFactory.CAT_OTHER);
+					IMarker marker = report(message, getPackageLine(header, elements[i]), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST, PDEMarkerFactory.CAT_OTHER);
 					addMarkerAttribute(marker, "packageName", name); //$NON-NLS-1$
 				}
 			}
@@ -1143,8 +1140,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						String name = st.nextToken().trim();
 						if (!getExportedPackages().contains(name)) {
 							String message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name);
-							report(message, getLine(header, name), CompilerFlags.P_MISSING_EXPORT_PKGS,
-									PDEMarkerFactory.CAT_OTHER);
+							report(message, getLine(header, name), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.CAT_OTHER);
 							return false;
 						}
 					}
