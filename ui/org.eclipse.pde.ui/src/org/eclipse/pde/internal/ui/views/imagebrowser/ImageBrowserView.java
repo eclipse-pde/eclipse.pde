@@ -328,10 +328,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	@Override
 	public void setFocus() {
-		// Pressing enter when navigating the images calls this method, stealing focus
-		if (sourceCombo.getSelection().isEmpty()) {
-			sourceCombo.getCombo().setFocus();
-		}
+		scrolledComposite.getParent().setFocus();
 	}
 
 	@Override
