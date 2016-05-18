@@ -97,7 +97,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	public void createPartControl(final Composite parent) {
 		final Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.IMAGE_BROWSER_VIEW);
-
+		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		Composite topComp = new Composite(composite, SWT.NONE);
 		RowLayout layout = new RowLayout();
 		// need to center vertically, otherwise its looks misaligned
@@ -267,6 +267,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	class PageNavigationControl extends Composite {
 		public PageNavigationControl(Composite parent, int style) {
 			super(parent, style);
+			setBackground(parent.getBackground());
 			RowLayoutFactory.fillDefaults().extendedMargins(0, 0, 50, 5).applyTo(this);
 			GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.END).grab(true, true).applyTo(this);
 			Color hyperlinkColor = getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND);
@@ -282,6 +283,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 					scanImages();
 				}
 			});
+			prev.setBackground(getBackground());
 			if (page == 0)
 				prev.setEnabled(false);
 			// Links to individual pages
@@ -296,6 +298,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			for (int i = start; i <= maxPage; i++) {
 				Hyperlink pageLink = new Hyperlink(this, SWT.NONE);
 				pageLink.setText(String.valueOf(i));
+				pageLink.setBackground(pageLink.getParent().getBackground());
 				if (i != curPage) {
 					final int selectedPage = i;
 					pageLink.setForeground(hyperlinkColor);
@@ -320,6 +323,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 					scanImages();
 				}
 			});
+			next.setBackground(getBackground());
 			if (lastPage)
 				next.setEnabled(false);
 
@@ -453,7 +457,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				if (pageNavigationControl!=null)
 					pageNavigationControl.dispose();
 				pageNavigationControl = new PageNavigationControl(imageComposite, SWT.NONE);
-				pageNavigationControl.setBackground(mPluginImageContainer.getBackground());
+				pageNavigationControl.setBackground(imageComposite.getBackground());
 
 				imageComposite.layout();
 
