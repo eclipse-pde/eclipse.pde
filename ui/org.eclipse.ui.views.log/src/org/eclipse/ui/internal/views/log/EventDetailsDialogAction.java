@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.ui.actions.SelectionProviderAction;
  */
 public class EventDetailsDialogAction extends SelectionProviderAction {
 
+	private LogView logView;
 	/**
 	 * The control that the dialog should appear on top of.
 	 */
@@ -41,8 +42,9 @@ public class EventDetailsDialogAction extends SelectionProviderAction {
 	 * @param memento - memento with EventDetails dialog options
 	 * the property dialog will describe
 	 */
-	public EventDetailsDialogAction(Control control, ISelectionProvider provider, IMemento memento) {
+	public EventDetailsDialogAction(LogView logView, Control control, ISelectionProvider provider, IMemento memento) {
 		super(provider, Messages.EventDetailsDialog_title);
+		this.logView = logView;
 		Assert.isNotNull(control);
 		this.control = control;
 		this.provider = provider;
@@ -93,7 +95,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction {
 		if ((element == null) || (!(element instanceof LogEntry)))
 			return;
 
-		propertyDialog = new EventDetailsDialog(control.getShell(), element, provider, comparator, memento);
+		propertyDialog = new EventDetailsDialog(control.getShell(), logView, element, provider, comparator, memento);
 		propertyDialog.create();
 		propertyDialog.getShell().setText(Messages.EventDetailsDialog_title);
 		propertyDialog.open();

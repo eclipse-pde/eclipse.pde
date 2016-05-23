@@ -441,7 +441,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private Action createPropertiesAction() {
-		Action action = new EventDetailsDialogAction(fTree, fFilteredTree.getViewer(), fMemento);
+		Action action = new EventDetailsDialogAction(this, fTree, fFilteredTree.getViewer(), fMemento);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES));
 		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES_DISABLED));
 		action.setToolTipText(Messages.LogView_properties_tooltip);

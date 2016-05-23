@@ -47,6 +47,7 @@ public class EventDetailsDialog extends TrayDialog {
 	public static final String FILTER_ENABLED = "detailsStackFilterEnabled"; //$NON-NLS-1$
 	public static final String FILTER_LIST = "detailsStackFilterList"; //$NON-NLS-1$
 
+	private LogView logView;
 	private IMemento memento;
 
 	private AbstractEntry entry;
@@ -97,8 +98,9 @@ public class EventDetailsDialog extends TrayDialog {
 	 * @param provider viewer
 	 * @param comparator comparator used to order all entries
 	 */
-	protected EventDetailsDialog(Shell parentShell, IAdaptable selection, ISelectionProvider provider, Comparator comparator, IMemento memento) {
+	protected EventDetailsDialog(Shell parentShell, LogView logView, IAdaptable selection, ISelectionProvider provider, Comparator comparator, IMemento memento) {
 		super(parentShell);
+		this.logView = logView;
 		this.provider = (TreeViewer) provider;
 		labelProvider = (LogViewLabelProvider) this.provider.getLabelProvider();
 		labelProvider.connect(this);
@@ -611,9 +613,12 @@ public class EventDetailsDialog extends TrayDialog {
 				FilterDialog dialog = new FilterDialog(getShell(), memento);
 				dialog.create();
 				dialog.getShell().setText(Messages.EventDetailsDialog_FilterDialog);
-				if (dialog.open() == Window.OK)
+				if (dialog.open() == Window.OK) {
 					// update filters and currently displayed stack trace
 					stackFilterPatterns = getFilters();
+					logView.reloadLog();
+					initialize();
+				}
 				updateProperties();
 			}
 		});
