@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
@@ -169,6 +170,9 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		refreshWidgets();
 
 		Dialog.applyDialogFont(composite);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDSAnnotationHelpContextIds.DS_ANNOTATION_PAGE);
+		
 		return composite;
 	}
 
