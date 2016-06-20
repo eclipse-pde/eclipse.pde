@@ -590,12 +590,17 @@ public class TargetDefinition implements ITargetDefinition {
 			iterator = list.iterator();
 			while (iterator.hasNext()) {
 				TargetBundle bundle = (TargetBundle) iterator.next();
-				org.osgi.framework.Version bundleVersion = new org.osgi.framework.Version(bundle.getBundleInfo().getVersion());
-				org.osgi.framework.Version infoVersion = new org.osgi.framework.Version(version);
-				if (bundleVersion.getMajor() == infoVersion.getMajor()
-						&& bundleVersion.getMinor() == infoVersion.getMinor()
-						&& bundleVersion.getMicro() == infoVersion.getMicro()) {
-					return bundle;
+				try{
+					org.osgi.framework.Version bundleVersion = new org.osgi.framework.Version(bundle.getBundleInfo().getVersion());
+					org.osgi.framework.Version infoVersion = new org.osgi.framework.Version(version);
+					if (bundleVersion.getMajor() == infoVersion.getMajor()
+							&& bundleVersion.getMinor() == infoVersion.getMinor()
+							&& bundleVersion.getMicro() == infoVersion.getMicro()) {
+						return bundle;
+					}
+				}
+				catch (IllegalArgumentException e) {
+					// invalid version, do nothing, check the next bundle.
 				}
 			}
 			// VERSION DOES NOT EXIST
