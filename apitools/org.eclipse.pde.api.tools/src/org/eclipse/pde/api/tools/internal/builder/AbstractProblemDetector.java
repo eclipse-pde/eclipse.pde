@@ -20,7 +20,9 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -490,14 +492,16 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	}
 
 	@Override
-	public List<IApiProblem> createProblems() {
+	public List<IApiProblem> createProblems(IProgressMonitor monitor) {
 		List<IReference> references = getRetainedReferences();
 		if (references.isEmpty()) {
 			return Collections.EMPTY_LIST;
 		}
 		List<IApiProblem> problems = new LinkedList<>();
 		Iterator<IReference> iterator = references.iterator();
+		SubMonitor loopMonitor = SubMonitor.convert(monitor, references.size());
 		while (iterator.hasNext()) {
+			loopMonitor.split(1);
 			IReference reference = iterator.next();
 			if (reference.getResolvedReference() == null) {
 				// unresolved reference ignore it

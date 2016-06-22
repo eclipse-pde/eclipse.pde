@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
@@ -407,10 +409,12 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	}
 
 	@Override
-	public List<IApiProblem> createProblems() {
+	public List<IApiProblem> createProblems(IProgressMonitor monitor) {
 		List<IReference> references = getRetainedReferences();
 		List<IApiProblem> problems = new LinkedList<>();
+		SubMonitor loopMonitor = SubMonitor.convert(monitor, references.size());
 		for (IReference reference : references) {
+			loopMonitor.split(1);
 			if (isProblem(reference)) {
 				try {
 					IApiProblem problem = null;

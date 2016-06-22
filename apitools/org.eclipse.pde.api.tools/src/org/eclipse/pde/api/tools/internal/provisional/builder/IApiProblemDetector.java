@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional.builder;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
@@ -42,8 +43,9 @@ public interface IApiProblemDetector {
 	 * Returns a list of any problems detected after analyzing potential
 	 * reference problems that are now resolved.
 	 *
+	 * @param monitor the monitor to report progress.
 	 * @return list of
 	 *         {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
 	 */
-	public List<IApiProblem> createProblems();
+	public List<IApiProblem> createProblems(IProgressMonitor monitor);
 }

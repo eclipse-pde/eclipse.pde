@@ -243,8 +243,7 @@ public class ReferenceAnalyzer {
 			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
 			SubMonitor loopMonitor = localMonitor.split(1).setWorkRemaining(detectors.length);
 			for (IApiProblemDetector detector : detectors) {
-				loopMonitor.split(1);
-				allProblems.addAll(detector.createProblems());
+				allProblems.addAll(detector.createProblems(loopMonitor.split(1)));
 			}
 			IApiProblem[] array = allProblems.toArray(new IApiProblem[allProblems.size()]);
 			return array;
