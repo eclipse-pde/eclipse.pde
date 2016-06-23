@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.*;
 import org.osgi.framework.*;
+import org.osgi.framework.VersionRange;
 
 public class BundleErrorReporter extends JarManifestErrorReporter {
 
@@ -53,7 +54,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// be paranoid.  something could have gone wrong reading the file etc.
 		if (fModel == null || !validateBundleSymbolicName())
 			return;
-
+		if (!validateVersionOfRequireBundle())
+			return;
 		BundleDescription desc = fModel.getBundleDescription();
 		if (desc == null && fModel.getInstallLocation() != null) {
 			// There was a problem creating the OSGi bundle description, possibly a bad header
@@ -179,6 +181,30 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (!fOsgiR4)
 			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle, Constants.BUNDLE_SYMBOLICNAME), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
 
+		return true;
+	}
+
+	/**
+	 * @return boolean false if fatal
+	 */
+	private boolean validateVersionOfRequireBundle() {
+		// check the version range of require bundle are ok
+		IHeader header = getHeader(Constants.REQUIRE_BUNDLE);
+		if (header == null)
+			return true;
+		ManifestElement[] required = header.getElements();
+		for (ManifestElement element : required) {
+			String versionRange = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
+			if (versionRange != null) {
+				try {
+					new VersionRange(versionRange);
+				} catch (IllegalArgumentException e) {
+					report(e.getMessage(), getLine(header, element.getValue()), CompilerFlags.ERROR,
+							PDEMarkerFactory.CAT_FATAL);
+					return false;
+				}
+			}
+		}
 		return true;
 	}
 
