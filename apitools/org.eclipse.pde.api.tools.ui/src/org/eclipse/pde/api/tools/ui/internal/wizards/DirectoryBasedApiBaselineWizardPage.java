@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -167,7 +167,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 					 * if the combo is initialized by copy/paste with a path
 					 * that points to a plugin directory
 					 */
-					locationcombo.setText(newPath);
+					locationcombo.setText(getUpdatedLocationForMacOS(newPath));
 					setErrorMessage(null);
 					doReload();
 				}
@@ -225,6 +225,24 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 		Dialog.applyDialogFont(comp);
 	}
 
+	private String getUpdatedLocationForMacOS(String newPath) {
+		String newLoc = newPath;
+		// On Mac OS, if user selects *.app, then location
+		// should be reset to *.app/Contents/Eclipse if that exists
+		if (System.getProperty("os.name").startsWith("Mac")) {//$NON-NLS-1$ //$NON-NLS-2$
+			Path nPath = new Path(newPath);
+			if (nPath.lastSegment() == null) {
+				return newLoc;
+			}
+			if (nPath.lastSegment().endsWith(".app")) { //$NON-NLS-1$
+				IPath appendedPath = nPath.append("Contents").append("Eclipse");//$NON-NLS-1$ //$NON-NLS-2$
+				if (appendedPath.toFile().exists()) {
+					newLoc = appendedPath.toOSString();
+				}
+			}
+		}
+		return newLoc;
+	}
 	/**
 	 * Initializes the controls of the page if the profile is not
 	 * <code>null</code>
@@ -323,6 +341,10 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 			return false;
 		}
 		String text = locationcombo.getText().trim();
+		String updatedText = getUpdatedLocationForMacOS(text);
+		if (!updatedText.equals(text)) {
+			locationcombo.setText(updatedText);
+		}
 		if (text.length() < 1) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_23);
 			reloadbutton.setEnabled(false);
