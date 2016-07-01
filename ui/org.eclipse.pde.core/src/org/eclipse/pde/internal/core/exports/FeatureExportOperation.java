@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,7 @@ public class FeatureExportOperation extends Job {
 					} catch (CoreException e) {
 						return e.getStatus();
 					} finally {
-						cleanup(null, subMonitor.split(3));
+						cleanup(subMonitor.split(3));
 					}
 				}
 			}
@@ -801,7 +801,7 @@ public class FeatureExportOperation extends Job {
 		return paths;
 	}
 
-	protected void cleanup(String[] config, IProgressMonitor monitor) {
+	protected void cleanup(IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		// clear out some cached values that depend on the configuration being built.
 		fDevProperties = null;
@@ -830,7 +830,7 @@ public class FeatureExportOperation extends Job {
 				target = doc.createElement("target"); //$NON-NLS-1$
 				target.setAttribute("name", "zip.logs"); //$NON-NLS-1$ //$NON-NLS-2$
 				child = doc.createElement("zip"); //$NON-NLS-1$
-				child.setAttribute("zipfile", fInfo.destinationDirectory + logName(config)); //$NON-NLS-1$
+				child.setAttribute("zipfile", fInfo.destinationDirectory + logName(null)); //$NON-NLS-1$
 				child.setAttribute("basedir", fBuildTempLocation + "/pde.logs"); //$NON-NLS-1$ //$NON-NLS-2$
 				target.appendChild(child);
 				root.appendChild(target);

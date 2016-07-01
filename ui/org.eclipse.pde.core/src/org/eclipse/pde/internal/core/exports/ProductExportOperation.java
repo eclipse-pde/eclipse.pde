@@ -120,7 +120,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 					PDECore.log(e);
 				}
 			}
-			cleanup(null, subMonitor.split(1));
+			cleanup(subMonitor.split(1));
 		}
 
 		if (hasAntErrors()) {
