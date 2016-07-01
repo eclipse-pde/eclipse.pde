@@ -167,7 +167,12 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 					 * if the combo is initialized by copy/paste with a path
 					 * that points to a plugin directory
 					 */
-					locationcombo.setText(getUpdatedLocationForMacOS(newPath));
+					String updatedLocation = getUpdatedLocationForMacOS(newPath);
+					locationcombo.setText(updatedLocation);
+					nametext.setText(new Path(updatedLocation).lastSegment() == null ? "" //$NON-NLS-1$
+							: new Path(updatedLocation).lastSegment());
+					nametext.setFocus();
+					nametext.selectAll();
 					setErrorMessage(null);
 					doReload();
 				}
@@ -308,7 +313,8 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 			getContainer().run(true, true, op);
 			// If no name has been set, the directories' name is taken as name.
 			if (nametext.getText().isEmpty()) {
-				nametext.setText(String.valueOf(Paths.get(location).getFileName()));
+				nametext.setText(Paths.get(location).getFileName() == null ? "" //$NON-NLS-1$
+						: String.valueOf(Paths.get(location).getFileName()));
 			}
 			treeviewer.setInput(getCurrentComponents());
 			treeviewer.refresh();
