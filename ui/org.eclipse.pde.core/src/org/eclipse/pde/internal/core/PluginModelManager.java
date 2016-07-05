@@ -925,8 +925,25 @@ public class PluginModelManager implements IModelProviderListener {
 						break;
 					}
 				}
-				if (isActive)
-					fState.addBundle(model, true);
+				if (isActive) {
+					// refresh everything related to this bundle model id
+					fEntries.remove(newID);
+					fState.removeBundleDescription(desc);
+					for (int i = 0; i < fExternalManager.getAllModels().length; i++) {
+						IPluginModelBase modelExternal = fExternalManager.getAllModels()[i];
+						if (modelExternal.getPluginBase().getId().equals(newID)) {
+							addToTable(fEntries, new IPluginModelBase[] { modelExternal });
+						}
+					}
+					IPluginModelBase[] models = fWorkspaceManager.getPluginModels();
+					for (int i = 0; i < models.length; i++) {
+						IPluginModelBase modelWorkspace = models[i];
+						if (modelWorkspace.getPluginBase().getId().equals(newID)) {
+							addToTable(fEntries, new IPluginModelBase[] { modelWorkspace });
+							addWorkspaceBundleToState(fEntries, modelWorkspace);
+						}
+					}
+				}
 			} else
 				// if the target plug-in has become disabled/unchecked, remove its bundle
 				// description from the state
