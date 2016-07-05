@@ -356,7 +356,7 @@ public class ProjectApiDescription extends ApiDescription {
 						if (visitor.visitElement(packageDescriptor, annotations)) {
 							children = fragment.getChildren();
 							for (IJavaElement element : children) {
-								if (monitor.isCanceled()) {
+								if (monitor != null && monitor.isCanceled()) {
 									throw new OperationCanceledException();
 								}
 								child = element;
