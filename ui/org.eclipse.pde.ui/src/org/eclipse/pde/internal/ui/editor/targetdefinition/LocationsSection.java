@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import org.eclipse.pde.core.target.ITargetDefinition;
-
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.shared.target.ITargetChangedListener;
@@ -66,6 +65,7 @@ public class LocationsSection extends SectionPart {
 		fContainerGroup = TargetLocationsGroup.createInForm(client, toolkit);
 		fEditor.getTargetChangedListener().setLocationTree(fContainerGroup);
 		fContainerGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
+		fContainerGroup.addTargetReloadListener(fEditor.getTargetChangedListener());
 		fContainerGroup.addTargetChangedListener(new ITargetChangedListener() {
 			@Override
 			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {

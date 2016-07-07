@@ -60,6 +60,7 @@ public class TargetLocationsGroup {
 
 	private ITargetDefinition fTarget;
 	private ListenerList<ITargetChangedListener> fChangeListeners = new ListenerList<>();
+	private ListenerList<ITargetChangedListener> fReloadListeners = new ListenerList<>();
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given composite.
@@ -104,6 +105,16 @@ public class TargetLocationsGroup {
 	 */
 	public void addTargetChangedListener(ITargetChangedListener listener) {
 		fChangeListeners.add(listener);
+	}
+
+	/**
+	 * Adds a listener to the set of listeners that will be notified when target
+	 * is  reloaded.  This method has no effect if the listener has already been added.
+	 *
+	 * @param listener target changed listener to add
+	 */
+	public void addTargetReloadListener(ITargetChangedListener listener) {
+		fReloadListeners.add(listener);
 	}
 
 	/**
@@ -573,7 +584,7 @@ public class TargetLocationsGroup {
 		Job job = new UIJob("Reloading...") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				contentsChanged(true);
+				contentsReload();
 				return Status.OK_STATUS;
 			}
 		};
@@ -588,6 +599,17 @@ public class TargetLocationsGroup {
 		for (ITargetChangedListener listener : fChangeListeners) {
 			listener.contentsChanged(fTarget, this, true, force);
 		}
+	}
+
+	/**
+	 * Reloads the target
+	 * 
+	 */
+	private void contentsReload() {
+		for (ITargetChangedListener listener : fReloadListeners) {
+			listener.contentsChanged(fTarget, this, true, true);
+		}
+
 	}
 
 }
