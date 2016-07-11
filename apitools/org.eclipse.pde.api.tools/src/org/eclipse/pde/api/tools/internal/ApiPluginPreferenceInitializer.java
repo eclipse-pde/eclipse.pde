@@ -60,6 +60,7 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		node.put(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, ApiPlugin.VALUE_DISABLED);
 
 		// version management
+		node.put(IApiProblemTypes.CHANGED_EXECUTION_ENV, ApiPlugin.VALUE_ERROR);
 		node.put(IApiProblemTypes.MISSING_SINCE_TAG, ApiPlugin.VALUE_ERROR);
 		node.put(IApiProblemTypes.MALFORMED_SINCE_TAG, ApiPlugin.VALUE_ERROR);
 		node.put(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, ApiPlugin.VALUE_ERROR);

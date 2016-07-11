@@ -822,6 +822,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			case IApiProblem.CATEGORY_VERSION: {
 				return IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER;
 			}
+			case IApiProblem.CATEGORY_CHANGE_EXECUTION_ENV: {
+				return IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER;
+			}
 			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: {
 				return IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER;
 			}
@@ -865,6 +868,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			IMarker marker = resource.createMarker(type);
 			int line = problem.getLineNumber();
 			switch (category) {
+				case IApiProblem.CATEGORY_CHANGE_EXECUTION_ENV:
 				case IApiProblem.CATEGORY_VERSION:
 				case IApiProblem.CATEGORY_API_BASELINE:
 				case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION:

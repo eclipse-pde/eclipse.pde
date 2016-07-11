@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,10 @@ public interface IApiProblem {
 	 * Constant representing a API use scan breakage problem
 	 */
 	public static final int CATEGORY_API_USE_SCAN_PROBLEM = 0x80000000;
+	/**
+	 * Constant representing changed required execution environment
+	 */
+	public static final int CATEGORY_CHANGE_EXECUTION_ENV = 0x90000000;
 	/**
 	 * Constant representing the offset of the message key portion of the id bit
 	 * mask.
@@ -189,6 +193,16 @@ public interface IApiProblem {
 	 * @see #CATEGORY_VERSION
 	 */
 	public static final int REEXPORTED_MINOR_VERSION_CHANGE = 6;
+
+	/**
+	 * Constant representing the value of the minor version change
+	 * {@link IApiProblem} kind as a consequence of Execution Env changes Value
+	 * is: <code>7</code> *
+	 *
+	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
+	 */
+	public static final int MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED = 7;
 
 	/**
 	 * Constant representing the value of an illegal extend {@link IApiProblem}

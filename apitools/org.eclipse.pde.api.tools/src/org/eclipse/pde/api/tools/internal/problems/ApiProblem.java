@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -508,6 +508,7 @@ public class ApiProblem implements IApiProblem {
 				return Util.getDeltaFlagsName(flags);
 			case IApiProblem.CATEGORY_SINCETAGS:
 			case IApiProblem.CATEGORY_USAGE:
+			case IApiProblem.CATEGORY_CHANGE_EXECUTION_ENV:
 			case IApiProblem.CATEGORY_VERSION:
 			case IApiProblem.CATEGORY_API_BASELINE:
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
@@ -568,6 +569,7 @@ public class ApiProblem implements IApiProblem {
 				return Util.getDeltaElementType(kind);
 			}
 			case IApiProblem.CATEGORY_USAGE:
+			case IApiProblem.CATEGORY_CHANGE_EXECUTION_ENV:
 			case IApiProblem.CATEGORY_VERSION:
 			case IApiProblem.CATEGORY_API_BASELINE:
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
@@ -597,6 +599,8 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.CATEGORY_USAGE:
 				return "USAGE"; //$NON-NLS-1$
 			case IApiProblem.CATEGORY_VERSION:
+				return "VERSION"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_CHANGE_EXECUTION_ENV:
 				return "VERSION"; //$NON-NLS-1$
 			case IApiProblem.CATEGORY_API_BASELINE:
 				return "API_BASELINE"; //$NON-NLS-1$

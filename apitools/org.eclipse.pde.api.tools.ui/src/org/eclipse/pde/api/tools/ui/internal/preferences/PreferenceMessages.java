@@ -161,6 +161,7 @@ public class PreferenceMessages extends NLS {
 	public static String TYPE_PARAMETER_REMOVED_CLASS_BOUND;
 	public static String TYPE_PARAMETER_REMOVED_INTERFACE_BOUND;
 
+	public static String VersionManagementReportChangedExecutionEnv;
 	public static String VersionManagementReportMissingSinceTag;
 	public static String VersionManagementReportMalformedSinceTags;
 	public static String VersionManagementReportInvalidSinceTagVersion;

@@ -358,6 +358,27 @@ public class ApiProblemFactory {
 	}
 
 	/**
+	 * Creates a new version number {@link IApiProblem}
+	 *
+	 * @param resourcepath the path to the resource this problem was found in
+	 * @param typeName the type name this problem was found in
+	 * @param messageargs listing of arguments to pass in to the localized
+	 *            message. The arguments are passed into the string in the order
+	 *            they appear in the array.
+	 * @param argumentids the ids of arguments passed into the problem
+	 * @param arguments the arguments that correspond to the listing of ids
+	 * @param linenumber the number of the line the problem occurred on
+	 * @param charstart the start of a char selection range
+	 * @param charend the end of a char selection range
+	 * @param element the element kind
+	 * @param kind the kind
+	 * @return a new {@link IApiProblem} for version numbers
+	 */
+	public static IApiProblem newChangedExecutionEnvProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
+		int id = createProblemId(IApiProblem.CATEGORY_CHANGE_EXECUTION_ENV, element, kind, IApiProblem.NO_FLAGS);
+		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
+	}
+	/**
 	 * Creates a new API Use Scan breakage {@link IApiProblem}
 	 *
 	 * @param resourcePath path of the resource associated with the problem
@@ -597,6 +618,9 @@ public class ApiProblemFactory {
 						break;
 				}
 				break;
+			}
+			case IApiProblem.CATEGORY_CHANGE_EXECUTION_ENV: {
+				return 43;
 			}
 			case IApiProblem.CATEGORY_VERSION: {
 				switch (kind) {
@@ -1017,6 +1041,9 @@ public class ApiProblemFactory {
 						break;
 				}
 				break;
+			}
+			case IApiProblem.CATEGORY_CHANGE_EXECUTION_ENV: {
+				return IApiProblemTypes.CHANGED_EXECUTION_ENV;
 			}
 			case IApiProblem.CATEGORY_VERSION: {
 				return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION;

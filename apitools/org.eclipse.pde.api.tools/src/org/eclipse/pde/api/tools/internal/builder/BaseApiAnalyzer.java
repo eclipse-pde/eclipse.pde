@@ -1422,6 +1422,70 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 
+	private boolean ignoreExecutionEnvChanges() {
+		if (fJavaProject == null) {
+			return true;
+		}
+		IProject project = fJavaProject.getProject();
+		ApiPlugin plugin = ApiPlugin.getDefault();
+		boolean ignore = plugin.getSeverityLevel(IApiProblemTypes.CHANGED_EXECUTION_ENV, project) == ApiPlugin.SEVERITY_IGNORE;
+		return ignore;
+
+	}
+
+	/**
+	 * Compares the two given components, checks for Execution Env changes and
+	 * generates true if minor version has to be increased
+	 *
+	 * @param reference
+	 * @param component
+	 */
+
+	private boolean shouldVersionChangeForExecutionEnvChanges(IApiComponent reference, IApiComponent component) {
+
+		if (ignoreExecutionEnvChanges()) {
+			return false;
+		}
+
+		String refversionval = reference.getVersion();
+		String compversionval = component.getVersion();
+		Version refversion = new Version(refversionval);
+		Version compversion = new Version(compversionval);
+
+		// prerequisite for minor version change for execution env changes
+		if (compversion.getMajor() > refversion.getMajor()) {
+			return false;
+		}
+		if ((compversion.getMajor() == refversion.getMajor()) && (compversion.getMinor() > refversion.getMinor())) {
+			return false;
+		}
+		String[] refExecutionEnv = null;
+		String[] compExecutionEnv = null;
+		try {
+			refExecutionEnv = reference.getExecutionEnvironments();
+		} catch (CoreException e) {
+		}
+		try {
+			compExecutionEnv = component.getExecutionEnvironments();
+		} catch (CoreException e) {
+		}
+		if (refExecutionEnv == null && compExecutionEnv != null) {
+			return true;
+		}
+		if (refExecutionEnv != null && compExecutionEnv == null) {
+			return true;
+		}
+		// any change in BREE list would generate a minor version increase
+		if (refExecutionEnv != null && compExecutionEnv != null) {
+			List<String> refExecutionEnvList = new ArrayList<>(Arrays.asList(refExecutionEnv));
+			List<String> compExecutionEnvList = new ArrayList<>(Arrays.asList(compExecutionEnv));
+			if (!(refExecutionEnvList.containsAll(compExecutionEnvList) && compExecutionEnvList.containsAll(refExecutionEnvList))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Processes delta to determine if it needs an @since tag. If it does and
 	 * one is not present or the version of the tag is incorrect, a marker is
@@ -1869,7 +1933,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param component
 	 */
 	private void checkApiComponentVersion(final IApiComponent reference, final IApiComponent component) throws CoreException {
-		if (ignoreComponentVersionCheck() || reference == null || component == null) {
+		if (reference == null || component == null) {
 			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring component version check"); //$NON-NLS-1$
 			}
@@ -1881,6 +1945,24 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		Version refversion = new Version(refversionval);
 		Version compversion = new Version(compversionval);
 		Version newversion = null;
+		if (ignoreComponentVersionCheck()) {
+			if (ignoreExecutionEnvChanges() == false) {
+				if (shouldVersionChangeForExecutionEnvChanges(reference, component)) {
+					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
+					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED, new String[] {
+							compversionval,
+							refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
+				}
+			}
+			if (problem != null) {
+				addProblem(problem);
+			}
+			if (ApiPlugin.DEBUG_API_ANALYZER) {
+				System.out.println("Ignoring component version check"); //$NON-NLS-1$
+			}
+			return;
+		}
+
 		if (ApiPlugin.DEBUG_API_ANALYZER) {
 			System.out.println("reference version of " + reference.getSymbolicName() + " : " + refversion); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println("component version of " + component.getSymbolicName() + " : " + compversion); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1924,6 +2006,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, new String[] {
 							compversionval, refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
 				}
+			} else if (shouldVersionChangeForExecutionEnvChanges(reference, component)) {
+				newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
+				problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED, new String[] {
+						compversionval,
+						refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
+
 			}
 			// analyze version of required components
 			ReexportedBundleVersionInfo info = null;
@@ -2147,13 +2235,25 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} else {
 			lineNumber = 1;
 		}
+
+		if (IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED == kind) {
+
+			return ApiProblemFactory.newChangedExecutionEnvProblem(path, null, messageargs, new String[] {
+					IApiMarkerConstants.MARKER_ATTR_VERSION,
+					IApiMarkerConstants.API_MARKER_ATTR_ID,
+					IApiMarkerConstants.VERSION_NUMBERING_ATTR_DESCRIPTION, }, new Object[] {
+							version,
+							Integer.valueOf(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
+							description }, lineNumber, charStart, charEnd, IElementDescriptor.RESOURCE, kind);
+		}
+
 		return ApiProblemFactory.newApiVersionNumberProblem(path, null, messageargs, new String[] {
 				IApiMarkerConstants.MARKER_ATTR_VERSION,
 				IApiMarkerConstants.API_MARKER_ATTR_ID,
 				IApiMarkerConstants.VERSION_NUMBERING_ATTR_DESCRIPTION, }, new Object[] {
-				version,
-				Integer.valueOf(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
-				description }, lineNumber, charStart, charEnd, IElementDescriptor.RESOURCE, kind);
+						version,
+						Integer.valueOf(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
+						description }, lineNumber, charStart, charEnd, IElementDescriptor.RESOURCE, kind);
 	}
 
 	/**
