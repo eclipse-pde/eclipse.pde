@@ -410,11 +410,25 @@ public class ApiModelFactory {
 		// strip off the scheme and sequence number and compare
 		String location = profile.getLocation();
 		// location should be minimally "target://X" for some identifier X
-		if (location == null || !location.startsWith(TARGET_PREFIX) || location.length() <= TARGET_PREFIX.length() + 3 || location.charAt(TARGET_PREFIX.length()) != IPath.SEPARATOR) {
+		if (location == null || !location.startsWith(TARGET_PREFIX) || location.length() <= TARGET_PREFIX.length() + 3) {
 			return false;
 		}
+		int seqEnd = -1;
+		if (location.charAt(TARGET_PREFIX.length()) != IPath.SEPARATOR) {
+			location = location.replace(System.getProperty("file.separator"), "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (location.charAt(TARGET_PREFIX.length()) != IPath.SEPARATOR) {
+				return false;
+			}
+			seqEnd = location.indexOf(IPath.SEPARATOR, TARGET_PREFIX.length() + 2);
+			if (seqEnd == -1) {
+				return false;
+			}
+			seqEnd--;
+		}
 		// 2 = ':/'
-		int seqEnd = location.indexOf(IPath.SEPARATOR, TARGET_PREFIX.length() + 2);
+		if (seqEnd == -1) {
+			seqEnd = location.indexOf(IPath.SEPARATOR, TARGET_PREFIX.length() + 2);
+		}
 		String targetIdentifier = location.substring(seqEnd + 1);
 		return targetIdentifier.equals(getDefinitionIdentifier(definition));
 	}
