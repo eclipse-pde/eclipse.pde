@@ -102,6 +102,7 @@ public class PluginHandler extends DefaultHandler {
 	public void processingInstruction(String target, String data) throws SAXException {
 		if ("eclipse".equals(target)) { //$NON-NLS-1$
 			// Data should be of the form: version="<version>"
+			data = data.trim();
 			Matcher matcher = VERSION_RE.matcher(data);
 			if (matcher.matches()) {
 				fSchemaVersion = TargetPlatformHelper.getSchemaVersionForTargetVersion(matcher.group(1));
