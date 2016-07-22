@@ -1371,7 +1371,7 @@ public final class Util {
 	/**
 	 * Rewrite a parameter type signature with type erasure and using the
 	 * parameterized type bounds lookup table. For example:
-	 * 
+	 *
 	 * <pre>
 	 *     expand("QList&lt;QE;&gt;;", {"E" &rarr; "Ljava.lang.Object;"}) = "QList;"
 	 *     expand("QE;", {"E" &rarr; "Ljava.lang.Object;"}) = "Ljava.lang.Object;"
@@ -2635,5 +2635,23 @@ public final class Util {
 			}
 		}
 		return buffer.toString();
+	}
+
+	/**
+	 * Updates a given progress monitor the given amount of work. Throws an
+	 * {@link OperationCanceledException} if the monitor has been canceled.
+	 *
+	 * @param monitor
+	 * @param work
+	 * @throws OperationCanceledException
+	 */
+	public static void updateMonitor(IProgressMonitor monitor, int work) throws OperationCanceledException {
+		if (monitor == null) {
+			return;
+		}
+		if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
+		monitor.worked(work);
 	}
 }
