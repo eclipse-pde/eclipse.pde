@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
+
+import com.ibm.icu.util.ULocale;
 
 /**
  * Contains strings and methods for writing HTML markup
@@ -72,7 +74,7 @@ public abstract class HTMLConvertor {
 	/**
 	 * Opening html tag: <code>&lt;html&gt;</code>
 	 */
-	public static final String OPEN_HTML = "<html>\n"; //$NON-NLS-1$
+	public static final String OPEN_HTML = !ULocale.getDefault().isRightToLeft() ? "<html>\n" : "<html  dir=\"rtl\">\n";//$NON-NLS-1$ //$NON-NLS-2$
 	/**
 	 * Closing html tag: <code>&lt;html&gt;</code>
 	 */
