@@ -27,6 +27,7 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
+import org.osgi.framework.Version;
 
 public class PluginModelManager implements IModelProviderListener {
 	private static final String fExternalPluginListFile = "SavedExternalPluginList.txt"; //$NON-NLS-1$
@@ -690,16 +691,29 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	private synchronized void addWorkspaceBundleToState(Map<String, LocalModelEntry> entries, IPluginModelBase model) {
-		String id = model.getPluginBase().getId();
+		IPluginBase pluginBase = model.getPluginBase();
+		String id = pluginBase.getId();
 		if (id == null)
 			return;
 
-		// update target models by the same ID from the state, if any
+		// Remove target models by the same ID from the state, iff the *.qualifier version from the workspace overrides them.
+		// Otherwise, update target models.
+		Version version = Version.parseVersion(pluginBase.getVersion());
+		boolean isQualifierVersion = "qualifier".equals(version.getQualifier()); //$NON-NLS-1$
 		ModelEntry entry = entries.get(id);
 		if (entry != null) {
 			IPluginModelBase[] models = entry.getExternalModels();
-			for (int i = 0; i < models.length; i++)
-				fState.updateBundleDescription(models[i].getBundleDescription());
+			for (int i = 0; i < models.length; i++) {
+				Version entryVersion = models[i].getBundleDescription().getVersion();
+				if (isQualifierVersion
+						&& version.getMajor() == entryVersion.getMajor()
+						&& version.getMinor() == entryVersion.getMinor()
+						&& version.getMicro() == entryVersion.getMicro()) {
+					fState.removeBundleDescription(models[i].getBundleDescription());
+				} else {
+					fState.updateBundleDescription(models[i].getBundleDescription());
+				}
+			}
 		}
 
 		// add new bundle to the state
