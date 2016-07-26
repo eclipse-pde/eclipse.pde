@@ -272,6 +272,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginsTabToolBar_validate;
 
+	public static String PluginsTabToolBar_validate_plugins;
+
+	public static String PluginsTabToolBar_validate_bundles;
+
 	public static String PluginStructureCreator_name;
 
 	public static String PointSelectionPage_cannotFindTemplate;
@@ -951,6 +955,8 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedPluginExportPage_signJar;
 	public static String AdvancedPluginExportPage_noAlias;
 	public static String AdvancedLauncherTab_subset;
+	public static String AdvancedLauncherTab_subset_plugins;
+	public static String AdvancedLauncherTab_subset_bundles;
 	public static String AdvancedLauncherTab_addNew;
 	public static String AdvancedLauncherTab_defaults;
 	public static String AdvancedLauncherTab_workingSet;

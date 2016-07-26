@@ -39,7 +39,7 @@ import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.PreRefreshNotif
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.launching.IPDELauncherConstants;
-import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
+import org.eclipse.pde.ui.launcher.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CCombo;
@@ -311,7 +311,16 @@ public abstract class AbstractPluginBlock {
 
 		fValidateButton = new Button(parent, SWT.PUSH);
 		fValidateButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		fValidateButton.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", ""))); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (fTab instanceof PluginsTab) {
+			fValidateButton.setText(PDEUIMessages.PluginsTabToolBar_validate_plugins);
+		} else if (fTab instanceof BundlesTab) {
+			fValidateButton.setText(PDEUIMessages.PluginsTabToolBar_validate_bundles);
+		} else {
+			fValidateButton
+					.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", ""))); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 		SWTUtil.setButtonDimensionHint(fValidateButton);
 		fValidateButton.addSelectionListener(fListener);
 	}
@@ -564,7 +573,14 @@ public abstract class AbstractPluginBlock {
 		fSelectAllButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_selectAll, SWT.PUSH);
 		fDeselectButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_deselectAll, SWT.PUSH);
 		fWorkingSetButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_workingSet, SWT.PUSH);
-		fAddRequiredButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_subset, fTab.getName()), SWT.PUSH);
+		if (fTab instanceof PluginsTab) {
+			fAddRequiredButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_subset_plugins, SWT.PUSH);
+		} else if (fTab instanceof BundlesTab) {
+			fAddRequiredButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_subset_bundles, SWT.PUSH);
+		} else {
+			fAddRequiredButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_subset, fTab.getName()), SWT.PUSH);
+		}
+
 		fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults, SWT.PUSH);
 		fFilterButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_selectedBundles, SWT.CHECK);
 		GridData filterButtonGridData = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_END);

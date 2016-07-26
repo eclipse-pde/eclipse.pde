@@ -34,7 +34,7 @@ import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.launching.IPDELauncherConstants;
-import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
+import org.eclipse.pde.ui.launcher.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.*;
@@ -818,7 +818,17 @@ public class FeatureBlock {
 		fAutoValidate.addSelectionListener(fListener);
 		Composite rightAlignComp = SWTFactory.createComposite(validatecomp, 1, 1, SWT.NONE, 0, 0);
 		rightAlignComp.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true, true));
-		fValidateButton = SWTFactory.createPushButton(rightAlignComp, NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+
+		if (fTab instanceof PluginsTab) {
+			fValidateButton = SWTFactory.createPushButton(rightAlignComp,
+					PDEUIMessages.PluginsTabToolBar_validate_plugins, null);
+		} else if (fTab instanceof BundlesTab) {
+			fValidateButton = SWTFactory.createPushButton(rightAlignComp,
+					PDEUIMessages.PluginsTabToolBar_validate_bundles, null);
+		} else {
+			fValidateButton = SWTFactory.createPushButton(rightAlignComp, NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+		}
+
 		fValidateButton.addSelectionListener(fListener);
 	}
 
