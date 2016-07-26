@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
+
+import java.util.Locale;
 
 /**
  * Contains strings and methods for writing HTML markup
@@ -72,7 +74,7 @@ public abstract class HTMLConvertor {
 	/**
 	 * Opening html tag: <code>&lt;html&gt;</code>
 	 */
-	public static final String OPEN_HTML = "<html>\n"; //$NON-NLS-1$
+	public static final String OPEN_HTML = !isRightToLeft() ? "<html>\n" : "<html  dir=\"rtl\">\n";//$NON-NLS-1$ //$NON-NLS-2$
 	/**
 	 * Closing html tag: <code>&lt;html&gt;</code>
 	 */
@@ -169,4 +171,16 @@ public abstract class HTMLConvertor {
 		buffer.append("<td width=\"").append(width).append("%\">"); //$NON-NLS-1$//$NON-NLS-2$
 		return buffer.toString();
 	}
+
+	/**
+	 *
+	 * @return true if language is right to left ( arabic , hebrew etc)
+	 */
+
+	public static boolean isRightToLeft() {
+		Locale locale = Locale.getDefault();
+		String language = locale.getLanguage();
+		return ("iw".equals(language) || "ar".equals(language) || "fa".equals(language) || "ur".equals(language));//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+	}
+
 }
