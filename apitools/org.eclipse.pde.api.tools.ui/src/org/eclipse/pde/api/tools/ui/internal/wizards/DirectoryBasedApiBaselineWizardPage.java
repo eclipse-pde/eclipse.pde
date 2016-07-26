@@ -169,10 +169,15 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 					 */
 					String updatedLocation = getUpdatedLocationForMacOS(newPath);
 					locationcombo.setText(updatedLocation);
-					nametext.setText(new Path(updatedLocation).lastSegment() == null ? "" //$NON-NLS-1$
-							: new Path(updatedLocation).lastSegment());
-					nametext.setFocus();
-					nametext.selectAll();
+					// If current name matches with the last segment of old location then
+					// update the current name with last segment of new location
+					if (nametext.getText().equals(new Path(loctext).lastSegment())) {
+						nametext.setText(new Path(updatedLocation).lastSegment() == null ? "" //$NON-NLS-1$
+								: new Path(updatedLocation).lastSegment());
+						nametext.setFocus();
+						nametext.selectAll();
+					}
+
 					setErrorMessage(null);
 					doReload();
 				}
