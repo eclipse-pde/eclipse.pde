@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,9 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	private static final String DEFAULT_SOURCE_DIR = "src"; //$NON-NLS-1$
 	private static final String DEFAULT_LIBRARY_NAME = "."; //$NON-NLS-1$
+
+	private static final int MAX_RETRY = 5;
+	private static final int RETRY_DELAY = 1000;
 
 	private IPluginModelBase[] fModels;
 	private int fImportType;
@@ -375,7 +378,8 @@ public class PluginImportOperation extends WorkspaceJob {
 					}
 					boolean deleteContent = project.getWorkspace().getRoot().getLocation()
 							.equals(project.getLocation().removeLastSegments(1));
-					project.delete(deleteContent, true, monitor);
+					deleteProject(project, deleteContent, monitor);
+
 				} catch (CoreException ex) {
 					status.add(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK,
 							NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName()),
@@ -385,6 +389,36 @@ public class PluginImportOperation extends WorkspaceJob {
 			monitor.worked(2);
 		} else {
 			monitor.worked(3);
+		}
+	}
+
+	/**
+	 * deletes a project. Retries if deletion failed (e.g. because the indexer
+	 * still locks the file).
+	 *
+	 * @param project
+	 *            the project to delete
+	 * @param deleteContent
+	 *            a flag controlling how whether content is aggressively deleted
+	 * @param monitor
+	 *            progress monitor, must not be <code>null</code>
+	 * @throws CoreException
+	 *             if operation failed
+	 */
+	private void deleteProject(IProject project, boolean deleteContent, IProgressMonitor monitor) throws CoreException {
+		for (int i = 0; i < MAX_RETRY; i++) {
+			try {
+				project.delete(deleteContent, true, monitor);
+				i = MAX_RETRY;
+			} catch (CoreException e) {
+				if (i == MAX_RETRY - 1) {
+					throw e;
+				}
+				try {
+					Thread.sleep(RETRY_DELAY);
+				} catch (InterruptedException e1) {
+				}
+			}
 		}
 	}
 
