@@ -56,6 +56,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		if (!validateVersionOfRequireBundle())
 			return;
+		if (!validateVersionOfImportPackage())
+			return;
+
 		BundleDescription desc = fModel.getBundleDescription();
 		if (desc == null && fModel.getInstallLocation() != null) {
 			// There was a problem creating the OSGi bundle description, possibly a bad header
@@ -195,6 +198,30 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		ManifestElement[] required = header.getElements();
 		for (ManifestElement element : required) {
 			String versionRange = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
+			if (versionRange != null) {
+				try {
+					new VersionRange(versionRange);
+				} catch (IllegalArgumentException e) {
+					report(e.getMessage(), getLine(header, element.getValue()), CompilerFlags.ERROR,
+							PDEMarkerFactory.CAT_FATAL);
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * @return boolean false if fatal
+	 */
+	private boolean validateVersionOfImportPackage() {
+		// check the version range of import package are ok
+		IHeader header = getHeader(Constants.IMPORT_PACKAGE);
+		if (header == null)
+			return true;
+		ManifestElement[] importPackages = header.getElements();
+		for (ManifestElement element : importPackages) {
+			String versionRange = element.getAttribute(Constants.VERSION_ATTRIBUTE);
 			if (versionRange != null) {
 				try {
 					new VersionRange(versionRange);
