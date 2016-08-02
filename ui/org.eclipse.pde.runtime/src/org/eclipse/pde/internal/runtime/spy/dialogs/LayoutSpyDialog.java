@@ -567,13 +567,13 @@ public class LayoutSpyDialog {
 			// Print the preferred horizontally-wrapped size:
 			Point hWrappedSize = child.computeSize(widthHint, SWT.DEFAULT, false);
 			builder.append(NLS.bind("computeSize({0} - widthAdjustment, SWT.DEFAULT, false) = {1}", //$NON-NLS-1$
-					new Object[] { widthHint, printPoint(hWrappedSize) }));
+					new Object[] { bounds.width, printPoint(hWrappedSize) }));
 			builder.append("\n"); //$NON-NLS-1$
 
 			// Print the preferred vertically-wrapped size:
 			Point vWrappedSize = child.computeSize(SWT.DEFAULT, heightHint, false);
 			builder.append(NLS.bind("computeSize(SWT.DEFAULT, {0} - heightAdjustment, false) = {1}", //$NON-NLS-1$
-					new Object[] { heightHint, printPoint(vWrappedSize) }));
+					new Object[] { bounds.height, printPoint(vWrappedSize) }));
 			builder.append("\n"); //$NON-NLS-1$
 
 			// Check for warnings
