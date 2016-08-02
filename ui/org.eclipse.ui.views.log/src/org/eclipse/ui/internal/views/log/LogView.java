@@ -123,8 +123,10 @@ public class LogView extends ViewPart implements ILogListener {
 	private Tree fTree;
 	private FilteredTree fFilteredTree;
 	private LogViewLabelProvider fLabelProvider;
+	private String fSelectedStack;
 
 	private Action fPropertiesAction;
+	private Action fShowStackAction;
 	private Action fDeleteLogAction;
 	private Action fReadLogAction;
 	private Action fCopyAction;
@@ -250,6 +252,8 @@ public class LogView extends ViewPart implements ILogListener {
 
 		toolBarManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
+		fShowStackAction = createShowStackAction();
+		
 		final Action clearAction = createClearAction();
 		toolBarManager.add(clearAction);
 
@@ -284,6 +288,7 @@ public class LogView extends ViewPart implements ILogListener {
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(fCopyAction);
 				manager.add(new Separator());
+				manager.add(fShowStackAction);
 				manager.add(clearAction);
 				manager.add(fDeleteLogAction);
 				manager.add(fOpenLogAction);
@@ -410,6 +415,13 @@ public class LogView extends ViewPart implements ILogListener {
 		return action;
 	}
 
+	private Action createShowStackAction() {
+		Action action = new ShowErrorInStackTraceConsoleAction(this, Messages.LogView_ShowInConsole);
+		action.setToolTipText(Messages.LogView_ShowStackTraceInConsoleView);
+		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_OPEN_CONSOLE));
+		return action;
+	}
+	
 	private Action createOpenLogAction() {
 		Action action = null;
 		try {
@@ -1139,9 +1151,25 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private void handleSelectionChanged(ISelection selection) {
 		updateStatus(selection);
+		updateSelectionStack(selection);
 		fCopyAction.setEnabled((!selection.isEmpty()) && ((IStructuredSelection) selection).getFirstElement() != null);
 		fPropertiesAction.setEnabled(!selection.isEmpty());
 		fExportLogEntryAction.setEnabled(!selection.isEmpty());
+		fShowStackAction.setEnabled(!(fSelectedStack == null));
+	}
+
+	private void updateSelectionStack(ISelection selection) {
+		fSelectedStack = null;
+		if (selection instanceof IStructuredSelection) {
+			Object firstObject = ((IStructuredSelection) selection).getFirstElement();
+			if (firstObject instanceof LogEntry) {
+				String stack = ((LogEntry) firstObject).getStack();
+				if (stack != null && stack.length() > 0) {
+					fSelectedStack = stack;
+				}
+			}
+		}
+
 	}
 
 	private void updateStatus(ISelection selection) {
@@ -1762,4 +1790,9 @@ public class LogView extends ViewPart implements ILogListener {
 	public void setPlatformLog() {
 		setLogFile(Platform.getLogFileLocation().toFile());
 	}
+
+	public String getSelectedStack() {
+		return fSelectedStack;
+	}
+
 }

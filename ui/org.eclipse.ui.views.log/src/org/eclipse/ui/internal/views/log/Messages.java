@@ -41,6 +41,9 @@ public class Messages extends NLS {
 	public static String LogView_show_filter_text;
 	public static String LogView_show_filter_initialText;
 
+	public static String LogView_ShowInConsole;
+	public static String LogView_ShowStackTraceInConsoleView;
+	
 	public static String LogView_SessionStarted;
 	public static String LogView_severity_error;
 	public static String LogView_severity_warning;

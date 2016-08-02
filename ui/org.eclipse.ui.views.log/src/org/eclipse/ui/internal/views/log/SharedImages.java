@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public final class SharedImages {
 
 	public static final String DESC_CLEAR = PATH_LCL + "clear.gif"; //$NON-NLS-1$
 	public static final String DESC_CLEAR_DISABLED = PATH_LCL_DISABLED + "clear.gif"; //$NON-NLS-1$
+	public static final String DESC_OPEN_CONSOLE = PATH_LCL + "open_console_obj.png"; //$NON-NLS-1$
 	public static final String DESC_REMOVE_LOG = PATH_LCL + "remove.gif"; //$NON-NLS-1$
 	public static final String DESC_REMOVE_LOG_DISABLED = PATH_LCL_DISABLED + "remove.gif"; //$NON-NLS-1$
 	public static final String DESC_EXPORT = PATH_LCL + "export_log.gif"; //$NON-NLS-1$
