@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Stefan Xenos (Google) - initial API and implementation
- *
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 499226
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.dialogs;
 
@@ -88,6 +88,7 @@ public class LayoutSpyDialog {
 		}
 
 		shell = new Shell(parentShell, SWT.SHELL_TRIM);
+		shell.setText(Messages.LayoutSpyDialog_shell_text);
 
 		resources = new LocalResourceManager(JFaceResources.getResources(), shell);
 		parentRectangleColor = resources.createColor(SELECTED_PARENT_OVERLAY_COLOR);

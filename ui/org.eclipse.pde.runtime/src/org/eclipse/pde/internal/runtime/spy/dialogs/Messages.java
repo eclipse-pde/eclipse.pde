@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Stefan Xenos (Google) - initial API and implementation
- *
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 499226
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.dialogs;
 
@@ -15,6 +15,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.runtime.spy.dialogs.messages"; //$NON-NLS-1$
+	public static String LayoutSpyDialog_shell_text;
 	public static String LayoutSpyDialog_button_open_child;
 	public static String LayoutSpyDialog_button_open_parent;
 	public static String LayoutSpyDialog_button_select_control;
