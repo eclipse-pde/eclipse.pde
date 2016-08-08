@@ -207,7 +207,7 @@ public class TargetEditor extends FormEditor {
 		ControlContribution setAsTarget = new ControlContribution("Set") { //$NON-NLS-1$
 			@Override
 			protected Control createControl(Composite parent) {
-				final ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE);
+				final ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE | SWT.NO_FOCUS);
 				hyperlink.setText(PDEUIMessages.AbstractTargetPage_setTarget);
 				hyperlink.setUnderlined(true);
 				hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
