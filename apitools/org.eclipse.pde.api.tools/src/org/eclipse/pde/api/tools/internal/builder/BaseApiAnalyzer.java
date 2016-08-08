@@ -2110,8 +2110,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							break;
 						}
 						case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE: {
-							// minor version change
-							if (compversion.getMinor() <= refversion.getMinor()) {
+							// minor version change if the component's major
+							// version is not greater than ref's major version
+							if (compversion.getMinor() <= refversion.getMinor() && !(compversion.getMajor() > refversion.getMajor())) {
 								newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
 								problem = createVersionProblem(info.kind, new String[] {
 										compversionval, info.componentID, }, String.valueOf(newversion), Util.EMPTY_STRING);
