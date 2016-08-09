@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
-import java.util.Locale;
+import com.ibm.icu.util.ULocale;
 
 /**
  * Contains strings and methods for writing HTML markup
@@ -74,7 +74,7 @@ public abstract class HTMLConvertor {
 	/**
 	 * Opening html tag: <code>&lt;html&gt;</code>
 	 */
-	public static final String OPEN_HTML = !isRightToLeft() ? "<html>\n" : "<html  dir=\"rtl\">\n";//$NON-NLS-1$ //$NON-NLS-2$
+	public static final String OPEN_HTML = !ULocale.getDefault().isRightToLeft() ? "<html>\n" : "<html  dir=\"rtl\">\n";//$NON-NLS-1$ //$NON-NLS-2$
 	/**
 	 * Closing html tag: <code>&lt;html&gt;</code>
 	 */
@@ -171,16 +171,4 @@ public abstract class HTMLConvertor {
 		buffer.append("<td width=\"").append(width).append("%\">"); //$NON-NLS-1$//$NON-NLS-2$
 		return buffer.toString();
 	}
-
-	/**
-	 *
-	 * @return true if language is right to left ( arabic , hebrew etc)
-	 */
-
-	public static boolean isRightToLeft() {
-		Locale locale = Locale.getDefault();
-		String language = locale.getLanguage();
-		return ("iw".equals(language) || "ar".equals(language) || "fa".equals(language) || "ur".equals(language));//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
-	}
-
 }
