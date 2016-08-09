@@ -483,9 +483,8 @@ public class TargetPlatformHelper {
 
 		// Don't resolve again if we don't have to
 		if (!target.isResolved()) {
-			SubMonitor subMon = SubMonitor.convert(monitor);
-			target.resolve(subMon);
-			if (subMon.isCanceled()) {
+			target.resolve(monitor);
+			if (monitor.isCanceled()) {
 				return null;
 			}
 			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
