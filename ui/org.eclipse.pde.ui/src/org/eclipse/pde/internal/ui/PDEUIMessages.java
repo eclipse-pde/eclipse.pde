@@ -22,6 +22,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String AbstractLauncherToolbar_noSelection;
 
+	public static String AbstractLauncherToolbar_noSelection_plugins;
+
+	public static String AbstractLauncherToolbar_noSelection_bundles;
+
 	public static String AbstractSchemaDetails_descriptionLabel;
 
 	public static String AbstractTargetPage_setTarget;
@@ -69,11 +73,23 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_AdditionalPluginsEntry;
 
+	public static String FeatureBlock_AdditionalPluginsEntry_plugins;
+
+	public static String FeatureBlock_AdditionalPluginsEntry_bundles;
+
 	public static String FeatureBlock_AddPluginsLabel;
+
+	public static String FeatureBlock_AddPluginsLabel_plugins;
+
+	public static String FeatureBlock_AddPluginsLabel_bundles;
 
 	public static String FeatureBlock_AllFeatureSelected;
 
 	public static String FeatureBlock_RemovePluginsLabel;
+
+	public static String FeatureBlock_RemovePluginsLabel_plugins;
+
+	public static String FeatureBlock_RemovePluginsLabel_bundles;
 
 	public static String FeatureBlock_addRequiredFeatues;
 
@@ -269,6 +285,10 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsTab_selectedPlugins;
 
 	public static String PluginsTabToolBar_auto_validate;
+
+	public static String PluginsTabToolBar_auto_validate_plugins;
+
+	public static String PluginsTabToolBar_auto_validate_bundles;
 
 	public static String PluginsTabToolBar_validate;
 
@@ -958,6 +978,8 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedLauncherTab_subset_plugins;
 	public static String AdvancedLauncherTab_subset_bundles;
 	public static String AdvancedLauncherTab_addNew;
+	public static String AdvancedLauncherTab_addNew_plugins;
+	public static String AdvancedLauncherTab_addNew_bundles;
 	public static String AdvancedLauncherTab_defaults;
 	public static String AdvancedLauncherTab_workingSet;
 	public static String AdvancedLauncherTab_selectedBundles;
@@ -965,6 +987,8 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedPluginExportPage_alias;
 	public static String JARSigningTab_keypass;
 	public static String AdvancedLauncherTab_includeOptional;
+	public static String AdvancedLauncherTab_includeOptional_plugins;
+	public static String AdvancedLauncherTab_includeOptional_bundles;
 	public static String AdvancedFeatureExportPage_siteURL;
 	public static String AdvancedPluginExportPage_keystore;
 	public static String AdvancedPluginExportPage_password;
