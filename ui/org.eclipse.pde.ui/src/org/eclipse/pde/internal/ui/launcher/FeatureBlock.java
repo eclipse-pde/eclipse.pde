@@ -34,7 +34,7 @@ import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.launching.IPDELauncherConstants;
-import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
+import org.eclipse.pde.ui.launcher.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.*;
@@ -340,7 +340,13 @@ public class FeatureBlock {
 						fDialog.open();
 						fDialog = null;
 					} else if (fOperation.isEmpty()) {
-						MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+						if (fTab instanceof PluginsTab) {
+							MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation,PDEUIMessages.AbstractLauncherToolbar_noSelection_plugins);
+						}else if (fTab instanceof BundlesTab) {
+							MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation,PDEUIMessages.AbstractLauncherToolbar_noSelection_bundles);
+						}else{
+							MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+						}
 					} else {
 						MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
 					}
@@ -814,11 +820,26 @@ public class FeatureBlock {
 		gd.horizontalIndent = indent;
 		validatecomp.setLayoutData(gd);
 
-		fAutoValidate = SWTFactory.createCheckButton(validatecomp, NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate, fTab.getName().replaceAll("&", "").toLowerCase(Locale.ENGLISH)), null, false, 1); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fTab instanceof PluginsTab) {
+			fAutoValidate = SWTFactory.createCheckButton(validatecomp, PDEUIMessages.PluginsTabToolBar_auto_validate_plugins, null, false, 1);
+		} else if (fTab instanceof BundlesTab) {
+			fAutoValidate = SWTFactory.createCheckButton(validatecomp, PDEUIMessages.PluginsTabToolBar_auto_validate_bundles, null, false, 1);
+		} else {
+			fAutoValidate = SWTFactory.createCheckButton(validatecomp, NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate, fTab.getName().replaceAll("&", "").toLowerCase(Locale.ENGLISH)), null, false, 1); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 		fAutoValidate.addSelectionListener(fListener);
 		Composite rightAlignComp = SWTFactory.createComposite(validatecomp, 1, 1, SWT.NONE, 0, 0);
 		rightAlignComp.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true, true));
-		fValidateButton = SWTFactory.createPushButton(rightAlignComp, NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+
+		if (fTab instanceof PluginsTab) {
+			fValidateButton = SWTFactory.createPushButton(rightAlignComp, PDEUIMessages.PluginsTabToolBar_validate_plugins, null);
+		} else if (fTab instanceof BundlesTab) {
+			fValidateButton = SWTFactory.createPushButton(rightAlignComp,PDEUIMessages.PluginsTabToolBar_validate_bundles, null);
+		} else {
+			fValidateButton = SWTFactory.createPushButton(rightAlignComp, NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+		}
+
 		fValidateButton.addSelectionListener(fListener);
 	}
 
@@ -982,9 +1003,22 @@ public class FeatureBlock {
 		fSelectFeaturesButton.addSelectionListener(fListener);
 		fAddRequiredFeaturesButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.FeatureBlock_addRequiredFeatues, null);
 		fAddRequiredFeaturesButton.addSelectionListener(fListener);
-		fAddPluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_AddPluginsLabel, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+		if (fTab instanceof PluginsTab) {
+			fAddPluginButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.FeatureBlock_AddPluginsLabel_plugins, null);
+		}else if (fTab instanceof BundlesTab) {
+			fAddPluginButton = SWTFactory.createPushButton(buttonComp,PDEUIMessages.FeatureBlock_AddPluginsLabel_bundles, null);
+		}else{
+			fAddPluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_AddPluginsLabel, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+		}
 		fAddPluginButton.addSelectionListener(fListener);
-		fRemovePluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_RemovePluginsLabel, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+		if (fTab instanceof PluginsTab) {
+			fRemovePluginButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.FeatureBlock_RemovePluginsLabel_plugins, null);
+		}else if (fTab instanceof BundlesTab) {
+			fRemovePluginButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.FeatureBlock_RemovePluginsLabel_bundles, null);
+		}else{
+			fRemovePluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_RemovePluginsLabel, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+		}
+
 		fRemovePluginButton.addSelectionListener(fListener);
 		fRemovePluginButton.setEnabled(false);
 		fDefaultsButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.AdvancedLauncherTab_defaults, null);
@@ -1005,7 +1039,13 @@ public class FeatureBlock {
 		fCounter = SWTFactory.createLabel(countComp, "", 1); //$NON-NLS-1$
 
 		Image siteImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SITE_OBJ);
-		fAdditionalPluginsParentElement = new NamedElement(NLS.bind(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry, fTab.getName().replaceAll("&", "")), siteImage); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fTab instanceof PluginsTab) {
+			fAdditionalPluginsParentElement = new NamedElement(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry_plugins, siteImage);
+		}else if (fTab instanceof BundlesTab) {
+			fAdditionalPluginsParentElement = new NamedElement(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry_bundles, siteImage);
+		}else{
+			fAdditionalPluginsParentElement = new NamedElement(NLS.bind(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry, fTab.getName().replaceAll("&", "")), siteImage); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	public void initialize() throws CoreException {

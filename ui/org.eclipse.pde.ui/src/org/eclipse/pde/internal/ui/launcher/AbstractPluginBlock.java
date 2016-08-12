@@ -39,7 +39,7 @@ import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.PreRefreshNotif
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.launching.IPDELauncherConstants;
-import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
+import org.eclipse.pde.ui.launcher.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CCombo;
@@ -299,19 +299,45 @@ public abstract class AbstractPluginBlock {
 	public void createControl(Composite parent, int span, int indent) {
 		createPluginViewer(parent, span - 1, indent);
 		createButtonContainer(parent, fPluginFilteredTree.getTreeLocationOffset());
-		fIncludeOptionalButton = createButton(parent, span, indent, NLS.bind(PDEUIMessages.AdvancedLauncherTab_includeOptional, fTab.getName().toLowerCase(Locale.ENGLISH)));
-		fAddWorkspaceButton = createButton(parent, span, indent, NLS.bind(PDEUIMessages.AdvancedLauncherTab_addNew, fTab.getName().toLowerCase(Locale.ENGLISH)));
+		if (fTab instanceof PluginsTab) {
+			fIncludeOptionalButton = createButton(parent, span, indent,PDEUIMessages.AdvancedLauncherTab_includeOptional_plugins);
+		}else if (fTab instanceof BundlesTab) {
+			fIncludeOptionalButton = createButton(parent, span, indent, PDEUIMessages.AdvancedLauncherTab_includeOptional_bundles);
+		}else{
+			fIncludeOptionalButton = createButton(parent, span, indent, NLS.bind(PDEUIMessages.AdvancedLauncherTab_includeOptional, fTab.getName().toLowerCase(Locale.ENGLISH)));
+		}
+		if (fTab instanceof PluginsTab) {
+			fAddWorkspaceButton = createButton(parent, span, indent, PDEUIMessages.AdvancedLauncherTab_addNew_plugins);
+		}else if (fTab instanceof BundlesTab) {
+			fAddWorkspaceButton = createButton(parent, span, indent,PDEUIMessages.AdvancedLauncherTab_addNew_bundles);
+		}else{
+			fAddWorkspaceButton = createButton(parent, span, indent, NLS.bind(PDEUIMessages.AdvancedLauncherTab_addNew, fTab.getName().toLowerCase(Locale.ENGLISH)));
+		}
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = span;
 		Label label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setLayoutData(gd);
 
-		fAutoValidate = createButton(parent, span - 1, indent, NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate, fTab.getName().replaceAll("&", "").toLowerCase(Locale.ENGLISH))); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fTab instanceof PluginsTab) {
+			fAutoValidate = createButton(parent, span - 1, indent, PDEUIMessages.PluginsTabToolBar_auto_validate_plugins);
+		} else if (fTab instanceof BundlesTab) {
+			fAutoValidate = createButton(parent, span - 1, indent, PDEUIMessages.PluginsTabToolBar_auto_validate_bundles);
+		} else{
+			fAutoValidate = createButton(parent, span - 1, indent, NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate, fTab.getName().replaceAll("&", "").toLowerCase(Locale.ENGLISH))); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 
 		fValidateButton = new Button(parent, SWT.PUSH);
 		fValidateButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		fValidateButton.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", ""))); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (fTab instanceof PluginsTab) {
+			fValidateButton.setText(PDEUIMessages.PluginsTabToolBar_validate_plugins);
+		} else if (fTab instanceof BundlesTab) {
+			fValidateButton.setText(PDEUIMessages.PluginsTabToolBar_validate_bundles);
+		} else {
+			fValidateButton.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", ""))); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 		SWTUtil.setButtonDimensionHint(fValidateButton);
 		fValidateButton.addSelectionListener(fListener);
 	}
@@ -564,7 +590,14 @@ public abstract class AbstractPluginBlock {
 		fSelectAllButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_selectAll, SWT.PUSH);
 		fDeselectButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_deselectAll, SWT.PUSH);
 		fWorkingSetButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_workingSet, SWT.PUSH);
-		fAddRequiredButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_subset, fTab.getName()), SWT.PUSH);
+		if (fTab instanceof PluginsTab) {
+			fAddRequiredButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_subset_plugins, SWT.PUSH);
+		} else if (fTab instanceof BundlesTab) {
+			fAddRequiredButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_subset_bundles, SWT.PUSH);
+		} else {
+			fAddRequiredButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_subset, fTab.getName()), SWT.PUSH);
+		}
+
 		fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults, SWT.PUSH);
 		fFilterButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_selectedBundles, SWT.CHECK);
 		GridData filterButtonGridData = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_END);
@@ -971,7 +1004,14 @@ public abstract class AbstractPluginBlock {
 					fDialog.open();
 					fDialog = null;
 				} else if (fOperation.isEmpty()) {
-					MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+					if (fTab instanceof PluginsTab) {
+						MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation,PDEUIMessages.AbstractLauncherToolbar_noSelection_plugins);
+					}else if (fTab instanceof BundlesTab) {
+						MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation,PDEUIMessages.AbstractLauncherToolbar_noSelection_bundles);
+					}else{
+						MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+					}
+
 				} else {
 					MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
 				}
