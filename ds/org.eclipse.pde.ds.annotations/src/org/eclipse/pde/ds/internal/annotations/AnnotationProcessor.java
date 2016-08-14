@@ -1506,7 +1506,9 @@ class AnnotationVisitor extends ASTVisitor {
 			IMethodBinding unbindMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, unbindCandidate, false);
 			if (unbindMethod == null) {
 				unbind = null;
-				reportProblem(annotation, null, missingUnbindMethodLevel, problems, NLS.bind(Messages.AnnotationProcessor_noImplicitReferenceUnbind, unbindCandidate), unbindCandidate);
+				if (IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC.equals(policy)) {
+					reportProblem(annotation, null, missingUnbindMethodLevel, problems, NLS.bind(Messages.AnnotationProcessor_noImplicitReferenceUnbind, unbindCandidate), unbindCandidate);
+				}
 			} else {
 				unbind = unbindMethod.getName();
 			}

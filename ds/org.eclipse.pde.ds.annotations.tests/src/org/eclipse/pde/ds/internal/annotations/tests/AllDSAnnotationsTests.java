@@ -34,6 +34,7 @@ import org.osgi.framework.Bundle;
 @SuiteClasses({
 	ManagedProjectTest.class,
 	UnmanagedProjectTest.class,
+	ErrorProjectTest.class,
 	DefaultComponentTest.class,
 	FullComponentTest.class,
 })
@@ -45,6 +46,7 @@ public class AllDSAnnotationsTests {
 		HashMap<String, String> map = new HashMap<>();
 		map.put("ds.annotations.test0", "projects/test0/");
 		map.put("ds.annotations.test1", "projects/test1/");
+		map.put("ds.annotations.test2", "projects/test2/");
 		projects = Collections.unmodifiableMap(map);
 	}
 
