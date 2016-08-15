@@ -63,7 +63,7 @@ public class PluginRegistryTests extends TestCase {
 	}
 
 	public void testMatchEquivalent() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", "3.10.0", IMatchRules.EQUIVALENT,
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", "3.11.0", IMatchRules.EQUIVALENT,
 				null);
 		assertNotNull(model);
 		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
