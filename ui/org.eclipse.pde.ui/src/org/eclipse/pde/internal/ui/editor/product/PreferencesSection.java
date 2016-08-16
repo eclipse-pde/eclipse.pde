@@ -148,6 +148,12 @@ public class PreferencesSection extends PDESection {
 					if (propertyElement != null) {
 						IPluginAttribute valueAttribute = propertyElement.getAttribute("value"); //$NON-NLS-1$
 						preferenceCustomizationPath = valueAttribute.getValue();
+						// get the path with respect to root
+						if (PREFS_CUSTOMIZATION_FILE.equals(preferenceCustomizationPath)) {
+							IResource resource = project.findMember(PREFS_CUSTOMIZATION_FILE);
+							boolean existing = resource != null && resource instanceof IFile;
+							preferenceCustomizationPath = existing ? ((IFile) resource).getFullPath().toString() : null;
+						}
 					}
 				}
 			}
