@@ -317,6 +317,10 @@ public class Schema extends PlatformObject implements ISchema {
 
 	@Override
 	public String getQualifiedPointId() {
+		// Check if the extension point ID is already fully qualified
+		if (fPointID.indexOf('.') >= 0) {
+			return fPointID;
+		}
 		return fPluginID + "." + fPointID; //$NON-NLS-1$
 	}
 
