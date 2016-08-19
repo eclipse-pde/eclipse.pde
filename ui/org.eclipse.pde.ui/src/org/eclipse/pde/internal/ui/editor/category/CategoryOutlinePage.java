@@ -38,18 +38,18 @@ public class CategoryOutlinePage extends FormOutlinePage {
 				if (page.getId().equals(IUsPage.PAGE_ID)) {
 					ArrayList<IWritable> result = new ArrayList<>();
 					ISiteCategoryDefinition[] catDefs = site.getCategoryDefinitions();
-					for (int i = 0; i < catDefs.length; i++) {
-						result.add(catDefs[i]);
+					for (ISiteCategoryDefinition catDef : catDefs) {
+						result.add(catDef);
 					}
 					ISiteFeature[] features = site.getFeatures();
-					for (int i = 0; i < features.length; i++) {
-						if (features[i].getCategories().length == 0)
-							result.add(new SiteFeatureAdapter(null, features[i]));
+					for (ISiteFeature feature : features) {
+						if (feature.getCategories().length == 0)
+							result.add(new SiteFeatureAdapter(null, feature));
 					}
 					ISiteBundle[] bundles = site.getBundles();
-					for (int i = 0; i < bundles.length; i++) {
-						if (bundles[i].getCategories().length == 0) {
-							result.add(new SiteBundleAdapter(null, bundles[i]));
+					for (ISiteBundle bundle : bundles) {
+						if (bundle.getCategories().length == 0) {
+							result.add(new SiteBundleAdapter(null, bundle));
 						}
 					}
 					return result.toArray();
@@ -63,20 +63,20 @@ public class CategoryOutlinePage extends FormOutlinePage {
 				ISite site = model.getSite();
 				ISiteFeature[] features = site.getFeatures();
 				HashSet<IWritable> result = new HashSet<>();
-				for (int i = 0; i < features.length; i++) {
-					ISiteCategory[] cats = features[i].getCategories();
-					for (int j = 0; j < cats.length; j++) {
-						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
-							result.add(new SiteFeatureAdapter(cats[j].getName(), features[i]));
+				for (ISiteFeature feature : features) {
+					ISiteCategory[] cats = feature.getCategories();
+					for (ISiteCategory cat : cats) {
+						if (cat.getDefinition() != null && cat.getDefinition().equals(catDef)) {
+							result.add(new SiteFeatureAdapter(cat.getName(), feature));
 						}
 					}
 				}
 				ISiteBundle[] bundles = site.getBundles();
-				for (int i = 0; i < bundles.length; i++) {
-					ISiteCategory[] cats = bundles[i].getCategories();
-					for (int j = 0; j < cats.length; j++) {
-						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
-							result.add(new SiteBundleAdapter(cats[j].getName(), bundles[i]));
+				for (ISiteBundle bundle : bundles) {
+					ISiteCategory[] cats = bundle.getCategories();
+					for (ISiteCategory cat : cats) {
+						if (cat.getDefinition() != null && cat.getDefinition().equals(catDef)) {
+							result.add(new SiteBundleAdapter(cat.getName(), bundle));
 						}
 					}
 				}

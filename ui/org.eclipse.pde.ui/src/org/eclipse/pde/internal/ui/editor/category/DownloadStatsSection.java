@@ -55,12 +55,12 @@ public class DownloadStatsSection extends TableSection {
 			ArrayList<IWritable> result = new ArrayList<>();
 			IStatsInfo info = (IStatsInfo) inputElement;
 			ISiteFeature[] features = info.getFeatureArtifacts();
-			for (int i = 0; i < features.length; i++) {
-				result.add(new SiteFeatureAdapter(null, features[i]));
+			for (ISiteFeature feature : features) {
+				result.add(new SiteFeatureAdapter(null, feature));
 			}
 			ISiteBundle[] bundles = info.getBundleArtifacts();
-			for (int i = 0; i < bundles.length; i++) {
-				result.add(new SiteBundleAdapter(null, bundles[i]));
+			for (ISiteBundle bundle : bundles) {
+				result.add(new SiteBundleAdapter(null, bundle));
 			}
 			return result.toArray();
 		}
@@ -258,9 +258,9 @@ public class DownloadStatsSection extends TableSection {
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 				ArrayList<IFeatureModel> newModels = new ArrayList<>();
-				for (int i = 0; i < allModels.length; i++) {
-					if (canAdd(allModels[i]))
-						newModels.add(allModels[i]);
+				for (IFeatureModel allModel : allModels) {
+					if (canAdd(allModel))
+						newModels.add(allModel);
 				}
 				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fArtifactTable.getTable().getShell(), candidateModels, true);
@@ -283,9 +283,9 @@ public class DownloadStatsSection extends TableSection {
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getAllModels();
 				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
-				for (int i = 0; i < allModels.length; i++) {
-					if (canAdd(allModels[i]))
-						newModels.add(allModels[i]);
+				for (IPluginModelBase allModel : allModels) {
+					if (canAdd(allModel))
+						newModels.add(allModel);
 				}
 				IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
 				PluginSelectionDialog dialog = new PluginSelectionDialog(fArtifactTable.getTable().getShell(), candidateModels, true);
@@ -305,8 +305,7 @@ public class DownloadStatsSection extends TableSection {
 		ISiteFeature[] features = fModel.getSite().getStatsInfo().getFeatureArtifacts();
 		IFeature cfeature = candidate.getFeature();
 
-		for (int i = 0; i < features.length; i++) {
-			ISiteFeature bfeature = features[i];
+		for (ISiteFeature bfeature : features) {
 			if (bfeature.getId().equals(cfeature.getId()) && bfeature.getVersion().equals(cfeature.getVersion()))
 				return false;
 		}
@@ -317,8 +316,7 @@ public class DownloadStatsSection extends TableSection {
 		ISiteBundle[] currentBundles = fModel.getSite().getStatsInfo().getBundleArtifacts();
 		IPluginBase candidateBundle = candidate.getPluginBase();
 
-		for (int i = 0; i < currentBundles.length; i++) {
-			ISiteBundle currentBundle = currentBundles[i];
+		for (ISiteBundle currentBundle : currentBundles) {
 			if (currentBundle.getId().equals(candidateBundle.getId()) && currentBundle.getVersion().equals(candidateBundle.getVersion()))
 				return false;
 		}
@@ -360,8 +358,8 @@ public class DownloadStatsSection extends TableSection {
 
 	private boolean isFeaturePatch(IFeature feature) {
 		IFeatureImport[] imports = feature.getImports();
-		for (int i = 0; i < imports.length; i++) {
-			if (imports[i].isPatch())
+		for (IFeatureImport import1 : imports) {
+			if (import1.isPatch())
 				return true;
 		}
 		return false;

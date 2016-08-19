@@ -60,18 +60,18 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			// model = (ISite) inputElement;
 			ArrayList<IWritable> result = new ArrayList<>();
 			ISiteCategoryDefinition[] catDefs = fModel.getSite().getCategoryDefinitions();
-			for (int i = 0; i < catDefs.length; i++) {
-				result.add(catDefs[i]);
+			for (ISiteCategoryDefinition catDef : catDefs) {
+				result.add(catDef);
 			}
 			ISiteFeature[] features = fModel.getSite().getFeatures();
-			for (int i = 0; i < features.length; i++) {
-				if (features[i].getCategories().length == 0)
-					result.add(new SiteFeatureAdapter(null, features[i]));
+			for (ISiteFeature feature : features) {
+				if (feature.getCategories().length == 0)
+					result.add(new SiteFeatureAdapter(null, feature));
 			}
 			ISiteBundle[] bundles = fModel.getSite().getBundles();
-			for (int i = 0; i < bundles.length; i++) {
-				if (bundles[i].getCategories().length == 0)
-					result.add(new SiteBundleAdapter(null, bundles[i]));
+			for (ISiteBundle bundle : bundles) {
+				if (bundle.getCategories().length == 0)
+					result.add(new SiteBundleAdapter(null, bundle));
 			}
 			return result.toArray();
 		}
@@ -82,20 +82,20 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) parent;
 				ISiteFeature[] features = fModel.getSite().getFeatures();
 				HashSet<IWritable> result = new HashSet<>();
-				for (int i = 0; i < features.length; i++) {
-					ISiteCategory[] cats = features[i].getCategories();
-					for (int j = 0; j < cats.length; j++) {
-						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
-							result.add(new SiteFeatureAdapter(cats[j].getName(), features[i]));
+				for (ISiteFeature feature : features) {
+					ISiteCategory[] cats = feature.getCategories();
+					for (ISiteCategory cat : cats) {
+						if (cat.getDefinition() != null && cat.getDefinition().equals(catDef)) {
+							result.add(new SiteFeatureAdapter(cat.getName(), feature));
 						}
 					}
 				}
 				ISiteBundle[] bundles = fModel.getSite().getBundles();
-				for (int i = 0; i < bundles.length; i++) {
-					ISiteCategory[] cats = bundles[i].getCategories();
-					for (int j = 0; j < cats.length; j++) {
-						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
-							result.add(new SiteBundleAdapter(cats[j].getName(), bundles[i]));
+				for (ISiteBundle bundle : bundles) {
+					ISiteCategory[] cats = bundle.getCategories();
+					for (ISiteCategory cat : cats) {
+						if (cat.getDefinition() != null && cat.getDefinition().equals(catDef)) {
+							result.add(new SiteBundleAdapter(cat.getName(), bundle));
 						}
 					}
 				}
@@ -114,19 +114,19 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			if (element instanceof ISiteCategoryDefinition) {
 				ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) element;
 				ISiteFeature[] features = fModel.getSite().getFeatures();
-				for (int i = 0; i < features.length; i++) {
-					ISiteCategory[] cats = features[i].getCategories();
-					for (int j = 0; j < cats.length; j++) {
-						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
+				for (ISiteFeature feature : features) {
+					ISiteCategory[] cats = feature.getCategories();
+					for (ISiteCategory cat : cats) {
+						if (cat.getDefinition() != null && cat.getDefinition().equals(catDef)) {
 							return true;
 						}
 					}
 				}
 				ISiteBundle[] bundles = fModel.getSite().getBundles();
-				for (int i = 0; i < bundles.length; i++) {
-					ISiteCategory[] cats = bundles[i].getCategories();
-					for (int j = 0; j < cats.length; j++) {
-						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
+				for (ISiteBundle bundle : bundles) {
+					ISiteCategory[] cats = bundle.getCategories();
+					for (ISiteCategory cat : cats) {
+						if (cat.getDefinition() != null && cat.getDefinition().equals(catDef)) {
 							return true;
 						}
 					}
@@ -282,8 +282,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	private boolean categoryExists(String name) {
 		ISiteCategoryDefinition[] defs = fModel.getSite().getCategoryDefinitions();
-		for (int i = 0; i < defs.length; i++) {
-			ISiteCategoryDefinition def = defs[i];
+		for (ISiteCategoryDefinition def : defs) {
 			String dname = def.getName();
 			if (dname != null && dname.equals(name))
 				return true;
@@ -318,8 +317,8 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			if (aFeature == null)
 				return;
 			ISiteCategory[] cats = aFeature.getCategories();
-			for (int j = 0; j < cats.length; j++) {
-				if (cats[j].getName().equals(catName))
+			for (ISiteCategory cat : cats) {
+				if (cat.getName().equals(catName))
 					return;
 			}
 			ISiteCategory cat = fModel.getFactory().createCategory(aFeature);
@@ -335,8 +334,8 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			if (aBundle == null)
 				return;
 			ISiteCategory[] cats = aBundle.getCategories();
-			for (int j = 0; j < cats.length; j++) {
-				if (cats[j].getName().equals(catName))
+			for (ISiteCategory cat : cats) {
+				if (cat.getName().equals(catName))
 					return;
 			}
 			ISiteCategory cat = fModel.getFactory().createCategory(aBundle);
@@ -461,23 +460,23 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private boolean handleRemoveCategoryDefinition(ISiteCategoryDefinition catDef) {
 		try {
 			Object[] children = ((CategoryContentProvider) fCategoryViewer.getContentProvider()).getChildren(catDef);
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof SiteFeatureAdapter) {
-					SiteFeatureAdapter adapter = (SiteFeatureAdapter) children[i];
+			for (Object element : children) {
+				if (element instanceof SiteFeatureAdapter) {
+					SiteFeatureAdapter adapter = (SiteFeatureAdapter) element;
 					ISiteCategory[] cats = adapter.feature.getCategories();
-					for (int j = 0; j < cats.length; j++) {
-						if (adapter.category.equals(cats[j].getName()))
-							adapter.feature.removeCategories(new ISiteCategory[] {cats[j]});
+					for (ISiteCategory cat : cats) {
+						if (adapter.category.equals(cat.getName()))
+							adapter.feature.removeCategories(new ISiteCategory[] {cat});
 					}
 					if (adapter.feature.getCategories().length == 0) {
 						fModel.getSite().removeFeatures(new ISiteFeature[] {adapter.feature});
 					}
-				} else if (children[i] instanceof SiteBundleAdapter) {
-					SiteBundleAdapter adapter = (SiteBundleAdapter) children[i];
+				} else if (element instanceof SiteBundleAdapter) {
+					SiteBundleAdapter adapter = (SiteBundleAdapter) element;
 					ISiteCategory[] cats = adapter.bundle.getCategories();
-					for (int j = 0; j < cats.length; j++) {
-						if (adapter.category.equals(cats[j].getName()))
-							adapter.bundle.removeCategories(new ISiteCategory[] {cats[j]});
+					for (ISiteCategory cat : cats) {
+						if (adapter.category.equals(cat.getName()))
+							adapter.bundle.removeCategories(new ISiteCategory[] {cat});
 					}
 					if (adapter.bundle.getCategories().length == 0) {
 						fModel.getSite().removeBundles(new ISiteBundle[] {adapter.bundle});
@@ -530,9 +529,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			if (aFeature == null)
 				return;
 			ISiteCategory[] cats = aFeature.getCategories();
-			for (int i = 0; i < cats.length; i++) {
-				if (catName.equals(cats[i].getName()))
-					aFeature.removeCategories(new ISiteCategory[] {cats[i]});
+			for (ISiteCategory cat : cats) {
+				if (catName.equals(cat.getName()))
+					aFeature.removeCategories(new ISiteCategory[] {cat});
 			}
 		} catch (CoreException e) {
 		}
@@ -543,9 +542,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			if (aBundle == null)
 				return;
 			ISiteCategory[] cats = aBundle.getCategories();
-			for (int i = 0; i < cats.length; i++) {
-				if (catName.equals(cats[i].getName()))
-					aBundle.removeCategories(new ISiteCategory[] {cats[i]});
+			for (ISiteCategory cat : cats) {
+				if (catName.equals(cat.getName()))
+					aBundle.removeCategories(new ISiteCategory[] {cat});
 			}
 		} catch (CoreException e) {
 		}
@@ -554,9 +553,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private ISiteFeature findRealFeature(SiteFeatureAdapter adapter) {
 		ISiteFeature featureCopy = adapter.feature;
 		ISiteFeature[] features = fModel.getSite().getFeatures();
-		for (int i = 0; i < features.length; i++) {
-			if (features[i].getId().equals(featureCopy.getId()) && features[i].getVersion().equals(featureCopy.getVersion())) {
-				return features[i];
+		for (ISiteFeature feature : features) {
+			if (feature.getId().equals(featureCopy.getId()) && feature.getVersion().equals(featureCopy.getVersion())) {
+				return feature;
 			}
 		}
 		return null;
@@ -565,9 +564,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private ISiteBundle findRealBundle(SiteBundleAdapter adapter) {
 		ISiteBundle featureCopy = adapter.bundle;
 		ISiteBundle[] bundles = fModel.getSite().getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundles[i].getId().equals(featureCopy.getId()) && bundles[i].getVersion().equals(featureCopy.getVersion())) {
-				return bundles[i];
+		for (ISiteBundle bundle : bundles) {
+			if (bundle.getId().equals(featureCopy.getId()) && bundle.getVersion().equals(featureCopy.getVersion())) {
+				return bundle;
 			}
 		}
 		return null;
@@ -636,13 +635,13 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	@Override
 	protected void doPaste(Object target, Object[] objects) {
 		try {
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof SiteFeatureAdapter) {
-					copyFeature((SiteFeatureAdapter) objects[i], target);
-				} else if (objects[i] instanceof SiteBundleAdapter) {
-					copyBundle((SiteBundleAdapter) objects[i], target);
-				} else if (objects[i] instanceof ISiteCategoryDefinition) {
-					fModel.getSite().addCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) objects[i]});
+			for (Object object : objects) {
+				if (object instanceof SiteFeatureAdapter) {
+					copyFeature((SiteFeatureAdapter) object, target);
+				} else if (object instanceof SiteBundleAdapter) {
+					copyBundle((SiteBundleAdapter) object, target);
+				} else if (object instanceof ISiteCategoryDefinition) {
+					fModel.getSite().addCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) object});
 				}
 			}
 		} catch (CoreException e) {
@@ -652,18 +651,17 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		if (target == null || target instanceof ISiteCategoryDefinition) {
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof SiteFeatureAdapter) {
+			for (Object object : objects) {
+				if (object instanceof SiteFeatureAdapter) {
 					return true;
 				}
-				if (objects[i] instanceof SiteBundleAdapter) {
+				if (object instanceof SiteBundleAdapter) {
 					return true;
 				}
-				if (objects[i] instanceof ISiteCategoryDefinition) {
-					String name = ((ISiteCategoryDefinition) objects[i]).getName();
+				if (object instanceof ISiteCategoryDefinition) {
+					String name = ((ISiteCategoryDefinition) object).getName();
 					ISiteCategoryDefinition[] defs = fModel.getSite().getCategoryDefinitions();
-					for (int j = 0; j < defs.length; j++) {
-						ISiteCategoryDefinition def = defs[j];
+					for (ISiteCategoryDefinition def : defs) {
 						String dname = def.getName();
 						if (dname != null && dname.equals(name))
 							return false;
@@ -697,9 +695,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 				ArrayList<IFeatureModel> newModels = new ArrayList<>();
-				for (int i = 0; i < allModels.length; i++) {
-					if (canAdd(allModels[i]))
-						newModels.add(allModels[i]);
+				for (IFeatureModel allModel : allModels) {
+					if (canAdd(allModel))
+						newModels.add(allModel);
 				}
 				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
@@ -722,9 +720,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getAllModels();
 				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
-				for (int i = 0; i < allModels.length; i++) {
-					if (canAdd(allModels[i]))
-						newModels.add(allModels[i]);
+				for (IPluginModelBase allModel : allModels) {
+					if (canAdd(allModel))
+						newModels.add(allModel);
 				}
 				IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
 				PluginSelectionDialog dialog = new PluginSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
@@ -744,8 +742,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		ISiteFeature[] features = fModel.getSite().getFeatures();
 		IFeature cfeature = candidate.getFeature();
 
-		for (int i = 0; i < features.length; i++) {
-			ISiteFeature bfeature = features[i];
+		for (ISiteFeature bfeature : features) {
 			if (bfeature.getId() != null && bfeature.getId().equals(cfeature.getId()) && bfeature.getVersion() != null
 					&& bfeature.getVersion().equals(cfeature.getVersion()))
 				return false;
@@ -757,8 +754,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		ISiteBundle[] currentBundles = fModel.getSite().getBundles();
 		IPluginBase candidateBundle = candidate.getPluginBase();
 
-		for (int i = 0; i < currentBundles.length; i++) {
-			ISiteBundle currentBundle = currentBundles[i];
+		for (ISiteBundle currentBundle : currentBundles) {
 			if (currentBundle.getId().equals(candidateBundle.getId()) && currentBundle.getVersion().equals(candidateBundle.getVersion()))
 				return false;
 		}
@@ -800,8 +796,8 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	private static boolean isFeaturePatch(IFeature feature) {
 		IFeatureImport[] imports = feature.getImports();
-		for (int i = 0; i < imports.length; i++) {
-			if (imports[i].isPatch())
+		for (IFeatureImport import1 : imports) {
+			if (import1.isPatch())
 				return true;
 		}
 		return false;
@@ -922,9 +918,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private void expandCategory(String category) {
 		if (category != null) {
 			ISiteCategoryDefinition[] catDefs = fModel.getSite().getCategoryDefinitions();
-			for (int i = 0; i < catDefs.length; i++) {
-				if (category.equals(catDefs[i].getName())) {
-					fCategoryViewer.expandToLevel(catDefs[i], 1);
+			for (ISiteCategoryDefinition catDef : catDefs) {
+				if (category.equals(catDef.getName())) {
+					fCategoryViewer.expandToLevel(catDef, 1);
 					break;
 				}
 			}

@@ -54,8 +54,7 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 
 	private boolean alreadyExists(String name) {
 		ISiteCategoryDefinition[] defs = fCurrentCategoryDefinition.getModel().getSite().getCategoryDefinitions();
-		for (int i = 0; i < defs.length; i++) {
-			ISiteCategoryDefinition def = defs[i];
+		for (ISiteCategoryDefinition def : defs) {
 			if (def == fCurrentCategoryDefinition)
 				continue;
 			String dname = def.getName();
@@ -102,9 +101,9 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
-		for (int i = 0; i < types.length; i++) {
-			for (int j = 0; j < transfers.length; j++) {
-				if (transfers[j].isSupportedType(types[i]))
+		for (TransferData type : types) {
+			for (Transfer transfer : transfers) {
+				if (transfer.isSupportedType(type))
 					return true;
 			}
 		}
@@ -225,24 +224,24 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 
 	private void updateBundlesAndFeatures(String oldCategory) {
 		ISiteFeature[] siteFeatures = fCurrentCategoryDefinition.getModel().getSite().getFeatures();
-		for (int i = 0; i < siteFeatures.length; i++) {
-			ISiteCategory[] categories = siteFeatures[i].getCategories();
-			for (int c = 0; c < categories.length; c++) {
-				if (oldCategory.equals(categories[c].getName())) {
+		for (ISiteFeature siteFeature : siteFeatures) {
+			ISiteCategory[] categories = siteFeature.getCategories();
+			for (ISiteCategory categorie : categories) {
+				if (oldCategory.equals(categorie.getName())) {
 					try {
-						categories[c].setName(fCurrentCategoryDefinition.getName());
+						categorie.setName(fCurrentCategoryDefinition.getName());
 					} catch (CoreException ce) {
 					}
 				}
 			}
 		}
 		ISiteBundle[] siteBundles = fCurrentCategoryDefinition.getModel().getSite().getBundles();
-		for (int i = 0; i < siteBundles.length; i++) {
-			ISiteCategory[] categories = siteBundles[i].getCategories();
-			for (int c = 0; c < categories.length; c++) {
-				if (oldCategory.equals(categories[c].getName())) {
+		for (ISiteBundle siteBundle : siteBundles) {
+			ISiteCategory[] categories = siteBundle.getCategories();
+			for (ISiteCategory categorie : categories) {
+				if (oldCategory.equals(categorie.getName())) {
 					try {
-						categories[c].setName(fCurrentCategoryDefinition.getName());
+						categorie.setName(fCurrentCategoryDefinition.getName());
 					} catch (CoreException ce) {
 					}
 				}
