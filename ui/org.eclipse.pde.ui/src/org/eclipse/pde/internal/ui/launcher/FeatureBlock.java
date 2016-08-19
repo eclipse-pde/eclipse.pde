@@ -1219,7 +1219,7 @@ public class FeatureBlock {
 				}
 			}
 
-			List<Object> models = new ArrayList<Object>(fFeatureModels.values());
+			List<Object> models = new ArrayList<>(fFeatureModels.values());
 			if (fAdditionalPlugins.size() > 0) {
 				models.add(fAdditionalPluginsParentElement);
 			}
