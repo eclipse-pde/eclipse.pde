@@ -289,6 +289,7 @@ public class LogView extends ViewPart implements ILogListener {
 				manager.add(fCopyAction);
 				manager.add(new Separator());
 				manager.add(fShowStackAction);
+				clearAction.setEnabled(!(elements.size() == 0 && groups.size() == 0));
 				manager.add(clearAction);
 				manager.add(fDeleteLogAction);
 				manager.add(fOpenLogAction);
