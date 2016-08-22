@@ -49,7 +49,7 @@ public class AllPDEMinimalTests {
 		suite.addTest(AllLogViewTests.suite());
 		suite.addTest(ProjectCreationTests.suite());
 		suite.addTest(BundleRootTests.suite());
-		suite.addTest(PluginRegistryTests.suite());
+		suite.addTest(PluginRegistryTestsMinimal.suite());
 		suite.addTest(ClasspathResolverTest.suite());
 		// suite.addTest(ClasspathContributorTest.suite());
 		return suite;
