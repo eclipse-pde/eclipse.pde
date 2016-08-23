@@ -113,7 +113,7 @@ public class Java8DeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after,
 				VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(delta)); //$NON-NLS-1$
+		assertTrue("Not compatible", !DeltaProcessor.isCompatible(delta)); //$NON-NLS-1$
 	}
 
 	/**

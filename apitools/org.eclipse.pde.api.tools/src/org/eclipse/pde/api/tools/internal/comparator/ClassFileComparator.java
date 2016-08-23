@@ -2160,7 +2160,7 @@ public class ClassFileComparator {
 							}
 						}
 					}
-					this.addDelta(getElementType(type), IDelta.ADDED, found ? IDelta.METHOD_MOVED_DOWN : IDelta.METHOD, restrictionsForMethodAddition, this.initialDescriptorRestrictions, 0, method.isDefaultMethod() ? (method.getModifiers() | Flags.AccDefaultMethod) : method.getModifiers(), this.type1, getKeyForMethod(method, type), new String[] {
+					this.addDelta(getElementType(type), IDelta.ADDED, found ? IDelta.METHOD_MOVED_DOWN : method.isDefaultMethod() ? IDelta.DEFAULT_METHOD : IDelta.METHOD, restrictionsForMethodAddition, this.initialDescriptorRestrictions, 0, method.isDefaultMethod() ? (method.getModifiers() | Flags.AccDefaultMethod) : method.getModifiers(), this.type1, getKeyForMethod(method, type), new String[] {
 							Util.getDescriptorName(type), methodDisplayName });
 
 				} else {

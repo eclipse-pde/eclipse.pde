@@ -769,6 +769,8 @@ public class ApiProblemFactory {
 										return 40;
 									case IDelta.METHOD:
 										return 44;
+									case IDelta.DEFAULT_METHOD:
+										return 47;
 									case IDelta.RESTRICTIONS:
 										return 72;
 									case IDelta.SUPER_INTERFACE_WITH_METHODS:

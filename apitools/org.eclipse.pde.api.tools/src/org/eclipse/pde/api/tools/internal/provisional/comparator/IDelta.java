@@ -844,6 +844,19 @@ public interface IDelta {
 	public static final int DEPRECATION = 72;
 
 	/**
+	 * Delta kind flag that denotes a default method has been added or removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 *
+	 * @see #getFlags()
+	 */
+	public static final int DEFAULT_METHOD = 73;
+
+	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 *
 	 * @return true if the receiver has no children deltas, false otherwise.
