@@ -1852,6 +1852,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							switch (flags) {
 								case IDelta.TYPE_MEMBER:
 								case IDelta.METHOD:
+								case IDelta.DEFAULT_METHOD:
 								case IDelta.CONSTRUCTOR:
 								case IDelta.ENUM_CONSTANT:
 								case IDelta.METHOD_WITH_DEFAULT_VALUE:
@@ -1894,6 +1895,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					switch (flags) {
 						case IDelta.TYPE_MEMBER:
 						case IDelta.METHOD:
+						case IDelta.DEFAULT_METHOD:
 						case IDelta.CONSTRUCTOR:
 						case IDelta.ENUM_CONSTANT:
 						case IDelta.METHOD_WITH_DEFAULT_VALUE:

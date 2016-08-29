@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1162,6 +1162,7 @@ public final class Util {
 							case IDelta.METHOD_WITH_DEFAULT_VALUE:
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
 							case IDelta.METHOD:
+							case IDelta.DEFAULT_METHOD:
 							case IDelta.CONSTRUCTOR:
 								return getMethod(type, key);
 							case IDelta.TYPE_MEMBER:
@@ -2330,6 +2331,7 @@ public final class Util {
 			case IDelta.TYPE:
 				return arguments[0];
 			case IDelta.METHOD:
+			case IDelta.DEFAULT_METHOD:
 			case IDelta.CONSTRUCTOR:
 			case IDelta.ENUM_CONSTANT:
 			case IDelta.METHOD_WITH_DEFAULT_VALUE:
