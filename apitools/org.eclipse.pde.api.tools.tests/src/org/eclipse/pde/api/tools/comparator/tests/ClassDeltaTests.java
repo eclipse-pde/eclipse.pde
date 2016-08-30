@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
@@ -27,6 +24,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Util;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Delta tests for class
@@ -1371,7 +1371,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertTrue("Is compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.FIELD_MOVED_UP, child.getFlags()); //$NON-NLS-1$
@@ -1491,7 +1491,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Extend restrictions", !RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertTrue("Is compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
 
 	/**
@@ -1630,7 +1630,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not a protected field", Flags.isProtected(child.getNewModifiers())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertTrue("Is compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
 
 	/**
@@ -1676,7 +1676,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not a protected field", Flags.isProtected(child.getNewModifiers())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertTrue("Is compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.FIELD_MOVED_UP, child.getFlags()); //$NON-NLS-1$
@@ -1896,7 +1896,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertTrue("Is compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.FIELD_MOVED_UP, child.getFlags()); //$NON-NLS-1$
@@ -2370,7 +2370,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not static", Flags.isStatic(child.getNewModifiers())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertTrue("Is compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 		try {
 			DeltaXmlVisitor xmlVisitor = new DeltaXmlVisitor();
 			delta.accept(xmlVisitor);
