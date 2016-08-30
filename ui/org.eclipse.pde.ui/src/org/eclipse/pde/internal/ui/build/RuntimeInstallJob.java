@@ -101,9 +101,6 @@ public class RuntimeInstallJob extends Job {
 
 			List<IInstallableUnit> toInstall = new ArrayList<>();
 			for (Object item : fInfo.items) {
-				if (subMonitor.isCanceled()) {
-					return Status.CANCEL_STATUS;
-				}
 				subMonitor.subTask(
 						NLS.bind(PDEUIMessages.RuntimeInstallJob_Creating_installable_unit, item.toString()));
 
@@ -144,7 +141,7 @@ public class RuntimeInstallJob extends Job {
 					IInstallableUnit existingIU = (IInstallableUnit) queryMatches.iterator().next();
 					toInstall.add(createInstallableUnitPatch(existingIU, newVersion, profile, subMonitor.split(1)));
 				}
-				subMonitor.worked(2);
+				subMonitor.step(2);
 			}
 
 			if (toInstall.size() > 0) {
@@ -159,9 +156,6 @@ public class RuntimeInstallJob extends Job {
 				return status;
 			}
 
-			if (subMonitor.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
 			return Status.OK_STATUS;
 
 		} catch (ProvisionException e) {
