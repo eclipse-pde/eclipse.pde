@@ -441,6 +441,12 @@ public class DeltaProcessor {
 				int newModifiers = delta.getNewModifiers();
 				switch (delta.getFlags()) {
 					case IDelta.FIELD:
+						if (RestrictionModifiers.isReferenceRestriction(delta.getCurrentRestrictions())) {
+							return true;
+						}
+						if (Util.isVisible(newModifiers)) {
+							return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
+						}
 						return true;
 					case IDelta.METHOD:
 						if (Util.isVisible(newModifiers)) {

@@ -294,6 +294,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 			IApiProblemTypes.ENUM_REMOVED_ENUM_CONSTANT,
 			IApiProblemTypes.ENUM_REMOVED_METHOD,
 			IApiProblemTypes.ENUM_REMOVED_TYPE_MEMBER,
+			IApiProblemTypes.CLASS_ADDED_FIELD,
 			IApiProblemTypes.CLASS_ADDED_METHOD,
 			IApiProblemTypes.CLASS_ADDED_RESTRICTIONS,
 			IApiProblemTypes.CLASS_ADDED_TYPE_PARAMETER,
