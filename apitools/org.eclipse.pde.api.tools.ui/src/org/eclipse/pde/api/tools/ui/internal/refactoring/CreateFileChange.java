@@ -123,14 +123,12 @@ public class CreateFileChange extends ResourceChange {
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 
-		InputStream is = null;
-		try {
-			SubMonitor subMonitor = SubMonitor.convert(pm, RefactoringMessages.CreateFileChange_3, 3);
+		SubMonitor subMonitor = SubMonitor.convert(pm, RefactoringMessages.CreateFileChange_3, 3);
 
+		try {
 			initializeEncoding();
 			IFile file = getOldFile(subMonitor.split(1));
-			try {
-				is = new ByteArrayInputStream(fSource.getBytes(fEncoding));
+			try (InputStream is = new ByteArrayInputStream(fSource.getBytes(fEncoding))) {
 				file.create(is, false, subMonitor.split(1));
 				if (fStampToRestore != IResource.NULL_STAMP) {
 					file.revertModificationStamp(fStampToRestore);
@@ -144,14 +142,8 @@ public class CreateFileChange extends ResourceChange {
 			} catch (UnsupportedEncodingException e) {
 				throw new JavaModelException(e, IJavaModelStatusConstants.IO_EXCEPTION);
 			}
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException ioe) {
-				throw new JavaModelException(ioe, IJavaModelStatusConstants.IO_EXCEPTION);
-			}
+		} catch (IOException ioe) {
+			throw new JavaModelException(ioe, IJavaModelStatusConstants.IO_EXCEPTION);
 		}
 	}
 
