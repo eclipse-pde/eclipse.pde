@@ -29,16 +29,16 @@ public class PDERuntimePluginImages {
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
 
 	// Plug-in Spy related images
-	public static final String IMG_CLASS_OBJ = "class_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_INTERFACE_OBJ = "int_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_PLUGIN_OBJ = "plugin_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_CLASS_OBJ = "class_obj.png"; //$NON-NLS-1$
+	public static final String IMG_INTERFACE_OBJ = "int_obj.png"; //$NON-NLS-1$
+	public static final String IMG_PLUGIN_OBJ = "plugin_obj.png"; //$NON-NLS-1$
 	public static final String IMG_SPY_OBJ = "pdespy_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_MENU_OBJ = "menu_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_ID_OBJ = "generic_xml_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_MENUSPY_OBJ = "menuspy_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_CONTEXTID_OBJ = "contextid_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_SAVE_IMAGE_AS_OBJ = "save_image_as_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_COPY_QNAME = "cpyqual_menu.gif"; //$NON-NLS-1$
+	public static final String IMG_COPY_QNAME = "cpyqual_menu.png"; //$NON-NLS-1$
 	public static final String IMG_UP_NAV = "up_nav.png"; //$NON-NLS-1$
 
 	public static final ImageDescriptor CLASS_OBJ = create(PATH_OBJ, IMG_CLASS_OBJ);
@@ -53,9 +53,9 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor COPY_QNAME = create(PATH_LCL, IMG_COPY_QNAME);
 	public static final ImageDescriptor UP_NAV = create(PATH_LCL, IMG_UP_NAV);
 
-	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(PATH_DCL, "refresh.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REFRESH = create(PATH_LCL, "refresh.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(PATH_DCL, "refresh.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REFRESH = create(PATH_LCL, "refresh.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ERROR_ST_OBJ = create(PATH_OBJ, "error_st_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ERROR_STACK_OBJ = create(PATH_OBJ, "error_stack.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXT_POINT_OBJ = create(PATH_OBJ, "ext_point_obj.gif"); //$NON-NLS-1$
@@ -68,7 +68,7 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_JAVA_LIB_OBJ = create(PATH_OBJ, "java_lib_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NATIVE_LIB_OBJ = create(PATH_OBJ, "native_lib_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OK_ST_OBJ = create(PATH_OBJ, "ok_st_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PLUGIN_OBJ = create(PATH_OBJ, "plugin_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PLUGIN_OBJ = create(PATH_OBJ, "plugin_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REQ_PLUGIN_OBJ = create(PATH_OBJ, "req_plugin_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REQ_PLUGINS_OBJ = create(PATH_OBJ, "req_plugins_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_RUNTIME_OBJ = create(PATH_OBJ, "runtime_obj.gif"); //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_PROPERTY_OBJ = create(PATH_OBJ, "property_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGINS_OBJ = create(PATH_OBJ, "plugins_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FRAGMENT_OBJ = create(PATH_OBJ, "frgmt_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PACKAGE_OBJ = create(PATH_OBJ, "package_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PACKAGE_OBJ = create(PATH_OBJ, "package_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REMOTE_SERVICE_PROXY_OBJ = create(PATH_OBJ, "rsvcproxy_obj.gif"); //$NON-NLS-1$
 
 	/*
