@@ -100,7 +100,7 @@ public class Java8DeltaTests extends DeltaTestSetup {
 	}
 
 	/**
-	 * Check if default method addition in an interface is compatible
+	 * Check if default method addition in an interface is not compatible
 	 */
 	public void test4() {
 		deployBundles("test4"); //$NON-NLS-1$
@@ -131,6 +131,23 @@ public class Java8DeltaTests extends DeltaTestSetup {
 				VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(delta)); //$NON-NLS-1$
+	}
+
+	/**
+	 * Check if public static method addition in an interface is compatible
+	 */
+	public void test6() {
+		deployBundles("test6"); //$NON-NLS-1$
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after,
+				VisibilityModifiers.ALL_VISIBILITIES, null);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(delta)); //$NON-NLS-1$
 	}
 
 	}

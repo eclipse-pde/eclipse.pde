@@ -66,7 +66,7 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 
 	@Override
 	public boolean isDefaultMethod() {
-		return ((IApiType) getParent()).isInterface() && (getModifiers() & Opcodes.ACC_ABSTRACT) == 0;
+		return ((IApiType) getParent()).isInterface() && ((getModifiers() & Opcodes.ACC_ABSTRACT) == 0) && ((getModifiers() & Opcodes.ACC_STATIC) == 0);
 	}
 
 	@Override
