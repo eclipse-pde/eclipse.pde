@@ -988,7 +988,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			// we ignore it for non-OSGi case
 			return true;
 		}
-		return !ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, fJavaProject.getProject().getProject());
+		return ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE, fJavaProject.getProject().getProject());
 	}
 
 	private boolean ignoreMajorVersionCheckWithoutBreakingChange() {
@@ -996,7 +996,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			// we ignore it for non-OSGi case
 			return true;
 		}
-		return !ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, fJavaProject.getProject().getProject());
+		return ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE, fJavaProject.getProject().getProject());
 	}
 
 	/**
@@ -2001,7 +2001,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE, new String[] {
 							compversionval, refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
 				}
-			} else if (compversion.getMinor() > refversion.getMinor()) {
+			} else if (compversion.getMinor() != refversion.getMinor()) {
 				// the minor version should not be incremented
 				if (!ignoreMinorVersionCheckWithoutApiChange()) {
 					newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);

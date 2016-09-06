@@ -122,8 +122,8 @@ public interface IApiProblemTypes {
 	public static final String INVALID_SINCE_TAG_VERSION = "invalid_since_tag_version"; //$NON-NLS-1$
 	public static final String CHANGED_EXECUTION_ENV = "changed_execution_env"; //$NON-NLS-1$
 	public static final String INCOMPATIBLE_API_COMPONENT_VERSION = "incompatible_api_component_version"; //$NON-NLS-1$
-	public static final String INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE = "incompatible_api_component_version_include_minor_without_api_change"; //$NON-NLS-1$
-	public static final String INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE = "incompatible_api_component_version_include_major_without_breaking_change"; //$NON-NLS-1$
+	public static final String INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE = "incompatible_api_component_version_ignore_minor_without_api_change"; //$NON-NLS-1$
+	public static final String INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE = "incompatible_api_component_version_ignore_major_without_breaking_change"; //$NON-NLS-1$
 
 	public static final String MISSING_DEFAULT_API_BASELINE = "missing_default_api_profile"; //$NON-NLS-1$
 	public static final String REPORT_RESOLUTION_ERRORS_API_COMPONENT = "report_resolution_errors_api_component"; //$NON-NLS-1$

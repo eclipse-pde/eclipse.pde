@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
 import java.util.jar.JarFile;
-
-import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -27,6 +25,8 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
+
+import junit.framework.Test;
 
 /**
  * Tests that the builder correctly finds manifest version problems
@@ -180,7 +180,8 @@ public class VersionTest extends CompatibilityTest {
 	private void xFalseMinorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("the instance pref node must exist", inode); //$NON-NLS-1$
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, ApiPlugin.VALUE_ENABLED);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE,
+				ApiPlugin.VALUE_DISABLED);
 		inode.flush();
 
 		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, IApiProblem.NO_FLAGS) };
@@ -219,7 +220,8 @@ public class VersionTest extends CompatibilityTest {
 	private void xFalseMajorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_ENABLED);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE,
+				ApiPlugin.VALUE_DISABLED);
 		inode.flush();
 
 		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE, IApiProblem.NO_FLAGS) };
@@ -250,6 +252,75 @@ public class VersionTest extends CompatibilityTest {
 
 	public void testFalseMajorIncF() throws Exception {
 		xFalseMajorInc(false);
+	}
+
+	/**
+	 * Tests ignore minor version increment with no API addition
+	 */
+	private void xIgnoreFalseMinorInc(boolean incremental) throws Exception {
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
+		assertNotNull("the instance pref node must exist", inode); //$NON-NLS-1$
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE,
+				ApiPlugin.VALUE_ENABLED);
+		inode.flush();
+
+
+		// update manifest minor version
+		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
+		assertTrue("Missing manifest", file.exists()); //$NON-NLS-1$
+		String content = Util.getFileContentAsString(file.getLocation().toFile());
+		content = content.replace("1.0.0", "1.1.0"); //$NON-NLS-1$ //$NON-NLS-2$
+		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);
+
+		if (incremental) {
+			incrementalBuild();
+		} else {
+			fullBuild();
+		}
+		ApiProblem[] problems = getEnv().getProblemsFor(MANIFEST_PATH, null);
+		assertTrue("No problem expected", problems.length == 0); //$NON-NLS-1$
+	}
+
+	public void testIgnoreFalseMinorIncI() throws Exception {
+		xIgnoreFalseMinorInc(true);
+	}
+
+	public void testIgnoreFalseMinorIncF() throws Exception {
+		xIgnoreFalseMinorInc(false);
+	}
+
+	/**
+	 * Tests ignore major version increment with no API breakage
+	 */
+	private void xIgnoreFalseMajorInc(boolean incremental) throws Exception {
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
+		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE,
+				ApiPlugin.VALUE_ENABLED);
+		inode.flush();
+
+		// update manifest minor version
+		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
+		assertTrue("Missing manifest", file.exists()); //$NON-NLS-1$
+		String content = Util.getFileContentAsString(file.getLocation().toFile());
+		content = content.replace("1.0.0", "2.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
+		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);
+
+		if (incremental) {
+			incrementalBuild();
+		} else {
+			fullBuild();
+		}
+		ApiProblem[] problems = getEnv().getProblemsFor(MANIFEST_PATH, null);
+		assertTrue("No problem expected", problems.length == 0); //$NON-NLS-1$
+	}
+
+	public void testIgnoreFalseMajorIncI() throws Exception {
+		xIgnoreFalseMajorInc(true);
+	}
+
+	public void testIgnoreFalseMajorIncF() throws Exception {
+		xIgnoreFalseMajorInc(false);
 	}
 
 	/**
@@ -285,7 +356,8 @@ public class VersionTest extends CompatibilityTest {
 	private void xRegardlessMajorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_ENABLED);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE,
+				ApiPlugin.VALUE_ENABLED);
 		inode.put(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, ApiPlugin.VALUE_ENABLED);
 		inode.flush();
 

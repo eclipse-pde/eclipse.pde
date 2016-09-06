@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,8 +168,8 @@ public class PreferenceMessages extends NLS {
 	public static String VersionManagementReportInvalidApiComponentVersion;
 	public static String ApiErrorsWarningsConfigurationBlock_setAllto;
 	public static String ApiErrorsWarningsConfigurationBlock_unused_problem_filters;
-	public static String VersionManagementReportInvalidApiComponentVersionIncludeMinorWithoutApiChange;
-	public static String VersionManagementReportInvalidApiComponentVersionIncludeMajorWithoutBreakingChange;
+	public static String VersionManagementReportInvalidApiComponentVersionIgnoreMinorWithoutApiChange;
+	public static String VersionManagementReportInvalidApiComponentVersionIgnoreMajorWithoutBreakingChange;
 
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees;
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip;
