@@ -6,7 +6,7 @@
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
      http://www.eclipse.org/legal/epl-v10.html
-    
+
      Contributors:
          IBM Corporation - initial API and implementation
  -->
@@ -18,7 +18,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%views.registry.name"
-            icon="$nl$/icons/eview16/registry.gif"
+            icon="$nl$/icons/eview16/registry.png"
             category="org.eclipse.pde.ui"
             class="org.eclipse.pde.internal.runtime.registry.RegistryBrowser"
             id="org.eclipse.pde.runtime.RegistryBrowser">
@@ -57,11 +57,11 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.pde.runtime.spy.commands.spyCommand"
-            icon="$nl$/icons/obj16/pdespy_obj.gif">
+            icon="$nl$/icons/obj16/pdespy_obj.png">
       </image>
       <image
             commandId="org.eclipse.pde.runtime.spy.commands.menuSpyCommand"
-            icon="$nl$/icons/obj16/menuspy_obj.gif">
+            icon="$nl$/icons/obj16/menuspy_obj.png">
       </image>
       <image
             commandId="org.eclipse.pde.runtime.spy.commands.layoutSpyCommand"
