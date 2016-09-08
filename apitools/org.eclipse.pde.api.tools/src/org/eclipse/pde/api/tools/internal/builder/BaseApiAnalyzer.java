@@ -1459,6 +1459,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if ((compversion.getMajor() == refversion.getMajor()) && (compversion.getMinor() > refversion.getMinor())) {
 			return false;
 		}
+		return hasExecutionEnvironmentChanged(reference, component);
+	}
+
+	private boolean hasExecutionEnvironmentChanged(IApiComponent reference, IApiComponent component) {
 		String[] refExecutionEnv = null;
 		String[] compExecutionEnv = null;
 		try {
@@ -2003,7 +2007,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 			} else if (compversion.getMinor() != refversion.getMinor()) {
 				// the minor version should not be incremented
-				if (!ignoreMinorVersionCheckWithoutApiChange()) {
+				if (!ignoreMinorVersionCheckWithoutApiChange() && !hasExecutionEnvironmentChanged(reference, component)) {
 					newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);
 					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, new String[] {
 							compversionval, refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
