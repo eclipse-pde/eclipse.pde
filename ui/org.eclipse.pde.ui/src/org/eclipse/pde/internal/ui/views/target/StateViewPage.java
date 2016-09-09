@@ -130,9 +130,9 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 
 		private Object[] getResolvedDependencies(VersionConstraint[] constraints) {
 			ArrayList<VersionConstraint> list = new ArrayList<>(constraints.length);
-			for (int i = 0; i < constraints.length; i++)
-				if (constraints[i].isResolved())
-					list.add(constraints[i]);
+			for (VersionConstraint constraint : constraints)
+				if (constraint.isResolved())
+					list.add(constraint);
 			return list.toArray();
 		}
 
@@ -456,8 +456,8 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 					fTreeViewer.refresh();
 				} else {
 					BundleDelta[] deltas = delta.getChanges();
-					for (int i = 0; i < deltas.length; i++) {
-						int type = deltas[i].getType();
+					for (BundleDelta d : deltas) {
+						int type = d.getType();
 						if (type == BundleDelta.REMOVED || type == BundleDelta.RESOLVED || type == BundleDelta.ADDED || type == BundleDelta.UNRESOLVED) {
 							fTreeViewer.refresh();
 							break;

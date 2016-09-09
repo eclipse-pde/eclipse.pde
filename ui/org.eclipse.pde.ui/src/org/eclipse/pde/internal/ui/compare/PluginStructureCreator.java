@@ -170,8 +170,7 @@ public class PluginStructureCreator extends StructureCreator {
 	private void createLibraries(DocumentRangeNode parent, PluginModelBase model, PDELabelProvider labelProvider, ResourceManager resources) {
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		int type = LIBRARY;
-		for (int i = 0; i < libraries.length; i++) {
-			IPluginLibrary pluginLibrary = libraries[i];
+		for (IPluginLibrary pluginLibrary : libraries) {
 			createNode(parent, type, pluginLibrary, labelProvider, resources);
 		}
 	}
@@ -179,8 +178,7 @@ public class PluginStructureCreator extends StructureCreator {
 	private void createImports(DocumentRangeNode parent, PluginModelBase model, PDELabelProvider labelProvider, PDELabelProvider labelProvider2, ResourceManager resources) {
 		IPluginImport[] imports = model.getPluginBase().getImports();
 		int type = IMPORT;
-		for (int i = 0; i < imports.length; i++) {
-			IPluginImport pluginImport = imports[i];
+		for (IPluginImport pluginImport : imports) {
 			createNode(parent, type, pluginImport, labelProvider, resources);
 		}
 	}
@@ -188,8 +186,7 @@ public class PluginStructureCreator extends StructureCreator {
 	private void createExtensionPoints(DocumentRangeNode parent, PluginModelBase model, PDELabelProvider labelProvider, ResourceManager resources) {
 		IPluginExtensionPoint[] extensionPoints = model.getPluginBase().getExtensionPoints();
 		int type = EXTENSION_POINT;
-		for (int i = 0; i < extensionPoints.length; i++) {
-			IPluginExtensionPoint extensionPoint = extensionPoints[i];
+		for (IPluginExtensionPoint extensionPoint : extensionPoints) {
 			createNode(parent, type, extensionPoint, labelProvider, resources);
 		}
 	}
@@ -197,8 +194,7 @@ public class PluginStructureCreator extends StructureCreator {
 	private void createExtensions(DocumentRangeNode parent, PluginModelBase model, PDELabelProvider labelProvider, ResourceManager resources) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		int type = EXTENSION;
-		for (int i = 0; i < extensions.length; i++) {
-			IPluginExtension extension = extensions[i];
+		for (IPluginExtension extension : extensions) {
 			createNode(parent, type, extension, labelProvider, resources);
 		}
 	}

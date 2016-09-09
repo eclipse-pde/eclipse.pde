@@ -100,26 +100,26 @@ public class RuntimeInstallJob extends Job {
 			}
 
 			List<IInstallableUnit> toInstall = new ArrayList<>();
-			for (int i = 0; i < fInfo.items.length; i++) {
+			for (Object item : fInfo.items) {
 				if (subMonitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
 				subMonitor.subTask(
-						NLS.bind(PDEUIMessages.RuntimeInstallJob_Creating_installable_unit, fInfo.items[i].toString()));
+						NLS.bind(PDEUIMessages.RuntimeInstallJob_Creating_installable_unit, item.toString()));
 
 				//Get the installable unit from the repo
 				String id = null;
 				String version = null;
-				if (fInfo.items[i] instanceof IPluginModelBase) {
-					id = ((IPluginModelBase) fInfo.items[i]).getPluginBase().getId();
-					version = ((IPluginModelBase) fInfo.items[i]).getPluginBase().getVersion();
-				} else if (fInfo.items[i] instanceof IFeatureModel) {
-					id = ((IFeatureModel) fInfo.items[i]).getFeature().getId() + ".feature.group"; //$NON-NLS-1$
-					version = ((IFeatureModel) fInfo.items[i]).getFeature().getVersion();
+				if (item instanceof IPluginModelBase) {
+					id = ((IPluginModelBase) item).getPluginBase().getId();
+					version = ((IPluginModelBase) item).getPluginBase().getVersion();
+				} else if (item instanceof IFeatureModel) {
+					id = ((IFeatureModel) item).getFeature().getId() + ".feature.group"; //$NON-NLS-1$
+					version = ((IFeatureModel) item).getFeature().getVersion();
 				}
 
 				if (id == null && version == null) {
-					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotGetIdOrVersion, fInfo.items[i].toString()));
+					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotGetIdOrVersion, item.toString()));
 				}
 
 				// Use the same qualifier replacement as the export operation used

@@ -32,11 +32,11 @@ public class GenerateFeatureBuildFileAction extends BaseBuildAction {
 	protected void makeScripts(IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].getUnderlyingResource() != null) {
-				IResource underlying = models[i].getUnderlyingResource();
+		for (IFeatureModel model : models) {
+			if (model.getUnderlyingResource() != null) {
+				IResource underlying = model.getUnderlyingResource();
 				if (underlying.equals(fManifestFile) || underlying.getProject().equals(fManifestFile.getProject()))
-					fFeatureModel = models[i];
+					fFeatureModel = model;
 			}
 		}
 
@@ -61,8 +61,8 @@ public class GenerateFeatureBuildFileAction extends BaseBuildAction {
 
 	private void refreshLocal(IFeature feature, IProgressMonitor monitor) throws CoreException {
 		IFeaturePlugin[] references = feature.getPlugins();
-		for (int i = 0; i < references.length; i++) {
-			IPluginModelBase refmodel = feature.getReferencedModel(references[i]);
+		for (IFeaturePlugin reference : references) {
+			IPluginModelBase refmodel = feature.getReferencedModel(reference);
 			if (refmodel != null) {
 				IResource resource = refmodel.getUnderlyingResource();
 				if (resource != null)
@@ -70,8 +70,8 @@ public class GenerateFeatureBuildFileAction extends BaseBuildAction {
 			}
 		}
 		IFeatureChild[] included = feature.getIncludedFeatures();
-		for (int i = 0; i < included.length; i++) {
-			IFeature child = ((FeatureChild) included[i]).getReferencedFeature();
+		for (IFeatureChild element : included) {
+			IFeature child = ((FeatureChild) element).getReferencedFeature();
 			if (child != null && child != fFeatureModel.getFeature()) {
 				IFeatureModel refmodel = child.getModel();
 				if (refmodel != null && refmodel.getUnderlyingResource() != null) {

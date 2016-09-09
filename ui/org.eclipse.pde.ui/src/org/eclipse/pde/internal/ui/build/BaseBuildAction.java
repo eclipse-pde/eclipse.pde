@@ -137,8 +137,8 @@ public abstract class BaseBuildAction extends AbstractHandler {
 
 	public static boolean hasErrors(IFile file) throws CoreException {
 		IMarker[] markers = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-		for (int i = 0; i < markers.length; i++) {
-			Object att = markers[i].getAttribute(IMarker.SEVERITY);
+		for (IMarker marker : markers) {
+			Object att = marker.getAttribute(IMarker.SEVERITY);
 			if (att != null && att instanceof Integer) {
 				if (((Integer) att).intValue() == IMarker.SEVERITY_ERROR)
 					return true;
