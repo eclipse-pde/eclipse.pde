@@ -341,8 +341,10 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	private static final Key KEY_INVALID_SINCE_TAG_VERSION = getApiToolsKey(IApiProblemTypes.INVALID_SINCE_TAG_VERSION);
 	private static final Key KEY_CHANGED_EXECUTION_ENV = getApiToolsKey(IApiProblemTypes.CHANGED_EXECUTION_ENV);
 	private static final Key KEY_INCOMPATIBLE_API_COMPONENT_VERSION = getApiToolsKey(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION);
-	private static final Key KEY_INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE = getApiToolsKey(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE);
-	private static final Key KEY_INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE = getApiToolsKey(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE);
+	private static final Key KEY_INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE = getApiToolsKey(
+			IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE);
+	private static final Key KEY_INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE = getApiToolsKey(
+			IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE);
 	private static final Key KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED = getApiToolsKey(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED);
 
 	private static final Key KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT = getApiToolsKey(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT);
@@ -432,8 +434,10 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	static Key[] fgAllVersionManagementKeys = {
 			KEY_MISSING_SINCE_TAG, KEY_MALFORMED_SINCE_TAG,
-			KEY_INVALID_SINCE_TAG_VERSION, KEY_CHANGED_EXECUTION_ENV,
-			KEY_INCOMPATIBLE_API_COMPONENT_VERSION };
+			KEY_INVALID_SINCE_TAG_VERSION,
+			KEY_INCOMPATIBLE_API_COMPONENT_VERSION,
+			KEY_INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE,
+			KEY_INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE, KEY_CHANGED_EXECUTION_ENV };
 
 	static Key[] fgAllExternalDependenciesKeys = {
 			KEY_API_USE_SCAN_TYPE_PROBLEM, KEY_API_USE_SCAN_METHOD_PROBLEM,
@@ -533,8 +537,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			KEY_INVALID_SINCE_TAG_VERSION,
 			KEY_CHANGED_EXECUTION_ENV,
 			KEY_INCOMPATIBLE_API_COMPONENT_VERSION,
-			KEY_INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE,
-			KEY_INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE,
+			KEY_INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE,
+			KEY_INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE,
 			KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
 			KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
 			KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS,
@@ -628,11 +632,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	}
 
 	private void updateEnableStates() {
-		boolean enableUnusedParams = !checkValue(KEY_INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_IGNORE);
-		getCheckBox(KEY_INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE).setEnabled(enableUnusedParams);
-		getCheckBox(KEY_INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE).setEnabled(enableUnusedParams);
-
-		boolean enableSystemLibraryCheck = !checkValue(KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, ApiPlugin.VALUE_IGNORE);
+		boolean enableSystemLibraryCheck = !checkValue(KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
+				ApiPlugin.VALUE_IGNORE);
 		if (this.fSystemLibraryControls != null) {
 			for (Control control : fSystemLibraryControls) {
 				control.setEnabled(enableSystemLibraryCheck);
@@ -1087,13 +1088,17 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 				PreferenceMessages.VersionManagementReportMissingSinceTag,
 				PreferenceMessages.VersionManagementReportMalformedSinceTags,
 				PreferenceMessages.VersionManagementReportInvalidSinceTagVersion,
+				PreferenceMessages.VersionManagementReportInvalidApiComponentVersion,
+				PreferenceMessages.VersionManagementReportInvalidApiComponentVersionReportMinorWithoutApiChange,
+				PreferenceMessages.VersionManagementReportInvalidApiComponentVersionReportMajorWithoutBreakingChange,
 				PreferenceMessages.VersionManagementReportChangedExecutionEnv,
-				PreferenceMessages.VersionManagementReportInvalidApiComponentVersion, }, new Key[] {
+		},
+				new Key[] {
 						KEY_MISSING_SINCE_TAG, KEY_MALFORMED_SINCE_TAG, KEY_INVALID_SINCE_TAG_VERSION,
-						KEY_CHANGED_EXECUTION_ENV,
-						KEY_INCOMPATIBLE_API_COMPONENT_VERSION });
-		addCheckBox(vcomp, PreferenceMessages.VersionManagementReportInvalidApiComponentVersionIgnoreMinorWithoutApiChange,KEY_INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE, CHECKBOX_VALUES, 2);
-		addCheckBox(vcomp, PreferenceMessages.VersionManagementReportInvalidApiComponentVersionIgnoreMajorWithoutBreakingChange,KEY_INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE, CHECKBOX_VALUES,2);
+						KEY_INCOMPATIBLE_API_COMPONENT_VERSION,
+						KEY_INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE,
+						KEY_INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE,
+						KEY_CHANGED_EXECUTION_ENV, });
 	}
 
 	private void createApiScanningPage(Composite page) {

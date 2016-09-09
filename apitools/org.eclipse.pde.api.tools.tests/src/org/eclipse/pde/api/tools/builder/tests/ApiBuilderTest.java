@@ -802,10 +802,11 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		inode.put(IApiProblemTypes.MALFORMED_SINCE_TAG, ApiPlugin.VALUE_ERROR);
 		inode.put(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, ApiPlugin.VALUE_ERROR);
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_ERROR);
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE,
-				ApiPlugin.VALUE_DISABLED);
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE,
-				ApiPlugin.VALUE_DISABLED);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE,
+				ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE,
+				ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.CHANGED_EXECUTION_ENV, ApiPlugin.VALUE_ERROR);
 
 		inode.put(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, ApiPlugin.VALUE_WARNING);
 		try {
@@ -1015,8 +1016,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		String value2 = enabled ? ApiPlugin.VALUE_ENABLED : ApiPlugin.VALUE_DISABLED;
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, value);
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE, value2);
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE, value2);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE, value2);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE, value2);
 		try {
 			inode.flush();
 		} catch (BackingStoreException e) {

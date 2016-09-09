@@ -180,8 +180,8 @@ public class VersionTest extends CompatibilityTest {
 	private void xFalseMinorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("the instance pref node must exist", inode); //$NON-NLS-1$
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE,
-				ApiPlugin.VALUE_DISABLED);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE,
+				ApiPlugin.VALUE_ERROR);
 		inode.flush();
 
 		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, IApiProblem.NO_FLAGS) };
@@ -220,8 +220,8 @@ public class VersionTest extends CompatibilityTest {
 	private void xFalseMajorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE,
-				ApiPlugin.VALUE_DISABLED);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE,
+				ApiPlugin.VALUE_ERROR);
 		inode.flush();
 
 		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE, IApiProblem.NO_FLAGS) };
@@ -260,7 +260,7 @@ public class VersionTest extends CompatibilityTest {
 	private void xIgnoreFalseMinorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("the instance pref node must exist", inode); //$NON-NLS-1$
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MINOR_WITHOUT_API_CHANGE,
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE,
 				ApiPlugin.VALUE_ENABLED);
 		inode.flush();
 
@@ -295,7 +295,7 @@ public class VersionTest extends CompatibilityTest {
 	private void xIgnoreFalseMajorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE,
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE,
 				ApiPlugin.VALUE_ENABLED);
 		inode.flush();
 
@@ -356,7 +356,7 @@ public class VersionTest extends CompatibilityTest {
 	private void xRegardlessMajorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
-		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_IGNORE_MAJOR_WITHOUT_BREAKING_CHANGE,
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE,
 				ApiPlugin.VALUE_ENABLED);
 		inode.put(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, ApiPlugin.VALUE_ENABLED);
 		inode.flush();

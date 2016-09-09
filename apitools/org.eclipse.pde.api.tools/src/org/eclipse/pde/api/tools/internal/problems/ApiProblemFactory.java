@@ -1050,7 +1050,15 @@ public class ApiProblemFactory {
 				return IApiProblemTypes.CHANGED_EXECUTION_ENV;
 			}
 			case IApiProblem.CATEGORY_VERSION: {
-				return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION;
+				switch (problem.getKind()) {
+					case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API:
+						return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE;
+					case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE:
+						return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE;
+					default:
+						return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION;
+				}
+
 			}
 			case IApiProblem.CATEGORY_USAGE: {
 				switch (problem.getKind()) {
