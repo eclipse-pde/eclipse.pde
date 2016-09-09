@@ -59,8 +59,8 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 					}
 				} catch (CoreException e) {
 				}
-				for (int i = 0; i < tabs.length; i++) {
-					tabs[i].initializeFrom(config);
+				for (ILaunchConfigurationTab tab : tabs) {
+					tab.initializeFrom(config);
 				}
 			}
 		});

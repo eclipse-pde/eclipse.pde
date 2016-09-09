@@ -137,12 +137,11 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 
 		IPluginExtension[] extensions = plugin.getExtensions();
 		ArrayList<String> result = new ArrayList<>();
-		for (int i = 0; i < extensions.length; i++) {
-			IPluginExtension extension = extensions[i];
+		for (IPluginExtension extension : extensions) {
 			if ("org.eclipse.core.runtime.applications".equals(extension.getPoint())) { //$NON-NLS-1$
 				String extensionID = extension.getId();
 				if (extensionID != null) {
-					result.add(IdUtil.getFullId(extensions[i]));
+					result.add(IdUtil.getFullId(extension));
 				}
 			}
 		}
@@ -154,8 +153,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			return TargetPlatform.getDefaultProduct();
 		if (fModel != null) {
 			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
-				IPluginExtension ext = extensions[i];
+			for (IPluginExtension ext : extensions) {
 				String point = ext.getPoint();
 				if ("org.eclipse.core.runtime.products".equals(point)) { //$NON-NLS-1$
 					if (ext.getChildCount() == 1) {

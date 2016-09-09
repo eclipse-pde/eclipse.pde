@@ -94,8 +94,8 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 			}
 		};
 		Control[] controls = composite.getChildren();
-		for (int i = 0; i < controls.length; i++)
-			controls[i].addListener(SWT.Activate, listener);
+		for (Control control : controls)
+			control.addListener(SWT.Activate, listener);
 
 		Dialog.applyDialogFont(composite);
 		composite.setSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
