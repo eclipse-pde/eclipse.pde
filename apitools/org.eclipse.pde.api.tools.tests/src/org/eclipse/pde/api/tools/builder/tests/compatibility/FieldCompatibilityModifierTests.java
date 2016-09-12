@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,10 +110,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xAddFinalNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoReference.java"); //$NON-NLS-1$
-		// there is 1 expected problem
-		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
-				IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD) };
-		setExpectedProblemIds(ids);
+		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
 
@@ -153,10 +150,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xAddFinalOnStaticNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalOnStaticNoReference.java"); //$NON-NLS-1$
-		// there is 1 expected problem
-		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
-				IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD) };
-		setExpectedProblemIds(ids);
+		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
 
