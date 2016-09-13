@@ -288,6 +288,7 @@ public class LogView extends ViewPart implements ILogListener {
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(fCopyAction);
 				manager.add(new Separator());
+				fShowStackAction.setEnabled(!(elements.size() == 0 && groups.size() == 0));
 				manager.add(fShowStackAction);
 				clearAction.setEnabled(!(elements.size() == 0 && groups.size() == 0));
 				manager.add(clearAction);
