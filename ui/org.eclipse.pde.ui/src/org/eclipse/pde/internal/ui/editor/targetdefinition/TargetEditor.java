@@ -473,7 +473,7 @@ public class TargetEditor extends FormEditor {
 					fLocationTree.setInput(getTarget());
 				}
 				Job.getJobManager().cancel(getJobFamily());
-				Job resolveJob = new Job(PDEUIMessages.TargetEditor_1) {
+				Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, getTarget().getName())) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						getTarget().resolve(monitor);

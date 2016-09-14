@@ -350,7 +350,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		final ITargetDefinition target = (ITargetDefinition) element;
 		if (target.isResolved())
 			return;
-		Job resolveJob = new Job(PDEUIMessages.TargetEditor_1) {
+
+		Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, target.getName())) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				target.resolve(monitor);
