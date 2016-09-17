@@ -14,6 +14,7 @@
  *     Tuukka Lehtonen <tuukka.lehtonen@semantum.fi>  - bug 247907
  *     Eike Stepper <stepper@esc-net.de>              - bug 429372
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 485843
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 501586
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
@@ -288,8 +289,8 @@ public class LogView extends ViewPart implements ILogListener {
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(fCopyAction);
 				manager.add(new Separator());
-				fShowStackAction.setEnabled(!(elements.size() == 0 && groups.size() == 0));
 				manager.add(fShowStackAction);
+				fShowStackAction.setEnabled(getSelectedStack() != null);
 				clearAction.setEnabled(!(elements.size() == 0 && groups.size() == 0));
 				manager.add(clearAction);
 				manager.add(fDeleteLogAction);
@@ -1157,7 +1158,7 @@ public class LogView extends ViewPart implements ILogListener {
 		fCopyAction.setEnabled((!selection.isEmpty()) && ((IStructuredSelection) selection).getFirstElement() != null);
 		fPropertiesAction.setEnabled(!selection.isEmpty());
 		fExportLogEntryAction.setEnabled(!selection.isEmpty());
-		fShowStackAction.setEnabled(!(fSelectedStack == null));
+		fShowStackAction.setEnabled(getSelectedStack() != null);
 	}
 
 	private void updateSelectionStack(ISelection selection) {
