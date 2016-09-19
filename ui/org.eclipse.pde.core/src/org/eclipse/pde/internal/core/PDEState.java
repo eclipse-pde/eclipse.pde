@@ -16,12 +16,12 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.osgi.framework.Version;
 
 public class PDEState extends MinimalState {
 
@@ -57,6 +57,54 @@ public class PDEState extends MinimalState {
 
 	private void createNewTargetState(boolean resolve, URL[] urls, IProgressMonitor monitor) {
 		fState = stateObjectFactory.createState(resolve);
+		if (resolve) {
+			fState.getResolver().setSelectionPolicy(new Comparator<BaseDescription>() {
+				@Override
+				public int compare(BaseDescription bd1, BaseDescription bd2) {
+					Version v1 = bd1.getVersion();
+					Version v2 = bd2.getVersion();
+					int versionCompare = versionCompare(v1, v2);
+					if (versionCompare != 0)
+						return versionCompare;
+					BundleDescription s1 = bd1.getSupplier();
+					BundleDescription s2 = bd2.getSupplier();
+					String n1 = s1.getName();
+					String n2 = s2.getName();
+					if (n1 != null && n1.equals(n2)) {
+						return versionCompare(s1.getVersion(), s2.getVersion());
+					}
+					long id1 = s1.getBundleId();
+					long id2 = s2.getBundleId();
+					return (id1 < id2) ? -1 : ((id1 == id2) ? 0 : 1);
+				}
+
+				/**
+				 * Compares the given versions and prefers ".qualifier" versions over versions
+				 * with any concrete qualifier.
+				 * 
+				 * @param v1 first version
+				 * @param v2 second version
+				 * @return a negative number, zero, or a positive number depending on
+				 * if the first version is more desired, equal amount of desire, or less desired
+				 * than the second version respectively
+				 */
+				private int versionCompare(Version v1, Version v2) {
+					if (v1.getMajor() == v2.getMajor() && v1.getMinor() == v2.getMinor() && v1.getMicro() == v2.getMicro()) {
+						boolean q1 = "qualifier".equals(v1.getQualifier()); //$NON-NLS-1$
+						boolean q2 = "qualifier".equals(v2.getQualifier()); //$NON-NLS-1$
+						if (q1 && q2) {
+							return 0;
+						} else if (q1 && !q2) {
+							return -1;
+						} else if (q2 && !q1) {
+							return 1;
+						}
+					}
+					int versionCompare = -(v1.compareTo(v2));
+					return versionCompare;
+				}
+			});
+		}
 		monitor.beginTask(PDECoreMessages.PDEState_CreatingTargetModelState, urls.length);
 		for (int i = 0; i < urls.length; i++) {
 			File file = new File(urls[i].getFile());
