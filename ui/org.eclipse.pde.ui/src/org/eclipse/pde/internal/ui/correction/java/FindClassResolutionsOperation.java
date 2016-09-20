@@ -158,14 +158,14 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		if (model != null && model.getBundleDescription() != null) {
 			importPkgs = model.getBundleDescription().getImportPackages();
 		}
-		subMonitor.worked(1);
+		subMonitor.step(1);
 
 		if (importPkgs != null) {
 			if (packageName != null) {
 				if (!isImportedPackage(packageName, importPkgs)) {
 					validPackages = getValidPackages(packageName);
 				}
-				subMonitor.worked(1);
+				subMonitor.step(1);
 			} else {
 				// find possible types in the global packages
 				validPackages = findValidPackagesContainingSimpleType(typeName, importPkgs, packagesToExport, subMonitor.split(1));

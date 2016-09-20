@@ -16,8 +16,7 @@ import org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
@@ -97,23 +96,21 @@ public abstract class BaseBuildAction extends AbstractHandler {
 	}
 
 	private void doBuild(IProgressMonitor monitor) throws CoreException, InvocationTargetException {
-		monitor.beginTask(PDEUIMessages.BuildAction_Validate, 4);
-		if (!ensureValid(fManifestFile, monitor)) {
-			monitor.done();
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.BuildAction_Validate, 4);
+		if (!ensureValid(fManifestFile, subMonitor.split(1))) {
+			subMonitor.step(3); // consume all remaining work
 			return;
 		}
-		monitor.worked(1);
-		monitor.setTaskName(PDEUIMessages.BuildAction_Generate);
-		makeScripts(monitor);
-		monitor.worked(1);
-		monitor.setTaskName(PDEUIMessages.BuildAction_Update);
-		refreshLocal(monitor);
-		monitor.worked(1);
+		subMonitor.setTaskName(PDEUIMessages.BuildAction_Generate);
+		makeScripts(subMonitor.split(1));
+		subMonitor.setTaskName(PDEUIMessages.BuildAction_Update);
+		refreshLocal(subMonitor.split(1));
 		IProject project = fManifestFile.getProject();
 		IFile generatedFile = (IFile) project.findMember("build.xml"); //$NON-NLS-1$
 		if (generatedFile != null)
 			setDefaultValues(generatedFile);
-		monitor.worked(1);
+		subMonitor.step(1);
 
 	}
 
