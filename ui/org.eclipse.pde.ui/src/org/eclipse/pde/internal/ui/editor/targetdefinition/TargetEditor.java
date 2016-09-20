@@ -413,7 +413,8 @@ public class TargetEditor extends FormEditor {
 							display.asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									TargetEditor.this.doRevert();
+									if (getActivePage() != -1)
+										TargetEditor.this.doRevert();
 								}
 							});
 						}
