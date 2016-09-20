@@ -385,22 +385,19 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.ManifestConsistencyChecker_0, getProject().getName()), 1);
-		try {
-			// clean problem markers on the project
-			cleanProblems(getProject(), IResource.DEPTH_ZERO);
-			// clean the manifest directory (since errors can be created on manifest files with incorrect casing)
-			IFile manifestFile = PDEProject.getManifest(getProject());
-			cleanProblems(manifestFile.getParent(), IResource.DEPTH_ONE);
-			// clean plug-in XML file
-			cleanProblems(PDEProject.getPluginXml(getProject()), IResource.DEPTH_ZERO);
-			// clean fragment XML file
-			cleanProblems(PDEProject.getFragmentXml(getProject()), IResource.DEPTH_ZERO);
-			// clean build properties
-			cleanProblems(PDEProject.getBuildProperties(getProject()), IResource.DEPTH_ZERO);
-			localmonitor.worked(1);
-		} finally {
-			localmonitor.done();
-		}
+		// clean problem markers on the project
+		cleanProblems(getProject(), IResource.DEPTH_ZERO);
+		// clean the manifest directory (since errors can be created on manifest
+		// files with incorrect casing)
+		IFile manifestFile = PDEProject.getManifest(getProject());
+		cleanProblems(manifestFile.getParent(), IResource.DEPTH_ONE);
+		// clean plug-in XML file
+		cleanProblems(PDEProject.getPluginXml(getProject()), IResource.DEPTH_ZERO);
+		// clean fragment XML file
+		cleanProblems(PDEProject.getFragmentXml(getProject()), IResource.DEPTH_ZERO);
+		// clean build properties
+		cleanProblems(PDEProject.getBuildProperties(getProject()), IResource.DEPTH_ZERO);
+		localmonitor.step(1);
 	}
 
 	/**

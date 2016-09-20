@@ -107,13 +107,9 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		IFile file = PDEProject.getFeatureXml(getProject());
 		if (file.exists()) {
 			SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.FeatureConsistencyChecker_0, file.getName()), 1);
-			try {
-				// clean problem markers on feature XML file
-				file.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
-				localmonitor.worked(1);
-			} finally {
-				localmonitor.done();
-			}
+			// clean problem markers on feature XML file
+			file.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
+			localmonitor.step(1);
 		}
 	}
 

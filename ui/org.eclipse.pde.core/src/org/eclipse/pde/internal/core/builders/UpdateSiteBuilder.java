@@ -93,13 +93,9 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		IFile site = getProject().getFile("site.xml"); //$NON-NLS-1$
 		if (site.exists()) {
 			SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.UpdateSiteBuilder_0, site.getName()), 1);
-			try {
-				// clean problem markers on site XML file
-				site.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
-				localmonitor.worked(1);
-			} finally {
-				localmonitor.done();
-			}
+			// clean problem markers on site XML file
+			site.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
+			localmonitor.step(1);
 		}
 	}
 }

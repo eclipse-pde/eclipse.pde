@@ -187,14 +187,12 @@ public class ExternalFeatureModelManager {
 	}
 
 	private static TargetFeature[] createFeatures(URL[] featurePaths, IProgressMonitor monitor) {
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, featurePaths.length);
 		Map<String, TargetFeature> uniqueFeatures = new HashMap<>();
 		for (int i = 0; i < featurePaths.length; i++) {
 			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {
-				monitor.worked(1);
+				subMonitor.step(1);
 				continue;
 			}
 			try {
@@ -203,7 +201,7 @@ public class ExternalFeatureModelManager {
 			} catch (CoreException e) {
 				// Ignore bad files in the collection
 			}
-			monitor.worked(1);
+			subMonitor.step(1);
 		}
 		Collection<TargetFeature> models = uniqueFeatures.values();
 		return models.toArray(new TargetFeature[models.size()]);

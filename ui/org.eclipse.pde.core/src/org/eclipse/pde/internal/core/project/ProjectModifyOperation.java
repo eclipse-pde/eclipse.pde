@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
-import org.eclipse.jdt.core.IClasspathEntry;
-
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
@@ -113,17 +111,17 @@ public class ProjectModifyOperation {
 			}
 			PDEProject.setBundleRoot(project, folder);
 		}
-		sub.worked(1);
+		sub.step(1);
 		configureNatures(description);
-		sub.worked(1);
+		sub.step(1);
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			configureJavaProject(description, before, jpExisted);
 		}
-		sub.worked(1);
+		sub.step(1);
 		configureManifest(description, before);
-		sub.worked(1);
+		sub.step(1);
 		configureBuildPropertiesFile(description, before);
-		sub.worked(1);
+		sub.step(1);
 
 		// project settings for Equinox, Extension Registry, Automated dependency policy,
 		// manifest editor launch shortcuts and export wizard
@@ -173,11 +171,7 @@ public class ProjectModifyOperation {
 		if (fModel.isDirty()) {
 			fModel.save();
 		}
-		sub.worked(1);
-		sub.done();
-		if (monitor != null) {
-			monitor.done();
-		}
+		sub.step(1);
 	}
 
 	/**

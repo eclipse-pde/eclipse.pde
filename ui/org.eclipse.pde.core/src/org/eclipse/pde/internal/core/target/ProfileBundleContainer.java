@@ -133,7 +133,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			} catch (CoreException e) {
 				all.add(new InvalidTargetBundle(new BundleInfo(location), e.getStatus()));
 			}
-			localMonitor.worked(1);
+			localMonitor.step(1);
 		}
 		// Add source bundles
 		for (BundleInfo element : source) {
@@ -146,9 +146,8 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			} catch (CoreException e) {
 				all.add(new InvalidTargetBundle(new BundleInfo(location), e.getStatus()));
 			}
-			localMonitor.worked(1);
+			localMonitor.step(1);
 		}
-		localMonitor.done();
 		return all.toArray(new TargetBundle[all.size()]);
 	}
 
@@ -192,9 +191,8 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 						PDECore.log(e);
 					}
 				}
-				localMonitor.worked(1);
+				localMonitor.step(1);
 			}
-			localMonitor.done();
 			if (!all.isEmpty()) {
 				return all.toArray(new TargetBundle[all.size()]);
 			}

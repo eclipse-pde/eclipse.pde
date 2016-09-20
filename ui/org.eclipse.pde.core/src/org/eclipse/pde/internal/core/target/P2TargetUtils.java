@@ -931,9 +931,6 @@ public class P2TargetUtils {
 
 		// Get the root IUs for every relevant container in the target definition
 		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(20));
-		if (subMonitor.isCanceled()) {
-			return;
-		}
 
 		// create the provisioning plan
 		IPlanner planner = getPlanner();
@@ -950,10 +947,6 @@ public class P2TargetUtils {
 		context.setMetadataRepositories(getMetadataRepositories(target));
 		context.setArtifactRepositories(getArtifactRepositories(target));
 
-		if (subMonitor.isCanceled()) {
-			return;
-		}
-
 		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor.split(20));
 		IStatus status = plan.getStatus();
 		if (!status.isOK()) {
@@ -966,18 +959,12 @@ public class P2TargetUtils {
 			// to continue, we don't want to update the running SDK while provisioning a target
 			PDECore.log(new Status(IStatus.INFO, PDECore.PLUGIN_ID, Messages.IUBundleContainer_6));
 		}
-		subMonitor.worked(10);
-		if (subMonitor.isCanceled()) {
-			return;
-		}
+		subMonitor.split(10);
 
 		// execute the provisioning plan
 		IPhaseSet phases = createPhaseSet();
 		IEngine engine = getEngine();
 		IStatus result = engine.perform(plan, phases, subMonitor.split(100));
-		if (subMonitor.isCanceled()) {
-			return;
-		}
 		if (!result.isOK()) {
 			throw new CoreException(result);
 		}
@@ -1138,9 +1125,6 @@ public class P2TargetUtils {
 
 		// resolve IUs
 		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(40));
-		if (subMonitor.isCanceled()) {
-			return;
-		}
 
 		URI[] repositories = getMetadataRepositories(target);
 		int repoCount = repositories.length;
@@ -1151,7 +1135,7 @@ public class P2TargetUtils {
 
 		// do an initial slice to add everything the user requested
 		IQueryResult<IInstallableUnit> queryResult = slice(units, allMetadata, target, subMonitor.split(5));
-		if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
+		if (queryResult == null || queryResult.isEmpty()) {
 			return;
 		}
 
@@ -1165,7 +1149,7 @@ public class P2TargetUtils {
 			units2[units.length] = sourceIU;
 
 			queryResult = slice(units2, allMetadata, target, subMonitor.split(5));
-			if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
+			if (queryResult == null || queryResult.isEmpty()) {
 				return;
 			}
 		}
@@ -1193,10 +1177,7 @@ public class P2TargetUtils {
 			plan.removeInstallableUnit((IInstallableUnit) name);
 		}
 
-		if (subMonitor.isCanceled()) {
-			return;
-		}
-		subMonitor.worked(5);
+		subMonitor.split(5);
 
 		// execute the provisioning plan
 		IPhaseSet phases = createPhaseSet();

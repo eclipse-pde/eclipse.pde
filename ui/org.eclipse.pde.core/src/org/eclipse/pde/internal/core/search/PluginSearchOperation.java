@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.search;
 
-import org.eclipse.pde.core.IIdentifiable;
-
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 
@@ -31,17 +31,13 @@ public class PluginSearchOperation {
 
 	public void execute(IProgressMonitor monitor) {
 		IPluginModelBase[] entries = fInput.getSearchScope().getMatchingModels();
-		monitor.beginTask("", entries.length); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, entries.length);
 
-		try {
-			for (int i = 0; i < entries.length; i++) {
-				IPluginModelBase candidate = entries[i];
-				visit(candidate);
-				monitor.worked(1);
-			}
-		} finally {
-			monitor.done();
+		for (IPluginModelBase candidate : entries) {
+			visit(candidate);
+			subMonitor.step(1);
 		}
+
 	}
 
 	private void visit(IPluginModelBase model) {

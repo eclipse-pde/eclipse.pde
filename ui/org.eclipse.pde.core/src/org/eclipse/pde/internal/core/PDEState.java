@@ -14,8 +14,7 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
@@ -81,7 +80,7 @@ public class PDEState extends MinimalState {
 				/**
 				 * Compares the given versions and prefers ".qualifier" versions over versions
 				 * with any concrete qualifier.
-				 * 
+				 *
 				 * @param v1 first version
 				 * @param v2 second version
 				 * @return a negative number, zero, or a positive number depending on
@@ -105,20 +104,17 @@ public class PDEState extends MinimalState {
 				}
 			});
 		}
-		monitor.beginTask(PDECoreMessages.PDEState_CreatingTargetModelState, urls.length);
-		for (int i = 0; i < urls.length; i++) {
-			File file = new File(urls[i].getFile());
+		SubMonitor subMonitor = SubMonitor.convert(monitor, PDECoreMessages.PDEState_CreatingTargetModelState,
+				urls.length);
+		for (URL url : urls) {
+			File file = new File(url.getFile());
 			try {
-				if (monitor.isCanceled())
-					// if canceled, stop loading bundles
-					return;
-				monitor.subTask(file.getName());
+				subMonitor.subTask(file.getName());
 				addBundle(file, -1);
 			} catch (CoreException e) {
 				PDECore.log(e);
-			} finally {
-				monitor.worked(1);
 			}
+			subMonitor.step(1);
 		}
 	}
 

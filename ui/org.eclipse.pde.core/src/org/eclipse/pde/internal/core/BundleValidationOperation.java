@@ -36,19 +36,21 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
-		if (FACTORY == null)
+		if (FACTORY == null) {
 			FACTORY = Platform.getPlatformAdmin().getFactory();
-		monitor.beginTask("", fModels.length + 1); //$NON-NLS-1$
+		}
+		SubMonitor subMonitor = SubMonitor.convert(monitor, fModels.length + 1);
 		fState = FACTORY.createState(true);
-		for (int i = 0; i < fModels.length; i++) {
-			BundleDescription bundle = fModels[i].getBundleDescription();
-			if (bundle != null)
+		for (IPluginModelBase fModel : fModels) {
+			BundleDescription bundle = fModel.getBundleDescription();
+			if (bundle != null) {
 				fState.addBundle(FACTORY.createBundleDescription(bundle));
-			monitor.worked(1);
+			}
+			subMonitor.step(1);
 		}
 		fState.setPlatformProperties(fProperties);
 		fState.resolve(false);
-		monitor.done();
+		subMonitor.step(1);
 	}
 
 	public Map<Object, Object[]> getResolverErrors() {

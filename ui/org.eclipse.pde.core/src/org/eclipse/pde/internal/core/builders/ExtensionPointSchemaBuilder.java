@@ -74,14 +74,9 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
-		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.ExtensionPointSchemaBuilder_0, getProject().getName()), 1);
-		try {
-			// clean existing markers on schema files
-			cleanSchemasIn(getProject(), localmonitor);
-			localmonitor.worked(1);
-		} finally {
-			localmonitor.done();
-		}
+		SubMonitor subMonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.ExtensionPointSchemaBuilder_0, getProject().getName()), 1);
+		// clean existing markers on schema files
+		cleanSchemasIn(getProject(), subMonitor.split(1));
 	}
 
 	/**
@@ -92,9 +87,6 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	 * @throws CoreException
 	 */
 	private void cleanSchemasIn(IContainer container, IProgressMonitor monitor) throws CoreException {
-		if (monitor.isCanceled()) {
-			throw new OperationCanceledException();
-		}
 		IResource[] members = container.members();
 		for (int i = 0; i < members.length; i++) {
 			IResource member = members[i];

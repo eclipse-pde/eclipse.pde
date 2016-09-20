@@ -246,14 +246,13 @@ public class FeatureExportOperation extends Job {
 		fHasErrors = false;
 
 		int subTaskLength = 6 + (configs.length * 4) + (publishingP2Metadata() ? 2 : 0);
-		SubMonitor subMonitor = SubMonitor.convert(monitor, subTaskLength);
-		subMonitor.setTaskName(PDECoreMessages.FeatureExportJob_taskName);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, PDECoreMessages.FeatureExportJob_taskName, subTaskLength);
 
 		HashMap<String, String> properties = createAntBuildProperties(configs);
 		BuildScriptGenerator generator = new BuildScriptGenerator();
 		setupGenerator(generator, featureID, version, configs, featureLocation);
 		generator.generate();
-		subMonitor.worked(1);
+		subMonitor.step(1);
 		subMonitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningBuildScript);
 		// compile the classes
 		runScript(featureLocation + IPath.SEPARATOR + "compile." + featureID + ".xml", new String[] {"main"}, properties, subMonitor.split(1)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -1148,7 +1147,7 @@ public class FeatureExportOperation extends Job {
 		if (fInfo.useWorkspaceCompiledClasses) {
 			getWorkspaceExportHelper().buildBeforeExport(fInfo.items, subMonitor.split(45));
 			Set<?> errors = getWorkspaceExportHelper().checkForErrors(fInfo.items);
-			subMonitor.worked(5);
+			subMonitor.step(5);
 			if (!errors.isEmpty()) {
 				return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_workspaceBuildErrorsFoundDuringExport, errors.toString()));
 			}
