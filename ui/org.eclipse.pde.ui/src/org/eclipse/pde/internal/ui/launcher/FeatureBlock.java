@@ -1068,7 +1068,7 @@ public class FeatureBlock {
 		}
 		String featureLocation = config.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		fFeatureWorkspaceButton.setSelection(featureLocation.equalsIgnoreCase(IPDELauncherConstants.LOCATION_WORKSPACE));
-		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false));
+		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true));
 
 		// If the workspace plug-in state has changed (project closed, etc.) the launch config needs to be updated without making the tab dirty
 		if (fLaunchConfig.isWorkingCopy()) {
@@ -1150,7 +1150,7 @@ public class FeatureBlock {
 		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false);
 		config.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		config.setAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
-		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
+		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true);
 	}
 
 	private void updateCounter() {

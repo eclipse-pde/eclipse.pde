@@ -803,7 +803,7 @@ public abstract class AbstractPluginBlock {
 		fPluginFilteredTree.resetFilter();
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
-		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false));
+		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true));
 		if (!enableTable) {
 			fPluginTreeViewer.setInput(null);
 		} else if (fPluginTreeViewer.getInput() == null) {
@@ -919,7 +919,7 @@ public abstract class AbstractPluginBlock {
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true);
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
-		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
+		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true);
 		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false);
 	}
 
