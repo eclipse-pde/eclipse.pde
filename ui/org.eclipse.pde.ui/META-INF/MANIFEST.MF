@@ -65,7 +65,8 @@ Export-Package:
  org.eclipse.pde.ui,
  org.eclipse.pde.ui.launcher,
  org.eclipse.pde.ui.target,
- org.eclipse.pde.ui.templates
+ org.eclipse.pde.ui.templates,
+ org.eclipse.ui.internal.views.log.jdt;x-internal:=true
 Require-Bundle: 
  org.eclipse.pde.core;bundle-version="[3.6.0,4.0.0)";visibility:=reexport,
  org.eclipse.core.runtime;bundle-version="[3.11.0,4.0.0)",
@@ -121,6 +122,7 @@ Require-Bundle:
  org.eclipse.equinox.bidi;bundle-version="[0.10.0,2.0.0)"
 Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text,
- org.eclipse.jdt.debug.core
+ org.eclipse.jdt.debug.core,
+ org.eclipse.jdt.debug.ui.console
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

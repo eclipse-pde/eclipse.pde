@@ -9,8 +9,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.1.0,2.0.0)";resolution:=optional,
  org.eclipse.ui;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.ui.ide;bundle-version="[3.3.0,4.0.0)";resolution:=optional
-Import-Package: com.ibm.icu.text,
- org.eclipse.jdt.debug.ui.console
+Import-Package: com.ibm.icu.text
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Localization: plugin

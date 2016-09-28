@@ -78,6 +78,8 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final String P_IMPORT_LOG = "importLog"; //$NON-NLS-1$
 	public static final String P_GROUP_BY = "groupBy"; //$NON-NLS-1$
 
+	private static final String LOG_ENTRY_GROUP = "logEntryGroup"; //$NON-NLS-1$
+
 	/** default values **/
 	private static final int DEFAULT_LOG_MAX_TAIL_SIZE = 1; // 1 Mega Byte
 
@@ -127,7 +129,6 @@ public class LogView extends ViewPart implements ILogListener {
 	private String fSelectedStack;
 
 	private Action fPropertiesAction;
-	private Action fShowStackAction;
 	private Action fDeleteLogAction;
 	private Action fReadLogAction;
 	private Action fCopyAction;
@@ -253,8 +254,6 @@ public class LogView extends ViewPart implements ILogListener {
 
 		toolBarManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-		fShowStackAction = createShowStackAction();
-		
 		final Action clearAction = createClearAction();
 		toolBarManager.add(clearAction);
 
@@ -288,9 +287,7 @@ public class LogView extends ViewPart implements ILogListener {
 			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(fCopyAction);
-				manager.add(new Separator());
-				manager.add(fShowStackAction);
-				fShowStackAction.setEnabled(getSelectedStack() != null);
+				manager.add(new Separator(LOG_ENTRY_GROUP));
 				clearAction.setEnabled(!(elements.size() == 0 && groups.size() == 0));
 				manager.add(clearAction);
 				manager.add(fDeleteLogAction);
@@ -415,13 +412,6 @@ public class LogView extends ViewPart implements ILogListener {
 		action.setToolTipText(Messages.LogView_import_tooltip);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_IMPORT));
 		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_IMPORT_DISABLED));
-		return action;
-	}
-
-	private Action createShowStackAction() {
-		Action action = new ShowErrorInStackTraceConsoleAction(this, Messages.LogView_ShowInConsole);
-		action.setToolTipText(Messages.LogView_ShowStackTraceInConsoleView);
-		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_OPEN_CONSOLE));
 		return action;
 	}
 	
@@ -1158,7 +1148,6 @@ public class LogView extends ViewPart implements ILogListener {
 		fCopyAction.setEnabled((!selection.isEmpty()) && ((IStructuredSelection) selection).getFirstElement() != null);
 		fPropertiesAction.setEnabled(!selection.isEmpty());
 		fExportLogEntryAction.setEnabled(!selection.isEmpty());
-		fShowStackAction.setEnabled(getSelectedStack() != null);
 	}
 
 	private void updateSelectionStack(ISelection selection) {
