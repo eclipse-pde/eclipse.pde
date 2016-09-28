@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.ui.templates.OptionTemplateSection;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 public abstract class PDETemplateSection extends OptionTemplateSection {
 
@@ -29,15 +30,16 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	public static final String VALUE_PERSPECTIVE_NAME = "RCP Perspective"; //$NON-NLS-1$
 	public static final String VALUE_APPLICATION_ID = "application"; //$NON-NLS-1$
 
+	private Bundle bundle = FrameworkUtil.getBundle(PDETemplateSection.class);
+
 	@Override
 	protected ResourceBundle getPluginResourceBundle() {
-		Bundle bundle = Platform.getBundle(Activator.getPluginId());
 		return Platform.getResourceBundle(bundle);
 	}
 
 	@Override
 	protected URL getInstallURL() {
-		return Activator.getDefault().getInstallURL();
+		return bundle.getEntry("/"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -45,7 +47,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 		try {
 			String[] candidates = getDirectoryCandidates();
 			for (int i = 0; i < candidates.length; i++) {
-				if (Activator.getDefault().getBundle().getEntry(candidates[i]) != null) {
+				if (bundle.getEntry(candidates[i]) != null) {
 					URL candidate = new URL(getInstallURL(), candidates[i]);
 					return candidate;
 				}
@@ -96,7 +98,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 		super.generateFiles(monitor);
 		// Copy the default splash screen if the branding option is selected
 		if (copyBrandingDirectory()) {
-			super.generateFiles(monitor, Activator.getDefault().getBundle().getEntry("branding/")); //$NON-NLS-1$
+			super.generateFiles(monitor, bundle.getEntry("branding/")); //$NON-NLS-1$
 		}
 	}
 
