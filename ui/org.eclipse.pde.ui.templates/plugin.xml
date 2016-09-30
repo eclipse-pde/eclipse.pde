@@ -116,6 +116,17 @@
       </wizard>
       <wizard
             availableAsShortcut="true"
+            category="templates"
+            icon="$nl$/icons/etool16/newex_wiz.png"
+            id="org.eclipse.pde.ui.newExtension.extensibleEditor"
+            name="%newExtension.templates.extensibleEditor.name"
+            template="org.eclipse.pde.ui.templates.extensibleEditor">
+         <description>
+            %newExtension.templates.extensibleEditor.desc
+         </description>
+      </wizard>
+      <wizard
+            availableAsShortcut="true"
             name="%newExtension.templates.help.name"
             template="org.eclipse.pde.ui.templates.help"
             icon="$nl$/icons/etool16/newex_wiz.png"
@@ -217,6 +228,12 @@
             name="%template.editor.name"
             class="org.eclipse.pde.internal.ui.templates.ide.EditorTemplate"
             id="org.eclipse.pde.ui.templates.editor">
+      </template>
+      <template
+            class="org.eclipse.pde.internal.ui.templates.ide.ExtensbileEditorTemplate"
+            contributingId="org.eclipse.pde.ui.templates.template1"
+            id="org.eclipse.pde.ui.templates.extensibleEditor"
+            name="%template.extensibleEditor.name">
       </template>
       <template
             contributingId="org.eclipse.ui.popupMenus"
@@ -410,6 +427,15 @@
             id="org.eclipse.pde.ui.pluginContent.editor">
          <description>
             %pluginContent.editor.description
+         </description>
+      </wizard>
+      <wizard
+            class="org.eclipse.pde.internal.ui.templates.ide.ExtensibleEditorNewWizard"
+            icon="$nl$/icons/etool16/newexprj_wiz.png"
+            id="org.eclipse.pde.ui.pluginContent.extensibleEditor"
+            name="%pluginContent.extensibleEditor.name">
+         <description>
+            %pluginContent.extensibleEditor.description
          </description>
       </wizard>
       <wizard
