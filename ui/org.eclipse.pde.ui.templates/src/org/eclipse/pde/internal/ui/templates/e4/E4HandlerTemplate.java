@@ -113,7 +113,7 @@ public class E4HandlerTemplate extends PDETemplateSection {
 
 		element.setName("fragment"); //$NON-NLS-1$
 		element.setAttribute("apply", "initial"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("uri", E4_FRAGMENT_FILE); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("uri", E4_FRAGMENT_FILE); //$NON-NLS-1$
 
 		extension.add(element);
 
@@ -124,7 +124,7 @@ public class E4HandlerTemplate extends PDETemplateSection {
 
 	@Override
 	public String[] getNewFiles() {
-		return new String[] {"icons/", E4_FRAGMENT_FILE}; //$NON-NLS-1$ //$NON-NLS-2$
+		return new String[] { "icons/", E4_FRAGMENT_FILE }; //$NON-NLS-1$
 	}
 
 	@Override
