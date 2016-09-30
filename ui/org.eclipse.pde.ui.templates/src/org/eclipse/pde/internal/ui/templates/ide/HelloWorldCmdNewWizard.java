@@ -30,9 +30,6 @@ public class HelloWorldCmdNewWizard extends NewPluginTemplateWizard {
 		setWindowTitle(PDETemplateMessages.HelloWorldCmdNewWizard_wtitle);
 	}
 
-	/*
-	 * @see NewExtensionTemplateWizard#createTemplateSections()
-	 */
 	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new HelloWorldCmdTemplate()};

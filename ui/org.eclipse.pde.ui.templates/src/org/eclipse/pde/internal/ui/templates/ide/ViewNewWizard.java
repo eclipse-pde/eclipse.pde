@@ -30,9 +30,6 @@ public class ViewNewWizard extends NewPluginTemplateWizard {
 		setWindowTitle(PDETemplateMessages.ViewNewWizard_wtitle);
 	}
 
-	/*
-	 * @see NewExtensionTemplateWizard#createTemplateSections()
-	 */
 	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new ViewTemplate()};

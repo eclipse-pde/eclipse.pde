@@ -29,9 +29,6 @@ public class EditorNewWizard extends NewPluginTemplateWizard {
 		setWindowTitle(PDETemplateMessages.EditorNewWizard_wtitle);
 	}
 
-	/*
-	 * @see NewExtensionTemplateWizard#createTemplateSections()
-	 */
 	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new EditorTemplate()};

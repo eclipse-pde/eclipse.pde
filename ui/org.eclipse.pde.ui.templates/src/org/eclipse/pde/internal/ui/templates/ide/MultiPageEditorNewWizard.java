@@ -30,9 +30,6 @@ public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
 		setWindowTitle(PDETemplateMessages.MultiPageEditorNewWizard_wtitle);
 	}
 
-	/*
-	 * @see NewExtensionTemplateWizard#createTemplateSections()
-	 */
 	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new MultiPageEditorTemplate(), new NewWizardTemplate()};
