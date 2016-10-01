@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 387565
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import org.eclipse.equinox.security.storage.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.*;
@@ -23,7 +25,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class JARSigningTab {
-
 	private static final String S_SIGN_JARS = "signJAR"; //$NON-NLS-1$
 	private static final String S_KEYSTORE = "keystore"; //$NON-NLS-1$
 	private static final String S_KEYPASS = "keypass"; //$NON-NLS-1$
@@ -107,17 +108,66 @@ public class JARSigningTab {
 	}
 
 	protected void initialize(IDialogSettings settings) {
-		fKeystoreText.setText(getString(settings, S_KEYSTORE));
-		fKeypassText.setText(getString(settings, S_KEYPASS));
-		fAliasText.setText(getString(settings, S_ALIAS));
-		fPasswordText.setText(getString(settings, S_PASSWORD));
-		fButton.setSelection(settings.getBoolean(S_SIGN_JARS));
+		ISecurePreferences preferences = getPreferences(settings.getName());
+		if (preferences == null) {
+			// only in case it is not possible to create secured storage in
+			// default location -> in that case default values are used
+			return;
+		}
+
+		String keystore = ""; //$NON-NLS-1$
+		String keypass = ""; //$NON-NLS-1$
+		String alias = ""; //$NON-NLS-1$
+		String password = ""; //$NON-NLS-1$
+		boolean signJars = false;
+		if (preferences.keys().length <= 0) {
+			// nothing stored in secured preferences, check settings for values
+			// from before bug387565 fix
+			keystore = getString(settings, S_KEYSTORE);
+			keypass = getString(settings, S_KEYPASS);
+			alias = getString(settings, S_ALIAS);
+			password = getString(settings, S_PASSWORD);
+			signJars = getBoolean(settings, S_SIGN_JARS);
+		} else {
+			// from secured preferences after bug387565 fix
+			keystore = getString(preferences, S_KEYSTORE);
+			keypass = getString(preferences, S_KEYPASS);
+			alias = getString(preferences, S_ALIAS);
+			password = getString(preferences, S_PASSWORD);
+			signJars = getBoolean(preferences, S_SIGN_JARS);
+		}
+
+		fKeystoreText.setText(keystore);
+		fKeypassText.setText(keypass);
+		fAliasText.setText(alias);
+		fPasswordText.setText(password);
+		fButton.setSelection(signJars);
 		updateGroup(fButton.getSelection());
 	}
 
 	private String getString(IDialogSettings settings, String key) {
-		String value = settings.get(key);
-		return value == null ? "" : value; //$NON-NLS-1$
+		String s = settings.get(key);
+		return s == null ? "" : s; //$NON-NLS-1$
+	}
+
+	private boolean getBoolean(IDialogSettings settings, String key) {
+		return settings.getBoolean(key);
+	}
+
+	private String getString(ISecurePreferences settings, String key) {
+		try {
+			return settings.get(key, ""); //$NON-NLS-1$
+		} catch (StorageException e) {
+			return ""; //$NON-NLS-1$
+		}
+	}
+
+	private boolean getBoolean(ISecurePreferences settings, String key) {
+		try {
+			return settings.getBoolean(key, false);
+		} catch (StorageException e) {
+			return false;
+		}
 	}
 
 	protected Label createLabel(Composite group, String text) {
@@ -170,11 +220,35 @@ public class JARSigningTab {
 	}
 
 	protected void saveSettings(IDialogSettings settings) {
-		settings.put(S_SIGN_JARS, fButton.getSelection());
-		settings.put(S_KEYSTORE, fKeystoreText.getText().trim());
-		settings.put(S_ALIAS, fAliasText.getText().trim());
-		settings.put(S_PASSWORD, fPasswordText.getText().trim());
-		settings.put(S_KEYPASS, fKeypassText.getText().trim());
+		ISecurePreferences preferences = getPreferences(settings.getName());
+		if (preferences == null) {
+			// only in case it is not possible to create secured storage in
+			// default location -> in that case do not persist settings
+			return;
+		}
+
+		try{
+			preferences.putBoolean(S_SIGN_JARS, fButton.getSelection(), true);
+			preferences.put(S_KEYSTORE, fKeystoreText.getText().trim(), true);
+			preferences.put(S_ALIAS, fAliasText.getText().trim(), true);
+			preferences.put(S_PASSWORD, fPasswordText.getText().trim(), true);
+			preferences.put(S_KEYPASS, fKeypassText.getText().trim(), true);
+
+			// bug387565 - for keys which are starting with this bugfix to be
+			// stored
+			// in secured storage, replace value in settings with empty string
+			// to avoid keeping sensitive info in plain text
+			String[] obsoleted = new String[] { S_KEYSTORE, S_ALIAS, S_PASSWORD, S_KEYPASS };
+			for (String key : obsoleted) {
+				if (settings.get(key) != null) {
+					settings.put(key, ""); //$NON-NLS-1$
+				}
+			}
+		}
+		catch (StorageException e) {
+			PDEPlugin.log("Failed to store JarSigning settings in secured preferences store"); //$NON-NLS-1$
+		}
+
 	}
 
 	protected String[] getSigningInfo() {
@@ -182,5 +256,21 @@ public class JARSigningTab {
 			return new String[] {fAliasText.getText().trim(), fKeystoreText.getText().trim(), fPasswordText.getText().trim(), fKeypassText.getText().trim()};
 		}
 		return null;
+	}
+
+	/**
+	 * Answer secured preferences which can be used for storing sensitive
+	 * information of this tab
+	 *
+	 * @return default instance of secure preferences for this tab,
+	 *         <code>null</code> if application was unable to create secure
+	 *         preferences using default location
+	 */
+	private ISecurePreferences getPreferences(String sectionName) {
+		ISecurePreferences preferences = SecurePreferencesFactory.getDefault();
+		if (preferences == null) {
+			return null;
+		}
+		return preferences.node(IPDEUIConstants.PLUGIN_ID).node(sectionName);
 	}
 }
