@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2015 IBM Corporation and others.
+ *  Copyright (c) 2010, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 247265
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared;
 
@@ -126,5 +127,19 @@ public class FilteredCheckboxTree extends FilteredTree {
 	@Override
 	protected long getRefreshJobDelay() {
 		return FILTER_DELAY;
+	}
+
+	/**
+	 * Add wildcard at the beginning of filter string if user did not added
+	 * wildcard himself.
+	 */
+	@Override
+	protected String getFilterString() {
+		String original = super.getFilterString();
+		String asterisk = "*"; //$NON-NLS-1$
+		if (original != null && !original.equals(getInitialText()) && !original.startsWith(asterisk)) {
+			return asterisk + original;
+		}
+		return original;
 	}
 }

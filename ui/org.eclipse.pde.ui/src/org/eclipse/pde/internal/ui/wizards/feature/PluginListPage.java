@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 247265
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
@@ -37,7 +38,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class PluginListPage extends BasePluginListPage {
-	class PluginContentProvider implements IStructuredContentProvider {
+	class PluginContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			return PluginRegistry.getActiveModels();
@@ -63,11 +64,26 @@ public class PluginListPage extends BasePluginListPage {
 				}
 			}
 		}
+
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			return new Object[0];
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		@Override
+		public boolean hasChildren(Object element) {
+			return false;
+		}
 	}
 
 	private Combo fLaunchConfigsCombo;
 	private Button fInitLaunchConfigButton;
-	private CheckboxTableViewer pluginViewer;
+	private CheckboxTreeViewer pluginViewer;
 	private static final String S_INIT_LAUNCH = "initLaunch"; //$NON-NLS-1$
 
 	public PluginListPage() {
@@ -99,14 +115,14 @@ public class PluginListPage extends BasePluginListPage {
 				public void widgetSelected(SelectionEvent e) {
 					boolean initLaunchConfigs = fInitLaunchConfigButton.getSelection();
 					fLaunchConfigsCombo.setEnabled(initLaunchConfigs);
-					tablePart.setEnabled(!initLaunchConfigs);
+					treePart.setEnabled(!initLaunchConfigs);
 				}
 			});
 
 			fLaunchConfigsCombo = new Combo(container, SWT.READ_ONLY);
 			fLaunchConfigsCombo.setItems(launchConfigs);
 			gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-			gd.horizontalSpan = 2;
+			gd.horizontalSpan = 3;
 			fLaunchConfigsCombo.setLayoutData(gd);
 			fLaunchConfigsCombo.select(0);
 			fLaunchConfigsCombo.setEnabled(initLaunch);
@@ -114,46 +130,39 @@ public class PluginListPage extends BasePluginListPage {
 			Button initPluginsButton = new Button(container, SWT.RADIO);
 			initPluginsButton.setText(PDEUIMessages.PluginListPage_initializeFromPlugins);
 			gd = new GridData();
-			gd.horizontalSpan = 3;
+			gd.horizontalSpan = 4;
 			initPluginsButton.setLayoutData(gd);
 			initPluginsButton.setSelection(!initLaunch);
 		}
 
-		tablePart.createControl(container, 3, true);
-		pluginViewer = tablePart.getTableViewer();
+		treePart.createControl(container, 4, true);
+		pluginViewer = treePart.getTreeViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
 		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		pluginViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
-		gd = (GridData) tablePart.getControl().getLayoutData();
-		if (launchConfigs.length > 0) {
-			gd.horizontalIndent = 30;
-			((GridData) tablePart.getCounterLabel().getLayoutData()).horizontalIndent = 30;
-		}
+		gd = (GridData) treePart.getControl().getLayoutData();
+		gd.horizontalIndent = 0;
 		gd.heightHint = 250;
 		gd.widthHint = 300;
 		pluginViewer.setInput(PDECore.getDefault().getModelManager());
-		tablePart.setSelection(new Object[0]);
-		tablePart.setEnabled(!initLaunch);
+		treePart.setSelection(new Object[0]);
+		treePart.setEnabled(!initLaunch);
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_FEATURE_REFERENCED_PLUGINS);
 		pluginViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				TableItem firstTI = pluginViewer.getTable().getSelection()[0];
-				if (firstTI.getChecked()) {
-					firstTI.setChecked(false);
-				} else {
-					firstTI.setChecked(true);
-				}
-				tablePart.updateCount(pluginViewer.getCheckedElements().length);
+				TreeItem firstTI = pluginViewer.getTree().getSelection()[0];
+				treePart.getTreeViewer().setChecked(firstTI.getData(), !firstTI.getChecked());
+				treePart.updateCounterLabel();
 			}
 		});
 	}
 
 	public IPluginBase[] getSelectedPlugins() {
 		if (fInitLaunchConfigButton == null || !fInitLaunchConfigButton.getSelection()) {
-			Object[] result = tablePart.getSelection();
+			Object[] result = treePart.getTreeViewer().getCheckedLeafElements();
 			IPluginBase[] plugins = new IPluginBase[result.length];
 			for (int i = 0; i < result.length; i++) {
 				IPluginModelBase model = (IPluginModelBase) result[i];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 247265
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.wizards.feature;
@@ -14,18 +15,18 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTreePart;
 import org.eclipse.swt.widgets.Composite;
 
 public class BasePluginListPage extends WizardPage {
-	protected WizardCheckboxTablePart tablePart;
+	protected WizardCheckboxTreePart treePart;
 
 	/**
 	 * @param pageName
 	 */
 	public BasePluginListPage(String pageName) {
 		super(pageName);
-		tablePart = new WizardCheckboxTablePart(null);
+		treePart = new WizardCheckboxTreePart(null);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -36,7 +37,7 @@ public class BasePluginListPage extends WizardPage {
 	 */
 	public BasePluginListPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		tablePart = new WizardCheckboxTablePart(null);
+		treePart = new WizardCheckboxTreePart(null);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -55,7 +56,7 @@ public class BasePluginListPage extends WizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			tablePart.getControl().setFocus();
+			treePart.getControl().setFocus();
 		}
 	}
 
