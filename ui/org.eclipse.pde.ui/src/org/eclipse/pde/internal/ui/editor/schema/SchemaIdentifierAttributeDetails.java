@@ -207,14 +207,20 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 		FilteredSchemaAttributeSelectionDialog dialog = new FilteredSchemaAttributeSelectionDialog(PDEPlugin.getActiveWorkbenchShell());
 		int status = dialog.open();
 		if (status == Window.OK) {
-			Object[] result = dialog.getResult();
-			Object object = result[0];
-			if (object instanceof ISchemaAttribute) {
-				ISchemaAttribute attribute = (ISchemaAttribute) object;
-				String id = PDESchemaHelper.getReferenceIdentifier(attribute);
-				entry.setValue(id);
-				entry.commit();
+                        Object[] selectedAttributes = dialog.getResult();
+                        StringBuilder result = new StringBuilder();
+                        for (Object object : selectedAttributes) {
+                                if (object instanceof ISchemaAttribute) {
+                                        ISchemaAttribute attribute = (ISchemaAttribute) object;
+                                        String id = PDESchemaHelper.getReferenceIdentifier(attribute);
+                                        if (result.length() > 0) {
+                                                result.append(","); //$NON-NLS-1$
+                                        }
+                                        result.append(id);
+                                }
 			}
+                        entry.setValue(result.toString());
+                        entry.commit();
 		}
 	}
 

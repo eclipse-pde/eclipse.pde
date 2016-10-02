@@ -29,9 +29,14 @@ public class PDESchemaHelper {
 	public static Map<String, IConfigurationElement> getValidAttributes(ISchemaAttribute attribute) {
 		Map<String, IConfigurationElement> attributeMap = new HashMap<>();
 
-		// TODO support multiple
-
-		gatherAttributes(attributeMap, attribute.getBasedOn());
+                // support multiple separated using comma
+                String basedOnValue = attribute.getBasedOn();
+                if (basedOnValue != null) {
+                        String[] basedOnList = basedOnValue.split(","); //$NON-NLS-1$
+                        for (String basedOn : basedOnList) {
+                                gatherAttributes(attributeMap, basedOn);
+                        }
+                }
 
 		// this adds the restrictions on top of the referenced identifiers
 		ISchemaRestriction restriction = attribute.getType().getRestriction();

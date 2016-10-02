@@ -73,7 +73,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 	}
 
 	public FilteredSchemaAttributeSelectionDialog(Shell shell) {
-		super(shell, false);
+                super(shell, true);
 
 		setTitle(PDEUIMessages.FilteredSchemaAttributeSelectionDialog_title);
 		setMessage(PDEUIMessages.FilteredSchemaAttributeSelectionDialog_message);
