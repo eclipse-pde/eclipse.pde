@@ -147,11 +147,10 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			IFeature feature = model.getFeature();
 			IFeaturePlugin[] plugins = feature.getPlugins();
 			List<NameVersionDescriptor> matchInfos = new ArrayList<>(plugins.length);
-			for (int i = 0; i < plugins.length; i++) {
+			for (IFeaturePlugin plugin : plugins) {
 				if (monitor.isCanceled()) {
 					return new TargetBundle[0];
 				}
-				IFeaturePlugin plugin = plugins[i];
 				// only include if plug-in matches environment
 				if (isMatch(definition.getArch(), plugin.getArch(), Platform.getOSArch()) && isMatch(definition.getNL(), plugin.getNL(), Platform.getNL()) && isMatch(definition.getOS(), plugin.getOS(), Platform.getOS()) && isMatch(definition.getWS(), plugin.getWS(), Platform.getWS())) {
 					matchInfos.add(new NameVersionDescriptor(plugin.getId(), plugin.getVersion()));
@@ -171,10 +170,10 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		if (definition instanceof TargetDefinition) {
 			TargetFeature[] allFeatures = ((TargetDefinition) definition).resolveFeatures(getLocation(false), monitor);
-			for (int i = 0; i < allFeatures.length; i++) {
-				if (allFeatures[i].getId().equals(fId)) {
-					if (fVersion == null || allFeatures[i].getVersion().equals(fVersion)) {
-						return new TargetFeature[] {allFeatures[i]};
+			for (TargetFeature allFeature : allFeatures) {
+				if (allFeature.getId().equals(fId)) {
+					if (fVersion == null || allFeature.getVersion().equals(fVersion)) {
+						return new TargetFeature[] {allFeature};
 					}
 				}
 			}

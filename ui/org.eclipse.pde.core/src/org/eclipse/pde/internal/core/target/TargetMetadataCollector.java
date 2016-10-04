@@ -53,8 +53,7 @@ public class TargetMetadataCollector {
 
 		ITargetLocation[] containers = definition.getTargetLocations();
 		if (containers != null) {
-			for (int i = 0; i < containers.length; i++) {
-				ITargetLocation currentContainer = containers[i];
+			for (ITargetLocation currentContainer : containers) {
 				if (currentContainer instanceof ProfileBundleContainer) {
 					File profileLocation = ((ProfileBundleContainer) currentContainer).getProfileFileLocation();
 					if (profileLocation != null) {
@@ -64,9 +63,9 @@ public class TargetMetadataCollector {
 					// PDE Build only wants local repositories as downloading can take as long as publishing new metadata.  Currently no way to get cached/downloaded metadata.
 					URI[] locations = ((IUBundleContainer) currentContainer).getRepositories();
 					if (locations != null) {
-						for (int j = 0; j < locations.length; j++) {
-							if (URIUtil.isFileURI(locations[j])) {
-								repos.add(locations[j]);
+						for (URI location : locations) {
+							if (URIUtil.isFileURI(location)) {
+								repos.add(location);
 							}
 						}
 					}

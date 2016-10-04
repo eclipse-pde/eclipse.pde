@@ -145,8 +145,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		if (fExtTargetHandles != null) {
 			// If an external target is inaccessible then don't show it. But keep the reference in case it becomes accessible later
 			Collection<ExternalFileTargetHandle> externalTargets = fExtTargetHandles.values();
-			for (Iterator<ExternalFileTargetHandle> iterator = externalTargets.iterator(); iterator.hasNext();) {
-				ExternalFileTargetHandle target = iterator.next();
+			for (ExternalFileTargetHandle target : externalTargets) {
 				if (target.exists())
 					local.add(target);
 			}
@@ -186,9 +185,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 				}
 			};
 			File[] files = directory.listFiles(filter);
-			for (int i = 0; i < files.length; i++) {
+			for (File file : files) {
 				try {
-					handles.add(LocalTargetHandle.restoreHandle(files[i].toURI()));
+					handles.add(LocalTargetHandle.restoreHandle(file.toURI()));
 				} catch (CoreException e) {
 					PDECore.log(e);
 				}
@@ -525,13 +524,13 @@ public class TargetPlatformService implements ITargetPlatformService {
 					disabledIDs.add(models[i].getPluginBase().getId());
 				}
 			}
-			for (int i = 0; i < models.length; i++) {
-				if (models[i].isEnabled()) {
-					String id = models[i].getPluginBase().getId();
+			for (IPluginModelBase model : models) {
+				if (model.isEnabled()) {
+					String id = model.getPluginBase().getId();
 					if (id != null) {
 						if (disabledIDs.contains(id)) {
 							// include version info since some versions are disabled
-							list.add(new NameVersionDescriptor(id, models[i].getPluginBase().getVersion()));
+							list.add(new NameVersionDescriptor(id, model.getPluginBase().getVersion()));
 						} else {
 							list.add(new NameVersionDescriptor(id, null));
 						}
@@ -605,12 +604,12 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	private StringBuffer getVMArguments(ITargetLocation[] containers) {
 		StringBuffer arguments = new StringBuffer(""); //$NON-NLS-1$
-		for (int i = 0; i < containers.length; i++) {
-			String[] vmargs = containers[i].getVMArguments();
+		for (ITargetLocation container : containers) {
+			String[] vmargs = container.getVMArguments();
 			if (vmargs == null)
 				continue;
-			for (int j = 0; j < vmargs.length; j++) {
-				arguments.append(vmargs[j]).append(' ');
+			for (String vmarg : vmargs) {
+				arguments.append(vmarg).append(' ');
 			}
 		}
 		return arguments;
@@ -625,8 +624,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
 		Set<String> allLocations = new HashSet<>(models.length);
 		Map<String, IPluginModelBase> stateLocations = new HashMap<>(models.length);
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase base = models[i];
+		for (IPluginModelBase base : models) {
 			allLocations.add(base.getInstallLocation());
 			stateLocations.put(base.getInstallLocation(), base);
 		}
@@ -635,8 +633,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 		TargetBundle[] bundles = target.getAllBundles();
 		Set<NameVersionDescriptor> alreadyConsidered = new HashSet<>(bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
-			TargetBundle bundle = bundles[i];
+		for (TargetBundle bundle : bundles) {
 			BundleInfo info = bundle.getBundleInfo();
 			File file = URIUtil.toFile(info.getLocation());
 			String location = file.getAbsolutePath();

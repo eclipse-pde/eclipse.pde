@@ -187,9 +187,9 @@ public class TargetDefinition implements ITargetDefinition {
 		if (locations == null) {
 			fIncluded = null;
 		} else {
-			for (int i = 0; i < locations.length; i++) {
-				if (locations[i] instanceof AbstractBundleContainer) {
-					((AbstractBundleContainer) locations[i]).associateWithTarget(this);
+			for (ITargetLocation location : locations) {
+				if (location instanceof AbstractBundleContainer) {
+					((AbstractBundleContainer) location).associateWithTarget(this);
 				}
 			}
 		}
@@ -247,12 +247,12 @@ public class TargetDefinition implements ITargetDefinition {
 				// Process synchronizers first, then perform resolves against the individual
 				// containers. A synchronizer may be shared among several containers, do we
 				// keep track of the synchronizers processed.
-				for (int i = 0; i < containers.length; i++) {
+				for (ITargetLocation container : containers) {
 					if (subMonitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
 					}
 					subMonitor.subTask(Messages.TargetDefinition_4);
-					P2TargetUtils synchronizer = containers[i].getAdapter(P2TargetUtils.class);
+					P2TargetUtils synchronizer = container.getAdapter(P2TargetUtils.class);
 					if (synchronizer != null && !seen.contains(synchronizer)) {
 						seen.add(synchronizer);
 						try {
@@ -270,16 +270,16 @@ public class TargetDefinition implements ITargetDefinition {
 				if (subMonitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				for (int i = 0; i < containers.length; i++) {
+				for (ITargetLocation container : containers) {
 					if (subMonitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
 					}
 					subMonitor.subTask(Messages.TargetDefinition_4);
-					P2TargetUtils synchronizer = containers[i].getAdapter(P2TargetUtils.class);
+					P2TargetUtils synchronizer = container.getAdapter(P2TargetUtils.class);
 					int totalWork = 5;
 					if (synchronizer == null)
 						totalWork = 100;
-					IStatus s = containers[i].resolve(this, subMonitor.split(totalWork));
+					IStatus s = container.resolve(this, subMonitor.split(totalWork));
 					if (!s.isOK()) {
 						status.add(s);
 					}
@@ -307,9 +307,8 @@ public class TargetDefinition implements ITargetDefinition {
 	public boolean isResolved() {
 		ITargetLocation[] containers = getTargetLocations();
 		if (containers != null) {
-			for (int i = 0; i < containers.length; i++) {
-				ITargetLocation container = containers[i];
-				if (!container.isResolved()) {
+			for (ITargetLocation targetLocation : containers) {
+				if (!targetLocation.isResolved()) {
 					return false;
 				}
 			}
@@ -327,8 +326,7 @@ public class TargetDefinition implements ITargetDefinition {
 			if (containers != null) {
 				// Check if the containers have any resolution problems
 				MultiStatus result = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_5, null);
-				for (int i = 0; i < containers.length; i++) {
-					ITargetLocation container = containers[i];
+				for (ITargetLocation container : containers) {
 					IStatus containerStatus = container.getStatus();
 					if (containerStatus != null && !containerStatus.isOK()) {
 						result.add(containerStatus);
@@ -387,12 +385,10 @@ public class TargetDefinition implements ITargetDefinition {
 			ITargetLocation[] containers = getTargetLocations();
 			if (containers != null) {
 				List<TargetBundle> all = new ArrayList<>();
-				for (int i = 0; i < containers.length; i++) {
-					ITargetLocation container = containers[i];
+				for (ITargetLocation container : containers) {
 					TargetBundle[] bundles = container.getBundles();
 					if (bundles != null) {
-						for (int j = 0; j < bundles.length; j++) {
-							TargetBundle rb = bundles[j];
+						for (TargetBundle rb : bundles) {
 							all.add(rb);
 						}
 					}
@@ -426,19 +422,18 @@ public class TargetDefinition implements ITargetDefinition {
 
 		List<NameVersionDescriptor> included = new ArrayList<>();
 		// For feature filters, get the list of included bundles, for bundle filters just add them to the list
-		for (int i = 0; i < filter.length; i++) {
-			if (filter[i].getType() == NameVersionDescriptor.TYPE_PLUGIN) {
-				included.add(filter[i]);
-			} else if (filter[i].getType() == NameVersionDescriptor.TYPE_FEATURE) {
+		for (NameVersionDescriptor element : filter) {
+			if (element.getType() == NameVersionDescriptor.TYPE_PLUGIN) {
+				included.add(element);
+			} else if (element.getType() == NameVersionDescriptor.TYPE_FEATURE) {
 				containsFeatures = true;
 				TargetFeature[] features = getAllFeatures();
 				TargetFeature bestMatch = null;
-				for (int j = 0; j < features.length; j++) {
-					TargetFeature feature = features[j];
-					if (feature.getId().equals(filter[i].getId())) {
-						if (filter[i].getVersion() != null) {
+				for (TargetFeature feature : features) {
+					if (feature.getId().equals(element.getId())) {
+						if (element.getVersion() != null) {
 							// Try to find an exact feature match
-							if (filter[i].getVersion().equals(feature.getVersion())) {
+							if (element.getVersion().equals(feature.getVersion())) {
 								// Exact match
 								bestMatch = feature;
 								break;
@@ -462,11 +457,11 @@ public class TargetDefinition implements ITargetDefinition {
 				// Add the required plugins from the feature to the list of includes
 				if (bestMatch != null) {
 					NameVersionDescriptor[] plugins = bestMatch.getPlugins();
-					for (int j = 0; j < plugins.length; j++) {
-						included.add(plugins[j]);
+					for (NameVersionDescriptor plugin : plugins) {
+						included.add(plugin);
 					}
 				} else {
-					missingFeatures.add(filter[i]);
+					missingFeatures.add(element);
 				}
 			}
 		}
@@ -476,8 +471,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 		// Add in missing features as resolved bundles with error statuses
 		if (containsFeatures && !missingFeatures.isEmpty()) {
-			for (Iterator<NameVersionDescriptor> iterator = missingFeatures.iterator(); iterator.hasNext();) {
-				NameVersionDescriptor missing = iterator.next();
+			for (NameVersionDescriptor missing : missingFeatures) {
 				BundleInfo info = new BundleInfo(missing.getId(), missing.getVersion(), null, BundleInfo.NO_LEVEL, false);
 				String message = NLS.bind(Messages.TargetDefinition_RequiredFeatureCouldNotBeFound, missing.getId());
 				Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST, message, null);
@@ -511,8 +505,7 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 		// map bundles names to available versions
 		Map<String, List<TargetBundle>> bundleMap = new HashMap<>(collection.length);
-		for (int i = 0; i < collection.length; i++) {
-			TargetBundle resolved = collection[i];
+		for (TargetBundle resolved : collection) {
 			List<TargetBundle> list = bundleMap.get(resolved.getBundleInfo().getSymbolicName());
 			if (list == null) {
 				list = new ArrayList<>(3);
@@ -522,8 +515,8 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 		List<TargetBundle> resolved = new ArrayList<>();
 
-		for (int i = 0; i < included.length; i++) {
-			BundleInfo info = new BundleInfo(included[i].getId(), included[i].getVersion(), null, BundleInfo.NO_LEVEL, false);
+		for (NameVersionDescriptor element : included) {
+			BundleInfo info = new BundleInfo(element.getId(), element.getVersion(), null, BundleInfo.NO_LEVEL, false);
 			TargetBundle bundle = resolveBundle(bundleMap, info, handleMissingBundles);
 			if (bundle != null) {
 				resolved.add(bundle);
@@ -840,8 +833,8 @@ public class TargetDefinition implements ITargetDefinition {
 		if (fContainers == null) {
 			buf.append("\n\tNo containers"); //$NON-NLS-1$
 		} else {
-			for (int i = 0; i < fContainers.length; i++) {
-				buf.append("\n\t").append(fContainers[i].toString()); //$NON-NLS-1$
+			for (ITargetLocation fContainer : fContainers) {
+				buf.append("\n\t").append(fContainer.toString()); //$NON-NLS-1$
 			}
 		}
 		buf.append("\nEnv: ").append(fOS).append("/").append(fWS).append("/").append(fArch).append("/").append(fNL); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -904,11 +897,10 @@ public class TargetDefinition implements ITargetDefinition {
 		// collect up all features from all containers and remove duplicates.
 		Map<NameVersionDescriptor, TargetFeature> result = new HashMap<>();
 		if (containers != null && containers.length > 0) {
-			for (int i = 0; i < containers.length; i++) {
-				TargetFeature[] currentFeatures = containers[i].getFeatures();
+			for (ITargetLocation container : containers) {
+				TargetFeature[] currentFeatures = container.getFeatures();
 				if (currentFeatures != null && currentFeatures.length > 0) {
-					for (int j = 0; j < currentFeatures.length; j++) {
-						TargetFeature feature = currentFeatures[j];
+					for (TargetFeature feature : currentFeatures) {
 						if (feature.getId() != null) {
 							// Don't allow features with null ids, Bug 377563
 							NameVersionDescriptor key = new NameVersionDescriptor(feature.getId(), feature.getVersion());
@@ -940,15 +932,15 @@ public class TargetDefinition implements ITargetDefinition {
 
 		TargetBundle[] allBundles = getAllBundles();
 		Map<String, TargetBundle> remaining = new HashMap<>();
-		for (int i = 0; i < allBundles.length; i++) {
-			remaining.put(allBundles[i].getBundleInfo().getSymbolicName(), allBundles[i]);
+		for (TargetBundle allBundle : allBundles) {
+			remaining.put(allBundle.getBundleInfo().getSymbolicName(), allBundle);
 		}
 
 		TargetFeature[] features = getAllFeatures();
-		for (int i = 0; i < features.length; i++) {
-			NameVersionDescriptor[] plugins = features[i].getPlugins();
-			for (int j = 0; j < plugins.length; j++) {
-				remaining.remove(plugins[j].getId());
+		for (TargetFeature feature : features) {
+			NameVersionDescriptor[] plugins = feature.getPlugins();
+			for (NameVersionDescriptor plugin : plugins) {
+				remaining.remove(plugin.getId());
 			}
 		}
 
@@ -985,17 +977,17 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 
 		Set<Object> result = new HashSet<>();
-		for (int i = 0; i < included.length; i++) {
-			if (included[i].getType() == NameVersionDescriptor.TYPE_PLUGIN) {
-				for (int j = 0; j < allExtraBundles.length; j++) {
-					if (allExtraBundles[j].getBundleInfo().getSymbolicName().equals(included[i].getId())) {
-						result.add(allExtraBundles[j]);
+		for (NameVersionDescriptor element : included) {
+			if (element.getType() == NameVersionDescriptor.TYPE_PLUGIN) {
+				for (TargetBundle allExtraBundle : allExtraBundles) {
+					if (allExtraBundle.getBundleInfo().getSymbolicName().equals(element.getId())) {
+						result.add(allExtraBundle);
 					}
 				}
-			} else if (included[i].getType() == NameVersionDescriptor.TYPE_FEATURE) {
-				for (int j = 0; j < allFeatures.length; j++) {
-					if (allFeatures[j].getId().equals(included[i].getId())) {
-						result.add(allFeatures[j]);
+			} else if (element.getType() == NameVersionDescriptor.TYPE_FEATURE) {
+				for (TargetFeature allFeature : allFeatures) {
+					if (allFeature.getId().equals(element.getId())) {
+						result.add(allFeature);
 					}
 				}
 			}

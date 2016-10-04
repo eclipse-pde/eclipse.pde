@@ -57,8 +57,8 @@ public class ExportTargetJob extends Job {
 			setupDestination(monitor);
 
 			monitor.subTask(PDECoreMessages.ExportTargetJob_ExportingTargetContents);
-			for (int i = 0; i < containers.length; i++) {
-				ITargetLocation container = containers[i];
+			for (ITargetLocation targetLocation : containers) {
+				ITargetLocation container = targetLocation;
 				container.resolve(fTarget, monitor);
 				if (!(container instanceof IUBundleContainer))
 					exportContainer(container, fTarget, featureDir, pluginDir, fileSystem, monitor);
@@ -77,8 +77,7 @@ public class ExportTargetJob extends Job {
 		if (included == null)
 			return;
 		filter = new HashMap<>();
-		for (int i = 0; i < included.length; i++) {
-			NameVersionDescriptor inclusion = included[i];
+		for (NameVersionDescriptor inclusion : included) {
 			NameVersionDescriptor[] versions = filter.get(inclusion.getId());
 			if (versions == null)
 				filter.put(inclusion.getId(), new NameVersionDescriptor[] {inclusion});
@@ -115,9 +114,9 @@ public class ExportTargetJob extends Job {
 		NameVersionDescriptor[] versions = filter.get(descriptor.getId());
 		if (versions == null)
 			return false;
-		for (int i = 0; i < versions.length; i++) {
-			String version = versions[i].getVersion();
-			if ((version == null || version.equals(descriptor.getVersion())) && descriptor.getType().equals(versions[i].getType()))
+		for (NameVersionDescriptor nameVersionDescriptor : versions) {
+			String version = nameVersionDescriptor.getVersion();
+			if ((version == null || version.equals(descriptor.getVersion())) && descriptor.getType().equals(nameVersionDescriptor.getType()))
 				return true;
 		}
 		return false;
@@ -158,8 +157,7 @@ public class ExportTargetJob extends Job {
 	}
 
 	private String getCapability(IInstallableUnit iu, String namespace) {
-		for (Iterator<?> i = iu.getProvidedCapabilities().iterator(); i.hasNext();) {
-			IProvidedCapability capability = (IProvidedCapability) i.next();
+		for (IProvidedCapability capability : iu.getProvidedCapabilities()) {
 			if (capability.getNamespace().equals(namespace))
 				return capability.getName();
 		}
@@ -170,18 +168,18 @@ public class ExportTargetJob extends Job {
 		TargetFeature[] features = container.getFeatures();
 		if (features != null) {
 			monitor.subTask(PDECoreMessages.ExportTargetExportFeatures);
-			for (int i = 0; i < features.length; i++) {
-				if (shouldExport(features[i]))
-					copy(features[i].getLocation(), featureDir, fileSystem, monitor);
+			for (TargetFeature feature : features) {
+				if (shouldExport(feature))
+					copy(feature.getLocation(), featureDir, fileSystem, monitor);
 			}
 		}
 
 		TargetBundle[] bundles = container.getBundles();
 		if (bundles != null) {
 			monitor.subTask(PDECoreMessages.ExportTargetExportPlugins);
-			for (int i = 0; i < bundles.length; i++) {
-				if (shouldExport(bundles[i]))
-					copy(bundles[i].getBundleInfo().getLocation().getPath(), pluginDir, fileSystem, monitor);
+			for (TargetBundle bundle : bundles) {
+				if (shouldExport(bundle))
+					copy(bundle.getBundleInfo().getLocation().getPath(), pluginDir, fileSystem, monitor);
 			}
 		}
 	}
@@ -223,8 +221,8 @@ public class ExportTargetJob extends Job {
 
 		IQueryResult<?> ius = P2TargetUtils.getIUs(target, monitor);
 		ArrayList<IInstallableUnit> toExport = new ArrayList<>();
-		for (Iterator<?> i = ius.iterator(); i.hasNext();) {
-			IInstallableUnit iu = (IInstallableUnit) i.next();
+		for (Object installableUnit : ius) {
+			IInstallableUnit iu = (IInstallableUnit) installableUnit;
 			if (shouldExport(iu))
 				toExport.add(iu);
 		}

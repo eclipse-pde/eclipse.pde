@@ -115,8 +115,8 @@ public class TargetDefinitionPersistenceHelper {
 		ITargetLocation[] containers = definition.getTargetLocations();
 		if (containers != null && containers.length > 0) {
 			Element containersElement = doc.createElement(LOCATIONS);
-			for (int i = 0; i < containers.length; i++) {
-				Element containerElement = serializeBundleContainer(docBuilder, doc, containers[i]);
+			for (ITargetLocation container : containers) {
+				Element containerElement = serializeBundleContainer(docBuilder, doc, container);
 				if (containerElement != null) {
 					containersElement.appendChild(containerElement);
 				}
@@ -191,11 +191,11 @@ public class TargetDefinitionPersistenceHelper {
 		NameVersionDescriptor[] implicitDependencies = definition.getImplicitDependencies();
 		if (implicitDependencies != null && implicitDependencies.length > 0) {
 			Element implicit = doc.createElement(IMPLICIT);
-			for (int i = 0; i < implicitDependencies.length; i++) {
+			for (NameVersionDescriptor implicitDependency : implicitDependencies) {
 				Element plugin = doc.createElement(PLUGIN);
-				plugin.setAttribute(ATTR_ID, implicitDependencies[i].getId());
-				if (implicitDependencies[i].getVersion() != null) {
-					plugin.setAttribute(ATTR_VERSION, implicitDependencies[i].getVersion());
+				plugin.setAttribute(ATTR_ID, implicitDependency.getId());
+				if (implicitDependency.getVersion() != null) {
+					plugin.setAttribute(ATTR_VERSION, implicitDependency.getVersion());
 				}
 				implicit.appendChild(plugin);
 			}
@@ -341,19 +341,19 @@ public class TargetDefinitionPersistenceHelper {
 	}
 
 	private static void serializeBundles(Document doc, Element parent, NameVersionDescriptor[] bundles) {
-		for (int j = 0; j < bundles.length; j++) {
-			if (bundles[j].getType() == NameVersionDescriptor.TYPE_FEATURE) {
+		for (NameVersionDescriptor bundle : bundles) {
+			if (bundle.getType() == NameVersionDescriptor.TYPE_FEATURE) {
 				Element includedBundle = doc.createElement(FEATURE);
-				includedBundle.setAttribute(ATTR_ID, bundles[j].getId());
-				String version = bundles[j].getVersion();
+				includedBundle.setAttribute(ATTR_ID, bundle.getId());
+				String version = bundle.getVersion();
 				if (version != null) {
 					includedBundle.setAttribute(ATTR_VERSION, version);
 				}
 				parent.appendChild(includedBundle);
 			} else {
 				Element includedBundle = doc.createElement(PLUGIN);
-				includedBundle.setAttribute(ATTR_ID, bundles[j].getId());
-				String version = bundles[j].getVersion();
+				includedBundle.setAttribute(ATTR_ID, bundle.getId());
+				String version = bundle.getVersion();
 				if (version != null) {
 					includedBundle.setAttribute(ATTR_VERSION, version);
 				}

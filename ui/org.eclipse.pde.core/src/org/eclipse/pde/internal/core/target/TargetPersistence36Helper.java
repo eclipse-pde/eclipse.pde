@@ -99,8 +99,8 @@ public class TargetPersistence36Helper {
 						definition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
 					} else {
 						List<NameVersionDescriptor> allIncluded = new ArrayList<>();
-						for (int j = 0; j < previousIncluded.length; j++) {
-							allIncluded.add(previousIncluded[j]);
+						for (NameVersionDescriptor nameVersionDescriptor : previousIncluded) {
+							allIncluded.add(nameVersionDescriptor);
 						}
 						allIncluded.addAll(included);
 						definition.setIncluded(allIncluded.toArray(new NameVersionDescriptor[included.size()]));

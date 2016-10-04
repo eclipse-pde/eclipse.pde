@@ -173,8 +173,7 @@ public class P2TargetUtils {
 		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		if (registry != null && tps != null) {
 			IProfile[] profiles = registry.getProfiles();
-			for (int i = 0; i < profiles.length; i++) {
-				IProfile profile = profiles[i];
+			for (IProfile profile : profiles) {
 				String id = profile.getProfileId();
 				if (id.startsWith(PROFILE_ID_PREFIX)) {
 					String memento = id.substring(PROFILE_ID_PREFIX.length());
@@ -196,8 +195,7 @@ public class P2TargetUtils {
 	 */
 	private static void delete(File folder) {
 		File[] files = folder.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			File file = files[i];
+		for (File file : files) {
 			if (file.isDirectory()) {
 				delete(file);
 			}
@@ -244,9 +242,9 @@ public class P2TargetUtils {
 	public static void garbageCollect() {
 		try {
 			IProfile[] profiles = getProfileRegistry().getProfiles();
-			for (int i = 0; i < profiles.length; i++) {
-				if (profiles[i].getProfileId().startsWith(PROFILE_ID_PREFIX)) {
-					getGarbageCollector().runGC(profiles[i]);
+			for (IProfile profile : profiles) {
+				if (profile.getProfileId().startsWith(PROFILE_ID_PREFIX)) {
+					getGarbageCollector().runGC(profile);
 				}
 			}
 		} catch (CoreException e) {
@@ -520,9 +518,9 @@ public class P2TargetUtils {
 		if (containers == null) {
 			return installedIUs.isEmpty();
 		}
-		for (int i = 0; i < containers.length; i++) {
-			if (containers[i] instanceof IUBundleContainer) {
-				IUBundleContainer bc = (IUBundleContainer) containers[i];
+		for (ITargetLocation container : containers) {
+			if (container instanceof IUBundleContainer) {
+				IUBundleContainer bc = (IUBundleContainer) container;
 				String[] ids = bc.getIds();
 				Version[] versions = bc.getVersions();
 				for (int j = 0; j < versions.length; j++) {
@@ -801,8 +799,7 @@ public class P2TargetUtils {
 		// Now proactively recompute all the related container caches.
 		ITargetLocation[] containers = target.getTargetLocations();
 		if (containers != null) {
-			for (int i = 0; i < containers.length; i++) {
-				ITargetLocation container = containers[i];
+			for (ITargetLocation container : containers) {
 				if (container instanceof IUBundleContainer) {
 					((IUBundleContainer) container).synchronizerChanged(target);
 				}
@@ -945,8 +942,7 @@ public class P2TargetUtils {
 		// removing everything that is no longer needed.
 		computeRemovals(fProfile, request, getIncludeSource());
 		request.addAll(Arrays.asList(units));
-		for (int i = 0; i < units.length; i++) {
-			IInstallableUnit unit = units[i];
+		for (IInstallableUnit unit : units) {
 			request.setInstallableUnitProfileProperty(unit, PROP_INSTALLED_IU, Boolean.toString(true));
 		}
 
@@ -1098,8 +1094,7 @@ public class P2TargetUtils {
 		IRequirement bundleRequirement = MetadataFactory.createRequirement("org.eclipse.equinox.p2.eclipse.type", "bundle", null, null, false, false, false); //$NON-NLS-1$ //$NON-NLS-2$
 		IQueryResult<IInstallableUnit> profileIUs = queryable.query(QueryUtil.createIUAnyQuery(), null);
 		ArrayList<IRequirement> requirements = new ArrayList<>();
-		for (Iterator<IInstallableUnit> i = profileIUs.iterator(); i.hasNext();) {
-			IInstallableUnit profileIU = i.next();
+		for (IInstallableUnit profileIU : profileIUs) {
 			if (profileIU.satisfies(bundleRequirement)) {
 				String id = profileIU.getId() + ".source"; //$NON-NLS-1$
 				Version version = profileIU.getVersion();
@@ -1187,16 +1182,15 @@ public class P2TargetUtils {
 		while (itor.hasNext()) {
 			plan.addInstallableUnit(itor.next());
 		}
-		for (int i = 0; i < units.length; i++) {
-			IInstallableUnit unit = units[i];
+		for (IInstallableUnit unit : units) {
 			plan.setInstallableUnitProfileProperty(unit, PROP_INSTALLED_IU, Boolean.toString(true));
 		}
 
 		// remove all units that are in the current profile but not in the new slice
 		Set<?> toRemove = fProfile.query(QueryUtil.ALL_UNITS, null).toSet();
 		toRemove.removeAll(newSet);
-		for (Iterator<?> i = toRemove.iterator(); i.hasNext();) {
-			plan.removeInstallableUnit((IInstallableUnit) i.next());
+		for (Object name : toRemove) {
+			plan.removeInstallableUnit((IInstallableUnit) name);
 		}
 
 		if (subMonitor.isCanceled()) {
@@ -1272,8 +1266,7 @@ public class P2TargetUtils {
 		Set<URI> result = new HashSet<>();
 		ITargetLocation[] containers = target.getTargetLocations();
 		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
-		for (int i = 0; i < containers.length; i++) {
-			ITargetLocation container = containers[i];
+		for (ITargetLocation container : containers) {
 			if (container instanceof IUBundleContainer) {
 				URI[] repos = ((IUBundleContainer) container).getRepositories();
 				if (repos == null) {
@@ -1316,8 +1309,8 @@ public class P2TargetUtils {
 		if (recent == null)
 			return;
 		String[] recents = recent.split("\n"); //$NON-NLS-1$
-		for (int i = 0; i < recents.length; i++) {
-			File bundlePool = new File(recents[i] + "/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool"); //$NON-NLS-1$
+		for (String recentWorkspace : recents) {
+			File bundlePool = new File(recentWorkspace + "/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool"); //$NON-NLS-1$
 			if (bundlePool.exists()) {
 				additionalRepos.add(bundlePool.toURI().normalize());
 			}
@@ -1346,8 +1339,7 @@ public class P2TargetUtils {
 			dataArea = URIUtil.append(dataArea, "profileRegistry/" + self.getProfileId() + ".profile"); //$NON-NLS-1$//$NON-NLS-2$
 			ProfileMetadataRepository profileRepo = new ProfileMetadataRepository(getGlobalAgent(), dataArea, null);
 			Collection<?> repos = profileRepo.getReferences();
-			for (Iterator<?> i = repos.iterator(); i.hasNext();) {
-				Object element = i.next();
+			for (Object element : repos) {
 				if (element instanceof IRepositoryReference) {
 					IRepositoryReference reference = (IRepositoryReference) element;
 					if (reference.getType() == IRepository.TYPE_ARTIFACT && reference.getLocation() != null)
@@ -1374,8 +1366,7 @@ public class P2TargetUtils {
 		ITargetLocation[] containers = definition.getTargetLocations();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, containers.length * 10);
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
-		for (int i = 0; i < containers.length; i++) {
-			ITargetLocation container = containers[i];
+		for (ITargetLocation container : containers) {
 			if (container instanceof IUBundleContainer) {
 				try {
 					IUBundleContainer iuContainer = (IUBundleContainer) container;
@@ -1402,8 +1393,7 @@ public class P2TargetUtils {
 		Set<URI> result = new HashSet<>();
 		ITargetLocation[] containers = target.getTargetLocations();
 		IMetadataRepositoryManager manager = getRepoManager();
-		for (int i = 0; i < containers.length; i++) {
-			ITargetLocation container = containers[i];
+		for (ITargetLocation container : containers) {
 			if (container instanceof IUBundleContainer) {
 				URI[] repos = ((IUBundleContainer) container).getRepositories();
 				if (repos == null) {
@@ -1437,8 +1427,8 @@ public class P2TargetUtils {
 				List<IArtifactRequest> artifactRequests = (List<IArtifactRequest>) parameters.get(NATIVE_ARTIFACTS);
 				IArtifactRepository destinationArtifactRepository = getBundlePool();
 				manager = getArtifactRepositoryManager();
-				for (Iterator<?> i = toDownload.iterator(); i.hasNext();) {
-					IArtifactKey keyToDownload = (IArtifactKey) i.next();
+				for (Object name : toDownload) {
+					IArtifactKey keyToDownload = (IArtifactKey) name;
 					IArtifactRequest request = manager.createMirrorRequest(keyToDownload, destinationArtifactRepository, null, null);
 					artifactRequests.add(request);
 				}
@@ -1485,8 +1475,8 @@ public class P2TargetUtils {
 			ProvisioningContext context = (ProvisioningContext) parameters.get(PARM_CONTEXT);
 			IProvisioningAgent agent = (IProvisioningAgent) parameters.get(PARM_AGENT);
 			DownloadManager dm = new DownloadManager(context, agent);
-			for (Iterator<IArtifactRequest> i = artifactRequests.iterator(); i.hasNext();) {
-				dm.add(i.next());
+			for (IArtifactRequest iArtifactRequest : artifactRequests) {
+				dm.add(iArtifactRequest);
 			}
 			return dm.start(monitor);
 		}

@@ -123,11 +123,11 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		List<TargetBundle> all = new ArrayList<>();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, infos.length + source.length);
 		// Add executable bundles
-		for (int i = 0; i < infos.length; i++) {
+		for (BundleInfo info : infos) {
 			if (monitor.isCanceled()) {
 				return new TargetBundle[0];
 			}
-			URI location = infos[i].getLocation();
+			URI location = info.getLocation();
 			try {
 				all.add(new TargetBundle(URIUtil.toFile(location)));
 			} catch (CoreException e) {
@@ -136,11 +136,11 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			localMonitor.worked(1);
 		}
 		// Add source bundles
-		for (int i = 0; i < source.length; i++) {
+		for (BundleInfo element : source) {
 			if (monitor.isCanceled()) {
 				return new TargetBundle[0];
 			}
-			URI location = source[i].getLocation();
+			URI location = element.getLocation();
 			try {
 				all.add(new TargetBundle(URIUtil.toFile(location)));
 			} catch (CoreException e) {
@@ -178,12 +178,12 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		if (files.length > 0) {
 			List<TargetBundle> all = new ArrayList<>(files.length);
 			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
-			for (int i = 0; i < files.length; i++) {
+			for (URL file : files) {
 				if (localMonitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
 				try {
-					File plugin = new File(files[i].getFile());
+					File plugin = new File(file.getFile());
 					all.add(new TargetBundle(plugin));
 				} catch (CoreException e) {
 					// If an old style conversion fails because the service is not available, log the error.

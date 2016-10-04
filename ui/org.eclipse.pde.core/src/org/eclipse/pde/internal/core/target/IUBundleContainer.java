@@ -206,8 +206,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new TargetFeature[0];
 		}
 
-		for (Iterator<IInstallableUnit> i = queryResult.iterator(); i.hasNext();) {
-			IInstallableUnit unit = i.next();
+		for (IInstallableUnit unit : queryResult) {
 			String id = unit.getId();
 			// if the IU naming convention says it is a feature, then add it.
 			// This is less than optimal but there is no clear way of identifying an IU as a feature.
@@ -226,10 +225,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		// Build a final set of the models for the features in the profile.
 		List<TargetFeature> result = new ArrayList<>();
-		for (int i = 0; i < allFeatures.length; i++) {
-			NameVersionDescriptor candidate = new NameVersionDescriptor(allFeatures[i].getId(), allFeatures[i].getVersion(), NameVersionDescriptor.TYPE_FEATURE);
+		for (TargetFeature allFeature : allFeatures) {
+			NameVersionDescriptor candidate = new NameVersionDescriptor(allFeature.getId(), allFeature.getVersion(), NameVersionDescriptor.TYPE_FEATURE);
 			if (features.contains(candidate)) {
-				result.add(allFeatures[i]);
+				result.add(allFeature);
 			}
 		}
 		fFeatures = result.toArray(new TargetFeature[result.size()]);
@@ -403,8 +402,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		OSGiBundleQuery query = new OSGiBundleQuery();
 		IQueryResult<IInstallableUnit> queryResult = source.query(query, null);
 		Map<BundleInfo, TargetBundle> bundles = new LinkedHashMap<>();
-		for (Iterator<IInstallableUnit> i = queryResult.iterator(); i.hasNext();) {
-			IInstallableUnit unit = i.next();
+		for (IInstallableUnit unit : queryResult) {
 			generateBundle(unit, artifacts, bundles);
 			if (getIncludeSource()) {
 				// bit of a hack using the bundle naming convention for finding source bundles
@@ -421,8 +419,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 	private void generateBundle(IInstallableUnit unit, IFileArtifactRepository repo, Map<BundleInfo, TargetBundle> bundles) throws CoreException {
 		Collection<IArtifactKey> artifacts = unit.getArtifacts();
-		for (Iterator<IArtifactKey> iterator2 = artifacts.iterator(); iterator2.hasNext();) {
-			IArtifactKey artifactKey = iterator2.next();
+		for (IArtifactKey artifactKey : artifacts) {
 			File file = null;
 			if (P2TargetUtils.fgArtifactKeyRepoFile.containsKey(artifactKey)) {
 				if (P2TargetUtils.fgArtifactKeyRepoFile.get(artifactKey).containsKey(repo))
@@ -673,9 +670,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 		URI[] repositories = getRepositories();
 		if (repositories != null) {
-			for (int i = 0; i < repositories.length; i++) {
+			for (URI repository : repositories) {
 				Element repo = document.createElement(TargetDefinitionPersistenceHelper.REPOSITORY);
-				repo.setAttribute(TargetDefinitionPersistenceHelper.LOCATION, repositories[i].toASCIIString());
+				repo.setAttribute(TargetDefinitionPersistenceHelper.LOCATION, repository.toASCIIString());
 				containerElement.appendChild(repo);
 			}
 		}

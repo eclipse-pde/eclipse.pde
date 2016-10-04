@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
@@ -88,12 +86,12 @@ public class TargetLocationTypeManager {
 		if (point == null)
 			return;
 		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				String type = elements[j].getAttribute(ATTR_TYPE);
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (IConfigurationElement element : elements) {
+				String type = element.getAttribute(ATTR_TYPE);
 				if (type != null) {
-					fExtentionMap.put(type, elements[j]);
+					fExtentionMap.put(type, element);
 				}
 			}
 		}
