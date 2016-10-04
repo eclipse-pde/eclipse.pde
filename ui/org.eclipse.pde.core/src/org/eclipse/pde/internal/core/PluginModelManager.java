@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -925,25 +925,8 @@ public class PluginModelManager implements IModelProviderListener {
 						break;
 					}
 				}
-				if (isActive) {
-					// refresh everything related to this bundle model id
-					fEntries.remove(newID);
-					fState.removeBundleDescription(desc);
-					for (int i = 0; i < fExternalManager.getAllModels().length; i++) {
-						IPluginModelBase modelExternal = fExternalManager.getAllModels()[i];
-						if (modelExternal.getPluginBase().getId().equals(newID)) {
-							addToTable(fEntries, new IPluginModelBase[] { modelExternal });
-						}
-					}
-					IPluginModelBase[] models = fWorkspaceManager.getPluginModels();
-					for (int i = 0; i < models.length; i++) {
-						IPluginModelBase modelWorkspace = models[i];
-						if (modelWorkspace.getPluginBase().getId().equals(newID)) {
-							addToTable(fEntries, new IPluginModelBase[] { modelWorkspace });
-							addWorkspaceBundleToState(fEntries, modelWorkspace);
-						}
-					}
-				}
+				if (isActive)
+					fState.addBundle(model, true);
 			} else
 				// if the target plug-in has become disabled/unchecked, remove its bundle
 				// description from the state
