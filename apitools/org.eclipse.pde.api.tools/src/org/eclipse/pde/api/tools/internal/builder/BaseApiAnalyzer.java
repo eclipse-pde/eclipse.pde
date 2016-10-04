@@ -2041,11 +2041,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									break;
 								}
 								case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE: {
-									// we should reset the major version and
-									// increment only the minor version
-									newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
-									problem = createVersionProblem(IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE, new String[] {
-											compversionval, info.componentID, }, String.valueOf(newversion), Util.EMPTY_STRING);
+									/*
+									 * we don't do anything since the major
+									 * version is already incremented. Just
+									 * report that the major version should not
+									 * be incremented
+									 */
 									break;
 								}
 								default:
