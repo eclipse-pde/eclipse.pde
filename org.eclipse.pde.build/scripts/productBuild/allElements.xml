@@ -84,38 +84,10 @@
 		</ant>
  	</target>
 	
-	<property name="assemble.org.eclipse.pde.build.container.feature.linux.motif.x86" value="true" />
- 	<target name="assemble.org.eclipse.pde.build.container.feature.linux.motif.x86">
- 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			
- 			<property name="archiveName" value="${archiveNamePrefix}-linux.motif.x86.zip"/>
-		</ant>
- 	</target>
-	
-	<property name="assemble.org.eclipse.pde.build.container.feature.solaris.motif.sparc" value="true" />
- 	<target name="assemble.org.eclipse.pde.build.container.feature.solaris.motif.sparc">
- 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			
- 			<property name="archiveName" value="${archiveNamePrefix}-solaris.motif.sparc.zip"/>
-		</ant>
- 	</target>
- 		
 	<property name="assemble.org.eclipse.pde.build.container.feature.solaris.gtk.sparc" value="true" />
  	<target name="assemble.org.eclipse.pde.build.container.feature.solaris.gtk.sparc">
  		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			
  			<property name="archiveName" value="${archiveNamePrefix}-solaris.gtk.sparc.zip"/>
-		</ant>
- 	</target>
-	
-	<property name="assemble.org.eclipse.pde.build.container.feature.aix.motif.ppc" value="true" />
- 	<target name="assemble.org.eclipse.pde.build.container.feature.aix.motif.ppc">
- 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			
- 			<property name="archiveName" value="${archiveNamePrefix}-aix.motif.ppc.zip"/>
-		</ant>
- 	</target>
-	
-	<property name="assemble.org.eclipse.pde.build.container.feature.hpux.motif.PA_RISC" value="true" />
- 	<target name="assemble.org.eclipse.pde.build.container.feature.hpux.motif.PA_RISC">
- 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			
- 			<property name="archiveName" value="${archiveNamePrefix}-hpux.motif.PA_RISC.zip"/>
 		</ant>
  	</target>
 	

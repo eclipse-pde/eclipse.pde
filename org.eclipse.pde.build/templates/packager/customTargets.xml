@@ -37,33 +37,9 @@
 		</ant>
 	</target>
 		
-	<target name="assemble.linux.motif.x86.xml">
-		<ant antfile="${assembleScriptName}" >
-			<property name="archiveName" value="${archiveNamePrefix}-linux.motif.x86.zip"/>
-		</ant>
-	</target>
-	
-	<target name="assemble.solaris.motif.sparc.xml">
-		<ant antfile="${assembleScriptName}" >
-			<property name="archiveName" value="${archiveNamePrefix}-solaris.motif.sparc.zip"/>
-		</ant>
-	</target>
-
 	<target name="assemble.solaris.gtk.sparc.xml">
 		<ant antfile="${assembleScriptName}" >
 			<property name="archiveName" value="${archiveNamePrefix}-solaris.gtk.sparc.zip"/>
-		</ant>
-	</target>
-	
-	<target name="assemble.aix.motif.ppc.xml">
-		<ant antfile="${assembleScriptName}" >
-			<property name="archiveName" value="${archiveNamePrefix}-aix.motif.ppc.zip"/>
-		</ant>
-	</target>
-	
-	<target name="assemble.hpux.motif.PA_RISC.xml">
-		<ant antfile="${assembleScriptName}" >
-			<property name="archiveName" value="${archiveNamePrefix}-hpux.motif.PA_RISC.zip"/>
 		</ant>
 	</target>
 	
