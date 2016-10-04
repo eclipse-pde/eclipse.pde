@@ -196,12 +196,6 @@ public class $className$ extends ViewPart {
 	}
 %endif
 
-/**
-	 * The constructor.
-	 */
-	public $className$() {
-	}
-
 	/**
 	 * This is a callback that will allow us
 	 * to create the viewer and initialize it.
