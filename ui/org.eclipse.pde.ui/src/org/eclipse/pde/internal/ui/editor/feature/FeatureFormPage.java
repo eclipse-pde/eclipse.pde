@@ -113,9 +113,6 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		// info.setImage(image);
 		// info.addHyperlinkListener(new HyperlinkAdapter() {
 		// public void linkActivated(HyperlinkEvent e) {
-		// WorkbenchHelp
-		// .displayHelpResource(PDEPlugin.getResourceString("OverviewPage.help.deploy"));
-		// //$NON-NLS-1$
 		// }
 		// });
 		// info.setBackground(section.getTitleBarGradientBackground());
@@ -134,9 +131,6 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		// info.setImage(image);
 		// info.addHyperlinkListener(new HyperlinkAdapter() {
 		// public void linkActivated(HyperlinkEvent e) {
-		// WorkbenchHelp
-		// .displayHelpResource(PDEPlugin.getResourceString("OverviewPage.help.deploy"));
-		// //$NON-NLS-1$
 		// }
 		// });
 		// info.setBackground(section.getTitleBarGradientBackground());

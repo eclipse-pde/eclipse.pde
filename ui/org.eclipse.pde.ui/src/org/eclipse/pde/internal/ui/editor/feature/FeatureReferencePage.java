@@ -83,8 +83,6 @@ public class FeatureReferencePage extends PDEFormPage {
 		managedForm.addPart(fPluginPortabilitySection);
 
 		form.setText(PDEUIMessages.FeatureEditor_ReferencePage_heading);
-		// WorkbenchHelp.setHelp(form.getBody(),
-		// IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 		fPluginSection.fireSelection();
 		super.createFormContent(managedForm);

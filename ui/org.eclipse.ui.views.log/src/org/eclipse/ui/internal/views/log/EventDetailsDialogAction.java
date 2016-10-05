@@ -49,8 +49,6 @@ public class EventDetailsDialogAction extends SelectionProviderAction {
 		this.control = control;
 		this.provider = provider;
 		this.memento = memento;
-		// setToolTipText
-		//WorkbenchHelp.setHelp
 	}
 
 	public boolean resetSelection(byte sortType, int sortOrder) {

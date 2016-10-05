@@ -80,8 +80,6 @@ public class FeatureIncludesPage extends PDEFormPage {
 		managedForm.addPart(fIncludedPortabilitySection);
 		form.setText(PDEUIMessages.FeatureEditor_IncludesPage_heading);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_ADVANCED);
-		// WorkbenchHelp.setHelp(form.getBody(),
-		// IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 		fIncludedSection.fireSelection();
 		super.createFormContent(managedForm);
 	}
