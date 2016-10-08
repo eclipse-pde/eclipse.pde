@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,13 +7,15 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.core.search;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class PluginSearchScope {
 
@@ -59,7 +61,22 @@ public class PluginSearchScope {
 			result.add(candidate);
 	}
 
+	protected final void addExternalModel(final IFeatureModel candidate, final List<IFeatureModel> result) {
+		if (externalScope == EXTERNAL_SCOPE_ALL)
+			result.add(candidate);
+		else if (externalScope == EXTERNAL_SCOPE_ENABLED && candidate.isEnabled())
+			result.add(candidate);
+	}
+
 	protected final void addWorkspaceModel(IPluginModelBase candidate, ArrayList<IPluginModelBase> result) {
+		if (workspaceScope == SCOPE_WORKSPACE) {
+			result.add(candidate);
+		} else if (selectedResources.contains(candidate.getUnderlyingResource().getProject())) {
+			result.add(candidate);
+		}
+	}
+
+	protected final void addWorkspaceModel(final IFeatureModel candidate, final List<IFeatureModel> result) {
 		if (workspaceScope == SCOPE_WORKSPACE) {
 			result.add(candidate);
 		} else if (selectedResources.contains(candidate.getUnderlyingResource().getProject())) {
@@ -83,4 +100,19 @@ public class PluginSearchScope {
 		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
+	public IFeatureModel[] getMatchingFeatureModels() {
+		return addRelevantModels(PDECore.getDefault().getFeatureModelManager().getModels());
+	}
+
+	protected final IFeatureModel[] addRelevantModels(IFeatureModel[] models) {
+		final List<IFeatureModel> result = new ArrayList<>();
+		for (IFeatureModel model : models) {
+			if (model.getUnderlyingResource() != null) {
+				addWorkspaceModel(model, result);
+			} else {
+				addExternalModel(model, result);
+			}
+		}
+		return result.toArray(new IFeatureModel[result.size()]);
+	}
 }

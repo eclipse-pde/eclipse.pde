@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.layout.GridData;
@@ -91,5 +94,26 @@ public class FeatureReferencePage extends PDEFormPage {
 	@Override
 	public void setFocus() {
 		fPluginSection.setFocus();
+	}
+
+	@Override
+	public boolean selectReveal(final Object object) {
+		if (object instanceof IFeaturePlugin) {
+			// selecton has to be done by detecting item from content provider by id of feature
+			// and using that in new selection 
+			// because just using #setSelection(object) will not work
+			final IFeaturePlugin featurePlugin = (IFeaturePlugin) object;
+			final StructuredViewer fPluginViewer = fPluginSection.getStructuredViewerPart().getViewer();
+			final IStructuredContentProvider provider = (IStructuredContentProvider) fPluginViewer.getContentProvider();
+			for (Object o : provider.getElements(fPluginViewer.getInput())) {
+				final IFeaturePlugin fp = (IFeaturePlugin) o;
+
+				if (fp.getId().equals(featurePlugin.getId())) {
+					fPluginViewer.setSelection(new StructuredSelection(fp), true);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

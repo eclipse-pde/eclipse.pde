@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
-
-import org.eclipse.search.ui.text.Match;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchQuery;
@@ -65,8 +65,12 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	@Override
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		Object element = match.getElement();
-		if (element instanceof IPluginObject)
+		if (element instanceof IPluginObject) {
 			return isMatchContained(editor, (IPluginObject) element);
+		}
+		if (element instanceof IFeaturePlugin) {
+			return isMatchContained(editor, (IFeaturePlugin) element);
+		}
 		return false;
 	}
 
@@ -86,6 +90,14 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 					}
 				}
 			}
+			if (objects[i] instanceof IFeaturePlugin) {
+				IFeaturePlugin object = (IFeaturePlugin) objects[i];
+				if (isMatchContained(editor, object)) {
+					for (Match match : getMatches(object)) {
+						list.add(match);
+					}
+				}
+			}
 		}
 		return list.toArray(new Match[list.size()]);
 	}
@@ -95,16 +107,27 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		return null;
 	}
 
-	protected boolean isMatchContained(IEditorPart editor, IPluginObject object) {
-		IFile resource = (IFile) editor.getEditorInput().getAdapter(IFile.class);
+	protected boolean isMatchContained(final IEditorPart editor, final IPluginObject object) {
+		return isMatchContained(editor, object.getModel().getUnderlyingResource(),
+				object.getModel().getInstallLocation());
+	}
+
+	protected boolean isMatchContained(final IEditorPart editor, final IFeaturePlugin object) {
+		return isMatchContained(editor, object.getModel().getUnderlyingResource(),
+				object.getModel().getInstallLocation());
+	}
+
+	protected boolean isMatchContained(final IEditorPart editor, final IResource underlyingResource,
+			final String installLocation) {
+		IFile resource = editor.getEditorInput().getAdapter(IFile.class);
 		if (resource != null) {
-			IResource objectResource = object.getModel().getUnderlyingResource();
+			IResource objectResource = underlyingResource;
 			if (objectResource != null)
 				return resource.getProject().equals(objectResource.getProject());
 		}
-		File file = (File) editor.getEditorInput().getAdapter(File.class);
+		File file = editor.getEditorInput().getAdapter(File.class);
 		if (file != null) {
-			IPath path = new Path(object.getModel().getInstallLocation());
+			IPath path = new Path(installLocation);
 			IPath filePath = null;
 			if (ICoreConstants.MANIFEST_FILENAME.equals(file.getName()))
 				filePath = new Path(file.getParentFile().getParent());

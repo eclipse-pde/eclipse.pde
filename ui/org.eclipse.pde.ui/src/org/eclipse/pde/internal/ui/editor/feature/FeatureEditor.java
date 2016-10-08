@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -59,7 +60,27 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		}
 	}
 
-	public static void openFeatureEditor(IFeatureModel model) {
+	/**
+	 * Opens Feature Editor on "Included Plug-ins" page and preselects the
+	 * featurePlugin.
+	 *
+	 * @param featurePlugin is included plug-in in feature
+	 */
+	public static void openFeatureEditor(final IFeaturePlugin featurePlugin) {
+		if (featurePlugin != null) {
+			IEditorPart editor = openFeatureEditor(featurePlugin.getModel());
+			// activate the page with plug-ins and preselect the requested
+			// featurePlugin
+			if (editor instanceof FeatureEditor) {
+				IFormPage page = ((FeatureEditor) editor).setActivePage(FeatureReferencePage.PAGE_ID);
+				page.selectReveal(featurePlugin);
+			}
+		} else {
+			Display.getCurrent().beep();
+		}
+	}
+
+	public static IEditorPart openFeatureEditor(IFeatureModel model) {
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
 			try {
@@ -71,7 +92,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 					IFileStore store = EFS.getStore(file.toURI());
 					input = new FileStoreEditorInput(store);
 				}
-				IDE.openEditor(PDEPlugin.getActivePage(), input, IPDEUIConstants.FEATURE_EDITOR_ID, true);
+				return IDE.openEditor(PDEPlugin.getActivePage(), input, IPDEUIConstants.FEATURE_EDITOR_ID, true);
 			} catch (PartInitException e) {
 				PDEPlugin.logException(e);
 			} catch (CoreException e) {
@@ -80,7 +101,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		} else {
 			Display.getCurrent().beep();
 		}
-
+		return null;
 	}
 
 	public FeatureEditor() {

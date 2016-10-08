@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
@@ -14,7 +15,9 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
 import org.eclipse.pde.internal.ui.views.plugins.ImportActionGroup;
 import org.eclipse.pde.internal.ui.views.plugins.JavaSearchActionGroup;
 import org.eclipse.search.ui.text.Match;
@@ -27,6 +30,10 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 	class SearchLabelProvider extends LabelProvider {
 		@Override
 		public Image getImage(Object element) {
+			if (element instanceof IFeaturePlugin) {
+				return getImage(((IFeaturePlugin) element).getFeature().getModel());
+			}
+
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
 
@@ -46,8 +53,16 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 				return extension.getPoint() + " - " + extension.getPluginBase().getId(); //$NON-NLS-1$
 			}
 
-			if (object instanceof IPluginExtensionPoint)
+			if (object instanceof IPluginExtensionPoint) {
 				return ((IPluginExtensionPoint) object).getFullId();
+			}
+
+			if (object instanceof IFeaturePlugin) {
+				final IFeaturePlugin featurePlugin = (IFeaturePlugin) object;
+				final String pluginId = featurePlugin.getId();
+				final String featureId = featurePlugin.getFeature().getId();
+				return pluginId + " - " + featureId; //$NON-NLS-1$
+			}
 
 			return PDEPlugin.getDefault().getLabelProvider().getText(object);
 		}
@@ -92,6 +107,11 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 
 	@Override
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
+		if (match.getElement() instanceof IFeaturePlugin) {
+			IFeaturePlugin featurePlugin = (IFeaturePlugin) match.getElement();
+			FeatureEditor.openFeatureEditor(featurePlugin);
+			return;
+		}
 		ManifestEditorOpener.open(match, activate);
 	}
 

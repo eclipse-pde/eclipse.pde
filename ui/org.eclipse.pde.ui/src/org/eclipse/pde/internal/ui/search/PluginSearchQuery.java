@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.search.*;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
@@ -38,6 +40,10 @@ public class PluginSearchQuery implements ISearchQuery {
 				if (match instanceof ISourceObject) {
 					ISourceObject object = (ISourceObject) match;
 					result.addMatch(new Match(match, Match.UNIT_LINE, object.getStartLine() - 1, 1));
+				}
+				if (match instanceof IFeaturePlugin) {
+					IFeaturePlugin object = (IFeaturePlugin) match;
+					result.addMatch(new Match(object, Match.UNIT_LINE, -1, 1));
 				}
 			}
 		};
