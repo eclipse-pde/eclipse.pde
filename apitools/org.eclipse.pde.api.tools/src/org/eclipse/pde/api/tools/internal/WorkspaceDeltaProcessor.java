@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,20 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import org.eclipse.pde.api.tools.internal.builder.BuildState;
-import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.util.Util;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
@@ -32,6 +25,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.api.tools.internal.builder.BuildState;
+import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Standard delta processor for us to track element state changes in the workspace
@@ -234,11 +231,20 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 							IProject project = (IProject) resource;
 							if (Util.isApiProject(project) || Util.isJavaProject(project)) {
 								if ((element.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
-									IJavaProject jp = (IJavaProject) JavaCore.create(resource);
-									dmanager.clean(jp, true, true);
-									bmanager.disposeWorkspaceBaseline();
+									cleanAndDisposeWorkspaceBaseline(resource);
 									break;
 								}
+							}
+						}
+					}
+					children = delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.REMOVED);
+					for (IResourceDelta element : children) {
+						resource = element.getResource();
+						if (element.getResource().getType() == IResource.PROJECT) {
+							IProject project = (IProject) resource;
+							if (Util.isApiProject(project) || Util.isJavaProject(project)) {
+									cleanAndDisposeWorkspaceBaseline(resource);
+									break;
 							}
 						}
 					}
@@ -270,5 +276,11 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 			default:
 				break;
 		}
+	}
+
+	private void cleanAndDisposeWorkspaceBaseline(IResource resource) {
+		IJavaProject jp = (IJavaProject) JavaCore.create(resource);
+		dmanager.clean(jp, true, true);
+		bmanager.disposeWorkspaceBaseline();
 	}
 }
