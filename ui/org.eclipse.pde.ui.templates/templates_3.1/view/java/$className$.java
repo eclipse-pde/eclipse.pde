@@ -84,9 +84,11 @@ public class $className$ extends ViewPart {
 		public TreeParent getParent() {
 			return parent;
 		}
+		@Override
 		public String toString() {
 			return getName();
 		}
+		@Override
 		public <T> T getAdapter(Class<T> key) {
 			return null;
 		}
@@ -171,12 +173,15 @@ public class $className$ extends ViewPart {
 
 %if viewType == "tableViewer"
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			return getText(obj);
 		}
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			return getImage(obj);
 		}
+		@Override
 		public Image getImage(Object obj) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
@@ -196,10 +201,7 @@ public class $className$ extends ViewPart {
 	}
 %endif
 
-	/**
-	 * This is a callback that will allow us
-	 * to create the viewer and initialize it.
-	 */
+	@Override
 	public void createPartControl(Composite parent) {
 %if viewType =="tableViewer"
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -318,9 +320,7 @@ public class $className$ extends ViewPart {
 			message);
 	}
 
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
