@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -34,12 +35,11 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class ArgumentsSection extends PDESection {
 
-	private static final String[] TAB_LABELS = new String[5];
+	private static final String[] TAB_LABELS = new String[4];
 	static {
 		TAB_LABELS[IArgumentsInfo.L_ARGS_ALL] = PDEUIMessages.ArgumentsSection_allPlatforms;
 		TAB_LABELS[IArgumentsInfo.L_ARGS_LINUX] = "linux"; //$NON-NLS-1$
 		TAB_LABELS[IArgumentsInfo.L_ARGS_MACOS] = "macosx"; //$NON-NLS-1$
-		TAB_LABELS[IArgumentsInfo.L_ARGS_SOLAR] = "solaris"; //$NON-NLS-1$
 		TAB_LABELS[IArgumentsInfo.L_ARGS_WIN32] = "win32"; //$NON-NLS-1$
 	}
 

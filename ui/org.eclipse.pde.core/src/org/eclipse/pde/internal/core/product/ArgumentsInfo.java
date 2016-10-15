@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2014 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -80,12 +81,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 				if (isEditable())
 					firePropertyChanged(P_PROG_ARGS_MAC, old, fProgramArgsMac[arch]);
 				break;
-			case L_ARGS_SOLAR :
-				old = fProgramArgsSol[arch];
-				fProgramArgsSol[arch] = args;
-				if (isEditable())
-					firePropertyChanged(P_PROG_ARGS_SOL, old, fProgramArgsSol[arch]);
-				break;
 			case L_ARGS_WIN32 :
 				old = fProgramArgsWin[arch];
 				fProgramArgsWin[arch] = args;
@@ -109,8 +104,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 				return fProgramArgsLin[arch];
 			case L_ARGS_MACOS :
 				return fProgramArgsMac[arch];
-			case L_ARGS_SOLAR :
-				return fProgramArgsSol[arch];
 			case L_ARGS_WIN32 :
 				return fProgramArgsWin[arch];
 		}
@@ -153,9 +146,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		} else if (Platform.OS_MACOSX.equals(os)) {
 			archArgs = archIndex > 0 ? getProgramArguments(L_ARGS_MACOS, archIndex) + " " + archArgsAllPlatforms : archArgsAllPlatforms; //$NON-NLS-1$
 			return getCompleteArgs(archArgs, getProgramArguments(L_ARGS_MACOS), fProgramArgs[L_ARGS_ARCH_ALL]);
-		} else if (Platform.OS_SOLARIS.equals(os)) {
-			archArgs = archIndex > 0 ? getProgramArguments(L_ARGS_SOLAR, archIndex) + " " + archArgsAllPlatforms : archArgsAllPlatforms; //$NON-NLS-1$
-			return getCompleteArgs(archArgs, getProgramArguments(L_ARGS_SOLAR), fProgramArgs[L_ARGS_ARCH_ALL]);
 		} else {
 			return getCompleteArgs(archArgsAllPlatforms, "", fProgramArgs[L_ARGS_ALL]); //$NON-NLS-1$
 		}
@@ -190,12 +180,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 				if (isEditable())
 					firePropertyChanged(P_VM_ARGS_MAC, old, fVMArgsMac[arch]);
 				break;
-			case L_ARGS_SOLAR :
-				old = fVMArgsSol[arch];
-				fVMArgsSol[arch] = args;
-				if (isEditable())
-					firePropertyChanged(P_VM_ARGS_SOL, old, fVMArgsSol[arch]);
-				break;
 			case L_ARGS_WIN32 :
 				old = fVMArgsWin[arch];
 				fVMArgsWin[arch] = args;
@@ -219,8 +203,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 				return fVMArgsLin[arch];
 			case L_ARGS_MACOS :
 				return fVMArgsMac[arch];
-			case L_ARGS_SOLAR :
-				return fVMArgsSol[arch];
 			case L_ARGS_WIN32 :
 				return fVMArgsWin[arch];
 		}
@@ -264,9 +246,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		} else if (Platform.OS_MACOSX.equals(os)) {
 			archArgs = archIndex > 0 ? getVMArguments(L_ARGS_MACOS, archIndex) + " " + archArgsAllPlatforms : archArgsAllPlatforms; //$NON-NLS-1$
 			return getCompleteArgs(archArgs, getVMArguments(L_ARGS_MACOS), fVMArgs[L_ARGS_ARCH_ALL]);
-		} else if (Platform.OS_SOLARIS.equals(os)) {
-			archArgs = archIndex > 0 ? getVMArguments(L_ARGS_SOLAR, archIndex) + " " + archArgsAllPlatforms : archArgsAllPlatforms; //$NON-NLS-1$
-			return getCompleteArgs(archArgs, getVMArguments(L_ARGS_SOLAR), fVMArgs[L_ARGS_ARCH_ALL]);
 		} else {
 			return getCompleteArgs(archArgsAllPlatforms, "", fVMArgs[L_ARGS_ARCH_ALL]); //$NON-NLS-1$
 		}
@@ -297,9 +276,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 				} else if (child.getNodeName().equals(P_PROG_ARGS_MAC)) {
 					parentArgs = fProgramArgsMac;
 					fProgramArgsMac[L_ARGS_ARCH_ALL] = getText(child).trim();
-				} else if (child.getNodeName().equals(P_PROG_ARGS_SOL)) {
-					parentArgs = fProgramArgsSol;
-					fProgramArgsSol[L_ARGS_ARCH_ALL] = getText(child).trim();
 				} else if (child.getNodeName().equals(P_PROG_ARGS_WIN)) {
 					parentArgs = fProgramArgsWin;
 					fProgramArgsWin[L_ARGS_ARCH_ALL] = getText(child).trim();
@@ -312,9 +288,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 				} else if (child.getNodeName().equals(P_VM_ARGS_MAC)) {
 					parentArgs = fVMArgsMac;
 					fVMArgsMac[L_ARGS_ARCH_ALL] = getText(child).trim();
-				} else if (child.getNodeName().equals(P_VM_ARGS_SOL)) {
-					parentArgs = fVMArgsSol;
-					fVMArgsSol[L_ARGS_ARCH_ALL] = getText(child).trim();
 				} else if (child.getNodeName().equals(P_VM_ARGS_WIN)) {
 					parentArgs = fVMArgsWin;
 					fVMArgsWin[L_ARGS_ARCH_ALL] = getText(child).trim();
@@ -385,15 +358,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 			writeArchArgs(fProgramArgsMac, subIndent, writer);
 			writer.println(subIndent + "</" + P_PROG_ARGS_MAC + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (hasArgs(fProgramArgsSol)) {
-			writer.print(subIndent + "<" + P_PROG_ARGS_SOL + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (fProgramArgsSol[L_ARGS_ARCH_ALL].length() > 0) {
-				writer.print(getWritableString(fProgramArgsSol[L_ARGS_ARCH_ALL]));
-			}
-			writer.println();
-			writeArchArgs(fProgramArgsSol, subIndent, writer);
-			writer.println(subIndent + "</" + P_PROG_ARGS_SOL + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 		if (hasArgs(fProgramArgsWin)) {
 			writer.print(subIndent + "<" + P_PROG_ARGS_WIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (fProgramArgsWin[L_ARGS_ARCH_ALL].length() > 0) {
@@ -429,15 +393,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 			writer.println();
 			writeArchArgs(fVMArgsMac, subIndent, writer);
 			writer.println(subIndent + "</" + P_VM_ARGS_MAC + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (hasArgs(fVMArgsSol)) {
-			writer.print(subIndent + "<" + P_VM_ARGS_SOL + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (fVMArgsSol[L_ARGS_ARCH_ALL].length() > 0) {
-				writer.print(getWritableString(fVMArgsSol[L_ARGS_ARCH_ALL]));
-			}
-			writer.println();
-			writeArchArgs(fVMArgsSol, subIndent, writer);
-			writer.println(subIndent + "</" + P_VM_ARGS_SOL + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (hasArgs(fVMArgsWin)) {
 			writer.print(subIndent + "<" + P_VM_ARGS_WIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$

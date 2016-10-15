@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -82,8 +83,6 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 						parseLinux((Element) child);
 					} else if (name.equals("macosx")) { //$NON-NLS-1$
 						parseMac((Element) child);
-					} else if (name.equals("solaris")) { //$NON-NLS-1$
-						parseSolaris((Element) child);
 					} else if (name.equals("win")) { //$NON-NLS-1$
 						parseWin((Element) child);
 					}
@@ -114,13 +113,6 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		}
 	}
 
-	private void parseSolaris(Element element) {
-		fIcons.put(SOLARIS_LARGE, element.getAttribute(SOLARIS_LARGE));
-		fIcons.put(SOLARIS_MEDIUM, element.getAttribute(SOLARIS_MEDIUM));
-		fIcons.put(SOLARIS_SMALL, element.getAttribute(SOLARIS_SMALL));
-		fIcons.put(SOLARIS_TINY, element.getAttribute(SOLARIS_TINY));
-	}
-
 	private void parseMac(Element element) {
 		fIcons.put(MACOSX_ICON, element.getAttribute("icon")); //$NON-NLS-1$
 	}
@@ -138,7 +130,6 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 		writeLinux(indent + "   ", writer); //$NON-NLS-1$
 		writeMac(indent + "   ", writer); //$NON-NLS-1$
-		writeSolaris(indent + "   ", writer); //$NON-NLS-1$
 		writerWin(indent + "   ", writer); //$NON-NLS-1$
 		writer.println(indent + "</launcher>"); //$NON-NLS-1$
 	}
@@ -158,15 +149,6 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		writeIcon(indent + "   ", WIN32_256_HIGH, writer); //$NON-NLS-1$
 		writer.println("/>"); //$NON-NLS-1$
 		writer.println(indent + "</win>"); //$NON-NLS-1$
-	}
-
-	private void writeSolaris(String indent, PrintWriter writer) {
-		writer.print(indent + "<solaris"); //$NON-NLS-1$
-		writeIcon(indent + "   ", SOLARIS_LARGE, writer); //$NON-NLS-1$
-		writeIcon(indent + "   ", SOLARIS_MEDIUM, writer); //$NON-NLS-1$
-		writeIcon(indent + "   ", SOLARIS_SMALL, writer); //$NON-NLS-1$
-		writeIcon(indent + "   ", SOLARIS_TINY, writer); //$NON-NLS-1$
-		writer.println("/>"); //$NON-NLS-1$
 	}
 
 	private void writeIcon(String indent, String iconId, PrintWriter writer) {

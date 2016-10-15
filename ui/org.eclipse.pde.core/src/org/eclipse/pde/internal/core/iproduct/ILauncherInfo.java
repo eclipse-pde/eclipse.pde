@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
@@ -15,11 +16,6 @@ public interface ILauncherInfo extends IProductObject {
 	public static final String LINUX_ICON = "linuxIcon"; //$NON-NLS-1$
 
 	public static final String MACOSX_ICON = "macosxIcon"; //$NON-NLS-1$
-
-	public static final String SOLARIS_LARGE = "solarisLarge"; //$NON-NLS-1$
-	public static final String SOLARIS_MEDIUM = "solarisMedium"; //$NON-NLS-1$
-	public static final String SOLARIS_SMALL = "solarisSmall"; //$NON-NLS-1$
-	public static final String SOLARIS_TINY = "solarisTiny"; //$NON-NLS-1$
 
 	public static final String WIN32_16_LOW = "winSmallLow"; //$NON-NLS-1$
 	public static final String WIN32_16_HIGH = "winSmallHigh"; //$NON-NLS-1$

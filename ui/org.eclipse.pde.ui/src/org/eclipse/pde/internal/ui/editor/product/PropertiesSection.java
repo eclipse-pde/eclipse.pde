@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -102,7 +103,8 @@ public class PropertiesSection extends TableSection {
 		private IConfigurationProperty fEdit;
 		private Set<String> fExistingNames;
 
-		private String[] COMBO_OSLABELS = new String[] {PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_SOLARIS, Platform.OS_WIN32};
+		private String[] COMBO_OSLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX,
+				Platform.OS_MACOSX, Platform.OS_WIN32 };
 		private String[] COMBO_ARCHLABELS = new String[] {PDEUIMessages.PropertiesSection_All, Platform.ARCH_X86, Platform.ARCH_X86_64, Platform.ARCH_PPC, Platform.ARCH_IA64, Platform.ARCH_IA64_32, Platform.ARCH_PA_RISC, Platform.ARCH_SPARC};
 
 		public PropertyDialog(Shell shell, IConfigurationProperty property, Set<String> existingNames) {

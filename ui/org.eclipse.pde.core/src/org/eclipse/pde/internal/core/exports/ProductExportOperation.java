@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
@@ -322,8 +323,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 				String images = null;
 				if (configs[i][0].equals("win32")) { //$NON-NLS-1$
 					images = getWin32Images(info);
-				} else if (configs[i][0].equals("solaris")) { //$NON-NLS-1$
-					images = getSolarisImages(info);
 				} else if (configs[i][0].equals("linux")) { //$NON-NLS-1$
 					images = getExpandedPath(info.getIconPath(ILauncherInfo.LINUX_ICON));
 				} else if (configs[i][0].equals("macosx")) { //$NON-NLS-1$
@@ -395,15 +394,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_48_LOW));
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_256_HIGH));
 		}
-		return buffer.length() > 0 ? buffer.toString() : null;
-	}
-
-	private String getSolarisImages(ILauncherInfo info) {
-		StringBuffer buffer = new StringBuffer();
-		append(buffer, info.getIconPath(ILauncherInfo.SOLARIS_LARGE));
-		append(buffer, info.getIconPath(ILauncherInfo.SOLARIS_MEDIUM));
-		append(buffer, info.getIconPath(ILauncherInfo.SOLARIS_SMALL));
-		append(buffer, info.getIconPath(ILauncherInfo.SOLARIS_TINY));
 		return buffer.length() > 0 ? buffer.toString() : null;
 	}
 

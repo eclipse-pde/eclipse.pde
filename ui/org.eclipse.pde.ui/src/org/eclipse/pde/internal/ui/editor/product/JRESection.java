@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 217908
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -64,8 +65,8 @@ public class JRESection extends PDESection {
 	private ComboViewerPart fEEsCombo;
 	private boolean fBlockChanges;
 
-	private static final String[] TAB_LABELS = {"linux", "macosx", "solaris", "win32"}; //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	private static final String[] TAB_OS = {Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_SOLARIS, Platform.OS_WIN32};
+	private static final String[] TAB_LABELS = { "linux", "macosx", "win32" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final String[] TAB_OS = { Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_WIN32 };
 
 	private CTabFolder fTabFolder;
 	private int fLastTab;
@@ -195,11 +196,9 @@ public class JRESection extends PDESection {
 		String currentTarget = TargetPlatform.getOS();
 
 		if (Platform.OS_WIN32.equals(currentTarget)) {
-			fTabFolder.setSelection(3);
+			fTabFolder.setSelection(2);
 		} else if (Platform.OS_MACOSX.equals(currentTarget)) {
 			fTabFolder.setSelection(1);
-		} else if (Platform.OS_SOLARIS.equals(currentTarget)) {
-			fTabFolder.setSelection(2);
 		}
 	}
 

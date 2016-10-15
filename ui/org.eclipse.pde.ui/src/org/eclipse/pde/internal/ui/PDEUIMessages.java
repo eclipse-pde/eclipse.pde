@@ -10,6 +10,7 @@
  *     Code 9 Corporation - on going enhancements and maintenance
  *     Brian de Alwis (MTI) - bug 429420
  *     Fabian Miehe - Bug 440420
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -2024,7 +2025,6 @@ public class PDEUIMessages extends NLS {
 	public static String AboutSection_warning;
 	public static String AboutSection_imgTitle;
 	public static String AboutSection_imgMessage;
-	public static String LauncherSection_solarisLabel;
 	public static String LauncherSection_launcherName;
 	public static String LauncherSection_dialogTitle;
 	public static String LauncherSection_dialogMessage;

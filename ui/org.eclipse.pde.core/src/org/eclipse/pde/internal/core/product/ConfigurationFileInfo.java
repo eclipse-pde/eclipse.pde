@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -178,11 +179,6 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 			fMacUse = use;
 			if (isEditable())
 				firePropertyChanged(MAC, old, fMacUse);
-		} else if (Platform.OS_SOLARIS.equals(os)) {
-			String old = fSolUse;
-			fSolUse = use;
-			if (isEditable())
-				firePropertyChanged(SOL, old, fSolUse);
 		}
 	}
 
@@ -197,8 +193,6 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 			return fLinUse;
 		} else if (Platform.OS_MACOSX.equals(os)) {
 			return fMacUse;
-		} else if (Platform.OS_SOLARIS.equals(os)) {
-			return fSolUse;
 		}
 		return null;
 	}
@@ -227,11 +221,6 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 			fMacPath = path;
 			if (isEditable())
 				firePropertyChanged(MAC, old, fMacPath);
-		} else if (Platform.OS_SOLARIS.equals(os)) {
-			String old = fSolPath;
-			fSolPath = path;
-			if (isEditable())
-				firePropertyChanged(SOL, old, fSolPath);
 		}
 	}
 
@@ -246,8 +235,6 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 			return fLinPath;
 		} else if (Platform.OS_MACOSX.equals(os)) {
 			return fMacPath;
-		} else if (Platform.OS_SOLARIS.equals(os)) {
-			return fSolPath;
 		}
 		return null;
 	}

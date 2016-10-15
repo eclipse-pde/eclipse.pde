@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -50,8 +51,6 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			return fJVMLin;
 		} else if (Platform.OS_MACOSX.equals(os)) {
 			return fJVMMac;
-		} else if (Platform.OS_SOLARIS.equals(os)) {
-			return fJVMSol;
 		}
 		return null;
 	}
@@ -73,11 +72,6 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			fJVMMac = jreContainerPath;
 			if (isEditable())
 				firePropertyChanged(JRE_MAC, old, fJVMMac);
-		} else if (Platform.OS_SOLARIS.equals(os)) {
-			IPath old = fJVMSol;
-			fJVMSol = jreContainerPath;
-			if (isEditable())
-				firePropertyChanged(JRE_SOL, old, fJVMSol);
 		}
 	}
 
@@ -173,8 +167,6 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			return bIncludeLin;
 		} else if (Platform.OS_MACOSX.equals(os)) {
 			return bIncludeMac;
-		} else if (Platform.OS_SOLARIS.equals(os)) {
-			return bIncludeSol;
 		}
 		return false;
 	}
@@ -196,11 +188,6 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			bIncludeMac = includeJRE;
 			if (isEditable())
 				firePropertyChanged(JRE_MAC, old, Boolean.valueOf(bIncludeMac));
-		} else if (Platform.OS_SOLARIS.equals(os)) {
-			Boolean old = Boolean.valueOf(bIncludeSol);
-			bIncludeSol = includeJRE;
-			if (isEditable())
-				firePropertyChanged(JRE_SOL, old, Boolean.valueOf(bIncludeSol));
 		}
 	}
 

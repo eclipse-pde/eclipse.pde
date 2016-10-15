@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -64,7 +65,6 @@ public class LauncherSection extends PDESection {
 	private StackLayout fNotebookLayout;
 	private Composite fLinuxSection;
 	private Composite fMacSection;
-	private Composite fSolarisSection;
 	private Composite fWin32Section;
 
 	class IconEntry extends FormEntry {
@@ -163,7 +163,6 @@ public class LauncherSection extends PDESection {
 
 		fLinuxSection = addLinuxSection(fNotebook, toolkit);
 		fMacSection = addMacSection(fNotebook, toolkit);
-		fSolarisSection = addSolarisSection(fNotebook, toolkit);
 		fWin32Section = addWin32Section(fNotebook, toolkit);
 
 		createTabs();
@@ -186,7 +185,6 @@ public class LauncherSection extends PDESection {
 	private void createTabs() {
 		addTab("linux"); //$NON-NLS-1$
 		addTab("macosx"); //$NON-NLS-1$
-		addTab("solaris"); //$NON-NLS-1$
 		addTab("win32"); //$NON-NLS-1$
 
 		String currentTarget = TargetPlatform.getOS();
@@ -196,9 +194,6 @@ public class LauncherSection extends PDESection {
 		} else if ("macosx".equals(currentTarget)) { //$NON-NLS-1$
 			fTabFolder.setSelection(1);
 			fNotebookLayout.topControl = fMacSection;
-		} else if ("solaris".equals(currentTarget)) { //$NON-NLS-1$
-			fTabFolder.setSelection(2);
-			fNotebookLayout.topControl = fSolarisSection;
 		} else {
 			fTabFolder.setSelection(0);
 			fNotebookLayout.topControl = fLinuxSection;
@@ -302,19 +297,6 @@ public class LauncherSection extends PDESection {
 		Composite comp = createComposite(parent, toolkit);
 		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_linuxLabel, 3);
 		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_icon, ILauncherInfo.LINUX_ICON));
-		toolkit.paintBordersFor(comp);
-		return comp;
-	}
-
-	private Composite addSolarisSection(Composite parent, FormToolkit toolkit) {
-		Composite comp = createComposite(parent, toolkit);
-		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_solarisLabel, 3);
-
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_large, ILauncherInfo.SOLARIS_LARGE));
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_medium, ILauncherInfo.SOLARIS_MEDIUM));
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_small, ILauncherInfo.SOLARIS_SMALL));
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_tiny, ILauncherInfo.SOLARIS_TINY));
-
 		toolkit.paintBordersFor(comp);
 		return comp;
 	}
@@ -461,14 +443,6 @@ public class LauncherSection extends PDESection {
 			return "xpm"; //$NON-NLS-1$
 		if (iconId.equals(ILauncherInfo.MACOSX_ICON))
 			return "icns"; //$NON-NLS-1$
-		if (iconId.equals(ILauncherInfo.SOLARIS_LARGE))
-			return "l.pm"; //$NON-NLS-1$
-		if (iconId.equals(ILauncherInfo.SOLARIS_MEDIUM))
-			return "m.pm"; //$NON-NLS-1$
-		if (iconId.equals(ILauncherInfo.SOLARIS_SMALL))
-			return "s.pm"; //$NON-NLS-1$
-		if (iconId.equals(ILauncherInfo.SOLARIS_TINY))
-			return "t.pm"; //$NON-NLS-1$
 		if (iconId.equals(ILauncherInfo.P_ICO_PATH))
 			return "ico"; //$NON-NLS-1$
 		return "bmp"; //$NON-NLS-1$
@@ -491,9 +465,6 @@ public class LauncherSection extends PDESection {
 				fNotebookLayout.topControl = fMacSection;
 				break;
 			case 2 :
-				fNotebookLayout.topControl = fSolarisSection;
-				break;
-			case 3 :
 				fNotebookLayout.topControl = fWin32Section;
 				break;
 		}
