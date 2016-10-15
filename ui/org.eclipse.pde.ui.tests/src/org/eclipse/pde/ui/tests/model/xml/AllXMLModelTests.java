@@ -12,6 +12,7 @@ package org.eclipse.pde.ui.tests.model.xml;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.pde.core.tests.internal.feature.FeatureDataTestCase;
 
 public class AllXMLModelTests {
 
@@ -27,6 +28,7 @@ public class AllXMLModelTests {
 		suite.addTest(ExtensionAttributeTestCase.suite());
 		suite.addTest(ExtensionElementTestCase.suite());
 		suite.addTest(ManifestEditorSpellCheckTestCase.suite());
+		suite.addTest(FeatureDataTestCase.suite());
 		return suite;
 	}
 

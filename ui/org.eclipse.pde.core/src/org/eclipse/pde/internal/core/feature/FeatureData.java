@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 322975
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.File;
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
 import org.w3c.dom.Node;
 
@@ -80,7 +82,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 			writer.print(indent2);
 			writer.print(attribute);
 			writer.print("=\""); //$NON-NLS-1$
-			writer.print(value);
+			writer.print(XMLPrintHandler.encode(value));
 			writer.print("\""); //$NON-NLS-1$
 		}
 	}
