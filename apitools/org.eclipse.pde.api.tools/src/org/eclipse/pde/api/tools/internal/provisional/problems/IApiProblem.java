@@ -63,10 +63,6 @@ public interface IApiProblem {
 	 */
 	public static final int CATEGORY_API_USE_SCAN_PROBLEM = 0x80000000;
 	/**
-	 * Constant representing changed required execution environment
-	 */
-	public static final int CATEGORY_CHANGE_EXECUTION_ENV = 0x90000000;
-	/**
 	 * Constant representing the offset of the message key portion of the id bit
 	 * mask.
 	 */

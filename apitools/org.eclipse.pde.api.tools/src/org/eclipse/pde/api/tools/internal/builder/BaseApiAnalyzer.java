@@ -2244,17 +2244,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			lineNumber = 1;
 		}
 
-		if (IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED == kind) {
-
-			return ApiProblemFactory.newChangedExecutionEnvProblem(path, null, messageargs, new String[] {
-					IApiMarkerConstants.MARKER_ATTR_VERSION,
-					IApiMarkerConstants.API_MARKER_ATTR_ID,
-					IApiMarkerConstants.VERSION_NUMBERING_ATTR_DESCRIPTION, }, new Object[] {
-							version,
-							Integer.valueOf(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
-							description }, lineNumber, charStart, charEnd, IElementDescriptor.RESOURCE, kind);
-		}
-
 		return ApiProblemFactory.newApiVersionNumberProblem(path, null, messageargs, new String[] {
 				IApiMarkerConstants.MARKER_ATTR_VERSION,
 				IApiMarkerConstants.API_MARKER_ATTR_ID,
