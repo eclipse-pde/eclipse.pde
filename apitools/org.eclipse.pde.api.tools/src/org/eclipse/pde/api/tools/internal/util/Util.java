@@ -773,8 +773,9 @@ public final class Util {
 			case IDelta.INTERFACE_BOUND:
 				return "INTERFACE_BOUND"; //$NON-NLS-1$
 			case IDelta.METHOD:
-			case IDelta.DEFAULT_METHOD:
 				return "METHOD"; //$NON-NLS-1$
+			case IDelta.DEFAULT_METHOD:
+				return "DEFAULT_METHOD"; //$NON-NLS-1$
 			case IDelta.METHOD_MOVED_UP:
 				return "METHOD_MOVED_UP"; //$NON-NLS-1$
 			case IDelta.METHOD_WITH_DEFAULT_VALUE:
