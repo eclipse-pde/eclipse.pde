@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.text.bundle;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.osgi.framework.Constants;
 
 public class BundleModelFactory implements IBundleModelFactory {
@@ -36,7 +37,8 @@ public class BundleModelFactory implements IBundleModelFactory {
 		if (fModel instanceof BundleModel)
 			newLine = TextUtilities.getDefaultLineDelimiter(((BundleModel) fModel).getDocument());
 		else
-			newLine = System.getProperty("line.separator"); //$NON-NLS-1$
+			// use consistent line endings, see bug 506157
+			newLine = ManifestUtils.MANIFEST_LINE_SEPARATOR;
 
 		if (key.equalsIgnoreCase(Constants.BUNDLE_ACTIVATOR)) {
 			header = new BundleActivatorHeader(key, value, bundle, newLine);
