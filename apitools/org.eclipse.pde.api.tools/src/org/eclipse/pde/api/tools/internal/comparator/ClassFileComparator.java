@@ -2108,6 +2108,23 @@ public class ClassFileComparator {
 								}
 							}
 						}
+						// check method of interfaces.
+						HashSet<IApiType> interfaces = new HashSet<>();
+						collectAllInterfaces(this.type2, interfaces);
+						if (!interfaces.isEmpty()) {
+							for (IApiType inter : interfaces) {
+								IApiMethod methodInterface = inter.getMethod(name, descriptor);
+								if (methodInterface == null) {
+									continue;
+								} else {
+									int access3 = methodInterface.getModifiers();
+									if (Flags.isPublic(access3) || Flags.isProtected(access3)) {
+										found = true;
+										break;
+									}
+								}
+							}
+						}
 					}
 				}
 				if (!found) {
