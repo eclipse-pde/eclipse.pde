@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -70,7 +71,25 @@ public class PDEState extends MinimalState {
 					String n1 = s1.getName();
 					String n2 = s2.getName();
 					if (n1 != null && n1.equals(n2)) {
-						return versionCompare(s1.getVersion(), s2.getVersion());
+						int retValue = versionCompare(s1.getVersion(), s2.getVersion());
+						if(retValue == 0){
+							boolean isQualifier = "qualifier".equals(v1.getQualifier()); //$NON-NLS-1$
+							if (!isQualifier) {
+								String loc1 = s1.getLocation();
+								String loc2 = s2.getLocation();
+								if (loc1 != null && loc2 != null  && !loc1.equals(loc2)) {
+									IPath p1 = new Path(loc1).removeLastSegments(1);
+									IPath p2 = new Path(loc2).removeLastSegments(1);
+									String workspaceLoc = ResourcesPlugin.getWorkspace().getRoot().getLocation()
+											.toString();
+									if (p1 != null && p1.toString().equals(workspaceLoc))
+										return -1;
+									if (p2 != null && p2.toString().equals(workspaceLoc))
+										return 1;
+								}
+							}
+						}
+						return retValue;
 					}
 					long id1 = s1.getBundleId();
 					long id2 = s2.getBundleId();
@@ -89,11 +108,12 @@ public class PDEState extends MinimalState {
 				 */
 				private int versionCompare(Version v1, Version v2) {
 					if (v1.getMajor() == v2.getMajor() && v1.getMinor() == v2.getMinor() && v1.getMicro() == v2.getMicro()) {
+						if (v1.getQualifier().equals(v2.getQualifier())) {
+							return 0;
+						}
 						boolean q1 = "qualifier".equals(v1.getQualifier()); //$NON-NLS-1$
 						boolean q2 = "qualifier".equals(v2.getQualifier()); //$NON-NLS-1$
-						if (q1 && q2) {
-							return 0;
-						} else if (q1 && !q2) {
+						if (q1 && !q2) {
 							return -1;
 						} else if (q2 && !q1) {
 							return 1;
