@@ -2160,8 +2160,38 @@ public class ClassFileComparator {
 							}
 						}
 					}
-					this.addDelta(getElementType(type), IDelta.ADDED, found ? IDelta.METHOD_MOVED_DOWN : method.isDefaultMethod() ? IDelta.DEFAULT_METHOD : IDelta.METHOD, restrictionsForMethodAddition, this.initialDescriptorRestrictions, 0, method.isDefaultMethod() ? (method.getModifiers() | Flags.AccDefaultMethod) : method.getModifiers(), this.type1, getKeyForMethod(method, type), new String[] {
+					boolean isOverride = false;
+					if (!found) {
+						if (this.component != null) {
+							String name = method.getName();
+							String descriptor = method.getSignature();
+							// check method of interfaces.
+							HashSet<IApiType> interfaces = new HashSet<>();
+							collectAllInterfaces(this.type2, interfaces);
+							if (!interfaces.isEmpty()) {
+								for (IApiType inter : interfaces) {
+									IApiMethod methodInterface = inter.getMethod(name, descriptor);
+									if (methodInterface == null) {
+										continue;
+									} else {
+										int access3 = methodInterface.getModifiers();
+										if (Flags.isPublic(access3) || Flags.isProtected(access3)) {
+											isOverride = true;
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+					if (isOverride) {
+						this.addDelta(getElementType(type), IDelta.ADDED, isOverride ? IDelta.OVERRIDEN_METHOD : method.isDefaultMethod() ? IDelta.DEFAULT_METHOD : IDelta.METHOD, restrictionsForMethodAddition, this.initialDescriptorRestrictions, 0, method.isDefaultMethod() ? (method.getModifiers() | Flags.AccDefaultMethod) : method.getModifiers(), this.type1, getKeyForMethod(method, type), new String[] {
+								Util.getDescriptorName(type),
+								methodDisplayName });
+					} else {
+						this.addDelta(getElementType(type), IDelta.ADDED, found ? IDelta.METHOD_MOVED_DOWN : method.isDefaultMethod() ? IDelta.DEFAULT_METHOD : IDelta.METHOD, restrictionsForMethodAddition, this.initialDescriptorRestrictions, 0, method.isDefaultMethod() ? (method.getModifiers() | Flags.AccDefaultMethod) : method.getModifiers(), this.type1, getKeyForMethod(method, type), new String[] {
 							Util.getDescriptorName(type), methodDisplayName });
+					}
 
 				} else {
 					this.addDelta(getElementType(type), IDelta.ADDED, found ? IDelta.OVERRIDEN_METHOD : IDelta.METHOD, restrictionsForMethodAddition, this.initialDescriptorRestrictions, 0, method.getModifiers(), this.type1, getKeyForMethod(method, type), new String[] {
