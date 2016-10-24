@@ -397,7 +397,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		cleanProblems(PDEProject.getFragmentXml(getProject()), IResource.DEPTH_ZERO);
 		// clean build properties
 		cleanProblems(PDEProject.getBuildProperties(getProject()), IResource.DEPTH_ZERO);
-		localmonitor.step(1);
+		localmonitor.split(1);
 	}
 
 	/**

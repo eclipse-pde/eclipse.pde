@@ -40,12 +40,12 @@ public class PluginSearchOperation {
 
 		for (IPluginModelBase candidate : plugins) {
 			visit(candidate);
-			subMonitor.step(1);
+			subMonitor.split(1);
 		}
 
 		for (IFeatureModel candidate : features) {
 			visit(candidate);
-			subMonitor.step(1);
+			subMonitor.split(1);
 		}
 	}
 

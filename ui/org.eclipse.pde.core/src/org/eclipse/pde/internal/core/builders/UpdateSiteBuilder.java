@@ -95,7 +95,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 			SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.UpdateSiteBuilder_0, site.getName()), 1);
 			// clean problem markers on site XML file
 			site.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
-			localmonitor.step(1);
+			localmonitor.split(1);
 		}
 	}
 }

@@ -79,7 +79,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 						PDECore.log(e);
 					}
 				}
-				localMonitor.step(1);
+				localMonitor.split(1);
 			}
 			return bundles.toArray(new TargetBundle[bundles.size()]);
 		}
@@ -104,7 +104,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 			} catch (CoreException e) {
 				// ignore non-feature files
 			}
-			localMonitor.step(1);
+			localMonitor.split(1);
 		}
 		return features.toArray(new TargetFeature[features.size()]);
 	}

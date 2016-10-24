@@ -252,7 +252,7 @@ public class FeatureExportOperation extends Job {
 		BuildScriptGenerator generator = new BuildScriptGenerator();
 		setupGenerator(generator, featureID, version, configs, featureLocation);
 		generator.generate();
-		subMonitor.step(1);
+		subMonitor.split(1);
 		subMonitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningBuildScript);
 		// compile the classes
 		runScript(featureLocation + IPath.SEPARATOR + "compile." + featureID + ".xml", new String[] {"main"}, properties, subMonitor.split(1)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -1147,7 +1147,7 @@ public class FeatureExportOperation extends Job {
 		if (fInfo.useWorkspaceCompiledClasses) {
 			getWorkspaceExportHelper().buildBeforeExport(fInfo.items, subMonitor.split(45));
 			Set<?> errors = getWorkspaceExportHelper().checkForErrors(fInfo.items);
-			subMonitor.step(5);
+			subMonitor.split(5);
 			if (!errors.isEmpty()) {
 				return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_workspaceBuildErrorsFoundDuringExport, errors.toString()));
 			}

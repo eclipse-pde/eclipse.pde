@@ -192,7 +192,7 @@ public class ExternalFeatureModelManager {
 		for (int i = 0; i < featurePaths.length; i++) {
 			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {
-				subMonitor.step(1);
+				subMonitor.split(1);
 				continue;
 			}
 			try {
@@ -201,7 +201,7 @@ public class ExternalFeatureModelManager {
 			} catch (CoreException e) {
 				// Ignore bad files in the collection
 			}
-			subMonitor.step(1);
+			subMonitor.split(1);
 		}
 		Collection<TargetFeature> models = uniqueFeatures.values();
 		return models.toArray(new TargetFeature[models.size()]);

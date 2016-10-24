@@ -137,7 +137,7 @@ public class PDEState extends MinimalState {
 			} catch (CoreException e) {
 				PDECore.log(e);
 			}
-			subMonitor.step(1);
+			subMonitor.split(1);
 		}
 	}
 

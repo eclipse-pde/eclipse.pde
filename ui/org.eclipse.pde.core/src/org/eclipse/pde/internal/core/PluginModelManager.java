@@ -568,7 +568,7 @@ public class PluginModelManager implements IModelProviderListener {
 		for (int i = 0; i < models.length; i++) {
 			addWorkspaceBundleToState(entries, models[i]);
 		}
-		subMon.step(15);
+		subMon.split(15);
 
 		if (PDECore.DEBUG_MODEL) {
 			System.out.println(fWorkspaceManager.getModels().length + " workspace models created in  " + (System.currentTimeMillis() - startWorkspaceAdditions) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -576,7 +576,7 @@ public class PluginModelManager implements IModelProviderListener {
 
 		// Resolve the state for all external and workspace models
 		fState.resolveState(true);
-		subMon.step(5);
+		subMon.split(5);
 
 		fEntries = entries;
 		// flush the extension registry cache since workspace data (BundleDescription id's) have changed.
@@ -594,7 +594,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 
-		subMon.step(25);
+		subMon.split(25);
 		if (PDECore.DEBUG_MODEL) {
 			long time = System.currentTimeMillis() - startTime;
 			System.out.println("PDE plug-in model initialization complete: " + time + " ms"); //$NON-NLS-1$//$NON-NLS-2$

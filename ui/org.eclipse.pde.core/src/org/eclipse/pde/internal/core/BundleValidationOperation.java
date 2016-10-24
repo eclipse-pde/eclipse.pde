@@ -46,11 +46,11 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 			if (bundle != null) {
 				fState.addBundle(FACTORY.createBundleDescription(bundle));
 			}
-			subMonitor.step(1);
+			subMonitor.split(1);
 		}
 		fState.setPlatformProperties(fProperties);
 		fState.resolve(false);
-		subMonitor.step(1);
+		subMonitor.split(1);
 	}
 
 	public Map<Object, Object[]> getResolverErrors() {

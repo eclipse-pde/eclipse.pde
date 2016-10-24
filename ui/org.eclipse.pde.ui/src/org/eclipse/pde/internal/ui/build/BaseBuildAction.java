@@ -99,7 +99,7 @@ public abstract class BaseBuildAction extends AbstractHandler {
 
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.BuildAction_Validate, 4);
 		if (!ensureValid(fManifestFile, subMonitor.split(1))) {
-			subMonitor.step(3); // consume all remaining work
+			subMonitor.split(3); // consume all remaining work
 			return;
 		}
 		subMonitor.setTaskName(PDEUIMessages.BuildAction_Generate);
@@ -110,7 +110,7 @@ public abstract class BaseBuildAction extends AbstractHandler {
 		IFile generatedFile = (IFile) project.findMember("build.xml"); //$NON-NLS-1$
 		if (generatedFile != null)
 			setDefaultValues(generatedFile);
-		subMonitor.step(1);
+		subMonitor.split(1);
 
 	}
 

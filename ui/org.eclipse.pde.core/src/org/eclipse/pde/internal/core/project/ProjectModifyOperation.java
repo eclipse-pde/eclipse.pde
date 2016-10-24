@@ -111,17 +111,17 @@ public class ProjectModifyOperation {
 			}
 			PDEProject.setBundleRoot(project, folder);
 		}
-		sub.step(1);
+		sub.split(1);
 		configureNatures(description);
-		sub.step(1);
+		sub.split(1);
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			configureJavaProject(description, before, jpExisted);
 		}
-		sub.step(1);
+		sub.split(1);
 		configureManifest(description, before);
-		sub.step(1);
+		sub.split(1);
 		configureBuildPropertiesFile(description, before);
-		sub.step(1);
+		sub.split(1);
 
 		// project settings for Equinox, Extension Registry, Automated dependency policy,
 		// manifest editor launch shortcuts and export wizard
@@ -171,7 +171,7 @@ public class ProjectModifyOperation {
 		if (fModel.isDirty()) {
 			fModel.save();
 		}
-		sub.step(1);
+		sub.split(1);
 	}
 
 	/**

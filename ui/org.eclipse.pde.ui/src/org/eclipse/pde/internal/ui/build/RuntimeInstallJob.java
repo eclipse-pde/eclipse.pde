@@ -141,7 +141,7 @@ public class RuntimeInstallJob extends Job {
 					IInstallableUnit existingIU = (IInstallableUnit) queryMatches.iterator().next();
 					toInstall.add(createInstallableUnitPatch(existingIU, newVersion, profile, subMonitor.split(1)));
 				}
-				subMonitor.step(2);
+				subMonitor.split(2);
 			}
 
 			if (toInstall.size() > 0) {
