@@ -236,12 +236,6 @@
             name="%template.extensibleEditor.name">
       </template>
       <template
-            contributingId="org.eclipse.ui.popupMenus"
-            name="%template.popupMenus.name"
-            class="org.eclipse.pde.internal.ui.templates.ide.PopupMenuTemplate"
-            id="org.eclipse.pde.ui.templates.popup">
-      </template>
-      <template
             class="org.eclipse.pde.internal.ui.templates.ide.CommonNavigatorTemplate"
             contributingId="org.eclipse.ui.navigator.viewer"
             id="org.eclipse.pde.ui.templates.commonNavigator"
@@ -409,15 +403,6 @@
             id="org.eclipse.pde.ui.pluginContent.propertyPages">
          <description>
             %pluginContent.propertyPages.description
-         </description>
-      </wizard>
-      <wizard
-            name="%pluginContent.popupMenus.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.png"
-            class="org.eclipse.pde.internal.ui.templates.ide.PopupMenuNewWizard"
-            id="org.eclipse.pde.ui.pluginContent.popupMenus">
-         <description>
-            %pluginContent.popupMenus.description
          </description>
       </wizard>
       <wizard

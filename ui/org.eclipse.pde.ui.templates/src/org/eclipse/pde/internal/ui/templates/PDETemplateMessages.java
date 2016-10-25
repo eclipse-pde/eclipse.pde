@@ -151,21 +151,6 @@ public class PDETemplateMessages extends NLS {
 	public static String NewWizardTemplate_extension;
 	public static String NewWizardTemplate_fileName;
 
-	public static String PopupMenuNewWizard_wtitle;
-	public static String PopupMenuTemplate_title;
-	public static String PopupMenuTemplate_desc;
-	public static String PopupMenuTemplate_targetClass;
-	public static String PopupMenuTemplate_newAction;
-	public static String PopupMenuTemplate_submenuName;
-	public static String PopupMenuTemplate_defaultSubmenuName;
-	public static String PopupMenuTemplate_actionLabel;
-	public static String PopupMenuTemplate_defaultActionName;
-	public static String PopupMenuTemplate_packageName;
-	public static String PopupMenuTemplate_actionClass;
-	public static String PopupMenuTemplate_enabledFor;
-	public static String PopupMenuTemplate_singleSelection;
-	public static String PopupMenuTemplate_multipleSelection;
-
 	public static String PreferencePageTemplate_title;
 	public static String PreferencePageTemplate_desc;
 	public static String PreferencePageTemplate_packageName;
