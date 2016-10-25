@@ -136,6 +136,7 @@ public class ViewTemplate extends PDETemplateSection {
 
 		viewElement.setAttribute("class", fullClassName); //$NON-NLS-1$
 		viewElement.setAttribute("category", cid); //$NON-NLS-1$
+		viewElement.setAttribute("inject", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(viewElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);

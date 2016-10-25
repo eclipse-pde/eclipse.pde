@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 265231, 486261
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 265231, 486261, 506528
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.rcp;
 
@@ -126,6 +126,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".View"); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("name", "View"); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("id", id + ".view"); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("inject", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(view);
 
 		if (!extension.isInTheModel())

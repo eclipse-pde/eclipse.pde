@@ -1,6 +1,9 @@
 package $packageName$;
 
 import java.util.*;
+
+import javax.inject.Inject;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -9,12 +12,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.part.ViewPart;
 
 public class View extends ViewPart {
 	public static final String ID = "$pluginId$.view";
 
+	@Inject IWorkbench workbench;
+	
 	private TableViewer viewer;
 	
 	private class StringLabelProvider extends ColumnLabelProvider {
@@ -25,7 +30,7 @@ public class View extends ViewPart {
 
 		@Override
 		public Image getImage(Object obj) {
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
+			return workbench.getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
 
 	}

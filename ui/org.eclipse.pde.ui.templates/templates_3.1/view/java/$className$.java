@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 % if viewType == "treeViewer"
 import org.eclipse.core.runtime.IAdaptable;
 % endif
+import javax.inject.Inject;
 
 
 /**
@@ -54,6 +55,8 @@ public class $className$ extends ViewPart {
 	 */
 	public static final String ID = "$packageName$.$className$";
 
+	@Inject IWorkbench workbench;
+	
 %endif
 %if viewType == "tableViewer"
 	private TableViewer viewer;
@@ -183,7 +186,7 @@ public class $className$ extends ViewPart {
 		}
 		@Override
 		public Image getImage(Object obj) {
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
+			return workbench.getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
 	}
 %else
@@ -196,7 +199,7 @@ public class $className$ extends ViewPart {
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
 			if (obj instanceof TreeParent)
 			   imageKey = ISharedImages.IMG_OBJ_FOLDER;
-			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
+			return workbench.getSharedImages().getImage(imageKey);
 		}
 	}
 %endif
@@ -223,7 +226,7 @@ public class $className$ extends ViewPart {
 %if contextHelp
 
 		// Create the help context id for the viewer's control
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "$pluginId$.viewer");
+		workbench.getHelpSystem().setHelp(viewer.getControl(), "$pluginId$.viewer");
 %endif
 		getSite().setSelectionProvider(viewer);
 		makeActions();
@@ -295,12 +298,12 @@ public class $className$ extends ViewPart {
 		};
 		action2.setText("Action 2");
 		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+		action2.setImageDescriptor(workbench.getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		doubleClickAction = new Action() {
 			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
+				IStructuredSelection selection = viewer.getStructuredSelection();
+				Object obj = selection.getFirstElement();
 				showMessage("Double-click detected on "+obj.toString());
 			}
 		};
