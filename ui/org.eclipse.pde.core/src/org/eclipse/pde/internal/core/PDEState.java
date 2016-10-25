@@ -14,6 +14,8 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
@@ -78,14 +80,15 @@ public class PDEState extends MinimalState {
 								String loc1 = s1.getLocation();
 								String loc2 = s2.getLocation();
 								if (loc1 != null && loc2 != null  && !loc1.equals(loc2)) {
-									IPath p1 = new Path(loc1).removeLastSegments(1);
-									IPath p2 = new Path(loc2).removeLastSegments(1);
-									String workspaceLoc = ResourcesPlugin.getWorkspace().getRoot().getLocation()
-											.toString();
-									if (p1 != null && p1.toString().equals(workspaceLoc))
-										return -1;
-									if (p2 != null && p2.toString().equals(workspaceLoc))
-										return 1;
+									IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+									if (root != null) {
+										IPath p1 = new Path(loc1);
+										if (root.findContainersForLocationURI(URIUtil.toURI(p1)).length != 0)
+											return -1;
+										IPath p2 = new Path(loc2);
+										if (root.findContainersForLocationURI(URIUtil.toURI(p2)).length != 0)
+											return 1;
+									}
 								}
 							}
 						}
