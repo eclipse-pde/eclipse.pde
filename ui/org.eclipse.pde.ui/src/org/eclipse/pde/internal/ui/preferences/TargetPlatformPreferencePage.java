@@ -214,10 +214,11 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 						.getTargetDefinitionMap();
 				for (Entry<ITargetHandle, List<TargetDefinition>> entry : targetFlagMap.entrySet()) {
 					if (entry.getKey().equals(target.getHandle())) {
-						if (entry.getValue().size() > 0) {
-							if (entry.getValue().get(0).isContentEquivalent(target)
-									&& entry.getValue().get(0).getStatus() != null) {
-								int value = entry.getValue().get(0).getStatus().getSeverity();
+						List<TargetDefinition> targetList = entry.getValue();
+						if (targetList.size() > 0) {
+							if (targetList.get(0).isContentEquivalent(target)
+									&& targetList.get(0).getStatus() != null) {
+								int value = targetList.get(0).getStatus().getSeverity();
 								if (value == IStatus.WARNING) {
 									flag = SharedLabelProvider.F_WARNING;
 								} else if (value == IStatus.ERROR) {
