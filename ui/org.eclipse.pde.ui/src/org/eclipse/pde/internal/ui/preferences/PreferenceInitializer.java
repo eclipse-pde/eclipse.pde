@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
@@ -25,6 +26,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(IPreferenceConstants.PROP_SHOW_OBJECTS, IPreferenceConstants.VALUE_USE_IDS);
 		store.setDefault(IPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
 		store.setDefault(IPreferenceConstants.SHOW_TARGET_STATUS, false);
+		store.setDefault(IPreferenceConstants.ALWAYS_PREFER_WORKSPACE, true);
+		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+		prefs.setDefault(ICoreConstants.ALWAYS_PREFER_WORKSPACE, true);
 	}
 
 }

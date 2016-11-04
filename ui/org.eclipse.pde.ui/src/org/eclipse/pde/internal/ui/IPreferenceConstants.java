@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,11 @@ public interface IPreferenceConstants extends ILaunchingPreferenceConstants {
 	 * Boolean preference whether to display the active target platform in the main window status bar
 	 */
 	public static final String SHOW_TARGET_STATUS = "Preferences.MainPage.showTargetStatus"; //$NON-NLS-1$
+	/**
+	 * Boolean preference whether to always prefer workspace bundle.
+	 */
+	public static final String ALWAYS_PREFER_WORKSPACE = "Preferences.MainPage.alwaysWorkspace";//$NON-NLS-1$
+
 
 	// Editor Outline
 	public static final String PROP_OUTLINE_SORTING = "PDEMultiPageContentOutline.SortingAction.isChecked"; //$NON-NLS-1$

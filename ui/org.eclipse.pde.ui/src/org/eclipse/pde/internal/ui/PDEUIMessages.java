@@ -507,6 +507,9 @@ public class PDEUIMessages extends NLS {
 	public static String MainPreferencePage_showSourceBundles;
 
 	public static String MainPreferencePage_ShowTargetStatus;
+	
+	public static String MainPreferencePage_AlwaysPreferWorkspace;
+	
 	public static String MainPreferencePage_updateStale;
 
 	public static String ManifestStructureCreator_errorMessage;

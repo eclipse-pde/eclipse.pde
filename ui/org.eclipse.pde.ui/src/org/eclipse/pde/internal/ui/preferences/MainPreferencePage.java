@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,12 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.core.target.ITargetPlatformService;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEPreferencesManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.ui.*;
@@ -124,6 +124,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fPromptOnRemove;
 	private Button fAddToJavaSearch;
 	private Button fShowTargetStatus;
+	private Button fAlwaysPreferWorkspace;
 
 	private Text fRuntimeWorkspaceLocation;
 	private Button fRuntimeWorkspaceLocationRadio;
@@ -177,6 +178,10 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fShowTargetStatus = new Button(optionComp, SWT.CHECK);
 		fShowTargetStatus.setText(PDEUIMessages.MainPreferencePage_ShowTargetStatus);
 		fShowTargetStatus.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
+
+		fAlwaysPreferWorkspace = new Button(optionComp, SWT.CHECK);
+		fAlwaysPreferWorkspace.setText(PDEUIMessages.MainPreferencePage_AlwaysPreferWorkspace);
+		fAlwaysPreferWorkspace.setSelection(store.getBoolean(IPreferenceConstants.ALWAYS_PREFER_WORKSPACE));
 
 		Group group = SWTFactory.createGroup(composite, PDEUIMessages.Preferences_MainPage_showObjects, 2, 1, GridData.FILL_HORIZONTAL);
 		fUseID = new Button(group, SWT.RADIO);
@@ -243,6 +248,18 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			}
 		}
 
+		boolean useWorkspace = fAlwaysPreferWorkspace.getSelection();
+		if (store.getBoolean(IPreferenceConstants.ALWAYS_PREFER_WORKSPACE) != useWorkspace) {
+			store.setValue(IPreferenceConstants.ALWAYS_PREFER_WORKSPACE, fAlwaysPreferWorkspace.getSelection());
+			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+			prefs.setValue(ICoreConstants.ALWAYS_PREFER_WORKSPACE, fAlwaysPreferWorkspace.getSelection());
+			try {
+				InstanceScope.INSTANCE.getNode(PDECore.PLUGIN_ID).flush();
+			} catch (BackingStoreException e) {
+			}
+			PDECore.getDefault().getModelManager().targetReloaded(null);
+		}
+
 		boolean showTarget = fShowTargetStatus.getSelection();
 		if (store.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS) != showTarget) {
 			store.setValue(IPreferenceConstants.SHOW_TARGET_STATUS, showTarget);
@@ -283,6 +300,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		fAddToJavaSearch.setSelection(store.getDefaultBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH));
 		fShowTargetStatus.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
+		fAlwaysPreferWorkspace.setSelection(store.getDefaultBoolean(IPreferenceConstants.ALWAYS_PREFER_WORKSPACE));
 
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
 		boolean runtimeLocationIsContainer = launchingStore.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER);
