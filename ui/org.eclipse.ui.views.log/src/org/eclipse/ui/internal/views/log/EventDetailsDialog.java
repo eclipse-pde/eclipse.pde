@@ -261,9 +261,11 @@ public class EventDetailsDialog extends TrayDialog {
 			findNextSelectedChild(entry);
 		} else { // at end of list but can branch into child elements - bug 58083
 			setEntryChildren(entry);
-			entry = entryChildren[0];
 			isAtEndOfLog = entryChildren.length == 0;
 			isLastChild = entryChildren.length == 0;
+			if (entryChildren.length > 0) {
+				entry = entryChildren[0];
+			}
 		}
 		setEntrySelectionInTable();
 	}
