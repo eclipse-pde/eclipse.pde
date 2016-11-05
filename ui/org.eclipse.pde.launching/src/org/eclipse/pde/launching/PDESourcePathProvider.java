@@ -83,7 +83,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	 *
 	 */
 	private IProject[] getJavaProjects(ILaunchConfiguration configuration) throws CoreException {
-		IProject[] projects = LaunchPluginValidator.getAffectedProjects(configuration);
+		IProject[] projects = LaunchPluginValidator.getAffectedProjects(configuration, false);
 		return PDELaunchingPlugin.getWorkspace().computeProjectOrder(projects).projects;
 	}
 

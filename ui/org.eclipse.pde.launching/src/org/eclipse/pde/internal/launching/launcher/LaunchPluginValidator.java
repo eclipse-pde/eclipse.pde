@@ -89,7 +89,18 @@ public class LaunchPluginValidator {
 		return set;
 	}
 
+	/**
+	 * @return all affected projects, independently of their nature
+	 */
 	public static IProject[] getAffectedProjects(ILaunchConfiguration config) throws CoreException {
+		return getAffectedProjects(config, true);
+	}
+
+	/**
+	 * @param addFeatures {@code true} to add <b>feature</b> projects (if any) too, {@code false} to include only affected <b>Java</b> projects
+	 * @return affected Java and feature projects (last one optional)
+	 */
+	public static IProject[] getAffectedProjects(ILaunchConfiguration config, boolean addFeatures) throws CoreException {
 		// if restarting, no need to check projects for errors
 		if (config.getAttribute(IPDEConstants.RESTART, false))
 			return new IProject[0];
@@ -101,11 +112,13 @@ public class LaunchPluginValidator {
 				projects.add(project);
 		}
 
-		// add workspace feature project too (if any)
-		IProject[] allProjects = PDECore.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < allProjects.length; i++) {
-			if (WorkspaceModelManager.isFeatureProject(allProjects[i]) && !projects.contains(allProjects[i]))
-				projects.add(allProjects[i]);
+		if (addFeatures) {
+			// add workspace feature project too (if any)
+			IProject[] allProjects = PDECore.getWorkspace().getRoot().getProjects();
+			for (int i = 0; i < allProjects.length; i++) {
+				if (WorkspaceModelManager.isFeatureProject(allProjects[i]) && !projects.contains(allProjects[i]))
+					projects.add(allProjects[i]);
+			}
 		}
 		// add fake "Java Search" project
 		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
