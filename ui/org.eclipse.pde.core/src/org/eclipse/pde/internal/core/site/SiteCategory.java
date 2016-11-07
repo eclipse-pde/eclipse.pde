@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,15 +7,13 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 296392
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.isite.ISite;
-import org.eclipse.pde.internal.core.isite.ISiteCategory;
-import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.Node;
 
 public class SiteCategory extends SiteObject implements ISiteCategory {
@@ -84,4 +82,14 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 		}
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(getClass().getSimpleName()).append("{") //$NON-NLS-1$
+				.append("name=").append(name) //$NON-NLS-1$
+				.append("}"); //$NON-NLS-1$
+		return builder.toString();
+	}
+
 }

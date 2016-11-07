@@ -1,12 +1,13 @@
 /*******************************************************************************
-* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2016 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
 *
 * Contributors:
 *   EclipseSource - initial API and implementation
-*   Mickael Istria (Red Hat Inc.) - 383795: <bundle...> support
+*   Mickael Istria (Red Hat Inc.) - 383795: <bundle...> support and nested categories
+*   Martin Karpisek <martin.karpisek@gmail.com> - Bug 296392
 *   IBM Corporation - ongoing enhancements
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
@@ -46,6 +47,9 @@ class CategoryLabelProvider extends LabelProvider {
 	public Image getImage(Object element) {
 		if (element instanceof ISiteCategoryDefinition)
 			return fCatDefImage;
+		if (element instanceof SiteCategoryDefinitionAdapter) {
+			return getImage(((SiteCategoryDefinitionAdapter) element).category);
+		}
 		if (element instanceof SiteFeatureAdapter) {
 			if (PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(((SiteFeatureAdapter) element).feature.getId(), ((SiteFeatureAdapter) element).feature.getVersion()) == null)
 				return fMissingSiteFeatureImage;
@@ -67,6 +71,9 @@ class CategoryLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		if (element instanceof ISiteCategoryDefinition)
 			return ((ISiteCategoryDefinition) element).getName();
+		if (element instanceof SiteCategoryDefinitionAdapter) {
+			return getText(((SiteCategoryDefinitionAdapter) element).category);
+		}
 		if (element instanceof SiteFeatureAdapter) {
 			ISiteFeature feature = ((SiteFeatureAdapter) element).feature;
 			return fSharedProvider.getObjectText(feature);

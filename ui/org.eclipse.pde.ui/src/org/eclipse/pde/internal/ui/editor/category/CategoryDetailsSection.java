@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2013, 2015 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2013, 2016 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,6 +7,8 @@
 * Contributors:
 *   EclipseSource - initial API and implementation
 *   IBM Corporation - bug fixing
+*   Red Hat Inc. - Support for nested categories
+*   Martin Karpisek <martin.karpisek@gmail.com> - Bug 296392
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
@@ -247,6 +249,20 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 				}
 			}
 		}
+
+		ISiteCategoryDefinition[] categories = fCurrentCategoryDefinition.getSite().getCategoryDefinitions();
+		for (ISiteCategoryDefinition categorie : categories) {
+			ISiteCategory[] cats = categorie.getCategories();
+			for (ISiteCategory cat : cats) {
+				if (cat.getParent() != null && oldCategory.equals(cat.getName())) {
+					try {
+						cat.setName(fCurrentCategoryDefinition.getName());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -268,6 +284,8 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 			Object o = ((IStructuredSelection) selection).getFirstElement();
 			if (o instanceof ISiteCategoryDefinition) {
 				fCurrentCategoryDefinition = (ISiteCategoryDefinition) o;
+			} else if (o instanceof SiteCategoryDefinitionAdapter) {
+				fCurrentCategoryDefinition = ((SiteCategoryDefinitionAdapter) o).category;
 			} else {
 				fCurrentCategoryDefinition = null;
 			}

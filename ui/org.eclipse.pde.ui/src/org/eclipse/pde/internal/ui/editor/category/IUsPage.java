@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2016 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,6 +7,8 @@
 * Contributors:
 *   EclipseSource - initial API and implementation
 *   IBM Corporation - Renamed from FeaturesPage
+*   Red Hat Inc. - Support for nested categories
+*   Martin Karpisek <martin.karpisek@gmail.com> - Bug 296392
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
@@ -44,14 +46,18 @@ public class IUsPage extends PDEFormPage {
 					if (object instanceof SiteBundleAdapter) {
 						return SiteBundleAdapter.class;
 					}
-					if (object instanceof ISiteCategoryDefinition)
+					if (object instanceof ISiteCategoryDefinition) {
 						return ISiteCategoryDefinition.class;
+					}
+					if (object instanceof SiteCategoryDefinitionAdapter) {
+						return SiteCategoryDefinitionAdapter.class;
+					}
 					return object.getClass();
 				}
 
 				@Override
 				public IDetailsPage getPage(Object key) {
-					if (key.equals(ISiteCategoryDefinition.class))
+					if (key.equals(ISiteCategoryDefinition.class) || key.equals(SiteCategoryDefinitionAdapter.class))
 						return createCategoryDetails();
 					return null;
 				}
