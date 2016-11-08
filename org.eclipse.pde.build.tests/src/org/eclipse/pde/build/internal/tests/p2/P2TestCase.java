@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2016 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,8 +19,8 @@ import org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepo
 import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository;
+import org.eclipse.equinox.internal.p2.repository.helpers.ChecksumProducer;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
-import org.eclipse.equinox.p2.internal.repository.tools.RepositoryUtilities;
 import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
@@ -140,7 +140,7 @@ public class P2TestCase extends PDETestCase {
 			return;
 
 		IFile artifact = repository.getFile(getArtifactLocation(descriptor));
-		String actualMD5 = RepositoryUtilities.computeMD5(artifact.getLocation().toFile());
+		String actualMD5 = ChecksumProducer.computeMD5(artifact.getLocation().toFile());
 		assertEquals(md5, actualMD5);
 	}
 
@@ -184,7 +184,7 @@ public class P2TestCase extends PDETestCase {
 	}
 
 	public void assertTouchpoint(IInstallableUnit iu, String phase, String action) {
-		Collection/*<ITouchpointData>*/data = iu.getTouchpointData();
+		Collection/*<ITouchpointData>*/ data = iu.getTouchpointData();
 		for (Iterator iter = data.iterator(); iter.hasNext();) {
 			ITouchpointInstruction instruction = ((ITouchpointData) iter.next()).getInstruction(phase);
 			if (instruction != null && instruction.getBody().indexOf(action) > -1)
@@ -194,7 +194,7 @@ public class P2TestCase extends PDETestCase {
 	}
 
 	public void assertProvides(IInstallableUnit iu, String namespace, String name) {
-		Collection/*<IProvidedCapability>*/caps = iu.getProvidedCapabilities();
+		Collection/*<IProvidedCapability>*/ caps = iu.getProvidedCapabilities();
 		for (Iterator iterator = caps.iterator(); iterator.hasNext();) {
 			IProvidedCapability cap = (IProvidedCapability) iterator.next();
 			if (cap.getNamespace().equals(namespace) && cap.getName().equals(name))
@@ -205,7 +205,7 @@ public class P2TestCase extends PDETestCase {
 	}
 
 	public void assertRequires(IInstallableUnit iu, String namespace, String name) {
-		Collection/*<IRequirement>*/reqs = iu.getRequirements();
+		Collection/*<IRequirement>*/ reqs = iu.getRequirements();
 		for (Iterator iterator = reqs.iterator(); iterator.hasNext();) {
 			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
 			if (reqCap.getNamespace().equals(namespace) && reqCap.getName().equals(name))
@@ -219,7 +219,7 @@ public class P2TestCase extends PDETestCase {
 		outer: for (Iterator iterator = requiredIUs.iterator(); iterator.hasNext();) {
 			IInstallableUnit reqIU = (IInstallableUnit) iterator.next();
 
-			Collection/*<IRequirement>*/reqs = iu.getRequirements();
+			Collection/*<IRequirement>*/ reqs = iu.getRequirements();
 			for (Iterator iterator2 = reqs.iterator(); iterator2.hasNext();) {
 				IRequiredCapability reqCap = (IRequiredCapability) iterator2.next();
 				if (reqCap.getNamespace().equals(IU_NAMESPACE) && reqCap.getName().equals(reqIU.getId()) && reqCap.getRange().isIncluded(reqIU.getVersion())) {
