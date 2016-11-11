@@ -293,7 +293,11 @@ public class ClassFileComparator {
 								IApiMethod method = methods[j];
 								IApiMethod method3 = this.type1.getMethod(method.getName(), method.getSignature());
 								if (method3 == null) {
-									this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), new String[] {
+									boolean isDefaultMethod = false;
+									if (this.type2.getMethod(method.getName(), method.getSignature()) != null) {
+										isDefaultMethod = this.type2.getMethod(method.getName(), method.getSignature()).isDefaultMethod();
+									}
+									this.addDelta(getElementType(this.type1), IDelta.ADDED, isDefaultMethod ? IDelta.DEFAULT_METHOD : IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), new String[] {
 											Util.getDescriptorName(type1),
 											type.getName(),
 											getMethodDisplayName(method, type) });
@@ -356,7 +360,11 @@ public class ClassFileComparator {
 										}
 									}
 									if (!found) {
-										this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), new String[] {
+										boolean isDefaultMethod = false;
+										if(this.type2.getMethod(method.getName(), method.getSignature())!=null) {
+											isDefaultMethod = this.type2.getMethod(method.getName(), method.getSignature()).isDefaultMethod();
+										}
+										this.addDelta(getElementType(this.type1), IDelta.ADDED, isDefaultMethod ? IDelta.DEFAULT_METHOD : IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), new String[] {
 												Util.getDescriptorName(type1),
 												type.getName(),
 												getMethodDisplayName(method, type) });
