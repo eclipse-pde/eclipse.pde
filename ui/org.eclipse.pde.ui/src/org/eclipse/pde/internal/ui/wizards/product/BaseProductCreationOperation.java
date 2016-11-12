@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 441543
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
@@ -55,6 +56,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	protected void initializeProduct(IProduct product) {
+		initializeProductId(product);
 		IProductModelFactory factory = product.getModel().getFactory();
 		IConfigurationFileInfo info = factory.createConfigFileInfo();
 		info.setUse(null, "default"); //$NON-NLS-1$
@@ -107,6 +109,24 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Initializes product id to name of product file (without extension).
+	 *
+	 * @param product
+	 *            whose id will be initialized
+	 */
+	protected void initializeProductId(IProduct product) {
+		if (fFile == null) {
+			return;
+		}
+		String id = fFile.getName();
+		int index = id.lastIndexOf('.');
+		if (index >= 0) {
+			id = id.substring(0, index);
+		}
+		product.setId(id);
 	}
 
 	protected void initializeProductInfo(IProductModelFactory factory, IProduct product, String id) {
