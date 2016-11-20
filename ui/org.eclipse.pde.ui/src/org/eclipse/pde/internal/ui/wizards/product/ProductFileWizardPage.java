@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
-
-import org.eclipse.pde.launching.IPDELauncherConstants;
 
 import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
@@ -25,6 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -64,7 +64,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 	private void initializeModel(IStructuredSelection selection) {
 		Object selected = selection.getFirstElement();
 		if (selected instanceof IAdaptable) {
-			IResource resource = (IResource) ((IAdaptable) selected).getAdapter(IResource.class);
+			IResource resource = ((IAdaptable) selected).getAdapter(IResource.class);
 			if (resource != null) {
 				IProject project = resource.getProject();
 				fModel = PluginRegistry.findModel(project);

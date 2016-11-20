@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2015 IBM Corporation and others.
+ *  Copyright (c) 2003, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -57,7 +58,7 @@ public class PluginInputContext extends XMLInputContext {
 			model.setInstallLocation(store.getParent().toString());
 			model.setCharset(getDefaultCharset());
 		} else if (input instanceof JarEntryEditorInput) {
-			File file = (File) ((JarEntryEditorInput) input).getAdapter(File.class);
+			File file = ((JarEntryEditorInput) input).getAdapter(File.class);
 			model.setInstallLocation(file.toString());
 			model.setCharset(getDefaultCharset());
 		} else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stephan Herrmann <stephan@cs.tu-berlin.de> - bug 61185
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
@@ -227,7 +228,7 @@ public class PDEJavaHelperUI {
 		controlDecoration.setMarginWidth(0);
 		// Custom hover tip text
 		String description = null;
-		IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		TriggerSequence[] activeBindings = bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		if (activeBindings.length == 0)
 			description = PDEUIMessages.PDEJavaHelper_msgContentAssistAvailable;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
@@ -160,7 +161,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 		if (fSourcePage == null)
 			return registeredDetectors;
 
-		IHyperlinkDetector additionalDetector = (IHyperlinkDetector) fSourcePage.getAdapter(IHyperlinkDetector.class);
+		IHyperlinkDetector additionalDetector = fSourcePage.getAdapter(IHyperlinkDetector.class);
 		if (additionalDetector == null)
 			return registeredDetectors;
 

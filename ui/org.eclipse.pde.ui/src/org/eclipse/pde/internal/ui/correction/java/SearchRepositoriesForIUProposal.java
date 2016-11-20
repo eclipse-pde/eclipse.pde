@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 EclipseSource Corporation and others.
+ * Copyright (c) 2010, 2016 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     EclipseSource Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction.java;
 
@@ -39,8 +40,8 @@ public class SearchRepositoriesForIUProposal implements IJavaCompletionProposal 
 	@Override
 	public void apply(IDocument document) {
 		try {
-			IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-			ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+			IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+			ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 			Command command = commandService.getCommand("org.eclipse.pde.ui.searchTargetRepositories"); //$NON-NLS-1$
 			IParameter parameter = command.getParameter("org.eclipse.pde.ui.searchTargetRepositories.term"); //$NON-NLS-1$
 			Parameterization parameterization = new Parameterization(parameter, fPackageName);

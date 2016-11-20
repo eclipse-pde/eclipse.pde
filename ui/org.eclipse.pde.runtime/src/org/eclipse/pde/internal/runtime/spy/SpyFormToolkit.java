@@ -10,6 +10,7 @@
  *     Willian Mitsuda <wmitsuda@gmail.com> - bug 209841
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 209487
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy;
 
@@ -243,7 +244,7 @@ public class SpyFormToolkit extends FormToolkit {
 	// TODO refactor me, I'm ugly
 	public void generatePluginDetailsText(Bundle bundle, String objectId, String objectType, StringBuffer buffer, FormText text) {
 		if (bundle != null) {
-			String version = (String) (bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
+			String version = (bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
 
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(PDERuntimeMessages.SpyDialog_contributingPluginId_title);

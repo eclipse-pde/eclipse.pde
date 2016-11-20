@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2015 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2016 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     Christian Pontesegger - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.views.imagebrowser.repositories;
@@ -67,7 +68,7 @@ public class TargetPlatformRepository extends AbstractRepository {
 
 		try {
 
-			ITargetPlatformService service = (ITargetPlatformService) PlatformUI.getWorkbench().getService(ITargetPlatformService.class);
+			ITargetPlatformService service = PlatformUI.getWorkbench().getService(ITargetPlatformService.class);
 			if (service != null) {
 				ITargetDefinition fDefinition = null;
 				if (fUseCurrent) {
@@ -119,7 +120,7 @@ public class TargetPlatformRepository extends AbstractRepository {
 		}
 
 		try {
-			ITargetPlatformService service = (ITargetPlatformService) PlatformUI.getWorkbench().getService(ITargetPlatformService.class);
+			ITargetPlatformService service = PlatformUI.getWorkbench().getService(ITargetPlatformService.class);
 			if (service != null) {
 				ITargetDefinition definition = service.getWorkspaceTargetDefinition();
 				String name = definition.getName();

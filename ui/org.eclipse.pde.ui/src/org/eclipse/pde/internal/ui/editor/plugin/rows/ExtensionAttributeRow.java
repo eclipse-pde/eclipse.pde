@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2015 IBM Corporation and others.
+ *  Copyright (c) 2003, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brian de Alwis (MTI) - bug 429420
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
@@ -137,7 +138,8 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 
 				// Append keybinding for filtering by attribute
 				if (getValue().length() > 0) {
-					String filterBinding = ((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class)).getBestActiveBindingFormattedFor(ActionFactory.FIND.getCommandId());
+					String filterBinding = PlatformUI.getWorkbench().getAdapter(IBindingService.class)
+							.getBestActiveBindingFormattedFor(ActionFactory.FIND.getCommandId());
 					result.append("<br><br>"); //$NON-NLS-1$
 					result.append(NLS.bind(PDEUIMessages.ExtensionAttributeRow_AttrFilter, filterBinding));
 				}

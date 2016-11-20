@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wolfgang Schell <ws@jetztgrad.net> - bug 259348
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry.model;
 
@@ -154,13 +155,13 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	private Bundle createBundleAdapter(org.osgi.framework.Bundle bundle) {
 		Bundle adapter = new Bundle();
 		adapter.setSymbolicName(bundle.getSymbolicName());
-		adapter.setVersion((String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
+		adapter.setVersion(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
 		adapter.setState(bundle.getState());
 		adapter.setId(bundle.getBundleId());
 		adapter.setEnabled(getIsEnabled(bundle));
 		adapter.setLocation(createLocation(bundle));
 
-		String fragmentHost = (String) bundle.getHeaders().get(Constants.FRAGMENT_HOST);
+		String fragmentHost = bundle.getHeaders().get(Constants.FRAGMENT_HOST);
 		if (fragmentHost != null) {
 			ManifestElement[] header;
 			try {
@@ -320,7 +321,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	}
 
 	private Object[] getManifestHeaderArray(org.osgi.framework.Bundle bundle, String headerKey) {
-		String libraries = (String) bundle.getHeaders().get(headerKey);
+		String libraries = bundle.getHeaders().get(headerKey);
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(headerKey, libraries);
 			if (elements == null)

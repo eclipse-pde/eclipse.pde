@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 251339
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
@@ -99,7 +100,7 @@ public abstract class PDEFormPage extends FormPage {
 		for (int i = 0; i < parts.length; i++) {
 			if (parts[i] instanceof IAdaptable) {
 				IAdaptable adapter = (IAdaptable) parts[i];
-				IAction[] actions = (IAction[]) adapter.getAdapter(IAction[].class);
+				IAction[] actions = adapter.getAdapter(IAction[].class);
 				if (actions != null) {
 					for (int j = 0; j < actions.length; j++) {
 						form.getToolBarManager().add(actions[j]);

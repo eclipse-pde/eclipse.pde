@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,10 +11,9 @@
  *       o Add an 'Open Manifest' to projects to open the manifest editor
  *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=133692)
  *     Brian de Alwis - open manifest for the currently active editor
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
-
-import org.eclipse.core.resources.IProject;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,16 +61,16 @@ public class OpenManifestHandler extends AbstractHandler {
 				if ((proj == null) && (element instanceof IProject))
 					proj = (IProject) element;
 				if ((proj == null) && (element instanceof IAdaptable)) {
-					IResource resource = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
+					IResource resource = ((IAdaptable) element).getAdapter(IResource.class);
 					if (resource != null) {
 						proj = resource.getProject();
 					}
 					if (proj == null) {
-						IWorkbenchAdapter workbenchAdapter = (IWorkbenchAdapter) ((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
+						IWorkbenchAdapter workbenchAdapter = ((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
 						if (workbenchAdapter != null) {
 							Object o = workbenchAdapter.getParent(element);
 							if (o instanceof IAdaptable) {
-								resource = (IResource) ((IAdaptable) o).getAdapter(IResource.class);
+								resource = ((IAdaptable) o).getAdapter(IResource.class);
 								if (resource != null) {
 									proj = resource.getProject();
 								}

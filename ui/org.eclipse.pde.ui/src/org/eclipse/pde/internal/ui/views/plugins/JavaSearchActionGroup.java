@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
@@ -100,7 +101,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 	private IPluginModelBase getModel(Object object) {
 		IPluginModelBase model = null;
 		if (object instanceof IAdaptable) {
-			model = (IPluginModelBase) ((IAdaptable) object).getAdapter(IPluginModelBase.class);
+			model = ((IAdaptable) object).getAdapter(IPluginModelBase.class);
 		} else if (object instanceof IPluginModelBase) {
 			model = (IPluginModelBase) object;
 		}

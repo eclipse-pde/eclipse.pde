@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2015 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2016 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     Christian Pontesegger - initial API and implementation
  *     IBM Corporation - bug fixing
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.views.imagebrowser;
@@ -41,7 +42,7 @@ public class SaveToWorkspace extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		ISourceProviderService service = (ISourceProviderService) PlatformUI.getWorkbench().getService(ISourceProviderService.class);
+		ISourceProviderService service = PlatformUI.getWorkbench().getService(ISourceProviderService.class);
 		ISourceProvider provider = service.getSourceProvider(ActiveImageSourceProvider.ACTIVE_IMAGE);
 		if (provider != null) {
 			Map<?, ?> currentState = provider.getCurrentState();

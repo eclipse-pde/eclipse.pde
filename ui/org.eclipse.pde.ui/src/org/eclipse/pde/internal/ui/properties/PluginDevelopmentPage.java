@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.properties;
 
@@ -60,7 +61,7 @@ public class PluginDevelopmentPage extends PropertyPage {
 	}
 
 	private void initialize() {
-		Preferences pref = getPreferences((IProject) getElement().getAdapter(IProject.class));
+		Preferences pref = getPreferences(getElement().getAdapter(IProject.class));
 		if (pref != null) {
 			fExtensionButton.setSelection(pref.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true));
 			fEquinoxButton.setSelection(pref.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true));
@@ -84,7 +85,7 @@ public class PluginDevelopmentPage extends PropertyPage {
 
 	@Override
 	public boolean performOk() {
-		Preferences pref = getPreferences((IProject) getElement().getAdapter(IProject.class));
+		Preferences pref = getPreferences(getElement().getAdapter(IProject.class));
 		if (pref != null) {
 			if (!fExtensionButton.getSelection())
 				pref.putBoolean(ICoreConstants.EXTENSIONS_PROPERTY, false);

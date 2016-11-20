@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -295,10 +296,10 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	}
 
 	private void handleInstallPluginConverter() {
-		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(P2_INSTALL_COMMAND_HANDLER);
 		if (command.isHandled()) {
-			IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+			IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 			try {
 				handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
 			} catch (ExecutionException ex) {

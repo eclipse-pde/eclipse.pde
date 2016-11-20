@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
@@ -49,7 +50,7 @@ public class DependencyExtentSearchResult extends SearchResult {
 	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		IEditorInput editorInput = editor.getEditorInput();
-		IJavaElement element = (IJavaElement) editorInput.getAdapter(IJavaElement.class);
+		IJavaElement element = editorInput.getAdapter(IJavaElement.class);
 		if (element != null) {
 			Set<Match> matches = new HashSet<>();
 			collectMatches(matches, element);
