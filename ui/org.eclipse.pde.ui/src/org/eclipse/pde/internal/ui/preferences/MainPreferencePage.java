@@ -180,8 +180,9 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fShowTargetStatus.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
 
 		fAlwaysPreferWorkspace = new Button(optionComp, SWT.CHECK);
-		fAlwaysPreferWorkspace.setText(PDEUIMessages.MainPreferencePage_AlwaysPreferWorkspace);
-		fAlwaysPreferWorkspace.setSelection(store.getBoolean(IPreferenceConstants.ALWAYS_PREFER_WORKSPACE));
+		fAlwaysPreferWorkspace.setText(PDEUIMessages.MainPreferencePage_WorkspacePluginsOverrideTarget);
+		fAlwaysPreferWorkspace.setSelection(store.getBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
+		fAlwaysPreferWorkspace.setToolTipText(PDEUIMessages.MainPreferencePage_WorkspacePluginsOverrideTargetTooltip);
 
 		Group group = SWTFactory.createGroup(composite, PDEUIMessages.Preferences_MainPage_showObjects, 2, 1, GridData.FILL_HORIZONTAL);
 		fUseID = new Button(group, SWT.RADIO);
@@ -249,10 +250,10 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 
 		boolean useWorkspace = fAlwaysPreferWorkspace.getSelection();
-		if (store.getBoolean(IPreferenceConstants.ALWAYS_PREFER_WORKSPACE) != useWorkspace) {
-			store.setValue(IPreferenceConstants.ALWAYS_PREFER_WORKSPACE, fAlwaysPreferWorkspace.getSelection());
+		if (store.getBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET) != useWorkspace) {
+			store.setValue(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, fAlwaysPreferWorkspace.getSelection());
 			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
-			prefs.setValue(ICoreConstants.ALWAYS_PREFER_WORKSPACE, fAlwaysPreferWorkspace.getSelection());
+			prefs.setValue(ICoreConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, fAlwaysPreferWorkspace.getSelection());
 			try {
 				InstanceScope.INSTANCE.getNode(PDECore.PLUGIN_ID).flush();
 			} catch (BackingStoreException e) {
@@ -300,7 +301,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		fAddToJavaSearch.setSelection(store.getDefaultBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH));
 		fShowTargetStatus.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
-		fAlwaysPreferWorkspace.setSelection(store.getDefaultBoolean(IPreferenceConstants.ALWAYS_PREFER_WORKSPACE));
+		fAlwaysPreferWorkspace.setSelection(store.getDefaultBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
 
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
 		boolean runtimeLocationIsContainer = launchingStore.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER);

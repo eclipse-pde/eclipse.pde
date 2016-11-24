@@ -26,9 +26,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(IPreferenceConstants.PROP_SHOW_OBJECTS, IPreferenceConstants.VALUE_USE_IDS);
 		store.setDefault(IPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
 		store.setDefault(IPreferenceConstants.SHOW_TARGET_STATUS, false);
-		store.setDefault(IPreferenceConstants.ALWAYS_PREFER_WORKSPACE, true);
+		store.setDefault(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, true);
 		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
-		prefs.setDefault(ICoreConstants.ALWAYS_PREFER_WORKSPACE, true);
+		prefs.setDefault(ICoreConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, true);
 	}
 
 }

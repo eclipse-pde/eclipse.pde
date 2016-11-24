@@ -688,7 +688,7 @@ public class PluginModelManager implements IModelProviderListener {
 
 		// update target models by the same ID from the state, if any
 		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
-		boolean preferWorkspaceBundle = prefs.getBoolean(ICoreConstants.ALWAYS_PREFER_WORKSPACE);
+		boolean preferWorkspaceBundle = prefs.getBoolean(ICoreConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET);
 		ModelEntry entry = entries.get(id);
 		if (entry != null) {
 			IPluginModelBase[] models = entry.getExternalModels();

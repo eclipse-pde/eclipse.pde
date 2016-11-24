@@ -467,9 +467,10 @@ public interface ICoreConstants {
 	public static final String WORKSPACE_TARGET_HANDLE = "workspace_target_handle"; //$NON-NLS-1$
 
 	/**
-	 * Preference key for target to always prefer workspace bundle irrespective of version
+	 * Preference key for the workspace bundle overriding target bundle for the
+	 * same id
 	 */
-	public static final String ALWAYS_PREFER_WORKSPACE = "always_prefer_workspace_bundle"; //$NON-NLS-1$
+	public static final String WORKSPACE_PLUGINS_OVERRIDE_TARGET = "workspace_plugins_override_target"; //$NON-NLS-1$
 
 	/**
 	 * Explicit preference value for {@link #WORKSPACE_TARGET_HANDLE} when the user chooses no

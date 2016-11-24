@@ -33,9 +33,10 @@ public interface IPreferenceConstants extends ILaunchingPreferenceConstants {
 	 */
 	public static final String SHOW_TARGET_STATUS = "Preferences.MainPage.showTargetStatus"; //$NON-NLS-1$
 	/**
-	 * Boolean preference whether to always prefer workspace bundle.
+	 * Boolean preference whether the workspace bundle overrides the target
+	 * bundle for the same bundle id
 	 */
-	public static final String ALWAYS_PREFER_WORKSPACE = "Preferences.MainPage.alwaysWorkspace";//$NON-NLS-1$
+	public static final String WORKSPACE_PLUGINS_OVERRIDE_TARGET = "Preferences.MainPage.workspacePluginsOverrideTarget";//$NON-NLS-1$
 
 
 	// Editor Outline
