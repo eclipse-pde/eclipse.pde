@@ -34,8 +34,6 @@ public abstract class TocObject extends DocumentObject implements
 	 *
 	 * @param model
 	 *            The model associated with this TocObject.
-	 * @param parent
-	 *            The parent of this TocObject.
 	 */
 	public TocObject(TocModel model, String tagName) {
 		super(model, tagName);

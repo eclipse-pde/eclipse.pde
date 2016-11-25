@@ -29,8 +29,6 @@ public class TocTopic extends TocObject {
 	 *
 	 * @param model
 	 *            The model associated with the new topic.
-	 * @param parent
-	 *            The parent TocObject of the new topic.
 	 */
 	public TocTopic(TocModel model) {
 		super(model, ELEMENT_TOPIC);
@@ -41,8 +39,6 @@ public class TocTopic extends TocObject {
 	 *
 	 * @param model
 	 *            The model associated with the new topic.
-	 * @param parent
-	 *            The parent TocObject of the new topic.
 	 */
 	public TocTopic(TocModel model, String tagName) {
 		super(model, tagName);
@@ -53,8 +49,6 @@ public class TocTopic extends TocObject {
 	 *
 	 * @param model
 	 *            The model associated with the new link.
-	 * @param parent
-	 *            The parent TocObject of the new link.
 	 * @param file
 	 *            The page to link to.
 	 */
@@ -182,9 +176,6 @@ public class TocTopic extends TocObject {
 	/**
 	 * Remove a TocObject child from this topic and signal the model if
 	 * necessary.
-	 *
-	 * @param child
-	 *            The child to add to the TocObject
 	 */
 	public void removeChild(TocObject tocObject) {
 		removeChildNode(tocObject, true);

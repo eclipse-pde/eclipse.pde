@@ -26,9 +26,6 @@ public class TocAnchor extends TocObject {
 
 	/**
 	 * Constructs an anchor with the given model and parent.
-	 *
-	 * @param parent
-	 *            The parent TocObject of the new anchor.
 	 */
 	public TocAnchor(TocModel model) {
 		super(model, ELEMENT_ANCHOR);

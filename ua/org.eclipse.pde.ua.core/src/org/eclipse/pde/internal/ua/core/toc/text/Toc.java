@@ -80,9 +80,6 @@ public class Toc extends TocTopic {
 
 	/**
 	 * Change the value of the anchor field and signal a model change if needed.
-	 *
-	 * @param The
-	 *            new anchor path to associate with this TOC
 	 */
 	public void setFieldAnchorTo(String name) {
 		setXMLAttribute(ATTRIBUTE_LINK_TO, name);

@@ -21,9 +21,6 @@ public class TocDocumentFactory extends DocumentNodeFactory implements
 		IDocumentNodeFactory {
 	private TocModel fModel;
 
-	/**
-	 * @param model
-	 */
 	public TocDocumentFactory(TocModel model) {
 		fModel = model;
 	}
@@ -61,11 +58,6 @@ public class TocDocumentFactory extends DocumentNodeFactory implements
 		return super.createDocumentNode(name, parent);
 	}
 
-	/**
-	 * @param name
-	 * @param elementName
-	 * @return
-	 */
 	private boolean isTocElement(String name, String elementName) {
 		if (name.equals(elementName)) {
 			return true;
@@ -73,80 +65,42 @@ public class TocDocumentFactory extends DocumentNodeFactory implements
 		return false;
 	}
 
-	/**
-	 * @param name
-	 * @return
-	 */
 	private boolean isToc(String name) {
 		return isTocElement(name, ITocConstants.ELEMENT_TOC);
 	}
 
-	/**
-	 * @param name
-	 * @return
-	 */
 	private boolean isAnchor(String name) {
 		return isTocElement(name, ITocConstants.ELEMENT_ANCHOR);
 	}
 
-	/**
-	 * @param name
-	 * @return
-	 */
 	private boolean isTopic(String name) {
 		return isTocElement(name, ITocConstants.ELEMENT_TOPIC);
 	}
 
-	/**
-	 * @param name
-	 * @return
-	 */
 	private boolean isLink(String name) {
 		return isTocElement(name, ITocConstants.ELEMENT_LINK);
 	}
 
-	/**
-	 * @return
-	 */
 	public Toc createToc() {
 		return new Toc(fModel);
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public TocTopic createTocTopic() {
 		return new TocTopic(fModel);
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public TocLink createTocLink() {
 		return new TocLink(fModel);
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public TocTopic createTocTopic(IFile file) {
 		return new TocTopic(fModel, file);
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public TocLink createTocLink(IFile file) {
 		return new TocLink(fModel, file);
 	}
 
-	/**
-	 * @return
-	 */
 	public TocAnchor createTocAnchor() {
 		return new TocAnchor(fModel);
 	}

@@ -11,21 +11,13 @@
 
 package org.eclipse.pde.internal.ua.core;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import org.w3c.dom.*;
 
 public class CheatSheetUtil {
 
 	/**
 	 * Recursively finds and accumulates all element's text and element children
 	 * into a String in raw XML form
-	 *
-	 * @param element
-	 * @return
 	 */
 	public static String parseElementText(Element element) {
 		// Puts all Text nodes in the full depth of the sub-tree
@@ -89,7 +81,6 @@ public class CheatSheetUtil {
 	 * Aggregates all attributes from the given element, formats then into the
 	 * proper key="value" XML format and returns them as one String
 	 *
-	 * @param element
 	 * @return The formatted String or null if the element has no attributes
 	 */
 	private static String parseElementAttributes(Element element) {

@@ -20,14 +20,8 @@ import org.eclipse.pde.core.IModelChangeProvider;
  */
 public interface ICompCSModel extends IModelChangeProvider, IModel {
 
-	/**
-	 * @return
-	 */
 	ICompCS getCompCS();
 
-	/**
-	 * @return
-	 */
 	ICompCSModelFactory getFactory();
 
 }

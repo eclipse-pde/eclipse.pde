@@ -30,8 +30,6 @@ public class TocLink extends TocObject {
 	 *
 	 * @param model
 	 *            The model associated with the new link.
-	 * @param parent
-	 *            The parent TocObject of the new link.
 	 */
 	public TocLink(TocModel model) {
 		super(model, ELEMENT_LINK);
@@ -42,8 +40,6 @@ public class TocLink extends TocObject {
 	 *
 	 * @param model
 	 *            The model associated with the new link.
-	 * @param parent
-	 *            The parent TocObject of the new link.
 	 * @param file
 	 *            The TOC file to link to.
 	 */
@@ -109,7 +105,7 @@ public class TocLink extends TocObject {
 	/**
 	 * Change the value of the link path and signal a model change if needed.
 	 *
-	 * @param id
+	 * @param path
 	 *            The new path to associate with the link
 	 */
 	public void setFieldTocPath(String path) {

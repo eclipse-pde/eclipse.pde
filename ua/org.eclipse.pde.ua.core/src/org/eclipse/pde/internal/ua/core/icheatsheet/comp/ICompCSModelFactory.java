@@ -13,45 +13,18 @@ package org.eclipse.pde.internal.ua.core.icheatsheet.comp;
 
 public interface ICompCSModelFactory {
 
-	/**
-	 * @return
-	 */
 	public ICompCS createCompCS();
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public ICompCSTaskGroup createCompCSTaskGroup(ICompCSObject parent);
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public ICompCSTask createCompCSTask(ICompCSObject parent);
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public ICompCSIntro createCompCSIntro(ICompCSObject parent);
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public ICompCSOnCompletion createCompCSOnCompletion(ICompCSObject parent);
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public ICompCSDependency createCompCSDependency(ICompCSObject parent);
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public ICompCSParam createCompCSParam(ICompCSObject parent);
 
 }
