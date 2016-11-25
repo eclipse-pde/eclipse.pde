@@ -19,41 +19,25 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSOnCompletion;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
 
-/**
- * CompCSEnclosingTextModifyListener
- *
- */
 public class CompCSConclusionTextListener implements IDocumentListener {
 
 	private ICompCSTaskObject fDataTaskObject;
 
 	private boolean fBlockEvents;
 
-	/**
-	 *
-	 */
 	public CompCSConclusionTextListener() {
 		fDataTaskObject = null;
 		fBlockEvents = false;
 	}
 
-	/**
-	 * @param block
-	 */
 	public void setBlockEvents(boolean block) {
 		fBlockEvents = block;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean getBlockEvents() {
 		return fBlockEvents;
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(ICompCSTaskObject object) {
 		// Set data
 		fDataTaskObject = object;
@@ -95,9 +79,6 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 		}
 	}
 
-	/**
-	 * @param text
-	 */
 	private void updateConclusionText(String text) {
 		if (fDataTaskObject.getFieldOnCompletion() == null) {
 			// Create a new conclusion
@@ -108,9 +89,6 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 		}
 	}
 
-	/**
-	 * @param text
-	 */
 	private void addConclusionText(String text) {
 		ICompCSModelFactory factory = fDataTaskObject.getModel().getFactory();
 		ICompCSOnCompletion conclusion = factory.createCompCSOnCompletion(fDataTaskObject);
@@ -118,17 +96,11 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 		fDataTaskObject.setFieldOnCompletion(conclusion);
 	}
 
-	/**
-	 * @param text
-	 */
 	private void modifyConclusionText(String text) {
 		ICompCSOnCompletion conclusion = fDataTaskObject.getFieldOnCompletion();
 		conclusion.setFieldContent(text);
 	}
 
-	/**
-	 * @param text
-	 */
 	private void removeConclusionText(String text) {
 		ICompCSOnCompletion conclusion = fDataTaskObject.getFieldOnCompletion();
 		if (conclusion != null) {

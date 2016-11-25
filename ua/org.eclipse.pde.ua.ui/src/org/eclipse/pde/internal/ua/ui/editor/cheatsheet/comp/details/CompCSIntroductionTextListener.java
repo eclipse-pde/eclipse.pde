@@ -19,40 +19,25 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSIntro;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
 
-/**
- * CompCSEnclosingTextModifyListener
- */
 public class CompCSIntroductionTextListener implements IDocumentListener {
 
 	private ICompCSTaskObject fDataTaskObject;
 
 	private boolean fBlockEvents;
 
-	/**
-	 *
-	 */
 	public CompCSIntroductionTextListener() {
 		fDataTaskObject = null;
 		fBlockEvents = false;
 	}
 
-	/**
-	 * @param block
-	 */
 	public void setBlockEvents(boolean block) {
 		fBlockEvents = block;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean getBlockEvents() {
 		return fBlockEvents;
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(ICompCSTaskObject object) {
 		// Set data
 		fDataTaskObject = object;
@@ -94,9 +79,6 @@ public class CompCSIntroductionTextListener implements IDocumentListener {
 		}
 	}
 
-	/**
-	 * @param text
-	 */
 	private void updateIntroductionText(String text) {
 		if (fDataTaskObject.getFieldIntro() == null) {
 			// Create a new introduction
@@ -107,9 +89,6 @@ public class CompCSIntroductionTextListener implements IDocumentListener {
 		}
 	}
 
-	/**
-	 * @param text
-	 */
 	private void addIntroductionText(String text) {
 		ICompCSModelFactory factory = fDataTaskObject.getModel().getFactory();
 		ICompCSIntro intro = factory.createCompCSIntro(fDataTaskObject);
@@ -117,17 +96,11 @@ public class CompCSIntroductionTextListener implements IDocumentListener {
 		fDataTaskObject.setFieldIntro(intro);
 	}
 
-	/**
-	 * @param text
-	 */
 	private void modifyIntroductionText(String text) {
 		ICompCSIntro intro = fDataTaskObject.getFieldIntro();
 		intro.setFieldContent(text);
 	}
 
-	/**
-	 * @param text
-	 */
 	private void removeIntroductionText(String text) {
 		ICompCSIntro intro = fDataTaskObject.getFieldIntro();
 		if (intro != null) {

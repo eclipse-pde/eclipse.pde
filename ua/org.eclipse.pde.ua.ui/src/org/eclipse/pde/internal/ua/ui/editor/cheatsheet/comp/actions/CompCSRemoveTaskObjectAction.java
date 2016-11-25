@@ -17,27 +17,18 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
 
-/**
- * SimpleCSAddStepAction
- */
 public class CompCSRemoveTaskObjectAction extends Action {
 
 	private ICompCSTaskObject fTaskObject;
 
 	private ICompCSObject fObjectToSelect;
 
-	/**
-	 *
-	 */
 	public CompCSRemoveTaskObjectAction() {
 		setText(ActionsMessages.CompCSRemoveTaskObjectAction_delete);
 		fTaskObject = null;
 		fObjectToSelect = null;
 	}
 
-	/**
-	 * @param subitem
-	 */
 	public void setTaskObject(ICompCSTaskObject taskObject) {
 		fTaskObject = taskObject;
 	}
@@ -60,9 +51,6 @@ public class CompCSRemoveTaskObjectAction extends Action {
 		}
 	}
 
-	/**
-	 * @param item
-	 */
 	private void determineItemToSelect(ICompCSTaskGroup group) {
 		// Select the next sibling
 		fObjectToSelect = group.getNextSibling(fTaskObject);
@@ -78,9 +66,6 @@ public class CompCSRemoveTaskObjectAction extends Action {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public ICompCSObject getObjectToSelect() {
 		return fObjectToSelect;
 	}

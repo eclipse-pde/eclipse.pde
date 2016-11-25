@@ -88,12 +88,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	private CompCSGroupValidator fGroupValidator;
 
-	/**
-	 * @param formPage
-	 * @param parent
-	 * @param style
-	 * @param buttonLabels
-	 */
 	public CompCSMasterTreeSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, new String[] {
 				Messages.CompCSMasterTreeSection_addTask,
@@ -131,10 +125,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		createSectionToolbar(section, toolkit);
 	}
 
-	/**
-	 * @param container
-	 * @param toolkit
-	 */
 	private void createTree(Composite container, FormToolkit toolkit) {
 		TreePart treePart = getTreePart();
 		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
@@ -147,9 +137,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		// TODO: MP: LOW: CompCS: Implement drag and drop move feature
 	}
 
-	/**
-	 *
-	 */
 	private void createTreeListeners() {
 		// Create listener for the outline view 'link with editor' toggle
 		// button
@@ -157,16 +144,10 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 				.addPostSelectionChangedListener(getPage().getPDEEditor().new PDEFormEditorChangeListener());
 	}
 
-	/**
-	 * @return
-	 */
 	public ISelection getSelection() {
 		return fTreeViewer.getSelection();
 	}
 
-	/**
-	 *
-	 */
 	private void initializeTreeViewer() {
 
 		if (fModel == null) {
@@ -214,10 +195,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		fTreeViewer.expandToLevel(2);
 	}
 
-	/**
-	 * @param section
-	 * @param toolkit
-	 */
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
 
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
@@ -329,9 +306,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
 	}
 
-	/**
-	 *
-	 */
 	private void handleAddTaskAction() {
 
 		ISelection sel = fTreeViewer.getSelection();
@@ -349,16 +323,10 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/**
-	 * @param flag
-	 */
 	private void updatePreviewButton(boolean flag) {
 		getTreePart().setButtonEnabled(F_BUTTON_PREVIEW, flag);
 	}
 
-	/**
-	 *
-	 */
 	private void handleAddGroupAction() {
 
 		ISelection sel = fTreeViewer.getSelection();
@@ -376,9 +344,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void handleMoveTaskObjectAction(int positionFlag) {
 
 		ISelection sel = fTreeViewer.getSelection();
@@ -399,9 +364,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void handlePreviewAction() {
 		// Get the editor input
 		// Could be IFileEditorInput (File in workpspace - e.g. Package Explorer
@@ -471,9 +433,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		updatePreviewButton(fGroupValidator.validate());
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 
 		Object[] objects = event.getChangedObjects();
@@ -511,9 +470,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelInsertType(IModelChangedEvent event) {
 		// Insert event
 		Object[] objects = event.getChangedObjects();
@@ -529,9 +485,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/**
-	 * @param object
-	 */
 	private void handleTaskObjectInsert(ICompCSObject object) {
 		// Refresh the parent element in the tree viewer
 		// TODO: MP: CompCS: LOW: Can we get away with an update instead of a
@@ -541,9 +494,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		fTreeViewer.setSelection(new StructuredSelection(object), true);
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelRemoveType(IModelChangedEvent event) {
 		// Remove event
 		Object[] objects = event.getChangedObjects();
@@ -559,9 +509,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/**
-	 * @param object
-	 */
 	private void handleTaskObjectRemove(ICompCSObject object) {
 		// Remove the item
 		fTreeViewer.remove(object);
@@ -573,9 +520,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		fTreeViewer.setSelection(new StructuredSelection(csObject), true);
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelChangeType(IModelChangedEvent event) {
 		// Change event
 		Object[] objects = event.getChangedObjects();
@@ -650,10 +594,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		// manager.add(new Separator());
 	}
 
-	/**
-	 * @param manager
-	 * @param csObject
-	 */
 	private void fillContextMenuRemoveAction(IMenuManager manager,
 			ICompCSTaskObject taskObject) {
 		// Add to the main context menu
@@ -685,9 +625,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		return false;
 	}
 
-	/**
-	 * @param object
-	 */
 	private void handleDeleteAction() {
 
 		ISelection sel = fTreeViewer.getSelection();
@@ -714,10 +651,6 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	private boolean canRemoveTaskObject(ICompCSObject parent) {
 		if (parent.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
 			// Preserve cheat sheet validity

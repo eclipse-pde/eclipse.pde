@@ -30,18 +30,12 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-/**
- * CompCSPage
- */
 public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 
 	public static final String PAGE_ID = "compCSPage"; //$NON-NLS-1$
 
 	private CompCSBlock fBlock;
 
-	/**
-	 * @param editor
-	 */
 	public CompCSPage(FormEditor editor) {
 		super(editor, PAGE_ID, Messages.CompCSPage_definition);
 
@@ -156,16 +150,10 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		fBlock.modelChanged(event);
 	}
 
-	/**
-	 * @return
-	 */
 	public ISelection getSelection() {
 		return fBlock.getSelection();
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 
 		Object[] objects = event.getChangedObjects();
@@ -181,9 +169,6 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public PDEMasterDetailsBlock getBlock() {
 		return fBlock;
 	}

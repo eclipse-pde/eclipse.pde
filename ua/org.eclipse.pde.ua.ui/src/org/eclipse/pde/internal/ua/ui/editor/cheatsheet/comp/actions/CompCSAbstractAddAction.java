@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,24 +16,14 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
 
-/**
- * SimpleCSAddStepAction
- *
- */
 public abstract class CompCSAbstractAddAction extends Action {
 
 	protected ICompCSObject fParentObject;
 
-	/**
-	 *
-	 */
 	public CompCSAbstractAddAction() {
-		// NO-OP
+		// intentionally left empty
 	}
 
-	/**
-	 * @param cheatsheet
-	 */
 	public void setParentObject(ICompCSObject object) {
 		fParentObject = object;
 	}

@@ -13,15 +13,8 @@ package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.comp;
 
 import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
 
-/**
- * CompCSEditorContributor
- *
- */
 public class CompCSEditorContributor extends PDEFormEditorContributor {
 
-	/**
-	 * @param menuName
-	 */
 	public CompCSEditorContributor() {
 		super("compCSEditor"); //$NON-NLS-1$
 	}

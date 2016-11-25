@@ -43,9 +43,6 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements IModelChangedL
 
 	private CompCSTaskDetails fTaskDetails;
 
-	/**
-	 * @param page
-	 */
 	public CompCSBlock(PDEFormPage page) {
 		super(page);
 	}
@@ -119,16 +116,10 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements IModelChangedL
 		//}
 	}
 
-	/**
-	 * @return
-	 */
 	public CompCSMasterTreeSection getMastersSection() {
 		return fMasterSection;
 	}
 
-	/**
-	 * @return
-	 */
 	public ISelection getSelection() {
 		if (fMasterSection != null) {
 			return fMasterSection.getSelection();

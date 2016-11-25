@@ -34,11 +34,6 @@ public class CompCSGroupValidator {
 
 	private String fErrorCategory;
 
-	// TODO: MP: LOW: CompCS: Can augment the model to have isValid() methods to simplify validation
-
-	/**
-	 *
-	 */
 	public CompCSGroupValidator(ICompCS cheatsheet, Form form, String errorCategory) {
 		fForm = form;
 		fErrorCategory = errorCategory;
@@ -47,9 +42,6 @@ public class CompCSGroupValidator {
 		populateGroups(cheatsheet);
 	}
 
-	/**
-	 * @param cheatsheet
-	 */
 	private void populateGroups(ICompCS cheatsheet) {
 		// Register all existing groups in the present workspace model to be
 		// validated
@@ -58,9 +50,6 @@ public class CompCSGroupValidator {
 		}
 	}
 
-	/**
-	 * @param group
-	 */
 	public void addGroup(ICompCSTaskGroup group) {
 		fGroups.add(group);
 		// Check to see if the group has any children
@@ -76,9 +65,6 @@ public class CompCSGroupValidator {
 		}
 	}
 
-	/**
-	 * @param group
-	 */
 	public void removeGroup(ICompCSTaskGroup group) {
 		fGroups.remove(group);
 		// Check to see if the group has any children
@@ -94,9 +80,6 @@ public class CompCSGroupValidator {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean validate() {
 		// Check to see if there is anything to validate
 		if (fGroups.isEmpty()) {
@@ -115,10 +98,6 @@ public class CompCSGroupValidator {
 		return true;
 	}
 
-	/**
-	 * @param group
-	 * @return
-	 */
 	private boolean validate(ICompCSTaskGroup group) {
 		if (group.getFieldTaskObjectCount() == 0) {
 			String message = '[' + fErrorCategory + ']' + ' ' + PDETextHelper.translateReadText(group.getFieldName()) + ':' + ' ' + Messages.CompCSGroupValidator_errorChildlessGroup;
