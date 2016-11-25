@@ -32,9 +32,6 @@ public class SimpleCSPreviewAction extends Action {
 
 	private IEditorInput fEditorInput;
 
-	/**
-	 * @param input
-	 */
 	public SimpleCSPreviewAction() {
 		fDataModelObject = null;
 		fEditorInput = null;
@@ -73,16 +70,10 @@ public class SimpleCSPreviewAction extends Action {
 		}
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setDataModelObject(ISimpleCS object) {
 		fDataModelObject = object;
 	}
 
-	/**
-	 * @param editorInput
-	 */
 	public void setEditorInput(IEditorInput editorInput) {
 		fEditorInput = editorInput;
 	}

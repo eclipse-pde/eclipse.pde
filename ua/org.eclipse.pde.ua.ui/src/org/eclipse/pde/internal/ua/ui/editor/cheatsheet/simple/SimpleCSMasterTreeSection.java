@@ -80,12 +80,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	private ControlDecoration fSubStepInfoDecoration;
 
-	/**
-	 * @param formPage
-	 * @param parent
-	 * @param style
-	 * @param buttonLabels
-	 */
 	public SimpleCSMasterTreeSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, new String[] {
 				SimpleMessages.SimpleCSMasterTreeSection_addStep,
@@ -127,10 +121,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		createSectionToolbar(section, toolkit);
 	}
 
-	/**
-	 * @param section
-	 * @param toolkit
-	 */
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
 
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
@@ -149,9 +139,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		section.setTextClient(toolbar);
 	}
 
-	/**
-	 *
-	 */
 	private void initializeTreeViewer() {
 		ISelection selection = fTreeViewer.getSelection();
 		if (fModel == null) {
@@ -181,10 +168,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		fTreeViewer.setSelection(selection, true);
 	}
 
-	/**
-	 * @param container
-	 * @param toolkit
-	 */
 	private void createTree(Composite container, FormToolkit toolkit) {
 		TreePart treePart = getTreePart();
 		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
@@ -282,12 +265,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		return false;
 	}
 
-	/**
-	 * @param targetCheatSheet
-	 * @param sourceItem
-	 * @param targetLocation
-	 * @return
-	 */
 	private boolean canDropMove(ISimpleCS targetCheatSheet,
 			ISimpleCSItem sourceItem, int targetLocation) {
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
@@ -304,12 +281,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		return false;
 	}
 
-	/**
-	 * @param targetItem
-	 * @param sourceItem
-	 * @param targetLocation
-	 * @return
-	 */
 	private boolean canDropMove(ISimpleCSItem targetItem,
 			ISimpleCSItem sourceItem, int targetLocation) {
 		ISimpleCS parent = targetItem.getSimpleCS();
@@ -341,12 +312,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		return false;
 	}
 
-	/**
-	 * @param targetIntro
-	 * @param sourceItem
-	 * @param targetLocation
-	 * @return
-	 */
 	private boolean canDropMove(ISimpleCSIntro targetIntro,
 			ISimpleCSItem sourceItem, int targetLocation) {
 		ISimpleCS parent = targetIntro.getSimpleCS();
@@ -374,12 +339,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		return false;
 	}
 
-	/**
-	 * @param targetItem
-	 * @param sourceSubItem
-	 * @param targetLocation
-	 * @return
-	 */
 	private boolean canDropMove(ISimpleCSItem targetItem,
 			ISimpleCSSubItem sourceSubItem, int targetLocation) {
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
@@ -404,12 +363,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		return false;
 	}
 
-	/**
-	 * @param targetSubItem
-	 * @param sourceSubItem
-	 * @param targetLocation
-	 * @return
-	 */
 	private boolean canDropMove(ISimpleCSSubItem targetSubItem,
 			ISimpleCSSubItem sourceSubItem, int targetLocation) {
 		ISimpleCSItem parent = (ISimpleCSItem) targetSubItem.getParent();
@@ -494,11 +447,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		}
 	}
 
-	/**
-	 * @param targetCheatSheet
-	 * @param sourceItem
-	 * @param targetLocation
-	 */
 	private void doDropMove(ISimpleCS targetCheatSheet,
 			ISimpleCSItem sourceItem, int targetLocation) {
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
@@ -517,11 +465,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		}
 	}
 
-	/**
-	 * @param targetItem
-	 * @param sourceItem
-	 * @param targetLocation
-	 */
 	private void doDropMove(ISimpleCSItem targetItem, ISimpleCSItem sourceItem,
 			int targetLocation) {
 		ISimpleCS parent = targetItem.getSimpleCS();
@@ -566,11 +509,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		}
 	}
 
-	/**
-	 * @param targetIntro
-	 * @param sourceItem
-	 * @param targetLocation
-	 */
 	private void doDropMove(ISimpleCSIntro targetIntro,
 			ISimpleCSItem sourceItem, int targetLocation) {
 		ISimpleCS parent = targetIntro.getSimpleCS();
@@ -601,11 +539,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		}
 	}
 
-	/**
-	 * @param targetItem
-	 * @param sourceSubItem
-	 * @param targetLocation
-	 */
 	private void doDropMove(ISimpleCSItem targetItem,
 			ISimpleCSSubItem sourceSubItem, int targetLocation) {
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
@@ -646,11 +579,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		}
 	}
 
-	/**
-	 * @param targetSubItem
-	 * @param sourceSubItem
-	 * @param targetLocation
-	 */
 	private void doDropMove(ISimpleCSSubItem targetSubItem,
 			ISimpleCSSubItem sourceSubItem, int targetLocation) {
 		ISimpleCSItem parent = (ISimpleCSItem) targetSubItem.getParent();
@@ -738,9 +666,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 				.getPrimaryContext().flushEditorInput();
 	}
 
-	/**
-	 *
-	 */
 	private void createSubStepInfoDecoration() {
 		//
 		Button button = getStructuredViewerPart().getButton(
@@ -754,11 +679,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 				.getImage());
 	}
 
-	/**
-	 * @param show
-	 * @param itemHasNoExecutable
-	 * @param itemIsNotOptional
-	 */
 	private void updateSubStepInfoDecoration(boolean show,
 			boolean itemHasNoExecutable, boolean itemIsNotOptional) {
 		//
@@ -777,9 +697,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		fSubStepInfoDecoration.setShowHover(show);
 	}
 
-	/**
-	 *
-	 */
 	private void createTreeListeners() {
 		// Create listener for the outline view 'link with editor' toggle
 		// button
@@ -787,9 +704,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 				.addPostSelectionChangedListener(getPage().getPDEEditor().new PDEFormEditorChangeListener());
 	}
 
-	/**
-	 * @return
-	 */
 	public ISelection getSelection() {
 		return fTreeViewer.getSelection();
 	}
@@ -838,9 +752,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		updateButtons();
 	}
 
-	/**
-	 *
-	 */
 	public void updateButtons() {
 		if (!fModel.isEditable()) {
 			return;
@@ -945,9 +856,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
 	}
 
-	/**
-	 *
-	 */
 	private void handleAddStepAction() {
 		// Get the current selection
 		ISimpleCSObject csObject = getCurrentSelection();
@@ -961,18 +869,12 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		fAddStepAction.run();
 	}
 
-	/**
-	 * @return
-	 */
 	private ISimpleCSObject getCurrentSelection() {
 		ISelection selection = fTreeViewer.getSelection();
 		Object object = ((IStructuredSelection) selection).getFirstElement();
 		return (ISimpleCSObject) object;
 	}
 
-	/**
-	 *
-	 */
 	private void handleAddSubStepAction() {
 		// Get the current selection
 		ISimpleCSObject csObject = getCurrentSelection();
@@ -986,9 +888,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		fAddSubStepAction.run();
 	}
 
-	/**
-	 *
-	 */
 	private void handleMoveStepAction(int positionFlag) {
 		ISimpleCSObject object = getCurrentSelection();
 		if (object != null) {
@@ -1007,9 +906,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void handlePreviewAction() {
 		// Get the editor
 		PDEFormEditor editor = (PDEFormEditor) getPage().getEditor();
@@ -1068,17 +964,11 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		super.refresh();
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		// Section will be updated on refresh
 		markStale();
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelChangeTypeSwap(IModelChangedEvent event) {
 		// Swap event
 		Object[] objects = event.getChangedObjects();
@@ -1096,9 +986,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelInsertType(IModelChangedEvent event) {
 		// Insert event
 		Object[] objects = event.getChangedObjects();
@@ -1114,9 +1001,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelRemoveType(IModelChangedEvent event) {
 		// Remove event
 		Object[] objects = event.getChangedObjects();
@@ -1160,9 +1044,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelChangeType(IModelChangedEvent event) {
 		// Change event
 		Object[] objects = event.getChangedObjects();
@@ -1300,9 +1181,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		return false;
 	}
 
-	/**
-	 * @param object
-	 */
 	private void handleDeleteAction() {
 		ISimpleCSObject object = getCurrentSelection();
 		if (object != null) {
@@ -1364,11 +1242,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		return false;
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 * @return
-	 */
 	private boolean validatePaste(Object targetObject, Object[] sourceObjects) {
 		// Validate target object
 		if ((targetObject instanceof ISimpleCSObject) == false) {
@@ -1381,10 +1254,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		return true;
 	}
 
-	/**
-	 * @param sourceObjects
-	 * @return
-	 */
 	private boolean validatePaste(Object[] sourceObjects) {
 		// Validate source objects
 		if (sourceObjects == null) {

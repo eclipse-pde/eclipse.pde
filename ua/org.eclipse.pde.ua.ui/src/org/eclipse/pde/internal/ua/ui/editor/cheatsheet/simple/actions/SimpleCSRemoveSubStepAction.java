@@ -12,13 +12,7 @@
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConditionalSubItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRepeatedSubItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 
 /**
  * SimpleCSAddStepAction
@@ -30,21 +24,12 @@ public class SimpleCSRemoveSubStepAction extends Action {
 
 	private ISimpleCSObject fObjectToSelect;
 
-	/**
-	 *
-	 */
 	public SimpleCSRemoveSubStepAction() {
-		// TODO: MP: LOW: SimpleCS:  Add tool-tip / image ?
 		setText(SimpleActionMessages.SimpleCSRemoveSubStepAction_actionText);
-//		setImageDescriptor(PDEUserAssistanceUIPluginImages.DESC_GEL_SC_OBJ);
-//		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
 		fSubItem = null;
 		fObjectToSelect = null;
 	}
 
-	/**
-	 * @param subitem
-	 */
 	public void setSubItem(ISimpleCSSubItemObject subitem) {
 		fSubItem = subitem;
 	}
@@ -81,9 +66,6 @@ public class SimpleCSRemoveSubStepAction extends Action {
 		}
 	}
 
-	/**
-	 * @param item
-	 */
 	private void determineItemToSelect(ISimpleCSItem item) {
 		// Select the next sibling
 		fObjectToSelect = item.getNextSibling(fSubItem);
@@ -99,17 +81,11 @@ public class SimpleCSRemoveSubStepAction extends Action {
 		}
 	}
 
-	/**
-	 * @param item
-	 */
 	private void determineItemToSelect(ISimpleCSObject object) {
 		// The parent itself
 		fObjectToSelect = object;
 	}
 
-	/**
-	 * @return
-	 */
 	public ISimpleCSObject getObjectToSelect() {
 		return fObjectToSelect;
 	}

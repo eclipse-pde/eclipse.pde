@@ -26,9 +26,6 @@ public class SimpleCSRemoveStepAction extends Action {
 
 	private ISimpleCSObject fObjectToSelect;
 
-	/**
-	 *
-	 */
 	public SimpleCSRemoveStepAction() {
 		setText(SimpleActionMessages.SimpleCSRemoveStepAction_actionText);
 		// TODO: MP: LOW: SimpleCS:  Add tool-tip / image ?
@@ -38,9 +35,6 @@ public class SimpleCSRemoveStepAction extends Action {
 		fObjectToSelect = null;
 	}
 
-	/**
-	 * @param cheatsheet
-	 */
 	public void setItem(ISimpleCSItem item) {
 		fItem = item;
 	}
@@ -59,9 +53,6 @@ public class SimpleCSRemoveStepAction extends Action {
 		}
 	}
 
-	/**
-	 * @param cheatsheet
-	 */
 	private void determineItemToSelect(ISimpleCS cheatsheet) {
 		// Select the next sibling
 		fObjectToSelect = cheatsheet.getNextSibling(fItem);
@@ -77,9 +68,6 @@ public class SimpleCSRemoveStepAction extends Action {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public ISimpleCSObject getObjectToSelect() {
 		return fObjectToSelect;
 	}

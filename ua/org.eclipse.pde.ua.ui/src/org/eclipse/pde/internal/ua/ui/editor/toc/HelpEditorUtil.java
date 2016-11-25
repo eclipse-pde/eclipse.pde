@@ -63,9 +63,6 @@ public class HelpEditorUtil {
 		return fileExtension != null && fileExtension.equals(tocExtension);
 	}
 
-	/**
-	 * @param file
-	 */
 	public static boolean isTOCFile(IPath path) {
 		if (!hasValidTocExtension(path))
 			return false;

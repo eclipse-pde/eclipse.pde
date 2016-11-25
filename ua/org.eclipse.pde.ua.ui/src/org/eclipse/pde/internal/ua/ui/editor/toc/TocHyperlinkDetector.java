@@ -25,9 +25,6 @@ import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
 
 public class TocHyperlinkDetector extends PDEHyperlinkDetector {
 
-	/**
-	 * @param editor the editor in which to detect the hyperlink
-	 */
 	public TocHyperlinkDetector(PDESourcePage page) {
 		super(page);
 	}

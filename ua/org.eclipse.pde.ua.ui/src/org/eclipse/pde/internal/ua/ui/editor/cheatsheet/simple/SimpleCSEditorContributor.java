@@ -25,9 +25,6 @@ public class SimpleCSEditorContributor extends PDEFormTextEditorContributor {
 
 	private SimpleCSPreviewAction fPreviewAction;
 
-	/**
-	 * @param menuName
-	 */
 	public SimpleCSEditorContributor() {
 		super("&Simple Cheat Sheet"); //$NON-NLS-1$
 		fPreviewAction = null;
@@ -58,9 +55,6 @@ public class SimpleCSEditorContributor extends PDEFormTextEditorContributor {
 		super.contextMenuAboutToShow(manager, addClipboard);
 	}
 
-	/**
-	 * @return
-	 */
 	public SimpleCSPreviewAction getPreviewAction() {
 		return fPreviewAction;
 	}

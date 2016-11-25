@@ -46,18 +46,12 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 
 	private TocBlock fBlock;
 
-	/**
-	 * @param editor
-	 */
 	public TocPage(FormEditor editor) {
 		super(editor, PAGE_ID, TocMessages.TocPage_title);
 
 		fBlock = new TocBlock(this);
 	}
 
-	/**
-	 * @return
-	 */
 	public PDEMasterDetailsBlock getBlock() {
 		return fBlock;
 	}
@@ -152,16 +146,10 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		fBlock.modelChanged(event);
 	}
 
-	/**
-	 * @return
-	 */
 	public ISelection getSelection() {
 		return fBlock.getSelection();
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 
 		Object[] objects = event.getChangedObjects();

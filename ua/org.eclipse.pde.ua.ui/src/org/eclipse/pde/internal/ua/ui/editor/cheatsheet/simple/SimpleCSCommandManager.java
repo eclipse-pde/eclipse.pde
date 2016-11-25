@@ -32,32 +32,20 @@ public class SimpleCSCommandManager {
 
 	private boolean fBlockEvents;
 
-	/**
-	 *
-	 */
 	private SimpleCSCommandManager() {
 		fCommandMap = Collections.synchronizedMap(new HashMap());
 		fBlockEvents = false;
 		fListeners = null;
 	}
 
-	/**
-	 * @param block
-	 */
 	public void setBlockEvents(boolean block) {
 		fBlockEvents = block;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean getBlockEvents() {
 		return fBlockEvents;
 	}
 
-	/**
-	 * @return
-	 */
 	public static SimpleCSCommandManager Instance() {
 		if (fPinstance == null) {
 			fPinstance = new SimpleCSCommandManager();
@@ -65,11 +53,6 @@ public class SimpleCSCommandManager {
 		return fPinstance;
 	}
 
-	/**
-	 * @param key
-	 * @param value
-	 * @return
-	 */
 	public synchronized boolean put(String key, String value) {
 		// Do not add the key-value pair if it is already in the map
 		if (fCommandMap.containsKey(key)) {
@@ -90,39 +73,22 @@ public class SimpleCSCommandManager {
 		return true;
 	}
 
-	/**
-	 * @param key
-	 * @return
-	 */
 	public String get(String key) {
 		return (String) fCommandMap.get(key);
 	}
 
-	/**
-	 * @param key
-	 * @return
-	 */
 	public boolean hasKey(String key) {
 		return fCommandMap.containsKey(key);
 	}
 
-	/**
-	 * @return
-	 */
 	public Set getKeys() {
 		return fCommandMap.keySet();
 	}
 
-	/**
-	 * @return
-	 */
 	public int getSize() {
 		return fCommandMap.size();
 	}
 
-	/**
-	 * @param listener
-	 */
 	public void addCommandKeyListener(ISimpleCSCommandKeyListener listener) {
 		if (fListeners == null) {
 			fListeners = new ListenerList();
@@ -130,9 +96,6 @@ public class SimpleCSCommandManager {
 		fListeners.add(listener);
 	}
 
-	/**
-	 * @param listener
-	 */
 	public void removeCommandKeyListener(ISimpleCSCommandKeyListener listener) {
 		if (fListeners == null) {
 			return;
@@ -140,10 +103,6 @@ public class SimpleCSCommandManager {
 		fListeners.remove(listener);
 	}
 
-	/**
-	 * @param key
-	 * @param value
-	 */
 	private void fireNewCommandKeyEvent(String key, String value) {
 		// Do not fire the event if there are no listeners or we are blocking
 		// events

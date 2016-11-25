@@ -34,18 +34,12 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 
 	private int fComboEntryLimit;
 
-	/**
-	 *
-	 */
 	public SimpleCSCommandComboPart() {
 		super();
 		fNewCommandKeyIndex = -1;
 		fComboEntryLimit = -1;
 	}
 
-	/**
-	 * @param listener
-	 */
 	public void addDisposeListener(DisposeListener listener) {
 		if (combo == null) {
 			return;
@@ -78,9 +72,6 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		putValueInCombo(key, fNewCommandKeyIndex);
 	}
 
-	/**
-	 * @param key
-	 */
 	private void putValueInCombo(String key, int index) {
 		// Ensure the key does not already exist in the combo
 		if (indexOf(key) != -1) {
@@ -101,9 +92,6 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void removeLeastRecentEntry() {
 		// The least recent entry is the last non-selected entry in the
 		// reciever's list
@@ -129,16 +117,10 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		remove(secondlastEntry);
 	}
 
-	/**
-	 * @param limit
-	 */
 	public void setComboEntryLimit(int limit) {
 		fComboEntryLimit = limit;
 	}
 
-	/**
-	 * @return
-	 */
 	public int getComboEntryLimit() {
 		return fComboEntryLimit;
 	}
@@ -153,9 +135,6 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		fNewCommandKeyIndex = newCommandKeyIndex;
 	}
 
-	/**
-	 * @return
-	 */
 	public int getNewCommandKeyIndex() {
 		return fNewCommandKeyIndex;
 	}
@@ -168,9 +147,6 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		SimpleCSCommandManager.Instance().removeCommandKeyListener(this);
 	}
 
-	/**
-	 *
-	 */
 	public void populate() {
 		// Populate the combo with all the values found in the command manager
 		Iterator iterator = SimpleCSCommandManager.Instance().getKeys().iterator();
@@ -180,18 +156,10 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		}
 	}
 
-	/**
-	 * @param key
-	 * @param value
-	 */
 	public void putValue(String key, String value) {
 		putValue(key, value, -1);
 	}
 
-	/**
-	 * @param key
-	 * @param value
-	 */
 	public void putValue(String key, String value, int index) {
 		// Source:  This combo box
 		// Add the new key to the combo if it does not already exist
@@ -202,10 +170,6 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		manager.put(key, value);
 	}
 
-	/**
-	 * @param key
-	 * @return
-	 */
 	public String getValue(String key) {
 		return SimpleCSCommandManager.Instance().get(key);
 	}

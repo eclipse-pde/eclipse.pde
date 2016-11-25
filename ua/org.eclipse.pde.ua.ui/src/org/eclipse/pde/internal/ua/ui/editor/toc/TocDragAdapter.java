@@ -37,7 +37,6 @@ public class TocDragAdapter implements DragSourceListener {
 	 * Constructs a new Drag Adapter with the specified selection
 	 * provider and TocTreeSection
 	 *
-	 * @param provider The provider of the dragged items
 	 * @param section The section that will handle removal
 	 */
 	public TocDragAdapter(TocTreeSection section) {

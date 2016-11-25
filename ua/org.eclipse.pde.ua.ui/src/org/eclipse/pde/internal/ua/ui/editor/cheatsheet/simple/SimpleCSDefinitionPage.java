@@ -46,9 +46,6 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 	private SimpleCSBlock fBlock;
 	private boolean fStale;
 
-	/**
-	 * @param editor
-	 */
 	public SimpleCSDefinitionPage(FormEditor editor) {
 		super(editor, PAGE_ID, SimpleMessages.SimpleCSDefinitionPage_title);
 		fBlock = new SimpleCSBlock(this);
@@ -166,16 +163,10 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 		fBlock.modelChanged(event);
 	}
 
-	/**
-	 * @return
-	 */
 	public ISelection getSelection() {
 		return fBlock.getSelection();
 	}
 
-	/**
-	 * @return
-	 */
 	public PDEMasterDetailsBlock getBlock() {
 		return fBlock;
 	}

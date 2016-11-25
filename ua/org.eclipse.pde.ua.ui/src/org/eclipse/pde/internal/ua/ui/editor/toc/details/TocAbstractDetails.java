@@ -44,9 +44,6 @@ public abstract class TocAbstractDetails extends PDEDetails {
 
 	private String fContextID;
 
-	/**
-	 *
-	 */
 	public TocAbstractDetails(TocTreeSection masterSection, String contextID) {
 		fMasterSection = masterSection;
 		fContextID = contextID;
@@ -62,16 +59,10 @@ public abstract class TocAbstractDetails extends PDEDetails {
 		hookListeners();
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void configureParentLayout(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 	}
 
-	/**
-	 * @param parent
-	 */
 	public void createDetails(Composite parent) { // Create the main section
 		int style = ExpandableComposite.TITLE_BAR;
 
@@ -94,29 +85,14 @@ public abstract class TocAbstractDetails extends PDEDetails {
 		markDetailsPart(fMainSection);
 	}
 
-	/**
-	 *
-	 */
 	protected abstract void createFields(Composite parent);
 
-	/**
-	 *
-	 */
 	protected abstract String getDetailsTitle();
 
-	/**
-	 *
-	 */
 	protected abstract String getDetailsDescription();
 
-	/**
-	 *
-	 */
 	public abstract void updateFields();
 
-	/**
-	 *
-	 */
 	public abstract void hookListeners();
 
 	/* (non-Javadoc)
@@ -187,31 +163,18 @@ public abstract class TocAbstractDetails extends PDEDetails {
 		// NO-OP
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isEditableElement() {
 		return fMasterSection.isEditable();
 	}
 
-	/**
-	 * @return
-	 */
 	public FormToolkit getToolkit() {
 		return getManagedForm().getToolkit();
 	}
 
-	/**
-	 * @return
-	 */
 	public TocTreeSection getMasterSection() {
 		return fMasterSection;
 	}
 
-	/**
-	 * @param selection
-	 * @return
-	 */
 	protected Object getFirstSelectedObject(ISelection selection) {
 		// Get the structured selection (obtained from the master tree viewer)
 		IStructuredSelection structuredSel = ((IStructuredSelection) selection);

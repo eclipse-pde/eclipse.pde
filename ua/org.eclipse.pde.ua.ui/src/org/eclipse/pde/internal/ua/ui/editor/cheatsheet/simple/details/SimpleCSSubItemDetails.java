@@ -45,9 +45,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 
 	private SimpleCSCommandDetails fCommandSection;
 
-	/**
-	 * @param elementSection
-	 */
 	public SimpleCSSubItemDetails(ICSMaster masterTreeSection) {
 		super(masterTreeSection, SimpleCSInputContext.CONTEXT_ID);
 		fSubItem = null;
@@ -58,9 +55,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fCommandSection = new SimpleCSCommandDetails(masterTreeSection);
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(ISimpleCSSubItem object) {
 		// Set data
 		fSubItem = object;

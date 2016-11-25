@@ -12,13 +12,7 @@
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSPerformWhen;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRunContainerObject;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRunObject;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 
 /**
  * SimpleCSAddStepAction
@@ -28,18 +22,12 @@ public class SimpleCSRemoveRunObjectAction extends Action {
 
 	private ISimpleCSRunContainerObject fRunContainerObject;
 
-	/**
-	 *
-	 */
 	public SimpleCSRemoveRunObjectAction() {
 		setText(SimpleActionMessages.SimpleCSRemoveRunObjectAction_actionText);
 //		setImageDescriptor(PDEUserAssistanceUIPluginImages.DESC_GEL_SC_OBJ);
 //		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
 	}
 
-	/**
-	 * @param cheatsheet
-	 */
 	public void setRunObject(ISimpleCSRunContainerObject runObject) {
 		fRunContainerObject = runObject;
 	}

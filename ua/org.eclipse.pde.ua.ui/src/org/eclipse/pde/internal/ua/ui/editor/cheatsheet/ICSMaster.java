@@ -18,14 +18,8 @@ import org.eclipse.ui.forms.widgets.Section;
  */
 public interface ICSMaster {
 
-	/**
-	 *
-	 */
 	public void updateButtons();
 
-	/**
-	 * @return
-	 */
 	public boolean isEditable();
 
 	/**
@@ -35,15 +29,8 @@ public interface ICSMaster {
 	 */
 	public void fireSelection();
 
-	/**
-	 * @return
-	 */
 	public Section getSection();
 
-	/**
-	 * @param object
-	 * @return
-	 */
 	public boolean setFormInput(Object object);
 
 }

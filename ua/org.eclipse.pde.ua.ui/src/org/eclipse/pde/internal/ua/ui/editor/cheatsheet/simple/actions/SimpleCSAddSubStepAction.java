@@ -14,34 +14,19 @@ package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.actions;
 import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModelFactory;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 
-/**
- * SimpleCSAddStepAction
- *
- */
 public class SimpleCSAddSubStepAction extends Action {
 
 	private ISimpleCSItem fItem;
 
 	private ISimpleCSSubItem fSubitem;
 
-	/**
-	 *
-	 */
 	public SimpleCSAddSubStepAction() {
 		setText(SimpleActionMessages.SimpleCSAddSubStepAction_actionText);
 	}
 
-	/**
-	 * @param cheatsheet
-	 */
 	public void setDataObject(ISimpleCSObject csObject) {
 		// Determine input
 		if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
@@ -81,9 +66,6 @@ public class SimpleCSAddSubStepAction extends Action {
 		insertNewSubItem(newSubItem);
 	}
 
-	/**
-	 * @return
-	 */
 	private ISimpleCSSubItem createNewSubItem() {
 		ISimpleCSModelFactory factory = fItem.getModel().getFactory();
 		// Element: subitem
@@ -105,9 +87,6 @@ public class SimpleCSAddSubStepAction extends Action {
 		return subitem;
 	}
 
-	/**
-	 * @param newSubItem
-	 */
 	private void insertNewSubItem(ISimpleCSSubItem newSubItem) {
 		// Insert the new subitem depending on the input specfied
 		if (fSubitem != null) {

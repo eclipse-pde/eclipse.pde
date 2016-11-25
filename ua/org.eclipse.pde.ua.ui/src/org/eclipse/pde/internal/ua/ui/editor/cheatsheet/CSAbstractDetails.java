@@ -47,26 +47,14 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 		hookListeners();
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void configureParentLayout(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 	}
 
-	/**
-	 * @param parent
-	 */
 	public abstract void createDetails(Composite parent);
 
-	/**
-	 *
-	 */
 	public abstract void updateFields();
 
-	/**
-	 *
-	 */
 	public abstract void hookListeners();
 
 	/* (non-Javadoc)
@@ -113,31 +101,18 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 		// NO-OP
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isEditableElement() {
 		return fMasterSection.isEditable();
 	}
 
-	/**
-	 * @return
-	 */
 	public FormToolkit getToolkit() {
 		return getManagedForm().getToolkit();
 	}
 
-	/**
-	 * @return
-	 */
 	public ICSMaster getMasterSection() {
 		return fMasterSection;
 	}
 
-	/**
-	 * @param selection
-	 * @return
-	 */
 	protected Object getFirstSelectedObject(ISelection selection) {
 		// Get the structured selection (obtained from the master tree viewer)
 		IStructuredSelection structuredSel = ((IStructuredSelection) selection);

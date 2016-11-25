@@ -48,9 +48,6 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements IDetailsPage
 
 	private SimpleCSIntroDetails fIntroDetails;
 
-	/**
-	 * @param page
-	 */
 	public SimpleCSBlock(PDEFormPage page) {
 		super(page);
 	}
@@ -130,16 +127,10 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements IDetailsPage
 		//}
 	}
 
-	/**
-	 * @return
-	 */
 	public ICSMaster getMastersSection() {
 		return fMasterSection;
 	}
 
-	/**
-	 * @return
-	 */
 	public ISelection getSelection() {
 		if (fMasterSection != null) {
 			return fMasterSection.getSelection();
