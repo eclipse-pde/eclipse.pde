@@ -548,9 +548,6 @@ public class FeatureSpecSection extends PDESection {
 		super.cancelEdit();
 	}
 
-	/**
-	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
-	 */
 	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();

@@ -369,7 +369,6 @@ public class DownloadStatsSection extends TableSection {
 	 *
 	 * @param candidates
 	 *            Array of IFeatureModel
-	 * @param monitor
 	 * @throws CoreException
 	 */
 	public void doAddFeatures(Object[] candidates) throws CoreException {
@@ -392,7 +391,6 @@ public class DownloadStatsSection extends TableSection {
 	 *
 	 * @param candidates
 	 *            Array of IPluginModelBase
-	 * @param monitor
 	 * @throws CoreException
 	 */
 	public void doAddBundles(Object[] candidates) throws CoreException {

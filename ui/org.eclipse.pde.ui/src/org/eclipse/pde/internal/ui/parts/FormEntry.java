@@ -69,13 +69,6 @@ public class FormEntry {
 
 	/**
 	 * Create all the controls in the provided parent.
-	 *
-	 * @param parent
-	 * @param toolkit
-	 * @param labelText
-	 * @param span
-	 * @param browseText
-	 * @param linkLabel
 	 */
 	private void createControl(Composite parent, FormToolkit toolkit, String labelText, int style, String browseText, boolean linkLabel, int indent, int tcolspan) {
 		if (linkLabel) {

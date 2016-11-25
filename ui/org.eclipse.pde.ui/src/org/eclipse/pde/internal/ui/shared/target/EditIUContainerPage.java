@@ -122,7 +122,6 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	/**
 	 * Constructor for editing an existing container
 	 * @param container the container to edit
-	 * @param profile profile from the parent target, used to setup the p2 UI
 	 */
 	protected EditIUContainerPage(IUBundleContainer container, ITargetDefinition definition) {
 		this(definition);

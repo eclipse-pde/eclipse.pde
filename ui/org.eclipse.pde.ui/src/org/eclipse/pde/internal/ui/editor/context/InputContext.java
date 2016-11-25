@@ -425,19 +425,12 @@ public abstract class InputContext {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @param input
-	 * @throws CoreException
-	 */
 	private void updateInput(IEditorInput newInput) throws CoreException {
 		deinitializeDocumentProvider();
 		fEditorInput = newInput;
 		initializeDocumentProvider();
 	}
 
-	/**
-	 *
-	 */
 	private void deinitializeDocumentProvider() {
 		IAnnotationModel amodel = fDocumentProvider.getAnnotationModel(fEditorInput);
 		if (amodel != null) {
@@ -447,9 +440,6 @@ public abstract class InputContext {
 		fDocumentProvider.disconnect(fEditorInput);
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void initializeDocumentProvider() throws CoreException {
 		fDocumentProvider.connect(fEditorInput);
 		IAnnotationModel amodel = fDocumentProvider.getAnnotationModel(fEditorInput);
@@ -459,9 +449,6 @@ public abstract class InputContext {
 		fDocumentProvider.addElementStateListener(fElementListener);
 	}
 
-	/**
-	 * @param monitor
-	 */
 	public void doSaveAs(IProgressMonitor monitor) throws Exception {
 		// Get the editor shell
 		Shell shell = getEditor().getSite().getShell();
@@ -489,14 +476,6 @@ public abstract class InputContext {
 		}
 	}
 
-	/**
-	 * @param monitor
-	 * @param path
-	 * @throws Exception
-	 * @throws CoreException
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 */
 	private void handleSaveAs(IProgressMonitor monitor, IPath path) throws Exception, CoreException, InterruptedException, InvocationTargetException {
 		// Ensure a new location was selected
 		if (path == null) {

@@ -33,10 +33,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class ConfigurationPage extends PDEFormPage {
 	public static final String PLUGIN_ID = "plugin-configuration"; //$NON-NLS-1$
 
-	/**
-	 * @param productEditor
-	 * @param useFeatures
-	 */
 	public ConfigurationPage(ProductEditor editor, boolean useFeatures) {
 		super(editor, PLUGIN_ID, PDEUIMessages.ConfigurationPageMock_pageTitle);
 	}

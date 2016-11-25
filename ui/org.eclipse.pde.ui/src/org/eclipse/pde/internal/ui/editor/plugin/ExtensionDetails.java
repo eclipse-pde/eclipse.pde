@@ -45,9 +45,6 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 
 	private static final String RTEXT_DATA = PDEUIMessages.ExtensionDetails_extensionPointLinks;
 
-	/**
-	 * @param masterSection
-	 */
 	public ExtensionDetails(PDESection masterSection) {
 		super(masterSection);
 	}
@@ -121,10 +118,6 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		markDetailsPart(section);
 	}
 
-	/**
-	 * @param toolkit
-	 * @param client
-	 */
 	private void createNameEntryField(FormToolkit toolkit, Composite client) {
 		name = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_name, null, false);
 		name.setFormEntryListener(new FormEntryAdapter(this) {
@@ -140,10 +133,6 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		});
 	}
 
-	/**
-	 * @param toolkit
-	 * @param client
-	 */
 	private void createIDEntryField(FormToolkit toolkit, Composite client) {
 		id = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_id, null, false);
 		id.setFormEntryListener(new FormEntryAdapter(this) {
@@ -181,8 +170,6 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 
 	/**
 	 * Denote a field as required by updating their label
-	 * @param attributeName
-	 * @param field
 	 */
 	private boolean isFieldRequired(String attributeName) {
 		// Ensure we have input
@@ -215,10 +202,6 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		return false;
 	}
 
-	/**
-	 * @param field
-	 * @param required
-	 */
 	private void updateLabel(boolean required, FormEntry field, String label) {
 		// Get the label
 		Control control = field.getLabel();

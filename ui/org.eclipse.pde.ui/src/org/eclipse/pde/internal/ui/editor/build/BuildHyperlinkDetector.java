@@ -25,9 +25,6 @@ public class BuildHyperlinkDetector implements IHyperlinkDetector {
 
 	private PDESourcePage fSourcePage;
 
-	/**
-	 * @param editor the editor in which to detect the hyperlink
-	 */
 	public BuildHyperlinkDetector(PDESourcePage page) {
 		fSourcePage = page;
 	}

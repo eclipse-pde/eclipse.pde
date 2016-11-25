@@ -24,9 +24,6 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 
 	private PDESourcePage fSourcePage;
 
-	/**
-	 * @param editor the editor in which to detect the hyperlink
-	 */
 	public BundleHyperlinkDetector(PDESourcePage page) {
 		fSourcePage = page;
 	}

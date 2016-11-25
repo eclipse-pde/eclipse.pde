@@ -312,7 +312,8 @@ public class JavaResolutionFactory {
 	 * @param desc an ExportPackageDescription from the bundle that is to be added as a Require-Bundle dependency
 	 * @param type the type of the proposal to be returned
 	 * @param relevance the relevance of the new proposal
-	 * @see TYPE_JAVA_COMPLETION , TYPE_CLASSPATH_FIX
+	 * @see JavaResolutionFactory#TYPE_JAVA_COMPLETION
+	 * @see JavaResolutionFactory#TYPE_CLASSPATH_FIX
 	 */
 	public static final Object createRequireBundleProposal(IProject project, ExportPackageDescription desc, int type, int relevance) {
 		if (desc.getSupplier() == null)
@@ -328,7 +329,8 @@ public class JavaResolutionFactory {
 	 * @param desc an ExportPackageDescription which represents the package to be added
 	 * @param type the type of the proposal to be returned
 	 * @param relevance the relevance of the new proposal
-	 * @see TYPE_JAVA_COMPLETION , TYPE_CLASSPATH_FIX
+	 * @see JavaResolutionFactory#TYPE_JAVA_COMPLETION
+	 * @see JavaResolutionFactory#TYPE_CLASSPATH_FIX
 	 */
 	public static final Object createImportPackageProposal(IProject project, ExportPackageDescription desc, int type, int relevance) {
 		AbstractManifestChange change = new ImportPackageManifestChange(project, desc);
@@ -346,7 +348,8 @@ public class JavaResolutionFactory {
 	 * @param pkg an IPackageFragment which represents the package to be added
 	 * @param type the type of the proposal to be returned
 	 * @param relevance the relevance of the new proposal
-	 * @see TYPE_JAVA_COMPLETION , TYPE_CLASSPATH_FIX
+	 * @see JavaResolutionFactory#TYPE_JAVA_COMPLETION
+	 * @see JavaResolutionFactory#TYPE_CLASSPATH_FIX
 	 */
 	public static final Object createExportPackageProposal(IProject project, IPackageFragment pkg, int type, int relevance) {
 		AbstractManifestChange change = new ExportPackageChange(project, pkg);

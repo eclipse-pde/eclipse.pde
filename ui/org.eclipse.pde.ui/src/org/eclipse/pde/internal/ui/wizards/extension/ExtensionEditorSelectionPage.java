@@ -29,11 +29,6 @@ public class ExtensionEditorSelectionPage extends WizardListSelectionPage {
 	private IPluginBase fPluginBase;
 	private IStructuredSelection fSelection;
 
-	/**
-	 * @param categories
-	 * @param baseCategory
-	 * @param message
-	 */
 	public ExtensionEditorSelectionPage(ElementList wizards) {
 		super(wizards, PDEUIMessages.ExtensionEditorSelectionPage_message);
 		setTitle(PDEUIMessages.ExtensionEditorSelectionPage_title);

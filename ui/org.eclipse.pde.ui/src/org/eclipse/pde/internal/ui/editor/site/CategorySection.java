@@ -717,7 +717,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	 *
 	 * @param candidates
 	 *            Array of IFeatureModel
-	 * @param monitor
 	 * @throws CoreException
 	 */
 	public void doAdd(Object[] candidates) throws CoreException {

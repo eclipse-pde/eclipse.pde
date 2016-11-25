@@ -106,11 +106,6 @@ public class ExtensionsPage extends PDEFormPage {
 		}
 	}
 
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
 	public ExtensionsPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.ExtensionsPage_tabName);
 		fBlock = new ExtensionsBlock();

@@ -135,10 +135,6 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 
 	}
 
-	/**
-	 * @param parent
-	 * @param renderer
-	 */
 	public FeatureSelectionDialog(Shell parent, IFeatureModel[] models, boolean multiSelect) {
 		super(parent, multiSelect);
 		setTitle(PDEUIMessages.FeatureSelectionDialog_title);

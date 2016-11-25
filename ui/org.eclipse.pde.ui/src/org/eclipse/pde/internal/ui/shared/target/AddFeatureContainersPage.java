@@ -201,7 +201,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	}
 
 	/**
-	 * This wizard will be returning multiple containers, not just one so we can't just use {@link #getTargetLocation()}
+	 * This wizard will be returning multiple containers, not just one.
 	 * @return array of containers created by this wizard
 	 * @throws CoreException if there was a problem acquiring the target service
 	 */
