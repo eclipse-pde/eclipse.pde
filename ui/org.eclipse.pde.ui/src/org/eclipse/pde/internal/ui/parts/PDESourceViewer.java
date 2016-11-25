@@ -160,7 +160,6 @@ public class PDESourceViewer {
 	 * The menu set on the underlying styled text widget of the source viewer
 	 * needs to be set to null before being diposed; otherwise, the menu will
 	 * be disposed along with the widget.
-	 * @param viewer
 	 */
 	public void unsetMenu() {
 		if (fViewer == null) {
@@ -177,9 +176,6 @@ public class PDESourceViewer {
 
 	/**
 	 * Utility method used to tie global actions into source viewers.
-	 *
-	 * @param actionId
-	 * @param viewer
 	 */
 	public boolean doGlobalAction(String actionId) {
 		// Ensure the viewer was created

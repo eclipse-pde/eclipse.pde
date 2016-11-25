@@ -23,9 +23,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.*;
 
-/**
- *
- */
 public class MirrorsSection extends PDESection {
 	private FormEntry fMirrorsURLEntry;
 
@@ -124,9 +121,6 @@ public class MirrorsSection extends PDESection {
 		super.cancelEdit();
 	}
 
-	/**
-	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
-	 */
 	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();

@@ -376,9 +376,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		((ProductEditor) getPage().getEditor()).updateConfigurationPage();
 	}
 
-	/**
-	 * @param productId
-	 */
 	private void refreshProductCombo(String productID) {
 		if (productID == null) {
 			productID = ""; //$NON-NLS-1$

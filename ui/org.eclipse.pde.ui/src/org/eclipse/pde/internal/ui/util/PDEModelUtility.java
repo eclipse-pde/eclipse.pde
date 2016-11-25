@@ -261,7 +261,6 @@ public class PDEModelUtility {
 	 * (not a BundleModel - which can be retreived from the BundlePluginModel)
 	 * @param modification
 	 * @param monitor
-	 * @throws CoreException
 	 */
 	public static void modifyModel(final ModelModification modification, final IProgressMonitor monitor) {
 		// ModelModification was not supplied with the right files

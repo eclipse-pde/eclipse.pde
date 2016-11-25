@@ -142,7 +142,6 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 
 	/**
 	 * Insert the method's description here.
-	 * @see WizardPage#finish
 	 */
 	@Override
 	public boolean finish() {
@@ -151,7 +150,6 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 
 	/**
 	 * Insert the method's description here.
-	 * @see WizardPage#getSelection
 	 */
 	@Override
 	public IClasspathEntry getSelection() {
@@ -165,7 +163,6 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 
 	/**
 	 * Insert the method's description here.
-	 * @see WizardPage#setSelection
 	 */
 	@Override
 	public void setSelection(IClasspathEntry containerEntry) {

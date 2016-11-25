@@ -329,11 +329,6 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		}
 	};
 
-	/**
-	 * Constructor
-	 * @param project
-	 * @param container
-	 */
 	public PDECompilersConfigurationBlock(IProject project, IWorkbenchPreferenceContainer container) {
 		fProject = project;
 		if (fProject != null) {
@@ -361,7 +356,6 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * returns if this block has fProject specific settings
-	 * @param fProject
 	 * @return true if there are fProject specific settings, false otherwise
 	 */
 	public boolean hasProjectSpecificSettings(IProject project) {

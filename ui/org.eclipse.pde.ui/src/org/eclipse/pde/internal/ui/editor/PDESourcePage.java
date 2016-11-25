@@ -95,8 +95,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		/**
 		 * Removes this selection changed listener from the given selection
 		 * provider.
-		 *
-		 * @param selectionProviderstyle
 		 */
 		public void uninstall(ISelectionProvider selectionProvider) {
 			if (selectionProvider != null) {
@@ -565,7 +563,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/**
 	 * Triggered by toggling the 'Link with Editor' button in the outline
 	 * view
-	 * @param offset
 	 */
 	public void synchronizeOutlinePage() {
 		// Get the current position of the cursor in this page

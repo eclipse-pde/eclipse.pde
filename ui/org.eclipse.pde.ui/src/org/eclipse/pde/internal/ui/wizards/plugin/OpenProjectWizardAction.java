@@ -24,9 +24,6 @@ import org.eclipse.ui.cheatsheets.ICheatSheetAction;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 
 public class OpenProjectWizardAction extends Action implements ICheatSheetAction {
-	/**
-	 * @param text
-	 */
 	public OpenProjectWizardAction() {
 		super("OpenProject"); //$NON-NLS-1$
 	}

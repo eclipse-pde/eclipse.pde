@@ -23,10 +23,6 @@ public class LicensingPage extends PDEFormPage {
 
 	public static final String PAGE_ID = "licensing"; //$NON-NLS-1$
 
-	/**
-	 * @param productEditor
-	 * @param useFeatures
-	 */
 	public LicensingPage(ProductEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.LicensingPage_title);
 	}

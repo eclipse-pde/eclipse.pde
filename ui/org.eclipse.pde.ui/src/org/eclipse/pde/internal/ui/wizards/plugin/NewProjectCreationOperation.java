@@ -545,7 +545,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	/**
 	 * Add the API analysis nature to the project
-	 * @param add
 	 */
 	private void addApiAnalysisNature() {
 		try {

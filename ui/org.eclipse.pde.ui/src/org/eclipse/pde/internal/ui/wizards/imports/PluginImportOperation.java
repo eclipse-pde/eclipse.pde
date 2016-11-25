@@ -96,8 +96,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * Constructor
 	 * @param models models of plug-ins to import
 	 * @param importType one of three types specified by constants, binary, binary with links, source
-	 * @param replaceQuery defines what to do if the project already exists in the workspace
-	 * @param executionQuery defines what to do if the project requires an unsupported execution environment
 	 * @param forceAutobuild whether to force a build after the import
 	 */
 	public PluginImportOperation(IPluginModelBase[] models, int importType, boolean forceAutobuild) {
@@ -443,7 +441,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * environment is supported and also checks if the project already exists and
 	 * needs to be replaced.
 	 * @param model model representing the plugin to import
-	 * @param instructions instructions for how to import from repository
 	 * @param monitor progress monitor
 	 * @throws CoreException if a problem occurs while importing a plugin
 	 */
@@ -1333,7 +1330,9 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * Sets the import descriptions to use when importing from a repository.
 	 *
-	 * @param descriptions map of {@link IBundleImporter} to arrays of {@link BundleImportDescription}.
+	 * @param descriptions
+	 *            map of {@link IBundleImporter} to arrays of
+	 *            {@link ScmUrlImportDescription}.
 	 */
 	public void setImportDescriptions(Map<IBundleImporter, ScmUrlImportDescription[]> descriptions) {
 		fImportDescriptions = descriptions;

@@ -57,7 +57,6 @@ public class PreviewContainerPage extends WizardPage {
 
 	/**
 	 * Refreshes the contents of the preview table, possible resolving the container
-	 * @param resolve whether the current container should be resolved if it hasn't been already
 	 */
 	protected void setInput(final ITargetLocation container) {
 		if (container == null) {

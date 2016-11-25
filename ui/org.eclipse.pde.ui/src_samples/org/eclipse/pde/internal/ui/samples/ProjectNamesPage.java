@@ -26,16 +26,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
-/**
- *
- */
 public class ProjectNamesPage extends WizardPage {
 	private SampleWizard wizard;
 	private Composite container;
 
-	/**
-	 * @param pageName
-	 */
 	public ProjectNamesPage(SampleWizard wizard) {
 		super("projects"); //$NON-NLS-1$
 		this.wizard = wizard;

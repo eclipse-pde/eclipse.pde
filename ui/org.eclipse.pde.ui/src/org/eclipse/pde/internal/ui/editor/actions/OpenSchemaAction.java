@@ -48,9 +48,6 @@ public class OpenSchemaAction extends Action {
 		initialize();
 	}
 
-	/**
-	 *
-	 */
 	private void initialize() {
 		setImageDescriptor(PDEPluginImages.DESC_SCHEMA_OBJ);
 		setText(PDEUIMessages.HyperlinkActionOpenSchema);
@@ -58,9 +55,6 @@ public class OpenSchemaAction extends Action {
 		setEnabled(false);
 	}
 
-	/**
-	 * @param schema
-	 */
 	public void setInput(ISchema schema) {
 		// Ensure schema is defined
 		if (schema == null) {
@@ -71,9 +65,6 @@ public class OpenSchemaAction extends Action {
 		fSchema = schema;
 	}
 
-	/**
-	 * @param point
-	 */
 	public void setInput(IPluginExtensionPoint point) {
 		// Ensure the point is defined
 		if (point == null) {
@@ -91,9 +82,6 @@ public class OpenSchemaAction extends Action {
 		fSchema = findSchema(point);
 	}
 
-	/**
-	 * @param fullPointID
-	 */
 	public void setInput(String fullPointID) {
 		// Ensure point ID is defined
 		if (fullPointID == null) {
@@ -113,9 +101,6 @@ public class OpenSchemaAction extends Action {
 		fSchema = findSchema(point);
 	}
 
-	/**
-	 * @param extension
-	 */
 	public void setInput(IPluginExtension extension) {
 		// Ensure the extension is defined
 		if (extension == null) {
@@ -154,9 +139,6 @@ public class OpenSchemaAction extends Action {
 		return schema;
 	}
 
-	/**
-	 * @param fullPointID
-	 */
 	private void displayErrorDialog() {
 		String title = PDEUIMessages.OpenSchemaAction_titleExtensionPointSchema;
 		String message = NLS.bind(PDEUIMessages.OpenSchemaAction_errorMsgSchemaNotFound, fFullPointID);
@@ -186,9 +168,6 @@ public class OpenSchemaAction extends Action {
 		}
 	}
 
-	/**
-	 * @param path
-	 */
 	private void openSchemaFile(URL url) {
 		try {
 			// Convert url to an encoded URI, then try to get a local file out of it
@@ -221,9 +200,6 @@ public class OpenSchemaAction extends Action {
 		}
 	}
 
-	/**
-	 * @param path
-	 */
 	private void openSchemaJar(URL url) {
 		try {
 			// The url is unencoded, so we can treat it like a path, splitting it based on the jar suffix '!'

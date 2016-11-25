@@ -25,9 +25,6 @@ import org.eclipse.ui.cheatsheets.ICheatSheetAction;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 
 public class OpenProjectWizardAction extends Action implements ICheatSheetAction {
-	/**
-	 * @param text
-	 */
 	public OpenProjectWizardAction() {
 		super(PDEUIMessages.Actions_Site_OpenProjectWizardAction);
 	}

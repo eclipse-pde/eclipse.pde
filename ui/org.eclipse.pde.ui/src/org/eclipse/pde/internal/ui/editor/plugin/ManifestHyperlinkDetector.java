@@ -25,9 +25,6 @@ import org.eclipse.pde.internal.ui.editor.text.*;
 
 public class ManifestHyperlinkDetector extends PDEHyperlinkDetector {
 
-	/**
-	 * @param editor the editor in which to detect the hyperlink
-	 */
 	public ManifestHyperlinkDetector(PDESourcePage page) {
 		super(page);
 	}

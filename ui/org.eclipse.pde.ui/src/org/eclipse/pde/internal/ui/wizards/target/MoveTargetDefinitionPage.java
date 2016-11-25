@@ -46,7 +46,8 @@ public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
 	/**
 	 * The list of filenames that are not allowed
 	 *
-	 * @param fFilterList <code>Collection</code> of filenames as <code>IPath</code>
+	 * @param filterFileList
+	 *            <code>Collection</code> of filenames as <code>IPath</code>
 	 */
 	protected void setFilter(Collection<?> filterFileList) {
 		fFilterList = filterFileList;

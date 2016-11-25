@@ -97,8 +97,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		/**
 		 * Removes this selection changed listener from the given selection
 		 * provider.
-		 *
-		 * @param selectionProviderstyle
 		 */
 		public void uninstall(ISelectionProvider selectionProvider) {
 			if (selectionProvider == null) {
