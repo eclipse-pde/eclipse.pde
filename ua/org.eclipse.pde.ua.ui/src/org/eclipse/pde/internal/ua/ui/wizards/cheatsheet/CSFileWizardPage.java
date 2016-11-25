@@ -44,19 +44,12 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 
 	public static final int F_COMPOSITE_CHEAT_SHEET = 1;
 
-	/**
-	 * @param pageName
-	 * @param selection
-	 */
 	public CSFileWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 
 		initialize();
 	}
 
-	/**
-	 *
-	 */
 	protected void initialize() {
 		setTitle(CSWizardMessages.CSFileWizardPage_title);
 		setDescription(CSWizardMessages.CSFileWizardPage_description);
@@ -64,9 +57,6 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 		setFileExtension(F_FILE_EXTENSION);
 	}
 
-	/**
-	 * @return
-	 */
 	public int getCheatSheetType() {
 		if (fSimpleCheatSheetButton.getSelection()) {
 			return F_SIMPLE_CHEAT_SHEET;

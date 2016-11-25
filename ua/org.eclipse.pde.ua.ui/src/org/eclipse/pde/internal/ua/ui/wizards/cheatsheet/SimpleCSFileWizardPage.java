@@ -19,9 +19,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.swt.widgets.Composite;
 
-/**
- * SimpleCheatSheetFileWizardPage
- */
 public class SimpleCSFileWizardPage extends CSFileWizardPage {
 
 	public final static String F_PAGE_NAME = "simple-cheatsheet"; //$NON-NLS-1$
@@ -30,10 +27,6 @@ public class SimpleCSFileWizardPage extends CSFileWizardPage {
 
 	private String fProjectName;
 
-	/**
-	 * @param pageName
-	 * @param selection
-	 */
 	public SimpleCSFileWizardPage(IStructuredSelection selection) {
 		super(F_PAGE_NAME, selection);
 
@@ -88,18 +81,12 @@ public class SimpleCSFileWizardPage extends CSFileWizardPage {
 		return super.validatePage();
 	}
 
-	/**
-	 * @return
-	 */
 	public String getAbsoluteFileName() {
 		// This is needed because the resource and group widget is disposed
 		// before the file name can be retrieved
 		return fAbsoluteFileName;
 	}
 
-	/**
-	 * @param projectName
-	 */
 	public void setProjectName(String projectName) {
 		fProjectName = projectName;
 	}

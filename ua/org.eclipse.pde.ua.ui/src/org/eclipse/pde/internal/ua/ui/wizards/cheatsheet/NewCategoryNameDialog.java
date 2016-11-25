@@ -29,9 +29,6 @@ public class NewCategoryNameDialog extends TrayDialog {
 
 	private String fNameTextValue;
 
-	/**
-	 * @param shell
-	 */
 	public NewCategoryNameDialog(Shell shell) {
 		super(shell);
 
@@ -59,9 +56,6 @@ public class NewCategoryNameDialog extends TrayDialog {
 		return composite;
 	}
 
-	/**
-	 * @param parent
-	 */
 	private Composite createUI(Composite parent) {
 		// Create the container
 		Composite container = createUIContainer(parent);
@@ -75,24 +69,14 @@ public class NewCategoryNameDialog extends TrayDialog {
 		return container;
 	}
 
-	/**
-	 *
-	 */
 	private void createListeners() {
 		// NO-OP
 	}
 
-	/**
-	 *
-	 */
 	private void updateUI() {
 		// NO-OP
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	private Composite createUIContainer(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
@@ -106,9 +90,6 @@ public class NewCategoryNameDialog extends TrayDialog {
 		return composite;
 	}
 
-	/**
-	 * @param container
-	 */
 	private void createUIInstructionLabel(Composite container) {
 		Label label = new Label(container, SWT.WRAP);
 		label.setText(CSWizardMessages.NewCategoryNameDialog_labelDesc);
@@ -118,9 +99,6 @@ public class NewCategoryNameDialog extends TrayDialog {
 		label.setLayoutData(data);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUINameField(Composite parent) {
 		// Create the label
 		createUINameLabel(parent);
@@ -128,17 +106,11 @@ public class NewCategoryNameDialog extends TrayDialog {
 		createUINameText(parent);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUINameLabel(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(CSWizardMessages.NewCategoryNameDialog_labelText);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUINameText(Composite parent) {
 		int style = SWT.BORDER;
 		fNameText = new Text(parent, style);
@@ -155,11 +127,7 @@ public class NewCategoryNameDialog extends TrayDialog {
 		super.okPressed();
 	}
 
-	/**
-	 * @return
-	 */
 	public String getNameText() {
 		return fNameTextValue;
 	}
-
 }

@@ -64,17 +64,11 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 
 	private Shell fShell;
 
-	/**
-	 *
-	 */
 	public RegisterCSOperation(IRegisterCSData registerCSData, Shell shell) {
 		fRegisterCSData = registerCSData;
 		fShell = shell;
 	}
 
-	/**
-	 * @param rule
-	 */
 	public RegisterCSOperation(ISchedulingRule rule) {
 		super(rule);
 	}
@@ -109,34 +103,20 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 
 		public IPluginElement fCSElement;
 
-		/**
-		 *
-		 */
 		public FindCSExtensionResult() {
 			fCSExtension = null;
 			fCSElement = null;
 		}
 
-		/**
-		 * @return
-		 */
 		public boolean foundCSExtension() {
 			return (fCSExtension != null);
 		}
 
-		/**
-		 * @return
-		 */
 		public boolean foundExactCSElement() {
 			return (fCSElement != null);
 		}
 	}
 
-	/**
-	 * @param file
-	 * @param monitor
-	 * @throws CoreException
-	 */
 	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
 
 		// Validate the operation
@@ -156,11 +136,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		PDEModelUtility.modifyModel(mod, monitor);
 	}
 
-	/**
-	 * @param model
-	 * @param monitor
-	 * @throws CoreException
-	 */
 	private void doModifyPluginModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 		if ((model instanceof IPluginModelBase) == false) {
 			return;
@@ -193,9 +168,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	/**
-	 * @param modelBase
-	 */
 	private void insertNewExtension(IPluginModelBase modelBase, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
 		monitor.beginTask(CSWizardMessages.RegisterCSOperation_task, 1);
@@ -206,9 +178,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	/**
-	 * @param extension
-	 */
 	private void modifyExistingExtension(IPluginExtension extension, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
 		monitor.beginTask(CSWizardMessages.RegisterCSOperation_task2, 1);
@@ -218,10 +187,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	/**
-	 * @param csElement
-	 * @param monitor
-	 */
 	private void modifyExistingElement(IPluginElement csElement, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
 		monitor.beginTask(CSWizardMessages.RegisterCSOperation_task3, 1);
@@ -262,9 +227,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	/**
-	 * @param descriptionElement
-	 */
 	private boolean modifyExistingDescription(IPluginElement element) throws CoreException {
 		// If the new description is defined set it on the existing description
 		// element; otherwise, delete the existing description element
@@ -275,10 +237,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		return false;
 	}
 
-	/**
-	 * @param csElement
-	 * @throws CoreException
-	 */
 	private IPluginElement findExistingDescription(IPluginElement csElement) throws CoreException {
 
 		if (csElement.getChildCount() > 0) {
@@ -357,10 +315,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		return (IPluginExtension[]) csExtensions.toArray(new IPluginExtension[csExtensions.size()]);
 	}
 
-	/**
-	 * @param file
-	 * @param monitor
-	 */
 	private void createNewPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
 
 		// Update progress work units
@@ -387,9 +341,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	/**
-	 * @param model
-	 */
 	private void modifyExistingManifestFile(IFile file) throws CoreException {
 		// Validate the operation
 		// Note: This is not accurate, we are validating the plugin.xml file rather
@@ -408,9 +359,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		PDEModelUtility.modifyModel(mod, null);
 	}
 
-	/**
-	 * @param model
-	 */
 	private void doModifyManifestModel(IBaseModel model) {
 		// Make sure we have a base model
 		if ((model instanceof IBundlePluginModelBase) == false) {
@@ -439,9 +387,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	/**
-	 * @param model
-	 */
 	private void doModifyBuildModel(IBaseModel model) throws CoreException {
 		// Make sure we have a base model
 		if ((model instanceof IPluginModelBase) == false) {
@@ -476,10 +421,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	/**
-	 * @param file
-	 * @return
-	 */
 	private IPluginModelBase createModel(IFile file) {
 		if (file.getProjectRelativePath().equals(ICoreConstants.FRAGMENT_PATH)) {
 			return new WorkspaceFragmentModel(file, false);
@@ -487,11 +428,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		return new WorkspacePluginModel(file, false);
 	}
 
-	/**
-	 * @param model
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginExtension createExtensionCheatSheet(IPluginModelBase model) throws CoreException {
 		IPluginExtension extension = model.getFactory().createExtension();
 		// Point
@@ -504,10 +440,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		return extension;
 	}
 
-	/**
-	 * @param extension
-	 * @throws CoreException
-	 */
 	private void createExtensionChildren(IPluginExtension extension) throws CoreException {
 		// Category element
 		IPluginElement categoryElement = createElementCategory(extension);
@@ -521,11 +453,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	/**
-	 * @param extension
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginElement createElementCategory(IPluginExtension extension) throws CoreException {
 		// Do not create the category if "<none>" was selected
 		String categoryID = fRegisterCSData.getDataCategoryID();
@@ -550,11 +477,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		return element;
 	}
 
-	/**
-	 * @param extension
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginElement createElementCheatSheet(IPluginExtension extension) throws CoreException {
 
 		IPluginElement element = extension.getModel().getFactory().createElement(extension);
@@ -583,11 +505,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		return element;
 	}
 
-	/**
-	 * @param parentElement
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginElement createElementDescription(IPluginElement parentElement) throws CoreException {
 		// Define the description element only if description text was
 		// specified

@@ -31,9 +31,6 @@ public class CSCategoryTrackerUtil {
 
 	private HashMap fCategoryTypeMap;
 
-	/**
-	 *
-	 */
 	public CSCategoryTrackerUtil() {
 
 		// Look-up hashmap
@@ -53,52 +50,28 @@ public class CSCategoryTrackerUtil {
 
 	}
 
-	/**
-	 * @param id
-	 * @param name
-	 */
 	public void associate(String id, String name, int type) {
 		fCategoryNameMap.put(name, id);
 		fCategoryIDMap.put(id, name);
 		fCategoryTypeMap.put(id, Integer.valueOf(type));
 	}
 
-	/**
-	 * @param name
-	 * @return
-	 */
 	public boolean containsCategoryName(String name) {
 		return fCategoryNameMap.containsKey(name);
 	}
 
-	/**
-	 * @param id
-	 * @return
-	 */
 	public boolean containsCategoryID(String id) {
 		return fCategoryIDMap.containsKey(id);
 	}
 
-	/**
-	 * @param id
-	 * @return
-	 */
 	public String getCategoryName(String id) {
 		return (String) fCategoryIDMap.get(id);
 	}
 
-	/**
-	 * @param name
-	 * @return
-	 */
 	public String getCategoryID(String name) {
 		return (String) fCategoryNameMap.get(name);
 	}
 
-	/**
-	 * @param id
-	 * @return
-	 */
 	public int getCategoryType(String id) {
 		Integer integer = (Integer) fCategoryTypeMap.get(id);
 		if (integer == null) {

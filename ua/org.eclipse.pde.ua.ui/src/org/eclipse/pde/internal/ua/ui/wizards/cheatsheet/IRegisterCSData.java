@@ -18,49 +18,21 @@ import org.eclipse.core.resources.IProject;
  */
 public interface IRegisterCSData {
 
-	/**
-	 * @return
-	 */
 	public String getDataDescription();
 
-	/**
-	 * @return
-	 */
 	public String getDataCategoryName();
 
-	/**
-	 * @return
-	 */
 	public String getDataCategoryID();
 
-	/**
-	 * @return
-	 */
 	public int getDataCategoryType();
 
-	/**
-	 * @return
-	 */
 	public String getDataContentFile();
 
-	/**
-	 * @return
-	 */
 	public String getDataCheatSheetID();
 
-	/**
-	 * @return
-	 */
 	public String getDataCheatSheetName();
 
-	/**
-	 * @return
-	 */
 	public boolean isCompositeCheatSheet();
 
-	/**
-	 * @return
-	 */
 	public IProject getPluginProject();
-
 }

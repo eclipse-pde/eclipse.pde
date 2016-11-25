@@ -70,9 +70,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 
 	private CSCategoryTrackerUtil fCategoryTrackerUtil;
 
-	/**
-	 * @param pageName
-	 */
 	public RegisterCSWizardPage(IModel model) {
 		super(F_PAGE_NAME);
 
@@ -80,9 +77,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		initialize();
 	}
 
-	/**
-	 *
-	 */
 	private void initialize() {
 
 		setTitle(CSWizardMessages.RegisterCSWizardPage_title);
@@ -105,9 +99,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		initializePluginModel();
 	}
 
-	/**
-	 *
-	 */
 	private void initializePluginModel() {
 		IPluginModelBase base = PluginRegistry.findModel(getPluginProject());
 		// should never happen
@@ -178,14 +169,8 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		return fPluginProject;
 	}
 
-	/**
-	 * @return
-	 */
 	public abstract String getDataCheatSheetName();
 
-	/**
-	 * @return
-	 */
 	public abstract boolean isCompositeCheatSheet();
 
 	/* (non-Javadoc)
@@ -201,9 +186,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUI(Composite parent) {
 		// Create the container
 		Composite container = createUIContainer(parent);
@@ -225,9 +207,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.REGISTER_CS);
 	}
 
-	/**
-	 * @param container
-	 */
 	private void createUILabel(Composite container) {
 		Label label = new Label(container, SWT.WRAP);
 		label.setText(CSWizardMessages.RegisterCSWizardPage_label);
@@ -236,10 +215,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		label.setLayoutData(data);
 	}
 
-	/**
-	 * @param container
-	 * @return
-	 */
 	private Group createUIGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
 		GridLayout layout = new GridLayout(3, false);
@@ -254,10 +229,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		return group;
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	private Composite createUIContainer(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -266,9 +237,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		return container;
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUICategoryField(Composite parent) {
 		// Create the label
 		createUICategoryLabel(parent);
@@ -278,17 +246,11 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		createUICategoryButton(parent);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUICategoryLabel(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(CSWizardMessages.RegisterCSWizardPage_category);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUICategoryCombo(Composite parent) {
 		int style = SWT.READ_ONLY | SWT.BORDER;
 		fCategoryCombo = new Combo(parent, style);
@@ -298,9 +260,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		fCategoryCombo.setText(CSWizardMessages.RegisterCSWizardPage_none);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUICategoryButton(Composite parent) {
 		fCategoryButton = new Button(parent, SWT.PUSH);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -311,9 +270,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		SWTUtil.setButtonDimensionHint(fCategoryButton);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIDescriptionField(Composite parent) {
 		// Create the label
 		createUIDescriptionLabel(parent);
@@ -321,9 +277,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		createUIDescriptionText(parent);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIDescriptionLabel(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(CSWizardMessages.RegisterCSWizardPage_desc);
@@ -332,9 +285,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		label.setLayoutData(data);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIDescriptionText(Composite parent) {
 		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.BORDER;
 		fDescriptionText = new Text(parent, style);
@@ -344,9 +294,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		fDescriptionText.setLayoutData(data);
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListeners() {
 		// Create listeners for the category button
 		createUIListenersCategoryButton();
@@ -356,9 +303,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		createUIListenersDescriptionText();
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListenersCategoryButton() {
 		fCategoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -367,9 +311,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListenersCategoryCombo() {
 		fCategoryCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -389,9 +330,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void handleWidgetSelectedCategoryButton() {
 		// Create a dialog allowing the user to input the category name
 		NewCategoryNameDialog dialog = new NewCategoryNameDialog(PDEUserAssistanceUIPlugin.getActiveWorkbenchShell());
@@ -413,9 +351,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 
 	}
 
-	/**
-	 *
-	 */
 	private void updateUI() {
 
 		if (fExtensionsModel != null) {
@@ -428,9 +363,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		}
 	}
 
-	/**
-	 * @param extensions
-	 */
 	private void processCategoryElements(IPluginExtension[] extensions) {
 		// Linear search:  Process all cheat sheet extensions found
 		for (int i = 0; i < extensions.length; i++) {
@@ -454,9 +386,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		}
 	}
 
-	/**
-	 * @param extensions
-	 */
 	private void processCheatSheetElements(IPluginExtension[] extensions) {
 		// Query cheat sheet extensions for information required to update
 		// the description text and category combo widgets
@@ -528,9 +457,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		}
 	}
 
-	/**
-	 * @param extensions
-	 */
 	private void processCheatSheetElement(IPluginElement parentElement, String generatedID) {
 		// Get the id attribute
 		IPluginAttribute idAttribute = parentElement.getAttribute(ICompCSConstants.ATTRIBUTE_ID);
@@ -549,9 +475,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		}
 	}
 
-	/**
-	 * @param parentElement
-	 */
 	private void updateUIDescriptionText(IPluginElement parentElement) {
 		IPluginObject pluginObject = parentElement.getChildren()[0];
 		if (pluginObject instanceof IPluginElement) {
@@ -563,18 +486,10 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void validateUI() {
 		setPageComplete(true);
 	}
 
-	/**
-	 * @param model
-	 * @param extensionPointID
-	 * @return
-	 */
 	public IPluginExtension[] findExtensions(ISharedExtensionsModel model, String extensionPointID) {
 		IPluginExtension[] extensions = model.getExtensions().getExtensions();
 
@@ -588,9 +503,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		return (IPluginExtension[]) csExtensions.toArray(new IPluginExtension[csExtensions.size()]);
 	}
 
-	/**
-	 * @return
-	 */
 	private String generateCheatSheetID() {
 		// Generate the hash code using the full path
 		long uniqueID = hash(fCheatSheetModel.getUnderlyingResource().getFullPath().toPortableString());
@@ -602,9 +514,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		return result;
 	}
 
-	/**
-	 * @return
-	 */
 	private String generateCategoryID(String name) {
 		// Generate the hash code using the category name
 		long uniqueID = hash(name);
@@ -614,10 +523,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		return result;
 	}
 
-	/**
-	 * @param string
-	 * @return
-	 */
 	private long hash(String string) {
 		int b = 378551;
 		int a = 63689;

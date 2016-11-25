@@ -51,9 +51,6 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 
 	private boolean fDataIsPrimary;
 
-	/**
-	 * @param pageName
-	 */
 	public RegisterTocWizardPage(IModel model) {
 		super(F_PAGE_NAME);
 
@@ -61,9 +58,6 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		initialize();
 	}
 
-	/**
-	 *
-	 */
 	private void initialize() {
 
 		setTitle(TocWizardMessages.RegisterTocWizardPage_title);
@@ -79,9 +73,6 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		initializePluginModel();
 	}
 
-	/**
-	 *
-	 */
 	private void initializePluginModel() {
 		IPluginModelBase base = PluginRegistry.findModel(getPluginProject());
 
@@ -93,9 +84,6 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 			fExtensionsModel = base;
 	}
 
-	/**
-	 *
-	 */
 	private void updateUI() {
 
 		if (fExtensionsModel != null) {
@@ -107,9 +95,6 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		}
 	}
 
-	/**
-	 * @param extensions
-	 */
 	private void processTocElements(IPluginExtension[] extensions) {
 		// Query cheat sheet extensions for information required to update
 		// the description text and category combo widgets
@@ -135,9 +120,6 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		}
 	}
 
-	/**
-	 * @param extensions
-	 */
 	private void processTocElement(IPluginElement parentElement, String generatedID) {
 		// Get the id attribute
 		IPluginAttribute fileAttribute = parentElement.getAttribute(RegisterTocOperation.F_TOC_ATTRIBUTE_FILE);
@@ -189,9 +171,6 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		validateUI();
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUI(Composite parent) {
 		// Create the container
 		Composite container = createUIContainer(parent);
@@ -208,10 +187,6 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.REGISTER_TOC);
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	private Composite createUIContainer(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -229,17 +204,11 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		fPrimaryChkBox.setSelection(true);
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListeners() {
 		// Create listeners for the primary check box
 		createUIListenersPrimaryChkBox();
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListenersPrimaryChkBox() {
 		fPrimaryChkBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -248,18 +217,10 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void validateUI() {
 		setPageComplete(true);
 	}
 
-	/**
-	 * @param model
-	 * @param extensionPointID
-	 * @return
-	 */
 	public IPluginExtension[] findExtensions(IPluginModelBase model, String extensionPointID) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 

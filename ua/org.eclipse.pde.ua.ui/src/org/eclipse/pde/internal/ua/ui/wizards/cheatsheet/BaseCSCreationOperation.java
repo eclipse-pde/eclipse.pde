@@ -29,23 +29,14 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
-/**
- * BaseCheatSheetCreationOperation
- */
 public abstract class BaseCSCreationOperation extends WorkspaceModifyOperation {
 
 	protected IFile fFile;
 
-	/**
-	 *
-	 */
 	public BaseCSCreationOperation(IFile file) {
 		fFile = file;
 	}
 
-	/**
-	 * @param rule
-	 */
 	public BaseCSCreationOperation(ISchedulingRule rule) {
 		super(rule);
 	}
@@ -61,14 +52,8 @@ public abstract class BaseCSCreationOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	/**
-	 *
-	 */
 	protected abstract void createContent() throws CoreException;
 
-	/**
-	 *
-	 */
 	private void openFile() {
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
@@ -94,10 +79,6 @@ public abstract class BaseCSCreationOperation extends WorkspaceModifyOperation {
 		});
 	}
 
-	/**
-	 * @param text
-	 * @return
-	 */
 	public static String formatTextBold(String text) {
 		// TODO: MP: CompCS:  Create generalized HTML formatter utility
 		StringBuffer buffer = new StringBuffer();

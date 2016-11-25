@@ -14,19 +14,10 @@ import org.eclipse.core.resources.IProject;
 
 public interface IRegisterTOCData {
 
-	/**
-	 * @return
-	 */
 	public boolean getDataPrimary();
 
-	/**
-	 * @return
-	 */
 	public String getDataTocFile();
 
-	/**
-	 * @return
-	 */
 	public IProject getPluginProject();
 
 }

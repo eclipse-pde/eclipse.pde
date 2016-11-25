@@ -22,16 +22,10 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
  */
 public class CompCSCreationOperation extends BaseCSCreationOperation implements IRunnableWithProgress {
 
-	/**
-	 * @param file
-	 */
 	public CompCSCreationOperation(IFile file) {
 		super(file);
 	}
 
-	/**
-	 * @param rule
-	 */
 	public CompCSCreationOperation(ISchedulingRule rule) {
 		super(rule);
 	}
@@ -46,9 +40,6 @@ public class CompCSCreationOperation extends BaseCSCreationOperation implements 
 		model.dispose();
 	}
 
-	/**
-	 * @param compCS
-	 */
 	private void initializeCS(ICompCS compCS) {
 		// Create Task Group
 		// Element: taskGroup
@@ -64,10 +55,6 @@ public class CompCSCreationOperation extends BaseCSCreationOperation implements 
 		compCS.setFieldTaskObject(taskGroup);
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public static ICompCSTask createBasicTask(ICompCSObject parent) {
 		ICompCSModelFactory factory = parent.getModel().getFactory();
 		// Create Task
@@ -90,10 +77,6 @@ public class CompCSCreationOperation extends BaseCSCreationOperation implements 
 		return task;
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	public static ICompCSTaskGroup createBasicGroup(ICompCSObject parent) {
 		ICompCSModelFactory factory = parent.getModel().getFactory();
 		// Create Task Group

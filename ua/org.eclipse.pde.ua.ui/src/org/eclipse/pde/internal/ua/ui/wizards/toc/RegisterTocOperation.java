@@ -60,17 +60,11 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	private IRegisterTOCData fPage;
 	private Shell fShell;
 
-	/**
-	 *
-	 */
 	public RegisterTocOperation(IRegisterTOCData page, Shell shell) {
 		fPage = page;
 		fShell = shell;
 	}
 
-	/**
-	 * @param rule
-	 */
 	public RegisterTocOperation(ISchedulingRule rule) {
 		super(rule);
 	}
@@ -105,34 +99,20 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 
 		public IPluginElement fTocElement;
 
-		/**
-		 *
-		 */
 		public FindTocExtensionResult() {
 			fTocExtension = null;
 			fTocElement = null;
 		}
 
-		/**
-		 * @return
-		 */
 		public boolean foundTocExtension() {
 			return (fTocExtension != null);
 		}
 
-		/**
-		 * @return
-		 */
 		public boolean foundExactTocElement() {
 			return (fTocElement != null);
 		}
 	}
 
-	/**
-	 * @param file
-	 * @param monitor
-	 * @throws CoreException
-	 */
 	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
 
 		// Validate the operation
@@ -152,11 +132,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		PDEModelUtility.modifyModel(mod, monitor);
 	}
 
-	/**
-	 * @param model
-	 * @param monitor
-	 * @throws CoreException
-	 */
 	private void doModifyPluginModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 		if ((model instanceof IPluginModelBase) == false) {
 			return;
@@ -182,9 +157,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	/**
-	 * @param modelBase
-	 */
 	private void insertNewExtension(IPluginModelBase modelBase, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
 		monitor.beginTask(TocWizardMessages.RegisterTocOperation_task, 1);
@@ -195,9 +167,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	/**
-	 * @param extension
-	 */
 	private void modifyExistingExtension(IPluginExtension extension, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
 		monitor.beginTask(TocWizardMessages.RegisterTocOperation_task2, 1);
@@ -207,10 +176,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	/**
-	 * @param tocElement
-	 * @param monitor
-	 */
 	private void modifyExistingElement(IPluginElement tocElement, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
 		monitor.beginTask(TocWizardMessages.RegisterTocOperation_task3, 1);
@@ -293,10 +258,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		return (IPluginExtension[]) tocExtensions.toArray(new IPluginExtension[tocExtensions.size()]);
 	}
 
-	/**
-	 * @param file
-	 * @param monitor
-	 */
 	private void createNewPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
 
 		// Update progress work units
@@ -323,9 +284,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	/**
-	 * @param model
-	 */
 	private void modifyExistingManifestFile(IFile file) throws CoreException {
 		// Validate the operation
 		// Note: This is not accurate, we are validating the plugin.xml file rather
@@ -344,9 +302,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		PDEModelUtility.modifyModel(mod, null);
 	}
 
-	/**
-	 * @param model
-	 */
 	private void doModifyManifestModel(IBaseModel model) {
 		// Make sure we have a base model
 		if ((model instanceof IBundlePluginModelBase) == false) {
@@ -375,9 +330,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	/**
-	 * @param model
-	 */
 	private void doModifyBuildModel(IBaseModel model) throws CoreException {
 		// Make sure we have a base model
 		if ((model instanceof IPluginModelBase) == false) {
@@ -412,10 +364,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	/**
-	 * @param file
-	 * @return
-	 */
 	private IPluginModelBase createModel(IFile file) {
 		if (file.getProjectRelativePath().equals(ICoreConstants.FRAGMENT_PATH)) {
 			return new WorkspaceFragmentModel(file, false);
@@ -423,11 +371,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		return new WorkspacePluginModel(file, false);
 	}
 
-	/**
-	 * @param model
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginExtension createExtensionToc(IPluginModelBase model) throws CoreException {
 		IPluginExtension extension = model.getFactory().createExtension();
 		// Point
@@ -438,10 +381,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		return extension;
 	}
 
-	/**
-	 * @param extension
-	 * @throws CoreException
-	 */
 	private void createExtensionChildren(IPluginExtension extension) throws CoreException {
 		// TOC element
 		IPluginElement tocElement = createElementToc(extension);
@@ -450,11 +389,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	/**
-	 * @param extension
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginElement createElementToc(IPluginExtension extension) throws CoreException {
 
 		IPluginElement element = extension.getModel().getFactory().createElement(extension);
