@@ -15,15 +15,11 @@ public interface ISimpleCSIntro extends ISimpleCSObject, ISimpleCSHelpObject {
 
 	/**
 	 * Element: description
-	 *
-	 * @return
 	 */
 	public ISimpleCSDescription getDescription();
 
 	/**
 	 * Element: description
-	 *
-	 * @param description
 	 */
 	public void setDescription(ISimpleCSDescription description);
 

@@ -15,15 +15,11 @@ public interface ISimpleCSOnCompletion extends ISimpleCSObject {
 
 	/**
 	 * Content (element)
-	 *
-	 * @return
 	 */
 	public String getContent();
 
 	/**
 	 * Content (element)
-	 *
-	 * @param content
 	 */
 	public void setContent(String content);
 }

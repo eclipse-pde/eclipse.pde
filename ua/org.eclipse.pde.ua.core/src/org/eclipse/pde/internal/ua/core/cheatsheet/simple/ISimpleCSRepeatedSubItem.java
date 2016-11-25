@@ -15,29 +15,21 @@ public interface ISimpleCSRepeatedSubItem extends ISimpleCSSubItemObject {
 
 	/**
 	 * Attribute: values
-	 *
-	 * @return
 	 */
 	public String getValues();
 
 	/**
 	 * Attribute: values
-	 *
-	 * @param values
 	 */
 	public void setValues(String values);
 
 	/**
 	 * Element: subitem
-	 *
-	 * @return
 	 */
 	public ISimpleCSSubItem getSubItem();
 
 	/**
 	 * Element: subitem
-	 *
-	 * @param subitem
 	 */
 	public void setSubItem(ISimpleCSSubItem subitem);
 

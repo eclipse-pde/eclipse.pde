@@ -16,14 +16,8 @@ import org.eclipse.pde.core.IModelChangeProvider;
 
 public interface ISimpleCSModel extends IModelChangeProvider, IModel {
 
-	/**
-	 * @return
-	 */
 	ISimpleCS getSimpleCS();
 
-	/**
-	 * @return
-	 */
 	ISimpleCSModelFactory getFactory();
 
 }

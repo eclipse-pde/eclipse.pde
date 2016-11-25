@@ -15,15 +15,11 @@ public interface ISimpleCSDescription extends ISimpleCSObject {
 
 	/**
 	 * Content (element)
-	 *
-	 * @return
 	 */
 	public String getContent();
 
 	/**
 	 * Content (element)
-	 *
-	 * @param content
 	 */
 	public void setContent(String content);
 }

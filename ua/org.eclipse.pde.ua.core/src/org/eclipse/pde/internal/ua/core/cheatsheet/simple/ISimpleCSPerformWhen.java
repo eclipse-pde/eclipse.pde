@@ -15,36 +15,26 @@ public interface ISimpleCSPerformWhen extends ISimpleCSRunContainerObject {
 
 	/**
 	 * Attribute: condition
-	 *
-	 * @return
 	 */
 	public String getCondition();
 
 	/**
 	 * Attribute: condition
-	 *
-	 * @param condition
 	 */
 	public void setCondition(String condition);
 
 	/**
 	 * Elements: command, action
-	 *
-	 * @return
 	 */
 	public ISimpleCSRunObject[] getExecutables();
 
 	/**
 	 * Elements: command, action
-	 *
-	 * @param executables
 	 */
 	public void addExecutable(ISimpleCSRunObject executable);
 
 	/**
 	 * Elements: command, action
-	 *
-	 * @param executables
 	 */
 	public void removeExecutable(ISimpleCSRunObject executable);
 

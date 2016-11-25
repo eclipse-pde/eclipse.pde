@@ -11,12 +11,7 @@
 
 package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -35,14 +30,8 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 
 	private boolean fEditable;
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 *
-	 */
 	public CompCSWorkspaceModel(IFile file, boolean editable) {
 		fFile = file;
 		fEditable = editable;
@@ -71,9 +60,6 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private String getContents() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
@@ -140,9 +126,6 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 		return fEditable;
 	}
 
-	/**
-	 * @return
-	 */
 	public String getInstallLocation() {
 		return fFile.getLocation().toOSString();
 	}
