@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
+import java.util.stream.IntStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.*;
@@ -662,7 +663,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
 		String[] ids = getIds();
 		Version[] versions = getVersions();
-		for (int i = 0; i < ids.length; i++) {
+		for (int i : getPredictableOrder(ids, versions)) {
 			Element unit = document.createElement(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT);
 			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID, ids[i]);
 			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, versions[i].toString());
@@ -670,6 +671,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 		URI[] repositories = getRepositories();
 		if (repositories != null) {
+			Arrays.sort(repositories);
 			for (URI repository : repositories) {
 				Element repo = document.createElement(TargetDefinitionPersistenceHelper.REPOSITORY);
 				repo.setAttribute(TargetDefinitionPersistenceHelper.LOCATION, repository.toASCIIString());
@@ -687,6 +689,32 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		} catch (TransformerException ex) {
 			return null;
 		}
+	}
+
+	/**
+	 * Generate a predictable order of the elements. Sort order is ID followed
+	 * by version.
+	 *
+	 * @param ids Installable unit identifiers
+	 * @param versions Installable unit versions
+	 * @return The element order to use
+	 */
+	private int[] getPredictableOrder(String[] ids, Version[] versions) {
+		Comparator<Integer> idVersionCmp = new Comparator<Integer>() {
+			@Override
+			public int compare(Integer i1, Integer i2) {
+				String id1 = ids[i1], id2 = ids[i2];
+				Version ver1 = versions[i1], ver2 = versions[i2];
+
+				int c = id1.compareTo(id2);
+				if (c == 0) {
+					return ver1.compareTo(ver2);
+				}
+				return c;
+			}
+		};
+
+		return IntStream.range(0, ids.length).boxed().sorted(idVersionCmp).mapToInt(i -> i).toArray();
 	}
 
 	IInstallableUnit[] getRootIUs(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
