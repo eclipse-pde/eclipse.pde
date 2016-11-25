@@ -75,9 +75,6 @@ public class SelectionPage extends WizardPage {
 		}
 	}
 
-	/**
-	 * @param pageName
-	 */
 	public SelectionPage(SampleWizard wizard) {
 		super("selection"); //$NON-NLS-1$
 		this.wizard = wizard;

@@ -366,10 +366,7 @@ public class DownloadStatsSection extends TableSection {
 	}
 
 	/**
-	 *
-	 * @param candidates
-	 *            Array of IFeatureModel
-	 * @throws CoreException
+	 * @param candidates  Array of IFeatureModel
 	 */
 	public void doAddFeatures(Object[] candidates) throws CoreException {
 		ISiteFeature[] added = new ISiteFeature[candidates.length];
@@ -388,10 +385,7 @@ public class DownloadStatsSection extends TableSection {
 	}
 
 	/**
-	 *
-	 * @param candidates
-	 *            Array of IPluginModelBase
-	 * @throws CoreException
+	 * @param candidates  Array of IPluginModelBase
 	 */
 	public void doAddBundles(Object[] candidates) throws CoreException {
 		ISiteBundle[] added = new ISiteBundle[candidates.length];

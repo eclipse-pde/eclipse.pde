@@ -75,11 +75,11 @@ public class SWTUtil {
 	}
 
 	/**
-	 * Sets width and height hint for the button control.
-	 * <b>Note:</b> This is a NOP if the button's layout data is not
-	 * an instance of <code>GridData</code>.
+	 * Sets width and height hint for the button control. <b>Note:</b> This is a
+	 * NOP if the button's layout data is not an instance of
+	 * <code>GridData</code>.
 	 *
-	 * @param	the button for which to set the dimension hint
+	 * @param button for which to set the dimension hint
 	 */
 	public static void setButtonDimensionHint(Button button) {
 		Dialog.applyDialogFont(button);

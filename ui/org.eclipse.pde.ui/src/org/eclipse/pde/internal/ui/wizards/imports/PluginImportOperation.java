@@ -1330,9 +1330,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * Sets the import descriptions to use when importing from a repository.
 	 *
-	 * @param descriptions
-	 *            map of {@link IBundleImporter} to arrays of
-	 *            {@link ScmUrlImportDescription}.
+	 * @param descriptions map of {@link IBundleImporter} to arrays of {@link ScmUrlImportDescription}.
 	 */
 	public void setImportDescriptions(Map<IBundleImporter, ScmUrlImportDescription[]> descriptions) {
 		fImportDescriptions = descriptions;

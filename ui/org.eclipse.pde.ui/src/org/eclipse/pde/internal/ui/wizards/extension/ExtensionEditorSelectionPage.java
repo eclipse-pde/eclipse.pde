@@ -21,9 +21,6 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IExtensionEditorWizard;
 
-/**
- *
- */
 public class ExtensionEditorSelectionPage extends WizardListSelectionPage {
 	private IProject fProject;
 	private IPluginBase fPluginBase;

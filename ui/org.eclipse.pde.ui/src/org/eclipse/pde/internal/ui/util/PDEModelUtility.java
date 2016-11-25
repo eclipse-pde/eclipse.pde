@@ -259,8 +259,6 @@ public class PDEModelUtility {
 	 * NOTE: If a MANIFEST.MF file is specified in the ModelModification a BundlePluginModel will be
 	 * searched for / created and passed to ModelModification#modifyModel(IBaseModel).
 	 * (not a BundleModel - which can be retreived from the BundlePluginModel)
-	 * @param modification
-	 * @param monitor
 	 */
 	public static void modifyModel(final ModelModification modification, final IProgressMonitor monitor) {
 		// ModelModification was not supplied with the right files

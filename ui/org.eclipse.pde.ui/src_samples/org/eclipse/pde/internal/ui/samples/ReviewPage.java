@@ -28,9 +28,6 @@ public class ReviewPage extends WizardPage {
 	private SampleWizard wizard;
 	private ScrolledFormText formText;
 
-	/**
-	 * @param pageName
-	 */
 	public ReviewPage(SampleWizard wizard) {
 		super("last"); //$NON-NLS-1$
 		this.wizard = wizard;

@@ -78,7 +78,6 @@ public class TemplateSelectionPage extends WizardPage {
 
 	/**
 	 * Constructor for TemplateSelectionPage.
-	 * @param pageName
 	 */
 	public TemplateSelectionPage(ITemplateSection[] candidates) {
 		super("templateSelection"); //$NON-NLS-1$

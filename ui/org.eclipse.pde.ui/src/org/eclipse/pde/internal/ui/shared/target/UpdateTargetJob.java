@@ -63,7 +63,7 @@ public class UpdateTargetJob extends Job {
 	}
 
 	/**
-	 * Use {@link #update(Map, IJobChangeListener)} instead
+	 * Use {@link #update(ITargetDefinition, Map, IJobChangeListener)} instead
 	 */
 	private UpdateTargetJob(Map<ITargetLocation, Set<Object>> toUpdate, ITargetDefinition target) {
 		super(Messages.UpdateTargetJob_UpdateJobName);

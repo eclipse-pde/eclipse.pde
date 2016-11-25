@@ -114,9 +114,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 	}
 
-	/**
-	 * @param pageName
-	 */
 	public TargetDefinitionContentPage(ITargetDefinition target) {
 		super("targetContent", target); //$NON-NLS-1$
 		setTitle(PDEUIMessages.TargetDefinitionContentPage_1);

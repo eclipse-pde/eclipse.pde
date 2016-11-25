@@ -942,10 +942,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	}
 
 	/**
-	 *
-	 * @param candidates
-	 *            Array of IFeatureModel
-	 * @throws CoreException
+	 * @param candidates Array of IFeatureModel
 	 */
 	public void doAdd(Object[] candidates) throws CoreException {
 		// Category to add features to
@@ -985,10 +982,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	}
 
 	/**
-	 *
-	 * @param candidates
-	 *            Array of IPluginModelBase
-	 * @throws CoreException
+	 * @param candidates Array of IPluginModelBase
 	 */
 	public void doAddBundles(Object[] candidates) throws CoreException {
 		// Category to add features to

@@ -84,9 +84,6 @@ public class SplashConfigurationSection extends PDESection {
 		// Note: Rely on refresh method to update the UI
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListenersFieldTemplateCombo() {
 		// Selection listener
 		fFieldTemplateCombo.addSelectionListener(new SelectionAdapter() {
@@ -112,9 +109,6 @@ public class SplashConfigurationSection extends PDESection {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void handleTemplateComboWidgetSelected() {
 		// Ignore event if notifications are blocked
 		if (fBlockNotification) {
@@ -139,9 +133,6 @@ public class SplashConfigurationSection extends PDESection {
 		return ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES[position][0];
 	}
 
-	/**
-	 *
-	 */
 	private void createUI() {
 		// Create the container
 		Composite container = createUISectionContainer(fSection);
@@ -165,9 +156,6 @@ public class SplashConfigurationSection extends PDESection {
 		getModel().addModelChangedListener(this);
 	}
 
-	/**
-	 *
-	 */
 	private void createUIFieldDecorationTemplate() {
 		// Decorate the combo with the info image
 		int bits = SWT.TOP | SWT.LEFT;
@@ -186,18 +174,12 @@ public class SplashConfigurationSection extends PDESection {
 		fControlDecoration.hide();
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUILabelType(Composite parent) {
 		Color foreground = fToolkit.getColors().getColor(IFormColors.TITLE);
 		Label label = fToolkit.createLabel(parent, PDEUIMessages.SplashTemplatesSection_typeName, SWT.WRAP);
 		label.setForeground(foreground);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUILabelProgress(Composite parent) {
 		Label label = fToolkit.createLabel(parent, PDEUIMessages.SplashConfigurationSection_sectionDescCustomization, SWT.WRAP);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -206,9 +188,6 @@ public class SplashConfigurationSection extends PDESection {
 		label.setLayoutData(data);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIFieldTemplateCombo(Composite parent) {
 		int style = SWT.READ_ONLY | SWT.BORDER;
 		fFieldTemplateCombo = new ComboPart();
@@ -225,9 +204,6 @@ public class SplashConfigurationSection extends PDESection {
 		}
 	}
 
-	/**
-	 * @param parent
-	 */
 	private Composite createUISectionContainer(Composite parent) {
 		Composite client = fToolkit.createComposite(fSection);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, F_NUM_COLUMNS));
@@ -235,9 +211,6 @@ public class SplashConfigurationSection extends PDESection {
 		return client;
 	}
 
-	/**
-	 *
-	 */
 	private void configureUISection() {
 		fSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -384,9 +357,6 @@ public class SplashConfigurationSection extends PDESection {
 		return spinner;
 	}
 
-	/**
-	 *
-	 */
 	private void resetProgressBarGeometry() {
 		// X Offset
 		fBarSpinners[0].setSelection(SplashInfo.F_DEFAULT_BAR_X_OFFSET);
@@ -398,9 +368,6 @@ public class SplashConfigurationSection extends PDESection {
 		fBarSpinners[3].setSelection(SplashInfo.F_DEFAULT_BAR_HEIGHT);
 	}
 
-	/**
-	 *
-	 */
 	private void resetProgressMessageGeometry() {
 		// X Offset
 		fMessageSpinners[0].setSelection(SplashInfo.F_DEFAULT_MESSAGE_X_OFFSET);
@@ -454,9 +421,6 @@ public class SplashConfigurationSection extends PDESection {
 		updateFieldEnablement();
 	}
 
-	/**
-	 *
-	 */
 	private void updateUIFieldTemplateCombo() {
 		// Update this sections enablement
 		updateFieldEnablement();
@@ -535,9 +499,6 @@ public class SplashConfigurationSection extends PDESection {
 		}
 	}
 
-	/**
-	 * @param e
-	 */
 	private void handleModelEventChange(IModelChangedEvent event) {
 		// Change event
 		Object[] objects = event.getChangedObjects();
@@ -549,9 +510,6 @@ public class SplashConfigurationSection extends PDESection {
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
 	}
@@ -565,9 +523,6 @@ public class SplashConfigurationSection extends PDESection {
 		super.dispose();
 	}
 
-	/**
-	 *
-	 */
 	private void updateFieldEnablement() {
 		// Enable / disable progress and message bar fields
 		updateFieldProgressEnablement();
@@ -575,9 +530,6 @@ public class SplashConfigurationSection extends PDESection {
 		updateFieldTemplateEnablement();
 	}
 
-	/**
-	 *
-	 */
 	private void updateFieldProgressEnablement() {
 		// Get the splash info if any
 		ISplashInfo info = getSplashInfo();
@@ -598,9 +550,6 @@ public class SplashConfigurationSection extends PDESection {
 		}
 	}
 
-	/**
-	 * @param buttonEnabled
-	 */
 	private void updateFieldProgressBarEnablement(boolean buttonEnabled) {
 		boolean enable = (fAddBarButton.getSelection() && buttonEnabled);
 		for (int i = 0; i < fBarControls.length; i++) {
@@ -608,9 +557,6 @@ public class SplashConfigurationSection extends PDESection {
 		}
 	}
 
-	/**
-	 * @param buttonEnabled
-	 */
 	private void updateFieldProgressMessageEnablement(boolean buttonEnabled) {
 		boolean enable = (fAddMessageButton.getSelection() && buttonEnabled);
 		for (int i = 0; i < fMessageControls.length; i++) {
@@ -618,9 +564,6 @@ public class SplashConfigurationSection extends PDESection {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void updateFieldTemplateEnablement() {
 		// Get the splash info if any
 		ISplashInfo info = getSplashInfo();
@@ -635,9 +578,6 @@ public class SplashConfigurationSection extends PDESection {
 		}
 	}
 
-	/**
-	 * @param controls
-	 */
 	private void addOffsetTooltips(Control[] controls) {
 		// Limit includes X, Y spinners and labels
 		int limit = 4;

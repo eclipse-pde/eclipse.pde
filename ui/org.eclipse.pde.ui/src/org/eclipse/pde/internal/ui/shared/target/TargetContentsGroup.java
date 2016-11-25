@@ -220,7 +220,7 @@ public class TargetContentsGroup {
 	 * Creates the tree in this group
 	 *
 	 * @param parent parent composite
-	 * @param style toolkit for form style or <code>null</code> for dialog style
+	 * @param toolkit for form style or <code>null</code> for dialog style
 	 */
 	private TreeViewer createTree(Composite parent, FormToolkit toolkit) {
 		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, toolkit);
@@ -864,9 +864,14 @@ public class TargetContentsGroup {
 	}
 
 	/**
-	 * Recursively gets the ID of required features of this feature and adds them to the required features list
-	 * @param model target feature to get requirements of
-	 * @param requiredFeatures collector for the required target features {@link TargetFeature}
+	 * Recursively gets the ID of required features of this feature and adds
+	 * them to the required features list
+	 *
+	 * @param feature
+	 *            target feature to get requirements of
+	 * @param requiredFeatures
+	 *            collector for the required target features
+	 *            {@link TargetFeature}
 	 */
 	private void getFeatureDependencies(TargetFeature feature, TargetFeature[] allFeatures, Set<TargetFeature> requiredFeatures) {
 		NameVersionDescriptor[] dependents = feature.getDependentFeatures();

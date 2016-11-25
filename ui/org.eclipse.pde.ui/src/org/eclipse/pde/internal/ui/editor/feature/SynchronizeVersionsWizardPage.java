@@ -133,10 +133,6 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 
 	/**
 	 * Forces a version into plugin/fragment .xml
-	 *
-	 * @param targetVersion
-	 * @param modelBase
-	 * @throws CoreException
 	 */
 	private void forceVersion(final String targetVersion, IPluginModelBase modelBase, IProgressMonitor monitor) {
 		IFile file = (IFile) modelBase.getUnderlyingResource();

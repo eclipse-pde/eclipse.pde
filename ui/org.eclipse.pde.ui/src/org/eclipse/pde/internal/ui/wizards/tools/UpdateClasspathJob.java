@@ -22,18 +22,12 @@ import org.eclipse.pde.internal.ui.*;
 public class UpdateClasspathJob extends Job {
 	IPluginModelBase[] fModels;
 
-	/**
-	 * @param name
-	 */
 	public UpdateClasspathJob(IPluginModelBase[] models) {
 		super(PDEUIMessages.UpdateClasspathJob_title);
 		setPriority(Job.LONG);
 		fModels = models;
 	}
 
-	/*
-	 * return canceled
-	 */
 	public boolean doUpdateClasspath(IProgressMonitor monitor, IPluginModelBase[] models) throws CoreException {
 		monitor.beginTask(PDEUIMessages.UpdateClasspathJob_task, models.length);
 		try {

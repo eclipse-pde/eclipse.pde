@@ -11,8 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-
 import java.util.HashMap;
 import java.util.TreeSet;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -70,12 +68,6 @@ public class XMLElementProposalComputer {
 		return tagNameMap;
 	}
 
-	/**
-	 * @param compositor
-	 * @param proposalList
-	 * @param siblings
-	 * @param multiplicityTracker
-	 */
 	private static void computeCompositorChildProposal(ISchemaCompositor compositor, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 		// Compositor can be null only in cases where we had a schema complex
 		// type but that complex type was complex because it had attributes
@@ -91,12 +83,6 @@ public class XMLElementProposalComputer {
 		}
 	}
 
-	/**
-	 * @param compositor
-	 * @param elementSet
-	 * @param siblings
-	 * @param multiplicityTracker
-	 */
 	private static void computeCompositorSequenceProposal(ISchemaCompositor compositor, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 
 		ISchemaObject[] schemaObject = compositor.getChildren();
@@ -111,12 +97,6 @@ public class XMLElementProposalComputer {
 		}
 	}
 
-	/**
-	 * @param compositor
-	 * @param elementSet
-	 * @param siblings
-	 * @param multiplicityTracker
-	 */
 	private static void computeCompositorChoiceProposal(ISchemaCompositor compositor, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 
 		// Unbounded max occurs are represented by the maximum integer value
@@ -133,10 +113,6 @@ public class XMLElementProposalComputer {
 		}
 	}
 
-	/**
-	 * @param compositor
-	 * @param siblings
-	 */
 	private static void adjustChoiceSiblings(ISchemaCompositor compositor, HashMap<String, Integer> siblings) {
 
 		ISchemaObject[] schemaObject = compositor.getChildren();
@@ -167,12 +143,6 @@ public class XMLElementProposalComputer {
 		}
 	}
 
-	/**
-	 * @param schemaObject
-	 * @param proposalList
-	 * @param siblings
-	 * @param multiplicityTracker
-	 */
 	private static void computeObjectChildProposal(ISchemaObject schemaObject, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 		if (schemaObject instanceof ISchemaElement) {
 			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
@@ -183,12 +153,6 @@ public class XMLElementProposalComputer {
 		}
 	}
 
-	/**
-	 * @param schemaElement
-	 * @param proposalList
-	 * @param siblings
-	 * @param multiplicityTracker
-	 */
 	private static void computeElementChildProposal(ISchemaElement schemaElement, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 
 		int occurrences = 0;

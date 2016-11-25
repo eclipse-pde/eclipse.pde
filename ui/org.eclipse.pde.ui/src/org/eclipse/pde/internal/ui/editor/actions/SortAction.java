@@ -27,14 +27,6 @@ public class SortAction extends Action {
 
 	private ViewerComparator fDefaultComparator;
 
-	/**
-	 * @param viewer
-	 * @param tooltipText
-	 * @param sorter
-	 * @param defaultSorter
-	 * @param listener
-	 * @param useMiniImage
-	 */
 	public SortAction(StructuredViewer viewer, String tooltipText, ViewerComparator sorter, ViewerComparator defaultSorter, IPropertyChangeListener listener) {
 
 		super(tooltipText, IAction.AS_CHECK_BOX);

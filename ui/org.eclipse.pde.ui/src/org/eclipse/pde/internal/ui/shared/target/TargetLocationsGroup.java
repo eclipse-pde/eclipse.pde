@@ -88,10 +88,8 @@ public class TargetLocationsGroup {
 	}
 
 	/**
-	 * Private constructor, use one of {@link #createTableInDialog(Composite, ITargetChangedListener)}
-	 * or {@link #createTableInForm(Composite, FormToolkit, ITargetChangedListener)}.
-	 *
-	 * @param reporter reporter implementation that will handle resolving and changes to the containers
+	 * Private constructor, use one of {@link #createInDialog(Composite)} or
+	 * {@link #createInForm(Composite, FormToolkit)}.
 	 */
 	private TargetLocationsGroup() {
 
@@ -206,7 +204,6 @@ public class TargetLocationsGroup {
 
 	/**
 	 * Sets up the tree viewer using the given tree
-	 * @param tree
 	 */
 	private void initializeTreeViewer(Tree tree) {
 		fTreeViewer = new TreeViewer(tree);
@@ -603,7 +600,7 @@ public class TargetLocationsGroup {
 
 	/**
 	 * Reloads the target
-	 * 
+	 *
 	 */
 	private void contentsReload() {
 		for (ITargetChangedListener listener : fReloadListeners) {

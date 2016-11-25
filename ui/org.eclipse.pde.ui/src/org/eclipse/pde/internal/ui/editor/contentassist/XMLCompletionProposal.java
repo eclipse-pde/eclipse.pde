@@ -101,13 +101,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		}
 	}
 
-	/**
-	 * @param document
-	 * @param sel
-	 * @param delim
-	 * @param documentInsertBuffer
-	 * @param doInternalWork
-	 */
 	private boolean applyVirtual(IDocument document, ITextSelection sel, String delim, StringBuffer documentInsertBuffer, boolean doInternalWork) {
 		int type = ((VirtualSchemaObject) fSchemaObject).getVType();
 		switch (type) {
@@ -140,10 +133,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		return doInternalWork;
 	}
 
-	/**
-	 * @param document
-	 * @param documentInsertBuffer
-	 */
 	private void applyAttributeValue(IDocument document, StringBuffer documentInsertBuffer) {
 		if (fRange instanceof IDocumentAttributeNode) {
 			fOffset = ((IDocumentAttributeNode) fRange).getValueOffset();
@@ -166,9 +155,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		}
 	}
 
-	/**
-	 * @param documentInsertBuffer
-	 */
 	private void applyExtensionPoint(StringBuffer documentInsertBuffer) {
 		String id = "id"; //$NON-NLS-1$
 		documentInsertBuffer.append("<extension-point id=\""); //$NON-NLS-1$
@@ -178,11 +164,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append("\" name=\"name\" />"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @param document
-	 * @param delim
-	 * @param documentInsertBuffer
-	 */
 	private void applyExtension(IDocument document, String delim, StringBuffer documentInsertBuffer) {
 		documentInsertBuffer.append("<extension"); //$NON-NLS-1$
 		documentInsertBuffer.append(delim);
@@ -196,11 +177,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append("</extension>"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @param document
-	 * @param delim
-	 * @param documentInsertBuffer
-	 */
 	private void applyExtensionFullPoint(IDocument document, String delim, StringBuffer documentInsertBuffer) {
 
 		String pointID = fSchemaObject.getName();
@@ -234,11 +210,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append('>');
 	}
 
-	/**
-	 * @param document
-	 * @param delim
-	 * @param sb
-	 */
 	private void applyElement(String indent, String delim, StringBuffer documentInsertBuffer) {
 		documentInsertBuffer.append('<');
 		documentInsertBuffer.append(((ISchemaElement) fSchemaObject).getName());
@@ -251,9 +222,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append('>');
 	}
 
-	/**
-	 * @param sb
-	 */
 	private void applyAttribute(StringBuffer documentInsertBuffer) {
 		if (fRange == null) {
 			// Model is broken
@@ -355,7 +323,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 
 	/**
 	 * Assumption: Model already reconciled by caller
-	 * @param base
 	 */
 	private void findExtensionVirtualPointValue(IPluginBase base) {
 

@@ -31,7 +31,6 @@ public abstract class XMLUtil {
 	 * a IPluginExtension or IPluginExtensionPoint (or null)
 	 * and returns the result.
 	 *
-	 * @param node
 	 * @return the IPluginExtension or IPluginExtensionPoint that contains <code>node</code>
 	 */
 	public static IPluginObject getTopLevelParent(IDocumentRange range) {

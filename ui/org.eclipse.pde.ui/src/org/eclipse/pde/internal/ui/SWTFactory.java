@@ -54,7 +54,7 @@ public class SWTFactory {
 	 * <b>Note:</b> This is a NOP if the button's layout data is not
 	 * an instance of <code>GridData</code>.
 	 *
-	 * @param	the button for which to set the dimension hint
+	 * @param button for which to set the dimension hint
 	 */
 	public static void setButtonDimensionHint(Button button) {
 		Assert.isNotNull(button);
@@ -294,7 +294,6 @@ public class SWTFactory {
 	 * Creates an ExpandibleComposite widget
 	 *
 	 * @param parent the parent to add this widget to
-	 * @param style the style for ExpandibleComposite expanding handle, and layout
 	 * @param label the label for the widget
 	 * @param hspan how many columns to span in the parent
 	 * @param fill the fill style for the widget
@@ -580,7 +579,6 @@ public class SWTFactory {
 	 *
 	 * @param shell the parent shell
 	 * @param id the id of preference page to show
-	 * @param page the actual page to show
 	 * @return the result of Window.open()
 	 */
 	public static int showPreferencePage(Shell shell, String id, Object data) {

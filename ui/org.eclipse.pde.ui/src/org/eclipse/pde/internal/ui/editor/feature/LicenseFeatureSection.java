@@ -69,7 +69,6 @@ public class LicenseFeatureSection extends PDESection {
 
 	/**
 	 * Creates the UI in the given section using the provided toolkit
-	 * @param toolkit
 	 */
 	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
