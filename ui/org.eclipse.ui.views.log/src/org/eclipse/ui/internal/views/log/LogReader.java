@@ -191,8 +191,7 @@ class LogReader {
 	}
 
 	/**
-	 * Updates the {@link currentSession} to be the one that is not null or has most recent date.
-	 * @param session
+	 * Updates the currentSession to be the one that is not null or has most recent date.
 	 */
 	private static LogSession updateCurrentSession(LogSession currentSession, LogSession session) {
 		if (currentSession == null) {
@@ -212,10 +211,6 @@ class LogReader {
 
 	/**
 	 * Adds entry to the list if it's not filtered. Removes entries exceeding the count limit.
-	 *
-	 * @param entry
-	 * @param entries
-	 * @param memento
 	 */
 	private static void addEntry(LogEntry entry, List entries, IMemento memento) {
 
@@ -233,9 +228,6 @@ class LogReader {
 
 	/**
 	 * Returns whether given entry is logged (true) or filtered (false).
-	 *
-	 * @param entry
-	 * @param memento
 	 * @return is entry logged or filtered
 	 */
 	public static boolean isLogged(LogEntry entry, IMemento memento) {

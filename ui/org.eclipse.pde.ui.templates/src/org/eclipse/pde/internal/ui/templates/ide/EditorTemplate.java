@@ -98,9 +98,6 @@ public class EditorTemplate extends BaseEditorTemplate {
 		return true;
 	}
 
-	/**
-	 * @see GenericTemplateSection#validateOptions(TemplateOption)
-	 */
 	@Override
 	public void validateOptions(TemplateOption source) {
 		if (source.isRequired() && source.isEmpty()) {

@@ -69,9 +69,6 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		}
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getBundle()
-	 */
 	public IBundle getBundle() {
 		if (model != null) {
 			IBundleModel bmodel = model.getBundleModel();

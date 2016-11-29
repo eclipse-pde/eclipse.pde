@@ -456,9 +456,6 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/**
 	 * Retrieve the input
-	 *
-	 * @param ev
-	 * @return input
 	 */
 	protected String getInput(Event ev) {
 		String input = null;
@@ -476,10 +473,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 	/**
 	 * Verify that the user input is a valid int field
 	 *
-	 * @param input
-	 *            The user supplied input
-	 * @param errorMessage
-	 *            The error message to display if the input is not a valid int field
+	 * @param errorMessage to display if the input is not a valid int field
 	 */
 	protected void verifyIntInput(Event ev, String errorMessage) {
 		String input = getInput(ev);

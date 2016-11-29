@@ -35,10 +35,6 @@ import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
 
 public class DSHyperlinkDetector extends PDEHyperlinkDetector {
 
-	/**
-	 * @param editor
-	 *            the editor in which to detect the hyperlink
-	 */
 	public DSHyperlinkDetector(PDESourcePage page) {
 		super(page);
 	}
