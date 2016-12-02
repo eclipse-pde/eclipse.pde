@@ -59,13 +59,7 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 		return fBlock;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.
-	 * eclipse.ui.forms.IManagedForm)
-	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		CtxHelpModel model = (CtxHelpModel) getModel();
@@ -97,11 +91,7 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 		form.setMessage(CtxHelpMessages.CtxHelpPage_errMsg, IMessageProvider.ERROR);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 		CtxHelpModel model = (CtxHelpModel) getModel();
 		if (model != null) {
@@ -110,13 +100,7 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde
-	 * .core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		fBlock.modelChanged(event);
 	}
@@ -128,11 +112,7 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 		return fBlock.getSelection();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#setActive(boolean)
-	 */
+	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);
 		if (active) {
@@ -175,11 +155,7 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.CTX_HELP_EDITOR;
 	}

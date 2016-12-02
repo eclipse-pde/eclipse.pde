@@ -72,16 +72,12 @@ public class CtxHelpEditor extends MultiSourceEditor {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
+	@Override
 	protected String getEditorID() {
 		return IConstants.CONTEXT_HELP_EDITOR_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getAdapter(java.lang.Class)
-	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IShowInSource.class) {
 			if (inUiThread() && isShowInApplicable()) {
@@ -130,6 +126,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	 */
 	private IShowInSource getShowInSource() {
 		return new IShowInSource() {
+			@Override
 			public ShowInContext getShowInContext() {
 				ArrayList resourceList = new ArrayList();
 				IStructuredSelection selection = (IStructuredSelection) getSelection();
@@ -165,29 +162,24 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	 */
 	private IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {
+			@Override
 			public String[] getShowInTargetIds() {
 				return new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV};
 			}
 		};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
-	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
-	 */
+	@Override
 	public String getContextIDForSaveAs() {
 		return CtxHelpInputContext.CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#addEditorPages()
-	 */
+	@Override
 	protected void addEditorPages() {
 		try {
 			addPage(new CtxHelpPage(this));
@@ -197,38 +189,28 @@ public class CtxHelpEditor extends MultiSourceEditor {
 		addSourcePage(CtxHelpInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
-	 */
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new CtxHelpFormOutlinePage(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
-	 */
+	@Override
 	protected InputContextManager createInputContextManager() {
 		return new CtxHelpInputContextManager(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createResourceContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IFileEditorInput)
-	 */
+	@Override
 	protected void createResourceContexts(InputContextManager contexts, IFileEditorInput input) {
 		contexts.putContext(input, new CtxHelpInputContext(this, input, true));
 		contexts.monitorFile(input.getFile());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IStorageEditorInput)
-	 */
+	@Override
 	protected void createStorageContexts(InputContextManager contexts, IStorageEditorInput input) {
 		contexts.putContext(input, new CtxHelpInputContext(this, input, true));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
-	 */
+	@Override
 	protected void createSystemFileContexts(InputContextManager contexts, FileStoreEditorInput input) {
 		try {
 			IFileStore store = EFS.getStore(input.getURI());
@@ -239,45 +221,33 @@ public class CtxHelpEditor extends MultiSourceEditor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#editorContextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
-	 */
+	@Override
 	public void editorContextAdded(InputContext context) {
 		// Add the source page
 		addSourcePage(context.getId());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
-	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		return fInputContextManager.findContext(CtxHelpInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
-	 */
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileAdded(org.eclipse.core.resources.IFile)
-	 */
+	@Override
 	public void monitoredFileAdded(IFile monitoredFile) {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileRemoved(org.eclipse.core.resources.IFile)
-	 */
+	@Override
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getSelection()
-	 */
+	@Override
 	public ISelection getSelection() {
 		IFormPage formPage = getActivePageInstance();
 		if ((formPage != null) && (formPage instanceof CtxHelpPage)) {
@@ -289,9 +259,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 		return super.getSelection();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#canCut(org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public boolean canCut(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) selection;
@@ -305,34 +273,34 @@ public class CtxHelpEditor extends MultiSourceEditor {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.MultiSourceEditor#createSourcePage(org.eclipse.pde.internal.ui.editor.PDEFormEditor, java.lang.String, java.lang.String, java.lang.String)
-	 */
+	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new CtxHelpSourcePage(editor, title, name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#contributeToToolbar(org.eclipse.jface.action.IToolBarManager)
-	 */
+	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		if (WorkspaceModelManager.isPluginProject(getCommonProject()) && getAggregateModel().isEditable()) {
 			manager.add(new ControlContribution("Register") { //$NON-NLS-1$
+						@Override
 						protected Control createControl(Composite parent) {
 							ImageHyperlink fImageHyperlinkRegisterTOC = new ImageHyperlink(parent, SWT.NONE);
 							fImageHyperlinkRegisterTOC.setText(CtxHelpMessages.CtxHelpEditor_text);
 							fImageHyperlinkRegisterTOC.setUnderlined(true);
 							fImageHyperlinkRegisterTOC.setForeground(getToolkit().getHyperlinkGroup().getForeground());
 							fImageHyperlinkRegisterTOC.addHyperlinkListener(new IHyperlinkListener() {
+								@Override
 								public void linkActivated(HyperlinkEvent e) {
 									handleRegisterCtxHelpFile();
 								}
 
+								@Override
 								public void linkEntered(HyperlinkEvent e) {
 									((ImageHyperlink) e.getSource()).setForeground(getToolkit().getHyperlinkGroup().getActiveForeground());
 									getEditorSite().getActionBars().getStatusLineManager().setMessage(CtxHelpMessages.CtxHelpEditor_text);
 								}
 
+								@Override
 								public void linkExited(HyperlinkEvent e) {
 									((ImageHyperlink) e.getSource()).setForeground(getToolkit().getHyperlinkGroup().getForeground());
 									getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
@@ -355,9 +323,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 		dialog.open();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		CtxHelpModel model = (CtxHelpModel) getAggregateModel();
 		model.setMarkerRefreshNeeded(true);
@@ -367,18 +333,14 @@ public class CtxHelpEditor extends MultiSourceEditor {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#dispose()
-	 */
+	@Override
 	public void dispose() {
 		//editor is closing, delete the markers
 		CtxHelpMarkerManager.deleteMarkers((CtxHelpModel) getAggregateModel());
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager)
-	 */
+	@Override
 	protected void createInputContexts(InputContextManager contextManager) {
 		super.createInputContexts(contextManager);
 

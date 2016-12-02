@@ -34,51 +34,37 @@ public class CtxHelpSourcePage extends XMLSourcePage {
 		super(editor, id, title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
-	 */
+	@Override
 	public boolean isQuickOutlineEnabled() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineComparator()
-	 */
+	@Override
 	public ViewerComparator createOutlineComparator() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineContentProvider()
-	 */
+	@Override
 	public ITreeContentProvider createOutlineContentProvider() {
 		return new CtxHelpContentProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineLabelProvider()
-	 */
+	@Override
 	public ILabelProvider createOutlineLabelProvider() {
 		return PDEUserAssistanceUIPlugin.getDefault().getLabelProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#setPartName(java.lang.String)
-	 */
+	@Override
 	protected void setPartName(String partName) {
 		super.setPartName(CtxHelpMessages.CtxHelpSourcePage_name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#isSelectionListener()
-	 */
+	@Override
 	protected boolean isSelectionListener() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
-	 */
+	@Override
 	public void updateSelection(Object object) {
 		if ((object instanceof IDocumentElementNode) && !((IDocumentElementNode) object).isErrorNode()) {
 			setSelectedObject(object);
@@ -87,9 +73,7 @@ public class CtxHelpSourcePage extends XMLSourcePage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#findRange()
-	 */
+	@Override
 	protected IDocumentRange findRange() {
 		if (getSelection() instanceof IDocumentElementNode) {
 			return (IDocumentElementNode) getSelection();
@@ -98,17 +82,13 @@ public class CtxHelpSourcePage extends XMLSourcePage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#getRangeElement(int, boolean)
-	 */
+	@Override
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		CtxHelpObject root = ((CtxHelpModel) getInputContext().getModel()).getCtxHelpRoot();
 		return findNode(root, offset, searchChildren);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#synchronizeOutlinePage(int)
-	 */
+	@Override
 	protected void synchronizeOutlinePage(int offset) {
 		IDocumentRange rangeElement = getRangeElement(offset, true);
 		updateHighlightRange(rangeElement);
@@ -119,9 +99,7 @@ public class CtxHelpSourcePage extends XMLSourcePage {
 		updateOutlinePageSelection(rangeElement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.editors.text.TextEditor#initializeEditor()
-	 */
+	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
 		// TODO Fix help context

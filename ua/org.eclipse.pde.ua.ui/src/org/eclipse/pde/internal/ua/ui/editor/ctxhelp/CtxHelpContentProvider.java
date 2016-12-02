@@ -25,9 +25,7 @@ import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject;
  */
 public class CtxHelpContentProvider implements ITreeContentProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof CtxHelpModel) {
 			CtxHelpObject root = ((CtxHelpModel) parentElement).getCtxHelpRoot();
@@ -39,9 +37,7 @@ public class CtxHelpContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof CtxHelpObject) {
 			return ((CtxHelpObject) element).getParent();
@@ -49,16 +45,12 @@ public class CtxHelpContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		return (getChildren(element).length > 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}

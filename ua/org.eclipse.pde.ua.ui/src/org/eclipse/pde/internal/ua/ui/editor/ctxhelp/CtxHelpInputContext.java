@@ -43,9 +43,7 @@ public class CtxHelpInputContext extends XMLInputContext {
 		create();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
-	 */
+	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		if (input instanceof IStorageEditorInput) {
 			boolean isReconciling = input instanceof IFileEditorInput;
@@ -77,23 +75,17 @@ public class CtxHelpInputContext extends XMLInputContext {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getId()
-	 */
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
-	 */
+	@Override
 	protected void reorderInsertEdits(ArrayList ops) {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#doRevert()
-	 */
+	@Override
 	public void doRevert() {
 		// TODO we should move this up the stack....
 		fEditOperations.clear();
@@ -103,9 +95,7 @@ public class CtxHelpInputContext extends XMLInputContext {
 		model.reconciled(model.getDocument());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getPartitionName()
-	 */
+	@Override
 	protected String getPartitionName() {
 		return "___ctxhelp_partition"; //$NON-NLS-1$
 	}

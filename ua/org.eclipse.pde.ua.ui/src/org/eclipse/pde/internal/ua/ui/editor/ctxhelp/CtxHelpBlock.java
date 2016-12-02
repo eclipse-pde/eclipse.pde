@@ -44,17 +44,13 @@ public class CtxHelpBlock extends PDEMasterDetailsBlock implements IModelChanged
 		super(page);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 		fMasterSection = new CtxHelpTreeSection(getPage(), parent);
 		return fMasterSection;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.MasterDetailsBlock#registerPages(org.eclipse.ui.forms.DetailsPart)
-	 */
+	@Override
 	protected void registerPages(DetailsPart detailsPart) {
 		// Only static pages to be defined.  Do not cache pages
 		detailsPart.setPageLimit(0);
@@ -65,26 +61,20 @@ public class CtxHelpBlock extends PDEMasterDetailsBlock implements IModelChanged
 		detailsPart.setPageProvider(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (fMasterSection != null) {
 			fMasterSection.modelChanged(event);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPage(java.lang.Object)
-	 */
+	@Override
 	public IDetailsPage getPage(Object key) {
 		// No dynamic pages.  Static pages already registered
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPageKey(java.lang.Object)
-	 */
+	@Override
 	public Object getPageKey(Object object) {
 		ISelection selection = getSelection();
 		if (!(selection instanceof IStructuredSelection) || ((IStructuredSelection) selection).size() > 1) {

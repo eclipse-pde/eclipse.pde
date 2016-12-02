@@ -26,9 +26,7 @@ public class CtxHelpInputContextManager extends InputContextManager {
 		super(editor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContextManager#getAggregateModel()
-	 */
+	@Override
 	public IBaseModel getAggregateModel() {
 		InputContext context = findContext(CtxHelpInputContext.CONTEXT_ID);
 		if (context == null) {

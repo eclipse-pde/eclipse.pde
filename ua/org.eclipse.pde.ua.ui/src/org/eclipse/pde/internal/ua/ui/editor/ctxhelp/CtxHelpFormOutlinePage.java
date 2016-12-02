@@ -39,6 +39,7 @@ public class CtxHelpFormOutlinePage extends FormOutlinePage {
 			super(ilp);
 		}
 
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof CtxHelpObject) {
 				return PDETextHelper.translateReadText(((CtxHelpObject) obj).getName());
@@ -47,9 +48,7 @@ public class CtxHelpFormOutlinePage extends FormOutlinePage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getChildren(java.lang.Object)
-	 */
+	@Override
 	protected Object[] getChildren(Object parent) {
 		if (parent instanceof CtxHelpPage) {
 			CtxHelpModel model = (CtxHelpModel) fEditor.getAggregateModel();
@@ -69,16 +68,12 @@ public class CtxHelpFormOutlinePage extends FormOutlinePage {
 		return super.getChildren(parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
-	 */
+	@Override
 	public ILabelProvider createLabelProvider() {
 		return new CtxHelpLabelProvider(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getParentPageId(java.lang.Object)
-	 */
+	@Override
 	protected String getParentPageId(Object item) {
 		return CtxHelpPage.PAGE_ID;
 	}

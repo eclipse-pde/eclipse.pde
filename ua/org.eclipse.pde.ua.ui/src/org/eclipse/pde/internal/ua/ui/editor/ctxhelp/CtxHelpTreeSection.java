@@ -120,6 +120,7 @@ public class CtxHelpTreeSection extends TreeSection {
 			fOpenTarget = target;
 		}
 
+		@Override
 		public void run() {
 			if (fOpenTarget != null) {
 				open(fOpenTarget);
@@ -137,13 +138,7 @@ public class CtxHelpTreeSection extends TreeSection {
 				CtxHelpMessages.CtxHelpTreeSection_6 });
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse
-	 * .ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		fModel = (CtxHelpModel) getPage().getModel();
 
@@ -169,6 +164,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	 */
 	private void createCommands() {
 		fAddContextAction = new CtxHelpAbstractAddAction() {
+			@Override
 			public void run() {
 				if (fParentObject != null) {
 					CtxHelpContext context = fParentObject.getModel()
@@ -182,6 +178,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		};
 		fAddContextAction.setText(CtxHelpMessages.CtxHelpTreeSection_10);
 		fAddTopicAction = new CtxHelpAbstractAddAction() {
+			@Override
 			public void run() {
 				if (fParentObject != null) {
 					CtxHelpTopic topic = fParentObject.getModel().getFactory()
@@ -196,6 +193,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		};
 		fAddTopicAction.setText(CtxHelpMessages.CtxHelpTreeSection_12);
 		fAddCommandAction = new CtxHelpAbstractAddAction() {
+			@Override
 			public void run() {
 				if (fParentObject != null) {
 					CtxHelpCommand command = fParentObject.getModel()
@@ -262,13 +260,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		fTree.addPostSelectionChangedListener(getPage().getPDEEditor().new PDEFormEditorChangeListener());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.TreeSection#createTreeViewer(org.eclipse
-	 * .swt.widgets.Composite, int)
-	 */
+	@Override
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		fFilteredTree = new FormFilteredTree(parent, style, new PatternFilter());
 		parent.setData("filtered", Boolean.TRUE); //$NON-NLS-1$
@@ -296,11 +288,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
-	 */
+	@Override
 	public boolean setFormInput(Object object) {
 		// This method allows the outline view to select items in the tree
 		// (Invoked by org.eclipse.ui.forms.editor.IFormPage.selectReveal(Object
@@ -339,13 +327,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		fTree.setSelection(fTree.getSelection());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse
-	 * .jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
@@ -421,13 +403,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu
-	 * (org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		IStructuredSelection selection = (IStructuredSelection) fTree
 				.getSelection();
@@ -639,13 +615,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		return objectsToRemove;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang
-	 * .String)
-	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		boolean cutAction = actionId.equals(ActionFactory.CUT.getId());
 
@@ -664,36 +634,18 @@ public class CtxHelpTreeSection extends TreeSection {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java
-	 * .lang.Object, java.lang.Object[])
-	 */
+	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		return canDropCopy(targetObject, sourceObjects,
 				ViewerDropAdapter.LOCATION_ON);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java
-	 * .lang.Object, java.lang.Object[])
-	 */
+	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		doDropCopy(targetObject, sourceObjects, ViewerDropAdapter.LOCATION_ON);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.TreeSection#handleDoubleClick(org.
-	 * eclipse.jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		Object selected = selection.getFirstElement();
 		if (selected instanceof CtxHelpTopic) {
@@ -743,13 +695,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected
-	 * (int)
-	 */
+	@Override
 	protected void buttonSelected(int index) {
 		IStructuredSelection selection = (IStructuredSelection) fTree
 				.getSelection();
@@ -805,44 +751,24 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 		PDEUserAssistanceUIPlugin.getDefault().getLabelProvider()
 				.disconnect(this);
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#
-	 * isDragAndDropEnabled()
-	 */
+	@Override
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#
-	 * getSupportedDNDOperations()
-	 */
+	@Override
 	public int getSupportedDNDOperations() {
 		return DND.DROP_MOVE | DND.DROP_COPY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropCopy
-	 * (java.lang.Object, java.lang.Object[], int)
-	 */
+	@Override
 	public void doDropCopy(Object targetObject, Object[] sourceObjects,
 			int targetLocation) {
 		if (fDropTargetParent != null) {
@@ -877,25 +803,13 @@ public class CtxHelpTreeSection extends TreeSection {
 		fDropTargetSibling = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove
-	 * (java.lang.Object, java.lang.Object[], int)
-	 */
+	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects,
 			int targetLocation) {
 		doDropCopy(targetObject, sourceObjects, targetLocation);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropCopy
-	 * (java.lang.Object, java.lang.Object[], int)
-	 */
+	@Override
 	public boolean canDropCopy(Object targetObject, Object[] sourceObjects,
 			int targetLocation) {
 		// Add as a child of the root
@@ -950,38 +864,20 @@ public class CtxHelpTreeSection extends TreeSection {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove
-	 * (java.lang.Object, java.lang.Object[], int)
-	 */
+	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects,
 			int targetLocation) {
 		// Same as drop copy operation
 		return canDropCopy(targetObject, sourceObjects, targetLocation);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragCopy
-	 * (java.lang.Object[])
-	 */
+	@Override
 	public boolean canDragCopy(Object[] sourceObjects) {
 		// Allow anything to be drag copied
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove
-	 * (java.lang.Object[])
-	 */
+	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		for (int i = 0; i < sourceObjects.length; i++) {
 			if (!(sourceObjects[i] instanceof CtxHelpObject)
@@ -993,26 +889,14 @@ public class CtxHelpTreeSection extends TreeSection {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove
-	 * (java.lang.Object[])
-	 */
+	@Override
 	public void doDragRemove(Object[] sourceObjects) {
 		updateRemoveActionWithSelection(new StructuredSelection(sourceObjects));
 		fRemoveObjectAction.run();
 		fDragFromHere = false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse
-	 * .pde.core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		// No need to call super, world changed event handled here
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
