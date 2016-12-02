@@ -29,10 +29,6 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IManagedForm;
 
-/**
- * CompCSBlock
- *
- */
 public class CompCSBlock extends PDEMasterDetailsBlock implements IModelChangedListener, IDetailsPageProvider {
 
 	private CompCSMasterTreeSection fMasterSection;
@@ -47,17 +43,13 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements IModelChangedL
 		super(page);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 		fMasterSection = new CompCSMasterTreeSection(getPage(), parent);
 		return fMasterSection;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.MasterDetailsBlock#registerPages(org.eclipse.ui.forms.DetailsPart)
-	 */
+	@Override
 	protected void registerPages(DetailsPart detailsPart) {
 		// Only static pages to be defined.  Do not cache pages
 		detailsPart.setPageLimit(0);
@@ -74,9 +66,7 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements IModelChangedL
 		detailsPart.setPageProvider(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPageKey(java.lang.Object)
-	 */
+	@Override
 	public Object getPageKey(Object object) {
 		// Get static page key
 		if (object instanceof ICompCS) {
@@ -93,17 +83,13 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements IModelChangedL
 		return object.getClass();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPage(java.lang.Object)
-	 */
+	@Override
 	public IDetailsPage getPage(Object key) {
 		// No dynamic pages.  Static pages already registered
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		// Inform the master section
 		if (fMasterSection != null) {

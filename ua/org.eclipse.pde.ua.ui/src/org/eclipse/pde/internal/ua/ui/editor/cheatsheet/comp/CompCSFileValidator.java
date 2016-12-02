@@ -27,13 +27,7 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.dialogs.ISelectionStatusValidator#validate(java.lang.Object
-	 * [])
-	 */
+	@Override
 	public IStatus validate(Object[] selection) {
 
 		// Ensure something was selected
@@ -54,9 +48,6 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 
 	}
 
-	/**
-	 * @param file
-	 */
 	private boolean isSimpleCSFile(IFile file) {
 		try {
 			IContentDescription description = file.getContentDescription();
@@ -69,19 +60,11 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 		return false;
 	}
 
-	/**
-	 * @param message
-	 * @return
-	 */
 	private IStatus errorStatus(String message) {
 		return new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID,
 				IStatus.ERROR, message, null);
 	}
 
-	/**
-	 * @param message
-	 * @return
-	 */
 	private IStatus okStatus(String message) {
 		return new Status(IStatus.OK, PDEUserAssistanceUIPlugin.PLUGIN_ID,
 				IStatus.OK, message, null);

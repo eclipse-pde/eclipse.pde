@@ -31,37 +31,26 @@ import org.eclipse.ui.ide.FileStoreEditorInput;
 
 public class CompCSEditor extends CSAbstractEditor {
 
-	/**
-	 *
-	 */
 	public CompCSEditor() {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
+	@Override
 	protected String getEditorID() {
 		return IConstants.COMPOSITE_CHEAT_SHEET_EDITOR_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
-	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
-	 */
+	@Override
 	public String getContextIDForSaveAs() {
 		return CompCSInputContext.CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#addEditorPages()
-	 */
+	@Override
 	protected void addEditorPages() {
 		try {
 			addPage(new CompCSPage(this));
@@ -70,38 +59,28 @@ public class CompCSEditor extends CSAbstractEditor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
-	 */
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new CompCSFormOutlinePage(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
-	 */
+	@Override
 	protected InputContextManager createInputContextManager() {
 		return new CompCSInputContextManager(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createResourceContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IFileEditorInput)
-	 */
+	@Override
 	protected void createResourceContexts(InputContextManager contexts, IFileEditorInput input) {
 		contexts.putContext(input, new CompCSInputContext(this, input, true));
 		contexts.monitorFile(input.getFile());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IStorageEditorInput)
-	 */
+	@Override
 	protected void createStorageContexts(InputContextManager contexts, IStorageEditorInput input) {
 		contexts.putContext(input, new CompCSInputContext(this, input, true));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
-	 */
+	@Override
 	protected void createSystemFileContexts(InputContextManager contexts, FileStoreEditorInput input) {
 		try {
 			IFileStore store = EFS.getStore(input.getURI());
@@ -112,44 +91,32 @@ public class CompCSEditor extends CSAbstractEditor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#editorContextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
-	 */
+	@Override
 	public void editorContextAdded(InputContext context) {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
-	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		return fInputContextManager.findContext(CompCSInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
-	 */
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileAdded(org.eclipse.core.resources.IFile)
-	 */
+	@Override
 	public void monitoredFileAdded(IFile monitoredFile) {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileRemoved(org.eclipse.core.resources.IFile)
-	 */
+	@Override
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getSelection()
-	 */
+	@Override
 	public ISelection getSelection() {
 		// Override the parent getSelection because it doesn't work.
 		// The selection provider operates at the form level and does not

@@ -32,43 +32,22 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 
-/**
- * CompCSInputContext
- *
- */
 public class CompCSInputContext extends UTF8InputContext {
 
 	public static final String CONTEXT_ID = "compcs-context"; //$NON-NLS-1$
 
-	/**
-	 * @param editor
-	 * @param input
-	 * @param primary
-	 */
 	public CompCSInputContext(PDEFormEditor editor, IEditorInput input,
 			boolean primary) {
 		super(editor, input, primary);
 		create();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.context.InputContext#addTextEditOperation
-	 * (java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
-	 */
+	@Override
 	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.context.InputContext#createModel(org
-	 * .eclipse.ui.IEditorInput)
-	 */
+	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		ICompCSModel model = null;
 		if (input instanceof IStorageEditorInput) {
@@ -92,33 +71,17 @@ public class CompCSInputContext extends UTF8InputContext {
 		return model;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getId()
-	 */
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.context.InputContext#getPartitionName
-	 * ()
-	 */
+	@Override
 	protected String getPartitionName() {
 		return "___compcs_partition"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.context.InputContext#flushModel(org
-	 * .eclipse.jface.text.IDocument)
-	 */
+	@Override
 	protected void flushModel(IDocument doc) {
 		if ((getModel() instanceof IEditable) == false) {
 			return;

@@ -24,22 +24,16 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
 public class CompCSFormOutlinePage extends FormOutlinePage {
 
-	/**
-	 * @param editor
-	 */
 	public CompCSFormOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}
 
-	/**
-	 * CompCSLabelProvider
-	 *
-	 */
 	private class CompCSLabelProvider extends BasicLabelProvider {
 		public CompCSLabelProvider(ILabelProvider ilp) {
 			super(ilp);
 		}
 
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof ICompCSObject) {
 				return getObjectText((ICompCSObject) obj);
@@ -48,10 +42,6 @@ public class CompCSFormOutlinePage extends FormOutlinePage {
 		}
 	}
 
-	/**
-	 * @param obj
-	 * @return
-	 */
 	protected String getObjectText(ICompCSObject obj) {
 		int limit = 50;
 
@@ -66,9 +56,7 @@ public class CompCSFormOutlinePage extends FormOutlinePage {
 		return PDETextHelper.truncateAndTrailOffText(PDETextHelper.translateReadText(obj.getName()), limit);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getChildren(java.lang.Object)
-	 */
+	@Override
 	protected Object[] getChildren(Object parent) {
 		if (parent instanceof CompCSPage) {
 			ICompCSModel cheatsheet = (ICompCSModel) fEditor.getAggregateModel();
@@ -87,16 +75,12 @@ public class CompCSFormOutlinePage extends FormOutlinePage {
 		return super.getChildren(parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
-	 */
+	@Override
 	public ILabelProvider createLabelProvider() {
 		return new CompCSLabelProvider(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getParentPageId(java.lang.Object)
-	 */
+	@Override
 	protected String getParentPageId(Object item) {
 		return CompCSPage.PAGE_ID;
 	}

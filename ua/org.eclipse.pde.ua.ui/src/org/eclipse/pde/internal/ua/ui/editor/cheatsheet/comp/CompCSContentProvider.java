@@ -18,23 +18,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
 
-/**
- * CompCSContentProvider
- *
- */
 public class CompCSContentProvider implements ITreeContentProvider {
 
 	public CompCSContentProvider() {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.
-	 * Object)
-	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ICompCSModel) {
 			return new Object[] { ((ICompCSModel) parentElement).getCompCS() };
@@ -48,13 +38,7 @@ public class CompCSContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object
-	 * )
-	 */
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof ICompCSObject) {
 			return ((ICompCSObject) element).getParent();
@@ -62,32 +46,22 @@ public class CompCSContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.
-	 * Object)
-	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		return (getChildren(element).length > 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java
-	 * .lang.Object)
-	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	public void dispose() {
 		// no op
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// no op
 	}

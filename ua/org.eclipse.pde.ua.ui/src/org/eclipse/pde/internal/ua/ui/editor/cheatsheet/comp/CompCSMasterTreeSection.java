@@ -52,10 +52,6 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-/**
- * CompCSMasterTreeSection
- *
- */
 public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	private static final int F_BUTTON_ADD_TASK = 0;
@@ -104,13 +100,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		fCollapseAction = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse
-	 * .ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		// Get the model
 		fModel = (ICompCSModel) getPage().getModel();
@@ -213,13 +203,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		section.setTextClient(toolbar);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected
-	 * (int)
-	 */
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 		case F_BUTTON_ADD_TASK:
@@ -243,24 +227,12 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse
-	 * .jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		updateButtons();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster
-	 * #updateButtons()
-	 */
+	@Override
 	public void updateButtons() {
 		if (!fModel.isEditable()) {
 			return;
@@ -407,13 +379,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse
-	 * .pde.core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		// No need to call super, world changed event handled here
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -538,23 +504,12 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster#fireSelection()
-	 */
+	@Override
 	public void fireSelection() {
 		fTreeViewer.setSelection(fTreeViewer.getSelection());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu
-	 * (org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		// Get the current selection
 		ISelection selection = fTreeViewer.getSelection();
@@ -610,13 +565,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang
-	 * .String)
-	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDeleteAction();
@@ -665,11 +614,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
-	 */
+	@Override
 	public boolean setFormInput(Object object) {
 		// This method allows the outline view to select items in the tree
 		// Invoked by

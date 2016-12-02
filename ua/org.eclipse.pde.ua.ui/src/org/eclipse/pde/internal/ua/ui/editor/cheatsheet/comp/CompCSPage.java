@@ -42,22 +42,12 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		fBlock = new CompCSBlock(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.COMPOSITE_CS_EDITOR;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.
-	 * eclipse.ui.forms.IManagedForm)
-	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		// Bug: Two veritical scrollbars appear when resizing the editor
 		// vertically
@@ -103,11 +93,7 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 				IHelpContextIds.COMPOSITE_CS_EDITOR);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 
 		ICompCSModel compCSModel = (ICompCSModel) getModel();
@@ -117,13 +103,7 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde
-	 * .core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
