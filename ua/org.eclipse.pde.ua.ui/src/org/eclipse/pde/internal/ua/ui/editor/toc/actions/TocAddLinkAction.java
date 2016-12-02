@@ -19,9 +19,7 @@ public class TocAddLinkAction extends TocAddObjectAction {
 		setText(TocActionMessages.TocAddLinkAction_link);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		if (fParentObject != null) { //Create a new link
 			TocLink link = fParentObject.getModel().getFactory().createTocLink();

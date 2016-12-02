@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.pde.internal.ua.ui.editor.toc.HelpEditorUtil;
 
 public class HelpEditorFilter extends ViewerFilter {
+	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof IFile) {
 			IPath path = ((IFile) element).getFullPath();

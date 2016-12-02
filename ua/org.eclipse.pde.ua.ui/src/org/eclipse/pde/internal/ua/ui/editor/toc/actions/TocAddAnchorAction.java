@@ -24,9 +24,7 @@ public class TocAddAnchorAction extends TocAddObjectAction {
 		setText(TocActionMessages.TocAddAnchorAction_anchor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		if (fParentObject != null) { //Create a new anchor
 			TocAnchor anchor = fParentObject.getModel().getFactory().createTocAnchor();

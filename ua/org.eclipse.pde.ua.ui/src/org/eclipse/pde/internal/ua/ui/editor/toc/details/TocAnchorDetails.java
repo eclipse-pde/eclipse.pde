@@ -29,9 +29,6 @@ public class TocAnchorDetails extends TocAbstractDetails {
 
 	private FormEntry fAnchorIdEntry;
 
-	/**
-	 * @param masterSection
-	 */
 	public TocAnchorDetails(TocTreeSection masterSection) {
 		super(masterSection, TocInputContext.CONTEXT_ID);
 		fDataTOCAnchor = null;
@@ -39,58 +36,50 @@ public class TocAnchorDetails extends TocAbstractDetails {
 		fAnchorIdEntry = null;
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(TocAnchor object) {
 		// Set data
 		fDataTOCAnchor = object;
 	}
 
+	@Override
 	protected TocObject getDataObject() {
 		return fDataTOCAnchor;
 	}
 
+	@Override
 	protected FormEntry getPathEntryField() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createFields(Composite parent) {
 		createAnchorIdWidget(parent);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createAnchorIdWidget(Composite parent) {
 		fAnchorIdEntry = new FormEntry(parent, getManagedForm().getToolkit(), TocDetailsMessages.TocAnchorDetails_idText, SWT.NONE);
 		// Ensure that the text field has proper width
 		fAnchorIdEntry.getText().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 	}
 
+	@Override
 	protected String getDetailsTitle() {
 		return TocDetailsMessages.TocAnchorDetails_title;
 	}
 
+	@Override
 	protected String getDetailsDescription() {
 		return TocDetailsMessages.TocAnchorDetails_idDesc;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		createAnchorIdEntryListeners();
 	}
 
-	/**
-	 *
-	 */
 	private void createAnchorIdEntryListeners() {
 		fAnchorIdEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fDataTOCAnchor != null) {
@@ -102,9 +91,7 @@ public class TocAnchorDetails extends TocAbstractDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		// Ensure data object is defined
 		if (fDataTOCAnchor != null) { // Update name entry
@@ -112,26 +99,19 @@ public class TocAnchorDetails extends TocAbstractDetails {
 		}
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updateAnchorIdEntry(boolean editable) {
 		fAnchorIdEntry.setValue(fDataTOCAnchor.getFieldAnchorId(), true);
 		fAnchorIdEntry.setEditable(editable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
 		fAnchorIdEntry.commit();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);

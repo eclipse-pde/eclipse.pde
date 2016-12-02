@@ -48,9 +48,7 @@ public class TocRemoveObjectAction extends Action {
 		fTocObjects = new TocObject[] {tocObject};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		if (fTocObjects == null)
 			return;

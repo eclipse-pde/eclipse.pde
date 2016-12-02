@@ -37,9 +37,6 @@ public class TocLinkDetails extends TocAbstractDetails {
 
 	private FormEntry fTocPathEntry;
 
-	/**
-	 * @param masterSection
-	 */
 	public TocLinkDetails(TocTreeSection masterSection) {
 		super(masterSection, TocInputContext.CONTEXT_ID);
 		fDataTOCLink = null;
@@ -47,62 +44,55 @@ public class TocLinkDetails extends TocAbstractDetails {
 		fTocPathEntry = null;
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(TocLink object) {
 		// Set data
 		fDataTOCLink = object;
 	}
 
+	@Override
 	protected TocObject getDataObject() {
 		return fDataTOCLink;
 	}
 
+	@Override
 	protected FormEntry getPathEntryField() {
 		return fTocPathEntry;
 	}
 
+	@Override
 	protected boolean isTocPath() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createFields(Composite parent) {
 		createTocPathWidget(parent);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createTocPathWidget(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), TocDetailsMessages.TocLinkDetails_locationDesc);
 
 		fTocPathEntry = new FormEntry(parent, getManagedForm().getToolkit(), TocDetailsMessages.TocLinkDetails_locationText, TocDetailsMessages.TocLinkDetails_browse, isEditable());
 	}
 
+	@Override
 	protected String getDetailsTitle() {
 		return TocDetailsMessages.TocLinkDetails_title;
 	}
 
+	@Override
 	protected String getDetailsDescription() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.toc.TocAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		createTocPathEntryListeners();
 	}
 
-	/**
-	 *
-	 */
 	private void createTocPathEntryListeners() {
 		fTocPathEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fDataTOCLink != null) {
@@ -110,10 +100,12 @@ public class TocLinkDetails extends TocAbstractDetails {
 				}
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse();
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				handleOpen();
 			}
@@ -137,9 +129,7 @@ public class TocLinkDetails extends TocAbstractDetails {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.toc.TocAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		// Ensure data object is defined
 		if (fDataTOCLink != null) { // Update name entry
@@ -147,26 +137,19 @@ public class TocLinkDetails extends TocAbstractDetails {
 		}
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updateTocPathEntry(boolean editable) {
 		fTocPathEntry.setValue(fDataTOCLink.getFieldTocPath(), true);
 		fTocPathEntry.setEditable(editable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
 		fTocPathEntry.commit();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);

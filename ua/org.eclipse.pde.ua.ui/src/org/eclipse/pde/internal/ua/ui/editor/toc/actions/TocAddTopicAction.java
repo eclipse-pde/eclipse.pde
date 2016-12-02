@@ -20,9 +20,7 @@ public class TocAddTopicAction extends TocAddObjectAction {
 		setText(TocActionMessages.TocAddTopicAction_topic);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		if (fParentObject != null) { //Create a new topic object
 			TocTopic topic = fParentObject.getModel().getFactory().createTocTopic();

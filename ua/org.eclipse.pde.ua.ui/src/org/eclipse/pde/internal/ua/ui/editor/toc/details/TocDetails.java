@@ -38,9 +38,6 @@ public class TocDetails extends TocAbstractDetails {
 	private FormEntry fAnchorEntry;
 	private FormEntry fPageEntry;
 
-	/**
-	 * @param masterSection
-	 */
 	public TocDetails(TocTreeSection masterSection) {
 		super(masterSection, TocInputContext.CONTEXT_ID);
 		fDataTOC = null;
@@ -50,25 +47,22 @@ public class TocDetails extends TocAbstractDetails {
 		fPageEntry = null;
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(Toc object) {
 		// Set data
 		fDataTOC = object;
 	}
 
+	@Override
 	protected TocObject getDataObject() {
 		return fDataTOC;
 	}
 
+	@Override
 	protected FormEntry getPathEntryField() {
 		return fPageEntry;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createFields(Composite parent) {
 		createNameWidget(parent);
 		createSpace(parent);
@@ -77,55 +71,44 @@ public class TocDetails extends TocAbstractDetails {
 		createPageWidget(parent);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createNameWidget(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), TocDetailsMessages.TocDetails_nameDesc);
 
 		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), TocDetailsMessages.TocDetails_nameText, SWT.NONE);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createAnchorWidget(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), TocDetailsMessages.TocDetails_anchorDesc);
 
 		fAnchorEntry = new FormEntry(parent, getManagedForm().getToolkit(), TocDetailsMessages.TocDetails_anchorText, SWT.NONE);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createPageWidget(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), TocDetailsMessages.TocDetails_locationDesc);
 
 		fPageEntry = new FormEntry(parent, getManagedForm().getToolkit(), TocDetailsMessages.TocDetails_locationText, TocDetailsMessages.TocDetails_browse, isEditable());
 	}
 
+	@Override
 	protected String getDetailsTitle() {
 		return TocDetailsMessages.TocDetails_title;
 	}
 
+	@Override
 	protected String getDetailsDescription() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		createNameEntryListeners();
 		createAnchorEntryListeners();
 		createPageEntryListeners();
 	}
 
-	/**
-	 *
-	 */
 	private void createNameEntryListeners() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fDataTOC != null) {
@@ -137,11 +120,9 @@ public class TocDetails extends TocAbstractDetails {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void createAnchorEntryListeners() {
 		fAnchorEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fDataTOC != null) {
@@ -153,21 +134,21 @@ public class TocDetails extends TocAbstractDetails {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void createPageEntryListeners() {
 		fPageEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) { // Ensure data object is defined
 				if (fDataTOC != null) {
 					fDataTOC.setFieldRef(fPageEntry.getValue());
 				}
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse();
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				handleOpen();
 			}
@@ -191,9 +172,7 @@ public class TocDetails extends TocAbstractDetails {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		// Ensure data object is defined
 		if (fDataTOC != null) { // Update name entry
@@ -203,33 +182,22 @@ public class TocDetails extends TocAbstractDetails {
 		}
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updateNameEntry(boolean editable) {
 		fNameEntry.setValue(fDataTOC.getFieldLabel(), true);
 		fNameEntry.setEditable(editable);
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updateAnchorEntry(boolean editable) {
 		fAnchorEntry.setValue(fDataTOC.getFieldAnchorTo(), true);
 		fAnchorEntry.setEditable(editable);
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updatePageEntry(boolean editable) {
 		fPageEntry.setValue(fDataTOC.getFieldRef(), true);
 		fPageEntry.setEditable(editable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
@@ -239,9 +207,7 @@ public class TocDetails extends TocAbstractDetails {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
