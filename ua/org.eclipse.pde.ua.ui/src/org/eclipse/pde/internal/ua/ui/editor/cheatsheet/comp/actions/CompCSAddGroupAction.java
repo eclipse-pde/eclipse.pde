@@ -16,22 +16,13 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup;
 import org.eclipse.pde.internal.ua.ui.wizards.cheatsheet.CompCSCreationOperation;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 
-/**
- * CompCSAddTaskAction
- *
- */
 public class CompCSAddGroupAction extends CompCSAbstractAddAction {
 
-	/**
-	 *
-	 */
 	public CompCSAddGroupAction() {
 		setText(ActionsMessages.CompCSAddGroupAction_group);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 
 		if (fParentObject == null) {

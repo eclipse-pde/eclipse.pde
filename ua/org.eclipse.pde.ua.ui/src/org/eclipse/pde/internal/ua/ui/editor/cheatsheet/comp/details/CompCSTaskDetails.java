@@ -58,10 +58,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-/**
- * CompCSTaskDetails
- *
- */
 public class CompCSTaskDetails extends CSAbstractDetails {
 
 	private Section fDefinitionSection;
@@ -80,9 +76,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 
 	private final static String F_DOT_DOT = ".."; //$NON-NLS-1$
 
-	/**
-	 * @param section
-	 */
 	public CompCSTaskDetails(ICSMaster section) {
 		super(section, CompCSInputContext.CONTEXT_ID);
 		fDataTask = null;
@@ -95,9 +88,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(ICompCSConstants.TYPE_TASK, section);
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(ICompCSTask object) {
 		// Set data
 		fDataTask = object;
@@ -105,9 +95,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fEnclosingTextSection.setData(object);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
+	@Override
 	public void initialize(IManagedForm form) {
 		super.initialize(form);
 		// Unfortunately this has to be explicitly called for sub detail
@@ -117,9 +105,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fEnclosingTextSection.initialize(form);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createDetails(Composite parent) {
 
 		// Create the main section
@@ -144,23 +130,14 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		markDetailsPart(fDefinitionSection);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUINameEntry(Composite parent) {
 		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), DetailsMessages.CompCSTaskDetails_name, SWT.NONE);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIPathEntry(Composite parent) {
 		fPathEntry = new FormEntry(parent, getManagedForm().getToolkit(), DetailsMessages.CompCSTaskDetails_path, DetailsMessages.CompCSTaskDetails_browse, isEditable());
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUISkipButton(Composite parent) {
 		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
 		fSkip = getToolkit().createButton(parent, DetailsMessages.CompCSTaskDetails_optional, SWT.CHECK);
@@ -170,9 +147,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fSkip.setForeground(foreground);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		// Create listeners for the name entry
 		createListenersNameEntry();
@@ -184,11 +159,9 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fEnclosingTextSection.hookListeners();
 	}
 
-	/**
-	 *
-	 */
 	private void createListenersNameEntry() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fDataTask == null) {
@@ -199,11 +172,9 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void createListenersPathEntry() {
 		fPathEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				// Ensure data object is defined
 				if (fDataTask == null) {
@@ -212,6 +183,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 				handleButtonEventPathEntry(entry);
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				// Ensure data object is defined
 				if (fDataTask == null) {
@@ -220,6 +192,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 				handleLinkEventPathEntry(convertPathRelativeToAbs(fPathEntry.getValue(), fDataTask.getModel().getUnderlyingResource().getFullPath().toPortableString()));
 			}
 
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fDataTask == null) {
@@ -231,9 +204,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		});
 	}
 
-	/**
-	 * @param entry
-	 */
 	private void handleButtonEventPathEntry(FormEntry entry) {
 		// Create the dialog
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getManagedForm().getForm().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
@@ -253,10 +223,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		}
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
 	private String extractFileName(String path) {
 		StringTokenizer tokenizer = new StringTokenizer(path, F_PATH_SEPARATOR);
 		while (tokenizer.countTokens() > 1) {
@@ -265,10 +231,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		return tokenizer.nextToken();
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
 	private String convertPathAbsToRelative(String relativePath, String basePath) {
 		StringTokenizer convertPathTokenizer = new StringTokenizer(relativePath, F_PATH_SEPARATOR);
 		StringTokenizer basePathTokenizer = new StringTokenizer(basePath, F_PATH_SEPARATOR);
@@ -312,11 +274,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		return ""; //$NON-NLS-1$
 	}
 
-	/**
-	 * @param dotDotCount
-	 * @param tokenizer
-	 * @return
-	 */
 	private String createRelativePath(int dotDotCount, String lastToken, StringTokenizer tokenizer) {
 		StringBuffer relativePath = new StringBuffer();
 		// Prepend with the number of specified ".."
@@ -340,9 +297,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		return relativePath.toString();
 	}
 
-	/**
-	 * @param absolutePath
-	 */
 	private void handleLinkEventPathEntry(String absolutePath) {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		Path path = new Path(absolutePath);
@@ -367,9 +321,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void handleLinkWizardPathEntry() {
 		NewSimpleCSFileWizard wizard = new NewSimpleCSFileWizard();
 		// Select in the tree view the directory this composite cheat sheet is
@@ -401,10 +352,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		}
 	}
 
-	/**
-	 * @param relativePath
-	 * @return
-	 */
 	private String convertPathRelativeToAbs(String relativePath, String basePath) {
 		StringTokenizer convertPathTokenizer = new StringTokenizer(relativePath, F_PATH_SEPARATOR);
 		StringTokenizer basePathTokenizer = new StringTokenizer(basePath, F_PATH_SEPARATOR);
@@ -442,9 +389,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		return startPath.toString() + endPath.toString();
 	}
 
-	/**
-	 * @param newValue
-	 */
 	private void handleTextEventPathEntry(String newValue) {
 		// Check for existing parameters
 		if (fDataTask.hasFieldParams()) {
@@ -465,9 +409,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		}
 	}
 
-	/**
-	 * @param newValue
-	 */
 	private void createTaskParamPathEntry(String newValue) {
 		ICompCSModelFactory factory = fDataTask.getModel().getFactory();
 		// Create parameter
@@ -479,11 +420,9 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fDataTask.addFieldParam(parameter);
 	}
 
-	/**
-	 *
-	 */
 	private void createListenersSkipButton() {
 		fSkip.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
 				if (fDataTask == null) {
@@ -494,9 +433,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		// Ensure data object is defined
 		if (fDataTask == null) {
@@ -513,17 +450,11 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fEnclosingTextSection.updateFields();
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updateNameEntry(boolean editable) {
 		fNameEntry.setValue(fDataTask.getFieldName(), true);
 		fNameEntry.setEditable(editable);
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updatePathEntry(boolean editable) {
 		ICompCSParam parameter = fDataTask.getFieldParam(ICompCSConstants.ATTRIBUTE_VALUE_PATH);
 		if (parameter != null) {
@@ -533,17 +464,12 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		}
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updateSkipButton(boolean editable) {
 		fSkip.setSelection(fDataTask.getFieldSkip());
 		fSkip.setEnabled(editable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
@@ -552,9 +478,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// No need to call for sub details, because they contain no form entries
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
@@ -568,9 +492,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		updateFields();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 		// Dispose of the enclosing text section
 		if (fEnclosingTextSection != null) {

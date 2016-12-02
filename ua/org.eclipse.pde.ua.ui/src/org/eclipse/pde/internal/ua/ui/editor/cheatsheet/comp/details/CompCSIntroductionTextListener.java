@@ -43,16 +43,12 @@ public class CompCSIntroductionTextListener implements IDocumentListener {
 		fDataTaskObject = object;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent e) {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 		// Check whether to handle this event
 		if (fBlockEvents) {

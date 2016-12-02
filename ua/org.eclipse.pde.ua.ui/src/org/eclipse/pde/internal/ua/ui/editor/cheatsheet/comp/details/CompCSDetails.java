@@ -24,10 +24,6 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
-/**
- * CompCSDetails
- *
- */
 public class CompCSDetails extends CSAbstractDetails {
 
 	private ICompCS fDataCheatSheet;
@@ -36,9 +32,6 @@ public class CompCSDetails extends CSAbstractDetails {
 
 	private FormEntry fNameEntry;
 
-	/**
-	 * @param masterSection
-	 */
 	public CompCSDetails(ICSMaster masterSection) {
 		super(masterSection, CompCSInputContext.CONTEXT_ID);
 		fDataCheatSheet = null;
@@ -47,17 +40,12 @@ public class CompCSDetails extends CSAbstractDetails {
 		fMainSection = null;
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(ICompCS object) {
 		// Set data
 		fDataCheatSheet = object;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createDetails(Composite parent) {
 		// Create the main section
 		int style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
@@ -75,26 +63,19 @@ public class CompCSDetails extends CSAbstractDetails {
 		markDetailsPart(fMainSection);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUINameEntry(Composite parent) {
 		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), DetailsMessages.CompCSDetails_name, SWT.NONE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		// Create the listeners for the name entry
 		createListenersNameEntry();
 	}
 
-	/**
-	 *
-	 */
 	private void createListenersNameEntry() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fDataCheatSheet == null) {
@@ -105,9 +86,7 @@ public class CompCSDetails extends CSAbstractDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		// Ensure data object is defined
 		if (fDataCheatSheet == null) {
@@ -117,17 +96,12 @@ public class CompCSDetails extends CSAbstractDetails {
 		updateNameEntry(isEditableElement());
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updateNameEntry(boolean editable) {
 		fNameEntry.setValue(fDataCheatSheet.getFieldName(), true);
 		fNameEntry.setEditable(editable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
@@ -135,9 +109,7 @@ public class CompCSDetails extends CSAbstractDetails {
 		// No need to call for sub details, because they contain no form entries
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);

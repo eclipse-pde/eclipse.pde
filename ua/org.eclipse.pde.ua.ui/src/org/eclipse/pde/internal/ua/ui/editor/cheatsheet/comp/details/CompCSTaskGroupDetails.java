@@ -35,10 +35,6 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
-/**
- * CompCSTaskGroupDetails
- *
- */
 public class CompCSTaskGroupDetails extends CSAbstractDetails {
 
 	private Section fDefinitionSection;
@@ -59,9 +55,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 
 	private static final String F_KIND_VALUE_SEQUENCE = DetailsMessages.CompCSTaskGroupDetails_sequence;
 
-	/**
-	 * @param section
-	 */
 	public CompCSTaskGroupDetails(ICSMaster section) {
 		super(section, CompCSInputContext.CONTEXT_ID);
 		fDataTaskGroup = null;
@@ -74,9 +67,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(ICompCSConstants.TYPE_TASKGROUP, section);
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(ICompCSTaskGroup object) {
 		// Set data
 		fDataTaskGroup = object;
@@ -84,9 +74,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fEnclosingTextSection.setData(object);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
+	@Override
 	public void initialize(IManagedForm form) {
 		super.initialize(form);
 		// Unfortunately this has to be explicitly called for sub detail
@@ -96,9 +84,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fEnclosingTextSection.initialize(form);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createDetails(Composite parent) {
 
 		// Create the main section
@@ -126,9 +112,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUISkipButton(Composite parent) {
 		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
 		fSkip = getToolkit().createButton(parent, DetailsMessages.CompCSTaskGroupDetails_optional, SWT.CHECK);
@@ -138,9 +121,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fSkip.setForeground(foreground);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIKindLabel(Composite parent) {
 		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
 		Label label = getToolkit().createLabel(parent, DetailsMessages.CompCSTaskGroupDetails_type, SWT.WRAP);
@@ -148,9 +128,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		label.setToolTipText(DetailsMessages.CompCSTaskGroupDetails_tooltip1);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIKindCombo(Composite parent) {
 		fKindCombo = new ComboPart();
 		fKindCombo.createControl(parent, getToolkit(), SWT.READ_ONLY);
@@ -166,16 +143,11 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fKindCombo.getControl().setToolTipText(DetailsMessages.CompCSTaskGroupDetails_tooltip2);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUINameEntry(Composite parent) {
 		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), DetailsMessages.CompCSTaskGroupDetails_name, SWT.NONE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		// Create listeners for the name entry
 		createListenersNameEntry();
@@ -187,11 +159,9 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fEnclosingTextSection.hookListeners();
 	}
 
-	/**
-	 *
-	 */
 	private void createListenersNameEntry() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fDataTaskGroup == null) {
@@ -202,11 +172,9 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void createListenersKindCombo() {
 		fKindCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
 				if (fDataTaskGroup == null) {
@@ -224,11 +192,9 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void createListenersSkipButton() {
 		fSkip.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
 				if (fDataTaskGroup == null) {
@@ -239,9 +205,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		// Ensure data object is defined
 		if (fDataTaskGroup == null) {
@@ -258,17 +222,11 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fEnclosingTextSection.updateFields();
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updateNameEntry(boolean editable) {
 		fNameEntry.setValue(fDataTaskGroup.getFieldName(), true);
 		fNameEntry.setEditable(editable);
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updateKindCombo(boolean editable) {
 		String kind = fDataTaskGroup.getFieldKind();
 
@@ -285,17 +243,12 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fKindCombo.setEnabled(editable);
 	}
 
-	/**
-	 * @param editable
-	 */
 	private void updateSkipButton(boolean editable) {
 		fSkip.setSelection(fDataTaskGroup.getFieldSkip());
 		fSkip.setEnabled(editable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
@@ -303,9 +256,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		// No need to call for sub details, because they contain no form entries
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
@@ -319,9 +270,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		updateFields();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 		// Dispose of the enclosing text section
 		if (fEnclosingTextSection != null) {

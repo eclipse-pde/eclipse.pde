@@ -33,9 +33,7 @@ public class CompCSRemoveTaskObjectAction extends Action {
 		fTaskObject = taskObject;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		if (fTaskObject != null) {
 			ICompCSObject parent = fTaskObject.getParent();
