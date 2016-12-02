@@ -42,6 +42,7 @@ public class TocOperation extends WorkspaceModifyOperation {
 		fTocName = tocName;
 	}
 
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		TocModel model = new TocModel(CoreUtility.getTextDocument(fFile.getContents()), false);
 		model.setUnderlyingResource(fFile);
@@ -74,6 +75,7 @@ public class TocOperation extends WorkspaceModifyOperation {
 
 	protected void openFile() {
 		Display.getCurrent().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchWindow ww = PDEUserAssistanceUIPlugin.getActiveWorkbenchWindow();
 				if (ww == null) {

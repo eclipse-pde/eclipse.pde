@@ -69,9 +69,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		super(rule);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 
 		try {
@@ -89,10 +87,6 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	/**
-	 * FindCSExtensionResult
-	 *
-	 */
 	private static class FindTocExtensionResult {
 
 		public IPluginExtension fTocExtension;
@@ -124,6 +118,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fPage.getPluginProject()) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				doModifyPluginModel(model, monitor);
 				doModifyManifestModel(model);
@@ -294,6 +289,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}
 		// Perform the modification of the manifest file
 		ModelModification mod = new ModelModification(fPage.getPluginProject()) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				doModifyManifestModel(model);
 				doModifyBuildModel(model);

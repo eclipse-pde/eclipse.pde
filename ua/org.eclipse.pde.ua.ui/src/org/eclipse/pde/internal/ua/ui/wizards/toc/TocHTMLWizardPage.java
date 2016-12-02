@@ -21,24 +21,15 @@ import org.eclipse.pde.internal.ua.ui.editor.toc.HelpEditorUtil;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
-/**
- * PDEWizardNewFileCreationPage
- */
 public class TocHTMLWizardPage extends WizardNewFileCreationPage {
 
 	private String fLastFilename;
 
-	/**
-	 * @param pageName
-	 * @param selection
-	 */
 	public TocHTMLWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
-	 */
+	@Override
 	protected boolean validatePage() {
 		fLastFilename = getFileName().trim();
 
@@ -68,24 +59,22 @@ public class TocHTMLWizardPage extends WizardNewFileCreationPage {
 		return super.validatePage();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
-	 */
+	@Override
 	protected IStatus validateLinkedResource() {
 		return new Status(IStatus.OK, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createLinkTarget()
-	 */
+	@Override
 	protected void createLinkTarget() {
 		// NO-OP
 	}
 
+	@Override
 	protected void createAdvancedControls(Composite parent) {
 		// NO-OP
 	}
 
+	@Override
 	public String getFileName() {
 		if (getControl() != null && getControl().isDisposed()) {
 			return fLastFilename;

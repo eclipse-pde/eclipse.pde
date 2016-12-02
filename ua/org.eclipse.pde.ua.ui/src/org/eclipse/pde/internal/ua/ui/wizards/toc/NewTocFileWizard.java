@@ -22,6 +22,7 @@ public class NewTocFileWizard extends TocHTMLWizard {
 	private TocWizardPage fPage;
 	private IPath fInitialPath = null;
 
+	@Override
 	public void addPages() {
 		fPage = new TocWizardPage("tocfile", getSelection()); //$NON-NLS-1$
 		if (fInitialPath != null)
@@ -29,16 +30,19 @@ public class NewTocFileWizard extends TocHTMLWizard {
 		addPage(fPage);
 	}
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
 		setWindowTitle(TocWizardMessages.NewTocFileWizard_title);
 		setNeedsProgressMonitor(true);
 	}
 
+	@Override
 	protected void initializeDefaultPageImageDescriptor() {
 		// setDefaultPageImageDescriptor(PDEUserAssistanceUIPluginImages.DESC_TARGET_WIZ);
 	}
 
+	@Override
 	public boolean performFinish() {
 		try {
 			fNewFile = fPage.createNewFile();

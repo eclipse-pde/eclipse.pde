@@ -28,15 +28,18 @@ public class TocWizardPage extends PDEWizardNewFileCreationPage {
 		setFileExtension(EXTENSION);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TOC_PAGE);
 	}
 
+	@Override
 	protected void createAdvancedControls(Composite parent) {
 	}
 
+	@Override
 	protected boolean validatePage() {
 		String tocName = getTocName();
 		if (tocName == null) {

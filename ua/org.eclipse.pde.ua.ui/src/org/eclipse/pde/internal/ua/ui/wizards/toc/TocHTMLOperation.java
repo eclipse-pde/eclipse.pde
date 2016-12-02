@@ -110,6 +110,7 @@ public class TocHTMLOperation extends WorkspaceModifyOperation {
 		fFile = file;
 	}
 
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 
 		ByteArrayInputStream stream = new ByteArrayInputStream(getHTMLContent());

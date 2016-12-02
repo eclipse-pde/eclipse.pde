@@ -22,33 +22,23 @@ import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPluginImages;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-/**
- * NewRegisterCSWizard
- */
 public class RegisterTocWizard extends Wizard implements INewWizard {
 
 	private RegisterTocWizardPage fMainPage;
 
 	private IModel fModel;
 
-	/**
-	 *
-	 */
 	public RegisterTocWizard(IModel model) {
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
+	@Override
 	public void addPages() {
 		fMainPage = new RegisterTocWizardPage(fModel);
 		addPage(fMainPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			getContainer().run(false, true, getOperation());
@@ -61,16 +51,11 @@ public class RegisterTocWizard extends Wizard implements INewWizard {
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private IRunnableWithProgress getOperation() {
 		return new RegisterTocOperation(fMainPage, getShell());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(TocWizardMessages.RegisterTocWizard_link);
 		// TODO: MP: LOW: TOC: New register table of contents wizard image

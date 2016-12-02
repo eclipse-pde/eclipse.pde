@@ -21,9 +21,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 public class TocHTMLWizard extends BasicNewFileResourceWizard {
 	protected IFile fNewFile;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#addPages()
-	 */
+	@Override
 	public void addPages() {
 		IWizardPage mainPage = new TocHTMLWizardPage("newHTMLPage1", getSelection());//$NON-NLS-1$
 		mainPage.setTitle(TocWizardMessages.TocHTMLWizard_title);
@@ -31,9 +29,7 @@ public class TocHTMLWizard extends BasicNewFileResourceWizard {
 		addPage(mainPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#performFinish()
-	 */
+	@Override
 	public boolean performFinish() {
 		IWizardPage mainPage = getPage("newHTMLPage1"); //$NON-NLS-1$
 		if (!(mainPage instanceof TocHTMLWizardPage)) {

@@ -148,21 +148,22 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		}
 	}
 
+	@Override
 	public boolean getDataPrimary() {
 		return fDataIsPrimary;
 	}
 
+	@Override
 	public String getDataTocFile() {
 		return fTocModel.getUnderlyingResource().getProjectRelativePath().toPortableString();
 	}
 
+	@Override
 	public IProject getPluginProject() {
 		return fPluginProject;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		createUI(parent);
 		createUIListeners();
@@ -211,6 +212,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 
 	private void createUIListenersPrimaryChkBox() {
 		fPrimaryChkBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fDataIsPrimary = fPrimaryChkBox.getSelection();
 			}
