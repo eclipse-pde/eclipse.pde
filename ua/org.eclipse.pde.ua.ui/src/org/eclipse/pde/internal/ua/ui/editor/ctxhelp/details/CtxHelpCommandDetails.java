@@ -36,9 +36,7 @@ public class CtxHelpCommandDetails extends CtxHelpAbstractDetails {
 		super(masterSection, CtxHelpInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#createFields(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createFields(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), CtxHelpDetailsMessages.CtxHelpCommandDetails_labelDesc);
 		fLabelEntry = new FormEntry(parent, getManagedForm().getToolkit(), CtxHelpDetailsMessages.CtxHelpCommandDetails_labelText, SWT.NONE);
@@ -47,25 +45,20 @@ public class CtxHelpCommandDetails extends CtxHelpAbstractDetails {
 		fSerialEntry = new FormEntry(parent, getManagedForm().getToolkit(), CtxHelpDetailsMessages.CtxHelpCommandDetails_commandText, SWT.NONE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#getDetailsTitle()
-	 */
+	@Override
 	protected String getDetailsTitle() {
 		return CtxHelpDetailsMessages.CtxHelpCommandDetails_title;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#getDetailsDescription()
-	 */
+	@Override
 	protected String getDetailsDescription() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		fLabelEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (fCommand != null) {
 					fCommand.setLabel(fLabelEntry.getValue());
@@ -73,6 +66,7 @@ public class CtxHelpCommandDetails extends CtxHelpAbstractDetails {
 			}
 		});
 		fSerialEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) { // Ensure data object is defined
 				if (fCommand != null) {
 					fCommand.setSerialization(fSerialEntry.getValue());
@@ -81,9 +75,7 @@ public class CtxHelpCommandDetails extends CtxHelpAbstractDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		if (fCommand != null) {
 			fLabelEntry.setValue(fCommand.getLabel(), true);
@@ -93,9 +85,7 @@ public class CtxHelpCommandDetails extends CtxHelpAbstractDetails {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
@@ -104,9 +94,7 @@ public class CtxHelpCommandDetails extends CtxHelpAbstractDetails {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		Object object = getFirstSelectedObject(selection);
 		if (object instanceof CtxHelpCommand) {

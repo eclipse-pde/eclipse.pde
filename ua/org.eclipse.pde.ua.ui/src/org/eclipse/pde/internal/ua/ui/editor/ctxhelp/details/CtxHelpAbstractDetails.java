@@ -49,9 +49,7 @@ public abstract class CtxHelpAbstractDetails extends PDEDetails {
 		fMainSection = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createContents(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 		createDetails(parent);
@@ -111,46 +109,34 @@ public abstract class CtxHelpAbstractDetails extends PDEDetails {
 	 */
 	public abstract void updateFields();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// NO-OP
 		// Children to override
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#fireSaveNeeded()
-	 */
+	@Override
 	public void fireSaveNeeded() {
 		markDirty();
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getContextId()
-	 */
+	@Override
 	public String getContextId() {
 		return fContextID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getPage()
-	 */
+	@Override
 	public PDEFormPage getPage() {
 		return (PDEFormPage) getManagedForm().getContainer();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#isEditable()
-	 */
+	@Override
 	public boolean isEditable() {
 		return fMasterSection.isEditable();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		// NO-OP
 	}

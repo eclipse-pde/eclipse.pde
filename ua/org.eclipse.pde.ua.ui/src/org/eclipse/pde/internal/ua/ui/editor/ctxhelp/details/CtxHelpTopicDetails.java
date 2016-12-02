@@ -47,9 +47,7 @@ public class CtxHelpTopicDetails extends CtxHelpAbstractDetails {
 		super(masterSection, CtxHelpInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#createFields(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createFields(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), CtxHelpDetailsMessages.CtxHelpTopicDetails_label);
 		fLabelEntry = new FormEntry(parent, getManagedForm().getToolkit(), CtxHelpDetailsMessages.CtxHelpTopicDetails_location, SWT.NONE);
@@ -58,25 +56,20 @@ public class CtxHelpTopicDetails extends CtxHelpAbstractDetails {
 		fLinkEntry = new FormEntry(parent, getManagedForm().getToolkit(), CtxHelpDetailsMessages.CtxHelpTopicDetails_locationTitle, CtxHelpDetailsMessages.CtxHelpTopicDetails_browseTitle, isEditable());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#getDetailsTitle()
-	 */
+	@Override
 	protected String getDetailsTitle() {
 		return CtxHelpDetailsMessages.CtxHelpTopicDetails_detailsTitle;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#getDetailsDescription()
-	 */
+	@Override
 	protected String getDetailsDescription() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		fLabelEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (fTopic != null) {
 					fTopic.setLabel(fLabelEntry.getValue());
@@ -84,6 +77,7 @@ public class CtxHelpTopicDetails extends CtxHelpAbstractDetails {
 			}
 		});
 		fLinkEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) { // Ensure data object is defined
 				if (fTopic != null) {
 					// TODO Do we need better testing for path validity?
@@ -91,10 +85,12 @@ public class CtxHelpTopicDetails extends CtxHelpAbstractDetails {
 				}
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse();
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				handleOpen();
 			}
@@ -121,9 +117,7 @@ public class CtxHelpTopicDetails extends CtxHelpAbstractDetails {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		if (fTopic != null) {
 			fLabelEntry.setValue(fTopic.getLabel(), true);
@@ -137,9 +131,7 @@ public class CtxHelpTopicDetails extends CtxHelpAbstractDetails {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
@@ -148,9 +140,7 @@ public class CtxHelpTopicDetails extends CtxHelpAbstractDetails {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		Object object = getFirstSelectedObject(selection);
 		if (object instanceof CtxHelpTopic) {

@@ -40,9 +40,7 @@ public class CtxHelpRemoveAction extends Action {
 		fObjects = objects;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		if (fObjects == null)
 			return;

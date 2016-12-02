@@ -36,9 +36,7 @@ public class CtxHelpDescriptionDetails extends CtxHelpAbstractDetails {
 		super(masterSection, CtxHelpInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#createFields(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createFields(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), CtxHelpDetailsMessages.CtxHelpDescriptionDetails_descDesc);
 		fDescEntry = new FormEntry(parent, getManagedForm().getToolkit(), CtxHelpDetailsMessages.CtxHelpDescriptionDetails_descLabel, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
@@ -49,25 +47,20 @@ public class CtxHelpDescriptionDetails extends CtxHelpAbstractDetails {
 		fDescEntry.getLabel().setLayoutData(data);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#getDetailsTitle()
-	 */
+	@Override
 	protected String getDetailsTitle() {
 		return CtxHelpDetailsMessages.CtxHelpDescriptionDetails_title;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#getDetailsDescription()
-	 */
+	@Override
 	protected String getDetailsDescription() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		fDescEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (fDescription != null) {
 					fDescription.setDescription(fDescEntry.getValue());
@@ -76,9 +69,7 @@ public class CtxHelpDescriptionDetails extends CtxHelpAbstractDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		if (fDescription != null) {
 			fDescEntry.setValue(fDescription.getDescription(), true);
@@ -86,9 +77,7 @@ public class CtxHelpDescriptionDetails extends CtxHelpAbstractDetails {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
@@ -96,9 +85,7 @@ public class CtxHelpDescriptionDetails extends CtxHelpAbstractDetails {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ctxhelp.details.CtxHelpAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		Object object = getFirstSelectedObject(selection);
 		if (object instanceof CtxHelpDescription) {
