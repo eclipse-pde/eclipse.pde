@@ -27,10 +27,6 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-/**
- * SimpleCSDetails
- *
- */
 public class SimpleCSDetails extends CSAbstractDetails {
 
 	private ISimpleCS fCheatSheet;
@@ -39,9 +35,6 @@ public class SimpleCSDetails extends CSAbstractDetails {
 
 	private Section fMainSection;
 
-	/**
-	 * @param section
-	 */
 	public SimpleCSDetails(ICSMaster section) {
 		super(section, SimpleCSInputContext.CONTEXT_ID);
 		fCheatSheet = null;
@@ -50,17 +43,12 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		fMainSection = null;
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(ISimpleCS object) {
 		// Set data
 		fCheatSheet = object;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
@@ -74,9 +62,7 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		updateFields();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createDetails(Composite parent) {
 
 		FormToolkit toolkit = getManagedForm().getToolkit();
@@ -107,12 +93,11 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		markDetailsPart(fMainSection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		// Attribute: title
 		fTitle.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fCheatSheet == null) {
@@ -123,9 +108,7 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		// Ensure data object is defined
 		if (fCheatSheet == null) {
@@ -138,9 +121,7 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		fTitle.setEditable(editable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries

@@ -32,6 +32,7 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 
 	private ImageHyperlink fImageHyperlinkRegisterCS;
 
+	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		// Add the register cheat sheet link to the form title area
 		if (WorkspaceModelManager.isPluginProject(getCommonProject())
@@ -39,11 +40,9 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 			manager.add(createUIControlConRegisterCS());
 	}
 
-	/**
-	 * @return
-	 */
 	private ControlContribution createUIControlConRegisterCS() {
 		return new ControlContribution("Register") { //$NON-NLS-1$
+			@Override
 			protected Control createControl(Composite parent) {
 				// Create UI
 				createUIImageHyperlinkRegisterCS(parent);
@@ -54,9 +53,6 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 		};
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIImageHyperlinkRegisterCS(Composite parent) {
 		fImageHyperlinkRegisterCS = new ImageHyperlink(parent, SWT.NONE);
 		fImageHyperlinkRegisterCS.setText(Messages.CSAbstractEditor_register);
@@ -65,29 +61,26 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 				.getHyperlinkGroup().getForeground());
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListenerImageHyperlinkRegisterCS() {
 		fImageHyperlinkRegisterCS
 				.addHyperlinkListener(new IHyperlinkListener() {
+					@Override
 					public void linkActivated(HyperlinkEvent e) {
 						handleLinkActivatedRegisterCS();
 					}
 
+					@Override
 					public void linkEntered(HyperlinkEvent e) {
 						handleLinkEnteredRegisterCS(e.getLabel());
 					}
 
+					@Override
 					public void linkExited(HyperlinkEvent e) {
 						handleLinkExitedRegisterCS();
 					}
 				});
 	}
 
-	/**
-	 * @param message
-	 */
 	private void handleLinkEnteredRegisterCS(String message) {
 		// Update colour
 		fImageHyperlinkRegisterCS.setForeground(getToolkit()
@@ -108,9 +101,6 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 		getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
 	}
 
-	/**
-	 *
-	 */
 	private void handleLinkActivatedRegisterCS() {
 		RegisterCSWizard wizard = new RegisterCSWizard(
 				(IModel) getAggregateModel());

@@ -30,9 +30,6 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
-/**
- * SimpleCSSubItemDetails
- */
 public class SimpleCSSubItemDetails extends CSAbstractDetails {
 
 	private ISimpleCSSubItem fSubItem;
@@ -62,9 +59,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fCommandSection.setData(object);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
@@ -78,9 +73,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		updateFields();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
+	@Override
 	public void initialize(IManagedForm form) {
 		super.initialize(form);
 		// Unfortunately this has to be explicitly called for sub detail
@@ -90,9 +83,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fCommandSection.initialize(form);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createDetails(Composite parent) {
 
 		GridData data = null;
@@ -136,12 +127,11 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fCommandSection.createDetails(parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		// Attribute: label
 		fLabel.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fSubItem == null) {
@@ -152,6 +142,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		});
 		// Attribute: skip
 		fSkip.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fSubItem == null) {
 					return;
@@ -163,9 +154,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fCommandSection.hookListeners();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 
 		boolean editable = isEditableElement();
@@ -184,9 +173,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fCommandSection.updateFields();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries

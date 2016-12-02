@@ -72,9 +72,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 
 	private static final int F_COMMAND_INSERTION_INDEX = 1;
 
-	/**
-	 * @param section
-	 */
 	public SimpleCSCommandDetails(ICSMaster section) {
 		super(section, SimpleCSInputContext.CONTEXT_ID);
 		fRun = null;
@@ -86,17 +83,12 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		fCommandOptional = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
-	 */
 	public void setData(ISimpleCSRun object) {
 		// Set data
 		fRun = object;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createDetails(Composite parent) {
 
 		int columnSpan = 3;
@@ -180,9 +172,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		markDetailsPart(commandSection);
 	}
 
-	/**
-	 * @param label
-	 */
 	private void createCommandInfoDecoration() {
 		// Command info decoration
 		int bits = SWT.TOP | SWT.LEFT;
@@ -193,13 +182,12 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		fCommandInfoDecoration.setImage(FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 
 		// Element: command
 		fCommandCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
 				if (fRun == null) {
@@ -233,6 +221,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		});
 
 		fCommandBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
 				if (fRun == null) {
@@ -256,6 +245,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 
 		// Attribute: required
 		fCommandOptional.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
 				if (fRun == null) {
@@ -274,9 +264,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		// Ensure data object is defined
 		if (fRun == null) {
@@ -297,9 +285,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		updateCommandEnablement();
 	}
 
-	/**
-	 *
-	 */
 	private void updateUICommandOptional() {
 		// Attribute: required
 		ISimpleCSCommand commandObject = getCommandObject(fRun);
@@ -313,10 +298,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		}
 	}
 
-	/**
-	 * @param runObject
-	 * @return
-	 */
 	private ISimpleCSCommand getCommandObject(ISimpleCSRun runObject) {
 		// Ensure the run object is defined
 		if (runObject == null) {
@@ -334,9 +315,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		return (ISimpleCSCommand) executable;
 	}
 
-	/**
-	 *
-	 */
 	private void clearCommandUI() {
 		// Clear the command combo
 		fCommandCombo.setText(F_NO_COMMAND);
@@ -344,9 +322,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		fCommandTable.clearAll();
 	}
 
-	/**
-	 *
-	 */
 	private void updateCommandEnablement() {
 		// Ensure data object is defined
 		if (fRun == null) {
@@ -372,9 +347,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		fCommandBrowse.setEnabled(editable);
 	}
 
-	/**
-	 * @param serialization
-	 */
 	private void createCommandInModel(String serialization) {
 		// Ensure data object is defined
 		if (fRun == null) {
@@ -386,10 +358,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		fRun.setExecutable(command);
 	}
 
-	/**
-	 * @param result
-	 * @param createInModel
-	 */
 	private void updateCommandCombo(ParameterizedCommand result, boolean createInModel) {
 
 		if (result == null) {
@@ -435,10 +403,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 
 	}
 
-	/**
-	 * @param serialization
-	 * @return
-	 */
 	private ParameterizedCommand getParameterizedCommand(String serialization) {
 		if (PDETextHelper.isDefined(serialization)) {
 			ICommandService service = getCommandService();
@@ -455,10 +419,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		return null;
 	}
 
-	/**
-	 * @param run
-	 * @return
-	 */
 	private ParameterizedCommand getParameterizedCommand(ISimpleCSRun run) {
 		if (run == null) {
 			return null;
@@ -471,9 +431,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		return null;
 	}
 
-	/**
-	 * @param parameters
-	 */
 	private void updateCommandTable(Map parameters) {
 		// Clear the table contents
 		fCommandTable.clearAll();
@@ -537,9 +494,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		return service.createContextSnapshot(false);
 	}
 
-	/**
-	 *
-	 */
 	private void updateCommandInfoDecoration(boolean showDecoration) {
 		if (showDecoration) {
 			fCommandInfoDecoration.show();
@@ -549,9 +503,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		fCommandInfoDecoration.setShowHover(showDecoration);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// NO-OP

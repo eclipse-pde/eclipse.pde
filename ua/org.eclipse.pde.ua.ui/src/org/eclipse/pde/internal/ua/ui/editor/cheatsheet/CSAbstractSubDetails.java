@@ -13,22 +13,13 @@ package org.eclipse.pde.internal.ua.ui.editor.cheatsheet;
 
 import org.eclipse.swt.widgets.Composite;
 
-/**
- * CSAbstractSubDetails
- */
 public abstract class CSAbstractSubDetails extends CSAbstractDetails {
 
-	/**
-	 * @param masterSection
-	 * @param contextID
-	 */
 	public CSAbstractSubDetails(ICSMaster masterSection, String contextID) {
 		super(masterSection, contextID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createContents(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createContents(Composite parent) {
 		// NO-OP
 		// This will never be called directly because classes extending this

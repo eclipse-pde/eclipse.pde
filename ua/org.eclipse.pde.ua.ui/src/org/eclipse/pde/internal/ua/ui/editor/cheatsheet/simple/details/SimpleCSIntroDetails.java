@@ -33,9 +33,6 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
-/**
- * SimpleCSIntroDetails
- */
 public class SimpleCSIntroDetails extends CSAbstractDetails {
 
 	private ISimpleCSIntro fIntro;
@@ -48,9 +45,6 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 
 	private boolean fBlockEvents;
 
-	/**
-	 * @param elementSection
-	 */
 	public SimpleCSIntroDetails(ICSMaster elementSection) {
 		super(elementSection, SimpleCSInputContext.CONTEXT_ID);
 		fIntro = null;
@@ -61,9 +55,6 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fBlockEvents = false;
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(ISimpleCSIntro object) {
 		// Set data
 		fIntro = object;
@@ -71,9 +62,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fHelpSection.setData(object);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
@@ -87,9 +76,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		updateFields();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
+	@Override
 	public void initialize(IManagedForm form) {
 		super.initialize(form);
 		// Unfortunately this has to be explicitly called for sub detail
@@ -99,9 +86,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fHelpSection.initialize(form);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createDetails(Composite parent) {
 
 		GridData data = null;
@@ -134,9 +119,6 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fHelpSection.createDetails(parent);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIFieldContent(Composite parent) {
 		GridData data = null;
 		// Create the label
@@ -154,33 +136,28 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		((GridData) fContentViewer.getViewer().getTextWidget().getLayoutData()).horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#doGlobalAction(java.lang.String)
-	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		return fContentViewer.doGlobalAction(actionId);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		// description: Content (Element)
 		createUIListenersContentViewer();
 		fHelpSection.hookListeners();
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListenersContentViewer() {
 		fContentViewer.createUIListeners();
 		// Create document listener
 		fContentViewer.getDocument().addDocumentListener(new IDocumentListener() {
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
 				// NO-OP
 			}
 
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				// Check whether to handle this event
 				if (fBlockEvents) {
@@ -205,9 +182,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		// Ensure data object is defined
 		if (fIntro == null) {
@@ -229,9 +204,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fContentViewer.getViewer().setEditable(editable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 		// Set the context menu to null to prevent the editor context menu
 		// from being disposed along with the source viewer
@@ -243,16 +216,12 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#canPaste(org.eclipse.swt.dnd.Clipboard)
-	 */
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		return fContentViewer.canPaste();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries

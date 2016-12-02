@@ -43,10 +43,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-/**
- * SimpleCSHelpDetailsSection
- *
- */
 public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 
 	private Text fHelpText;
@@ -69,9 +65,6 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 
 	private static final String F_HELP_DOCUMENT_LINK = SimpleDetailsMessages.SimpleCSHelpDetails_helpDocumentLink;
 
-	/**
-	 * @param section
-	 */
 	public SimpleCSHelpDetails(ICSMaster section) {
 		super(section, SimpleCSInputContext.CONTEXT_ID);
 		fHelpObject = null;
@@ -85,25 +78,12 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		fHelpSection = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData
-	 * (java.lang.Object)
-	 */
 	public void setData(ISimpleCSHelpObject object) {
 		// Set data
 		fHelpObject = object;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails
-	 * #createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createDetails(Composite parent) {
 
 		int columnSpan = 3;
@@ -171,18 +151,13 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		markDetailsPart(fHelpSection);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails
-	 * #hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 
 		// Attribute: href
 		// Attribute: contextId
 		fHelpCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
 				if (fHelpObject == null) {
@@ -227,6 +202,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		// Attribute: href
 		// Attribute: contextId
 		fHelpText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				// Block UI updates
 				if (fBlockListeners) {
@@ -252,15 +228,13 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		});
 
 		fHelpBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleButtonSelectedEventBrowse(e);
 			}
 		});
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleButtonSelectedEventBrowse(SelectionEvent event) {
 		// Create the dialog
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
@@ -306,13 +280,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails
-	 * #updateFields()
-	 */
+	@Override
 	public void updateFields() {
 		// Ensure data object is defined
 		if (fHelpObject == null) {
@@ -350,11 +318,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		fHelpCombo.setEnabled(editable);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// NO-OP

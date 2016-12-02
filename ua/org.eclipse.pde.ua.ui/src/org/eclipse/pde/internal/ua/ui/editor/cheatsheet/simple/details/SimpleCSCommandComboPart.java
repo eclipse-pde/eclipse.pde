@@ -24,10 +24,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-/**
- * SimpleCSCommandComboPart
- *
- */
 public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSCommandKeyListener, DisposeListener {
 
 	private int fNewCommandKeyIndex;
@@ -50,9 +46,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.parts.ComboPart#createControl(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit, int)
-	 */
+	@Override
 	public void createControl(Composite parent, FormToolkit toolkit, int style) {
 		super.createControl(parent, toolkit, style);
 		// Connect to the global command manager
@@ -62,9 +56,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		addDisposeListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.ISimpleCSCommandKeyListener#newCommandKey(org.eclipse.pde.internal.ui.editor.cheatsheet.simple.NewCommandKeyEvent)
-	 */
+	@Override
 	public void newCommandKey(NewCommandKeyEvent event) {
 		// Source:  Another combo box
 		String key = event.getKey();
@@ -139,9 +131,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		return fNewCommandKeyIndex;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-	 */
+	@Override
 	public void widgetDisposed(DisposeEvent e) {
 		// Disconnect from the global command manager
 		SimpleCSCommandManager.Instance().removeCommandKeyListener(this);

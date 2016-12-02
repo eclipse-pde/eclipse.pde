@@ -40,10 +40,6 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
-/**
- * SimpleCSItemDetails
- *
- */
 public class SimpleCSItemDetails extends CSAbstractDetails {
 
 	private ISimpleCSItem fItem;
@@ -64,9 +60,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 
 	private boolean fBlockEvents;
 
-	/**
-	 * @param section
-	 */
 	public SimpleCSItemDetails(ICSMaster section) {
 		super(section, SimpleCSInputContext.CONTEXT_ID);
 		fItem = null;
@@ -82,9 +75,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fCommandSection = new SimpleCSCommandDetails(section);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
+	@Override
 	public void initialize(IManagedForm form) {
 		super.initialize(form);
 		// Unfortunately this has to be explicitly called for sub detail
@@ -96,9 +87,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fCommandSection.initialize(form);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createDetails(Composite parent) {
 
 		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
@@ -144,16 +133,11 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fHelpSection.createDetails(parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#doGlobalAction(java.lang.String)
-	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		return fContentViewer.doGlobalAction(actionId);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIFieldContent(Composite parent) {
 		GridData data = null;
 		// Create the label
@@ -171,9 +155,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		((GridData) fContentViewer.getViewer().getTextWidget().getLayoutData()).horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 	}
 
-	/**
-	 *
-	 */
 	private void createSkipInfoDecoration() {
 		// Skip info decoration
 		int bits = SWT.TOP | SWT.LEFT;
@@ -184,14 +165,13 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fSkipInfoDecoration.setImage(FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
-	 */
+	@Override
 	public void hookListeners() {
 		// description: Content (Element)
 		createUIListenersContentViewer();
 		// Attribute: title
 		fTitle.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fItem == null) {
@@ -202,6 +182,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		});
 		// Attribute: skip
 		fSkip.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
 				if (fItem == null) {
@@ -217,17 +198,16 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fCommandSection.hookListeners();
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListenersContentViewer() {
 		fContentViewer.createUIListeners();
 		// Create document listener
 		fContentViewer.getDocument().addDocumentListener(new IDocumentListener() {
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
 				// NO-OP
 			}
 
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				// Check whether to handle this event
 				if (fBlockEvents) {
@@ -252,9 +232,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#updateFields()
-	 */
+	@Override
 	public void updateFields() {
 
 		boolean editable = isEditableElement();
@@ -288,9 +266,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fContentViewer.getViewer().setEditable(editable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 		// Set the context menu to null to prevent the editor context menu
 		// from being disposed along with the source viewer
@@ -302,16 +278,11 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#canPaste(org.eclipse.swt.dnd.Clipboard)
-	 */
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		return fContentViewer.canPaste();
 	}
 
-	/**
-	 *
-	 */
 	private void updateSkipEnablement() {
 		// Ensure data object is defined
 		if (fItem == null) {
@@ -331,9 +302,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fSkip.setEnabled(editable);
 	}
 
-	/**
-	 * @param show
-	 */
 	private void updateSkipInfoDecoration(boolean show) {
 		if (show) {
 			fSkipInfoDecoration.show();
@@ -343,9 +311,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fSkipInfoDecoration.setShowHover(show);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
@@ -353,9 +319,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		// No need to call for sub details, because they contain no form entries
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
@@ -369,9 +333,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		updateFields();
 	}
 
-	/**
-	 * @param object
-	 */
 	public void setData(ISimpleCSItem object) {
 		// Set data
 		fItem = object;
