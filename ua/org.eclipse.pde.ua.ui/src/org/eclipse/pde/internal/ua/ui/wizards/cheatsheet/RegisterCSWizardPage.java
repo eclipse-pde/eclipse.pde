@@ -35,9 +35,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
-/**
- * RegisterCSWizardPage
- */
 public abstract class RegisterCSWizardPage extends WizardPage implements IRegisterCSData {
 
 	public final static String F_PAGE_NAME = "register-cs"; //$NON-NLS-1$
@@ -110,23 +107,17 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 			fExtensionsModel = base;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataDescription()
-	 */
+	@Override
 	public String getDataDescription() {
 		return fDataDescription;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataCategoryName()
-	 */
+	@Override
 	public String getDataCategoryName() {
 		return fDataCategoryName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataCategoryType()
-	 */
+	@Override
 	public int getDataCategoryType() {
 		String categoryID = getDataCategoryID();
 		if (categoryID == null) {
@@ -135,9 +126,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		return fCategoryTrackerUtil.getCategoryType(categoryID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataCategoryID()
-	 */
+	@Override
 	public String getDataCategoryID() {
 		if (fDataCategoryName != null) {
 			return fCategoryTrackerUtil.getCategoryID(fDataCategoryName);
@@ -145,9 +134,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataContentFile()
-	 */
+	@Override
 	public String getDataContentFile() {
 		// Retrieve the project relative path to the cheat sheet
 		String portablePath = fCheatSheetModel.getUnderlyingResource().getProjectRelativePath().toPortableString();
@@ -155,27 +142,23 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		return F_LOCALE_VARIABLE + portablePath;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataCheatSheetID()
-	 */
+	@Override
 	public String getDataCheatSheetID() {
 		return fDataCheatSheetID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getPluginProject()
-	 */
+	@Override
 	public IProject getPluginProject() {
 		return fPluginProject;
 	}
 
+	@Override
 	public abstract String getDataCheatSheetName();
 
+	@Override
 	public abstract boolean isCompositeCheatSheet();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 
 		createUI(parent);
@@ -305,6 +288,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 
 	private void createUIListenersCategoryButton() {
 		fCategoryButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleWidgetSelectedCategoryButton();
 			}
@@ -313,17 +297,16 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 
 	private void createUIListenersCategoryCombo() {
 		fCategoryCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fDataCategoryName = fCategoryCombo.getText();
 			}
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListenersDescriptionText() {
 		fDescriptionText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fDataDescription = fDescriptionText.getText();
 			}

@@ -26,10 +26,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
-/**
- * CheatSheetFileWizardPage
- *
- */
 public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 
 	private Button fSimpleCheatSheetButton;
@@ -67,9 +63,7 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 		return -1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected void createAdvancedControls(Composite parent) {
 
 		GridData data = null;
@@ -85,6 +79,7 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 		fSimpleCheatSheetButton.setText(CSWizardMessages.CSFileWizardPage_simpleCheatSheet);
 		fSimpleCheatSheetButton.setSelection(true);
 		fSimpleCheatSheetButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				getWizard().getContainer().updateButtons();
 			}
@@ -106,6 +101,7 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 		data.verticalIndent = 10;
 		fCompositeCheatSheetButton.setLayoutData(data);
 		fCompositeCheatSheetButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				getWizard().getContainer().updateButtons();
 			}
@@ -121,9 +117,7 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Dialog.applyDialogFont(fGroup);

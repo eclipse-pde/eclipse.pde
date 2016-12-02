@@ -24,25 +24,17 @@ import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPluginImages;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-/**
- * NewRegisterCSWizard
- */
 public class RegisterCSWizard extends Wizard implements INewWizard {
 
 	private RegisterCSWizardPage fMainPage;
 
 	private IModel fModel;
 
-	/**
-	 *
-	 */
 	public RegisterCSWizard(IModel model) {
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
+	@Override
 	public void addPages() {
 		if (fModel instanceof ICompCSModel) {
 			fMainPage = new RegisterCompCSWizardPage((ICompCSModel) fModel);
@@ -53,9 +45,7 @@ public class RegisterCSWizard extends Wizard implements INewWizard {
 		addPage(fMainPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			getContainer().run(false, true, getOperation());
@@ -68,16 +58,11 @@ public class RegisterCSWizard extends Wizard implements INewWizard {
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private IRunnableWithProgress getOperation() {
 		return new RegisterCSOperation(fMainPage, getShell());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(CSWizardMessages.RegisterCSWizard_title);
 		// TODO: MP: LOW: CompCS: New register cheat sheet wizard image

@@ -41,9 +41,7 @@ public abstract class BaseCSCreationOperation extends WorkspaceModifyOperation {
 		super(rule);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		monitor.beginTask(CSWizardMessages.BaseCSCreationOperation_task, 2);
 		createContent();
@@ -56,6 +54,7 @@ public abstract class BaseCSCreationOperation extends WorkspaceModifyOperation {
 
 	private void openFile() {
 		Display.getCurrent().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchWindow window = PDEUserAssistanceUIPlugin.getActiveWorkbenchWindow();
 				if (window == null) {

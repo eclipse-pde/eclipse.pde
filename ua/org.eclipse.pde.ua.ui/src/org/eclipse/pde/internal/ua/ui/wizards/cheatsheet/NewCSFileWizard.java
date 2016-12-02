@@ -22,48 +22,33 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 
-/**
- * NewCheatSheetWizard
- *
- */
 public class NewCSFileWizard extends BasicNewFileResourceWizard implements INewWizard {
 
 	protected CSFileWizardPage fMainPage;
 
-	/**
-	 *
-	 */
 	public NewCSFileWizard() {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#addPages()
-	 */
+	@Override
 	public void addPages() {
 		fMainPage = new CSFileWizardPage("cheatsheet", getSelection()); //$NON-NLS-1$
 		addPage(fMainPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
 		setWindowTitle(CSWizardMessages.NewCSFileWizard_title);
 		setNeedsProgressMonitor(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#initializeDefaultPageImageDescriptor()
-	 */
+	@Override
 	protected void initializeDefaultPageImageDescriptor() {
 		setDefaultPageImageDescriptor(PDEUserAssistanceUIPluginImages.DESC_CHEATSHEET_WIZ);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#performFinish()
-	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			getContainer().run(false, true, getOperation());
@@ -76,9 +61,6 @@ public class NewCSFileWizard extends BasicNewFileResourceWizard implements INewW
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private IRunnableWithProgress getOperation() {
 
 		IFile file = fMainPage.createNewFile();

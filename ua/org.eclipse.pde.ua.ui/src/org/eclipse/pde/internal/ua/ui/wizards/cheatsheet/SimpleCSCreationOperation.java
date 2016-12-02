@@ -18,28 +18,17 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSModel;
 
-/**
- * SimpleCheatSheetCreationOperation
- */
 public class SimpleCSCreationOperation extends BaseCSCreationOperation {
 
-	/**
-	 * @param file
-	 */
 	public SimpleCSCreationOperation(IFile file) {
 		super(file);
 	}
 
-	/**
-	 * @param rule
-	 */
 	public SimpleCSCreationOperation(ISchedulingRule rule) {
 		super(rule);
 	}
 
-	/**
-	 *
-	 */
+	@Override
 	protected void createContent() throws CoreException {
 		SimpleCSModel model = new SimpleCSModel(CoreUtility.getTextDocument(fFile.getContents()), false);
 		model.setUnderlyingResource(fFile);
@@ -48,9 +37,6 @@ public class SimpleCSCreationOperation extends BaseCSCreationOperation {
 		model.dispose();
 	}
 
-	/**
-	 * @param simpleCS
-	 */
 	protected void initializeCS(ISimpleCS simpleCS) {
 		ISimpleCSModelFactory factory = simpleCS.getModel().getFactory();
 

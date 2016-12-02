@@ -50,9 +50,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.osgi.framework.Constants;
 
-/**
- * RegisterCSOperation
- */
 public class RegisterCSOperation extends WorkspaceModifyOperation {
 
 	public final static String F_CS_EXTENSION_POINT_ID = "org.eclipse.ui.cheatsheets.cheatSheetContent"; //$NON-NLS-1$
@@ -73,9 +70,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		super(rule);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 
 		try {
@@ -93,10 +88,6 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	/**
-	 * FindCSExtensionResult
-	 *
-	 */
 	private static class FindCSExtensionResult {
 
 		public IPluginExtension fCSExtension;
@@ -128,6 +119,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fRegisterCSData.getPluginProject()) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				doModifyPluginModel(model, monitor);
 				doModifyManifestModel(model);
@@ -351,6 +343,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 		// Perform the modification of the manifest file
 		ModelModification mod = new ModelModification(fRegisterCSData.getPluginProject()) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				doModifyManifestModel(model);
 				doModifyBuildModel(model);

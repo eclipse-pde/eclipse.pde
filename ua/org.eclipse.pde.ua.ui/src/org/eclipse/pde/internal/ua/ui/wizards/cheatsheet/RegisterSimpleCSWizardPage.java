@@ -13,28 +13,18 @@ package org.eclipse.pde.internal.ua.ui.wizards.cheatsheet;
 
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
 
-/**
- * RegisterSimpleCSWizardPage
- */
 public class RegisterSimpleCSWizardPage extends RegisterCSWizardPage {
 
-	/**
-	 * @param model
-	 */
 	public RegisterSimpleCSWizardPage(ISimpleCSModel model) {
 		super(model);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.RegisterCSWizardPage#getDataName()
-	 */
+	@Override
 	public String getDataCheatSheetName() {
 		return ((ISimpleCSModel) fCheatSheetModel).getSimpleCS().getTitle();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.RegisterCSWizardPage#isCompositeCheatSheet()
-	 */
+	@Override
 	public boolean isCompositeCheatSheet() {
 		return false;
 	}

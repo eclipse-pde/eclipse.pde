@@ -20,9 +20,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
-/**
- * NewCategoryNameDialog
- */
 public class NewCategoryNameDialog extends TrayDialog {
 
 	private Text fNameText;
@@ -36,17 +33,13 @@ public class NewCategoryNameDialog extends TrayDialog {
 		fNameTextValue = null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.NEW_CS_CATEGORY_NAME_DIALOG);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		Composite composite = createUI(parent);
@@ -117,9 +110,7 @@ public class NewCategoryNameDialog extends TrayDialog {
 		fNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
+	@Override
 	protected void okPressed() {
 		// This is needed because the widget is disposed before after okay is
 		// pressed before the value can be retrieved

@@ -13,28 +13,18 @@ package org.eclipse.pde.internal.ua.ui.wizards.cheatsheet;
 
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
 
-/**
- * RegisterCompCSWizardPage
- */
 public class RegisterCompCSWizardPage extends RegisterCSWizardPage {
 
-	/**
-	 * @param model
-	 */
 	public RegisterCompCSWizardPage(ICompCSModel model) {
 		super(model);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.RegisterCSWizardPage#getDataName()
-	 */
+	@Override
 	public String getDataCheatSheetName() {
 		return ((ICompCSModel) fCheatSheetModel).getCompCS().getFieldName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.RegisterCSWizardPage#isCompositeCheatSheet()
-	 */
+	@Override
 	public boolean isCompositeCheatSheet() {
 		return true;
 	}

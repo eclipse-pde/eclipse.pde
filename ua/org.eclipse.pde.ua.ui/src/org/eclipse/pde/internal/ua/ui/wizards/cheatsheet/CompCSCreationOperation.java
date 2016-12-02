@@ -17,9 +17,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSWorkspaceModel;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
 
-/**
- * CompCSCreationOperation
- */
 public class CompCSCreationOperation extends BaseCSCreationOperation implements IRunnableWithProgress {
 
 	public CompCSCreationOperation(IFile file) {
@@ -30,9 +27,7 @@ public class CompCSCreationOperation extends BaseCSCreationOperation implements 
 		super(rule);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.BaseCheatSheetCreationOperation#createContent()
-	 */
+	@Override
 	protected void createContent() {
 		CompCSWorkspaceModel model = new CompCSWorkspaceModel(fFile, false);
 		initializeCS(model.getCompCS());

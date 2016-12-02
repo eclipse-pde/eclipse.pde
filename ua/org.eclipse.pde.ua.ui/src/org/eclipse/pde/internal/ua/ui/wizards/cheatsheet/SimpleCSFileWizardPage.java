@@ -34,9 +34,7 @@ public class SimpleCSFileWizardPage extends CSFileWizardPage {
 		fAbsoluteFileName = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.CheatSheetFileWizardPage#initialize()
-	 */
+	@Override
 	protected void initialize() {
 		setTitle(CSWizardMessages.SimpleCSFileWizardPage_title);
 		setDescription(CSWizardMessages.SimpleCSFileWizardPage_description);
@@ -44,23 +42,17 @@ public class SimpleCSFileWizardPage extends CSFileWizardPage {
 		setFileExtension(F_FILE_EXTENSION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.CheatSheetFileWizardPage#getCheatSheetType()
-	 */
+	@Override
 	public int getCheatSheetType() {
 		return F_SIMPLE_CHEAT_SHEET;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.CheatSheetFileWizardPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected void createAdvancedControls(Composite parent) {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.CheatSheetFileWizardPage#validatePage()
-	 */
+	@Override
 	protected boolean validatePage() {
 		// Set the absolute file name
 		fAbsoluteFileName = getContainerFullPath().toPortableString() + IPath.SEPARATOR + getFileName();
