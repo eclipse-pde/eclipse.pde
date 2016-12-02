@@ -43,17 +43,13 @@ public class RegisterCtxHelpWizard extends Wizard {
 		setNeedsProgressMonitor(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
+	@Override
 	public void addPages() {
 		fMainPage = new RegisterCtxHelpWizardPage(CtxWizardMessages.RegisterCtxHelpWizard_title);
 		addPage(fMainPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			getContainer().run(false, true, new RegisterCtxHelpOperation(getShell(), fWizModel, fMainPage.getPluginText()));
@@ -80,6 +76,7 @@ public class RegisterCtxHelpWizard extends Wizard {
 			setMessage(CtxWizardMessages.RegisterCtxHelpWizard_pageMessage);
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			Composite composite = new Composite(parent, SWT.NONE);
 			composite.setLayout(new GridLayout(2, false));

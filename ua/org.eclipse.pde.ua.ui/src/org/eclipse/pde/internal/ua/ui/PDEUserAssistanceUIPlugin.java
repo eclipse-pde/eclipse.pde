@@ -43,19 +43,13 @@ public class PDEUserAssistanceUIPlugin extends AbstractUIPlugin {
 	public PDEUserAssistanceUIPlugin() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
@@ -103,6 +97,7 @@ public class PDEUserAssistanceUIPlugin extends AbstractUIPlugin {
 				: Display.getDefault();
 		final IStatus fstatus = status;
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				ErrorDialog.openError(null, title, null, fstatus);
 			}

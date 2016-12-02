@@ -77,13 +77,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		fShell = shell;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core
-	 * .runtime.IProgressMonitor)
-	 */
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
 		try {
@@ -116,6 +110,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fProject) {
+			@Override
 			protected void modifyModel(IBaseModel model,
 					IProgressMonitor monitor) throws CoreException {
 				doModifyPluginModel(model, monitor);
@@ -228,6 +223,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		}
 		// Perform the modification of the manifest file
 		ModelModification mod = new ModelModification(fProject) {
+			@Override
 			protected void modifyModel(IBaseModel model,
 					IProgressMonitor monitor) throws CoreException {
 				doModifyManifestModel(model);

@@ -26,6 +26,7 @@ public class PDEUserAssistanceLabelProvider extends SharedLabelProvider {
 	public PDEUserAssistanceLabelProvider() {
 	}
 
+	@Override
 	public String getText(Object obj) {
 		if (obj instanceof ISimpleCSObject) {
 			return getObjectText((ISimpleCSObject) obj);
@@ -67,9 +68,6 @@ public class PDEUserAssistanceLabelProvider extends SharedLabelProvider {
 		return PDETextHelper.truncateAndTrailOffText(PDETextHelper.translateReadText(obj.getName()), limit);
 	}
 
-	/**
-	 * @param obj
-	 */
 	public String getObjectText(TocObject obj) {
 		return PDETextHelper.translateReadText(obj.getName());
 	}
@@ -78,6 +76,7 @@ public class PDEUserAssistanceLabelProvider extends SharedLabelProvider {
 		return PDETextHelper.translateReadText(obj.getName());
 	}
 
+	@Override
 	public Image getImage(Object obj) {
 		if (obj instanceof ISimpleCSObject) {
 			return getObjectImage((ISimpleCSObject) obj);
@@ -114,9 +113,6 @@ public class PDEUserAssistanceLabelProvider extends SharedLabelProvider {
 		return get(PDEUserAssistanceUIPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
 	}
 
-	/**
-	 * @param object
-	 */
 	private Image getObjectImage(ICompCSObject object) {
 
 		if (object.getType() == ICompCSConstants.TYPE_TASK) {
@@ -129,9 +125,6 @@ public class PDEUserAssistanceLabelProvider extends SharedLabelProvider {
 		return get(PDEUserAssistanceUIPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
 	}
 
-	/**
-	 * @param object
-	 */
 	private Image getObjectImage(TocObject object) {
 		switch (object.getType()) {
 			case ITocConstants.TYPE_TOC : {
@@ -155,9 +148,6 @@ public class PDEUserAssistanceLabelProvider extends SharedLabelProvider {
 		}
 	}
 
-	/**
-	 * @param object
-	 */
 	private Image getObjectImage(CtxHelpObject object) {
 		switch (object.getType()) {
 			case ICtxHelpConstants.TYPE_ROOT : {

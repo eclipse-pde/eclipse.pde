@@ -27,33 +27,25 @@ public class NewCtxHelpWizard extends BasicNewFileResourceWizard {
 
 	protected NewCtxHelpWizardPage fMainPage;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#addPages()
-	 */
+	@Override
 	public void addPages() {
 		fMainPage = new NewCtxHelpWizardPage("new context help", getSelection()); //$NON-NLS-1$
 		addPage(fMainPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
 		setWindowTitle(CtxWizardMessages.NewCtxHelpWizard_title);
 		setNeedsProgressMonitor(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#initializeDefaultPageImageDescriptor()
-	 */
+	@Override
 	protected void initializeDefaultPageImageDescriptor() {
 		// setDefaultPageImageDescriptor(PDEUserAssistanceUIPluginImages.DESC_TARGET_WIZ);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#performFinish()
-	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			getContainer().run(false, true, getOperation());

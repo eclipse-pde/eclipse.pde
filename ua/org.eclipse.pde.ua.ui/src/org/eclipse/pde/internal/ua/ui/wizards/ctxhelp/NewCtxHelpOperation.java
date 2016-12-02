@@ -45,9 +45,7 @@ public class NewCtxHelpOperation extends WorkspaceModifyOperation {
 		fFile = file;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		CtxHelpModel model = new CtxHelpModel(CoreUtility.getTextDocument(fFile.getContents()), false);
 		model.setUnderlyingResource(fFile);
@@ -76,6 +74,7 @@ public class NewCtxHelpOperation extends WorkspaceModifyOperation {
 	 */
 	protected void openFile() {
 		Display.getCurrent().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchWindow ww = PDEUserAssistanceUIPlugin.getActiveWorkbenchWindow();
 				if (ww == null) {

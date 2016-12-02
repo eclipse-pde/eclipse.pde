@@ -35,10 +35,12 @@ public class NewCtxHelpWizardPage extends PDEWizardNewFileCreationPage {
 		setFileExtension(EXTENSION);
 	}
 
+	@Override
 	protected void createAdvancedControls(Composite parent) {
 		// We don't want any advanced controls showing up
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 
