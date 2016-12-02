@@ -25,22 +25,13 @@ import org.eclipse.pde.internal.ui.editor.PDEHyperlinkDetector;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
 
-/**
- * SimpleCSHyperlinkDetector
- *
- */
 public class SimpleCSHyperlinkDetector extends PDEHyperlinkDetector {
 
-	/**
-	 * @param page
-	 */
 	public SimpleCSHyperlinkDetector(PDESourcePage page) {
 		super(page);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEHyperlinkDetector#detectAttributeHyperlink(org.eclipse.pde.internal.core.text.IDocumentAttributeNode)
-	 */
+	@Override
 	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttributeNode attribute) {
 		// Get the attribute value
 		String attributeValue = attribute.getAttributeValue();

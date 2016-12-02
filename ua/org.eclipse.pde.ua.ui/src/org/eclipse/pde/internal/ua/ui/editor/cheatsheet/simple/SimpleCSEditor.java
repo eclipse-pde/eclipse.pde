@@ -38,30 +38,22 @@ public class SimpleCSEditor extends CSAbstractEditor {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
+	@Override
 	protected String getEditorID() {
 		return IConstants.SIMPLE_CHEAT_SHEET_EDITOR_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
-	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
-	 */
+	@Override
 	public String getContextIDForSaveAs() {
 		return SimpleCSInputContext.CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#addEditorPages()
-	 */
+	@Override
 	protected void addEditorPages() {
 		// Add form pages
 		try {
@@ -73,38 +65,28 @@ public class SimpleCSEditor extends CSAbstractEditor {
 		addSourcePage(SimpleCSInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
-	 */
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new SimpleCSFormOutlinePage(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
-	 */
+	@Override
 	protected InputContextManager createInputContextManager() {
 		return new SimpleCSInputContextManager(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createResourceContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IFileEditorInput)
-	 */
+	@Override
 	protected void createResourceContexts(InputContextManager contexts, IFileEditorInput input) {
 		contexts.putContext(input, new SimpleCSInputContext(this, input, true));
 		contexts.monitorFile(input.getFile());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IStorageEditorInput)
-	 */
+	@Override
 	protected void createStorageContexts(InputContextManager contexts, IStorageEditorInput input) {
 		contexts.putContext(input, new SimpleCSInputContext(this, input, true));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
-	 */
+	@Override
 	protected void createSystemFileContexts(InputContextManager contexts, FileStoreEditorInput input) {
 		try {
 			IFileStore store = EFS.getStore(input.getURI());
@@ -115,45 +97,33 @@ public class SimpleCSEditor extends CSAbstractEditor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#editorContextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
-	 */
+	@Override
 	public void editorContextAdded(InputContext context) {
 		// Add the source page
 		addSourcePage(context.getId());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
-	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		return fInputContextManager.findContext(SimpleCSInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
-	 */
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileAdded(org.eclipse.core.resources.IFile)
-	 */
+	@Override
 	public void monitoredFileAdded(IFile monitoredFile) {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileRemoved(org.eclipse.core.resources.IFile)
-	 */
+	@Override
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getSelection()
-	 */
+	@Override
 	public ISelection getSelection() {
 		// Override the parent getSelection because it doesn't work.
 		// The selection provider operates at the form level and does not
@@ -170,9 +140,7 @@ public class SimpleCSEditor extends CSAbstractEditor {
 		return super.getSelection();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#computeInitialPageId()
-	 */
+	@Override
 	protected String computeInitialPageId() {
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
@@ -181,16 +149,12 @@ public class SimpleCSEditor extends CSAbstractEditor {
 		return firstPageId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.MultiSourceEditor#createSourcePage(org.eclipse.pde.internal.ui.editor.PDEFormEditor, java.lang.String, java.lang.String, java.lang.String)
-	 */
+	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new SimpleCSSourcePage(editor, title, name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#canCut(org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public boolean canCut(ISelection selection) {
 		IFormPage page = getActivePageInstance();
 		if (page instanceof PDEFormPage) {

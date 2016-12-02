@@ -16,22 +16,13 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 
-/**
- * SimpleCSInputContextManager
- *
- */
 public class SimpleCSInputContextManager extends InputContextManager {
 
-	/**
-	 * @param editor
-	 */
 	public SimpleCSInputContextManager(PDEFormEditor editor) {
 		super(editor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContextManager#getAggregateModel()
-	 */
+	@Override
 	public IBaseModel getAggregateModel() {
 		InputContext context = findContext(SimpleCSInputContext.CONTEXT_ID);
 		return (context != null) ? context.getModel() : null;

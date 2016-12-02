@@ -17,10 +17,6 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.actions.SimpleCSPreviewAction;
 import org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor;
 
-/**
- * SimpleCSFormEditorContributor
- *
- */
 public class SimpleCSEditorContributor extends PDEFormTextEditorContributor {
 
 	private SimpleCSPreviewAction fPreviewAction;
@@ -30,18 +26,14 @@ public class SimpleCSEditorContributor extends PDEFormTextEditorContributor {
 		fPreviewAction = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor#makeActions()
-	 */
+	@Override
 	protected void makeActions() {
 		super.makeActions();
 		// Make the preview action
 		fPreviewAction = new SimpleCSPreviewAction();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor#contextMenuAboutToShow(org.eclipse.jface.action.IMenuManager, boolean)
-	 */
+	@Override
 	public void contextMenuAboutToShow(IMenuManager manager, boolean addClipboard) {
 		// Get the model
 		ISimpleCSModel model = (ISimpleCSModel) getEditor().getAggregateModel();
@@ -59,9 +51,7 @@ public class SimpleCSEditorContributor extends PDEFormTextEditorContributor {
 		return fPreviewAction;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor#supportsHyperlinking()
-	 */
+	@Override
 	public boolean supportsHyperlinking() {
 		return true;
 	}

@@ -34,16 +34,12 @@ public class SimpleCSInputContext extends XMLInputContext {
 
 	public static final String CONTEXT_ID = "simplecs-context"; //$NON-NLS-1$
 
-	/**
-	 * @param editor
-	 * @param input
-	 * @param primary
-	 */
 	public SimpleCSInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();
 	}
 
+	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		// Ensure valid input
 		if ((input instanceof IStorageEditorInput) == false) {
@@ -84,9 +80,7 @@ public class SimpleCSInputContext extends XMLInputContext {
 		return model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#doRevert()
-	 */
+	@Override
 	public void doRevert() {
 		// TODO: MP: TEO: LOW: Generalize revert?
 		fEditOperations.clear();
@@ -96,23 +90,17 @@ public class SimpleCSInputContext extends XMLInputContext {
 		model.reconciled(model.getDocument());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getId()
-	 */
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getPartitionName()
-	 */
+	@Override
 	protected String getPartitionName() {
 		return "___simplecs_partition"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
-	 */
+	@Override
 	protected void reorderInsertEdits(ArrayList ops) {
 		// NO-OP
 	}

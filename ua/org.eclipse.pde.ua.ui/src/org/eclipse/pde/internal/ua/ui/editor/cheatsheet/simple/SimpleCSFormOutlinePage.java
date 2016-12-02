@@ -24,22 +24,16 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
 public class SimpleCSFormOutlinePage extends FormOutlinePage {
 
-	/**
-	 * @param editor
-	 */
 	public SimpleCSFormOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}
 
-	/**
-	 * SimpleCSLabelProvider
-	 *
-	 */
 	public class SimpleCSLabelProvider extends BasicLabelProvider {
 		public SimpleCSLabelProvider(ILabelProvider ilp) {
 			super(ilp);
 		}
 
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof ISimpleCSObject) {
 				return getObjectText((ISimpleCSObject) obj);
@@ -48,10 +42,6 @@ public class SimpleCSFormOutlinePage extends FormOutlinePage {
 		}
 	}
 
-	/**
-	 * @param obj
-	 * @return
-	 */
 	protected String getObjectText(ISimpleCSObject obj) {
 		int limit = 50;
 
@@ -68,9 +58,7 @@ public class SimpleCSFormOutlinePage extends FormOutlinePage {
 		return PDETextHelper.truncateAndTrailOffText(PDETextHelper.translateReadText(obj.getName()), limit);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getChildren(java.lang.Object)
-	 */
+	@Override
 	protected Object[] getChildren(Object parent) {
 		if (parent instanceof SimpleCSDefinitionPage) {
 			ISimpleCSModel cheatsheet = (ISimpleCSModel) fEditor.getAggregateModel();
@@ -89,16 +77,12 @@ public class SimpleCSFormOutlinePage extends FormOutlinePage {
 		return super.getChildren(parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
-	 */
+	@Override
 	public ILabelProvider createLabelProvider() {
 		return new SimpleCSLabelProvider(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getParentPageId(java.lang.Object)
-	 */
+	@Override
 	protected String getParentPageId(Object item) {
 		return SimpleCSDefinitionPage.PAGE_ID;
 	}

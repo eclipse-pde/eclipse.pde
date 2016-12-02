@@ -21,16 +21,10 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
 public class SimpleCSContentProvider implements ITreeContentProvider {
 
 	public SimpleCSContentProvider() {
-		// NO-OP
+		// intentionally left empty
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.
-	 * Object)
-	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ISimpleCSModel) {
 			return new Object[] { ((ISimpleCSModel) parentElement)
@@ -45,13 +39,7 @@ public class SimpleCSContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object
-	 * )
-	 */
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof ISimpleCSObject) {
 			return ((ISimpleCSObject) element).getParent();
@@ -59,32 +47,22 @@ public class SimpleCSContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.
-	 * Object)
-	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		return (getChildren(element).length > 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java
-	 * .lang.Object)
-	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	public void dispose() {
 		// no op
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// no op
 	}

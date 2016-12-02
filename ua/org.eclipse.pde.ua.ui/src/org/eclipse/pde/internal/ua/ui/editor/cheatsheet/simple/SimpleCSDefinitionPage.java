@@ -34,10 +34,6 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-/**
- * SimpleCSPage
- *
- */
 public class SimpleCSDefinitionPage extends PDEFormPage implements
 		IModelChangedListener {
 
@@ -51,22 +47,12 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 		fBlock = new SimpleCSBlock(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.SIMPLE_CS_EDITOR;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.
-	 * eclipse.ui.forms.IManagedForm)
-	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		// Bug: Two veritical scrollbars appear when resizing the editor
 		// vertically
@@ -112,11 +98,7 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 				IHelpContextIds.SIMPLE_CS_EDITOR);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 
 		ISimpleCSModel simpleCSModel = (ISimpleCSModel) getModel();
@@ -126,13 +108,7 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde
-	 * .core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
@@ -171,11 +147,7 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 		return fBlock;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#setActive(boolean)
-	 */
+	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);
 

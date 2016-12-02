@@ -30,59 +30,38 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 
-/**
- * SimpleCSSourcePage
- *
- */
 public class SimpleCSSourcePage extends XMLSourcePage {
 
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
 	public SimpleCSSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
-	 */
+	@Override
 	public boolean isQuickOutlineEnabled() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineComparator()
-	 */
+	@Override
 	public ViewerComparator createOutlineComparator() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineContentProvider()
-	 */
+	@Override
 	public ITreeContentProvider createOutlineContentProvider() {
 		return new SimpleCSContentProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineLabelProvider()
-	 */
+	@Override
 	public ILabelProvider createOutlineLabelProvider() {
 		return PDEUserAssistanceUIPlugin.getDefault().getLabelProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#isSelectionListener()
-	 */
+	@Override
 	protected boolean isSelectionListener() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
-	 */
+	@Override
 	public void updateSelection(Object object) {
 		if ((object instanceof IDocumentElementNode) && (((IDocumentElementNode) object).isErrorNode() == false)) {
 			setSelectedObject(object);
@@ -91,9 +70,7 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#findRange()
-	 */
+	@Override
 	protected IDocumentRange findRange() {
 
 		Object selectedObject = getSelection();
@@ -104,17 +81,13 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#getRangeElement(int, boolean)
-	 */
+	@Override
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IDocumentElementNode rootNode = ((SimpleCSModel) getInputContext().getModel()).getSimpleCS();
 		return findNode(rootNode, offset, searchChildren);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#synchronizeOutlinePage(int)
-	 */
+	@Override
 	protected void synchronizeOutlinePage(int offset) {
 		IDocumentRange range = getRangeElement(offset, true);
 		updateHighlightRange(range);
@@ -122,9 +95,7 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 		updateOutlinePageSelection(range);
 	}
 
-	/**
-	 * @param range
-	 */
+	@Override
 	public IDocumentRange adaptRange(IDocumentRange range) {
 		// Adapt the range to node that is viewable in the outline view
 		if (range instanceof IDocumentAttributeNode) {
@@ -152,9 +123,7 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		// Get the editor
 		PDEFormEditor editor = (PDEFormEditor) getEditor();
@@ -176,24 +145,18 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 		super.editorContextMenuAboutToShow(menu);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#setPartName(java.lang.String)
-	 */
+	@Override
 	protected void setPartName(String partName) {
 		super.setPartName(SimpleMessages.SimpleCSSourcePage_title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.editors.text.TextEditor#initializeEditor()
-	 */
+	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
 		setHelpContextId(IHelpContextIds.SIMPLE_CS_EDITOR);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#getAdapter(java.lang.Class)
-	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter)) {
 			return new SimpleCSHyperlinkDetector(this);
