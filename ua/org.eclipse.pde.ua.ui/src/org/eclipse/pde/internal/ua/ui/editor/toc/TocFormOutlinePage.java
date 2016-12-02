@@ -22,22 +22,16 @@ import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
 public class TocFormOutlinePage extends FormOutlinePage {
-	/**
-	 * @param editor
-	 */
 	public TocFormOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}
 
-	/**
-	 * TocLabelProvider
-	 *
-	 */
 	private class TocLabelProvider extends BasicLabelProvider {
 		public TocLabelProvider(ILabelProvider ilp) {
 			super(ilp);
 		}
 
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof TocObject) {
 				return getObjectText((TocObject) obj);
@@ -46,17 +40,11 @@ public class TocFormOutlinePage extends FormOutlinePage {
 		}
 	}
 
-	/**
-	 * @param obj
-	 * @return
-	 */
 	protected String getObjectText(TocObject obj) {
 		return PDETextHelper.translateReadText(obj.getName());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getChildren(java.lang.Object)
-	 */
+	@Override
 	protected Object[] getChildren(Object parent) {
 		if (parent instanceof TocPage) {
 			TocModel toc = (TocModel) fEditor.getAggregateModel();
@@ -76,16 +64,12 @@ public class TocFormOutlinePage extends FormOutlinePage {
 		return super.getChildren(parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
-	 */
+	@Override
 	public ILabelProvider createLabelProvider() {
 		return new TocLabelProvider(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getParentPageId(java.lang.Object)
-	 */
+	@Override
 	protected String getParentPageId(Object item) {
 		return TocPage.PAGE_ID;
 	}

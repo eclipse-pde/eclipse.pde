@@ -28,68 +28,50 @@ import org.eclipse.pde.internal.ui.editor.IFoldingStructureProvider;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 
-/**
- * TocSourcePage
- */
 public class TocSourcePage extends XMLSourcePage {
 
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
 	public TocSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
-	 */
+	@Override
 	public boolean isQuickOutlineEnabled() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineComparator()
-	 */
+	@Override
 	public ViewerComparator createOutlineComparator() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineContentProvider()
-	 */
+	@Override
 	public ITreeContentProvider createOutlineContentProvider() {
 		return new TocContentProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineLabelProvider()
-	 */
+	@Override
 	public ILabelProvider createOutlineLabelProvider() {
 		return PDEUserAssistanceUIPlugin.getDefault().getLabelProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#setPartName(java.lang.String)
-	 */
+	@Override
 	protected void setPartName(String partName) {
 		super.setPartName(TocMessages.TocSourcePage_title);
 	}
 
+	@Override
 	protected boolean isSelectionListener() {
 		return true;
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
 			return new TocHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
-	 */
+	@Override
 	public void updateSelection(Object object) {
 		if ((object instanceof IDocumentElementNode) && !((IDocumentElementNode) object).isErrorNode()) {
 			setSelectedObject(object);
@@ -98,6 +80,7 @@ public class TocSourcePage extends XMLSourcePage {
 		}
 	}
 
+	@Override
 	protected IDocumentRange findRange() {
 
 		Object selectedObject = getSelection();
@@ -108,11 +91,13 @@ public class TocSourcePage extends XMLSourcePage {
 		return null;
 	}
 
+	@Override
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		TocObject toc = ((TocModel) getInputContext().getModel()).getToc();
 		return findNode(toc, offset, searchChildren);
 	}
 
+	@Override
 	protected void synchronizeOutlinePage(int offset) {
 		IDocumentRange rangeElement = getRangeElement(offset, true);
 		updateHighlightRange(rangeElement);
@@ -123,11 +108,13 @@ public class TocSourcePage extends XMLSourcePage {
 		updateOutlinePageSelection(rangeElement);
 	}
 
+	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
 		setHelpContextId(IHelpContextIds.TOC_EDITOR);
 	}
 
+	@Override
 	protected IFoldingStructureProvider getFoldingStructureProvider(IEditingModel model) {
 		return new TocFoldingStructureProvider(this, model);
 	}

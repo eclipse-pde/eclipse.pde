@@ -56,6 +56,7 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	 * @param event the event
 	 * @return one of the <code>LOCATION_* </code>constants defined in this class
 	 */
+	@Override
 	protected int determineLocation(DropTargetEvent event) {
 		if (!(event.item instanceof Item)) {
 			return LOCATION_NONE;
@@ -81,19 +82,21 @@ public class TocDropAdapter extends ViewerDropAdapter {
 		return LOCATION_ON;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * A new drag has entered the widget. Do file validation if necessary,
 	 * and then set the Drag and Drop mode.
 	 */
+	@Override
 	public void dragEnter(DropTargetEvent event) {
 		validateFileDrop(event);
 		setDNDMode(event);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Override the dragOver behaviour to directly supply event feedback
 	 * but do nothing else.
 	 */
+	@Override
 	public void dragOver(DropTargetEvent event) {
 		int currentLocation = determineLocation(event);
 		switch (currentLocation) {
@@ -113,10 +116,11 @@ public class TocDropAdapter extends ViewerDropAdapter {
 		event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * The Drag and Drop operation changed. Change the operation to a valid one
 	 * if necessary.
 	 */
+	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
 		validateFileDrop(event);
 		setDNDMode(event);
@@ -184,9 +188,10 @@ public class TocDropAdapter extends ViewerDropAdapter {
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Override the drop behaviour in order to directly manage the drop event
 	 */
+	@Override
 	public void drop(DropTargetEvent event) {
 		Object target = determineTarget(event);
 		int location = determineLocation(event);
@@ -195,35 +200,23 @@ public class TocDropAdapter extends ViewerDropAdapter {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * Override the behaviour of ViewerDropAdapter#dragLeave(org.eclipse.swt.dnd.DropTargetEvent)
-	 *
-	 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragLeave(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
+	@Override
 	public void dragLeave(DropTargetEvent event) { //NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * Override the behaviour of ViewerDropAdapter#dropAccept(org.eclipse.swt.dnd.DropTargetEvent)
-	 *
-	 * @see org.eclipse.swt.dnd.DropTargetAdapter#dropAccept(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
+	@Override
 	public void dropAccept(DropTargetEvent event) { //NO-OP
 	}
 
 	//These methods are never called because much of ViewerDropAdapter's
 	//behaviour is overridden, but they must be implemented.
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
-	 */
+	@Override
 	public boolean performDrop(Object data) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
-	 */
+	@Override
 	public boolean validateDrop(Object target, int operation, TransferData transferType) {
 		return false;
 	}

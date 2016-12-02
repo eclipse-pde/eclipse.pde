@@ -96,6 +96,7 @@ public class TocTreeSection extends TreeSection {
 			fOpenTarget = target;
 		}
 
+		@Override
 		public void run() {
 			if (fOpenTarget != null) {
 				open(fOpenTarget);
@@ -159,13 +160,7 @@ public class TocTreeSection extends TreeSection {
 		fOpenLinkAction = new TocOpenLinkAction();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse
-	 * .ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		// Get the model
 		fModel = (TocModel) getPage().getModel();
@@ -298,11 +293,7 @@ public class TocTreeSection extends TreeSection {
 		fTocTree.expandToLevel(2);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
-	 */
+	@Override
 	public boolean setFormInput(Object object) {
 		// This method allows the outline view to select items in the tree
 		// (Invoked by org.eclipse.ui.forms.editor.IFormPage.selectReveal(Object
@@ -343,13 +334,7 @@ public class TocTreeSection extends TreeSection {
 		fTocTree.setSelection(fTocTree.getSelection());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse
-	 * .jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
@@ -438,13 +423,7 @@ public class TocTreeSection extends TreeSection {
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu
-	 * (org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		// Get the current selection
 		ISelection selection = fTocTree.getSelection();
@@ -563,24 +542,12 @@ public class TocTreeSection extends TreeSection {
 				&& fModel.isEditable());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java
-	 * .lang.Object, java.lang.Object[])
-	 */
+	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang
-	 * .String)
-	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		boolean cutAction = actionId.equals(ActionFactory.CUT.getId());
 
@@ -597,24 +564,12 @@ public class TocTreeSection extends TreeSection {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java
-	 * .lang.Object, java.lang.Object[])
-	 */
+	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		performDrop(targetObject, sourceObjects, ViewerDropAdapter.LOCATION_ON);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.TreeSection#handleDoubleClick(org.
-	 * eclipse.jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		Object selected = selection.getFirstElement();
 		if (selected instanceof TocObject) {
@@ -1049,13 +1004,7 @@ public class TocTreeSection extends TreeSection {
 		return fModel.getFactory().createTocLink(file);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected
-	 * (int)
-	 */
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 		case F_BUTTON_ADD_TOPIC:
@@ -1240,13 +1189,7 @@ public class TocTreeSection extends TreeSection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse
-	 * .pde.core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		// No need to call super, world changed event handled here
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -1264,9 +1207,6 @@ public class TocTreeSection extends TreeSection {
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelChangeTypeSwap(IModelChangedEvent event) {
 		// Swap event
 		// Get the changed object
@@ -1368,11 +1308,7 @@ public class TocTreeSection extends TreeSection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
+	@Override
 	public void refresh() {
 		TocModel model = (TocModel) getPage().getModel();
 		ISelection selection = fTocTree.getSelection();
@@ -1383,24 +1319,14 @@ public class TocTreeSection extends TreeSection {
 		super.refresh();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.TreeSection#createTreeViewer(org.eclipse
-	 * .swt.widgets.Composite, int)
-	 */
+	@Override
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		fFilteredTree = new FormFilteredTree(parent, style, new PatternFilter());
 		parent.setData("filtered", Boolean.TRUE); //$NON-NLS-1$
 		return fFilteredTree.getViewer();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 		PDEUserAssistanceUIPlugin.getDefault().getLabelProvider()
 				.disconnect(this);

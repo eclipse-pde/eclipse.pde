@@ -16,22 +16,13 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 
-/**
- * CompCSInputContextManager
- *
- */
 public class TocInputContextManager extends InputContextManager {
 
-	/**
-	 * @param editor
-	 */
 	public TocInputContextManager(PDEFormEditor editor) {
 		super(editor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContextManager#getAggregateModel()
-	 */
+	@Override
 	public IBaseModel getAggregateModel() {
 		InputContext context = findContext(TocInputContext.CONTEXT_ID);
 		if (context == null) {

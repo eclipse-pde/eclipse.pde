@@ -29,9 +29,6 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IManagedForm;
 
-/**
- *
- */
 public class TocBlock extends PDEMasterDetailsBlock implements IModelChangedListener, IDetailsPageProvider {
 
 	private TocTreeSection fMasterSection;
@@ -44,24 +41,17 @@ public class TocBlock extends PDEMasterDetailsBlock implements IModelChangedList
 
 	private TocLinkDetails fLinkDetails;
 
-	/**TODO: Comment
-	 * @param page
-	 */
 	public TocBlock(PDEFormPage page) {
 		super(page);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 		fMasterSection = new TocTreeSection(getPage(), parent);
 		return fMasterSection;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.MasterDetailsBlock#registerPages(org.eclipse.ui.forms.DetailsPart)
-	 */
+	@Override
 	protected void registerPages(DetailsPart detailsPart) {
 		// Only static pages to be defined.  Do not cache pages
 		detailsPart.setPageLimit(0);
@@ -81,9 +71,7 @@ public class TocBlock extends PDEMasterDetailsBlock implements IModelChangedList
 		detailsPart.setPageProvider(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		// Inform the master section
 		if (fMasterSection != null) {
@@ -91,17 +79,13 @@ public class TocBlock extends PDEMasterDetailsBlock implements IModelChangedList
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPage(java.lang.Object)
-	 */
+	@Override
 	public IDetailsPage getPage(Object key) {
 		// No dynamic pages.  Static pages already registered
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPageKey(java.lang.Object)
-	 */
+	@Override
 	public Object getPageKey(Object object) {
 		ISelection selection = getSelection();
 		if (!(selection instanceof IStructuredSelection) || ((IStructuredSelection) selection).size() > 1) {

@@ -37,10 +37,6 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-/**
- * TocPage
- *
- */
 public class TocPage extends PDEFormPage implements IModelChangedListener {
 	public static final String PAGE_ID = "tocPage"; //$NON-NLS-1$
 
@@ -56,13 +52,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		return fBlock;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.
-	 * eclipse.ui.forms.IManagedForm)
-	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		TocModel model = (TocModel) getModel();
@@ -103,11 +93,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 
 		TocModel tocModel = (TocModel) getModel();
@@ -117,13 +103,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde
-	 * .core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
@@ -165,6 +145,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		}
 	}
 
+	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);
 		if (active) {
@@ -207,11 +188,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.TOC_EDITOR;
 	}

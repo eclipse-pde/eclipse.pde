@@ -43,18 +43,14 @@ public class TocDragAdapter implements DragSourceListener {
 		fSection = section;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
-	 */
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		if (event.doit) { //The event should only be enabled if there is a selection to drag
 			event.doit = !fSection.getSelection().isEmpty();
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
-	 */
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		//Check if the drag is still enabled
 		if (event.doit) {
@@ -111,9 +107,7 @@ public class TocDragAdapter implements DragSourceListener {
 		return objects;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
-	 */
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		if (event.detail == DND.DROP_MOVE && fDraggedItems != null) {
 			fSection.handleDrag(fDraggedItems);

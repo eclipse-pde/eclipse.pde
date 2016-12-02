@@ -18,6 +18,7 @@ public class TocEditorContributor extends PDEFormTextEditorContributor {
 		super("TOC Editor"); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean supportsHyperlinking() {
 		return true;
 	}

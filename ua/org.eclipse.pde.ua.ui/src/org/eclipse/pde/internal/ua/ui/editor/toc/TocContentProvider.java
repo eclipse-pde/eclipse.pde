@@ -17,21 +17,13 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.internal.ua.core.toc.text.TocModel;
 import org.eclipse.pde.internal.ua.core.toc.text.TocObject;
 
-/**
- * TocContentProvider
- */
 public class TocContentProvider implements ITreeContentProvider {
 
-	/**
-	 *
-	 */
 	public TocContentProvider() {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof TocModel) {
 			return new Object[] {((TocModel) parentElement).getToc()};
@@ -45,9 +37,7 @@ public class TocContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof TocObject) {
 			return ((TocObject) element).getParent();
@@ -55,16 +45,12 @@ public class TocContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		return (getChildren(element).length > 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}

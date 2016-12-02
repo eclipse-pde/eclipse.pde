@@ -33,6 +33,7 @@ public class TocFoldingStructureProvider extends AbstractFoldingStructureProvide
 		super(editor, model);
 	}
 
+	@Override
 	public void addFoldingRegions(Set currentRegions, IEditingModel model) throws BadLocationException {
 		TocObject toc = ((TocModel) model).getToc();
 		List childList = toc.getChildren();

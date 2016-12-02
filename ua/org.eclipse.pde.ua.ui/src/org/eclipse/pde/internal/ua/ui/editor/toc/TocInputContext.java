@@ -34,19 +34,12 @@ public class TocInputContext extends XMLInputContext {
 
 	public static final String CONTEXT_ID = "toc-context"; //$NON-NLS-1$
 
-	/**
-	 * @param editor
-	 * @param input
-	 * @param primary
-	 */
 	public TocInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
-	 */
+	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		if (input instanceof IStorageEditorInput) {
 			boolean isReconciling = input instanceof IFileEditorInput;
@@ -78,23 +71,17 @@ public class TocInputContext extends XMLInputContext {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getId()
-	 */
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
-	 */
+	@Override
 	protected void reorderInsertEdits(ArrayList ops) {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#doRevert()
-	 */
+	@Override
 	public void doRevert() {
 		fEditOperations.clear();
 		fOperationTable.clear();
@@ -103,9 +90,7 @@ public class TocInputContext extends XMLInputContext {
 		model.reconciled(model.getDocument());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getPartitionName()
-	 */
+	@Override
 	protected String getPartitionName() {
 		return "___toc_partition"; //$NON-NLS-1$
 	}

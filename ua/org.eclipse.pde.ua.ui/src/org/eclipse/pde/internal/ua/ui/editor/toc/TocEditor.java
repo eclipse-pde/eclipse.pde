@@ -69,15 +69,12 @@ public class TocEditor extends MultiSourceEditor {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
+	@Override
 	protected String getEditorID() {
 		return IConstants.TABLE_OF_CONTENTS_EDITOR_ID;
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (inUiThread() && isShowInApplicable()) {
 			if (adapter == IShowInSource.class) {
@@ -132,6 +129,7 @@ public class TocEditor extends MultiSourceEditor {
 	 */
 	private IShowInSource getShowInSource() {
 		return new IShowInSource() {
+			@Override
 			public ShowInContext getShowInContext() {
 				ArrayList resourceList = new ArrayList();
 				IStructuredSelection selection = (IStructuredSelection) getSelection();
@@ -186,6 +184,7 @@ public class TocEditor extends MultiSourceEditor {
 	 */
 	private IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {
+			@Override
 			public String[] getShowInTargetIds() {
 				return new String[] { JavaUI.ID_PACKAGES,
 						IPageLayout.ID_RES_NAV };
@@ -193,30 +192,17 @@ public class TocEditor extends MultiSourceEditor {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
-	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
-	 */
+	@Override
 	public String getContextIDForSaveAs() {
 		return TocInputContext.CONTEXT_ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#addEditorPages()
-	 */
+	@Override
 	protected void addEditorPages() {
 		try {
 			addPage(new TocPage(this));
@@ -227,62 +213,30 @@ public class TocEditor extends MultiSourceEditor {
 		addSourcePage(TocInputContext.CONTEXT_ID);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
-	 */
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new TocFormOutlinePage(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager
-	 * ()
-	 */
+	@Override
 	protected InputContextManager createInputContextManager() {
 		return new TocInputContextManager(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createResourceContexts
-	 * (org.eclipse.pde.internal.ui.editor.context.InputContextManager,
-	 * org.eclipse.ui.IFileEditorInput)
-	 */
+	@Override
 	protected void createResourceContexts(InputContextManager contexts,
 			IFileEditorInput input) {
 		contexts.putContext(input, new TocInputContext(this, input, true));
 		contexts.monitorFile(input.getFile());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts
-	 * (org.eclipse.pde.internal.ui.editor.context.InputContextManager,
-	 * org.eclipse.ui.IStorageEditorInput)
-	 */
+	@Override
 	protected void createStorageContexts(InputContextManager contexts,
 			IStorageEditorInput input) {
 		contexts.putContext(input, new TocInputContext(this, input, true));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts
-	 * (org.eclipse.pde.internal.ui.editor.context.InputContextManager,
-	 * org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
-	 */
+	@Override
 	protected void createSystemFileContexts(InputContextManager contexts,
 			FileStoreEditorInput input) {
 		try {
@@ -294,64 +248,33 @@ public class TocEditor extends MultiSourceEditor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#editorContextAdded(org
-	 * .eclipse.pde.internal.ui.editor.context.InputContext)
-	 */
+	@Override
 	public void editorContextAdded(InputContext context) {
 		// Add the source page
 		addSourcePage(context.getId());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java
-	 * .lang.Object)
-	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		return fInputContextManager.findContext(TocInputContext.CONTEXT_ID);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.pde.internal.ui.editor.context.IInputContextListener#
-	 * contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
-	 */
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.pde.internal.ui.editor.context.IInputContextListener#
-	 * monitoredFileAdded(org.eclipse.core.resources.IFile)
-	 */
+	@Override
 	public void monitoredFileAdded(IFile monitoredFile) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.pde.internal.ui.editor.context.IInputContextListener#
-	 * monitoredFileRemoved(org.eclipse.core.resources.IFile)
-	 */
+	@Override
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getSelection()
-	 */
+	@Override
 	public ISelection getSelection() {
 		IFormPage formPage = getActivePageInstance();
 		if ((formPage != null) && (formPage instanceof TocPage)) {
@@ -364,6 +287,7 @@ public class TocEditor extends MultiSourceEditor {
 		return super.getSelection();
 	}
 
+	@Override
 	public boolean canCut(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) selection;
@@ -379,19 +303,13 @@ public class TocEditor extends MultiSourceEditor {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.MultiSourceEditor#createSourcePage
-	 * (org.eclipse.pde.internal.ui.editor.PDEFormEditor, java.lang.String,
-	 * java.lang.String, java.lang.String)
-	 */
+	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor,
 			String title, String name, String contextId) {
 		return new TocSourcePage(editor, title, name);
 	}
 
+	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		// Add the register cheat sheet link to the form title area
 		if (WorkspaceModelManager.isPluginProject(getCommonProject())
@@ -402,6 +320,7 @@ public class TocEditor extends MultiSourceEditor {
 
 	private ControlContribution createUIControlConRegisterCS() {
 		return new ControlContribution("Register") { //$NON-NLS-1$
+			@Override
 			protected Control createControl(Composite parent) {
 				// Create UI
 				createUIImageHyperlinkRegisterToc(parent);
@@ -412,9 +331,6 @@ public class TocEditor extends MultiSourceEditor {
 		};
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIImageHyperlinkRegisterToc(Composite parent) {
 		fImageHyperlinkRegisterTOC = new ImageHyperlink(parent, SWT.NONE);
 		fImageHyperlinkRegisterTOC.setText(TocMessages.TocEditor_link);
@@ -423,29 +339,26 @@ public class TocEditor extends MultiSourceEditor {
 				.getHyperlinkGroup().getForeground());
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListenerImageHyperlinkRegisterToc() {
 		fImageHyperlinkRegisterTOC
 				.addHyperlinkListener(new IHyperlinkListener() {
+					@Override
 					public void linkActivated(HyperlinkEvent e) {
 						handleLinkActivatedRegisterTOC();
 					}
 
+					@Override
 					public void linkEntered(HyperlinkEvent e) {
 						handleLinkEnteredRegisterTOC(e.getLabel());
 					}
 
+					@Override
 					public void linkExited(HyperlinkEvent e) {
 						handleLinkExitedRegisterTOC();
 					}
 				});
 	}
 
-	/**
-	 * @param message
-	 */
 	private void handleLinkEnteredRegisterTOC(String message) {
 		// Update colour
 		fImageHyperlinkRegisterTOC.setForeground(getToolkit()
@@ -455,9 +368,6 @@ public class TocEditor extends MultiSourceEditor {
 				.setMessage(message);
 	}
 
-	/**
-	 *
-	 */
 	private void handleLinkExitedRegisterTOC() {
 		// Update colour
 		fImageHyperlinkRegisterTOC.setForeground(getToolkit()
@@ -466,9 +376,6 @@ public class TocEditor extends MultiSourceEditor {
 		getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
 	}
 
-	/**
-	 *
-	 */
 	private void handleLinkActivatedRegisterTOC() {
 		RegisterTocWizard wizard = new RegisterTocWizard(
 				(IModel) getAggregateModel());
@@ -485,13 +392,7 @@ public class TocEditor extends MultiSourceEditor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#doSave(org.eclipse.core
-	 * .runtime.IProgressMonitor)
-	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 
 		TocModel model = (TocModel) getAggregateModel();
@@ -502,24 +403,14 @@ public class TocEditor extends MultiSourceEditor {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#dispose()
-	 */
+	@Override
 	public void dispose() {
 		// editor is closing, delete the markers
 		TocMarkerManager.deleteMarkers((TocModel) getAggregateModel());
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContexts(
-	 * org.eclipse.pde.internal.ui.editor.context.InputContextManager)
-	 */
+	@Override
 	protected void createInputContexts(InputContextManager contextManager) {
 		super.createInputContexts(contextManager);
 

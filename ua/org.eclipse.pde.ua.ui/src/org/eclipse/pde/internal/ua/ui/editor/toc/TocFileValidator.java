@@ -18,23 +18,14 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
-/**
- * TocFileValidator
- *
- */
 public class TocFileValidator implements ISelectionStatusValidator {
 	IBaseModel fModel;
 
-	/**
-	 *
-	 */
 	public TocFileValidator(IBaseModel model) {
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.ISelectionStatusValidator#validate(java.lang.Object[])
-	 */
+	@Override
 	public IStatus validate(Object[] selection) {
 
 		// Ensure something was selected
