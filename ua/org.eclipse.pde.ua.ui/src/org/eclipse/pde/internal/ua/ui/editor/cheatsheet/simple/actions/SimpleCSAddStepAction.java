@@ -22,10 +22,6 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.ua.ui.wizards.cheatsheet.BaseCSCreationOperation;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 
-/**
- * SimpleCSAddStepAction
- *
- */
 public class SimpleCSAddStepAction extends Action {
 
 	private ISimpleCS fCheatsheet;
@@ -34,16 +30,10 @@ public class SimpleCSAddStepAction extends Action {
 
 	private ISimpleCSIntro fIntro;
 
-	/**
-	 *
-	 */
 	public SimpleCSAddStepAction() {
 		setText(SimpleActionMessages.SimpleCSAddStepAction_actionText);
 	}
 
-	/**
-	 * @param csObject
-	 */
 	public void setDataObject(ISimpleCSObject csObject) {
 		// Determine input
 		if (csObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
@@ -66,9 +56,7 @@ public class SimpleCSAddStepAction extends Action {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		// Ensure we have valid input
 		if (fCheatsheet == null) {
@@ -80,9 +68,6 @@ public class SimpleCSAddStepAction extends Action {
 		insertNewItem(newItem);
 	}
 
-	/**
-	 * @param item
-	 */
 	private void insertNewItem(ISimpleCSItem newItem) {
 		// Insert the new item depending on the input specfied
 		if (fIntro != null) {
@@ -102,9 +87,6 @@ public class SimpleCSAddStepAction extends Action {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private ISimpleCSItem createNewItem() {
 		ISimpleCSModelFactory factory = fCheatsheet.getModel().getFactory();
 		// Create the new item

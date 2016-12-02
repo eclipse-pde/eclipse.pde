@@ -14,10 +14,6 @@ package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 
-/**
- * SimpleCSAddStepAction
- *
- */
 public class SimpleCSRemoveRunObjectAction extends Action {
 
 	private ISimpleCSRunContainerObject fRunContainerObject;
@@ -32,9 +28,7 @@ public class SimpleCSRemoveRunObjectAction extends Action {
 		fRunContainerObject = runObject;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		if (fRunContainerObject != null) {
 			// Determine parent type and remove accordingly

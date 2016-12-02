@@ -52,9 +52,7 @@ public class SimpleCSAddSubStepAction extends Action {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		// Ensure we have valid input
 		if (fItem == null) {

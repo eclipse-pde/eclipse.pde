@@ -16,10 +16,6 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
 
-/**
- * SimpleCSAddStepAction
- *
- */
 public class SimpleCSRemoveStepAction extends Action {
 
 	private ISimpleCSItem fItem;
@@ -39,9 +35,7 @@ public class SimpleCSRemoveStepAction extends Action {
 		fItem = item;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		if (fItem != null) {
 			// Parent can only be a cheat sheet

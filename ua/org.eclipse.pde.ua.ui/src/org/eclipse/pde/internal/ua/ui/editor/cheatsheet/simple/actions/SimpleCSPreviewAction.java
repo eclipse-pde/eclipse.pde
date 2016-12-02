@@ -22,10 +22,6 @@ import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPluginImages;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 
-/**
- * SimpleCSPreviewAction
- *
- */
 public class SimpleCSPreviewAction extends Action {
 
 	private ISimpleCS fDataModelObject;
@@ -41,9 +37,7 @@ public class SimpleCSPreviewAction extends Action {
 		setImageDescriptor(PDEUserAssistanceUIPluginImages.DESC_CHEATSHEET_OBJ);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		// Ensure we have our input
 		if (fDataModelObject == null) {

@@ -14,10 +14,6 @@ package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 
-/**
- * SimpleCSAddStepAction
- *
- */
 public class SimpleCSRemoveSubStepAction extends Action {
 
 	private ISimpleCSSubItemObject fSubItem;
@@ -34,9 +30,7 @@ public class SimpleCSRemoveSubStepAction extends Action {
 		fSubItem = subitem;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		if (fSubItem != null) {
 			// Determine parent type and remove accordingly
