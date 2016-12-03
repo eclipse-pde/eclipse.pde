@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 249374
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
@@ -25,7 +27,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTreePart;
+import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -43,21 +46,36 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	protected JARSigningTab fJARSiginingTab;
 	protected TabFolder fTabFolder;
 
-	class ExportListProvider implements IStructuredContentProvider {
+	private class ExportListProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			return getListElements();
 		}
+
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			return new Object[0];
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		@Override
+		public boolean hasChildren(Object element) {
+			return false;
+		}
 	}
 
-	class ExportPart extends WizardCheckboxTablePart {
+	class ExportPart extends WizardCheckboxTreePart {
 		public ExportPart(String label, String[] buttonLabels) {
 			super(label, buttonLabels);
 		}
 
 		@Override
-		public void updateCounter(int count) {
-			super.updateCounter(count);
+		public void updateCounterLabel() {
+			super.updateCounterLabel();
 			pageChanged();
 		}
 
@@ -148,37 +166,34 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		fExportPart.createControl(composite);
+		fExportPart.createControl(composite, 4, true);
 		GridData gd = (GridData) fExportPart.getControl().getLayoutData();
 		gd.heightHint = 125;
 		gd.widthHint = 150;
 		gd.horizontalSpan = 2;
 
-		TableViewer viewer = fExportPart.getTableViewer();
+		CachedCheckboxTreeViewer viewer = fExportPart.getTreeViewer();
 		viewer.setContentProvider(new ExportListProvider());
 		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				if (event.getSource() instanceof CheckboxTableViewer) {
-					IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-					((CheckboxTableViewer) event.getSource()).setChecked(selection.getFirstElement(), !((CheckboxTableViewer) event.getSource()).getChecked(selection.getFirstElement()));
-					fExportPart.updateCounter(((CheckboxTableViewer) event.getSource()).getCheckedElements().length);
-				}
+				TreeItem firstTI = fExportPart.getTreeViewer().getTree().getSelection()[0];
+				fExportPart.getTreeViewer().setChecked(firstTI.getData(), !firstTI.getChecked());
+				fExportPart.updateCounterLabel();
 			}
 		});
-		fExportPart.getTableViewer().setInput(getInput());
+		fExportPart.getTreeViewer().setInput(getInput());
 	}
 
 	protected abstract Object getInput();
 
 	protected void initializeViewer() {
-		Object[] elems = fSelection.toArray();
-		ArrayList<IModel> checked = new ArrayList<>(elems.length);
+		final Set<IModel> selected = new HashSet<>();
 
-		for (int i = 0; i < elems.length; i++) {
-			Object elem = elems[i];
+		// collect from original selection proper models which can be used for export
+		for (Object elem : fSelection.toArray()) {
 			IProject project = null;
 
 			if (elem instanceof IFile) {
@@ -191,32 +206,56 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 			}
 			if (project != null) {
 				IModel model = findModelFor(project);
-				if (model != null && !checked.contains(model)) {
-					checked.add(model);
+				if (model != null && !selected.contains(model)) {
+					selected.add(model);
 				}
 			}
 		}
+
+		//collected models from selection actually doesn't have to be valid for 
+		//this export page (or subclass) - select those which fits
+		//because otherwise we could try to select for export something which is not
+		//in the viewer visible for user
+		final List<IModel> checked = new ArrayList<>(selected.size());
+		for (Object o : getListElements()) {
+			if (selected.contains(o)) {
+				checked.add((IModel) o);
+			}
+		}
+
+		//preselect all models which were deduced and if possible
+		//scroll-down viewer to first one
 		fExportPart.setSelection(checked.toArray());
-		if (checked.size() > 0)
-			fExportPart.getTableViewer().reveal(checked.get(0));
+		if (checked.size() > 0) {
+			fExportPart.getTreeViewer().reveal(checked.get(0));
+		}
 	}
 
 	private void handleWorkingSets() {
 		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(getShell(), true);
 		if (dialog.open() == Window.OK) {
-			ArrayList<IModel> models = new ArrayList<>();
+			//collect proper models from working set
+			Set<IModel> selected = new HashSet<>();
 			IWorkingSet[] workingSets = dialog.getSelection();
 			for (int i = 0; i < workingSets.length; i++) {
 				IAdaptable[] elements = workingSets[i].getElements();
 				for (int j = 0; j < elements.length; j++) {
 					IModel model = findModelFor(elements[j]);
 					if (isValidModel(model)) {
-						models.add(model);
+						selected.add(model);
 					}
 				}
 			}
-			fExportPart.setSelection(models.toArray());
+			//select only those which are possible to use in viewer list for exort
+			final List<IModel> checked = new ArrayList<>(selected.size());
+			for (Object o : getListElements()) {
+				if (selected.contains(o)) {
+					checked.add((IModel) o);
+				}
+			}
+
+			fExportPart.setSelection(checked.toArray());
 		}
 	}
 
