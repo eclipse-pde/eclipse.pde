@@ -76,10 +76,9 @@ public class ActiveMenuSection implements ISpySection {
 			ToolBar bar = ((ToolBarManager) parent).getControl();
 			if (bar.getParent() instanceof CoolBar) {
 				CoolItem[] items = ((CoolBar) bar.getParent()).getItems();
-				for (int i = 0; i < items.length; i++) {
-					CoolItem coolItem = items[i];
-					if (coolItem.getControl() == bar) {
-						Object o = coolItem.getData();
+				for (CoolItem item : items) {
+					if (item.getControl() == bar) {
+						Object o = item.getData();
 						if (o instanceof ToolBarContributionItem) {
 							String parentId = ((ToolBarContributionItem) o).getId();
 							String locationURI = "toolbar:" + parentId + (id == null ? "?after=additions" : "?after=" + id); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

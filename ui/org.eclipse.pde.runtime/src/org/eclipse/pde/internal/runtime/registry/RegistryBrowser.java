@@ -605,9 +605,9 @@ public class RegistryBrowser extends ViewPart {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		if (selection != null) {
 			Object[] elements = selection.toArray();
-			for (int i = 0; i < elements.length; i++) {
-				if (elements[i] instanceof Bundle) {
-					bundles.add(elements[i]);
+			for (Object element : elements) {
+				if (element instanceof Bundle) {
+					bundles.add(element);
 				}
 			}
 		}
@@ -744,8 +744,8 @@ public class RegistryBrowser extends ViewPart {
 		if (filtersEnabled()) {
 			deferredRefresh();
 		} else {
-			for (int i = 0; i < objects.length; i++) {
-				fTreeViewer.refresh(objects[i]);
+			for (Object object : objects) {
+				fTreeViewer.refresh(object);
 			}
 		}
 		updateTitle();

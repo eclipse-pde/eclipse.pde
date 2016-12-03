@@ -107,9 +107,9 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 	}
 
 	protected void update(ModelChangeDelta[] deltas) {
-		for (int i = 0; i < deltas.length; i++) {
-			ModelObject object = deltas[i].getModelObject();
-			int flag = deltas[i].getFlag();
+		for (ModelChangeDelta delta : deltas) {
+			ModelObject object = delta.getModelObject();
+			int flag = delta.getFlag();
 
 			switch (flag) {
 				case ModelChangeDelta.ADDED :

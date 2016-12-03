@@ -73,10 +73,11 @@ public class ServiceRegistration extends ModelObject implements Comparable {
 		}
 
 		Set bundles = new HashSet();
-		for (int i = 0; i < usingBundles.length; i++) {
-			Bundle bundle = model.getBundle(new Long(usingBundles[i]));
-			if (bundle != null)
+		for (long usingBundle : usingBundles) {
+			Bundle bundle = model.getBundle(new Long(usingBundle));
+			if (bundle != null){
 				bundles.add(bundle);
+			}
 		}
 		return (Bundle[]) bundles.toArray(new Bundle[bundles.size()]);
 	}
@@ -86,8 +87,7 @@ public class ServiceRegistration extends ModelObject implements Comparable {
 	}
 
 	public Property getProperty(String name) {
-		for (int p = 0; p < properties.length; p++) {
-			Property property = properties[p];
+		for (Property property : properties) {
 			if (name.equals(property.getName())) {
 				return property;
 			}

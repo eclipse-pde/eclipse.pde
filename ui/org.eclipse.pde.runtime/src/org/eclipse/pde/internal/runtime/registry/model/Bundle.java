@@ -156,9 +156,10 @@ public class Bundle extends ModelObject {
 		ExtensionPoint[] extPoints = model.getExtensionPoints();
 		List result = new ArrayList();
 
-		for (int i = 0; i < extPoints.length; i++) {
-			if (extPoints[i].getContributorId().longValue() == id)
-				result.add(extPoints[i]);
+		for (ExtensionPoint extPoint : extPoints) {
+			if (extPoint.getContributorId().longValue() == id){
+				result.add(extPoint);
+			}
 		}
 		return (ExtensionPoint[]) result.toArray(new ExtensionPoint[result.size()]);
 	}
@@ -169,11 +170,12 @@ public class Bundle extends ModelObject {
 		ExtensionPoint[] extPoints = model.getExtensionPoints();
 		List result = new ArrayList();
 
-		for (int i = 0; i < extPoints.length; i++) {
-			for (Iterator it = extPoints[i].getExtensions().iterator(); it.hasNext();) {
+		for (ExtensionPoint extPoint : extPoints) {
+			for (Iterator it = extPoint.getExtensions().iterator(); it.hasNext();) {
 				Extension a = (Extension) it.next();
-				if (a.getContributorId().longValue() == id)
+				if (a.getContributorId().longValue() == id){
 					result.add(a);
+				}
 			}
 
 		}
@@ -186,9 +188,10 @@ public class Bundle extends ModelObject {
 		ServiceRegistration[] services = model.getServices();
 		List result = new ArrayList();
 
-		for (int i = 0; i < services.length; i++) {
-			if (symbolicName.equals(services[i].getBundle()))
-				result.add(services[i]);
+		for (ServiceRegistration service : services) {
+			if (symbolicName.equals(service.getBundle())){
+				result.add(service);
+			}
 		}
 		return (ServiceRegistration[]) result.toArray(new ServiceRegistration[result.size()]);
 	}
@@ -199,12 +202,14 @@ public class Bundle extends ModelObject {
 		ServiceRegistration[] services = model.getServices();
 		List result = new ArrayList();
 
-		for (int i = 0; i < services.length; i++) {
-			long[] usingBundles = services[i].getUsingBundleIds();
-			if (usingBundles != null) {
-				for (int j = 0; j < usingBundles.length; j++)
-					if (id == usingBundles[j])
-						result.add(services[i]);
+		for (ServiceRegistration service : services) {
+			long[] usingBundleIds = service.getUsingBundleIds();
+			if (usingBundleIds != null) {
+				for (long usingBundleId : usingBundleIds){
+					if (id == usingBundleId){
+						result.add(service);
+					}
+				}
 			}
 		}
 		return (ServiceRegistration[]) result.toArray(new ServiceRegistration[result.size()]);

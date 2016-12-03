@@ -79,15 +79,16 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		ResolverError[] resolverErrors = platformAdmin.getState(false).getResolverErrors(desc);
 
 		MultiStatus problems = new MultiStatus(PDERuntimePlugin.ID, IStatus.INFO, PDERuntimeMessages.RegistryView_found_problems, null);
-		for (int i = 0; i < resolverErrors.length; i++) {
-			if ((resolverErrors[i].getType() & (ResolverError.MISSING_FRAGMENT_HOST | ResolverError.MISSING_GENERIC_CAPABILITY | ResolverError.MISSING_IMPORT_PACKAGE | ResolverError.MISSING_REQUIRE_BUNDLE)) != 0)
+		for (ResolverError error : resolverErrors) {
+			if ((error.getType() & (ResolverError.MISSING_FRAGMENT_HOST | ResolverError.MISSING_GENERIC_CAPABILITY | ResolverError.MISSING_IMPORT_PACKAGE | ResolverError.MISSING_REQUIRE_BUNDLE)) != 0){
 				continue;
-			IStatus status = new Status(IStatus.WARNING, PDERuntimePlugin.ID, resolverErrors[i].toString());
+			}
+			IStatus status = new Status(IStatus.WARNING, PDERuntimePlugin.ID, error.toString());
 			problems.add(status);
 		}
 
-		for (int i = 0; i < unsatisfied.length; i++) {
-			IStatus status = new Status(IStatus.WARNING, PDERuntimePlugin.ID, MessageHelper.getResolutionFailureMessage(unsatisfied[i]));
+		for (VersionConstraint constraint : unsatisfied) {
+			IStatus status = new Status(IStatus.WARNING, PDERuntimePlugin.ID, MessageHelper.getResolutionFailureMessage(constraint));
 			problems.add(status);
 		}
 
@@ -100,11 +101,12 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			return;
 
 		org.osgi.framework.Bundle[] newBundles = PDERuntimePlugin.getDefault().getBundleContext().getBundles();
-		for (int i = 0; i < newBundles.length; i++) {
-			if (monitor.isCanceled())
+		for (org.osgi.framework.Bundle bundle : newBundles) {
+			if (monitor.isCanceled()){
 				return;
+			}
 
-			Bundle ba = createBundleAdapter(newBundles[i]);
+			Bundle ba = createBundleAdapter(bundle);
 			listener.addBundle(ba);
 		}
 	}
@@ -140,11 +142,12 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			return;
 		}
 
-		for (int i = 0; i < references.length; i++) {
-			if (monitor.isCanceled())
+		for (ServiceReference reference : references) {
+			if (monitor.isCanceled()){
 				return;
+			}
 
-			ServiceRegistration service = createServiceReferenceAdapter(references[i]);
+			ServiceRegistration service = createServiceReferenceAdapter(reference);
 			// The list of registered services is volatile, avoid adding unregistered services to the listener
 			if (service.getBundle() != null) {
 				listener.addService(service);
@@ -493,9 +496,9 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 
 		if (enabled) {
 			DisabledInfo[] infos = state.getDisabledInfos(desc);
-			for (int i = 0; i < infos.length; i++) {
+			for (DisabledInfo info : infos) {
 				PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-				platformAdmin.removeDisabledInfo(infos[i]);
+				platformAdmin.removeDisabledInfo(info);
 			}
 		} else {
 			DisabledInfo info = new DisabledInfo("org.eclipse.pde.ui", "Disabled via PDE", desc); //$NON-NLS-1$ //$NON-NLS-2$

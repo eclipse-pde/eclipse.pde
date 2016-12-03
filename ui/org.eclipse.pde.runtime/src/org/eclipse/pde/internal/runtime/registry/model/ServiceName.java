@@ -44,8 +44,8 @@ public class ServiceName extends ModelObject implements Comparable {
 		if (array == null)
 			return 0;
 		int result = 1;
-		for (int index = 0; index < array.length; index++) {
-			result = prime * result + (array[index] == null ? 0 : array[index].hashCode());
+		for (Object o : array) {
+			result = prime * result + (o == null ? 0 : o.hashCode());
 		}
 		return result;
 	}

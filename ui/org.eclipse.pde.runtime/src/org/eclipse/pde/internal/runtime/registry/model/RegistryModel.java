@@ -135,11 +135,11 @@ public class RegistryModel {
 
 		@Override
 		public void addExtensions(Extension[] extensionAdapters) {
-			for (int i = 0; i < extensionAdapters.length; i++) {
-				extensionAdapters[i].setModel(RegistryModel.this);
-				String id = extensionAdapters[i].getExtensionPointUniqueIdentifier();
+			for (Extension extension : extensionAdapters) {
+				extension.setModel(RegistryModel.this);
+				String id = extension.getExtensionPointUniqueIdentifier();
 				ExtensionPoint extPoint = (ExtensionPoint) extensionPoints.get(id);
-				extPoint.getExtensions().add(extensionAdapters[i]);
+				extPoint.getExtensions().add(extension);
 			}
 
 			ModelChangeDelta[] delta = new ModelChangeDelta[extensionAdapters.length];
@@ -151,10 +151,10 @@ public class RegistryModel {
 
 		@Override
 		public void removeExtensions(Extension[] extensionAdapters) {
-			for (int i = 0; i < extensionAdapters.length; i++) {
-				String id = extensionAdapters[i].getExtensionPointUniqueIdentifier();
+			for (Extension extension : extensionAdapters) {
+				String id = extension.getExtensionPointUniqueIdentifier();
 				ExtensionPoint extPoint = (ExtensionPoint) extensionPoints.get(id);
-				extPoint.getExtensions().remove(extensionAdapters[i]);
+				extPoint.getExtensions().remove(extension);
 			}
 
 			ModelChangeDelta[] delta = new ModelChangeDelta[extensionAdapters.length];
@@ -163,16 +163,16 @@ public class RegistryModel {
 			}
 			fireModelChangeEvent(delta);
 
-			for (int i = 0; i < extensionAdapters.length; i++) {
-				extensionAdapters[i].setModel(null);
+			for (Extension extension : extensionAdapters) {
+				extension.setModel(null);
 			}
 		}
 
 		@Override
 		public void addExtensionPoints(ExtensionPoint[] extensionPointAdapters) {
-			for (int i = 0; i < extensionPointAdapters.length; i++) {
-				extensionPointAdapters[i].setModel(RegistryModel.this);
-				extensionPoints.put(extensionPointAdapters[i].getUniqueIdentifier(), extensionPointAdapters[i]);
+			for (ExtensionPoint extPoint : extensionPointAdapters) {
+				extPoint.setModel(RegistryModel.this);
+				extensionPoints.put(extPoint.getUniqueIdentifier(), extPoint);
 			}
 
 			ModelChangeDelta[] delta = new ModelChangeDelta[extensionPointAdapters.length];
@@ -184,8 +184,8 @@ public class RegistryModel {
 
 		@Override
 		public void removeExtensionPoints(ExtensionPoint[] extensionPointAdapters) {
-			for (int i = 0; i < extensionPointAdapters.length; i++) {
-				extensionPoints.remove(extensionPointAdapters[i].getUniqueIdentifier());
+			for (ExtensionPoint extPoint : extensionPointAdapters) {
+				extensionPoints.remove(extPoint.getUniqueIdentifier());
 			}
 
 			ModelChangeDelta[] delta = new ModelChangeDelta[extensionPointAdapters.length];
@@ -194,8 +194,8 @@ public class RegistryModel {
 			}
 			fireModelChangeEvent(delta);
 
-			for (int i = 0; i < extensionPointAdapters.length; i++) {
-				extensionPointAdapters[i].setModel(null);
+			for (ExtensionPoint extPoint : extensionPointAdapters) {
+				extPoint.setModel(null);
 			}
 		}
 	};

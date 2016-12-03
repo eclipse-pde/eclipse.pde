@@ -434,9 +434,7 @@ public class LayoutSpyDialog {
 			Layout theLayout = composite.getLayout();
 			if (theLayout instanceof GridLayout) {
 				Control[] children = composite.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					Control child = children[i];
-
+				for (Control child : children) {
 					GridData data = (GridData) child.getLayoutData();
 
 					if (data != null) {

@@ -164,9 +164,9 @@ public class SpyFormToolkit extends FormToolkit {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
 			buffer.append("</p>"); //$NON-NLS-1$
-			for (int i = 0; i < clazzes.length; i++) {
+			for (Class clazz : clazzes) {
 				buffer.append("<li bindent=\"20\" style=\"image\" value=\"interface\">"); //$NON-NLS-1$
-				createClassReference(buffer, clazzes[i]);
+				createClassReference(buffer, clazz);
 				buffer.append("</li>"); //$NON-NLS-1$
 			}
 			Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_INTERFACE_OBJ);
@@ -181,9 +181,9 @@ public class SpyFormToolkit extends FormToolkit {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
 			buffer.append("</p>"); //$NON-NLS-1$
-			for (int i = 0; i < clazzes.length; i++) {
+			for (Class clazz : clazzes) {
 				buffer.append("<li bindent=\"20\" style=\"image\" value=\"class\">"); //$NON-NLS-1$
-				createClassReference(buffer, clazzes[i]);
+				createClassReference(buffer, clazz);
 				buffer.append("</li>"); //$NON-NLS-1$
 			}
 			Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CLASS_OBJ);
@@ -198,9 +198,9 @@ public class SpyFormToolkit extends FormToolkit {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
 			buffer.append("</p>"); //$NON-NLS-1$
-			for (int i = 0; i < ids.length; i++) {
+			for (String id : ids) {
 				buffer.append("<li bindent=\"20\" style=\"image\" value=\"id\">"); //$NON-NLS-1$
-				buffer.append(ids[i]);
+				buffer.append(id);
 				buffer.append("</li>"); //$NON-NLS-1$
 			}
 			Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_ID_OBJ);

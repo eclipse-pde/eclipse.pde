@@ -95,8 +95,8 @@ public class ActiveHelpSection implements ISpySection {
 		if (control instanceof Composite) {
 			Composite composite = (Composite) control;
 			Control[] controls = composite.getChildren();
-			for (int i = 0; i < controls.length; i++) {
-				processChildren(controls[i], buffer);
+			for (Control child : controls) {
+				processChildren(child, buffer);
 			}
 		}
 	}
