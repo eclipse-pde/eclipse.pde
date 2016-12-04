@@ -122,16 +122,16 @@ public class Plugin extends PluginBase implements IPlugin {
 		}
 
 		children = getExtensionPoints();
-		for (int i = 0; i < children.length; i++) {
-			((IPluginExtensionPoint) children[i]).write(firstIndent, writer);
+		for (Object element : children) {
+			((IPluginExtensionPoint) element).write(firstIndent, writer);
 		}
 		if (children.length > 0)
 			writer.println();
 
 		// add extensions
 		children = getExtensions();
-		for (int i = 0; i < children.length; i++) {
-			((IPluginExtension) children[i]).write(firstIndent, writer);
+		for (Object element : children) {
+			((IPluginExtension) element).write(firstIndent, writer);
 		}
 		if (children.length > 0)
 			writer.println();

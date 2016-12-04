@@ -34,8 +34,8 @@ public class AbbreviatedPluginHandler extends PluginHandler {
 	@Override
 	protected boolean isInterestingExtension(Element element) {
 		String point = element.getAttribute("point"); //$NON-NLS-1$
-		for (int i = 0; i < fExtensionPointIDs.length; i++) {
-			if (point.equals(fExtensionPointIDs[i])) {
+		for (String extensionPointId : fExtensionPointIDs) {
+			if (point.equals(extensionPointId)) {
 				return true;
 			}
 		}

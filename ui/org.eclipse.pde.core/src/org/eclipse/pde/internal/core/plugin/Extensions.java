@@ -60,16 +60,16 @@ public class Extensions extends AbstractExtensions {
 		Object[] children = getExtensionPoints();
 		if (children.length > 0)
 			writer.println();
-		for (int i = 0; i < children.length; i++) {
-			((IPluginExtensionPoint) children[i]).write(firstIndent, writer);
+		for (Object element : children) {
+			((IPluginExtensionPoint) element).write(firstIndent, writer);
 		}
 
 		// add extensions
 		children = getExtensions();
 		if (children.length > 0)
 			writer.println();
-		for (int i = 0; i < children.length; i++) {
-			((IPluginExtension) children[i]).write(firstIndent, writer);
+		for (Object element : children) {
+			((IPluginExtension) element).write(firstIndent, writer);
 		}
 		writer.println();
 		writer.println(fIsFragment ? "</fragment>" : "</plugin>"); //$NON-NLS-1$ //$NON-NLS-2$

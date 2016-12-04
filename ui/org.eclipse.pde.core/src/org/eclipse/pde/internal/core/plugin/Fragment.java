@@ -197,16 +197,16 @@ public class Fragment extends PluginBase implements IFragment {
 
 		children = getExtensionPoints();
 		if (children.length > 0) {
-			for (int i = 0; i < children.length; i++) {
-				((IPluginExtensionPoint) children[i]).write(firstIndent, writer);
+			for (Object element : children) {
+				((IPluginExtensionPoint) element).write(firstIndent, writer);
 			}
 			writer.println();
 		}
 
 		// add extensions
 		children = getExtensions();
-		for (int i = 0; i < children.length; i++) {
-			((IPluginExtension) children[i]).write(firstIndent, writer);
+		for (Object element : children) {
+			((IPluginExtension) element).write(firstIndent, writer);
 		}
 		writer.println("</fragment>"); //$NON-NLS-1$
 	}

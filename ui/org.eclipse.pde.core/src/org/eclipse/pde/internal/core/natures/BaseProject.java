@@ -39,9 +39,9 @@ public abstract class BaseProject extends PlatformObject implements IProjectNatu
 
 	private ICommand getBuilderCommand(IProjectDescription description, String builderId) {
 		ICommand[] commands = description.getBuildSpec();
-		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(builderId)) {
-				return commands[i];
+		for (ICommand command : commands) {
+			if (command.getBuilderName().equals(builderId)) {
+				return command;
 			}
 		}
 		return null;

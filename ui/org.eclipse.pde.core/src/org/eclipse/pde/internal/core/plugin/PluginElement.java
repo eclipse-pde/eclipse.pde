@@ -46,9 +46,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		setParent(element.getParent());
 		fName = element.getName();
 		IPluginAttribute[] atts = element.getAttributes();
-		for (int i = 0; i < atts.length; i++) {
-			PluginAttribute att = (PluginAttribute) atts[i];
-			getAttributeMap().put(att.getName(), (IPluginAttribute) att.clone());
+		for (IPluginAttribute attr : atts) {
+			PluginAttribute pluginAttribute = (PluginAttribute) attr;
+			getAttributeMap().put(pluginAttribute.getName(), (IPluginAttribute) pluginAttribute.clone());
 		}
 		fText = element.getText();
 		fElementInfo = (ISchemaElement) element.getElementInfo();
@@ -69,8 +69,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			if (target.getAttributeCount() != getAttributeCount())
 				return false;
 			IPluginAttribute tatts[] = target.getAttributes();
-			for (int i = 0; i < tatts.length; i++) {
-				IPluginAttribute tatt = tatts[i];
+			for (IPluginAttribute tatt : tatts) {
 				IPluginAttribute att = getAttributeMap().get(tatt.getName());
 				if (att == null || att.equals(tatt) == false)
 					return false;
@@ -231,9 +230,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		writer.println(">"); //$NON-NLS-1$
 		newIndent = indent + ELEMENT_SHIFT;
 		IPluginObject[] children = getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPluginElement element = (IPluginElement) children[i];
-			element.write(newIndent, writer);
+		for (IPluginObject object : children) {
+			IPluginElement pluginElement = (IPluginElement) object;
+			pluginElement.write(newIndent, writer);
 		}
 		if (getText() != null) {
 			writer.println(newIndent + getWritableString(getText()));
@@ -246,10 +245,10 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			fAttributes = new Hashtable<>();
 			if (fElement != null) {
 				String[] names = fElement.getAttributeNames();
-				for (int i = 0; i < names.length; i++) {
-					IPluginAttribute attr = createAttribute(names[i], fElement.getAttribute(names[i]));
+				for (String name : names) {
+					IPluginAttribute attr = createAttribute(name, fElement.getAttribute(name));
 					if (attr != null)
-						fAttributes.put(names[i], attr);
+						fAttributes.put(name, attr);
 				}
 			}
 		}
@@ -279,11 +278,11 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			fChildren = new ArrayList<>();
 			if (fElement != null) {
 				IConfigurationElement[] elements = fElement.getChildren();
-				for (int i = 0; i < elements.length; i++) {
-					PluginElement element = new PluginElement(elements[i]);
-					element.setModel(getModel());
-					element.setParent(this);
-					fChildren.add(element);
+				for (IConfigurationElement element : elements) {
+					PluginElement pluginElement = new PluginElement(element);
+					pluginElement.setModel(getModel());
+					pluginElement.setParent(this);
+					fChildren.add(pluginElement);
 				}
 			}
 		}

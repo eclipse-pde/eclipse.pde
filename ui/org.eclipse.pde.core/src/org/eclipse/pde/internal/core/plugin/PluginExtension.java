@@ -170,9 +170,9 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		}
 		writer.println(">"); //$NON-NLS-1$
 		IPluginObject[] children = getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPluginElement child = (IPluginElement) children[i];
-			child.write(indent + PluginElement.ELEMENT_SHIFT, writer);
+		for (IPluginObject child : children) {
+			IPluginElement pluginElement = (IPluginElement) child;
+			pluginElement.write(indent + PluginElement.ELEMENT_SHIFT, writer);
 		}
 		writer.println(indent + "</extension>"); //$NON-NLS-1$
 	}
@@ -208,11 +208,11 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 			if (fExtension != null) {
 				if (fExtension != null) {
 					IConfigurationElement[] elements = fExtension.getConfigurationElements();
-					for (int i = 0; i < elements.length; i++) {
-						PluginElement element = new PluginElement(elements[i]);
-						element.setModel(getModel());
-						element.setParent(this);
-						fChildren.add(element);
+					for (IConfigurationElement element : elements) {
+						PluginElement pluginElement = new PluginElement(element);
+						pluginElement.setModel(getModel());
+						pluginElement.setParent(this);
+						fChildren.add(pluginElement);
 					}
 				}
 			}

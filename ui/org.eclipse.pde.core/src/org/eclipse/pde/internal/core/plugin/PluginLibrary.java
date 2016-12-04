@@ -51,8 +51,8 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 			if (desc != null) {
 				ArrayList<String> list = new ArrayList<>();
 				ExportPackageDescription[] exports = desc.getExportPackages();
-				for (int i = 0; i < exports.length; i++) {
-					list.add(exports[i].getName());
+				for (ExportPackageDescription export : exports) {
+					list.add(export.getName());
 				}
 				return list.toArray(new String[list.size()]);
 			}
@@ -178,8 +178,8 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		if (array == null)
 			return null;
 		ArrayList<String> list = new ArrayList<>();
-		for (int i = 0; i < array.length; i++) {
-			list.add(array[i]);
+		for (String element : array) {
+			list.add(element);
 		}
 		return list;
 	}
@@ -203,9 +203,9 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 					if (isFullyExported()) {
 						writer.println(indent2 + "<export name=\"*\"/>"); //$NON-NLS-1$
 					} else {
-						for (int i = 0; i < fContentFilters.length; i++) {
+						for (String filter : fContentFilters) {
 							writer.println(indent2 + "<export name=\"" //$NON-NLS-1$
-									+ fContentFilters[i] + "\"/>"); //$NON-NLS-1$
+									+ filter + "\"/>"); //$NON-NLS-1$
 						}
 					}
 				}

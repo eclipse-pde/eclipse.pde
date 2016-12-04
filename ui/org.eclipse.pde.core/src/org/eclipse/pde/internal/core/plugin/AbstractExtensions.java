@@ -79,17 +79,17 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 	public void load(IExtensions srcExtensions) {
 		List<IPluginExtension> extensionsList = getExtensionsList();
 		IPluginExtension[] extensions = srcExtensions.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			if (extensions[i] != null) {
-				extensionsList.add(extensions[i]);
+		for (IPluginExtension extension : extensions) {
+			if (extension != null) {
+				extensionsList.add(extension);
 			}
 		}
 
 		List<IPluginExtensionPoint> extensionPointsList = getExtensionPointsList();
 		IPluginExtensionPoint[] extensionPoints = srcExtensions.getExtensionPoints();
-		for (int i = 0; i < extensionPoints.length; i++) {
-			if (extensionPoints[i] != null) {
-				extensionPointsList.add(extensionPoints[i]);
+		for (IPluginExtensionPoint extensionPoint : extensionPoints) {
+			if (extensionPoint != null) {
+				extensionPointsList.add(extensionPoint);
 			}
 		}
 	}
@@ -143,8 +143,8 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 
 	protected void writeChildren(String indent, String tag, Object[] children, PrintWriter writer) {
 		writer.println(indent + "<" + tag + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-		for (int i = 0; i < children.length; i++) {
-			IPluginObject obj = (IPluginObject) children[i];
+		for (Object element : children) {
+			IPluginObject obj = (IPluginObject) element;
 			obj.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		writer.println(indent + "</" + tag + ">"); //$NON-NLS-1$ //$NON-NLS-2$

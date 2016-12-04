@@ -64,10 +64,10 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 	public void add(IPluginImport[] iimports) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < iimports.length; i++) {
-			((PluginImport) iimports[i]).setInTheModel(true);
-			((PluginImport) iimports[i]).setParent(this);
-			fImports.add(iimports[i]);
+		for (IPluginImport iimport : iimports) {
+			((PluginImport) iimport).setInTheModel(true);
+			((PluginImport) iimport).setParent(this);
+			fImports.add(iimport);
 		}
 		fireStructureChanged(iimports, IModelChangedEvent.INSERT);
 	}
@@ -156,12 +156,12 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 	void loadRuntime(BundleDescription description, PDEState state) {
 		String[] libraryNames = state.getLibraryNames(description.getBundleId());
-		for (int i = 0; i < libraryNames.length; i++) {
+		for (String libraryName : libraryNames) {
 			PluginLibrary library = new PluginLibrary();
 			library.setModel(getModel());
 			library.setInTheModel(true);
 			library.setParent(this);
-			library.load(libraryNames[i]);
+			library.load(libraryName);
 			fLibraries.add(library);
 		}
 	}
@@ -183,22 +183,22 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 	void loadImports(BundleDescription description) {
 		BundleSpecification[] required = description.getRequiredBundles();
-		for (int i = 0; i < required.length; i++) {
+		for (BundleSpecification spec : required) {
 			PluginImport importElement = new PluginImport();
 			importElement.setModel(getModel());
 			importElement.setInTheModel(true);
 			importElement.setParent(this);
 			fImports.add(importElement);
-			importElement.load(required[i]);
+			importElement.load(spec);
 		}
 		BundleDescription[] imported = getImportedBundles(description);
-		for (int i = 0; i < imported.length; i++) {
+		for (BundleDescription element : imported) {
 			PluginImport importElement = new PluginImport();
 			importElement.setModel(getModel());
 			importElement.setInTheModel(true);
 			importElement.setParent(this);
 			fImports.add(importElement);
-			importElement.load(imported[i]);
+			importElement.load(element);
 		}
 	}
 
@@ -271,9 +271,9 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 	public void remove(IPluginImport[] iimports) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < iimports.length; i++) {
-			fImports.remove(iimports[i]);
-			((PluginImport) iimports[i]).setInTheModel(false);
+		for (IPluginImport iimport : iimports) {
+			fImports.remove(iimport);
+			((PluginImport) iimport).setInTheModel(false);
 		}
 		fireStructureChanged(iimports, IModelChangedEvent.REMOVE);
 	}
