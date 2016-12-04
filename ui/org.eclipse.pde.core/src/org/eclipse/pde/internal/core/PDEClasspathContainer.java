@@ -76,8 +76,8 @@ public class PDEClasspathContainer {
 
 			// If the jarred plugin contains any jarred libraries they must be extracted as the compiler can't handle nested jar files
 			File[] extractedLibraries = PDECore.getDefault().getModelManager().getExternalModelManager().getExtractedLibraries(model);
-			for (int i = 0; i < extractedLibraries.length; i++) {
-				Path path = new Path(extractedLibraries[i].getAbsolutePath());
+			for (File libraryFile : extractedLibraries) {
+				Path path = new Path(libraryFile.getAbsolutePath());
 				addLibraryEntry(path, path, rules, getClasspathAttributes(model), entries);
 			}
 		} else {
@@ -89,11 +89,11 @@ public class PDEClasspathContainer {
 					srcPath = new Path(model.getInstallLocation());
 				addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
 			} else {
-				for (int i = 0; i < libraries.length; i++) {
-					if (IPluginLibrary.RESOURCE.equals(libraries[i].getType()))
+				for (IPluginLibrary library : libraries) {
+					if (IPluginLibrary.RESOURCE.equals(library.getType()))
 						continue;
-					model = (IPluginModelBase) libraries[i].getModel();
-					String name = libraries[i].getName();
+					model = (IPluginModelBase) library.getModel();
+					String name = library.getName();
 					String expandedName = ClasspathUtilCore.expandLibraryName(name);
 					IPath path = ClasspathUtilCore.getPath(model, expandedName);
 					if (path == null && !model.isFragmentModel() && ClasspathUtilCore.containsVariables(name)) {
@@ -160,9 +160,9 @@ public class PDEClasspathContainer {
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) {
 			BundleDescription[] fragments = desc.getFragments();
-			for (int i = 0; i < fragments.length; i++) {
-				if (new File(fragments[i].getLocation(), libraryName).exists())
-					return PluginRegistry.findModel(fragments[i]);
+			for (BundleDescription fragment : fragments) {
+				if (new File(fragment.getLocation(), libraryName).exists())
+					return PluginRegistry.findModel(fragment);
 			}
 		}
 		return null;

@@ -28,8 +28,8 @@ public class PDEManager {
 		BundleDescription desc = getBundleDescription(model);
 		if (desc != null) {
 			BundleDescription[] fragments = desc.getFragments();
-			for (int i = 0; i < fragments.length; i++) {
-				IPluginModelBase candidate = PluginRegistry.findModel(fragments[i]);
+			for (BundleDescription fragment : fragments) {
+				IPluginModelBase candidate = PluginRegistry.findModel(fragment);
 				if (candidate instanceof IFragmentModel) {
 					result.add(candidate);
 				}
@@ -71,8 +71,8 @@ public class PDEManager {
 		addNLLocation(model, urls);
 		if (model instanceof IPluginModel) {
 			IFragmentModel[] fragments = findFragmentsFor(model);
-			for (int i = 0; i < fragments.length; i++) {
-				addNLLocation(fragments[i], urls);
+			for (IFragmentModel fragment : fragments) {
+				addNLLocation(fragment, urls);
 			}
 		} else if (model instanceof IFragmentModel) {
 			IPluginModel host = findHostFor((IFragmentModel) model);

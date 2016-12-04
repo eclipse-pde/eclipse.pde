@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
@@ -114,8 +110,8 @@ public class PDEExtensionRegistry {
 		}
 		IExtension[] exts = point.getExtensions();
 		HashSet<IPluginModelBase> plugins = new HashSet<>();
-		for (int i = 0; i < exts.length; i++) {
-			IPluginModelBase base = getPlugin(exts[i].getContributor(), false);
+		for (IExtension ext : exts) {
+			IPluginModelBase base = getPlugin(ext.getContributor(), false);
 			if (base != null && !plugins.contains(base) && (!activeOnly || base.isEnabled()))
 				plugins.add(base);
 		}
@@ -157,9 +153,8 @@ public class PDEExtensionRegistry {
 			IPluginModelBase model = getPlugin(extPoint.getContributor(), true);
 			if (model != null) {
 				IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
-				for (int i = 0; i < points.length; i++) {
-					IPluginExtensionPoint point = points[i];
-					if (points[i].getFullId().equals(pointId)) {
+				for (IPluginExtensionPoint point : points) {
+					if (point.getFullId().equals(pointId)) {
 						return point;
 					}
 				}
@@ -174,8 +169,8 @@ public class PDEExtensionRegistry {
 			return new IPluginExtension[0];
 		IExtension[] extensions = getRegistry().getExtensions(fStrategy.createContributor(base));
 		ArrayList<PluginExtension> list = new ArrayList<>();
-		for (int i = 0; i < extensions.length; i++) {
-			PluginExtension extension = new PluginExtension(extensions[i]);
+		for (IExtension ext : extensions) {
+			PluginExtension extension = new PluginExtension(ext);
 			extension.setModel(getExtensionsModel(base));
 			extension.setParent(base.getExtensions());
 			list.add(extension);
@@ -189,8 +184,8 @@ public class PDEExtensionRegistry {
 			return new IPluginExtensionPoint[0];
 		IExtensionPoint[] extensions = getRegistry().getExtensionPoints(fStrategy.createContributor(base));
 		ArrayList<PluginExtensionPoint> list = new ArrayList<>();
-		for (int i = 0; i < extensions.length; i++) {
-			PluginExtensionPoint point = new PluginExtensionPoint(extensions[i]);
+		for (IExtensionPoint extension : extensions) {
+			PluginExtensionPoint point = new PluginExtensionPoint(extension);
 			point.setModel(getExtensionsModel(base));
 			point.setParent(base.getExtensions());
 			list.add(point);
@@ -211,21 +206,21 @@ public class PDEExtensionRegistry {
 			IExtension[] extensions = point.getExtensions();
 			if (!activeOnly)
 				return extensions;
-			for (int i = 0; i < extensions.length; i++) {
-				IPluginModelBase base = getPlugin(extensions[i].getContributor(), true);
+			for (IExtension extension : extensions) {
+				IPluginModelBase base = getPlugin(extension.getContributor(), true);
 				if (base != null && base.isEnabled())
-					list.add(extensions[i]);
+					list.add(extension);
 			}
 		} else {
 			IPluginModelBase[] bases = activeOnly ? PluginRegistry.getActiveModels() : PluginRegistry.getAllModels();
-			for (int i = 0; i < bases.length; i++) {
-				IContributor contributor = fStrategy.createContributor(bases[i]);
+			for (IPluginModelBase base : bases) {
+				IContributor contributor = fStrategy.createContributor(base);
 				if (contributor == null)
 					continue;
 				IExtension[] extensions = getRegistry().getExtensions(contributor);
-				for (int j = 0; j < extensions.length; j++) {
-					if (extensions[j].getExtensionPointUniqueIdentifier().equals(extensionPointId))
-						list.add(extensions[j]);
+				for (IExtension extension : extensions) {
+					if (extension.getExtensionPointUniqueIdentifier().equals(extensionPointId))
+						list.add(extension);
 				}
 			}
 		}
@@ -247,10 +242,10 @@ public class PDEExtensionRegistry {
 			if (!searchAll && entry.getWorkspaceModels().length > 0)
 				return null;
 			IPluginModelBase externalModels[] = entry.getExternalModels();
-			for (int j = 0; j < externalModels.length; j++) {
-				BundleDescription extDesc = externalModels[j].getBundleDescription();
+			for (IPluginModelBase model : externalModels) {
+				BundleDescription extDesc = model.getBundleDescription();
 				if (extDesc != null && extDesc.getBundleId() == bundleId)
-					return externalModels[j];
+					return model;
 			}
 		}
 		return null;

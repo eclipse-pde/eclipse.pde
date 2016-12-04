@@ -77,8 +77,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}
 		if (PDECore.DEBUG_CLASSPATH) {
 			System.out.println("Dependencies for plugin '" + fModel.getPluginBase().getId() + "':"); //$NON-NLS-1$ //$NON-NLS-2$
-			for (int i = 0; i < fEntries.length; i++) {
-				System.out.println("\t" + fEntries[i]); //$NON-NLS-1$
+			for (IClasspathEntry entry : fEntries) {
+				System.out.println("\t" + entry); //$NON-NLS-1$
 			}
 		}
 		return fEntries;
@@ -112,17 +112,17 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				addHostPlugin(host, added, map, entries);
 			} else if ("true".equals(System.getProperty("pde.allowCycles"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				BundleDescription[] fragments = desc.getFragments();
-				for (int i = 0; i < fragments.length; i++) {
-					if (fragments[i].isResolved()) {
-						addPlugin(fragments[i], false, map, entries);
+				for (BundleDescription fragment : fragments) {
+					if (fragment.isResolved()) {
+						addPlugin(fragment, false, map, entries);
 					}
 				}
 			}
 
 			// add dependencies
 			BundleSpecification[] required = desc.getRequiredBundles();
-			for (int i = 0; i < required.length; i++) {
-				addDependency((BundleDescription) required[i].getSupplier(), added, map, entries);
+			for (BundleSpecification element : required) {
+				addDependency((BundleDescription) element.getSupplier(), added, map, entries);
 			}
 
 			if (fBuild == null)
@@ -165,9 +165,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			fClasspathContributors = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.core.pluginClasspathContributors"); //$NON-NLS-1$
-			for (int i = 0; i < elements.length; i++) {
+			for (IConfigurationElement element : elements) {
 				try {
-					fClasspathContributors.add((IClasspathContributor) elements[i].createExecutableExtension("class")); //$NON-NLS-1$
+					fClasspathContributors.add((IClasspathContributor) element.createExecutableExtension("class")); //$NON-NLS-1$
 				} catch (CoreException e) {
 					PDECore.log(e.getStatus());
 				}
@@ -189,8 +189,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (desc == null)
 			return;
 		ExportPackageDescription[] exports = helper.getVisiblePackages(desc);
-		for (int i = 0; i < exports.length; i++) {
-			BundleDescription exporter = exports[i].getExporter();
+		for (ExportPackageDescription export : exports) {
+			BundleDescription exporter = export.getExporter();
 			if (exporter == null)
 				continue;
 			ArrayList<Rule> list = visiblePackages.get(exporter);
@@ -198,7 +198,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				list = new ArrayList<>();
 				visiblePackages.put(exporter, list);
 			}
-			Rule rule = getRule(helper, desc, exports[i]);
+			Rule rule = getRule(helper, desc, export);
 			if (!list.contains(rule))
 				list.add(rule);
 		}
@@ -220,9 +220,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 		if (hasExtensibleAPI(desc) && desc.getContainingState() != null) {
 			BundleDescription[] fragments = desc.getFragments();
-			for (int i = 0; i < fragments.length; i++) {
-				if (fragments[i].isResolved())
-					addDependencyViaImportPackage(fragments[i], added, map, entries);
+			for (BundleDescription fragment : fragments) {
+				if (fragment.isResolved())
+					addDependencyViaImportPackage(fragment, added, map, entries);
 			}
 		}
 	}
@@ -238,9 +238,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		BundleDescription[] fragments = hasExtensibleAPI(desc) ? desc.getFragments() : new BundleDescription[0];
 
 		// add fragment patches before host
-		for (int i = 0; i < fragments.length; i++) {
-			if (fragments[i].isResolved() && ClasspathUtilCore.isPatchFragment(fragments[i])) {
-				addDependency(fragments[i], added, map, entries, useInclusion);
+		for (BundleDescription fragment : fragments) {
+			if (fragment.isResolved() && ClasspathUtilCore.isPatchFragment(fragment)) {
+				addDependency(fragment, added, map, entries, useInclusion);
 			}
 		}
 
@@ -254,9 +254,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}
 
 		BundleSpecification[] required = desc.getRequiredBundles();
-		for (int i = 0; i < required.length; i++) {
-			if (required[i].isExported()) {
-				addDependency((BundleDescription) required[i].getSupplier(), added, map, entries, useInclusion);
+		for (BundleSpecification element : required) {
+			if (element.isExported()) {
+				addDependency((BundleDescription) element.getSupplier(), added, map, entries, useInclusion);
 			}
 		}
 	}
@@ -320,14 +320,14 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			// add host plug-in
 			if (added.add(host) && addPlugin(host, false, map, entries)) {
 				BundleSpecification[] required = host.getRequiredBundles();
-				for (int i = 0; i < required.length; i++) {
-					addDependency((BundleDescription) required[i].getSupplier(), added, map, entries);
+				for (BundleSpecification bundleSpec : required) {
+					addDependency((BundleDescription) bundleSpec.getSupplier(), added, map, entries);
 				}
 
 				// add Import-Package
 				ImportPackageSpecification[] imports = host.getImportPackages();
-				for (int i = 0; i < imports.length; i++) {
-					BaseDescription supplier = imports[i].getSupplier();
+				for (ImportPackageSpecification importSpec : imports) {
+					BaseDescription supplier = importSpec.getSupplier();
 					if (supplier instanceof ExportPackageDescription) {
 						addDependencyViaImportPackage(((ExportPackageDescription) supplier).getExporter(), added, map, entries);
 					}
@@ -343,17 +343,17 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	protected void addExtraClasspathEntries(HashSet<BundleDescription> added, ArrayList<IClasspathEntry> entries) {
 		IBuildEntry[] buildEntries = fBuild.getBuildEntries();
-		for (int i = 0; i < buildEntries.length; i++) {
-			String name = buildEntries[i].getName();
+		for (IBuildEntry entry : buildEntries) {
+			String name = entry.getName();
 			if (name.equals(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH) || name.startsWith(IBuildPropertiesConstants.PROPERTY_EXTRAPATH_PREFIX)) {
-				addExtraClasspathEntries(added, entries, buildEntries[i].getTokens());
+				addExtraClasspathEntries(added, entries, entry.getTokens());
 			}
 		}
 	}
 
 	protected void addExtraClasspathEntries(HashSet<BundleDescription> added, ArrayList<IClasspathEntry> entries, String[] tokens) {
-		for (int i = 0; i < tokens.length; i++) {
-			IPath path = Path.fromPortableString(tokens[i]);
+		for (String token : tokens) {
+			IPath path = Path.fromPortableString(token);
 			if (!path.isAbsolute()) {
 				File file = new File(fModel.getInstallLocation(), path.toString());
 				if (file.exists()) {
@@ -406,8 +406,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			IBuildEntry entry = fBuild.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			if (entry != null) {
 				String[] tokens = entry.getTokens();
-				for (int i = 0; i < tokens.length; i++) {
-					String pluginId = tokens[i];
+				for (String pluginId : tokens) {
 					// Get PluginModelBase first to resolve system.bundle entry if it exists
 					IPluginModelBase model = PluginRegistry.findModel(pluginId);
 					if (model != null) {
@@ -433,19 +432,19 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				BundleDescription bdesc = (BundleDescription) stack.pop();
 				ExportPackageDescription[] expkgs = bdesc.getExportPackages();
 				ArrayList<Rule> rules = new ArrayList<>();
-				for (int i = 0; i < expkgs.length; i++) {
+				for (ExportPackageDescription expkg : expkgs) {
 					Rule rule = new Rule();
-					rule.discouraged = restrictPackage(projectDesc, expkgs[i]);
-					rule.path = new Path(expkgs[i].getName().replaceAll("\\.", "/") + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					rule.discouraged = restrictPackage(projectDesc, expkg);
+					rule.path = new Path(expkg.getName().replaceAll("\\.", "/") + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					rules.add(rule);
 				}
 				map.put(bdesc, rules);
 
 				// Look at re-exported Require-Bundles for any other exported packages
 				BundleSpecification[] requiredBundles = bdesc.getRequiredBundles();
-				for (int i = 0; i < requiredBundles.length; i++)
-					if (requiredBundles[i].isExported()) {
-						BaseDescription bd = requiredBundles[i].getSupplier();
+				for (BundleSpecification requiredBundle : requiredBundles)
+					if (requiredBundle.isExported()) {
+						BaseDescription bd = requiredBundle.getSupplier();
 						if (bd != null && bd instanceof BundleDescription)
 							stack.add(bd);
 					}
@@ -457,8 +456,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		String[] friends = (String[]) pkg.getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
 		if (friends != null) {
 			String symbolicName = desc.getSymbolicName();
-			for (int i = 0; i < friends.length; i++) {
-				if (symbolicName.equals(friends[i]))
+			for (String friend : friends) {
+				if (symbolicName.equals(friend))
 					return false;
 
 			}

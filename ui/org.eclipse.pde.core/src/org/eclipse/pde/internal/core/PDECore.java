@@ -173,9 +173,9 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 			registryPlugins = state.getTargetModels();
 		}
 
-		for (int i = 0; i < registryPlugins.length; i++) {
-			if (registryPlugins[i].getPluginBase().getId().equals(id))
-				return registryPlugins[i];
+		for (IPluginModelBase plugin : registryPlugins) {
+			if (plugin.getPluginBase().getId().equals(id))
+				return plugin;
 		}
 		return null;
 	}

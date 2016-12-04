@@ -38,11 +38,11 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		IExtensionRegistry fRegistry;
 
 		protected final void removeModels(IPluginModelBase[] bases, boolean onlyInactive) {
-			for (int i = 0; i < bases.length; i++) {
+			for (IPluginModelBase base : bases) {
 				//				resetModel(bases[i]);
-				if (onlyInactive && bases[i].isEnabled())
+				if (onlyInactive && base.isEnabled())
 					continue;
-				removeBundle(fRegistry, bases[i]);
+				removeBundle(fRegistry, base);
 			}
 		}
 
@@ -74,21 +74,21 @@ public class PDERegistryStrategy extends RegistryStrategy {
 			entries = delta.getAddedEntries();
 			ModelEntry[] removedEntries = delta.getRemovedEntries();
 			if (removedEntries.length == entries.length && fRegistry instanceof IDynamicExtensionRegistry) {
-				for (int i = 0; i < removedEntries.length; i++) {
-					if (removedEntries[i].getId() != null) {
+				for (ModelEntry entry : removedEntries) {
+					if (entry.getId() != null) {
 						IDynamicExtensionRegistry registry = (IDynamicExtensionRegistry) fRegistry;
 						IContributor[] contributors = registry.getAllContributors();
-						for (int j = 0; j < contributors.length; j++) {
-							if (removedEntries[i].getId().equals(contributors[j].getName())) {
-								registry.removeContributor(contributors[j], fKey);
+						for (IContributor contributor : contributors) {
+							if (entry.getId().equals(contributor.getName())) {
+								registry.removeContributor(contributor, fKey);
 								break;
 							}
 						}
 					}
 				}
 			}
-			for (int i = 0; i < entries.length; i++)
-				addBundles(fRegistry, entries[i].getActiveModels());
+			for (ModelEntry entry : entries)
+				addBundles(fRegistry, entry.getActiveModels());
 		}
 
 	}
@@ -105,8 +105,8 @@ public class PDERegistryStrategy extends RegistryStrategy {
 			addBundles(fRegistry, event.getChangedModels());
 			addBundles(fRegistry, event.getAddedModels());
 			// if we remove the last workspace model for a Bundle-SymbolicName, then refresh the external models by removing then adding them
-			for (int i = 0; i < bases.length; i++) {
-				ModelEntry entry = PluginRegistry.findEntry(bases[i].getPluginBase().getId());
+			for (IPluginModelBase base : bases) {
+				ModelEntry entry = PluginRegistry.findEntry(base.getPluginBase().getId());
 				if (entry != null && entry.getWorkspaceModels().length == 0) {
 					IPluginModelBase[] externalModels = entry.getExternalModels();
 					removeModels(externalModels, false);
@@ -175,8 +175,8 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	}
 
 	private void addBundles(IExtensionRegistry registry, IPluginModelBase[] bases) {
-		for (int i = 0; i < bases.length; i++)
-			addBundle(registry, bases[i]);
+		for (IPluginModelBase base : bases)
+			addBundle(registry, base);
 	}
 
 	private void addBundle(IExtensionRegistry registry, IPluginModelBase base) {
@@ -301,8 +301,8 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	public long getContributionsTimestamp() {
 		IPluginModelBase[] bases = fPDERegistry.getModels();
 		long timeStamp = 0;
-		for (int i = 0; i < bases.length; i++) {
-			String loc = bases[i].getInstallLocation();
+		for (IPluginModelBase base : bases) {
+			String loc = base.getInstallLocation();
 			if (loc == null)
 				continue;
 

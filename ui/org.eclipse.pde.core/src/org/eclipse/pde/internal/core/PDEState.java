@@ -156,13 +156,12 @@ public class PDEState extends MinimalState {
 	private void removeDuplicatesFromState(State state) {
 		// TODO This shouldn't be required if the target is removing duplicates, but test workspace shows some duplicates still
 		BundleDescription[] bundles = state.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			BundleDescription desc = bundles[i];
+		for (BundleDescription desc : bundles) {
 			String id = desc.getSymbolicName();
 			BundleDescription[] conflicts = state.getBundles(id);
 			if (conflicts.length > 1) {
-				for (int j = 0; j < conflicts.length; j++) {
-					if (desc.getVersion().equals(conflicts[j].getVersion()) && desc.getBundleId() != conflicts[j].getBundleId()) {
+				for (BundleDescription conflict : conflicts) {
+					if (desc.getVersion().equals(conflict.getVersion()) && desc.getBundleId() != conflict.getBundleId()) {
 						fState.removeBundle(desc);
 					}
 				}
@@ -172,8 +171,7 @@ public class PDEState extends MinimalState {
 
 	private IPluginModelBase[] createTargetModels(BundleDescription[] bundleDescriptions) {
 		HashMap<String, IPluginModelBase> models = new HashMap<>((4 / 3) * bundleDescriptions.length + 1);
-		for (int i = 0; i < bundleDescriptions.length; i++) {
-			BundleDescription desc = bundleDescriptions[i];
+		for (BundleDescription desc : bundleDescriptions) {
 			IPluginModelBase base = createExternalModel(desc);
 			fTargetModels.add(base);
 			models.put(desc.getSymbolicName(), base);
@@ -207,8 +205,7 @@ public class PDEState extends MinimalState {
 		File dir = new File(PDECore.getDefault().getStateLocation().toOSString());
 		File[] children = dir.listFiles();
 		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				File child = children[i];
+			for (File child : children) {
 				if (child.isDirectory()) {
 					String name = child.getName();
 					if (name.endsWith(".target") && name.length() > ".target".length()) { //$NON-NLS-1$ //$NON-NLS-2$

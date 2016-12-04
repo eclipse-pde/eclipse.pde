@@ -21,6 +21,7 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.configurator.IPlatformConfiguration.ISiteEntry;
 
 @SuppressWarnings("deprecation")
 // PDE still supports searching the platform.xml for plug-in/feature listings
@@ -77,8 +78,8 @@ public class PluginPathFinder {
 
 		File[] linkFiles = new File(platformHome + IPath.SEPARATOR + "links").listFiles(); //$NON-NLS-1$
 		if (linkFiles != null) {
-			for (int i = 0; i < linkFiles.length; i++) {
-				String path = getSitePath(platformHome, linkFiles[i], features);
+			for (File linkFile : linkFiles) {
+				String path = getSitePath(platformHome, linkFile, features);
 				if (path != null) {
 					sites.add(new File(path));
 				}
@@ -225,17 +226,17 @@ public class PluginPathFinder {
 	private static URL[] getExtensionPluginURLs(IPlatformConfiguration config, boolean features) {
 		ArrayList<URL> extensionPlugins = new ArrayList<>();
 		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
-		for (int i = 0; i < sites.length; i++) {
-			URL url = sites[i].getURL();
+		for (ISiteEntry site : sites) {
+			URL url = site.getURL();
 			if ("file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
 				String[] entries;
 				if (features)
-					entries = sites[i].getFeatures();
+					entries = site.getFeatures();
 				else
-					entries = sites[i].getPlugins();
-				for (int j = 0; j < entries.length; j++) {
+					entries = site.getPlugins();
+				for (String entry : entries) {
 					try {
-						extensionPlugins.add(new File(url.getFile(), entries[j]).toURL());
+						extensionPlugins.add(new File(url.getFile(), entry).toURL());
 					} catch (MalformedURLException e) {
 					}
 				}
@@ -256,9 +257,9 @@ public class PluginPathFinder {
 				continue;
 			File[] children = sites[i].listFiles();
 			if (children != null) {
-				for (int j = 0; j < children.length; j++) {
+				for (File element : children) {
 					try {
-						result.add(children[j].toURL());
+						result.add(element.toURL());
 					} catch (MalformedURLException e) {
 					}
 				}
@@ -271,8 +272,8 @@ public class PluginPathFinder {
 		if (Boolean.getBoolean("eclipse.pde.launch")) //$NON-NLS-1$
 			return true;
 		String[] args = Platform.getApplicationArgs();
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("-pdelaunch")) //$NON-NLS-1$
+		for (String arg : args) {
+			if (arg.equals("-pdelaunch")) //$NON-NLS-1$
 				return true;
 		}
 		return false;
