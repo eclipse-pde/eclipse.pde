@@ -238,8 +238,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		if (value == null) {
 			return;
 		}
-		for (int i = 0; i < allowedValues.length; i++) {
-			if (allowedValues[i].equals(value)) {
+		for (String allowedValue : allowedValues) {
+			if (allowedValue.equals(value)) {
 				return;
 			}
 		}
@@ -269,8 +269,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		if (value == null) {
 			return;
 		}
-		for (int i = 0; i < allowedValues.length; i++) {
-			if (allowedValues[i].equals(value)) {
+		for (String allowedValue : allowedValues) {
+			if (allowedValue.equals(value)) {
 				return;
 			}
 		}
@@ -280,8 +280,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	protected void validateHeaderValue(IHeader header, String[] allowedValues) {
 		ManifestElement[] elements = header.getElements();
 		if (elements.length > 0) {
-			for (int i = 0; i < allowedValues.length; i++) {
-				if (allowedValues[i].equals(elements[0].getValue())) {
+			for (String allowedValue : allowedValues) {
+				if (allowedValue.equals(elements[0].getValue())) {
 					return;
 				}
 			}

@@ -53,8 +53,8 @@ public class PluginRebuilder implements IStateDeltaListener, IResourceChangeList
 			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 			if (fTouchWorkspace) {
 				IProject[] projects = root.getProjects();
-				for (int i = 0; i < projects.length; i++) {
-					touchProject(projects[i]);
+				for (IProject project : projects) {
+					touchProject(project);
 				}
 			} else {
 				Iterator<String> iter = fProjectNames.iterator();
@@ -96,14 +96,14 @@ public class PluginRebuilder implements IStateDeltaListener, IResourceChangeList
 			fProjectNames.clear();
 		} else {
 			BundleDelta[] deltas = delta.getChanges();
-			for (int i = 0; i < deltas.length; i++) {
+			for (BundleDelta bundleDelta : deltas) {
 				// only interested in workspace plug-ins that are affected by delta
 				// but not those who have caused it.
-				int type = deltas[i].getType();
+				int type = bundleDelta.getType();
 				if ((type & BundleDelta.UPDATED) == BundleDelta.UPDATED || (type & BundleDelta.ADDED) == BundleDelta.ADDED || (type & BundleDelta.REMOVED) == BundleDelta.REMOVED)
 					continue;
 
-				IPluginModelBase model = PluginRegistry.findModel(deltas[i].getBundle());
+				IPluginModelBase model = PluginRegistry.findModel(bundleDelta.getBundle());
 				IResource resource = model == null ? null : model.getUnderlyingResource();
 				if (resource != null)
 					fProjectNames.add(resource.getProject().getName());

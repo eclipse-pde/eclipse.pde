@@ -229,16 +229,16 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 	}
 
 	private boolean optionalEndTag(String tag) {
-		for (int i = 0; i < optionalEndTagKeys.length; i++) {
-			if (tag.equalsIgnoreCase(optionalEndTagKeys[i]))
+		for (String optionalEndTagKey : optionalEndTagKeys) {
+			if (tag.equalsIgnoreCase(optionalEndTagKey))
 				return true;
 		}
 		return false;
 	}
 
 	private boolean forbiddenEndTag(String tag) {
-		for (int i = 0; i < forbiddenEndTagKeys.length; i++) {
-			if (tag.equalsIgnoreCase(forbiddenEndTagKeys[i]))
+		for (String forbiddenEndTagKey : forbiddenEndTagKeys) {
+			if (tag.equalsIgnoreCase(forbiddenEndTagKey))
 				return true;
 		}
 		return false;
@@ -272,8 +272,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		if (fSchema != null) {
 			ISchemaInclude[] includes = fSchema.getIncludes();
 			String schemaLocation = element.getAttribute(ATTR_LOCATION);
-			for (int i = 0; i < includes.length; i++) {
-				ISchemaInclude include = includes[i];
+			for (ISchemaInclude include : includes) {
 				ISchema includedSchema = include.getIncludedSchema();
 				try {
 					if (includedSchema == null)

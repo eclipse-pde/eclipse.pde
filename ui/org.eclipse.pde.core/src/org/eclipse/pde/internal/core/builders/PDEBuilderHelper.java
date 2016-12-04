@@ -25,16 +25,16 @@ public class PDEBuilderHelper {
 	public static String[] getUnlistedClasspaths(ArrayList<?> sourceEntries, IProject project, IClasspathEntry[] cpes) {
 		String[] unlisted = new String[cpes.length];
 		int index = 0;
-		for (int i = 0; i < cpes.length; i++) {
-			if (cpes[i].getEntryKind() != IClasspathEntry.CPE_SOURCE)
+		for (IClasspathEntry entry : cpes) {
+			if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE)
 				continue;
-			IPath path = cpes[i].getPath();
+			IPath path = entry.getPath();
 			boolean found = false;
 			for (int j = 0; j < sourceEntries.size(); j++) {
 				IBuildEntry be = (IBuildEntry) sourceEntries.get(j);
 				String[] tokens = be.getTokens();
-				for (int k = 0; k < tokens.length; k++) {
-					IResource res = project.findMember(tokens[k]);
+				for (String token : tokens) {
+					IResource res = project.findMember(token);
 					if (res == null)
 						continue;
 					IPath ipath = res.getFullPath();
@@ -51,8 +51,8 @@ public class PDEBuilderHelper {
 	public static ArrayList<String> getSourceEntries(IBuild build) {
 		ArrayList<String> sourceEntryKeys = new ArrayList<>();
 		IBuildEntry[] entries = build.getBuildEntries();
-		for (int i = 0; i < entries.length; i++) {
-			String name = entries[i].getName();
+		for (IBuildEntry buildEntry : entries) {
+			String name = buildEntry.getName();
 			if (name.startsWith(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX)) {
 				// splice the entry
 				String entry = name.substring(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX.length(), name.length());

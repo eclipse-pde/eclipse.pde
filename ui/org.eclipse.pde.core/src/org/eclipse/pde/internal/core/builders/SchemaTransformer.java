@@ -159,9 +159,9 @@ public class SchemaTransformer {
 	}
 
 	private DocumentSection findSection(IDocumentSection[] sections, String sectionId) {
-		for (int i = 0; i < sections.length; i++) {
-			if (sections[i].getSectionId().equalsIgnoreCase(sectionId)) {
-				return (DocumentSection) sections[i];
+		for (IDocumentSection section : sections) {
+			if (section.getSectionId().equalsIgnoreCase(sectionId)) {
+				return (DocumentSection) section;
 			}
 		}
 		return null;
@@ -236,11 +236,11 @@ public class SchemaTransformer {
 		fWriter.print("<h6 class=\"CaptionFigColumn SchemaHeader\">Description: </h6>"); //$NON-NLS-1$
 		transformText(fSchema.getDescription());
 		ISchemaInclude[] includes = fSchema.getIncludes();
-		for (int i = 0; i < includes.length; i++) {
-			ISchema ischema = includes[i].getIncludedSchema();
-			if (ischema != null) {
+		for (ISchemaInclude include : includes) {
+			ISchema schema = include.getIncludedSchema();
+			if (schema != null) {
 				fWriter.println("<p>"); //$NON-NLS-1$
-				transformText(ischema.getDescription());
+				transformText(schema.getDescription());
 				fWriter.println("</p>"); //$NON-NLS-1$
 			}
 		}
@@ -250,8 +250,8 @@ public class SchemaTransformer {
 	private void transformMarkup() {
 		fWriter.println("<p></p>"); //$NON-NLS-1$
 		ISchemaElement[] elements = fSchema.getResolvedElements();
-		for (int i = 0; i < elements.length; i++) {
-			transformElement(elements[i]);
+		for (ISchemaElement element : elements) {
+			transformElement(element);
 		}
 	}
 
@@ -303,8 +303,7 @@ public class SchemaTransformer {
 		}
 
 		fWriter.println("<ul class=\"ConfigMarkupAttlistDesc\">"); //$NON-NLS-1$
-		for (int i = 0; i < attributes.length; i++) {
-			ISchemaAttribute att = attributes[i];
+		for (ISchemaAttribute att : attributes) {
 			if (name.equals("extension")) { //$NON-NLS-1$
 				if (att.getDescription() == null || att.getDescription().trim().length() == 0) {
 					continue;
@@ -399,8 +398,8 @@ public class SchemaTransformer {
 
 	private int calculateMaxAttributeWidth(ISchemaAttribute[] attributes) {
 		int width = 0;
-		for (int i = 0; i < attributes.length; i++) {
-			width = Math.max(width, attributes[i].getName().length());
+		for (ISchemaAttribute attribute : attributes) {
+			width = Math.max(width, attribute.getName().length());
 		}
 		return width;
 	}

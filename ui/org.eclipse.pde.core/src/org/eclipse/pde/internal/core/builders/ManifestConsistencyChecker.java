@@ -359,8 +359,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					}
 				} else {
 					// check for misspelled MANIFEST.MF files
-					for (int i = 0; i < fileList.length; i++) {
-						String fileName = fileList[i];
+					for (String fileName : fileList) {
 						IFile currentFile = manifestFolder.getFile(fileName);
 						try {
 							IMarker marker = currentFile.createMarker(PDEMarkerFactory.MARKER_ID);
