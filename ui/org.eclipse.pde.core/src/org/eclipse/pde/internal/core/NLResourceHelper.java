@@ -65,8 +65,8 @@ public class NLResourceHelper {
 		String[] suffices = new String[] {suffix1, suffix2, suffix3, suffix4};
 
 		InputStream stream = null;
-		for (int i = 0; i < suffices.length; i++) {
-			String candidateFileName = name + suffices[i];
+		for (String suffix : suffices) {
+			String candidateFileName = name + suffix;
 			stream = resourceLoader.getResourceAsStream(candidateFileName + ".properties"); //$NON-NLS-1$
 			if (stream != null) {
 				fNLFileBasePath = candidateFileName;

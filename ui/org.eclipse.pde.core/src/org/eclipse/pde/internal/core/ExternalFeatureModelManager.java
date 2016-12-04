@@ -120,8 +120,8 @@ public class ExternalFeatureModelManager {
 		List<IFeatureModel> result = new ArrayList<>();
 		TargetFeature[] features = target.getAllFeatures();
 		if (features != null) {
-			for (int i = 0; i < features.length; i++) {
-				String location = features[i].getLocation();
+			for (TargetFeature feature : features) {
+				String location = feature.getLocation();
 				File manifest = new File(location, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 				if (!manifest.exists() || !manifest.isFile()) {
 					continue;
@@ -189,8 +189,8 @@ public class ExternalFeatureModelManager {
 	private static TargetFeature[] createFeatures(URL[] featurePaths, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, featurePaths.length);
 		Map<String, TargetFeature> uniqueFeatures = new HashMap<>();
-		for (int i = 0; i < featurePaths.length; i++) {
-			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
+		for (URL featurePath : featurePaths) {
+			File manifest = new File(featurePath.getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {
 				subMonitor.split(1);
 				continue;

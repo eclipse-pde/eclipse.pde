@@ -61,14 +61,14 @@ public class JavaElementChangeListener implements IElementChangedListener {
 
 	private void handleChildDeltas(IJavaElementDelta delta) {
 		IJavaElementDelta[] deltas = delta.getAffectedChildren();
-		for (int i = 0; i < deltas.length; i++) {
-			if (ignoreDelta(deltas[i]))
+		for (IJavaElementDelta childDelta : deltas) {
+			if (ignoreDelta(childDelta))
 				continue;
-			if (isInterestingDelta(deltas[i])) {
-				updateTable(deltas[i].getElement());
+			if (isInterestingDelta(childDelta)) {
+				updateTable(childDelta.getElement());
 				break;
 			}
-			handleDelta(deltas[i]);
+			handleDelta(childDelta);
 		}
 	}
 

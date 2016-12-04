@@ -69,27 +69,27 @@ public class JavadocLocationManager {
 		fLocations = new HashMap<>();
 
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(JAVADOC_ID, false);
-		for (int i = 0; i < extensions.length; i++) {
-			IPluginModelBase base = PluginRegistry.findModel(extensions[i].getContributor().getName());
+		for (IExtension extension : extensions) {
+			IPluginModelBase base = PluginRegistry.findModel(extension.getContributor().getName());
 			// only search external models
 			if (base == null || base.getUnderlyingResource() != null)
 				continue;
-			processExtension(extensions[i], base);
+			processExtension(extension, base);
 		}
 	}
 
 	private void processExtension(IExtension extension, IPluginModelBase base) {
 		IConfigurationElement[] children = extension.getConfigurationElements();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].getName().equals("javadoc")) { //$NON-NLS-1$
-				String path = children[i].getAttribute("path"); //$NON-NLS-1$
+		for (IConfigurationElement element : children) {
+			if (element.getName().equals("javadoc")) { //$NON-NLS-1$
+				String path = element.getAttribute("path"); //$NON-NLS-1$
 				if (path == null)
 					continue;
 				try {
 					new URL(path);
-					processPlugins(path, children[i].getChildren());
+					processPlugins(path, element.getChildren());
 				} catch (MalformedURLException e) {
-					String attr = children[i].getAttribute("archive"); //$NON-NLS-1$
+					String attr = element.getAttribute("archive"); //$NON-NLS-1$
 					boolean archive = attr == null ? false : "true".equals(attr); //$NON-NLS-1$
 
 					IPath modelPath = new Path(base.getInstallLocation());
@@ -114,16 +114,16 @@ public class JavadocLocationManager {
 							buffer.append("!/"); //$NON-NLS-1$
 						}
 					}
-					processPlugins(buffer.toString(), children[i].getChildren());
+					processPlugins(buffer.toString(), element.getChildren());
 				}
 			}
 		}
 	}
 
 	private void processPlugins(String path, IConfigurationElement[] plugins) {
-		for (int i = 0; i < plugins.length; i++) {
-			if (plugins[i].getName().equals("plugin")) { //$NON-NLS-1$
-				String id = plugins[i].getAttribute("id"); //$NON-NLS-1$
+		for (IConfigurationElement plugin : plugins) {
+			if (plugin.getName().equals("plugin")) { //$NON-NLS-1$
+				String id = plugin.getAttribute("id"); //$NON-NLS-1$
 				if (id == null)
 					continue;
 				Set<String> set = fLocations.get(path);

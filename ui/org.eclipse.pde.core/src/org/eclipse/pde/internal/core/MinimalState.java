@@ -138,10 +138,10 @@ public class MinimalState {
 			return fState.resolve(false);
 		}
 		List<BundleDescription> bundles = new ArrayList<>();
-		for (int i = 0; i < symbolicNames.length; i++) {
-			BundleDescription[] descriptions = fState.getBundles(symbolicNames[i]);
-			for (int j = 0; j < descriptions.length; j++) {
-				bundles.add(descriptions[j]);
+		for (String symbolicName : symbolicNames) {
+			BundleDescription[] descriptions = fState.getBundles(symbolicName);
+			for (BundleDescription description : descriptions) {
+				bundles.add(description);
 			}
 		}
 		return fState.resolve(bundles.toArray(new BundleDescription[bundles.size()]));

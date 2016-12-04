@@ -200,9 +200,9 @@ public class PDEAuxiliaryState {
 				if (info.bundleSourceEntry != null)
 					element.setAttribute(ATTR_BUNDLE_SOURCE, info.bundleSourceEntry);
 				if (info.libraries != null) {
-					for (int i = 0; i < info.libraries.length; i++) {
+					for (String library : info.libraries) {
 						Element lib = doc.createElement(ELEMENT_LIB);
-						lib.setAttribute(ATTR_NAME, info.libraries[i]);
+						lib.setAttribute(ATTR_NAME, library);
 						element.appendChild(lib);
 					}
 				}

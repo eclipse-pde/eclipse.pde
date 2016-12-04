@@ -94,8 +94,8 @@ class ExternalLibraryCache {
 
 		List<File> files = new ArrayList<>();
 
-		for (int i = 0; i < libs.length; i++) {
-			String libName = libs[i].getName();
+		for (IPluginLibrary lib : libs) {
+			String libName = lib.getName();
 			if (!".".equals(libName)) { //$NON-NLS-1$
 				libName = ClasspathUtilCore.expandLibraryName(libName);
 				File fDestFile = new File(fCacheDir, libName);
@@ -133,9 +133,9 @@ class ExternalLibraryCache {
 		// build a list with all potential directory names for quick check
 		Set<String> bundleKeys = new HashSet<>();
 
-		for (int i = 0; i < targetModels.length; i++) {
-			if (targetModels[i].isEnabled()) {
-				BundleDescription desc = targetModels[i].getBundleDescription();
+		for (IPluginModelBase targetModel : targetModels) {
+			if (targetModel.isEnabled()) {
+				BundleDescription desc = targetModel.getBundleDescription();
 				bundleKeys.add(getBundleLibsCacheDirName(desc));
 			}
 		}

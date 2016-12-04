@@ -163,8 +163,8 @@ public class P2Utils {
 	 * @throws MalformedURLException
 	 */
 	private static void copyURLs(URL[] dest, int start, BundleInfo[] infos) throws MalformedURLException {
-		for (int i = 0; i < infos.length; i++) {
-			dest[start++] = new File(infos[i].getLocation()).toURL();
+		for (BundleInfo info : infos) {
+			dest[start++] = new File(info.getLocation()).toURL();
 		}
 	}
 
@@ -234,8 +234,8 @@ public class P2Utils {
 
 		List<BundleInfo> bundleInfo = new ArrayList<>(bundles.size());
 		List<BundleInfo> sourceInfo = new ArrayList<>(bundles.size());
-		for (Iterator<?> iterator = bundles.keySet().iterator(); iterator.hasNext();) {
-			IPluginModelBase currentModel = (IPluginModelBase) iterator.next();
+		for (final Object name : bundles.keySet()) {
+			final IPluginModelBase currentModel = (IPluginModelBase) name;
 			IPluginBase base = currentModel.getPluginBase();
 
 			BundleInfo info = new BundleInfo();
@@ -386,8 +386,8 @@ public class P2Utils {
 
 		// Create metadata for the bundles
 		Collection<IInstallableUnit> ius = new ArrayList<>(bundles.size());
-		for (Iterator<?> iterator = bundles.iterator(); iterator.hasNext();) {
-			IPluginModelBase model = (IPluginModelBase) iterator.next();
+		for (final Object name : bundles) {
+			IPluginModelBase model = (IPluginModelBase) name;
 			BundleDescription bundle = model.getBundleDescription();
 			ius.add(createBundleIU(bundle));
 		}
@@ -395,8 +395,7 @@ public class P2Utils {
 		// Add the metadata to the profile
 		ProvisioningContext context = new ProvisioningContext(agent);
 		IProvisioningPlan plan = engine.createPlan(profile, context);
-		for (Iterator<IInstallableUnit> iter = ius.iterator(); iter.hasNext();) {
-			IInstallableUnit iu = iter.next();
+		for (final IInstallableUnit iu : ius) {
 			plan.addInstallableUnit(iu);
 			plan.setInstallableUnitProfileProperty(iu, "org.eclipse.equinox.p2.internal.inclusion.rules", ProfileInclusionRules.createOptionalInclusionRule(iu)); //$NON-NLS-1$
 		}
@@ -448,14 +447,12 @@ public class P2Utils {
 		ArrayList<IRequirement> reqsDeps = new ArrayList<>();
 		if (isFragment)
 			reqsDeps.add(MetadataFactory.createRequirement(CAPABILITY_NS_OSGI_BUNDLE, bd.getHost().getName(), fromOSGiVersionRange(bd.getHost().getVersionRange()), null, false, false));
-		for (int j = 0; j < requiredBundles.length; j++)
-			reqsDeps.add(MetadataFactory.createRequirement(CAPABILITY_NS_OSGI_BUNDLE, requiredBundles[j].getName(), fromOSGiVersionRange(requiredBundles[j].getVersionRange()), null, requiredBundles[j].isOptional(), false));
+		for (final BundleSpecification requiredBundle : requiredBundles)
+			reqsDeps.add(MetadataFactory.createRequirement(CAPABILITY_NS_OSGI_BUNDLE, requiredBundle.getName(), fromOSGiVersionRange(requiredBundle.getVersionRange()), null, requiredBundle.isOptional(), false));
 
 		// Process the import packages
 		ImportPackageSpecification osgiImports[] = bd.getImportPackages();
-		for (int i = 0; i < osgiImports.length; i++) {
-			// TODO we need to sort out how we want to handle wild-carded dynamic imports - for now we ignore them
-			ImportPackageSpecification importSpec = osgiImports[i];
+		for (final ImportPackageSpecification importSpec : osgiImports) {
 			String importPackageName = importSpec.getName();
 			if (importPackageName.indexOf('*') != -1)
 				continue;
@@ -473,9 +470,9 @@ public class P2Utils {
 
 		// Process the export package
 		ExportPackageDescription exports[] = bd.getExportPackages();
-		for (int i = 0; i < exports.length; i++) {
+		for (final ExportPackageDescription export : exports) {
 			//TODO make sure that we support all the refinement on the exports
-			providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_JAVA_PACKAGE, exports[i].getName(), fromOSGiVersion(exports[i].getVersion())));
+			providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_JAVA_PACKAGE, export.getName(), fromOSGiVersion(export.getVersion())));
 		}
 		// Here we add a bundle capability to identify bundles
 		providedCapabilities.add(BUNDLE_CAPABILITY);

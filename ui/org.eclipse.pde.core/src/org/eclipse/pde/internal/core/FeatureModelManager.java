@@ -89,10 +89,10 @@ public class FeatureModelManager {
 		fWorkspaceManager.addModelProviderListener(fProviderListener);
 
 		IFeatureModel[] models = fWorkspaceManager.getFeatureModels();
-		for (int i = 0; i < models.length; i++) {
+		for (IFeatureModel model : models) {
 			// add all workspace models, including invalid or duplicate (save
 			// id, ver)
-			fActiveModels.add(models[i]);
+			fActiveModels.add(model);
 		}
 
 		fExternalManager = new ExternalFeatureModelManager();
@@ -127,9 +127,9 @@ public class FeatureModelManager {
 		init();
 		IFeatureModel[] allModels = fActiveModels.getAll();
 		ArrayList<IFeatureModel> valid = new ArrayList<>(allModels.length);
-		for (int i = 0; i < allModels.length; i++) {
-			if (allModels[i].isValid()) {
-				valid.add(allModels[i]);
+		for (final IFeatureModel model : allModels) {
+			if (model.isValid()) {
+				valid.add(model);
 			}
 		}
 		return valid.toArray(new IFeatureModel[valid.size()]);
@@ -171,9 +171,9 @@ public class FeatureModelManager {
 			return findFeatureModel(id);
 		}
 
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].isValid()) {
-				return models[i];
+		for (final IFeatureModel model : models) {
+			if (model.isValid()) {
+				return model;
 			}
 		}
 
@@ -216,9 +216,9 @@ public class FeatureModelManager {
 		init();
 		IFeatureModel[] models = fActiveModels.get(id);
 		ArrayList<IFeatureModel> valid = new ArrayList<>(models.length);
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].isValid()) {
-				valid.add(models[i]);
+		for (final IFeatureModel model : models) {
+			if (model.isValid()) {
+				valid.add(model);
 			}
 		}
 		return valid.toArray(new IFeatureModel[valid.size()]);
@@ -226,21 +226,21 @@ public class FeatureModelManager {
 
 	public IFeatureModel findFeatureModel(String id) {
 		IFeatureModel[] models = findFeatureModels(id);
-		IFeatureModel model = null;
-		for (int i = 0; i < models.length; i++) {
-			if (model == null) {
-				model = models[i];
+		IFeatureModel result = null;
+		for (final IFeatureModel model : models) {
+			if (result == null) {
+				result = model;
 			} else {
-				String version = model.getFeature().getVersion();
-				String version2 = models[i].getFeature().getVersion();
+				final String version = result.getFeature().getVersion();
+				final String version2 = model.getFeature().getVersion();
 				Version vid = Version.parseVersion(version);
 				Version vid2 = Version.parseVersion(version2);
 				if (VersionUtil.isGreaterOrEqualTo(vid2, vid)) {
-					model = models[i];
+					result = model;
 				}
 			}
 		}
-		return model;
+		return result;
 	}
 
 	private void handleModelsChanged(IModelProviderEvent e) {
@@ -248,8 +248,8 @@ public class FeatureModelManager {
 		IFeatureModelDelta delta = processEvent(e);
 
 		Object[] entries = fListeners.toArray();
-		for (int i = 0; i < entries.length; i++) {
-			((IFeatureModelListener) entries[i]).modelsChanged(delta);
+		for (final Object entry : entries) {
+			((IFeatureModelListener) entry).modelsChanged(delta);
 		}
 	}
 
@@ -303,8 +303,8 @@ public class FeatureModelManager {
 						continue;
 					}
 					IFeatureModel[] activeModels = fActiveModels.get(id, version);
-					for (int j = 0; j < activeModels.length; j++) {
-						if (activeModels[j].getUnderlyingResource() == null) {
+					for (final IFeatureModel activeModel : activeModels) {
+						if (activeModel.getUnderlyingResource() == null) {
 							// ignore duplicate external models
 							continue;
 						}
@@ -372,20 +372,19 @@ public class FeatureModelManager {
 	 */
 	private void adjustExternalVisibility(FeatureModelDelta delta, Set<Idver> affectedIdVers) {
 		if (affectedIdVers != null) {
-			for (Iterator<Idver> it = affectedIdVers.iterator(); it.hasNext();) {
-				FeatureTable.Idver idver = it.next();
+			for (final Idver idver : affectedIdVers) {
 				IFeatureModel[] affectedModels = fActiveModels.get(idver);
 				if (affectedModels.length > 1) {
 					/*
 					 * there must have been at least one workspace and one
 					 * external model
 					 */
-					for (int j = 0; j < affectedModels.length; j++) {
-						if (affectedModels[j].getUnderlyingResource() == null) {
+					for (final IFeatureModel model : affectedModels) {
+						if (model.getUnderlyingResource() == null) {
 							// move external to inactive
-							fActiveModels.remove(affectedModels[j]);
-							fInactiveModels.add(affectedModels[j]);
-							delta.add(affectedModels[j], IFeatureModelDelta.REMOVED);
+							fActiveModels.remove(model);
+							fInactiveModels.add(model);
+							delta.add(model, IFeatureModelDelta.REMOVED);
 						}
 					}
 				}
