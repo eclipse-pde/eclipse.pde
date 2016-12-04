@@ -412,9 +412,9 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 */
 	protected void setModels(IPluginModelBase[] models) {
 		fModels = Collections.synchronizedMap(new HashMap<IProject, IModel>());
-		for (int i = 0; i < models.length; i++) {
-			IProject project = models[i].getUnderlyingResource().getProject();
-			fModels.put(project, models[i]);
+		for (IPluginModelBase model : models) {
+			IProject project = model.getUnderlyingResource().getProject();
+			fModels.put(project, model);
 		}
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
@@ -435,10 +435,10 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	protected URL[] getPluginPaths() {
 		ArrayList<URL> list = new ArrayList<>();
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			if (isPluginProject(projects[i])) {
+		for (final IProject project : projects) {
+			if (isPluginProject(project)) {
 				try {
-					IPath path = projects[i].getLocation();
+					final IPath path = project.getLocation();
 					if (path != null) {
 						list.add(path.toFile().toURL());
 					}

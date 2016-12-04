@@ -50,8 +50,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 			Object element = delta.getElement();
 			if (element instanceof IJavaModel) {
 				IJavaElementDelta[] projectDeltas = delta.getAffectedChildren();
-				for (int i = 0; i < projectDeltas.length; i++) {
-					if (handleDelta(projectDeltas[i]))
+				for (IJavaElementDelta projectDelta : projectDeltas) {
+					if (handleDelta(projectDelta))
 						break;
 				}
 				return true;
@@ -133,8 +133,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		ArrayList<IClasspathEntry> result = new ArrayList<>();
 
 		IPluginModelBase[] wModels = PluginRegistry.getWorkspaceModels();
-		for (int i = 0; i < wModels.length; i++) {
-			IProject project = wModels[i].getUnderlyingResource().getProject();
+		for (IPluginModelBase model : wModels) {
+			IProject project = model.getUnderlyingResource().getProject();
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				result.add(JavaCore.newProjectEntry(project.getFullPath()));
 			}
@@ -145,17 +145,17 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 			if (entry != null) {
 				boolean addModel = true;
 				wModels = entry.getWorkspaceModels();
-				for (int i = 0; i < wModels.length; i++) {
-					IProject project = wModels[i].getUnderlyingResource().getProject();
+				for (IPluginModelBase model : wModels) {
+					IProject project = model.getUnderlyingResource().getProject();
 					if (project.hasNature(JavaCore.NATURE_ID))
 						addModel = false;
 				}
 				if (!addModel)
 					continue;
 				IPluginModelBase[] models = entry.getExternalModels();
-				for (int i = 0; i < models.length; i++) {
-					if (models[i].isEnabled())
-						ClasspathUtilCore.addLibraries(models[i], result);
+				for (IPluginModelBase model : models) {
+					if (model.isEnabled())
+						ClasspathUtilCore.addLibraries(model, result);
 				}
 			}
 		}
@@ -193,8 +193,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		if (jProject != null) {
 			try {
 				IPackageFragmentRoot[] roots = jProject.getAllPackageFragmentRoots();
-				for (int i = 0; i < roots.length; i++) {
-					IPackageFragmentRoot root = roots[i];
+				for (IPackageFragmentRoot root : roots) {
 					IPath path = root.getPath();
 					if (path.equals(jarPath))
 						return root;
@@ -206,13 +205,12 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 
 		// Find in other plug-in (and fragments) projects dependencies
 		IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
-		for (int i = 0; i < pluginModels.length; i++) {
-			IProject project = pluginModels[i].getUnderlyingResource().getProject();
+		for (IPluginModelBase model : pluginModels) {
+			IProject project = model.getUnderlyingResource().getProject();
 			IJavaProject javaProject = JavaCore.create(project);
 			try {
 				IPackageFragmentRoot[] roots = javaProject.getAllPackageFragmentRoots();
-				for (int j = 0; j < roots.length; j++) {
-					IPackageFragmentRoot root = roots[j];
+				for (IPackageFragmentRoot root : roots) {
 					IPath path = root.getPath();
 					if (path.equals(jarPath))
 						return root;
@@ -238,8 +236,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		checkForProxyProject();
 		PluginModelDelta delta = new PluginModelDelta();
 		int size = fPluginIdSet.size();
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
+		for (IPluginModelBase model : models) {
+			String id = model.getPluginBase().getId();
 			if (fPluginIdSet.add(id)) {
 				ModelEntry entry = PluginRegistry.findEntry(id);
 				if (entry != null)
@@ -255,8 +253,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	public void removeFromJavaSearch(IPluginModelBase[] models) {
 		PluginModelDelta delta = new PluginModelDelta();
 		int size = fPluginIdSet.size();
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
+		for (IPluginModelBase model : models) {
+			String id = model.getPluginBase().getId();
 			if (fPluginIdSet.remove(id)) {
 				ModelEntry entry = PluginRegistry.findEntry(id);
 				if (entry != null) {
@@ -273,8 +271,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	public void removeAllFromJavaSearch() {
 		if (fPluginIdSet.size() > 0) {
 			PluginModelDelta delta = new PluginModelDelta();
-			for (Iterator<String> iterator = fPluginIdSet.iterator(); iterator.hasNext();) {
-				String id = iterator.next();
+			for (String id : fPluginIdSet) {
 				ModelEntry entry = PluginRegistry.findEntry(id);
 				if (entry != null) {
 					delta.addEntry(entry, PluginModelDelta.CHANGED);
@@ -304,9 +301,9 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	@Override
 	public void modelsChanged(PluginModelDelta delta) {
 		ModelEntry[] entries = delta.getRemovedEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (fPluginIdSet.contains(entries[i].getId())) {
-				fPluginIdSet.remove(entries[i].getId());
+		for (ModelEntry entry : entries) {
+			if (fPluginIdSet.contains(entry.getId())) {
+				fPluginIdSet.remove(entry.getId());
 			}
 		}
 		resetContainer();

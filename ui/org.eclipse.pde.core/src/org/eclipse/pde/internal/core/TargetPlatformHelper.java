@@ -197,12 +197,12 @@ public class TargetPlatformHelper {
 		if (model.getUnderlyingResource() != null) {
 			File[] files = new File(model.getInstallLocation()).listFiles();
 			if (files != null) {
-				for (int i = 0; i < files.length; i++) {
-					if (files[i].isDirectory())
+				for (File file : files) {
+					if (file.isDirectory())
 						continue;
-					String name = files[i].getName();
+					String name = file.getName();
 					if (name.startsWith(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME) && name.endsWith(".properties") //$NON-NLS-1$
-							&& files[i].lastModified() > timestamp) {
+							&& file.lastModified() > timestamp) {
 						return true;
 					}
 				}
@@ -229,10 +229,9 @@ public class TargetPlatformHelper {
 		if (target != null && !target.isResolved()) {
 			ITargetLocation[] locations = target.getTargetLocations();
 			if (locations != null) {
-				for (int i = 0; i < locations.length; i++) {
-					ITargetLocation iTargetLocation = locations[i];
-					if (iTargetLocation instanceof IUBundleContainer) {
-						IUBundleContainer bc = (IUBundleContainer) iTargetLocation;
+				for (ITargetLocation location : locations) {
+					if (location instanceof IUBundleContainer) {
+						IUBundleContainer bc = (IUBundleContainer) location;
 						URI[] uri = bc.getRepositories();
 						if (uri != null) {
 							if (uri.length > 0) {
@@ -249,9 +248,9 @@ public class TargetPlatformHelper {
 	public static Set<String> getApplicationNameSet() {
 		TreeSet<String> result = new TreeSet<>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
-		for (int i = 0; i < extensions.length; i++) {
-			String id = extensions[i].getUniqueIdentifier();
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+		for (IExtension extension : extensions) {
+			String id = extension.getUniqueIdentifier();
+			IConfigurationElement[] elements = extension.getConfigurationElements();
 			if (elements.length != 1)
 				continue;
 			String visiblity = elements[0].getAttribute("visible"); //$NON-NLS-1$
@@ -272,13 +271,13 @@ public class TargetPlatformHelper {
 	public static TreeSet<String> getProductNameSet() {
 		TreeSet<String> result = new TreeSet<>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension.getConfigurationElements();
 			if (elements.length != 1)
 				continue;
 			if (!"product".equals(elements[0].getName())) //$NON-NLS-1$
 				continue;
-			String id = extensions[i].getUniqueIdentifier();
+			String id = extension.getUniqueIdentifier();
 			if (id != null && id.trim().length() > 0)
 				result.add(id);
 		}
@@ -315,8 +314,8 @@ public class TargetPlatformHelper {
 
 		// add java profiles for those EE's that have a .profile file in the current system bundle
 		ArrayList<Dictionary<String, String>> result = new ArrayList<>(profiles.length);
-		for (int i = 0; i < profiles.length; i++) {
-			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profiles[i]);
+		for (String profile : profiles) {
+			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profile);
 			if (environment != null) {
 				Properties profileProps = environment.getProfileProperties();
 				if (profileProps != null) {
@@ -504,14 +503,14 @@ public class TargetPlatformHelper {
 	public static Map<Long, String> getPatchMap(PDEState state) {
 		HashMap<Long, String> properties = new HashMap<>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
-		for (int i = 0; i < models.length; i++) {
-			BundleDescription desc = models[i].getBundleDescription();
+		for (IPluginModelBase model : models) {
+			BundleDescription desc = model.getBundleDescription();
 			if (desc == null)
 				continue;
 			Long id = new Long(desc.getBundleId());
-			if (ClasspathUtilCore.hasExtensibleAPI(models[i])) {
+			if (ClasspathUtilCore.hasExtensibleAPI(model)) {
 				properties.put(id, ICoreConstants.EXTENSIBLE_API + ": true"); //$NON-NLS-1$
-			} else if (ClasspathUtilCore.isPatchFragment(models[i])) {
+			} else if (ClasspathUtilCore.isPatchFragment(model)) {
 				properties.put(id, ICoreConstants.PATCH_FRAGMENT + ": true"); //$NON-NLS-1$
 			}
 		}
@@ -521,8 +520,8 @@ public class TargetPlatformHelper {
 	public static HashMap<Long, String[]> getBundleClasspaths(PDEState state) {
 		HashMap<Long, String[]> properties = new HashMap<>();
 		BundleDescription[] bundles = state.getState().getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			properties.put(new Long(bundles[i].getBundleId()), getValue(bundles[i], state));
+		for (BundleDescription bundle : bundles) {
+			properties.put(new Long(bundle.getBundleId()), getValue(bundle, state));
 		}
 		return properties;
 	}
@@ -551,8 +550,8 @@ public class TargetPlatformHelper {
 	public static String[] getFeaturePaths() {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
 		ArrayList<String> list = new ArrayList<>();
-		for (int i = 0; i < models.length; i++) {
-			String location = models[i].getInstallLocation();
+		for (IFeatureModel model : models) {
+			String location = model.getInstallLocation();
 			if (location != null)
 				list.add(location + IPath.SEPARATOR + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 		}

@@ -260,9 +260,8 @@ public class SourceLocationManager implements ICoreConstants {
 	 */
 	private IPath searchUserSpecifiedLocations(IPath relativePath) {
 		List<SourceLocation> userLocations = getUserLocations();
-		for (Iterator<SourceLocation> iterator = userLocations.iterator(); iterator.hasNext();) {
-			SourceLocation currentLocation = iterator.next();
-			IPath fullPath = currentLocation.getPath().append(relativePath);
+		for (SourceLocation location : userLocations) {
+			IPath fullPath = location.getPath().append(relativePath);
 			File file = fullPath.toFile();
 			if (file.exists()) {
 				return fullPath;
@@ -279,9 +278,8 @@ public class SourceLocationManager implements ICoreConstants {
 	 */
 	private IPath searchExtensionLocations(IPath relativePath) {
 		List<SourceLocation> extensionLocations = getExtensionLocations();
-		for (Iterator<SourceLocation> iterator = extensionLocations.iterator(); iterator.hasNext();) {
-			SourceLocation currentLocation = iterator.next();
-			IPath fullPath = currentLocation.getPath().append(relativePath);
+		for (SourceLocation location : extensionLocations) {
+			IPath fullPath = location.getPath().append(relativePath);
 			File file = fullPath.toFile();
 			if (file.exists()) {
 				return fullPath;
@@ -348,9 +346,9 @@ public class SourceLocationManager implements ICoreConstants {
 	private static List<SourceLocation> processExtensions() {
 		ArrayList<SourceLocation> result = new ArrayList<>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(PDECore.PLUGIN_ID + ".source", false); //$NON-NLS-1$
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] children = extensions[i].getConfigurationElements();
-			RegistryContributor contributor = (RegistryContributor) extensions[i].getContributor();
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] children = extension.getConfigurationElements();
+			RegistryContributor contributor = (RegistryContributor) extension.getContributor();
 			long bundleId = Long.parseLong(contributor.getActualId());
 			BundleDescription desc = PDECore.getDefault().getModelManager().getState().getState().getBundle(Long.parseLong(contributor.getActualId()));
 			IPluginModelBase base = null;
@@ -360,17 +358,17 @@ public class SourceLocationManager implements ICoreConstants {
 			else {
 				ModelEntry entry = PluginRegistry.findEntry(contributor.getActualName());
 				IPluginModelBase externalModels[] = entry.getExternalModels();
-				for (int j = 0; j < externalModels.length; j++) {
-					BundleDescription extDesc = externalModels[j].getBundleDescription();
+				for (IPluginModelBase externalModel : externalModels) {
+					BundleDescription extDesc = externalModel.getBundleDescription();
 					if (extDesc != null && extDesc.getBundleId() == bundleId)
-						base = externalModels[j];
+						base = externalModel;
 				}
 			}
 			if (base == null)
 				continue;
-			for (int j = 0; j < children.length; j++) {
-				if (children[j].getName().equals("location")) { //$NON-NLS-1$
-					String pathValue = children[j].getAttribute("path"); //$NON-NLS-1$
+			for (IConfigurationElement element : children) {
+				if (element.getName().equals("location")) { //$NON-NLS-1$
+					String pathValue = element.getAttribute("path"); //$NON-NLS-1$
 					IPath path = new Path(base.getInstallLocation()).append(pathValue);
 					if (path.toFile().exists()) {
 						SourceLocation location = new SourceLocation(path);

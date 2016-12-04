@@ -82,9 +82,9 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 
 		fModels = Collections.synchronizedMap(new HashMap<IProject, IModel>());
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			if (isInterestingProject(projects[i]))
-				createModel(projects[i], false);
+		for (IProject project : projects) {
+			if (isInterestingProject(project))
+				createModel(project, false);
 		}
 		addListeners();
 	}

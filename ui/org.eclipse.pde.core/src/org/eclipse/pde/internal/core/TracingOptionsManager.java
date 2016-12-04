@@ -31,8 +31,8 @@ public class TracingOptionsManager {
 	private Properties createTemplate() {
 		Properties temp = new Properties();
 		IPluginModelBase[] models = PluginRegistry.getAllModels();
-		for (int i = 0; i < models.length; i++) {
-			addToTemplate(temp, models[i]);
+		for (IPluginModelBase model : models) {
+			addToTemplate(temp, model);
 		}
 		return temp;
 	}

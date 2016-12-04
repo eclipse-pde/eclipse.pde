@@ -71,9 +71,9 @@ public class UpdateManagerHelper {
 
 			// Compute local sites
 			ArrayList<LocalSite> sites = new ArrayList<>();
-			for (int i = 0; i < models.length; i++) {
-				IPath path = new Path(models[i].getInstallLocation()).removeLastSegments(2);
-				addToSite(path, models[i], sites);
+			for (IPluginModelBase model : models) {
+				IPath path = new Path(model.getInstallLocation()).removeLastSegments(2);
+				addToSite(path, model, sites);
 			}
 
 			createConfigurationEntries(platformConfiguration, sites);
