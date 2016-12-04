@@ -25,10 +25,10 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	public String[] getContentFilters() {
 		IDocumentElementNode[] children = getChildNodes();
 		ArrayList<String> result = new ArrayList<>();
-		for (int i = 0; i < children.length; i++) {
-			PluginObjectNode node = (PluginObjectNode) children[i];
+		for (IDocumentElementNode childNode : children) {
+			PluginObjectNode node = (PluginObjectNode) childNode;
 			if (node.getName().equals(P_EXPORTED)) {
-				String name = children[i].getXMLAttributeValue(P_NAME);
+				String name = childNode.getXMLAttributeValue(P_NAME);
 				if (name != null && !name.equals("*")) { //$NON-NLS-1$
 					int index = name.indexOf(".*"); //$NON-NLS-1$
 					if (index != -1)
@@ -48,8 +48,8 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	@Override
 	public boolean isExported() {
 		IDocumentElementNode[] children = getChildNodes();
-		for (int i = 0; i < children.length; i++) {
-			PluginObjectNode node = (PluginObjectNode) children[i];
+		for (final IDocumentElementNode childNode : children) {
+			final PluginObjectNode node = (PluginObjectNode) childNode;
 			if (node.getName().equals(P_EXPORTED))
 				return true;
 		}
@@ -59,10 +59,10 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	@Override
 	public boolean isFullyExported() {
 		IDocumentElementNode[] children = getChildNodes();
-		for (int i = 0; i < children.length; i++) {
-			PluginObjectNode node = (PluginObjectNode) children[i];
+		for (final IDocumentElementNode childNode : children) {
+			final PluginObjectNode node = (PluginObjectNode) childNode;
 			if (node.getName().equals(P_EXPORTED)) {
-				String name = children[i].getXMLAttributeValue(P_NAME);
+				final String name = childNode.getXMLAttributeValue(P_NAME);
 				if (name != null && name.equals("*")) //$NON-NLS-1$
 					return true;
 			}
@@ -103,9 +103,9 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		if (!filter.endsWith(".*")) //$NON-NLS-1$
 			filter += ".*"; //$NON-NLS-1$
 		IDocumentElementNode[] children = getChildNodes();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].getXMLTagName().equals(P_EXPORTED) && filter.equals(children[i].getXMLAttributeValue(P_NAME))) {
-				removeContentFilter((PluginElementNode) children[i]);
+		for (final IDocumentElementNode childNode : children) {
+			if (childNode.getXMLTagName().equals(P_EXPORTED) && filter.equals(childNode.getXMLAttributeValue(P_NAME))) {
+				removeContentFilter((PluginElementNode) childNode);
 			}
 		}
 	}
@@ -167,9 +167,9 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		IDocumentElementNode[] children = getChildNodes();
 		if (children.length > 0) {
 			buffer.append(writeShallow(false) + sep);
-			for (int i = 0; i < children.length; i++) {
-				children[i].setLineIndent(getLineIndent() + 3);
-				buffer.append(children[i].write(true) + sep);
+			for (final IDocumentElementNode childNode : children) {
+				childNode.setLineIndent(getLineIndent() + 3);
+				buffer.append(childNode.write(true) + sep);
 			}
 			buffer.append(getIndent() + "</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
@@ -183,8 +183,8 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		StringBuffer buffer = new StringBuffer("<" + getXMLTagName()); //$NON-NLS-1$
 
 		IDocumentAttributeNode[] attrs = getNodeAttributes();
-		for (int i = 0; i < attrs.length; i++) {
-			appendAttribute(buffer, attrs[i].getAttributeName());
+		for (final IDocumentAttributeNode attrNode : attrs) {
+			appendAttribute(buffer, attrNode.getAttributeName());
 		}
 		if (terminate)
 			buffer.append("/"); //$NON-NLS-1$

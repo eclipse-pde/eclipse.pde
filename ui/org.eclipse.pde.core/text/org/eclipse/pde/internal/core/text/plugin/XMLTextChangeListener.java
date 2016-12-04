@@ -54,8 +54,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		}
 		TextEdit[] children = parent.getChildren();
 		// First dive down to find the right parent.
-		for (int i = 0; i < children.length; i++) {
-			TextEdit child = children[i];
+		for (TextEdit child : children) {
 			if (covers(child, edit)) {
 				insert(child, edit);
 				return;

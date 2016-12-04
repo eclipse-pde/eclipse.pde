@@ -155,9 +155,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Print child elements
 		if (hasChildren) {
 			IDocumentElementNode[] children = getChildNodes();
-			for (int i = 0; i < children.length; i++) {
-				children[i].setLineIndent(getLineIndent() + 3);
-				buffer.append(getLineDelimiter() + children[i].write(true));
+			for (IDocumentElementNode childNode : children) {
+				childNode.setLineIndent(getLineIndent() + 3);
+				buffer.append(getLineDelimiter() + childNode.write(true));
 			}
 		}
 		// Print text content
@@ -194,10 +194,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		StringBuffer buffer = new StringBuffer();
 		IDocumentAttributeNode[] attributes = getNodeAttributes();
 		// Write all attributes
-		for (int i = 0; i < attributes.length; i++) {
-			IDocumentAttributeNode attribute = attributes[i];
-			if (isDefined(attribute) && !attribute.getAttributeName().startsWith("xmlns:")) { //$NON-NLS-1$
-				buffer.append(getAttributeIndent() + attribute.write());
+		for (IDocumentAttributeNode attrNode : attributes) {
+			if (isDefined(attrNode) && !attrNode.getAttributeName().startsWith("xmlns:")) { //$NON-NLS-1$
+				buffer.append(getAttributeIndent() + attrNode.write());
 			}
 		}
 		return buffer.toString();
@@ -646,9 +645,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Returns the number of attributes with defined values
 		int count = 0;
 		IDocumentAttributeNode[] attributes = getNodeAttributes();
-		for (int i = 0; i < attributes.length; i++) {
-			IDocumentAttributeNode attribute = attributes[i];
-			if (isDefined(attribute)) {
+		for (IDocumentAttributeNode attrNode : attributes) {
+			if (isDefined(attrNode)) {
 				count++;
 			}
 		}

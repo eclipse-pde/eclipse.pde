@@ -293,9 +293,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 		// remove all attributes from previous element, if any.
 		if (fReconciling) {
 			IDocumentAttributeNode[] attrs = node.getNodeAttributes();
-			for (int i = 0; i < attrs.length; i++) {
-				if (attrs[i].getNameOffset() == -1)
-					node.removeDocumentAttribute(attrs[i]);
+			for (IDocumentAttributeNode attrNode : attrs) {
+				if (attrNode.getNameOffset() == -1)
+					node.removeDocumentAttribute(attrNode);
 			}
 		}
 	}
@@ -305,9 +305,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 		// remove all excess children elements, if any.
 		if (fReconciling) {
 			IDocumentElementNode[] children = node.getChildNodes();
-			for (int i = 0; i < children.length; i++) {
-				if (children[i].getOffset() == -1) {
-					node.removeChildNode(children[i]);
+			for (IDocumentElementNode elementNode : children) {
+				if (elementNode.getOffset() == -1) {
+					node.removeChildNode(elementNode);
 				}
 			}
 		}

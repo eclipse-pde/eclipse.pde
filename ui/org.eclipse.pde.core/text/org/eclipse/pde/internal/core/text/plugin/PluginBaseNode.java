@@ -45,9 +45,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 
 	public void add(IPluginImport[] pluginImports) {
 		IDocumentElementNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
-		for (int i = 0; i < pluginImports.length; i++) {
-			if (pluginImports[i] != null && pluginImports[i] instanceof PluginImportNode) {
-				PluginImportNode node = (PluginImportNode) pluginImports[i];
+		for (IPluginImport pluginImport : pluginImports) {
+			if (pluginImport != null && pluginImport instanceof PluginImportNode) {
+				PluginImportNode node = (PluginImportNode) pluginImport;
 				parent.addChildNode(node);
 			}
 		}
@@ -67,9 +67,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	public void remove(IPluginImport[] pluginImports) {
 		IDocumentElementNode parent = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (parent != null) {
-			for (int i = 0; i < pluginImports.length; i++) {
-				parent.removeChildNode((IDocumentElementNode) pluginImports[i]);
-				pluginImports[i].setInTheModel(false);
+			for (IPluginImport pluginImport : pluginImports) {
+				parent.removeChildNode((IDocumentElementNode) pluginImport);
+				pluginImport.setInTheModel(false);
 			}
 			fireStructureChanged(pluginImports, IModelChangedEvent.REMOVE);
 		}
@@ -81,9 +81,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		IDocumentElementNode requiresNode = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (requiresNode != null) {
 			IDocumentElementNode[] children = requiresNode.getChildNodes();
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof IPluginLibrary)
-					result.add(children[i]);
+			for (IDocumentElementNode childNode : children) {
+				if (childNode instanceof IPluginLibrary)
+					result.add(childNode);
 			}
 		}
 
@@ -93,10 +93,10 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	private IDocumentElementNode getEnclosingElement(String elementName, boolean create) {
 		PluginElementNode element = null;
 		IDocumentElementNode[] children = getChildNodes();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof IPluginElement) {
-				if (((PluginElementNode) children[i]).getXMLTagName().equals(elementName)) {
-					element = (PluginElementNode) children[i];
+		for (IDocumentElementNode childNode : children) {
+			if (childNode instanceof IPluginElement) {
+				if (((PluginElementNode) childNode).getXMLTagName().equals(elementName)) {
+					element = (PluginElementNode) childNode;
 					break;
 				}
 			}
@@ -126,9 +126,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		IDocumentElementNode requiresNode = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (requiresNode != null) {
 			IDocumentElementNode[] children = requiresNode.getChildNodes();
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof IPluginImport)
-					result.add(children[i]);
+			for (IDocumentElementNode childNode : children) {
+				if (childNode instanceof IPluginImport)
+					result.add(childNode);
 			}
 		}
 
@@ -242,9 +242,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	public IPluginExtensionPoint[] getExtensionPoints() {
 		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode[] children = getChildNodes();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof IPluginExtensionPoint)
-				result.add(children[i]);
+		for (IDocumentElementNode childNode : children) {
+			if (childNode instanceof IPluginExtensionPoint)
+				result.add(childNode);
 		}
 		return result.toArray(new IPluginExtensionPoint[result.size()]);
 	}
@@ -253,9 +253,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	public IPluginExtension[] getExtensions() {
 		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode[] children = getChildNodes();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof IPluginExtension)
-				result.add(children[i]);
+		for (IDocumentElementNode childNode : children) {
+			if (childNode instanceof IPluginExtension)
+				result.add(childNode);
 		}
 		return result.toArray(new IPluginExtension[result.size()]);
 	}
@@ -354,17 +354,17 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		}
 
 		IPluginExtensionPoint[] extPoints = getExtensionPoints();
-		for (int i = 0; i < extPoints.length; i++) {
-			IDocumentElementNode extPoint = (IDocumentElementNode) extPoints[i];
-			extPoint.setLineIndent(getLineIndent() + 3);
-			buffer.append(extPoint.write(true) + newLine);
+		for (IPluginExtensionPoint extPoint : extPoints) {
+			IDocumentElementNode extPointNode = (IDocumentElementNode) extPoint;
+			extPointNode.setLineIndent(getLineIndent() + 3);
+			buffer.append(extPointNode.write(true) + newLine);
 		}
 
 		IPluginExtension[] extensions = getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IDocumentElementNode extension = (IDocumentElementNode) extensions[i];
-			extension.setLineIndent(getLineIndent() + 3);
-			buffer.append(extension.write(true) + newLine);
+		for (IPluginExtension extension : extensions) {
+			IDocumentElementNode extensionNode = (IDocumentElementNode) extension;
+			extensionNode.setLineIndent(getLineIndent() + 3);
+			buffer.append(extensionNode.write(true) + newLine);
 		}
 
 		buffer.append("</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -396,8 +396,8 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		}
 
 		String[] specific = getSpecificAttributes();
-		for (int i = 0; i < specific.length; i++)
-			buffer.append(newLine + specific[i]);
+		for (String element : specific)
+			buffer.append(newLine + element);
 		if (terminate)
 			buffer.append("/"); //$NON-NLS-1$
 		buffer.append(">"); //$NON-NLS-1$

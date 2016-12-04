@@ -342,8 +342,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		Iterator<?> iterator = children.iterator();
 		while (iterator.hasNext()) {
 			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
-			for (int i = 0; i < classes.length; i++) {
-				Class<?> clazz = classes[i];
+			for (Class<?> clazz : classes) {
 				if (clazz.isInstance(node) == match) {
 					filteredChildren.add(node);
 					break;

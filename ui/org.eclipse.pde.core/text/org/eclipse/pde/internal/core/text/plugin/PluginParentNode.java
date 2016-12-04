@@ -55,8 +55,8 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 	public IPluginObject[] getChildren() {
 		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode[] nodes = getChildNodes();
-		for (int i = 0; i < nodes.length; i++)
-			result.add(nodes[i]);
+		for (IDocumentElementNode childNode : nodes)
+			result.add(childNode);
 
 		return result.toArray(new IPluginObject[result.size()]);
 	}

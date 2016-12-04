@@ -74,9 +74,9 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 			buffer.append(getIndent());
 		buffer.append(writeShallow(false));
 		IDocumentElementNode[] children = getChildNodes();
-		for (int i = 0; i < children.length; i++) {
-			children[i].setLineIndent(getLineIndent() + 3);
-			buffer.append(sep + children[i].write(true));
+		for (IDocumentElementNode childNode : children) {
+			childNode.setLineIndent(getLineIndent() + 3);
+			buffer.append(sep + childNode.write(true));
 		}
 		buffer.append(sep + getIndent() + "</extension>"); //$NON-NLS-1$
 		return buffer.toString();

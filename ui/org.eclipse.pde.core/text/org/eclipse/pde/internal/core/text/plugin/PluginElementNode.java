@@ -93,9 +93,9 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 				buffer.append(text);
 				buffer.append(sep);
 			}
-			for (int i = 0; i < children.length; i++) {
-				children[i].setLineIndent(getLineIndent() + 3);
-				buffer.append(children[i].write(true));
+			for (IDocumentElementNode childNode : children) {
+				childNode.setLineIndent(getLineIndent() + 3);
+				buffer.append(childNode.write(true));
 				buffer.append(sep);
 			}
 		}
@@ -112,9 +112,9 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 		StringBuffer buffer = new StringBuffer("<" + getXMLTagName()); //$NON-NLS-1$
 
 		IDocumentAttributeNode[] attrs = getNodeAttributes();
-		for (int i = 0; i < attrs.length; i++) {
-			if (attrs[i].getAttributeValue().length() > 0)
-				buffer.append(sep + getIndent() + "      " + attrs[i].write()); //$NON-NLS-1$
+		for (IDocumentAttributeNode attrNode : attrs) {
+			if (attrNode.getAttributeValue().length() > 0)
+				buffer.append(sep + getIndent() + "      " + attrNode.write()); //$NON-NLS-1$
 		}
 		if (terminate)
 			buffer.append("/"); //$NON-NLS-1$

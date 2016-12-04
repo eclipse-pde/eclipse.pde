@@ -80,10 +80,10 @@ public class PluginDocumentHandler extends DocumentHandler {
 			}
 		} else {
 			IDocumentElementNode[] children = parent.getChildNodes();
-			for (int i = 0; i < children.length; i++) {
-				if (children[i].getOffset() < 0) {
-					if (name.equals(children[i].getXMLTagName())) {
-						node = children[i];
+			for (IDocumentElementNode childNode : children) {
+				if (childNode.getOffset() < 0) {
+					if (name.equals(childNode.getXMLTagName())) {
+						node = childNode;
 					}
 					break;
 				}
@@ -94,11 +94,11 @@ public class PluginDocumentHandler extends DocumentHandler {
 			return fFactory.createDocumentNode(name, parent);
 
 		IDocumentAttributeNode[] attrs = node.getNodeAttributes();
-		for (int i = 0; i < attrs.length; i++) {
-			attrs[i].setNameOffset(-1);
-			attrs[i].setNameLength(-1);
-			attrs[i].setValueOffset(-1);
-			attrs[i].setValueLength(-1);
+		for (IDocumentAttributeNode attrNode : attrs) {
+			attrNode.setNameOffset(-1);
+			attrNode.setNameLength(-1);
+			attrNode.setValueOffset(-1);
+			attrNode.setValueLength(-1);
 		}
 
 		for (int i = 0; i < node.getChildNodes().length; i++) {
