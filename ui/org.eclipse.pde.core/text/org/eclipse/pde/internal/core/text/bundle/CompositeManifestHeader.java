@@ -48,8 +48,8 @@ public class CompositeManifestHeader extends ManifestHeader {
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(fName, value);
 			if (elements != null) {
-				for (int i = 0; i < elements.length; i++) {
-					addManifestElement(createElement(elements[i]), false);
+				for (ManifestElement element : elements) {
+					addManifestElement(createElement(element), false);
 				}
 			}
 		} catch (BundleException e) {
@@ -70,13 +70,13 @@ public class CompositeManifestHeader extends ManifestHeader {
 	public void update(boolean notify) {
 		StringBuffer sb = new StringBuffer();
 		PDEManifestElement[] elements = getElements();
-		for (int i = 0; i < elements.length; i++) {
+		for (PDEManifestElement element : elements) {
 			if (sb.length() > 0) {
 				sb.append(","); //$NON-NLS-1$
 				sb.append(fLineDelimiter);
 				sb.append(" "); //$NON-NLS-1$
 			}
-			sb.append(elements[i].write());
+			sb.append(element.write());
 		}
 		String old = fValue;
 		fValue = sb.toString();
@@ -102,8 +102,8 @@ public class CompositeManifestHeader extends ManifestHeader {
 	}
 
 	protected void addManifestElements(PDEManifestElement[] elements) {
-		for (int i = 0; i < elements.length; i++)
-			addManifestElement(elements[i], false);
+		for (PDEManifestElement element : elements)
+			addManifestElement(element, false);
 		update(false);
 		fireStructureChanged(elements, IModelChangedEvent.INSERT);
 	}
@@ -182,8 +182,8 @@ public class CompositeManifestHeader extends ManifestHeader {
 	public Vector<String> getElementNames() {
 		PDEManifestElement[] elements = getElements();
 		Vector<String> vector = new Vector<>(elements.length);
-		for (int i = 0; i < elements.length; i++) {
-			vector.add(elements[i].getValue());
+		for (PDEManifestElement element : elements) {
+			vector.add(element.getValue());
 		}
 		return vector;
 	}

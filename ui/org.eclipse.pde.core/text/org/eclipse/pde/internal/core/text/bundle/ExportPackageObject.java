@@ -47,8 +47,8 @@ public class ExportPackageObject extends PackageObject {
 	protected void processFriends() {
 		String[] friends = getDirectives(ICoreConstants.FRIENDS_DIRECTIVE);
 		if (friends != null) {
-			for (int i = 0; i < friends.length; i++) {
-				fFriends.put(friends[i], new PackageFriend(this, friends[i]));
+			for (String friend : friends) {
+				fFriends.put(friend, new PackageFriend(this, friend));
 			}
 		}
 	}

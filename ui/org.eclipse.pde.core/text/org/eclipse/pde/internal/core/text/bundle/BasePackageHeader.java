@@ -60,17 +60,16 @@ public abstract class BasePackageHeader extends CompositeManifestHeader {
 	protected void processValue(String value) {
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(fName, value);
-			for (int i = 0; i < elements.length; i++) {
-				if (elements[i].getValueComponents().length > 1) {
+			for (ManifestElement element : elements) {
+				if (element.getValueComponents().length > 1) {
 					// if package element has multiple value components, create a new Element to represent each value (bug 160233)
-					String[] values = elements[i].getValueComponents();
-					for (int j = 0; j < values.length; j++) {
-						PDEManifestElement elem = createElement(elements[i]);
-						elem.setValueComponents(new String[] {values[j]});
+					for (String valueComponent : element.getValueComponents()) {
+						PDEManifestElement elem = createElement(element);
+						elem.setValueComponents(new String[] {valueComponent});
 						addManifestElement(elem, false);
 					}
 				} else {
-					addManifestElement(createElement(elements[i]), false);
+					addManifestElement(createElement(element), false);
 				}
 			}
 		} catch (BundleException e) {

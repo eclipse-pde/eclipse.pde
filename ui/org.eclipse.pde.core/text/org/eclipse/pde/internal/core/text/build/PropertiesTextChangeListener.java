@@ -30,8 +30,7 @@ public class PropertiesTextChangeListener extends AbstractKeyValueTextChangeList
 	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			Object object = objects[i];
+		for (Object object : objects) {
 			IDocumentKey key = (IDocumentKey) object;
 			Object op = fOperationTable.remove(key);
 			if (fReadableNames != null)

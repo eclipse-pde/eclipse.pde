@@ -46,8 +46,8 @@ public class RequireBundleObject extends PDEManifestElement {
 		String[] values = ManifestElement.getArrayFromList(version);
 		// If there are values, add them
 		if ((values != null) && (values.length > 0)) {
-			for (int i = 0; i < values.length; i++) {
-				addAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, values[i]);
+			for (String value : values) {
+				addAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, value);
 			}
 		}
 		fHeader.update();

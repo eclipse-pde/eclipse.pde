@@ -67,8 +67,8 @@ public class ConvertSchemaToHTML extends Task {
 		List<IPath> searchPaths = getSearchPaths();
 
 		IPluginExtensionPoint[] extPoints = model.getPluginBase().getExtensionPoints();
-		for (int i = 0; i < extPoints.length; i++) {
-			String schemaLocation = extPoints[i].getSchema();
+		for (IPluginExtensionPoint extPoint : extPoints) {
+			String schemaLocation = extPoint.getSchema();
 			PrintWriter out = null;
 
 			if (schemaLocation == null || schemaLocation.equals("")) //$NON-NLS-1$
@@ -81,14 +81,14 @@ public class ConvertSchemaToHTML extends Task {
 				XMLDefaultHandler handler = new XMLDefaultHandler();
 				parser.parse(schemaFile, handler);
 				URL url = schemaFile.toURL();
-				SchemaDescriptor desc = new SchemaDescriptor(extPoints[i].getFullId(), url, searchPaths);
+				SchemaDescriptor desc = new SchemaDescriptor(extPoint.getFullId(), url, searchPaths);
 				schema = (Schema) desc.getSchema(false);
 
 				// Check that all included schemas are available
 				ISchemaInclude[] includes = schema.getIncludes();
-				for (int j = 0; j < includes.length; j++) {
-					if (includes[j].getIncludedSchema() == null) {
-						log(NLS.bind(PDECoreMessages.ConvertSchemaToHTML_CannotFindIncludedSchema, includes[j].getLocation(), schemaFile), Project.MSG_ERR);
+				for (ISchemaInclude include : includes) {
+					if (include.getIncludedSchema() == null) {
+						log(NLS.bind(PDECoreMessages.ConvertSchemaToHTML_CannotFindIncludedSchema, include.getLocation(), schemaFile), Project.MSG_ERR);
 					}
 				}
 
@@ -99,7 +99,7 @@ public class ConvertSchemaToHTML extends Task {
 						return;
 					}
 
-				String id = extPoints[i].getId();
+				String id = extPoint.getId();
 				if (id.indexOf('.') == -1)
 					id = pluginID + "." + id; //$NON-NLS-1$
 				File file = new File(directory, id.replace('.', '_') + ".html"); //$NON-NLS-1$
@@ -212,16 +212,16 @@ public class ConvertSchemaToHTML extends Task {
 		}
 		String[] paths = this.additionalSearchPaths.split(","); //$NON-NLS-1$
 		List<IPath> result = new ArrayList<>(paths.length);
-		for (int i = 0; i < paths.length; i++) {
-			IPath path = new Path(paths[i]);
-			if (path.isValidPath(paths[i])) {
+		for (String pathString : paths) {
+			IPath path = new Path(pathString);
+			if (path.isValidPath(pathString)) {
 				if (!path.isAbsolute()) {
 					File baseDir = getProject().getBaseDir();
 					path = new Path(baseDir.getPath()).append(path);
 				}
 				result.add(path);
 			} else {
-				System.out.println(NLS.bind(PDECoreMessages.ConvertSchemaToHTML_InvalidAdditionalSearchPath, paths[i]));
+				System.out.println(NLS.bind(PDECoreMessages.ConvertSchemaToHTML_InvalidAdditionalSearchPath, pathString));
 			}
 		}
 		return result;
