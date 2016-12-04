@@ -93,13 +93,13 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 		String[] libraries = state.getLibraryNames(id);
 		if (libraries.length > 0) {
 			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < libraries.length; i++) {
+			for (String library : libraries) {
 				if (buffer.length() > 0) {
 					buffer.append(","); //$NON-NLS-1$
 					buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
 					buffer.append(" "); //$NON-NLS-1$
 				}
-				buffer.append(libraries[i]);
+				buffer.append(library);
 			}
 			properties.put(Constants.BUNDLE_CLASSPATH, buffer.toString());
 		}

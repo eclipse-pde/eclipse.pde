@@ -294,8 +294,7 @@ public class PluginRegistry {
 	public static IPluginModelBase[] findModels(String id, String version, int match, PluginFilter filter) {
 		IPluginModelBase[] models = PluginRegistry.getAllModels();
 		List<IPluginModelBase> results = new ArrayList<>();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+		for (IPluginModelBase model : models) {
 			if ((filter == null || filter.accept(model)) && isMatch(model.getPluginBase(), id, version, match))
 				results.add(model);
 		}
@@ -344,8 +343,7 @@ public class PluginRegistry {
 		}
 		IPluginModelBase max = null;
 		Version maxV = null;
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+		for (IPluginModelBase model : models) {
 			String versionStr = model.getPluginBase().getVersion();
 			Version version = VersionUtil.validateVersion(versionStr).isOK() ? new Version(versionStr) : Version.emptyVersion;
 			if (max == null) {
@@ -381,8 +379,7 @@ public class PluginRegistry {
 	public static IPluginModelBase[] findModels(String id, VersionRange range, PluginFilter filter) {
 		IPluginModelBase[] models = PluginRegistry.getAllModels();
 		List<IPluginModelBase> results = new ArrayList<>();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+		for (IPluginModelBase model : models) {
 			if ((filter == null || filter.accept(model)) && id.equals(model.getPluginBase().getId())) {
 				String versionStr = model.getPluginBase().getVersion();
 				Version version = VersionUtil.validateVersion(versionStr).isOK() ? new Version(versionStr) : Version.emptyVersion;

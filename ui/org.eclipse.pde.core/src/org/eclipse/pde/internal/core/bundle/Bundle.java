@@ -97,10 +97,9 @@ public class Bundle extends BundleObject implements IBundle {
 	 */
 	protected Map<String, String> getHeaders() {
 		Map<String, String> result = new HashMap<>(fDocumentHeaders.values().size());
-		for (Iterator<IManifestHeader> iterator = fDocumentHeaders.values().iterator(); iterator.hasNext();) {
-			IManifestHeader currentHeader = iterator.next();
-			if (currentHeader.getValue() != null) {
-				result.put(currentHeader.getKey(), currentHeader.getValue());
+		for (IManifestHeader header : fDocumentHeaders.values()) {
+			if (header.getValue() != null) {
+				result.put(header.getKey(), header.getValue());
 			}
 		}
 		return result;

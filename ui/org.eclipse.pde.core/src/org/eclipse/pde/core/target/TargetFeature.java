@@ -99,14 +99,14 @@ public class TargetFeature {
 		List<NameVersionDescriptor> result = new ArrayList<>();
 		IFeature feature = featureModel.getFeature();
 		IFeatureImport[] featureImports = feature.getImports();
-		for (int i = 0; i < featureImports.length; i++) {
-			if (featureImports[i].getType() == IFeatureImport.FEATURE) {
-				result.add(new NameVersionDescriptor(featureImports[i].getId(), null, NameVersionDescriptor.TYPE_FEATURE));
+		for (IFeatureImport featureImport : featureImports) {
+			if (featureImport.getType() == IFeatureImport.FEATURE) {
+				result.add(new NameVersionDescriptor(featureImport.getId(), null, NameVersionDescriptor.TYPE_FEATURE));
 			}
 		}
 		IFeatureChild[] featureIncludes = feature.getIncludedFeatures();
-		for (int i = 0; i < featureIncludes.length; i++) {
-			result.add(new NameVersionDescriptor(featureIncludes[i].getId(), null, NameVersionDescriptor.TYPE_FEATURE));
+		for (IFeatureChild featureInclude : featureIncludes) {
+			result.add(new NameVersionDescriptor(featureInclude.getId(), null, NameVersionDescriptor.TYPE_FEATURE));
 		}
 		return result.toArray(new NameVersionDescriptor[result.size()]);
 	}

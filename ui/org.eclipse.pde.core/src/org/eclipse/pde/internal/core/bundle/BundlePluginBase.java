@@ -205,9 +205,9 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 			if (imports == null)
 				// if imports == null, initialize the imports list by calling getImports()
 				getImports();
-			for (int i = 0; i < iimports.length; i++) {
-				if (iimports[i] != null)
-					addImport(iimports[i]);
+			for (IPluginImport pluginImport : iimports) {
+				if (pluginImport != null)
+					addImport(pluginImport);
 			}
 			fireStructureChanged(iimports, true);
 		}
@@ -258,11 +258,11 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	public void remove(IPluginImport[] pluginImports) throws CoreException {
 		ensureModelEditable();
 		if (imports != null) {
-			for (int i = 0; i < pluginImports.length; i++) {
-				imports.remove(pluginImports[i]);
+			for (IPluginImport pluginImport : pluginImports) {
+				imports.remove(pluginImport);
 				Object header = getManifestHeader(Constants.REQUIRE_BUNDLE);
 				if (header instanceof RequireBundleHeader) {
-					((RequireBundleHeader) header).removeBundle(pluginImports[i].getId());
+					((RequireBundleHeader) header).removeBundle(pluginImport.getId());
 				}
 			}
 			fireStructureChanged(pluginImports, false);
@@ -280,12 +280,12 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 			if (value != null) {
 				try {
 					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
-					for (int i = 0; i < elements.length; i++) {
+					for (ManifestElement element : elements) {
 						PluginLibrary library = new PluginLibrary();
 						library.setModel(getModel());
 						library.setInTheModel(true);
 						library.setParent(this);
-						library.load(elements[i].getValue());
+						library.load(element.getValue());
 						libraries.add(library);
 					}
 				} catch (BundleException e) {
@@ -302,22 +302,22 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 			BundleDescription description = model.getBundleDescription();
 			if (description != null) {
 				BundleSpecification[] required = description.getRequiredBundles();
-				for (int i = 0; i < required.length; i++) {
+				for (BundleSpecification element : required) {
 					PluginImport importElement = new PluginImport();
 					importElement.setModel(getModel());
 					importElement.setInTheModel(true);
 					importElement.setParent(this);
 					imports.add(importElement);
-					importElement.load(required[i]);
+					importElement.load(element);
 				}
 				BundleDescription[] imported = PluginBase.getImportedBundles(description);
-				for (int i = 0; i < imported.length; i++) {
+				for (BundleDescription element : imported) {
 					PluginImport importElement = new PluginImport();
 					importElement.setModel(getModel());
 					importElement.setInTheModel(true);
 					importElement.setParent(this);
 					imports.add(importElement);
-					importElement.load(imported[i]);
+					importElement.load(element);
 				}
 			} else {
 				IBundle bundle = getBundle();
@@ -327,13 +327,13 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 						int bundleManifestVersion = getBundleManifestVersion(bundle);
 						if (value != null) {
 							ManifestElement[] elements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, value);
-							for (int i = 0; i < elements.length; i++) {
+							for (ManifestElement element : elements) {
 								PluginImport importElement = new PluginImport();
 								importElement.setModel(getModel());
 								importElement.setInTheModel(true);
 								importElement.setParent(this);
 								imports.add(importElement);
-								importElement.load(elements[i], bundleManifestVersion);
+								importElement.load(element, bundleManifestVersion);
 							}
 						}
 					} catch (BundleException e) {

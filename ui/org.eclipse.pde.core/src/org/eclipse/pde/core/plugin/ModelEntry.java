@@ -96,33 +96,33 @@ public class ModelEntry extends PlatformObject {
 	}
 
 	private IPluginModelBase getBestCandidate(IPluginModelBase[] models) {
-		IPluginModelBase model = null;
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].getBundleDescription() == null)
+		IPluginModelBase result = null;
+		for (IPluginModelBase model : models) {
+			if (model.getBundleDescription() == null)
 				continue;
 
-			if (model == null) {
-				model = models[i];
-				continue;
-			}
-
-			if (!model.isEnabled() && models[i].isEnabled()) {
-				model = models[i];
+			if (result == null) {
+				result = model;
 				continue;
 			}
 
-			BundleDescription current = model.getBundleDescription();
-			BundleDescription candidate = models[i].getBundleDescription();
+			if (!result.isEnabled() && model.isEnabled()) {
+				result = model;
+				continue;
+			}
+
+			BundleDescription current = result.getBundleDescription();
+			BundleDescription candidate = model.getBundleDescription();
 			if (!current.isResolved() && candidate.isResolved()) {
-				model = models[i];
+				result = model;
 				continue;
 			}
 
 			if (current.getVersion().compareTo(candidate.getVersion()) < 0) {
-				model = models[i];
+				result = model;
 			}
 		}
-		return model;
+		return result;
 	}
 
 	/**

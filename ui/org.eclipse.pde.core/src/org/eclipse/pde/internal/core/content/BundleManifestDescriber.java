@@ -91,10 +91,10 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 	}
 
 	private boolean matches(String line) {
-		for (int i = 0; i < HEADERS.length; i++) {
-			int length = HEADERS[i].length();
+		for (String header : HEADERS) {
+			int length = header.length();
 			if (line.length() >= length)
-				if (line.substring(0, length).equalsIgnoreCase(HEADERS[i]))
+				if (line.substring(0, length).equalsIgnoreCase(header))
 					return true;
 		}
 		return false;

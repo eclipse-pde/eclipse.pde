@@ -196,10 +196,9 @@ public class TargetBundle {
 				try {
 					ManifestElement[] manifestElements = ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE));
 					if (manifestElements != null) {
-						for (int j = 0; j < manifestElements.length; j++) {
-							ManifestElement currentElement = manifestElements[j];
-							String binaryPluginName = currentElement.getValue();
-							String versionEntry = currentElement.getAttribute(Constants.VERSION_ATTRIBUTE);
+						for (ManifestElement element : manifestElements) {
+							String binaryPluginName = element.getValue();
+							String versionEntry = element.getAttribute(Constants.VERSION_ATTRIBUTE);
 							// Currently the version attribute is required
 							if (binaryPluginName != null && binaryPluginName.length() > 0 && versionEntry != null && versionEntry.length() > 0) {
 								return new BundleInfo(binaryPluginName, versionEntry, null, BundleInfo.NO_LEVEL, false);
@@ -239,8 +238,7 @@ public class TargetBundle {
 				try {
 					registry.addContribution(new BufferedInputStream(new FileInputStream(pxml)), contributor, false, null, null, this);
 					IExtension[] extensions = registry.getExtensions(contributor);
-					for (int i = 0; i < extensions.length; i++) {
-						IExtension extension = extensions[i];
+					for (IExtension extension : extensions) {
 						if (ICoreConstants.EXTENSION_POINT_SOURCE.equals(extension.getExtensionPointUniqueIdentifier())) {
 							IConfigurationElement[] elements = extension.getConfigurationElements();
 							if (elements.length == 1) {
