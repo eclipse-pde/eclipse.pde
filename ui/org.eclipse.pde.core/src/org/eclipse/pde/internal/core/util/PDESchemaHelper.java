@@ -42,8 +42,7 @@ public class PDESchemaHelper {
 		ISchemaRestriction restriction = attribute.getType().getRestriction();
 		if (restriction != null) {
 			Object[] children = restriction.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				Object child = children[i];
+			for (Object child : children) {
 				if (child instanceof ISchemaEnumeration) {
 					ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
 					String value = enumeration.getName();
@@ -81,17 +80,17 @@ public class PDESchemaHelper {
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(path[0], true);
 
 		List<IConfigurationElement> members = new ArrayList<>();
-		for (int i = 0; i < extensions.length; i++) {
+		for (IExtension extension : extensions) {
 			// handle the core style identifier case
 			if (path.length == 2) {
-				attributesInfo.put(extensions[i].getUniqueIdentifier(), null);
+				attributesInfo.put(extension.getUniqueIdentifier(), null);
 				continue;
 			}
 
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				if (elements[j].getName().equals(path[1])) {
-					members.add(elements[j]);
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (IConfigurationElement element : elements) {
+				if (element.getName().equals(path[1])) {
+					members.add(element);
 				}
 			}
 		}
@@ -99,8 +98,7 @@ public class PDESchemaHelper {
 		for (int i = 2; i < path.length; i++) {
 			if (path[i].startsWith("@")) { //$NON-NLS-1$
 				String attName = path[i].substring(1);
-				for (Iterator<IConfigurationElement> iterator = parents.iterator(); iterator.hasNext();) {
-					IConfigurationElement element = iterator.next();
+				for (IConfigurationElement element : parents) {
 					String value = element.getAttribute(attName);
 					if (value != null) {
 						// see bug 248248 for why we have this contentTypes check
@@ -114,8 +112,7 @@ public class PDESchemaHelper {
 				return;
 			}
 			members = new ArrayList<>();
-			for (Iterator<IConfigurationElement> iterator = parents.iterator(); iterator.hasNext();) {
-				IConfigurationElement element = iterator.next();
+			for (IConfigurationElement element : parents) {
 				members.addAll(keepGoing(element, path[i]));
 			}
 			parents = members;
@@ -128,14 +125,14 @@ public class PDESchemaHelper {
 
 	private static String buildBasedOnValue(ISchemaObject object) {
 		if (object instanceof ISchemaElement && !(object instanceof ISchemaRootElement)) {
-			ISchemaElement element = (ISchemaElement) object;
-			ISchema schema = element.getSchema();
+			ISchemaElement schemaElement = (ISchemaElement) object;
+			ISchema schema = schemaElement.getSchema();
 			ISchemaElement[] elements = schema.getElements();
-			for (int i = 0; i < elements.length; i++) {
-				ISchemaElement[] children = schema.getCandidateChildren(elements[i]);
-				for (int j = 0; j < children.length; j++) {
-					if (object.getName().equals(children[j].getName())) {
-						return buildBasedOnValue(elements[i]) + '/' + object.getName();
+			for (ISchemaElement element : elements) {
+				ISchemaElement[] children = schema.getCandidateChildren(element);
+				for (ISchemaElement childElement : children) {
+					if (object.getName().equals(childElement.getName())) {
+						return buildBasedOnValue(element) + '/' + object.getName();
 					}
 				}
 			}

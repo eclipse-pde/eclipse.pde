@@ -119,10 +119,9 @@ public class Site extends SiteObject implements ISite {
 	@Override
 	public void addFeatures(ISiteFeature[] newFeatures) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newFeatures.length; i++) {
-			ISiteFeature feature = newFeatures[i];
+		for (ISiteFeature feature : newFeatures) {
 			((SiteFeature) feature).setInTheModel(true);
-			features.add(newFeatures[i]);
+			features.add(feature);
 		}
 		fireStructureChanged(newFeatures, IModelChangedEvent.INSERT);
 	}
@@ -130,8 +129,7 @@ public class Site extends SiteObject implements ISite {
 	@Override
 	public void addBundles(ISiteBundle[] newBundles) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newBundles.length; i++) {
-			ISiteBundle bundle = newBundles[i];
+		for (ISiteBundle bundle : newBundles) {
 			((SiteBundle) bundle).setInTheModel(true);
 			bundles.add(bundle);
 		}
@@ -141,10 +139,9 @@ public class Site extends SiteObject implements ISite {
 	@Override
 	public void addArchives(ISiteArchive[] archs) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < archs.length; i++) {
-			ISiteArchive archive = archs[i];
+		for (ISiteArchive archive : archs) {
 			((SiteArchive) archive).setInTheModel(true);
-			archives.add(archs[i]);
+			archives.add(archive);
 		}
 		fireStructureChanged(archs, IModelChangedEvent.INSERT);
 	}
@@ -152,10 +149,9 @@ public class Site extends SiteObject implements ISite {
 	@Override
 	public void addCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < defs.length; i++) {
-			ISiteCategoryDefinition def = defs[i];
+		for (ISiteCategoryDefinition def : defs) {
 			((SiteCategoryDefinition) def).setInTheModel(true);
-			categoryDefs.add(defs[i]);
+			categoryDefs.add(def);
 		}
 		fireStructureChanged(defs, IModelChangedEvent.INSERT);
 	}
@@ -163,10 +159,9 @@ public class Site extends SiteObject implements ISite {
 	@Override
 	public void addRepositoryReferences(IRepositoryReference[] repos) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < repos.length; i++) {
-			IRepositoryReference repo = repos[i];
+		for (IRepositoryReference repo : repos) {
 			((RepositoryReference) repo).setInTheModel(true);
-			repositoryReferences.add(repos[i]);
+			repositoryReferences.add(repo);
 		}
 		fireStructureChanged(repos, IModelChangedEvent.INSERT);
 	}
@@ -174,10 +169,9 @@ public class Site extends SiteObject implements ISite {
 	@Override
 	public void removeFeatures(ISiteFeature[] newFeatures) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newFeatures.length; i++) {
-			ISiteFeature feature = newFeatures[i];
+		for (ISiteFeature feature : newFeatures) {
 			((SiteFeature) feature).setInTheModel(false);
-			features.remove(newFeatures[i]);
+			features.remove(feature);
 		}
 		fireStructureChanged(newFeatures, IModelChangedEvent.REMOVE);
 	}
@@ -185,8 +179,7 @@ public class Site extends SiteObject implements ISite {
 	@Override
 	public void removeBundles(ISiteBundle[] newBundles) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newBundles.length; i++) {
-			ISiteBundle bundle = newBundles[i];
+		for (ISiteBundle bundle : newBundles) {
 			((SiteBundle) bundle).setInTheModel(false);
 			bundles.remove(bundle);
 		}
@@ -196,10 +189,9 @@ public class Site extends SiteObject implements ISite {
 	@Override
 	public void removeArchives(ISiteArchive[] archs) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < archs.length; i++) {
-			ISiteArchive archive = archs[i];
+		for (ISiteArchive archive : archs) {
 			((SiteArchive) archive).setInTheModel(false);
-			archives.remove(archs[i]);
+			archives.remove(archive);
 		}
 		fireStructureChanged(archs, IModelChangedEvent.REMOVE);
 	}
@@ -207,10 +199,9 @@ public class Site extends SiteObject implements ISite {
 	@Override
 	public void removeCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < defs.length; i++) {
-			ISiteCategoryDefinition def = defs[i];
+		for (ISiteCategoryDefinition def : defs) {
 			((SiteCategoryDefinition) def).setInTheModel(false);
-			categoryDefs.remove(defs[i]);
+			categoryDefs.remove(def);
 		}
 		fireStructureChanged(defs, IModelChangedEvent.REMOVE);
 	}
@@ -218,10 +209,9 @@ public class Site extends SiteObject implements ISite {
 	@Override
 	public void removeRepositoryReferences(IRepositoryReference[] repos) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < repos.length; i++) {
-			IRepositoryReference repo = repos[i];
+		for (IRepositoryReference repo : repos) {
 			((RepositoryReference) repo).setInTheModel(false);
-			repositoryReferences.remove(repos[i]);
+			repositoryReferences.remove(repo);
 		}
 		fireStructureChanged(repos, IModelChangedEvent.REMOVE);
 	}

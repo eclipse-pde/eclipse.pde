@@ -11,9 +11,6 @@
 package org.eclipse.pde.internal.core.util;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -64,12 +61,12 @@ public class PDEJavaHelper {
 		State state = desc.getContainingState();
 		StateHelper helper = state.getStateHelper();
 		ExportPackageDescription[] exports = helper.getVisiblePackages(desc);
-		for (int i = 0; i < exports.length; i++) {
-			BundleDescription exporter = exports[i].getExporter();
+		for (ExportPackageDescription export : exports) {
+			BundleDescription exporter = export.getExporter();
 			if (exporter == null)
 				continue;
 
-			if (fullyQualifiedName.equals(exports[i].getName()) && helper.getAccessCode(desc, exports[i]) == StateHelper.ACCESS_DISCOURAGED)
+			if (fullyQualifiedName.equals(export.getName()) && helper.getAccessCode(desc, export) == StateHelper.ACCESS_DISCOURAGED)
 				return true;
 
 		}
@@ -150,8 +147,8 @@ public class PDEJavaHelper {
 		if (jp != null)
 			try {
 				IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
-				for (int i = 0; i < roots.length; i++) {
-					IPackageFragment frag = roots[i].getPackageFragment(packageName);
+				for (IPackageFragmentRoot root : roots) {
+					IPackageFragment frag = root.getPackageFragment(packageName);
 					if (frag.exists()) {
 						return frag;
 					}
@@ -170,9 +167,9 @@ public class PDEJavaHelper {
 			if (plugin == null)
 				return null;
 			ImportPackageSpecification[] packages = plugin.getBundleDescription().getImportPackages();
-			for (int i = 0; i < packages.length; i++)
-				if (packages[i].getName().equals(packageName)) {
-					ExportPackageDescription desc = (ExportPackageDescription) packages[i].getSupplier();
+			for (ImportPackageSpecification spec : packages)
+				if (spec.getName().equals(packageName)) {
+					ExportPackageDescription desc = (ExportPackageDescription) spec.getSupplier();
 					if (desc != null)
 						base = PluginRegistry.findModel(desc.getExporter().getSymbolicName());
 					break;
@@ -185,8 +182,8 @@ public class PDEJavaHelper {
 				if (jp != null)
 					try {
 						IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
-						for (int i = 0; i < roots.length; i++) {
-							IPackageFragment frag = roots[i].getPackageFragment(packageName);
+						for (IPackageFragmentRoot root : roots) {
+							IPackageFragment frag = root.getPackageFragment(packageName);
 							if (frag.exists())
 								return frag;
 						}
@@ -209,10 +206,10 @@ public class PDEJavaHelper {
 				// else model is in folder form, try to find model's libraries on filesystem
 			} else {
 				IPluginLibrary[] libs = base.getPluginBase().getLibraries();
-				for (int i = 0; i < libs.length; i++) {
-					if (IPluginLibrary.RESOURCE.equals(libs[i].getType()))
+				for (IPluginLibrary lib : libs) {
+					if (IPluginLibrary.RESOURCE.equals(lib.getType()))
 						continue;
-					String libName = ClasspathUtilCore.expandLibraryName(libs[i].getName());
+					String libName = ClasspathUtilCore.expandLibraryName(lib.getName());
 					IPackageFragmentRoot root = jp.findPackageFragmentRoot(path.append(libName));
 					if (root != null) {
 						IPackageFragment frag = root.getPackageFragment(packageName);
@@ -233,10 +230,10 @@ public class PDEJavaHelper {
 		if (libs.length == 0) {
 			libPaths.add(path);
 		}
-		for (int i = 0; i < libs.length; i++) {
-			if (IPluginLibrary.RESOURCE.equals(libs[i].getType()))
+		for (IPluginLibrary lib : libs) {
+			if (IPluginLibrary.RESOURCE.equals(lib.getType()))
 				continue;
-			String libName = ClasspathUtilCore.expandLibraryName(libs[i].getName());
+			String libName = ClasspathUtilCore.expandLibraryName(lib.getName());
 			libPaths.add(path.append(libName));
 		}
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
@@ -269,10 +266,10 @@ public class PDEJavaHelper {
 		HashMap<String, IPackageFragment> map = new HashMap<>();
 		try {
 			IPackageFragmentRoot[] roots = getRoots(jProject);
-			for (int i = 0; i < roots.length; i++) {
-				IJavaElement[] children = roots[i].getChildren();
-				for (int j = 0; j < children.length; j++) {
-					IPackageFragment fragment = (IPackageFragment) children[j];
+			for (IPackageFragmentRoot root : roots) {
+				IJavaElement[] children = root.getChildren();
+				for (IJavaElement element : children) {
+					IPackageFragment fragment = (IPackageFragment) element;
 					String name = fragment.getElementName();
 					if (name.length() == 0)
 						name = "."; //$NON-NLS-1$

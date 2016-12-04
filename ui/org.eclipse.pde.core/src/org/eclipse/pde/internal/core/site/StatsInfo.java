@@ -49,10 +49,9 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	@Override
 	public void addFeatureArtifacts(ISiteFeature[] newFeatures) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newFeatures.length; i++) {
-			ISiteFeature feature = newFeatures[i];
+		for (ISiteFeature feature : newFeatures) {
 			((SiteFeature) feature).setInTheModel(true);
-			featureArtifacts.add(newFeatures[i]);
+			featureArtifacts.add(feature);
 		}
 		fireStructureChanged(newFeatures, IModelChangedEvent.INSERT);
 	}
@@ -60,8 +59,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	@Override
 	public void addBundleArtifacts(ISiteBundle[] newBundles) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newBundles.length; i++) {
-			ISiteBundle bundle = newBundles[i];
+		for (ISiteBundle bundle : newBundles) {
 			((SiteBundle) bundle).setInTheModel(true);
 			bundleArtifacts.add(bundle);
 		}
@@ -71,10 +69,9 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	@Override
 	public void removeFeatureArtifacts(ISiteFeature[] newFeatures) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newFeatures.length; i++) {
-			ISiteFeature feature = newFeatures[i];
+		for (ISiteFeature feature : newFeatures) {
 			((SiteFeature) feature).setInTheModel(false);
-			featureArtifacts.remove(newFeatures[i]);
+			featureArtifacts.remove(feature);
 		}
 		fireStructureChanged(newFeatures, IModelChangedEvent.REMOVE);
 	}
@@ -82,8 +79,7 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	@Override
 	public void removeBundleArtifacts(ISiteBundle[] newBundles) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newBundles.length; i++) {
-			ISiteBundle bundle = newBundles[i];
+		for (ISiteBundle bundle : newBundles) {
 			((SiteBundle) bundle).setInTheModel(false);
 			bundleArtifacts.remove(bundle);
 		}

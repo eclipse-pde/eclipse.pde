@@ -47,10 +47,9 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	@Override
 	public void addCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newCategories.length; i++) {
-			ISiteCategory category = newCategories[i];
+		for (ISiteCategory category : newCategories) {
 			((SiteCategory) category).setInTheModel(true);
-			fCategories.add(newCategories[i]);
+			fCategories.add(category);
 		}
 		fireStructureChanged(newCategories, IModelChangedEvent.INSERT);
 	}
@@ -58,10 +57,9 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	@Override
 	public void removeCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newCategories.length; i++) {
-			ISiteCategory category = newCategories[i];
+		for (ISiteCategory category : newCategories) {
 			((SiteCategory) category).setInTheModel(false);
-			fCategories.remove(newCategories[i]);
+			fCategories.remove(category);
 		}
 		fireStructureChanged(newCategories, IModelChangedEvent.REMOVE);
 	}

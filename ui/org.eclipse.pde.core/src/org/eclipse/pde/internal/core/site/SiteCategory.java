@@ -75,8 +75,7 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 	public ISiteCategoryDefinition getDefinition() {
 		ISite site = getSite();
 		ISiteCategoryDefinition[] definitions = site.getCategoryDefinitions();
-		for (int i = 0; i < definitions.length; i++) {
-			ISiteCategoryDefinition def = definitions[i];
+		for (ISiteCategoryDefinition def : definitions) {
 			if (def.getName().equals(getName()))
 				return def;
 		}

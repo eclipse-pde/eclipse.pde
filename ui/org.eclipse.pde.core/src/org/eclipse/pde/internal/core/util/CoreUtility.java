@@ -119,11 +119,11 @@ public class CoreUtility {
 				File[] children = fileToDelete.listFiles();
 				if (children != null) {
 					subMon.setWorkRemaining(children.length * 10);
-					for (int i = 0; i < children.length; i++) {
+					for (File element : children) {
 						if (subMon.isCanceled()) {
 							return;
 						}
-						deleteContent(children[i], subMon.split(10));
+						deleteContent(element, subMon.split(10));
 					}
 				}
 			}
@@ -182,11 +182,9 @@ public class CoreUtility {
 		// check features
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] models = manager.getModels();
-		for (int i = 0; i < models.length; i++) {
-			IFeatureModel featureModel = models[i];
+		for (IFeatureModel featureModel : models) {
 			IFeaturePlugin[] plugins = featureModel.getFeature().getPlugins();
-			for (int j = 0; j < plugins.length; j++) {
-				IFeaturePlugin featurePlugin = plugins[j];
+			for (IFeaturePlugin featurePlugin : plugins) {
 				if (featurePlugin.getId().equals(bundle.getSymbolicName())) {
 					return featurePlugin.isUnpack();
 				}
@@ -197,8 +195,8 @@ public class CoreUtility {
 		if (libraries.length == 0)
 			return false;
 
-		for (int i = 0; i < libraries.length; i++) {
-			if (libraries[i].getName().equals(".")) //$NON-NLS-1$
+		for (IPluginLibrary library : libraries) {
+			if (library.getName().equals(".")) //$NON-NLS-1$
 				return false;
 		}
 		return true;

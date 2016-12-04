@@ -202,8 +202,7 @@ public class ManifestUtils {
 			}
 		}
 		List<IPackageFragmentRoot> pkgFragRoots = new LinkedList<>();
-		for (int j = 0; j < libs.length; j++) {
-			String lib = libs[j];
+		for (String lib : libs) {
 			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=230469
 			IPackageFragmentRoot root = null;
 			if (!lib.equals(".")) { //$NON-NLS-1$
@@ -220,8 +219,8 @@ public class ManifestUtils {
 				if (entry == null)
 					continue;
 				String[] tokens = entry.getTokens();
-				for (int i = 0; i < tokens.length; i++) {
-					IResource resource = project.findMember(tokens[i]);
+				for (String token : tokens) {
+					IResource resource = project.findMember(token);
 					if (resource == null)
 						continue;
 					root = javaProject.getPackageFragmentRoot(resource);

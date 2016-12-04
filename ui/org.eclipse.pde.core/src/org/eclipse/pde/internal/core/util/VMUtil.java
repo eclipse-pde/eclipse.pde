@@ -24,10 +24,10 @@ public class VMUtil {
 	public static IVMInstall[] getAllVMInstances() {
 		ArrayList<IVMInstall> res = new ArrayList<>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-		for (int i = 0; i < types.length; i++) {
-			IVMInstall[] installs = types[i].getVMInstalls();
-			for (int k = 0; k < installs.length; k++) {
-				res.add(installs[k]);
+		for (IVMInstallType type : types) {
+			IVMInstall[] installs = type.getVMInstalls();
+			for (IVMInstall install : installs) {
+				res.add(install);
 			}
 		}
 		return res.toArray(new IVMInstall[res.size()]);
@@ -64,9 +64,9 @@ public class VMUtil {
 	public static IVMInstall getVMInstall(String name) {
 		if (name != null) {
 			IVMInstall[] installs = getAllVMInstances();
-			for (int i = 0; i < installs.length; i++) {
-				if (installs[i].getName().equals(name))
-					return installs[i];
+			for (IVMInstall install : installs) {
+				if (install.getName().equals(name))
+					return install;
 			}
 		}
 		return JavaRuntime.getDefaultVMInstall();
