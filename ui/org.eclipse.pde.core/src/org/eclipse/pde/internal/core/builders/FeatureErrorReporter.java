@@ -454,10 +454,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		if (entry != null) {
 			IPluginModelBase[] allModels = entry.getActiveModels();
-			for (int i = 0; i < allModels.length; i++) {
-				IPluginModelBase availablePlugin = allModels[i];
-				if (id.equals(availablePlugin.getPluginBase().getId())) {
-					if (version.equals(availablePlugin.getPluginBase().getVersion())) {
+			for (IPluginModelBase model : allModels) {
+				if (id.equals(model.getPluginBase().getId())) {
+					if (version.equals(model.getPluginBase().getVersion())) {
 						return;
 					}
 				}

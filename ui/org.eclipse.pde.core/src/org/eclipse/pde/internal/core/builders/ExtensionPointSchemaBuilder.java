@@ -88,8 +88,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	 */
 	private void cleanSchemasIn(IContainer container, IProgressMonitor monitor) throws CoreException {
 		IResource[] members = container.members();
-		for (int i = 0; i < members.length; i++) {
-			IResource member = members[i];
+		for (IResource member : members) {
 			if (member instanceof IContainer)
 				cleanSchemasIn((IContainer) member, monitor);
 			else if (member instanceof IFile && isSchemaFile((IFile) member)) {
@@ -167,8 +166,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	private void compileSchemasIn(IContainer container, IProgressMonitor monitor) throws CoreException {
 		monitor.subTask(PDECoreMessages.Builders_Schema_compilingSchemas);
 		IResource[] members = container.members();
-		for (int i = 0; i < members.length; i++) {
-			IResource member = members[i];
+		for (IResource member : members) {
 			if (member instanceof IContainer)
 				compileSchemasIn((IContainer) member, monitor);
 			else if (member instanceof IFile && isSchemaFile((IFile) member)) {

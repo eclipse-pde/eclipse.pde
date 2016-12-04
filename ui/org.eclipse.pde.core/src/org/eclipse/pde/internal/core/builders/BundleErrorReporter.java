@@ -128,10 +128,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			// Running list of packages in the project
 			//Set packages = new HashSet();
 			StringBuffer packages = new StringBuffer();
-			for (int i = 0; i < roots.length; i++) {
+			for (IPackageFragmentRoot root : roots) {
 				try {
-					if (ManifestUtils.isImmediateRoot(roots[i])) {
-						IJavaElement[] javaElements = roots[i].getChildren();
+					if (ManifestUtils.isImmediateRoot(root)) {
+						IJavaElement[] javaElements = root.getChildren();
 						for (int j = 0; j < javaElements.length; j++)
 							if (javaElements[j] instanceof IPackageFragment) {
 								IPackageFragment fragment = (IPackageFragment) javaElements[j];
@@ -338,8 +338,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (host.getSupplier() == null) {
 			boolean missingHost = false;
 			ResolverError[] errors = desc.getContainingState().getResolverErrors(desc);
-			for (int i = 0; i < errors.length; i++) {
-				if (errors[i].getType() == ResolverError.MISSING_FRAGMENT_HOST) {
+			for (ResolverError error : errors) {
+				if (error.getType() == ResolverError.MISSING_FRAGMENT_HOST) {
 					missingHost = true;
 					break;
 				}
@@ -348,11 +348,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (missingHost) {
 				BundleDescription[] suppliers = desc.getContainingState().getBundles(name);
 				boolean resolved = true;
-				for (int i = 0; i < suppliers.length; i++) {
-					if (suppliers[i].getHost() != null)
+				for (BundleDescription supplier : suppliers) {
+					if (supplier.getHost() != null)
 						continue;
-					if (suppliers[i].isResolved()) {
-						Version version = suppliers[i].getVersion();
+					if (supplier.isResolved()) {
+						Version version = supplier.getVersion();
 						// use fully qualified name to avoid conflict with other VersionRange class
 						org.eclipse.osgi.service.resolver.VersionRange range = host.getVersionRange();
 						if (!range.isIncluded(version)) {
@@ -416,9 +416,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				try {
 					IClasspathEntry[] entries = javaProject.getRawClasspath();
 
-					for (int i = 0; i < entries.length; i++) {
-						if (entries[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-							IPath currentPath = entries[i].getPath();
+					for (IClasspathEntry entry : entries) {
+						if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+							IPath currentPath = entry.getPath();
 							if (JavaRuntime.newDefaultJREContainerPath().matchingFirstSegments(currentPath) > 0) {
 								String eeId = JavaRuntime.getExecutionEnvironmentId(currentPath);
 								if (eeId != null) {
@@ -446,11 +446,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 
 			if (vm != null) {
-				for (int i = 0; i < systemEnvs.length; i++) {
+				for (IExecutionEnvironment systemEnv : systemEnvs) {
 					// Get strictly compatible EE for the default VM
-					if (systemEnvs[i].isStrictlyCompatible(vm)) {
+					if (systemEnv.isStrictlyCompatible(vm)) {
 						IMarker marker = report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev, PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
-						addMarkerAttribute(marker, "ee_id", systemEnvs[i].getId()); //$NON-NLS-1$
+						addMarkerAttribute(marker, "ee_id", systemEnv.getId()); //$NON-NLS-1$
 						break;
 					}
 				}
@@ -469,10 +469,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			IClasspathEntry[] entries;
 			try {
 				entries = jproject.getRawClasspath();
-				for (int i = 0; i < entries.length; i++) {
-					if (entries[i].getEntryKind() != IClasspathEntry.CPE_CONTAINER)
+				for (IClasspathEntry entry : entries) {
+					if (entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER)
 						continue;
-					IPath currentPath = entries[i].getPath();
+					IPath currentPath = entry.getPath();
 					if (JavaRuntime.newDefaultJREContainerPath().matchingFirstSegments(currentPath) == 0)
 						continue;
 
@@ -489,16 +489,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 		IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-		for (int i = 0; i < bundleEnvs.length; i++) {
+		for (String bundleEnv : bundleEnvs) {
 			boolean found = false;
-			for (int j = 0; j < systemEnvs.length; j++) {
-				if (bundleEnvs[i].equals(systemEnvs[j].getId())) {
+			for (IExecutionEnvironment systemEnv : systemEnvs) {
+				if (bundleEnv.equals(systemEnv.getId())) {
 					found = true;
 					break;
 				}
 			}
 			if (!found) {
-				report(NLS.bind(PDECoreMessages.BundleErrorReporter_reqExecEnv_unknown, bundleEnvs[i]), getLine(header, bundleEnvs[i]), sev, PDEMarkerFactory.M_UNKNOW_EXEC_ENV, PDEMarkerFactory.CAT_EE);
+				report(NLS.bind(PDECoreMessages.BundleErrorReporter_reqExecEnv_unknown, bundleEnv), getLine(header, bundleEnv), sev, PDEMarkerFactory.M_UNKNOW_EXEC_ENV, PDEMarkerFactory.CAT_EE);
 				break;
 			}
 		}
@@ -534,8 +534,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc != null && !desc.isResolved()) {
 				ResolverError[] errors = desc.getContainingState().getResolverErrors(desc);
-				for (int i = 0; i < errors.length; i++) {
-					if (errors[i].getType() == ResolverError.PLATFORM_FILTER) {
+				for (ResolverError error : errors) {
+					if (error.getType() == ResolverError.PLATFORM_FILTER) {
 						report(PDECoreMessages.BundleErrorReporter_badFilter, header.getLineNumber() + 1, severity, PDEMarkerFactory.CAT_OTHER);
 					}
 				}
@@ -619,8 +619,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		BundleDescription desc = fModel.getBundleDescription();
 		if (desc == null) {
-			for (int i = 0; i < required.length; i++)
-				validateBundleVersionAttribute(header, required[i]);
+			for (ManifestElement element : required)
+				validateBundleVersionAttribute(header, element);
 			return;
 		}
 
@@ -739,17 +739,17 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		BundleDescription desc = fModel.getBundleDescription();
 		if (desc == null) {
 			ManifestElement[] elements = header.getElements();
-			for (int i = 0; i < elements.length; i++) {
-				validateSpecificationVersionAttribute(header, elements[i]);
-				validateImportPackageVersion(header, elements[i]);
+			for (ManifestElement element : elements) {
+				validateSpecificationVersionAttribute(header, element);
+				validateImportPackageVersion(header, element);
 			}
 			return;
 		}
 
 		boolean hasUnresolved = false;
 		VersionConstraint[] constraints = desc.getContainingState().getStateHelper().getUnsatisfiedConstraints(desc);
-		for (int i = 0; i < constraints.length; i++) {
-			if (constraints[i] instanceof ImportPackageSpecification) {
+		for (VersionConstraint constraint : constraints) {
+			if (constraint instanceof ImportPackageSpecification) {
 				hasUnresolved = true;
 				break;
 			}
@@ -769,26 +769,26 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		ManifestElement[] elements = header.getElements();
 		int index = 0;
-		for (int i = 0; i < elements.length; i++) {
+		for (ManifestElement element : elements) {
 			checkCanceled(monitor);
 
-			validateSpecificationVersionAttribute(header, elements[i]);
-			validateResolutionDirective(header, elements[i]);
+			validateSpecificationVersionAttribute(header, element);
+			validateResolutionDirective(header, element);
 
 			// TODO we should only validate versions that we have a match
-			validateImportPackageVersion(header, elements[i]);
+			validateImportPackageVersion(header, element);
 
 			if (!hasUnresolved)
 				continue;
 
-			int length = elements[i].getValueComponents().length;
+			int length = element.getValueComponents().length;
 			for (int j = 0; j < length; j++) {
 				ImportPackageSpecification importSpec = imports[index++];
 				String name = importSpec.getName();
 				if (name.equals("java") || name.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
 					IHeader jreHeader = getHeader(ICoreConstants.ECLIPSE_JREBUNDLE);
 					if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
-						report(PDECoreMessages.BundleErrorReporter_importNoJRE, getPackageLine(header, elements[i]), CompilerFlags.ERROR, PDEMarkerFactory.M_JAVA_PACKAGE__PORTED, PDEMarkerFactory.CAT_FATAL);
+						report(PDECoreMessages.BundleErrorReporter_importNoJRE, getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.M_JAVA_PACKAGE__PORTED, PDEMarkerFactory.CAT_FATAL);
 						continue;
 					}
 				}
@@ -796,8 +796,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (importSpec.isResolved() || !isCheckUnresolvedImports())
 					continue;
 
-				boolean optional = isOptional(elements[i]);
-				int severity = getRequireBundleSeverity(elements[i], optional);
+				boolean optional = isOptional(element);
+				int severity = getRequireBundleSeverity(element, optional);
 
 				ExportPackageDescription export = exported.get(name);
 				if (export != null) {
@@ -805,13 +805,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						Version version = export.getVersion();
 						org.eclipse.osgi.service.resolver.VersionRange range = importSpec.getVersionRange();
 						if (range != null && !range.isIncluded(version)) {
-							report(NLS.bind(PDECoreMessages.BundleErrorReporter_unsatisfiedConstraint, importSpec.toString()), getPackageLine(header, elements[i]), severity, PDEMarkerFactory.CAT_FATAL);
+							report(NLS.bind(PDECoreMessages.BundleErrorReporter_unsatisfiedConstraint, importSpec.toString()), getPackageLine(header, element), severity, PDEMarkerFactory.CAT_FATAL);
 						}
 					} else {
-						report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedExporter, new String[] {export.getSupplier().getSymbolicName(), name}), getPackageLine(header, elements[i]), severity, PDEMarkerFactory.CAT_OTHER);
+						report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedExporter, new String[] {export.getSupplier().getSymbolicName(), name}), getPackageLine(header, element), severity, PDEMarkerFactory.CAT_OTHER);
 					}
 				} else {
-					IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_PackageNotExported, name), getPackageLine(header, elements[i]), severity, PDEMarkerFactory.M_IMPORT_PKG_NOT_AVAILABLE, PDEMarkerFactory.CAT_FATAL);
+					IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_PackageNotExported, name), getPackageLine(header, element), severity, PDEMarkerFactory.M_IMPORT_PKG_NOT_AVAILABLE, PDEMarkerFactory.CAT_FATAL);
 					try {
 						if (marker != null) {
 							marker.setAttribute("packageName", name); //$NON-NLS-1$
@@ -829,16 +829,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		BundleDescription[] bundles = state.getBundles();
 
 		HashMap<String, ExportPackageDescription> exported = new HashMap<>();
-		for (int i = 0; i < bundles.length; i++) {
-			ExportPackageDescription[] exports = bundles[i].getExportPackages();
-			for (int j = 0; j < exports.length; j++) {
-				String name = exports[j].getName();
+		for (BundleDescription bundle : bundles) {
+			ExportPackageDescription[] exports = bundle.getExportPackages();
+			for (ExportPackageDescription export : exports) {
+				String name = export.getName();
 				if (exported.containsKey(name)) {
-					if (exports[j].getSupplier().isResolved()) {
-						exported.put(name, exports[j]);
+					if (export.getSupplier().isResolved()) {
+						exported.put(name, export);
 					}
 				} else {
-					exported.put(name, exports[j]);
+					exported.put(name, export);
 				}
 			}
 		}
@@ -853,22 +853,22 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String message = null;
 		ManifestElement[] elements = header.getElements();
 
-		for (int i = 0; i < elements.length; i++) {
+		for (ManifestElement element : elements) {
 			checkCanceled(monitor);
 
-			validateExportPackageVersion(header, elements[i]);
-			validateSpecificationVersionAttribute(header, elements[i]);
-			validateX_InternalDirective(header, elements[i]);
-			validateX_FriendsDirective(header, elements[i]);
+			validateExportPackageVersion(header, element);
+			validateSpecificationVersionAttribute(header, element);
+			validateX_InternalDirective(header, element);
+			validateX_FriendsDirective(header, element);
 
-			String[] valueComps = elements[i].getValueComponents();
-			for (int j = 0; j < valueComps.length; j++) {
-				String name = valueComps[j];
+			String[] valueComps = element.getValueComponents();
+			for (String valueComp : valueComps) {
+				String name = valueComp;
 				if (name.equals("java") || name.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
 					IHeader jreHeader = getHeader(ICoreConstants.ECLIPSE_JREBUNDLE);
 					if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
 						message = PDECoreMessages.BundleErrorReporter_exportNoJRE;
-						report(message, getPackageLine(header, elements[i]), CompilerFlags.ERROR, PDEMarkerFactory.M_JAVA_PACKAGE__PORTED, PDEMarkerFactory.CAT_FATAL);
+						report(message, getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.M_JAVA_PACKAGE__PORTED, PDEMarkerFactory.CAT_FATAL);
 					}
 				} else if (".".equals(name.trim())) { //$NON-NLS-1$
 					// workaround for manifest converter generating "."
@@ -882,7 +882,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				/* The exported package does not exist in the bundle.  Allow project folders to be packages (see bug 166680 comment 17)*/
 				if (!getExportedPackages().contains(name) && !(fProject.getFolder(name.replace('.', '/')).exists())) {
 					message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name);
-					IMarker marker = report(message, getPackageLine(header, elements[i]), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST, PDEMarkerFactory.CAT_OTHER);
+					IMarker marker = report(message, getPackageLine(header, element), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST, PDEMarkerFactory.CAT_OTHER);
 					addMarkerAttribute(marker, "packageName", name); //$NON-NLS-1$
 				}
 			}
@@ -893,8 +893,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private boolean containsPackage(IHeader header, String name) {
 		if (header != null) {
 			ManifestElement[] elements = header.getElements();
-			for (int i = 0; i < elements.length; i++) {
-				if (elements[i].getValue().equals(name))
+			for (ManifestElement element : elements) {
+				if (element.getValue().equals(name))
 					return true;
 			}
 		}
@@ -927,9 +927,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			} else {
 				try {
 					if (fProject.hasNature(JavaCore.NATURE_ID)) {
-						IPackageFragment[] packages = PluginJavaSearchUtil.collectPackageFragments(new IPluginModelBase[] {model}, JavaCore.create(fProject), false);
-						for (int i = 0; i < packages.length; i++)
-							fProjectPackages.add(packages[i].getElementName());
+						IPackageFragment[] fragments = PluginJavaSearchUtil.collectPackageFragments(new IPluginModelBase[] {model}, JavaCore.create(fProject), false);
+						for (IPackageFragment fragment : fragments)
+							fProjectPackages.add(fragment.getElementName());
 					}
 				} catch (CoreException ce) {
 				}
@@ -938,8 +938,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void addFragmentPackages(BundleDescription[] fragments) {
-		for (int i = 0; i < fragments.length; i++) {
-			String id = fragments[i].getSymbolicName();
+		for (BundleDescription fragment : fragments) {
+			String id = fragment.getSymbolicName();
 			IPluginModelBase model = PluginRegistry.findModel(id);
 			IResource resource = model instanceof IFragmentModel ? model.getUnderlyingResource() : null;
 			if (resource != null) {
@@ -956,8 +956,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				for (int i = 0; i < roots.length; i++) {
 					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || (roots[i].getKind() == IPackageFragmentRoot.K_BINARY && !roots[i].isExternal())) {
 						IJavaElement[] children = roots[i].getChildren();
-						for (int j = 0; j < children.length; j++) {
-							IPackageFragment f = (IPackageFragment) children[j];
+						for (IJavaElement element : children) {
+							IPackageFragment f = (IPackageFragment) element;
 							String name = f.getElementName();
 							if (name.equals("")) //$NON-NLS-1$
 								name = "."; //$NON-NLS-1$
@@ -1000,8 +1000,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (severity == CompilerFlags.IGNORE)
 			return;
 
-		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
-			IHeader header = getHeader(ICoreConstants.TRANSLATABLE_HEADERS[i]);
+		for (String element : ICoreConstants.TRANSLATABLE_HEADERS) {
+			IHeader header = getHeader(element);
 			if (header != null) {
 				String value = header.getValue();
 				if (!value.startsWith("%")) { //$NON-NLS-1$
@@ -1062,8 +1062,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (internal == null)
 			return;
 
-		for (int i = 0; i < BOOLEAN_VALUES.length; i++) {
-			if (BOOLEAN_VALUES[i].equals(internal))
+		for (String value : BOOLEAN_VALUES) {
+			if (value.equals(internal))
 				return;
 		}
 		String message = NLS.bind(PDECoreMessages.BundleErrorReporter_dir_value, (new String[] {internal, ICoreConstants.INTERNAL_DIRECTIVE}));
@@ -1187,8 +1187,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			String key = (String) keys.nextElement();
 			if ("exceptions".equals(key)) { //$NON-NLS-1$
 				String[] values = elements[0].getAttributes(key);
-				for (int i = 0; i < values.length; i++) {
-					StringTokenizer st = new StringTokenizer(values[i], ","); //$NON-NLS-1$
+				for (String value : values) {
+					StringTokenizer st = new StringTokenizer(value, ","); //$NON-NLS-1$
 					while (st.hasMoreTokens()) {
 						String name = st.nextToken().trim();
 						if (!getExportedPackages().contains(name)) {

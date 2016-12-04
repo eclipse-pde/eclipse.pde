@@ -64,8 +64,7 @@ public class DependencyLoopFinder {
 
 		if (!onlyCandidates) {
 			IPluginImport[] iimports = subroot.getImports();
-			for (int i = 0; i < iimports.length; i++) {
-				IPluginImport iimport = iimports[i];
+			for (IPluginImport iimport : iimports) {
 				String id = iimport.getId();
 				//Be paranoid
 				if (id == null)
@@ -98,9 +97,7 @@ public class DependencyLoopFinder {
 
 		}
 		if (candidates != null) {
-			for (int i = 0; i < candidates.length; i++) {
-				IPlugin candidate = candidates[i];
-
+			for (IPlugin candidate : candidates) {
 				// number of loops before traversing plugin
 				int oldLoopSize = loops.size();
 

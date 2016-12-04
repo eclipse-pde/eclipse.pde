@@ -190,42 +190,42 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		ArrayList<IBuildEntry> outputEntries = new ArrayList<>(1);
 		Map<String, String> encodingEntries = new HashMap<>();
 		IBuildEntry[] entries = build.getBuildEntries();
-		for (int i = 0; i < entries.length; i++) {
-			String name = entries[i].getName();
-			if (entries[i].getTokens().length == 0)
+		for (IBuildEntry entry : entries) {
+			String name = entry.getName();
+			if (entry.getTokens().length == 0)
 				prepareError(name, null, PDECoreMessages.BuildErrorReporter_emptyEntry, PDEMarkerFactory.B_REMOVAL, PDEMarkerFactory.CAT_FATAL);
 			else if (name.equals(PROPERTY_BIN_INCLUDES))
-				binIncludes = entries[i];
+				binIncludes = entry;
 			else if (name.equals(PROPERTY_BIN_EXCLUDES))
-				binExcludes = entries[i];
+				binExcludes = entry;
 			else if (name.equals(PROPERTY_SRC_INCLUDES))
-				srcIncludes = entries[i];
+				srcIncludes = entry;
 			else if (name.equals(PROPERTY_SRC_EXCLUDES))
-				srcExcludes = entries[i];
+				srcExcludes = entry;
 			else if (name.equals(PROPERTY_JAVAC_SOURCE))
-				javacSource = entries[i];
+				javacSource = entry;
 			else if (name.equals(PROPERTY_JAVAC_TARGET))
-				javacTarget = entries[i];
+				javacTarget = entry;
 			else if (name.equals(PROPERTY_PROJECT_SETTINGS))
-				javaProjectWarnings = entries[i];
+				javaProjectWarnings = entry;
 			else if (name.equals(PROPERTY_JRE_COMPILATION_PROFILE))
-				jreCompilationProfile = entries[i];
+				jreCompilationProfile = entry;
 			else if (name.startsWith(PROPERTY_JAVAC_WARNINGS_PREFIX))
-				javacWarnings.add(entries[i]);
+				javacWarnings.add(entry);
 			else if (name.startsWith(PROPERTY_JAVAC_ERRORS_PREFIX))
-				javacErrors.add(entries[i]);
+				javacErrors.add(entry);
 			else if (name.startsWith(PROPERTY_SOURCE_PREFIX))
-				sourceEntries.add(entries[i]);
+				sourceEntries.add(entry);
 			else if (name.startsWith(PROPERTY_OUTPUT_PREFIX))
-				outputEntries.add(entries[i]);
+				outputEntries.add(entry);
 			else if (name.startsWith(PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX))
-				encodingEntries.put(entries[i].getName(), entries[i].getTokens()[0]);
+				encodingEntries.put(entry.getName(), entry.getTokens()[0]);
 			else if (name.equals(PROPERTY_JAR_EXTRA_CLASSPATH))
-				jarsExtra = entries[i];
+				jarsExtra = entry;
 			else if (name.equals(IBuildEntry.SECONDARY_DEPENDENCIES))
-				bundleList = entries[i];
+				bundleList = entry;
 			else if (name.equals(PROPERTY_CUSTOM)) {
-				String[] tokens = entries[i].getTokens();
+				String[] tokens = entry.getTokens();
 				if (tokens.length == 1 && tokens[0].equalsIgnoreCase("true")) //$NON-NLS-1$
 					// nothing to validate in custom builds
 					return;
@@ -233,7 +233,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 			// non else if statement to catch all names
 			if (name.startsWith(PROPERTY_SOURCE_PREFIX))
-				sourceEntryKeys.add(entries[i].getName());
+				sourceEntryKeys.add(entry.getName());
 		}
 
 		// validation not relying on build flag
@@ -284,9 +284,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 */
 	private List<String> getSourceLibraries(List<IBuildEntry> sourceEntries) {
 		List<String> libraries = new ArrayList<>();
-		for (Iterator<IBuildEntry> iterator = sourceEntries.iterator(); iterator.hasNext();) {
-			IBuildEntry sourceEntry = iterator.next();
-			String libName = sourceEntry.getName().substring(PROPERTY_SOURCE_PREFIX.length());
+		for (IBuildEntry entry : sourceEntries) {
+			String libName = entry.getName().substring(PROPERTY_SOURCE_PREFIX.length());
 			libraries.add(libName);
 		}
 		return libraries;
@@ -315,9 +314,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				return;
 			}
 			boolean source = false;
-			for (int i = 0; i < classpath.length; i++) {
-				IClasspathEntry cpe = classpath[i];
-				if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+			for (IClasspathEntry entry : classpath) {
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					source = true;
 				}
 			}
@@ -459,11 +457,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 			// If a warnings entry is required, make sure there is one for each library with the correct content
 			if (complianceWarnSettings.size() > 0) {
-				for (Iterator<String> iterator = libraryNames.iterator(); iterator.hasNext();) {
-					String libName = iterator.next();
+				for (String libName : libraryNames) {
 					IBuildEntry matchingEntry = null;
-					for (Iterator<IBuildEntry> iterator2 = javacWarningsEntries.iterator(); iterator2.hasNext();) {
-						IBuildEntry candidate = iterator2.next();
+					for (IBuildEntry candidate : javacWarningsEntries) {
 						if (candidate.getName().equals(PROPERTY_JAVAC_WARNINGS_PREFIX + libName)) {
 							matchingEntry = candidate;
 							break;
@@ -471,16 +467,14 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					}
 					if (matchingEntry == null) {
 						String missingTokens = ""; //$NON-NLS-1$
-						for (Iterator<String> iterator2 = complianceWarnSettings.iterator(); iterator2.hasNext();) {
-							String currentIdentifier = iterator2.next();
+						for (String currentIdentifier : complianceWarnSettings) {
 							missingTokens = join(missingTokens, '-' + currentIdentifier);
 						}
 						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_WARNINGS_PREFIX + libName);
 						prepareError(PROPERTY_JAVAC_WARNINGS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
 					} else {
 						String missingTokens = ""; //$NON-NLS-1$
-						for (Iterator<String> iterator2 = complianceWarnSettings.iterator(); iterator2.hasNext();) {
-							String currentIdentifier = iterator2.next();
+						for (String currentIdentifier : complianceWarnSettings) {
 							if (!matchingEntry.contains(currentIdentifier) && !matchingEntry.contains('+' + currentIdentifier) && !matchingEntry.contains('-' + currentIdentifier)) {
 								join(missingTokens, '-' + currentIdentifier);
 							}
@@ -495,11 +489,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 			// If a warnings entry is required, make sure there is one for each library with the correct content
 			if (complianceErrorSettings.size() > 0) {
-				for (Iterator<String> iterator = libraryNames.iterator(); iterator.hasNext();) {
-					String libName = iterator.next();
+				for (String libName : libraryNames) {
 					IBuildEntry matchingEntry = null;
-					for (Iterator<IBuildEntry> iterator2 = javacErrorsEntries.iterator(); iterator2.hasNext();) {
-						IBuildEntry candidate = iterator2.next();
+					for (IBuildEntry candidate : javacErrorsEntries) {
 						if (candidate.getName().equals(PROPERTY_JAVAC_ERRORS_PREFIX + libName)) {
 							matchingEntry = candidate;
 							break;
@@ -507,16 +499,14 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					}
 					if (matchingEntry == null) {
 						String missingTokens = ""; //$NON-NLS-1$
-						for (Iterator<String> iterator2 = complianceErrorSettings.iterator(); iterator2.hasNext();) {
-							String currentIdentifier = iterator2.next();
+						for (String currentIdentifier : complianceErrorSettings) {
 							missingTokens = join(missingTokens, '-' + currentIdentifier);
 						}
 						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_ERRORS_PREFIX + libName);
 						prepareError(PROPERTY_JAVAC_ERRORS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
 					} else {
 						String missingTokens = ""; //$NON-NLS-1$
-						for (Iterator<String> iterator2 = complianceErrorSettings.iterator(); iterator2.hasNext();) {
-							String currentIdentifier = iterator2.next();
+						for (String currentIdentifier : complianceErrorSettings) {
 							if (!matchingEntry.contains(currentIdentifier) && !matchingEntry.contains('+' + currentIdentifier) && !matchingEntry.contains('-' + currentIdentifier)) {
 								missingTokens = join(missingTokens, '-' + currentIdentifier);
 							}
@@ -676,19 +666,19 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			return;
 		String[] tokens = binIncludes.getTokens();
 		boolean exists = false;
-		for (int i = 0; i < tokens.length; i++) {
-			if (key.startsWith(tokens[i])) {
+		for (String token : tokens) {
+			if (key.startsWith(token)) {
 				exists = true;
 				break;
 			}
 
 			// check for wildcards
 			IPath project = fFile.getProject().getLocation();
-			if (project != null && tokens[i] != null) {
-				File file = project.toFile();
-				File[] files = file.listFiles(new WildcardFilenameFilter(tokens[i]));
-				for (int j = 0; j < files.length; j++) {
-					if (files[j].toString().endsWith(key)) {
+			if (project != null && token != null) {
+				File projectFile = project.toFile();
+				File[] files = projectFile.listFiles(new WildcardFilenameFilter(token));
+				for (File file : files) {
+					if (file.toString().endsWith(key)) {
 						exists = true;
 						break;
 					}
@@ -747,8 +737,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		IPluginModelBase pluginModel = PluginRegistry.findModel(fProject);
 		if (pluginModel != null) {
 			IPluginLibrary[] pluginLibraries = pluginModel.getPluginBase().getLibraries();
-			for (int i = 0; i < pluginLibraries.length; i++) {
-				pluginLibraryNames.add(pluginLibraries[i].getName());
+			for (IPluginLibrary library : pluginLibraries) {
+				pluginLibraryNames.add(library.getName());
 			}
 		}
 		if (!pluginLibraryNames.contains(".")) { //$NON-NLS-1$
@@ -769,8 +759,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			key = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			boolean found = false;
 			String[] binIncludesTokens = binIncludes.getTokens();
-			for (int j = 0; j < binIncludesTokens.length; j++) {
-				Pattern pattern = PatternConstructor.createPattern(binIncludesTokens[j], false);
+			for (String token : binIncludesTokens) {
+				Pattern pattern = PatternConstructor.createPattern(token, false);
 				if (pattern.matcher(key).matches())
 					found = true;
 			}
@@ -780,8 +770,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				if (path.getFileExtension() == null) {
 					if (!key.endsWith("/")) { //$NON-NLS-1$
 						key = key + "/"; //$NON-NLS-1$
-						for (int j = 0; j < binIncludesTokens.length; j++) {
-							Pattern pattern = PatternConstructor.createPattern(binIncludesTokens[j], false);
+						for (String token : binIncludesTokens) {
+							Pattern pattern = PatternConstructor.createPattern(token, false);
 							if (pattern.matcher(key).matches())
 								found = true;
 						}
@@ -796,8 +786,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	private void validateMissingLibraries(ArrayList<String> sourceEntryKeys, IClasspathEntry[] cpes) {
 		boolean srcFolderExists = false;
 		// no need to flag anything if the project contains no source folders.
-		for (int j = 0; j < cpes.length; j++) {
-			if (cpes[j].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+		for (IClasspathEntry entry : cpes) {
+			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 				srcFolderExists = true;
 				break;
 			}
@@ -818,8 +808,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 		}
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		for (int i = 0; i < libraries.length; i++) {
-			String libname = libraries[i].getName();
+		for (IPluginLibrary library : libraries) {
+			String libname = library.getName();
 			if (libname.equals(".")) { //$NON-NLS-1$
 				if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY)) {
 					prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.NO_RESOLUTION, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
@@ -844,8 +834,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 		if (fragments == null)
 			return false;
-		for (int j = 0; j < fragments.length; j++) {
-			IPluginModelBase fragmentModel = PluginRegistry.findModel(fragments[j]);
+		for (BundleDescription fragment : fragments) {
+			IPluginModelBase fragmentModel = PluginRegistry.findModel(fragment);
 			if (fragmentModel != null && fragmentModel.getUnderlyingResource() != null) {
 				IProject project = fragmentModel.getUnderlyingResource().getProject();
 				if (project.findMember(libname) != null)
@@ -854,15 +844,15 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					IBuild build = ClasspathUtilCore.getBuild(fragmentModel);
 					if (build != null) {
 						IBuildEntry[] entries = build.getBuildEntries();
-						for (int i = 0; i < entries.length; i++)
-							if (entries[i].getName().equals(PROPERTY_SOURCE_PREFIX + libname))
+						for (IBuildEntry entrie : entries)
+							if (entrie.getName().equals(PROPERTY_SOURCE_PREFIX + libname))
 								return true;
 						return false;
 					}
 				} catch (CoreException e) {
 				}
 			} else {
-				String location = fragments[j].getLocation();
+				String location = fragment.getLocation();
 				File external = new File(location);
 				if (external.exists()) {
 					if (external.isDirectory()) {
@@ -890,11 +880,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			name = DEF_SOURCE_ENTRY;
 			message = PDECoreMessages.BuildErrorReporter_classpathEntryMissing;
 		}
-		for (int i = 0; i < unlisted.length; i++) {
-			if (unlisted[i] == null || excludeList.contains(unlisted[i]))
+		for (String element : unlisted) {
+			if (element == null || excludeList.contains(element))
 				continue;
-			BuildProblem error = prepareError(name, unlisted[i], NLS.bind(message, unlisted[i], name), PDEMarkerFactory.B_ADDITION, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
-			error.addExtraBuildEntryTokenAttribute(PROPERTY_SRC_EXCLUDES, unlisted[i]);
+			BuildProblem error = prepareError(name, element, NLS.bind(message, element, name), PDEMarkerFactory.B_ADDITION, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
+			error.addExtraBuildEntryTokenAttribute(PROPERTY_SRC_EXCLUDES, element);
 		}
 	}
 
@@ -909,9 +899,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (javaProject.exists()) {
 				IClasspathEntry[] classPathEntries = javaProject.getResolvedClasspath(true);
 
-				for (int index = 0; index < classPathEntries.length; index++) {
-					if (classPathEntries[index].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-						sourceFolderList.add(classPathEntries[index].getPath());
+				for (IClasspathEntry entry : classPathEntries) {
+					if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+						sourceFolderList.add(entry.getPath());
 					}
 				}
 			}
@@ -921,19 +911,19 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		List<String> reservedTokens = Arrays.asList(RESERVED_NAMES);
 
 		String[] tokens = includes.getTokens();
-		for (int i = 0; i < tokens.length; i++) {
-			IResource res = fProject.findMember(tokens[i]);
+		for (String token : tokens) {
+			IResource res = fProject.findMember(token);
 			if (res == null)
 				continue;
 			String errorMessage = null;
 			if (sourceFolderList.contains(res.getFullPath())) {
 				errorMessage = PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder;
-			} else if (tokens[i].startsWith(".") || reservedTokens.contains(res.getName().toString().toLowerCase())) { //$NON-NLS-1$
+			} else if (token.startsWith(".") || reservedTokens.contains(res.getName().toString().toLowerCase())) { //$NON-NLS-1$
 				errorMessage = NLS.bind(PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder1, res.getName());
 			}
 
 			if (errorMessage != null) {
-				prepareError(includes.getName(), tokens[i], errorMessage, PDEMarkerFactory.B_REMOVAL, fSrcInclSeverity, PDEMarkerFactory.CAT_OTHER);
+				prepareError(includes.getName(), token, errorMessage, PDEMarkerFactory.B_REMOVAL, fSrcInclSeverity, PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 
@@ -943,8 +933,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (includes == null)
 			return;
 		String[] tokens = includes.getTokens();
-		for (int i = 0; i < tokens.length; i++) {
-			String token = tokens[i].trim();
+		for (String tokenBasic : tokens) {
+			String token = tokenBasic.trim();
 			if (token.indexOf("*") != -1) //$NON-NLS-1$
 				// skip entries with wildcards
 				continue;
@@ -985,9 +975,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	private void validateDependencyManagement(IBuildEntry bundleList) {
 		String[] bundles = bundleList.getTokens();
-		for (int i = 0; i < bundles.length; i++) {
-			if (PluginRegistry.findModel(bundles[i]) == null)
-				prepareError(IBuildEntry.SECONDARY_DEPENDENCIES, bundles[i], NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindBundle, bundles[i]), PDEMarkerFactory.NO_RESOLUTION, fClasspathSeverity, PDEMarkerFactory.CAT_OTHER);
+		for (String bundle : bundles) {
+			if (PluginRegistry.findModel(bundle) == null)
+				prepareError(IBuildEntry.SECONDARY_DEPENDENCIES, bundle, NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindBundle, bundle), PDEMarkerFactory.NO_RESOLUTION, fClasspathSeverity, PDEMarkerFactory.CAT_OTHER);
 		}
 
 	}
@@ -1118,8 +1108,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (lineNum > 0) {
 				IMarker marker = report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken, bp.fSeverity, bp.fCategory);
 				if (marker != null && bp.attributes != null) {
-					for (Iterator<String> iterator = bp.attributes.keySet().iterator(); iterator.hasNext();) {
-						String attribute = iterator.next();
+					for (String attribute : bp.attributes.keySet()) {
 						try {
 							marker.setAttribute(attribute, bp.attributes.get(attribute));
 						} catch (CoreException e) {

@@ -274,17 +274,16 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				computeAllowedElements(compositor, elementSet);
 
 			ISchemaAttribute[] attrs = complexType.getAttributes();
-			for (int i = 0; i < attrs.length; i++) {
-				if (attrs[i].getKind() == IMetaAttribute.JAVA)
-					elementSet.add(attrs[i].getName());
+			for (ISchemaAttribute attr : attrs) {
+				if (attr.getKind() == IMetaAttribute.JAVA)
+					elementSet.add(attr.getName());
 			}
 		}
 	}
 
 	private void computeAllowedElements(ISchemaCompositor compositor, HashSet<String> elementSet) {
 		ISchemaObject[] children = compositor.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			ISchemaObject child = children[i];
+		for (ISchemaObject child : children) {
 			if (child instanceof ISchemaObjectReference) {
 				ISchemaObjectReference ref = (ISchemaObjectReference) child;
 				ISchemaElement refElement = (ISchemaElement) ref.getReferencedObject();
@@ -302,8 +301,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			return;
 
 		ISchemaAttribute[] attInfos = schemaElement.getAttributes();
-		for (int i = 0; i < attInfos.length; i++) {
-			ISchemaAttribute attInfo = attInfos[i];
+		for (ISchemaAttribute attInfo : attInfos) {
 			if (attInfo.getUse() == ISchemaAttribute.REQUIRED) {
 				boolean found = element.getAttributeNode(attInfo.getName()) != null;
 				if (!found && attInfo.getKind() == IMetaAttribute.JAVA) {
@@ -572,8 +570,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	protected void validateRestrictionAttribute(Element element, Attr attr, ISchemaRestriction restriction) {
 		Object[] children = restriction.getChildren();
 		String value = attr.getValue();
-		for (int i = 0; i < children.length; i++) {
-			Object child = children[i];
+		for (Object child : children) {
 			if (child instanceof ISchemaEnumeration) {
 				ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
 				if (enumeration.getName().equals(value)) {

@@ -73,10 +73,10 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 		if (workspaceFeatures.length > 0) {
 			IProgressMonitor monitor = new NullProgressMonitor();
 			SubMonitor subMonitor = SubMonitor.convert(monitor, workspaceFeatures.length);
-			for (int i = 0; i < workspaceFeatures.length; i++) {
+			for (IFeatureModel feature : workspaceFeatures) {
 				SubMonitor iterationMonitor = subMonitor.split(1);
 				try {
-					IResource resource = workspaceFeatures[i].getUnderlyingResource();
+					IResource resource = feature.getUnderlyingResource();
 					if (resource != null) {
 						resource.touch(iterationMonitor);
 					}
