@@ -74,14 +74,13 @@ public class ExecutionEnvironmentProfileManager {
 				dir.mkdir();
 			}
 			File[] files = dir.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				files[i].delete();
+			for (File file : files) {
+				file.delete();
 			}
 			// create current profiles
 			Bundle bundle = Platform.getBundle(IPDEBuildConstants.BUNDLE_OSGI);
 			IExecutionEnvironment[] environments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-			for (int i = 0; i < environments.length; i++) {
-				IExecutionEnvironment env = environments[i];
+			for (IExecutionEnvironment env : environments) {
 				String path = env.getId().replace('/', '_') + ".profile"; //$NON-NLS-1$
 				URL entry = bundle.getEntry(path);
 				if (entry == null) {

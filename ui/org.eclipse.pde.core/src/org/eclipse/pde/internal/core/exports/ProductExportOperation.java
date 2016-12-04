@@ -114,9 +114,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 			return e.getStatus();
 		} finally {
 			// Clean up generated files
-			for (int j = 0; j < fInfo.items.length; j++) {
+			for (Object item : fInfo.items) {
 				try {
-					deleteBuildFiles(fInfo.items[j]);
+					deleteBuildFiles(item);
 				} catch (CoreException e) {
 					PDECore.log(e);
 				}
@@ -182,8 +182,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		IJREInfo jreInfo = fProduct.getJREInfo();
 		if (jreInfo != null) {
-			for (int i = 0; i < configurations.length; i++) {
-				String[] config = configurations[i];
+			for (String[] configuration : configurations) {
+				String[] config = configuration;
 
 				// Only include the JRE if product config says to do so
 				if (!jreInfo.includeJREWithProduct(config[0])) {
@@ -214,18 +214,18 @@ public class ProductExportOperation extends FeatureExportOperation {
 		if (fInfo.exportSource && fInfo.exportSourceBundle) {
 			properties.put(IBuildPropertiesConstants.PROPERTY_INDIVIDUAL_SOURCE, "true"); //$NON-NLS-1$
 			List<IPluginModelBase> workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
-			for (int i = 0; i < fInfo.items.length; i++) {
-				if (fInfo.items[i] instanceof IFeatureModel) {
-					IFeature feature = ((IFeatureModel) fInfo.items[i]).getFeature();
+			for (Object item : fInfo.items) {
+				if (item instanceof IFeatureModel) {
+					IFeature feature = ((IFeatureModel) item).getFeature();
 					properties.put("generate.feature@" + feature.getId().trim() + ".source", feature.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					BundleDescription bundle = null;
-					if (fInfo.items[i] instanceof IPluginModelBase) {
-						bundle = ((IPluginModelBase) fInfo.items[i]).getBundleDescription();
+					if (item instanceof IPluginModelBase) {
+						bundle = ((IPluginModelBase) item).getBundleDescription();
 					}
 					if (bundle == null) {
-						if (fInfo.items[i] instanceof BundleDescription)
-							bundle = (BundleDescription) fInfo.items[i];
+						if (item instanceof BundleDescription)
+							bundle = (BundleDescription) item;
 					}
 					if (bundle == null)
 						continue;
@@ -319,13 +319,13 @@ public class ProductExportOperation extends FeatureExportOperation {
 		ILauncherInfo info = fProduct.getLauncherInfo();
 		if (info != null) {
 			String icons = ""; //$NON-NLS-1$
-			for (int i = 0; i < configs.length; i++) {
+			for (String[] config : configs) {
 				String images = null;
-				if (configs[i][0].equals("win32")) { //$NON-NLS-1$
+				if (config[0].equals("win32")) { //$NON-NLS-1$
 					images = getWin32Images(info);
-				} else if (configs[i][0].equals("linux")) { //$NON-NLS-1$
+				} else if (config[0].equals("linux")) { //$NON-NLS-1$
 					images = getExpandedPath(info.getIconPath(ILauncherInfo.LINUX_ICON));
-				} else if (configs[i][0].equals("macosx")) { //$NON-NLS-1$
+				} else if (config[0].equals("macosx")) { //$NON-NLS-1$
 					images = getExpandedPath(info.getIconPath(ILauncherInfo.MACOSX_ICON));
 				}
 				if (images != null) {

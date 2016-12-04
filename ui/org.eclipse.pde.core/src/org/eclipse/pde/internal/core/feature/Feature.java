@@ -53,9 +53,9 @@ public class Feature extends VersionableObject implements IFeature {
 	@Override
 	public void addPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newPlugins.length; i++) {
-			fPlugins.add(newPlugins[i]);
-			((FeaturePlugin) newPlugins[i]).setInTheModel(true);
+		for (IFeaturePlugin plugin : newPlugins) {
+			fPlugins.add(plugin);
+			((FeaturePlugin) plugin).setInTheModel(true);
 		}
 		fireStructureChanged(newPlugins, IModelChangedEvent.INSERT);
 	}
@@ -63,9 +63,9 @@ public class Feature extends VersionableObject implements IFeature {
 	@Override
 	public void addData(IFeatureData[] newData) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < newData.length; i++) {
-			fData.add(newData[i]);
-			((FeatureData) newData[i]).setInTheModel(true);
+		for (IFeatureData data : newData) {
+			fData.add(data);
+			((FeatureData) data).setInTheModel(true);
 		}
 		fireStructureChanged(newData, IModelChangedEvent.INSERT);
 	}
@@ -73,9 +73,9 @@ public class Feature extends VersionableObject implements IFeature {
 	@Override
 	public void addIncludedFeatures(IFeatureChild[] features) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < features.length; i++) {
-			fChildren.add(features[i]);
-			((FeatureChild) features[i]).setInTheModel(true);
+		for (IFeatureChild child : features) {
+			fChildren.add(child);
+			((FeatureChild) child).setInTheModel(true);
 		}
 		fireStructureChanged(features, IModelChangedEvent.INSERT);
 	}
@@ -83,9 +83,9 @@ public class Feature extends VersionableObject implements IFeature {
 	@Override
 	public void addImports(IFeatureImport[] iimports) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < iimports.length; i++) {
-			fImports.add(iimports[i]);
-			((FeatureImport) iimports[i]).setInTheModel(true);
+		for (IFeatureImport iimport : iimports) {
+			fImports.add(iimport);
+			((FeatureImport) iimport).setInTheModel(true);
 		}
 		fireStructureChanged(iimports, IModelChangedEvent.INSERT);
 	}
@@ -288,8 +288,7 @@ public class Feature extends VersionableObject implements IFeature {
 			if (entry == null)
 				continue;
 			IPluginModelBase[] models = entry.getActiveModels();
-			for (int j = 0; j < models.length; j++) {
-				IPluginModelBase m = models[j];
+			for (IPluginModelBase m : models) {
 				if (fp.getVersion().equals(m.getPluginBase().getVersion()) || fp.getVersion().equals(ICoreConstants.DEFAULT_VERSION))
 					model = m;
 			}
@@ -347,8 +346,7 @@ public class Feature extends VersionableObject implements IFeature {
 	 */
 	private void addPluginImports(List<IFeatureImport> preservedImports, List<IFeatureImport> newImports, IPluginBase plugin) throws CoreException {
 		IPluginImport[] pluginImports = plugin.getImports();
-		for (int i = 0; i < pluginImports.length; i++) {
-			IPluginImport pluginImport = pluginImports[i];
+		for (IPluginImport pluginImport : pluginImports) {
 			if (pluginImport.isOptional()) {
 				continue;
 			}
@@ -423,9 +421,9 @@ public class Feature extends VersionableObject implements IFeature {
 	@Override
 	public void removePlugins(IFeaturePlugin[] removed) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < removed.length; i++) {
-			fPlugins.remove(removed[i]);
-			((FeaturePlugin) removed[i]).setInTheModel(false);
+		for (IFeaturePlugin element : removed) {
+			fPlugins.remove(element);
+			((FeaturePlugin) element).setInTheModel(false);
 		}
 		fireStructureChanged(removed, IModelChangedEvent.REMOVE);
 	}
@@ -433,9 +431,9 @@ public class Feature extends VersionableObject implements IFeature {
 	@Override
 	public void removeData(IFeatureData[] removed) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < removed.length; i++) {
-			fData.remove(removed[i]);
-			((FeatureData) removed[i]).setInTheModel(false);
+		for (IFeatureData element : removed) {
+			fData.remove(element);
+			((FeatureData) element).setInTheModel(false);
 		}
 		fireStructureChanged(removed, IModelChangedEvent.REMOVE);
 	}
@@ -443,9 +441,9 @@ public class Feature extends VersionableObject implements IFeature {
 	@Override
 	public void removeIncludedFeatures(IFeatureChild[] features) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < features.length; i++) {
-			fChildren.remove(features[i]);
-			((FeatureChild) features[i]).setInTheModel(false);
+		for (IFeatureChild feature : features) {
+			fChildren.remove(feature);
+			((FeatureChild) feature).setInTheModel(false);
 		}
 		fireStructureChanged(features, IModelChangedEvent.REMOVE);
 	}
@@ -453,9 +451,9 @@ public class Feature extends VersionableObject implements IFeature {
 	@Override
 	public void removeImports(IFeatureImport[] iimports) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < iimports.length; i++) {
-			fImports.remove(iimports[i]);
-			((FeatureImport) iimports[i]).setInTheModel(false);
+		for (IFeatureImport iimport : iimports) {
+			fImports.remove(iimport);
+			((FeatureImport) iimport).setInTheModel(false);
 		}
 		fireStructureChanged(iimports, IModelChangedEvent.REMOVE);
 	}

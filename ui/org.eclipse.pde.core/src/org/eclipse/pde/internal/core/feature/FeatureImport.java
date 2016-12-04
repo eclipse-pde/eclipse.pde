@@ -47,9 +47,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 
 	private IFeature findFeature(IFeatureModel[] models, String id, String version, int match) {
 
-		for (int i = 0; i < models.length; i++) {
-			IFeatureModel model = models[i];
-
+		for (IFeatureModel model : models) {
 			IFeature feature = model.getFeature();
 			String pid = feature.getId();
 			String pversion = feature.getVersion();

@@ -60,10 +60,10 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 		} catch (InvocationTargetException e) {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
 		} finally {
-			for (int i = 0; i < fInfo.items.length; i++) {
-				if (fInfo.items[i] instanceof IModel)
+			for (Object item : fInfo.items) {
+				if (item instanceof IModel)
 					try {
-						deleteBuildFiles(fInfo.items[i]);
+						deleteBuildFiles(item);
 					} catch (CoreException e) {
 						PDECore.log(e);
 					}
@@ -98,18 +98,18 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 			environment.put("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
 			environment.put("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
 
-			for (int i = 0; i < fInfo.items.length; i++) {
-				if (fInfo.items[i] instanceof IFeatureModel) {
-					IFeature feature = ((IFeatureModel) fInfo.items[i]).getFeature();
+			for (Object item : fInfo.items) {
+				if (item instanceof IFeatureModel) {
+					IFeature feature = ((IFeatureModel) item).getFeature();
 					prop.put("generate.feature@" + feature.getId() + ".source", feature.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					BundleDescription bundle = null;
-					if (fInfo.items[i] instanceof IPluginModelBase) {
-						bundle = ((IPluginModelBase) fInfo.items[i]).getBundleDescription();
+					if (item instanceof IPluginModelBase) {
+						bundle = ((IPluginModelBase) item).getBundleDescription();
 					}
 					if (bundle == null) {
-						if (fInfo.items[i] instanceof BundleDescription)
-							bundle = (BundleDescription) fInfo.items[i];
+						if (item instanceof BundleDescription)
+							bundle = (BundleDescription) item;
 					}
 					if (bundle == null)
 						continue;

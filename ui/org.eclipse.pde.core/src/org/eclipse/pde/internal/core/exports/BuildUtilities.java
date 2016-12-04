@@ -31,8 +31,7 @@ public class BuildUtilities {
 			if (vm == null) {
 				IVMInstall[] installs = environment.getCompatibleVMs();
 				// take the first strictly compatible vm if there is no default
-				for (int i = 0; i < installs.length; i++) {
-					IVMInstall install = installs[i];
+				for (IVMInstall install : installs) {
 					if (environment.isStrictlyCompatible(install)) {
 						vm = install;
 						break;

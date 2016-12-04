@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.exports;
 
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 import java.util.*;
@@ -61,8 +60,8 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	 */
 	public void buildBeforeExport(Object[] exportedItems, IProgressMonitor monitor) throws CoreException {
 		IProject[] projects = getExportedWorkspaceProjects(exportedItems);
-		for (int i = 0; i < projects.length; i++) {
-			projects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+		for (IProject project : projects) {
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 		}
 	}
 
@@ -78,14 +77,14 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	public Set<IProject> checkForErrors(Object[] exportedItems) throws CoreException {
 		IProject[] projects = getExportedWorkspaceProjects(exportedItems);
 		Set<IProject> projectsWithErrors = new HashSet<>(projects.length);
-		for (int i = 0; i < projects.length; i++) {
-			IMarker[] markers = projects[i].findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+		for (IProject project : projects) {
+			IMarker[] markers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 			if (markers.length > 0) {
-				for (int j = 0; j < markers.length; j++) {
-					Integer severity = (Integer) (markers[j].getAttribute(IMarker.SEVERITY));
+				for (IMarker marker : markers) {
+					Integer severity = (Integer) (marker.getAttribute(IMarker.SEVERITY));
 					if (severity != null && severity.intValue() >= IMarker.SEVERITY_ERROR) {
-						if (markers[j].getType().equals(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER) || markers[j].getType().equals(PDEMarkerFactory.MARKER_ID)) {
-							projectsWithErrors.add(projects[i]);
+						if (marker.getType().equals(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER) || marker.getType().equals(PDEMarkerFactory.MARKER_ID)) {
+							projectsWithErrors.add(project);
 							break;
 						}
 					}
@@ -109,16 +108,16 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	public Map<String, Map<String, Set<IPath>>> getWorkspaceOutputFolders(Object[] exportedItems) throws CoreException {
 		IProject[] projects = getExportedWorkspaceProjects(exportedItems);
 		Map<String, Map<String, Set<IPath>>> result = new HashMap<>(projects.length);
-		for (int i = 0; i < projects.length; i++) {
-			IFile buildFile = PDEProject.getBuildProperties(projects[i]);
+		for (IProject project : projects) {
+			IFile buildFile = PDEProject.getBuildProperties(project);
 			if (buildFile.exists()) {
 				IBuildModel buildModel = new WorkspaceBuildModel(buildFile);
 				buildModel.load();
-				IJavaProject javaProject = JavaCore.create(projects[i]);
+				IJavaProject javaProject = JavaCore.create(project);
 				if (javaProject.exists()) {
 					Map<String, Set<IPath>> modelOutput = getPluginOutputFolders(buildModel, javaProject);
 					if (!modelOutput.isEmpty()) {
-						IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(projects[i]);
+						IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
 						if (model != null) {
 							result.put(model.getBundleDescription().getSymbolicName(), modelOutput);
 						}
@@ -133,20 +132,20 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 		Map<String, Set<IPath>> outputEntries = new HashMap<>();
 
 		IBuildEntry[] buildEntries = buildModel.getBuild().getBuildEntries();
-		for (int i = 0; i < buildEntries.length; i++) {
-			String name = buildEntries[i].getName();
+		for (IBuildEntry buildEntry : buildEntries) {
+			String name = buildEntry.getName();
 			if (name.startsWith(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX)) {
 				Set<IPath> outputPaths = new HashSet<>();
 
-				String[] sourceFolders = buildEntries[i].getTokens();
-				for (int j = 0; j < sourceFolders.length; j++) {
+				String[] sourceFolders = buildEntry.getTokens();
+				for (String sourceFolder : sourceFolders) {
 
 					IClasspathEntry[] classpathEntries = javaProject.getRawClasspath();
-					for (int k = 0; k < classpathEntries.length; k++) {
-						if (classpathEntries[k].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-							IPath sourcePath = classpathEntries[k].getPath().removeFirstSegments(1); // Entries include project as first segment
-							if (sourcePath.equals(new Path(sourceFolders[j]))) {
-								IPath outputPath = classpathEntries[k].getOutputLocation();
+					for (IClasspathEntry classpathEntry : classpathEntries) {
+						if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+							IPath sourcePath = classpathEntry.getPath().removeFirstSegments(1); // Entries include project as first segment
+							if (sourcePath.equals(new Path(sourceFolder))) {
+								IPath outputPath = classpathEntry.getOutputLocation();
 								if (outputPath == null) {
 									outputPath = javaProject.getOutputLocation();
 								}
@@ -167,20 +166,20 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 		if (fWorkspaceProjects == null) {
 			// TODO This won't work for nested features either
 			Set<IProject> projects = new HashSet<>();
-			for (int i = 0; i < exportedItems.length; i++) {
-				if (exportedItems[i] instanceof IPluginModelBase) {
-					IPath installLocation = new Path(((IPluginModelBase) exportedItems[i]).getInstallLocation());
+			for (Object exportedItem : exportedItems) {
+				if (exportedItem instanceof IPluginModelBase) {
+					IPath installLocation = new Path(((IPluginModelBase) exportedItem).getInstallLocation());
 					IProject project = PDECore.getWorkspace().getRoot().getProject(installLocation.lastSegment());
 					if (project.exists()) {
 						projects.add(project);
 					}
-				} else if (exportedItems[i] instanceof IFeatureModel) {
-					IFeatureModel feature = (IFeatureModel) exportedItems[i];
+				} else if (exportedItem instanceof IFeatureModel) {
+					IFeatureModel feature = (IFeatureModel) exportedItem;
 					IFeaturePlugin[] plugins = feature.getFeature().getPlugins();
-					for (int j = 0; j < plugins.length; j++) {
-						IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(plugins[j].getId());
-						if (plugin != null) {
-							IPath installLocation = new Path(plugin.getInstallLocation());
+					for (IFeaturePlugin plugin : plugins) {
+						IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(plugin.getId());
+						if (model != null) {
+							IPath installLocation = new Path(model.getInstallLocation());
 							IProject project = PDECore.getWorkspace().getRoot().getProject(installLocation.lastSegment());
 							if (project.exists()) {
 								projects.add(project);

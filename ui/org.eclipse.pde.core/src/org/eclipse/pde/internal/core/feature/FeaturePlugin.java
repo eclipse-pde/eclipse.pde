@@ -52,9 +52,9 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 			// if no plug-ins match the id, entry == null
 			if (entry != null) {
 				IPluginModelBase bases[] = entry.getActiveModels();
-				for (int i = 0; i < bases.length; i++) {
-					if (bases[i].getPluginBase().getVersion().equals(version)) {
-						model = bases[i];
+				for (IPluginModelBase base : bases) {
+					if (base.getPluginBase().getVersion().equals(version)) {
+						model = base;
 						break;
 					}
 				}

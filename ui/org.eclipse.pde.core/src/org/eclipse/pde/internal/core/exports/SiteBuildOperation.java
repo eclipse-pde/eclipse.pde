@@ -74,8 +74,8 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	}
 
 	private void updateSiteFeatureVersions() throws CoreException {
-		for (int i = 0; i < fFeatureModels.length; i++) {
-			IFeature feature = fFeatureModels[i].getFeature();
+		for (IFeatureModel featureModel : fFeatureModels) {
+			IFeature feature = featureModel.getFeature();
 			Version pvi = Version.parseVersion(feature.getVersion());
 
 			if ("qualifier".equals(pvi.getQualifier())) { //$NON-NLS-1$
@@ -99,19 +99,19 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 		// first see if version with qualifier being qualifier is present among
 		// site features
 		ISiteFeature[] siteFeatures = fSiteModel.getSite().getFeatures();
-		for (int s = 0; s < siteFeatures.length; s++) {
-			if (siteFeatures[s].getId().equals(feature.getId()) && siteFeatures[s].getVersion().equals(feature.getVersion())) {
-				return siteFeatures[s];
+		for (ISiteFeature siteFeature : siteFeatures) {
+			if (siteFeature.getId().equals(feature.getId()) && siteFeature.getVersion().equals(feature.getVersion())) {
+				return siteFeature;
 			}
 		}
 		String highestQualifier = null;
 		// then find feature with the highest qualifier
-		for (int s = 0; s < siteFeatures.length; s++) {
-			if (siteFeatures[s].getId().equals(feature.getId())) {
-				Version candidatePvi = Version.parseVersion(siteFeatures[s].getVersion());
+		for (ISiteFeature siteFeature : siteFeatures) {
+			if (siteFeature.getId().equals(feature.getId())) {
+				Version candidatePvi = Version.parseVersion(siteFeature.getVersion());
 				if (pvi.getMajor() == candidatePvi.getMajor() && pvi.getMinor() == candidatePvi.getMinor() && pvi.getMicro() == candidatePvi.getMicro()) {
 					if (reversionCandidate == null || candidatePvi.getQualifier().compareTo(highestQualifier) > 0) {
-						reversionCandidate = siteFeatures[s];
+						reversionCandidate = siteFeature;
 						highestQualifier = candidatePvi.getQualifier();
 					}
 				}
@@ -147,10 +147,10 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 		// finding the newest feature archive
 		String newestName = null;
 		long newestTime = 0;
-		for (int i = 0; i < featureJars.length; i++) {
-			File file = new File(featureJars[i].getLocation().toOSString());
+		for (IResource featureJar : featureJars) {
+			File file = new File(featureJar.getLocation().toOSString());
 			long jarTime = file.lastModified();
-			String jarName = featureJars[i].getName();
+			String jarName = featureJar.getName();
 
 			if (jarTime < fBuildTime) {
 				continue;
@@ -159,7 +159,7 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 				continue;
 			}
 			if (pattern.matcher(jarName).matches()) {
-				newestName = featureJars[i].getName();
+				newestName = featureJar.getName();
 				newestTime = jarTime;
 			}
 		}

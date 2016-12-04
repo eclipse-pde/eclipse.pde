@@ -100,11 +100,11 @@ public class FeatureExportOperation extends Job {
 				doExport(model, null, subMonitor.split(20));
 
 			} else {
-				for (int j = 0; j < fInfo.items.length; j++) {
+				for (Object item : fInfo.items) {
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
 					try {
-						doExport((IFeatureModel) fInfo.items[j], configurations, subMonitor.split(20));
+						doExport((IFeatureModel) item, configurations, subMonitor.split(20));
 					} catch (CoreException e) {
 						return e.getStatus();
 					} finally {
@@ -208,8 +208,8 @@ public class FeatureExportOperation extends Job {
 		if (configs == null || configs.length == 0 || configs[0] == null) {
 			configs = new String[][] {{getOS(feature), getWS(feature), getOSArch(feature)}};
 		} else {
-			for (int i = 0; i < configs.length; i++) {
-				createDestination(configs[i][0], configs[i][1], configs[i][2]);
+			for (String[] config : configs) {
+				createDestination(config[0], config[1], config[2]);
 			}
 		}
 		try {
@@ -272,16 +272,16 @@ public class FeatureExportOperation extends Job {
 		}
 
 		subMonitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningAssemblyScript);
-		for (int i = 0; i < configs.length; i++) {
-			setArchiveLocation(properties, configs[i][0], configs[i][1], configs[i][2]);
-			runScript(getAssemblyScriptName(featureID, configs[i][0], configs[i][1], configs[i][2], featureLocation), new String[] {"main"}, //$NON-NLS-1$
+		for (String[] config : configs) {
+			setArchiveLocation(properties, config[0], config[1], config[2]);
+			runScript(getAssemblyScriptName(featureID, config[0], config[1], config[2], featureLocation), new String[] {"main"}, //$NON-NLS-1$
 					properties, subMonitor.split(2));
 		}
 
 		subMonitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningPackagerScript);
-		for (int i = 0; i < configs.length; i++) {
-			setArchiveLocation(properties, configs[i][0], configs[i][1], configs[i][2]);
-			runScript(getPackagerScriptName(featureID, configs[i][0], configs[i][1], configs[i][2], featureLocation), null, properties, subMonitor.split(2));
+		for (String[] config : configs) {
+			setArchiveLocation(properties, config[0], config[1], config[2]);
+			runScript(getPackagerScriptName(featureID, config[0], config[1], config[2], featureLocation), null, properties, subMonitor.split(2));
 		}
 		properties.put("destination.temp.folder", fBuildTempLocation + "/pde.logs"); //$NON-NLS-1$ //$NON-NLS-2$
 		runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, subMonitor.split(2)); //$NON-NLS-1$
@@ -345,16 +345,16 @@ public class FeatureExportOperation extends Job {
 		if (model instanceof IFeatureModel) {
 			IFeature feature = ((IFeatureModel) model).getFeature();
 			IFeatureChild[] children = feature.getIncludedFeatures();
-			for (int i = 0; i < children.length; i++) {
-				IFeature ref = ((FeatureChild) children[i]).getReferencedFeature();
+			for (IFeatureChild featureChild : children) {
+				IFeature ref = ((FeatureChild) featureChild).getReferencedFeature();
 				if (ref != null) {
 					deleteBuildFiles(ref.getModel());
 				}
 			}
 
 			IFeaturePlugin[] plugins = feature.getPlugins();
-			for (int i = 0; i < plugins.length; i++) {
-				IPluginModelBase plugin = PluginRegistry.findModel(plugins[i].getId());
+			for (IFeaturePlugin featurePlugin : plugins) {
+				IPluginModelBase plugin = PluginRegistry.findModel(featurePlugin.getId());
 				if (plugin != null) {
 					deleteBuildFiles(plugin);
 				}
@@ -459,8 +459,8 @@ public class FeatureExportOperation extends Job {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, BuildUtilities.getBootClasspath());
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 			IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-			for (int i = 0; i < envs.length; i++) {
-				String id = envs[i].getId();
+			for (IExecutionEnvironment env : envs) {
+				String id = env.getId();
 				if (id != null)
 					fAntBuildProperties.put(id, BuildUtilities.getBootClasspath(id));
 			}
@@ -612,8 +612,8 @@ public class FeatureExportOperation extends Job {
 			if (dir.isDirectory()) {
 				File[] children = dir.listFiles();
 				if (children != null) {
-					for (int i = 0; i < children.length; i++) {
-						deleteDir(children[i]);
+					for (File element : children) {
+						deleteDir(element);
 					}
 				}
 			}
@@ -692,8 +692,8 @@ public class FeatureExportOperation extends Job {
 		//TODO this is duplicate from createAntBuildProperties
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (int i = 0; i < envs.length; i++) {
-			String id = envs[i].getId();
+		for (IExecutionEnvironment env : envs) {
+			String id = env.getId();
 			if (id != null)
 				properties.put(id, BuildUtilities.getBootClasspath(id));
 		}
@@ -724,8 +724,7 @@ public class FeatureExportOperation extends Job {
 		}
 
 		Dictionary<String, String>[] dictionaries = fStateCopy.getPlatformProperties();
-		for (int i = 0; i < dictionaries.length; i++) {
-			Dictionary<String, String> properties = dictionaries[i];
+		for (Dictionary<String, String> properties : dictionaries) {
 			properties.put("osgi.os", os); //$NON-NLS-1$
 			properties.put("osgi.ws", ws); //$NON-NLS-1$
 			properties.put("osgi.arch", arch); //$NON-NLS-1$
@@ -770,8 +769,8 @@ public class FeatureExportOperation extends Job {
 			IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
 			if (entry != null) {
 				String[] tokens = entry.getTokens();
-				for (int i = 0; i < tokens.length; i++) {
-					if (tokens[i].equals("true")) //$NON-NLS-1$
+				for (final String token : tokens) {
+					if (token.equals("true")) //$NON-NLS-1$
 						return true;
 				}
 			}
@@ -783,8 +782,8 @@ public class FeatureExportOperation extends Job {
 		Map<String, String> map = new HashMap<>(); // merge workspace and external features using workspace over external
 		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] models = fmm.getExternalModels();
-		for (int i = 0; i < models.length; i++) {
-			map.put(models[i].getFeature().getId(), models[i].getInstallLocation());
+		for (IFeatureModel model : models) {
+			map.put(model.getFeature().getId(), model.getInstallLocation());
 		}
 		// remove anything that we have in the workspace models
 		models = fmm.getWorkspaceModels();
@@ -896,9 +895,9 @@ public class FeatureExportOperation extends Job {
 			}
 
 			boolean returnAfterLoop = false;
-			for (int i = 0; i < featuresExported.length; i++) {
-				if (featuresExported[i] instanceof IFeatureModel) {
-					IFeature feature = ((IFeatureModel) featuresExported[i]).getFeature();
+			for (final Object element : featuresExported) {
+				if (element instanceof IFeatureModel) {
+					IFeature feature = ((IFeatureModel) element).getFeature();
 
 					if (feature.getIncludedFeatures().length > 0) {
 						createFeature(featureID, featureLocation, feature.getIncludedFeatures(), doc, root, prop);
@@ -915,9 +914,9 @@ public class FeatureExportOperation extends Job {
 					includes.setAttribute("id", feature.getId()); //$NON-NLS-1$
 					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
 					root.appendChild(includes);
-				} else if (featuresExported[i] instanceof IFeatureChild) {
+				} else if (element instanceof IFeatureChild) {
 					returnAfterLoop = true;
-					IFeature feature = ((FeatureChild) featuresExported[i]).getReferencedFeature();
+					IFeature feature = ((FeatureChild) element).getReferencedFeature();
 					if (feature != null) {
 						if (feature.getIncludedFeatures().length > 0) {
 							createFeature(featureID, featureLocation, feature.getIncludedFeatures(), doc, root, prop);
@@ -1013,14 +1012,14 @@ public class FeatureExportOperation extends Job {
 							plugin.setAttribute("unpack", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 							root.appendChild(plugin);
 							BundleDescription[] fragments = bundle.getFragments();
-							for (int i = 0; i < configurations.length; i++) {
-								BundleDescription launcherFragment = getMatchingLauncher(configurations[i], fragments);
+							for (String[] configuration : configurations) {
+								BundleDescription launcherFragment = getMatchingLauncher(configuration, fragments);
 								if (launcherFragment != null) {
 									Element fragment = doc.createElement("plugin"); //$NON-NLS-1$
 									fragment.setAttribute("id", launcherFragment.getSymbolicName()); //$NON-NLS-1$
 									fragment.setAttribute("version", launcherFragment.getVersion().toString()); //$NON-NLS-1$
 									fragment.setAttribute("fragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-									setFilterAttributes(fragment, configurations[i]);
+									setFilterAttributes(fragment, configuration);
 									root.appendChild(fragment);
 								}
 							}
@@ -1031,9 +1030,9 @@ public class FeatureExportOperation extends Job {
 
 			List<IPluginModelBase> workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
 
-			for (int i = 0; i < fInfo.items.length; i++) {
-				if (fInfo.items[i] instanceof IFeatureModel) {
-					IFeature feature = ((IFeatureModel) fInfo.items[i]).getFeature();
+			for (Object item : fInfo.items) {
+				if (item instanceof IFeatureModel) {
+					IFeature feature = ((IFeatureModel) item).getFeature();
 					Element includes = doc.createElement("includes"); //$NON-NLS-1$
 					includes.setAttribute("id", feature.getId()); //$NON-NLS-1$
 					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
@@ -1047,12 +1046,12 @@ public class FeatureExportOperation extends Job {
 					}
 				} else {
 					BundleDescription bundle = null;
-					if (fInfo.items[i] instanceof IPluginModelBase) {
-						bundle = ((IPluginModelBase) fInfo.items[i]).getBundleDescription();
+					if (item instanceof IPluginModelBase) {
+						bundle = ((IPluginModelBase) item).getBundleDescription();
 					}
 					if (bundle == null) {
-						if (fInfo.items[i] instanceof BundleDescription)
-							bundle = (BundleDescription) fInfo.items[i];
+						if (item instanceof BundleDescription)
+							bundle = (BundleDescription) item;
 					}
 					if (bundle == null)
 						continue;
@@ -1064,8 +1063,7 @@ public class FeatureExportOperation extends Job {
 
 					//when doing multiplatform we need filters set on the plugin elements that need them
 					//so check the Bundle's platfrom filter against each config
-					for (Iterator<String[]> iterator = configs.iterator(); iterator.hasNext();) {
-						String[] currentConfig = iterator.next();
+					for (String[] currentConfig : configs) {
 						Dictionary<String, String> environment = getEnvironment(currentConfig);
 						if (shouldAddPlugin(bundle, environment)) {
 							Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
