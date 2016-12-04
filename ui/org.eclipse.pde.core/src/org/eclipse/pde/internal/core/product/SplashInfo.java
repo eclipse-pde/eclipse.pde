@@ -177,8 +177,8 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 			return false;
 		for (int i = 0; i < value.length(); i++) {
 			boolean found = false;
-			for (int j = 0; j < VALID_HEX_CHARS.length; j++) {
-				if (value.charAt(i) == VALID_HEX_CHARS[j]) {
+			for (char validChar : VALID_HEX_CHARS) {
+				if (value.charAt(i) == validChar) {
 					found = true;
 					break;
 				}

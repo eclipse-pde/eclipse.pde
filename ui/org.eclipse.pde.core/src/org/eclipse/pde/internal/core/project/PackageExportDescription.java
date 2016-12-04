@@ -72,8 +72,8 @@ public class PackageExportDescription implements IPackageExportDescription {
 			code++;
 		}
 		if (fFriends != null) {
-			for (int i = 0; i < fFriends.length; i++) {
-				code += fFriends[i].hashCode();
+			for (String friend : fFriends) {
+				code += friend.hashCode();
 			}
 		}
 		return code;

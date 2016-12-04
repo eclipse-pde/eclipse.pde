@@ -215,12 +215,12 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 			IBundleClasspathEntry[] classpath = null;
 			if (elements != null && elements.length > 0) {
 				List<IBundleClasspathEntry> collect = new ArrayList<>();
-				for (int i = 0; i < elements.length; i++) {
-					String libName = elements[i].getValue();
+				for (ManifestElement element : elements) {
+					String libName = element.getValue();
 					IBundleClasspathEntry[] entries = getClasspathEntries(project, build, libName);
 					if (entries != null) {
-						for (int j = 0; j < entries.length; j++) {
-							collect.add(entries[j]);
+						for (IBundleClasspathEntry entry : entries) {
+							collect.add(entry);
 						}
 					}
 				}
@@ -312,19 +312,19 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 					String[] tokens = entry.getTokens();
 					if (tokens != null && tokens.length > 0) {
 						List<String> strings = new ArrayList<>();
-						for (int i = 0; i < tokens.length; i++) {
-							strings.add(tokens[i]);
+						for (String token : tokens) {
+							strings.add(token);
 						}
 						// remove the default entries
 						strings.remove("META-INF/"); //$NON-NLS-1$
 						String[] names = ProjectModifyOperation.getLibraryNames(this);
 						if (names != null) {
-							for (int i = 0; i < names.length; i++) {
-								strings.remove(names[i]);
+							for (String name : names) {
+								strings.remove(name);
 								// if the library is a folder, account for trailing slash - see bug 306991
-								IPath path = new Path(names[i]);
+								IPath path = new Path(name);
 								if (path.getFileExtension() == null) {
-									strings.remove(names[i] + "/"); //$NON-NLS-1$
+									strings.remove(name + "/"); //$NON-NLS-1$
 								}
 							}
 						}
@@ -399,8 +399,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 					IPath output = null;
 					if (jp.exists()) {
 						IClasspathEntry[] rawClasspath = jp.getRawClasspath();
-						for (int j = 0; j < rawClasspath.length; j++) {
-							IClasspathEntry cpe = rawClasspath[j];
+						for (IClasspathEntry cpe : rawClasspath) {
 							if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 								if (cpe.getPath().removeFirstSegments(1).equals(path)) {
 									output = cpe.getOutputLocation();
@@ -547,8 +546,8 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	@Override
 	public boolean hasNature(String natureId) {
 		if (fNatures != null) {
-			for (int i = 0; i < fNatures.length; i++) {
-				if (fNatures[i].equals(natureId)) {
+			for (String nature : fNatures) {
+				if (nature.equals(natureId)) {
 					return true;
 				}
 			}

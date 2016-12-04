@@ -407,8 +407,8 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 	}
 
 	private boolean hasArgs(String[] args) {
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].length() > 0) {
+		for (String arg : args) {
+			if (arg.length() > 0) {
 				return true;
 			}
 		}

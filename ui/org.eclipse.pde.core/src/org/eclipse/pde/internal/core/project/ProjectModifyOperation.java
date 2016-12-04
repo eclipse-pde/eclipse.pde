@@ -77,8 +77,7 @@ public class ProjectModifyOperation {
 				IJavaProject jp = JavaCore.create(project);
 				if (jp.exists()) {
 					IClasspathEntry[] classpath = jp.getRawClasspath();
-					for (int i = 0; i < classpath.length; i++) {
-						IClasspathEntry entry = classpath[i];
+					for (IClasspathEntry entry : classpath) {
 						if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
 							String id = JavaRuntime.getExecutionEnvironmentId(entry.getPath());
 							if (id != null) {
@@ -199,8 +198,8 @@ public class ProjectModifyOperation {
 		// create source folders as required
 		IBundleClasspathEntry[] bces = description.getBundleClasspath();
 		if (bces != null && bces.length > 0) {
-			for (int i = 0; i < bces.length; i++) {
-				IPath folder = bces[i].getSourcePath();
+			for (IBundleClasspathEntry bce : bces) {
+				IPath folder = bce.getSourcePath();
 				if (folder != null) {
 					CoreUtility.createFolder(project.getFolder(folder));
 				}
@@ -220,11 +219,9 @@ public class ProjectModifyOperation {
 				IClasspathEntry[] entries = getSourceFolderEntries(javaProject, description);
 				IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
 				List<IClasspathEntry> add = new ArrayList<>();
-				for (int i = 0; i < entries.length; i++) {
-					IClasspathEntry entry = entries[i];
+				for (IClasspathEntry entry : entries) {
 					boolean present = false;
-					for (int j = 0; j < rawClasspath.length; j++) {
-						IClasspathEntry existingEntry = rawClasspath[j];
+					for (IClasspathEntry existingEntry : rawClasspath) {
 						if (existingEntry.getEntryKind() == entry.getEntryKind()) {
 							if (existingEntry.getPath().equals(entry.getPath())) {
 								present = true;
@@ -240,8 +237,7 @@ public class ProjectModifyOperation {
 				boolean addRequired = false;
 				if (description.hasNature(IBundleProjectDescription.PLUGIN_NATURE)) {
 					addRequired = true;
-					for (int i = 0; i < rawClasspath.length; i++) {
-						IClasspathEntry cpe = rawClasspath[i];
+					for (IClasspathEntry cpe : rawClasspath) {
 						if (cpe.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
 							if (PDECore.REQUIRED_PLUGINS_CONTAINER_PATH.equals(cpe.getPath())) {
 								addRequired = false;
@@ -255,8 +251,8 @@ public class ProjectModifyOperation {
 				}
 				if (!add.isEmpty()) {
 					List<IClasspathEntry> all = new ArrayList<>();
-					for (int i = 0; i < rawClasspath.length; i++) {
-						all.add(rawClasspath[i]);
+					for (IClasspathEntry cpe : rawClasspath) {
+						all.add(cpe);
 					}
 					all.addAll(add);
 					javaProject.setRawClasspath(all.toArray(new IClasspathEntry[all.size()]), null);
@@ -348,8 +344,7 @@ public class ProjectModifyOperation {
 			return new IClasspathEntry[0];
 		}
 		List<IClasspathEntry> entries = new ArrayList<>();
-		for (int i = 0; i < folders.length; i++) {
-			IBundleClasspathEntry folder = folders[i];
+		for (IBundleClasspathEntry folder : folders) {
 			if (folder.getSourcePath() == null) {
 				// no source indicates class file folder or library
 				IPath bin = folder.getBinaryPath();
@@ -403,13 +398,13 @@ public class ProjectModifyOperation {
 		IProjectDescription projectDescription = project.getDescription();
 		String[] curr = projectDescription.getNatureIds();
 		Set<String> before = new HashSet<>();
-		for (int i = 0; i < curr.length; i++) {
-			before.add(curr[i]);
+		for (String element : curr) {
+			before.add(element);
 		}
 		String[] natureIds = description.getNatureIds();
 		Set<String> after = new HashSet<>();
-		for (int i = 0; i < natureIds.length; i++) {
-			after.add(natureIds[i]);
+		for (String natureId : natureIds) {
+			after.add(natureId);
 		}
 		if (!before.equals(after)) {
 			projectDescription.setNatureIds(natureIds);
@@ -507,13 +502,12 @@ public class ProjectModifyOperation {
 			// remove all existing imports, then add new ones
 			IPluginImport[] imports = pluginBase.getImports();
 			if (imports != null && imports.length > 0) {
-				for (int i = 0; i < imports.length; i++) {
-					pluginBase.remove(imports[i]);
+				for (IPluginImport pluginImport : imports) {
+					pluginBase.remove(pluginImport);
 				}
 			}
 			if (dependencies != null) {
-				for (int i = 0; i < dependencies.length; i++) {
-					IRequiredBundleDescription req = dependencies[i];
+				for (IRequiredBundleDescription req : dependencies) {
 					VersionRange range = req.getVersionRange();
 					IPluginImport iimport = fModel.getPluginFactory().createImport();
 					iimport.setId(req.getName());
@@ -552,8 +546,7 @@ public class ProjectModifyOperation {
 					bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, null); // remove
 				} else {
 					StringBuffer buffer = new StringBuffer();
-					for (int i = 0; i < ees.length; i++) {
-						String id = ees[i];
+					for (String id : ees) {
 						if (buffer.length() > 0) {
 							buffer.append(",\n "); //comma, new-line, space //$NON-NLS-1$
 						}
@@ -569,8 +562,7 @@ public class ProjectModifyOperation {
 					bundle.setHeader(Constants.IMPORT_PACKAGE, null); // remove
 				} else {
 					ImportPackageHeader header = (ImportPackageHeader) factory.createHeader(Constants.IMPORT_PACKAGE, ""); //$NON-NLS-1$
-					for (int i = 0; i < packages.length; i++) {
-						IPackageImportDescription pkg = packages[i];
+					for (IPackageImportDescription pkg : packages) {
 						ImportPackageObject ip = header.addPackage(pkg.getName());
 						VersionRange range = pkg.getVersionRange();
 						if (range != null) {
@@ -589,8 +581,7 @@ public class ProjectModifyOperation {
 					bundle.setHeader(Constants.EXPORT_PACKAGE, null); // remove
 				} else {
 					ExportPackageHeader header = (ExportPackageHeader) factory.createHeader(Constants.EXPORT_PACKAGE, ""); //$NON-NLS-1$
-					for (int i = 0; i < exports.length; i++) {
-						IPackageExportDescription pkg = exports[i];
+					for (IPackageExportDescription pkg : exports) {
 						ExportPackageObject epo = header.addPackage(pkg.getName());
 						Version version = pkg.getVersion();
 						if (version != null) {
@@ -598,8 +589,8 @@ public class ProjectModifyOperation {
 						}
 						String[] friends = pkg.getFriends();
 						if (friends != null) {
-							for (int j = 0; j < friends.length; j++) {
-								epo.addFriend(new PackageFriend(epo, friends[j]));
+							for (String friend : friends) {
+								epo.addFriend(new PackageFriend(epo, friend));
 							}
 						} else {
 							epo.setInternal(!pkg.isApi());
@@ -702,11 +693,11 @@ public class ProjectModifyOperation {
 		IBundleClasspathEntry[] libs = description.getBundleClasspath();
 		if (libs != null && libs.length > 0) {
 			Set<String> names = new LinkedHashSet<>();
-			for (int i = 0; i < libs.length; i++) {
-				IPath lib = libs[i].getLibrary();
+			for (IBundleClasspathEntry cpe : libs) {
+				IPath libPath = cpe.getLibrary();
 				String libName = "."; //$NON-NLS-1$
-				if (lib != null) {
-					libName = lib.toString();
+				if (libPath != null) {
+					libName = libPath.toString();
 				}
 				names.add(libName);
 			}
@@ -731,8 +722,8 @@ public class ProjectModifyOperation {
 			IPluginBase pluginBase = fModel.getPluginBase();
 			IPluginLibrary[] libraries = pluginBase.getLibraries();
 			if (libraries != null && libraries.length > 0) {
-				for (int i = 0; i < libraries.length; i++) {
-					pluginBase.remove(libraries[i]);
+				for (IPluginLibrary library : libraries) {
+					pluginBase.remove(library);
 				}
 			}
 			String[] names = getLibraryNames(description);
@@ -740,9 +731,9 @@ public class ProjectModifyOperation {
 				if (names.length == 1 && ".".equals(names[0])) { //$NON-NLS-1$
 					return; // default library does not need to be added
 				}
-				for (int i = 0; i < names.length; i++) {
+				for (String name : names) {
 					IPluginLibrary library = fModel.getPluginFactory().createLibrary();
-					library.setName(names[i]);
+					library.setName(name);
 					library.setExported(false);
 					pluginBase.add(library);
 				}
@@ -791,10 +782,10 @@ public class ProjectModifyOperation {
 		if (!isEqual(names, prevNames)) {
 			// remove old libraries
 			if (prevNames != null) {
-				for (int i = 0; i < prevNames.length; i++) {
-					if (binEntry.contains(prevNames[i])) {
+				for (String prevName : prevNames) {
+					if (binEntry.contains(prevName)) {
 						modified = true;
-						binEntry.removeToken(prevNames[i]);
+						binEntry.removeToken(prevName);
 					}
 				}
 			}
@@ -824,8 +815,8 @@ public class ProjectModifyOperation {
 		if (!isEqual(paths, prevPaths)) {
 			// remove old paths
 			if (prevPaths != null) {
-				for (int i = 0; i < prevPaths.length; i++) {
-					String token = prevPaths[i].toString();
+				for (IPath prevPath : prevPaths) {
+					String token = prevPath.toString();
 					if (binEntry.contains(token)) {
 						binEntry.removeToken(token);
 						modified = true;
@@ -834,8 +825,8 @@ public class ProjectModifyOperation {
 			}
 			// add new paths
 			if (paths != null) {
-				for (int i = 0; i < paths.length; i++) {
-					String name = paths[i].toString();
+				for (IPath path : paths) {
+					String name = path.toString();
 					if (!binEntry.contains(name)) {
 						binEntry.addToken(name);
 						modified = true;
@@ -856,24 +847,24 @@ public class ProjectModifyOperation {
 			String[] oldNames = getLibraryNames(before);
 			IBuild build = model.getBuild();
 			if (oldNames != null) {
-				for (int i = 0; i < oldNames.length; i++) {
-					removeBuildEntry(build, IBuildEntry.JAR_PREFIX + oldNames[i]);
-					removeBuildEntry(build, IBuildEntry.OUTPUT_PREFIX + oldNames[i]);
+				for (String oldName : oldNames) {
+					removeBuildEntry(build, IBuildEntry.JAR_PREFIX + oldName);
+					removeBuildEntry(build, IBuildEntry.OUTPUT_PREFIX + oldName);
 				}
 			}
 			// configure the new ones
 			if (folders != null && folders.length > 0) {
-				for (int i = 0; i < folders.length; i++) {
+				for (IBundleClasspathEntry folder : folders) {
 					String libraryName = null;
-					IPath libPath = folders[i].getLibrary();
+					IPath libPath = folder.getLibrary();
 					if (libPath == null) {
 						libraryName = "."; //$NON-NLS-1$
 					} else {
-						libraryName = folders[i].getLibrary().toString();
+						libraryName = folder.getLibrary().toString();
 					}
 
 					// SOURCE.<LIBRARY_NAME>
-					IPath srcFolder = folders[i].getSourcePath();
+					IPath srcFolder = folder.getSourcePath();
 					if (srcFolder != null) {
 						IBuildEntry entry = getBuildEntry(build, factory, IBuildEntry.JAR_PREFIX + libraryName);
 						if (!srcFolder.isEmpty())
@@ -883,7 +874,7 @@ public class ProjectModifyOperation {
 					}
 
 					// OUTPUT.<LIBRARY_NAME>
-					IPath outFolder = folders[i].getBinaryPath();
+					IPath outFolder = folder.getBinaryPath();
 					if (srcFolder != null && outFolder == null) {
 						// default output folder
 						IJavaProject project = JavaCore.create(description.getProject());

@@ -447,16 +447,16 @@ public class Product extends ProductObject implements IProduct {
 	@Override
 	public void addConfigurationProperties(IConfigurationProperty[] properties) {
 		boolean modified = false;
-		for (int i = 0; i < properties.length; i++) {
-			if (properties[i] == null)
+		for (IConfigurationProperty property : properties) {
+			if (property == null)
 				continue;
-			String name = properties[i].getName();
+			String name = property.getName();
 			if (name == null || fConfigurationProperties.containsKey(name)) {
 				continue;
 			}
 
-			properties[i].setModel(getModel());
-			fConfigurationProperties.put(name, properties[i]);
+			property.setModel(getModel());
+			fConfigurationProperties.put(name, property);
 			modified = true;
 		}
 		if (modified && isEditable())
@@ -467,8 +467,8 @@ public class Product extends ProductObject implements IProduct {
 	public void removePlugins(IProductPlugin[] plugins) {
 		boolean modified = false;
 		LinkedList<Object> removedConfigurations = new LinkedList<>();
-		for (int i = 0; i < plugins.length; i++) {
-			final String id = plugins[i].getId();
+		for (IProductPlugin plugin : plugins) {
+			String id = plugin.getId();
 			if (fPlugins.remove(id) != null) {
 				modified = true;
 				Object configuration = fPluginConfigurations.remove(id);
@@ -488,8 +488,8 @@ public class Product extends ProductObject implements IProduct {
 	@Override
 	public void removePluginConfigurations(IPluginConfiguration[] configurations) {
 		boolean modified = false;
-		for (int i = 0; i < configurations.length; i++) {
-			if (fPluginConfigurations.remove(configurations[i].getId()) != null) {
+		for (IPluginConfiguration configuration : configurations) {
+			if (fPluginConfigurations.remove(configuration.getId()) != null) {
 				modified = true;
 			}
 		}
@@ -500,8 +500,8 @@ public class Product extends ProductObject implements IProduct {
 	@Override
 	public void removeConfigurationProperties(IConfigurationProperty[] properties) {
 		boolean modified = false;
-		for (int i = 0; i < properties.length; i++) {
-			if (fConfigurationProperties.remove(properties[i].getName()) != null) {
+		for (IConfigurationProperty property : properties) {
+			if (fConfigurationProperties.remove(property.getName()) != null) {
 				modified = true;
 			}
 		}
@@ -532,8 +532,8 @@ public class Product extends ProductObject implements IProduct {
 	@Override
 	public void addRepositories(IRepositoryInfo[] repos) {
 		boolean modified = false;
-		for (int i = 0; i < repos.length; i++) {
-			modified = modified || fRepositories.add(repos[i]);
+		for (IRepositoryInfo repo : repos) {
+			modified = modified || fRepositories.add(repo);
 		}
 		if (modified && isEditable())
 			fireStructureChanged(repos, IModelChangedEvent.INSERT);
@@ -542,8 +542,8 @@ public class Product extends ProductObject implements IProduct {
 	@Override
 	public void removeRepositories(IRepositoryInfo[] repos) {
 		boolean modified = false;
-		for (int i = 0; i < repos.length; i++) {
-			modified = fRepositories.remove(repos[i]) || modified;
+		for (IRepositoryInfo repo : repos) {
+			modified = fRepositories.remove(repo) || modified;
 		}
 		if (modified && isEditable())
 			fireStructureChanged(repos, IModelChangedEvent.REMOVE);
@@ -600,8 +600,8 @@ public class Product extends ProductObject implements IProduct {
 	@Override
 	public boolean containsFeature(String id) {
 		IProductFeature[] features = getFeatures();
-		for (int i = 0; i < features.length; i++) {
-			if (features[i].getId().equals(id))
+		for (IProductFeature feature : features) {
+			if (feature.getId().equals(id))
 				return true;
 		}
 		return false;
@@ -661,9 +661,9 @@ public class Product extends ProductObject implements IProduct {
 	@Override
 	public void removeFeatures(IProductFeature[] features) {
 		boolean modified = false;
-		for (int i = 0; i < features.length; i++) {
-			if (features[i].getId() != null) {
-				fFeatures.remove(features[i]);
+		for (IProductFeature feature : features) {
+			if (feature.getId() != null) {
+				fFeatures.remove(feature);
 				modified = true;
 			}
 		}

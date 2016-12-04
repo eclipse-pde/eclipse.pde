@@ -202,13 +202,13 @@ public final class BundleProjectService implements IBundleProjectService {
 		// build manifests
 		List<Map<String, String>> manifests = new ArrayList<>();
 		List<IPluginModelBase> plugins = new ArrayList<>();
-		for (int i = 0; i < models.length; i++) {
-			String location = models[i].getInstallLocation();
+		for (IPluginModelBase model : models) {
+			String location = model.getInstallLocation();
 			if (location != null) {
 				Map<String, String> manifest = loadManifest(new File(location));
 				if (manifest != null) {
 					manifests.add(manifest);
-					plugins.add(models[i]);
+					plugins.add(model);
 				}
 			}
 		}
@@ -217,8 +217,7 @@ public final class BundleProjectService implements IBundleProjectService {
 			Map[] marray = manifests.toArray(new Map[manifests.size()]);
 			Map<IBundleImporter, ScmUrlImportDescription[]> result = new HashMap<>();
 			IBundleImporter[] importers = Team.getBundleImporters();
-			for (int i = 0; i < importers.length; i++) {
-				IBundleImporter importer = importers[i];
+			for (IBundleImporter importer : importers) {
 				ScmUrlImportDescription[] descriptions = importer.validateImport(marray);
 				List<ScmUrlImportDescription> descriptioonList = new ArrayList<>();
 				for (int j = 0; j < descriptions.length; j++) {
