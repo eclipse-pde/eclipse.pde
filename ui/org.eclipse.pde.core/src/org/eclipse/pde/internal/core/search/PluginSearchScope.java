@@ -90,11 +90,11 @@ public class PluginSearchScope {
 
 	protected final IPluginModelBase[] addRelevantModels(IPluginModelBase[] models) {
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].getUnderlyingResource() != null) {
-				addWorkspaceModel(models[i], result);
+		for (IPluginModelBase model : models) {
+			if (model.getUnderlyingResource() != null) {
+				addWorkspaceModel(model, result);
 			} else {
-				addExternalModel(models[i], result);
+				addExternalModel(model, result);
 			}
 		}
 		return result.toArray(new IPluginModelBase[result.size()]);

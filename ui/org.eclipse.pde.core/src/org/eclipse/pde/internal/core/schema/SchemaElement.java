@@ -157,9 +157,9 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		if (iconName != null)
 			return iconName;
 		ISchemaAttribute[] attributes = getAttributes();
-		for (int i = 0; i < attributes.length; i++) {
-			if (isValidIconProperty(attributes[i]))
-				return attributes[i].getName();
+		for (ISchemaAttribute attribute : attributes) {
+			if (isValidIconProperty(attribute))
+				return attribute.getName();
 		}
 		return null;
 	}
@@ -169,9 +169,9 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		if (labelProperty != null)
 			return labelProperty;
 		ISchemaAttribute[] attributes = getAttributes();
-		for (int i = 0; i < attributes.length; i++) {
-			if (isValidLabelProperty(attributes[i]))
-				return attributes[i].getName();
+		for (ISchemaAttribute attribute : attributes) {
+			if (isValidLabelProperty(attribute))
+				return attribute.getName();
 		}
 		return null;
 	}
@@ -203,9 +203,8 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		}
 		if (getAttributeCount() > 0) {
 			ISchemaAttribute[] atts = getAttributes();
-			for (int i = 0; i < atts.length; i++) {
-				ISchemaAttribute att = atts[i];
-				att.setParent(this);
+			for (ISchemaAttribute attribute : atts) {
+				attribute.setParent(this);
 			}
 		}
 	}

@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.io.File;
 import java.net.*;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -104,15 +103,14 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		// If we are running the ant task, additional search locations may be provided
 		// The project folder must have the plug-in ID as its file name
 		if (url == null && additionalSearchPath != null) {
-			for (Iterator<IPath> iterator = additionalSearchPath.iterator(); iterator.hasNext();) {
-				IPath currentSearch = iterator.next();
+			for (IPath searchPath : additionalSearchPath) {
 				File pluginFile = null;
-				if (currentSearch.isAbsolute()) {
+				if (searchPath.isAbsolute()) {
 					// Append plug-in id directly to absolute paths
-					pluginFile = new File(currentSearch.toFile(), pluginID);
+					pluginFile = new File(searchPath.toFile(), pluginID);
 				} else if (parentFile != null) {
 					// Append relative path to parent file location
-					File file = new File(parentFile, currentSearch.toOSString());
+					File file = new File(parentFile, searchPath.toOSString());
 					pluginFile = new File(file, pluginID);
 				}
 

@@ -114,15 +114,15 @@ public class SchemaRegistry {
 		ModelEntry entry = PluginRegistry.findEntry(pluginID);
 		if (entry != null) {
 			IPluginModelBase[] models = entry.getWorkspaceModels();
-			for (int i = 0; i < models.length; i++) {
-				url = getSchemaURL(models[i], schema);
+			for (IPluginModelBase model : models) {
+				url = getSchemaURL(model, schema);
 				if (url != null)
 					break;
 			}
 			if (url == null) {
 				models = entry.getExternalModels();
-				for (int i = 0; i < models.length; i++) {
-					url = getSchemaURL(models[i], schema);
+				for (IPluginModelBase model : models) {
+					url = getSchemaURL(model, schema);
 					if (url != null)
 						break;
 				}

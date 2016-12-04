@@ -44,9 +44,9 @@ public class PluginJavaSearchUtil {
 		if (model == null || !set.add(model))
 			return;
 		IPluginImport[] imports = model.getPluginBase().getImports();
-		for (int i = 0; i < imports.length; i++) {
-			if (imports[i].isReexported()) {
-				IPluginModelBase child = PluginRegistry.findModel(imports[i].getId());
+		for (IPluginImport pluginImport : imports) {
+			if (pluginImport.isReexported()) {
+				IPluginModelBase child = PluginRegistry.findModel(pluginImport.getId());
 				if (child != null)
 					collectAllPrerequisites(child, set);
 			}
@@ -57,23 +57,22 @@ public class PluginJavaSearchUtil {
 		ArrayList<IPackageFragment> result = new ArrayList<>();
 		IPackageFragmentRoot[] roots = parentProject.getAllPackageFragmentRoots();
 
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+		for (IPluginModelBase model : models) {
 			IResource resource = model.getUnderlyingResource();
 			if (resource == null) {
 				ArrayList<Path> libraryPaths = new ArrayList<>();
 				addLibraryPaths(model, libraryPaths);
-				for (int j = 0; j < roots.length; j++) {
-					if (libraryPaths.contains(roots[j].getPath())) {
-						extractPackageFragments(roots[j], result, filterEmptyPackages);
+				for (IPackageFragmentRoot root : roots) {
+					if (libraryPaths.contains(root.getPath())) {
+						extractPackageFragments(root, result, filterEmptyPackages);
 					}
 				}
 			} else {
 				IProject project = resource.getProject();
-				for (int j = 0; j < roots.length; j++) {
-					IJavaProject jProject = (IJavaProject) roots[j].getParent();
+				for (IPackageFragmentRoot root : roots) {
+					IJavaProject jProject = (IJavaProject) root.getParent();
 					if (jProject.getProject().equals(project)) {
-						extractPackageFragments(roots[j], result, filterEmptyPackages);
+						extractPackageFragments(root, result, filterEmptyPackages);
 					}
 				}
 			}
@@ -84,8 +83,8 @@ public class PluginJavaSearchUtil {
 	private static void extractPackageFragments(IPackageFragmentRoot root, ArrayList<IPackageFragment> result, boolean filterEmpty) {
 		try {
 			IJavaElement[] children = root.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				IPackageFragment fragment = (IPackageFragment) children[i];
+			for (IJavaElement element : children) {
+				IPackageFragment fragment = (IPackageFragment) element;
 				if (!filterEmpty || fragment.hasChildren())
 					result.add(fragment);
 			}
@@ -105,8 +104,8 @@ public class PluginJavaSearchUtil {
 			libraryPaths.add(new Path(file.getAbsolutePath()));
 		} else {
 			IPluginLibrary[] libraries = plugin.getLibraries();
-			for (int i = 0; i < libraries.length; i++) {
-				String libraryName = ClasspathUtilCore.expandLibraryName(libraries[i].getName());
+			for (IPluginLibrary library : libraries) {
+				String libraryName = ClasspathUtilCore.expandLibraryName(library.getName());
 				String path = plugin.getModel().getInstallLocation() + IPath.SEPARATOR + libraryName;
 				if (new File(path).exists()) {
 					libraryPaths.add(new Path(path));
@@ -116,15 +115,15 @@ public class PluginJavaSearchUtil {
 			}
 		}
 		if (ClasspathUtilCore.hasExtensibleAPI(model)) {
-			for (int i = 0; i < fragments.length; i++) {
-				addLibraryPaths(fragments[i], libraryPaths);
+			for (IFragmentModel fragment : fragments) {
+				addLibraryPaths(fragment, libraryPaths);
 			}
 		}
 	}
 
 	private static void findLibraryInFragments(IFragmentModel[] fragments, String libraryName, ArrayList<Path> libraryPaths) {
-		for (int i = 0; i < fragments.length; i++) {
-			String path = fragments[i].getInstallLocation() + IPath.SEPARATOR + libraryName;
+		for (IFragmentModel fragment : fragments) {
+			String path = fragment.getInstallLocation() + IPath.SEPARATOR + libraryName;
 			if (new File(path).exists()) {
 				libraryPaths.add(new Path(path));
 				break;
@@ -135,9 +134,9 @@ public class PluginJavaSearchUtil {
 	public static IJavaSearchScope createSeachScope(IJavaProject jProject) throws JavaModelException {
 		IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 		ArrayList<IPackageFragmentRoot> filteredRoots = new ArrayList<>();
-		for (int i = 0; i < roots.length; i++) {
-			if (roots[i].getResource() != null && roots[i].getResource().getProject().equals(jProject.getProject())) {
-				filteredRoots.add(roots[i]);
+		for (IPackageFragmentRoot root : roots) {
+			if (root.getResource() != null && root.getResource().getProject().equals(jProject.getProject())) {
+				filteredRoots.add(root);
 			}
 		}
 		return SearchEngine.createJavaSearchScope(filteredRoots.toArray(new IJavaElement[filteredRoots.size()]));

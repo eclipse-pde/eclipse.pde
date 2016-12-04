@@ -119,9 +119,9 @@ public class PluginSearchOperation {
 				result.add(pluginBase);
 		}
 		IPluginImport[] imports = pluginBase.getImports();
-		for (int i = 0; i < imports.length; i++) {
-			if (fPattern.matcher(imports[i].getId()).matches())
-				result.add(imports[i]);
+		for (IPluginImport pluginImport : imports) {
+			if (fPattern.matcher(pluginImport.getId()).matches())
+				result.add(pluginImport);
 		}
 	}
 
@@ -145,17 +145,17 @@ public class PluginSearchOperation {
 
 	private void findExtensionPointDeclarations(IPluginModelBase model, ArrayList<IIdentifiable> result) {
 		IPluginExtensionPoint[] extensionPoints = model.getPluginBase().getExtensionPoints();
-		for (int i = 0; i < extensionPoints.length; i++) {
-			if (fPattern.matcher(extensionPoints[i].getFullId()).matches())
-				result.add(extensionPoints[i]);
+		for (IPluginExtensionPoint extensionPoint : extensionPoints) {
+			if (fPattern.matcher(extensionPoint.getFullId()).matches())
+				result.add(extensionPoint);
 		}
 	}
 
 	private void findExtensionPointReferences(IPluginModelBase model, ArrayList<IIdentifiable> result) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			if (fPattern.matcher(extensions[i].getPoint()).matches())
-				result.add(extensions[i]);
+		for (IPluginExtension extension : extensions) {
+			if (fPattern.matcher(extension.getPoint()).matches())
+				result.add(extension);
 		}
 	}
 

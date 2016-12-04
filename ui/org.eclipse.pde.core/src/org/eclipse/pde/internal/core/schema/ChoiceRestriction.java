@@ -31,8 +31,8 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		this(source.getSchema());
 		children = new Vector<>();
 		Object[] choices = source.getChildren();
-		for (int i = 0; i < choices.length; i++) {
-			children.add(new SchemaEnumeration(this, ((ISchemaEnumeration) choices[i]).getName()));
+		for (Object choice : choices) {
+			children.add(new SchemaEnumeration(this, ((ISchemaEnumeration) choice).getName()));
 		}
 	}
 

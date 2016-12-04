@@ -120,8 +120,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private void collectElements(ISchemaCompositor compositor, Vector<Object> result) {
 		Object[] children = compositor.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			Object child = children[i];
+		for (Object child : children) {
 			if (child instanceof ISchemaCompositor)
 				collectElements((ISchemaCompositor) child, result);
 			else if (child instanceof ISchemaObjectReference) {
@@ -275,8 +274,8 @@ public class Schema extends PlatformObject implements ISchema {
 			if (schema == null)
 				continue;
 			ISchemaElement[] ielements = schema.getElements();
-			for (int j = 0; j < ielements.length; j++)
-				result.add(ielements[j]);
+			for (ISchemaElement element : ielements)
+				result.add(element);
 		}
 		return (ISchemaElement[]) result.toArray(new ISchemaElement[result.size()]);
 	}
@@ -860,8 +859,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private void resolveElementReference(ISchemaObjectReference reference) {
 		ISchemaElement[] elementList = getResolvedElements();
-		for (int i = 0; i < elementList.length; i++) {
-			ISchemaElement element = elementList[i];
+		for (ISchemaElement element : elementList) {
 			if (!(element instanceof ISchemaObjectReference) && element.getName().equals(reference.getName())) {
 				// Link
 				reference.setReferencedObject(element);
@@ -953,8 +951,8 @@ public class Schema extends PlatformObject implements ISchema {
 						return;
 					}
 					ISchemaAttribute[] attributes = element.getAttributes();
-					for (int j = 0; j < attributes.length; j++)
-						if (attributes[j] == null) {
+					for (ISchemaAttribute attribute : attributes)
+						if (attribute == null) {
 							fValid = false;
 							return;
 						}
@@ -974,8 +972,8 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	private void addOmittedDocumentSections() {
-		for (int i = 0; i < DocumentSection.DOC_SECTIONS.length; i++) {
-			DocumentSection section = new DocumentSection(this, DocumentSection.DOC_SECTIONS[i], null);
+		for (String element : DocumentSection.DOC_SECTIONS) {
+			DocumentSection section = new DocumentSection(this, element, null);
 			if (!fDocSections.contains(section)) {
 				addDocumentSection(section);
 			}
