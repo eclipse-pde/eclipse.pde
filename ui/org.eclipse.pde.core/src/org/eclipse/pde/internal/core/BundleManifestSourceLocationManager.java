@@ -56,11 +56,10 @@ public class BundleManifestSourceLocationManager {
 	 */
 	public Collection<SourceLocation> getSourceLocations() {
 		Collection<SourceLocation> result = new ArrayList<>(fPluginToSourceBundle.values().size());
-		for (Iterator<IPluginModelBase> iterator = fPluginToSourceBundle.values().iterator(); iterator.hasNext();) {
-			IPluginModelBase currentBundle = iterator.next();
-			SourceLocation currentLocation = new SourceLocation(new Path(currentBundle.getInstallLocation()));
-			currentLocation.setUserDefined(false);
-			result.add(currentLocation);
+		for (IPluginModelBase bundle : fPluginToSourceBundle.values()) {
+			SourceLocation location = new SourceLocation(new Path(bundle.getInstallLocation()));
+			location.setUserDefined(false);
+			result.add(location);
 		}
 		return result;
 	}
@@ -93,8 +92,7 @@ public class BundleManifestSourceLocationManager {
 		Set<String> pluginSourceRoots = new HashSet<>();
 		ManifestElement[] manifestElements = getSourceEntries(pluginName, pluginVersion);
 		if (manifestElements != null) {
-			for (int j = 0; j < manifestElements.length; j++) {
-				ManifestElement currentElement = manifestElements[j];
+			for (ManifestElement currentElement : manifestElements) {
 				String binaryPluginName = currentElement.getValue();
 				String versionEntry = currentElement.getAttribute(Constants.VERSION_ATTRIBUTE);
 				// Currently the version attribute is required
@@ -135,8 +133,7 @@ public class BundleManifestSourceLocationManager {
 		Set<String> pluginSourceRoots = new HashSet<>();
 		ManifestElement[] manifestElements = getSourceEntries(pluginName, pluginVersion);
 		if (manifestElements != null) {
-			for (int j = 0; j < manifestElements.length; j++) {
-				ManifestElement currentElement = manifestElements[j];
+			for (ManifestElement currentElement : manifestElements) {
 				addSourceRoots(currentElement.getDirective("roots"), pluginSourceRoots); //$NON-NLS-1$
 			}
 		}
@@ -173,8 +170,8 @@ public class BundleManifestSourceLocationManager {
 	private void addSourceRoots(String rootEntryDirective, Set<String> pluginSourceRoots) {
 		if (rootEntryDirective != null) {
 			String[] roots = rootEntryDirective.split(","); //$NON-NLS-1$
-			for (int k = 0; k < roots.length; k++) {
-				pluginSourceRoots.add(roots[k]);
+			for (String root : roots) {
+				pluginSourceRoots.add(root);
 			}
 		} else {
 			pluginSourceRoots.add("."); //$NON-NLS-1$
@@ -188,8 +185,8 @@ public class BundleManifestSourceLocationManager {
 	 */
 	public void setPlugins(IPluginModelBase[] externalModels) {
 		fPluginToSourceBundle = new HashMap<>();
-		for (int i = 0; i < externalModels.length; i++) {
-			IPluginBase currentPlugin = externalModels[i].getPluginBase();
+		for (IPluginModelBase model : externalModels) {
+			IPluginBase currentPlugin = model.getPluginBase();
 			if (currentPlugin instanceof PluginBase) {
 				String bundleSourceEntry = ((PluginBase) currentPlugin).getBundleSourceEntry();
 				if (bundleSourceEntry != null) {
@@ -200,12 +197,11 @@ public class BundleManifestSourceLocationManager {
 						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, currentPlugin.getId(), currentPlugin.getVersion()), e));
 					}
 					if (manifestElements != null) {
-						IPath path = new Path(externalModels[i].getInstallLocation());
+						IPath path = new Path(model.getInstallLocation());
 						if (path.toFile().exists()) {
-							for (int j = 0; j < manifestElements.length; j++) {
-								ManifestElement currentElement = manifestElements[j];
-								String binaryPluginName = currentElement.getValue();
-								String versionEntry = currentElement.getAttribute(Constants.VERSION_ATTRIBUTE);
+							for (ManifestElement element : manifestElements) {
+								String binaryPluginName = element.getValue();
+								String versionEntry = element.getAttribute(Constants.VERSION_ATTRIBUTE);
 								// Currently the version attribute is required
 								if (binaryPluginName != null && binaryPluginName.length() > 0 && versionEntry != null && versionEntry.length() > 0) {
 									Version version = null;
@@ -215,7 +211,7 @@ public class BundleManifestSourceLocationManager {
 										PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, new Object[] {currentPlugin.getName(), versionEntry, path.toString()}), e));
 
 									}
-									fPluginToSourceBundle.put(new SourceLocationKey(binaryPluginName, version), externalModels[i]);
+									fPluginToSourceBundle.put(new SourceLocationKey(binaryPluginName, version), model);
 								} else {
 									PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.BundleManifestSourceLocationManager_problemProcessBundleManifestHeaderAttributeMissing, currentPlugin.getName())));
 								}

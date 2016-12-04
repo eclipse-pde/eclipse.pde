@@ -57,20 +57,19 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		Set<String> alreadyDuplicated = new HashSet<>();
 		Map<Object, Object[]> map = new HashMap<>();
 		BundleDescription[] bundles = fState.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			BundleDescription desc = bundles[i];
-			if (!desc.isResolved()) {
-				map.put(desc, fState.getResolverErrors(desc));
-			} else if (desc.isSingleton() && !alreadyDuplicated.contains(desc.getSymbolicName())) {
-				BundleDescription[] dups = fState.getBundles(desc.getSymbolicName());
+		for (BundleDescription bundle : bundles) {
+			if (!bundle.isResolved()) {
+				map.put(bundle, fState.getResolverErrors(bundle));
+			} else if (bundle.isSingleton() && !alreadyDuplicated.contains(bundle.getSymbolicName())) {
+				BundleDescription[] dups = fState.getBundles(bundle.getSymbolicName());
 				if (dups.length > 1) {
 					// more than 1 singleton present
-					alreadyDuplicated.add(desc.getSymbolicName());
-					MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, NLS.bind(PDECoreMessages.BundleValidationOperation_multiple_singletons, new String[] {Integer.toString(dups.length), desc.getSymbolicName()}), null);
-					for (int j = 0; j < dups.length; j++) {
-						status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, dups[j].getLocation()));
+					alreadyDuplicated.add(bundle.getSymbolicName());
+					MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, NLS.bind(PDECoreMessages.BundleValidationOperation_multiple_singletons, new String[] {Integer.toString(dups.length), bundle.getSymbolicName()}), null);
+					for (BundleDescription dup : dups) {
+						status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, dup.getLocation()));
 					}
-					map.put(desc, new Object[] {status});
+					map.put(bundle, new Object[] {status});
 				}
 			}
 		}
@@ -84,12 +83,11 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 	public boolean hasErrors() {
 		if (fState.getHighestBundleId() > -1) {
 			BundleDescription[] bundles = fState.getBundles();
-			for (int i = 0; i < bundles.length; i++) {
-				BundleDescription desc = bundles[i];
-				if (!desc.isResolved()) {
+			for (BundleDescription bundle : bundles) {
+				if (!bundle.isResolved()) {
 					return true;
-				} else if (desc.isSingleton()) {
-					BundleDescription[] dups = fState.getBundles(desc.getSymbolicName());
+				} else if (bundle.isSingleton()) {
+					BundleDescription[] dups = fState.getBundles(bundle.getSymbolicName());
 					if (dups.length > 1) {
 						// more than one singleton
 						return true;

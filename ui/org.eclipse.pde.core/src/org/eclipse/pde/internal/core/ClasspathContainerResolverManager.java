@@ -41,11 +41,11 @@ public class ClasspathContainerResolverManager {
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(POINT_ID);
-		for (int i = 0; i < elements.length; i++) {
-			String attrNature = elements[i].getAttribute(ATT_NATURE);
+		for (IConfigurationElement element : elements) {
+			String attrNature = element.getAttribute(ATT_NATURE);
 			try {
 				if (project.isNatureEnabled(attrNature)) {
-					result.add(elements[i].createExecutableExtension(ATT_CLASS));
+					result.add(element.createExecutableExtension(ATT_CLASS));
 				}
 			} catch (CoreException e) {
 				PDECore.log(e.getStatus());

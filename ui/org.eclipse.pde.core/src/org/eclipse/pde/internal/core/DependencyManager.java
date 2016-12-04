@@ -98,8 +98,8 @@ public class DependencyManager {
 	private static Set<String> toSet(String[] array) {
 		Set<String> set = new HashSet<>();
 		if (array != null) {
-			for (int i = 0; i < array.length; i++) {
-				set.add(array[i]);
+			for (String element : array) {
+				set.add(element);
 			}
 		}
 		return set;
@@ -128,8 +128,8 @@ public class DependencyManager {
 			IPluginModelBase model = (IPluginModelBase) selected[i];
 			addBundleAndDependencies(model.getBundleDescription(), set, includeOptional, excludeFragments);
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				String point = extensions[j].getPoint();
+			for (IPluginExtension extension : extensions) {
+				String point = extension.getPoint();
 				if (point != null) {
 					int dot = point.lastIndexOf('.');
 					if (dot != -1) {
@@ -140,8 +140,8 @@ public class DependencyManager {
 			}
 		}
 
-		for (int i = 0; i < implicit.length; i++) {
-			addBundleAndDependencies(state.getBundle(implicit[i], null), set, includeOptional, excludeFragments);
+		for (String element : implicit) {
+			addBundleAndDependencies(state.getBundle(element, null), set, includeOptional, excludeFragments);
 		}
 
 		if (removeSelf) {
@@ -196,10 +196,10 @@ public class DependencyManager {
 				}
 			}
 			ImportPackageSpecification[] importedPkgs = desc.getImportPackages();
-			for (int i = 0; i < importedPkgs.length; i++) {
-				ExportPackageDescription exporter = (ExportPackageDescription) importedPkgs[i].getSupplier();
+			for (ImportPackageSpecification importedPkg : importedPkgs) {
+				ExportPackageDescription exporter = (ExportPackageDescription) importedPkg.getSupplier();
 				// Continue if the Imported Package is unresolved of the package is optional and don't want optional packages
-				if (exporter == null || (!includeOptional && Constants.RESOLUTION_OPTIONAL.equals(importedPkgs[i].getDirective(Constants.RESOLUTION_DIRECTIVE)))) {
+				if (exporter == null || (!includeOptional && Constants.RESOLUTION_OPTIONAL.equals(importedPkg.getDirective(Constants.RESOLUTION_DIRECTIVE)))) {
 					continue;
 				}
 				addBundleAndDependencies(exporter.getExporter(), set, includeOptional, excludeFragments);

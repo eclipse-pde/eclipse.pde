@@ -92,8 +92,8 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	class BinaryFileModificationValidator extends FileModificationValidator {
 		@Override
 		public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
-			for (int i = 0; i < files.length; i++) {
-				if (isBinaryResource(files[i], false)) {
+			for (IFile file : files) {
+				if (isBinaryResource(file, false)) {
 					return createProblemStatus();
 				}
 			}

@@ -33,10 +33,10 @@ public class ClasspathUtilCore {
 			addJARdPlugin(model, result);
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			for (int i = 0; i < libraries.length; i++) {
-				if (IPluginLibrary.RESOURCE.equals(libraries[i].getType()))
+			for (IPluginLibrary library : libraries) {
+				if (IPluginLibrary.RESOURCE.equals(library.getType()))
 					continue;
-				IClasspathEntry entry = createLibraryEntry(libraries[i]);
+				IClasspathEntry entry = createLibraryEntry(library);
 				if (entry != null && !result.contains(entry)) {
 					result.add(entry);
 				}
@@ -164,10 +164,10 @@ public class ClasspathUtilCore {
 	private static IPluginModelBase resolveLibraryInFragments(IPluginLibrary library, String libraryName) {
 		IFragmentModel[] fragments = PDEManager.findFragmentsFor(library.getPluginModel());
 
-		for (int i = 0; i < fragments.length; i++) {
-			IPath path = getPath(fragments[i], libraryName);
+		for (IFragmentModel fragment : fragments) {
+			IPath path = getPath(fragment, libraryName);
 			if (path != null)
-				return fragments[i];
+				return fragment;
 		}
 		return null;
 	}

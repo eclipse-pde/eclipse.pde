@@ -43,11 +43,11 @@ public class ClasspathHelper {
 		// account for cascading workspaces
 		TargetWeaver.weaveDevProperties(properties);
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
+		for (IPluginModelBase model : models) {
+			String id = model.getPluginBase().getId();
 			if (id == null)
 				continue;
-			String entry = writeEntry(getDevPaths(models[i], checkExcluded, null));
+			String entry = writeEntry(getDevPaths(model, checkExcluded, null));
 			if (entry.length() > 0) {
 				String currentValue = (String) properties.get(id);
 				if (!entry.equals(currentValue)) {
@@ -127,13 +127,13 @@ public class ClasspathHelper {
 	private static String getDevEntries(boolean checkExcluded) {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		ArrayList<IPath> list = new ArrayList<>();
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
+		for (IPluginModelBase model : models) {
+			String id = model.getPluginBase().getId();
 			if (id == null || id.trim().length() == 0)
 				continue;
-			IPath[] paths = getDevPaths(models[i], checkExcluded, null);
-			for (int j = 0; j < paths.length; j++) {
-				list.add(paths[j]);
+			IPath[] paths = getDevPaths(model, checkExcluded, null);
+			for (IPath path : paths) {
+				list.add(path);
 			}
 		}
 		String entry = writeEntry(list.toArray(new IPath[list.size()]));
@@ -172,18 +172,18 @@ public class ClasspathHelper {
 		IJavaProject jProject = JavaCore.create(project);
 		HashMap<IPath, ArrayList<IPath>> map = new HashMap<>();
 		IClasspathEntry[] entries = jProject.getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
+		for (IClasspathEntry entry : entries) {
 			// most of the paths we get will be project relative, so we need to make the paths relative
 			// we will have problems adding an "absolute" path that is workspace relative
 			IPath output = null, source = null;
-			if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-				source = entries[i].getPath();
-				output = entries[i].getOutputLocation();
+			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				source = entry.getPath();
+				output = entry.getOutputLocation();
 				if (output == null)
 					output = jProject.getOutputLocation();
-			} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
-				source = entries[i].getPath();
-				output = entries[i].getPath();
+			} else if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+				source = entry.getPath();
+				output = entry.getPath();
 				if (source.segmentCount() == 1)
 					source = new Path(DOT);
 			}
@@ -215,8 +215,8 @@ public class ClasspathHelper {
 
 		// Add additional entries from contributed bundle classpath resolvers
 		IBundleClasspathResolver[] resolvers = PDECore.getDefault().getClasspathContainerResolverManager().getBundleClasspathResolvers(project);
-		for (int i = 0; i < resolvers.length; i++) {
-			Map<IPath, Collection<IPath>> resolved = resolvers[i].getAdditionalClasspathEntries(jProject);
+		for (IBundleClasspathResolver resolver : resolvers) {
+			Map<IPath, Collection<IPath>> resolved = resolver.getAdditionalClasspathEntries(jProject);
 			Iterator<Entry<IPath, Collection<IPath>>> resolvedIter = resolved.entrySet().iterator();
 			while (resolvedIter.hasNext()) {
 				Map.Entry<IPath, Collection<IPath>> resolvedEntry = resolvedIter.next();
@@ -239,8 +239,8 @@ public class ClasspathHelper {
 		IBuildEntry entry = (build != null) ? build.getEntry(IBuildEntry.JAR_PREFIX + libName) : null;
 		if (entry != null) {
 			String[] resources = entry.getTokens();
-			for (int j = 0; j < resources.length; j++) {
-				IResource res = project.findMember(resources[j]);
+			for (String resource : resources) {
+				IResource res = project.findMember(resource);
 				if (res != null) {
 					ArrayList<IPath> list = classpathMap.get(res.getFullPath());
 					if (list != null) {
@@ -307,16 +307,16 @@ public class ClasspathHelper {
 									paths = collect.toArray(new IPath[collect.size()]);
 								}
 							}
-							for (int j = 0; j < paths.length; j++)
-								addPath(result, project, paths[j]);
+							for (IPath path : paths)
+								addPath(result, project, path);
 						} else {
 							for (int i = 0; i < libraries.length; i++) {
 								IPath[] paths = findLibrary(libraries[i].getName(), project, classpathMap, build);
 								if (paths.length == 0 && !libraries[i].getName().equals(DOT)) {
 									paths = findLibraryFromFragments(libraries[i].getName(), model, checkExcluded, pluginsMap);
 								}
-								for (int j = 0; j < paths.length; j++)
-									addPath(result, project, paths[j]);
+								for (IPath path : paths)
+									addPath(result, project, path);
 							}
 						}
 					}

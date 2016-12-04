@@ -72,8 +72,7 @@ public class ClasspathComputer {
 		// keep existing source folders
 		if (!clear) {
 			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
-			for (int i = 0; i < entries.length; i++) {
-				IClasspathEntry entry = entries[i];
+			for (IClasspathEntry entry : entries) {
 				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					if (paths.add(entry.getPath()))
 						result.add(entry);
@@ -83,16 +82,16 @@ public class ClasspathComputer {
 
 		IClasspathAttribute[] attrs = getClasspathAttributes(project, model);
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		for (int i = 0; i < libraries.length; i++) {
-			IBuildEntry buildEntry = build == null ? null : build.getEntry("source." + libraries[i].getName()); //$NON-NLS-1$
+		for (IPluginLibrary library : libraries) {
+			IBuildEntry buildEntry = build == null ? null : build.getEntry("source." + library.getName()); //$NON-NLS-1$
 			if (buildEntry != null) {
 				addSourceFolder(buildEntry, project, paths, result);
 			} else {
-				IPath sourceAttachment = sourceLibraryMap != null ? (IPath) sourceLibraryMap.get(libraries[i].getName()) : null;
-				if (libraries[i].getName().equals(".")) //$NON-NLS-1$
+				IPath sourceAttachment = sourceLibraryMap != null ? (IPath) sourceLibraryMap.get(library.getName()) : null;
+				if (library.getName().equals(".")) //$NON-NLS-1$
 					addJARdPlugin(project, ClasspathUtilCore.getFilename(model), sourceAttachment, attrs, result);
 				else
-					addLibraryEntry(project, libraries[i], sourceAttachment, attrs, result);
+					addLibraryEntry(project, library, sourceAttachment, attrs, result);
 			}
 		}
 		if (libraries.length == 0) {
@@ -122,8 +121,7 @@ public class ClasspathComputer {
 
 	private static void addSourceFolder(IBuildEntry buildEntry, IProject project, HashSet<IPath> paths, ArrayList<IClasspathEntry> result) throws CoreException {
 		String[] folders = buildEntry.getTokens();
-		for (int j = 0; j < folders.length; j++) {
-			String folder = folders[j];
+		for (String folder : folders) {
 			IPath path = project.getFullPath().append(folder);
 			if (paths.add(path)) {
 				if (project.findMember(folder) == null) {
@@ -321,12 +319,12 @@ public class ClasspathComputer {
 	 */
 	public static IClasspathEntry createEntryUsingPreviousEntry(IJavaProject javaProject, String ee, IPath path) throws CoreException {
 		IClasspathEntry[] entries = javaProject.getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
-			if (path.isPrefixOf(entries[i].getPath()) && path.equals(PDECore.JRE_CONTAINER_PATH)) {
-				return JavaCore.newContainerEntry(getEEPath(ee), entries[i].getAccessRules(), entries[i].getExtraAttributes(), entries[i].isExported());
+		for (IClasspathEntry entry : entries) {
+			if (path.isPrefixOf(entry.getPath()) && path.equals(PDECore.JRE_CONTAINER_PATH)) {
+				return JavaCore.newContainerEntry(getEEPath(ee), entry.getAccessRules(), entry.getExtraAttributes(), entry.isExported());
 			}
-			if (entries[i].getPath().equals(path)) {
-				return JavaCore.newContainerEntry(path, entries[i].getAccessRules(), entries[i].getExtraAttributes(), entries[i].isExported());
+			if (entry.getPath().equals(path)) {
+				return JavaCore.newContainerEntry(path, entry.getAccessRules(), entry.getExtraAttributes(), entry.isExported());
 			}
 		}
 

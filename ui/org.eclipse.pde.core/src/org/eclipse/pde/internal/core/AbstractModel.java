@@ -100,8 +100,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		IModelChangedListener[] list = fListeners.toArray(new IModelChangedListener[fListeners.size()]);
-		for (int i = 0; i < list.length; i++) {
-			IModelChangedListener listener = list[i];
+		for (IModelChangedListener listener : list) {
 			listener.modelChanged(event);
 		}
 	}
