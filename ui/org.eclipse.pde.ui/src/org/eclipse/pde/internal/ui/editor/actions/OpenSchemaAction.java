@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,14 +7,16 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Marc-Andre Laperle (Ericsson) - Fix for bug 508683. Open workspace file.
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.actions;
 
 import java.io.File;
 import java.net.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -179,16 +181,11 @@ public class OpenSchemaAction extends Action {
 			}
 
 			// See if the file is actually in the workspace so we can open the editable version
-			IPath schemaPath = new Path(schemaFile.getPath());
 			IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-			IPath workspacePath = root.getLocation();
-			if (workspacePath.isPrefixOf(schemaPath)) {
-				schemaPath = schemaPath.removeFirstSegments(workspacePath.segmentCount());
-				IResource res = root.findMember(schemaPath);
-				if (res != null && res instanceof IFile && res.getProject().isOpen()) {
-					SchemaEditor.openSchema((IFile) res);
-					return;
-				}
+			IFile[] filesForLocation = root.findFilesForLocationURI(uri);
+			if (filesForLocation.length > 0) {
+				SchemaEditor.openSchema(filesForLocation[0]);
+				return;
 			}
 
 			// Not in the workspace, open as absolute path
