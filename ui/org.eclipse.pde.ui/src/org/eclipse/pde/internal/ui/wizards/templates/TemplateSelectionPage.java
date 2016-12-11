@@ -138,8 +138,7 @@ public class TemplateSelectionPage extends WizardPage {
 	}
 
 	private void initializeWizardPages() {
-		for (int i = 0; i < fCandidates.length; i++) {
-			ITemplateSection section = fCandidates[i];
+		for (ITemplateSection section : fCandidates) {
 			if (section.getPagesAdded() == false)
 				section.addPages((Wizard) getWizard());
 		}
@@ -186,9 +185,7 @@ public class TemplateSelectionPage extends WizardPage {
 		ITemplateSection[] sections = getSelectedTemplates();
 		fVisiblePages.clear();
 
-		for (int i = 0; i < sections.length; i++) {
-			ITemplateSection section = sections[i];
-
+		for (ITemplateSection section : sections) {
 			for (int j = 0; j < section.getPageCount(); j++) {
 				fVisiblePages.add(section.getPage(j));
 			}

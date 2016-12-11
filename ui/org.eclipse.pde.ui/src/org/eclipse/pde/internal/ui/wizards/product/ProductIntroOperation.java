@@ -170,10 +170,10 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 
 	private IPluginExtension getExtension(IPluginModelBase model, String tPoint) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			String point = extensions[i].getPoint();
+		for (IPluginExtension extension : extensions) {
+			String point = extension.getPoint();
 			if (tPoint.equals(point)) {
-				return extensions[i];
+				return extension;
 			}
 		}
 		return null;
@@ -207,8 +207,7 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 	private void generateFiles(File src, IContainer dst, boolean firstLevel, boolean binary, IProgressMonitor monitor) throws CoreException {
 		File[] members = src.listFiles();
 
-		for (int i = 0; i < members.length; i++) {
-			File member = members[i];
+		for (File member : members) {
 			if (member.getName().equals("ext.xml") || //$NON-NLS-1$
 					member.getName().equals("java") || //$NON-NLS-1$
 					member.getName().equals("concept3.xhtml") || //$NON-NLS-1$

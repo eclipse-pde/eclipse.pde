@@ -70,8 +70,8 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	private Properties getProductProperties(IPluginElement element) {
 		Properties prop = new Properties();
 		IPluginObject[] children = element.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPluginElement child = (IPluginElement) children[i];
+		for (IPluginObject childObject : children) {
+			IPluginElement child = (IPluginElement) childObject;
 			if (child.getName().equals("property")) { //$NON-NLS-1$
 				String name = null;
 				String value = null;
@@ -96,10 +96,10 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		IPluginModelBase model = PluginRegistry.findModel(pluginId);
 		if (model != null) {
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
-				if ("org.eclipse.core.runtime.products".equals(extensions[i].getPoint()) //$NON-NLS-1$
-						&& productId.substring(lastDot + 1).equals(extensions[i].getId())) {
-					IPluginObject[] children = extensions[i].getChildren();
+			for (IPluginExtension extension : extensions) {
+				if ("org.eclipse.core.runtime.products".equals(extension.getPoint()) //$NON-NLS-1$
+						&& productId.substring(lastDot + 1).equals(extension.getId())) {
+					IPluginObject[] children = extension.getChildren();
 					if (children.length > 0) {
 						IPluginElement object = (IPluginElement) children[0];
 						if (object.getName().equals("product")) //$NON-NLS-1$

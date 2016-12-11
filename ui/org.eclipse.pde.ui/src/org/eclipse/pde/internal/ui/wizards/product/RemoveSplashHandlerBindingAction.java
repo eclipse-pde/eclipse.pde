@@ -11,8 +11,6 @@
 
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import org.eclipse.pde.core.plugin.IPluginElement;
-
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -106,8 +104,7 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 			return;
 		}
 		// Process all product binding elements
-		for (int i = 0; i < productBindingElements.length; i++) {
-			IPluginElement element = productBindingElements[i];
+		for (IPluginElement element : productBindingElements) {
 			// Get the product ID attribute
 			IPluginAttribute productIDAttribute = element.getAttribute(F_ATTRIBUTE_PRODUCT_ID);
 			// Remove any product binding element that does not define a
@@ -137,8 +134,8 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		String[][] choices = ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES;
 		// Check to see if the splash ID matches any of the pre-generated
 		// splash handler template IDs
-		for (int i = 0; i < choices.length; i++) {
-			String splashID = fFieldTargetPackage + '.' + choices[i][0];
+		for (String[] choice : choices) {
+			String splashID = fFieldTargetPackage + '.' + choice[0];
 			if (value.equals(splashID)) {
 				return true;
 			}
@@ -155,9 +152,9 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		}
 		IPluginObject[] pluginObjects = extension.getChildren();
 		// Process all children
-		for (int j = 0; j < pluginObjects.length; j++) {
-			if (pluginObjects[j] instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObjects[j];
+		for (IPluginObject pluginObject : pluginObjects) {
+			if (pluginObject instanceof IPluginElement) {
+				IPluginElement element = (IPluginElement) pluginObject;
 				// Find product binding elements
 				if (element.getName().equals(F_ELEMENT_PRODUCT_BINDING)) {
 					elements.add(element);
@@ -176,10 +173,10 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		// Get all the extensions
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		// Get the first extension matching the specified extension point ID
-		for (int i = 0; i < extensions.length; i++) {
-			String point = extensions[i].getPoint();
+		for (IPluginExtension extension : extensions) {
+			String point = extension.getPoint();
 			if (extensionPointID.equals(point)) {
-				return extensions[i];
+				return extension;
 			}
 		}
 		return null;

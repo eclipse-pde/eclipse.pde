@@ -121,10 +121,10 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 
 		if (fModel != null && fModel.getPluginBase().getId() != null) {
 			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
-				String point = extensions[i].getPoint();
+			for (IPluginExtension extension : extensions) {
+				String point = extension.getPoint();
 				if ("org.eclipse.core.runtime.products".equals(point)) { //$NON-NLS-1$
-					String id = extensions[i].getId();
+					String id = extension.getId();
 					if (id != null) {
 						String full = fModel.getPluginBase().getId() + "." + id; //$NON-NLS-1$
 						if (fProductCombo.indexOf(full) != -1) {

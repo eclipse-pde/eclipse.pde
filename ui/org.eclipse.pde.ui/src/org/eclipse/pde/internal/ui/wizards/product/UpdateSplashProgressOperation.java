@@ -362,8 +362,8 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 
 	private void removeEntryTokens(IBuildEntry showProgressEntry, String[] values) throws CoreException {
 		// Remove each token
-		for (int i = 0; i < values.length; i++) {
-			showProgressEntry.removeToken(values[i]);
+		for (String value : values) {
+			showProgressEntry.removeToken(value);
 		}
 	}
 
@@ -459,16 +459,16 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		// Get the product element children
 		IPluginObject[] objects = productElement.getChildren();
 		// Process all children
-		for (int i = 0; i < objects.length; i++) {
+		for (IPluginObject object : objects) {
 			// Ensure we have an element
-			if ((objects[i] instanceof IPluginElement) == false) {
+			if ((object instanceof IPluginElement) == false) {
 				continue;
 			}
 			// Property elements are the only legitimate children of product elements
-			if (objects[i].getName().equals(F_ELEMENT_PROPERTY) == false) {
+			if (object.getName().equals(F_ELEMENT_PROPERTY) == false) {
 				continue;
 			}
-			IPluginElement element = (IPluginElement) objects[i];
+			IPluginElement element = (IPluginElement) object;
 			// Get the name
 			IPluginAttribute nameAttribute = element.getAttribute(F_ATTRIBUTE_NAME);
 			// Ensure we have a preference customization property
@@ -508,20 +508,20 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		// Get the extension matching the product extension point ID
 		// and product ID
-		for (int i = 0; i < extensions.length; i++) {
+		for (IPluginExtension extension : extensions) {
 			// Get the extension point
-			String point = extensions[i].getPoint();
+			String point = extension.getPoint();
 			// Ensure we have a product extension
 			if (point.equals(F_EXTENSION_PRODUCT) == false) {
 				continue;
 			}
 			// Ensure we have the exact product
 			// Get the fully qualified product ID
-			String id = fPluginId + '.' + extensions[i].getId();
+			String id = fPluginId + '.' + extension.getId();
 			if (id.equals(fProductID) == false) {
 				continue;
 			}
-			return extensions[i];
+			return extension;
 		}
 		return null;
 	}

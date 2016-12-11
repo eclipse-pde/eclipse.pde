@@ -190,11 +190,11 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		String introId;
 		TreeSet<String> result = new TreeSet<>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.ui.intro", true); //$NON-NLS-1$
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] children = extensions[i].getConfigurationElements();
-			for (int j = 0; j < children.length; j++) {
-				if ("intro".equals(children[j].getName())) {//$NON-NLS-1$
-					introId = children[j].getAttribute("id"); //$NON-NLS-1$
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] children = extension.getConfigurationElements();
+			for (IConfigurationElement element : children) {
+				if ("intro".equals(element.getName())) {//$NON-NLS-1$
+					introId = element.getAttribute("id"); //$NON-NLS-1$
 					if (introId != null)
 						result.add(introId);
 				}

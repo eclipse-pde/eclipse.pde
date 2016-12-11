@@ -101,8 +101,7 @@ public class NewExtensionTemplateWizard extends Wizard implements IExtensionWiza
 
 	private void updateDependencies() throws CoreException {
 		IPluginReference[] refs = fSection.getDependencies(fModel.getPluginBase().getSchemaVersion());
-		for (int i = 0; i < refs.length; i++) {
-			IPluginReference ref = refs[i];
+		for (IPluginReference ref : refs) {
 			if (!modelContains(ref)) {
 				IPluginImport iimport = fModel.getPluginFactory().createImport();
 				iimport.setId(ref.getId());
@@ -117,8 +116,7 @@ public class NewExtensionTemplateWizard extends Wizard implements IExtensionWiza
 	private boolean modelContains(IPluginReference ref) {
 		IPluginBase plugin = fModel.getPluginBase();
 		IPluginImport[] imports = plugin.getImports();
-		for (int i = 0; i < imports.length; i++) {
-			IPluginImport iimport = imports[i];
+		for (IPluginImport iimport : imports) {
 			if (iimport.getId().equals(ref.getId())) {
 				// good enough
 				return true;

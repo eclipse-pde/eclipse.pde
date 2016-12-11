@@ -64,10 +64,10 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 	@Override
 	public boolean canFinish() {
 		ITemplateSection[] sections = fSelectionPage.getSelectedTemplates();
-		for (int i = 0; i < sections.length; i++) {
-			int pageCount = sections[i].getPageCount();
+		for (ITemplateSection section : sections) {
+			int pageCount = section.getPageCount();
 			for (int j = 0; j < pageCount; j++) {
-				WizardPage page = sections[i].getPage(j);
+				WizardPage page = section.getPage(j);
 				if (page != null && !page.isPageComplete())
 					return false;
 			}
@@ -80,8 +80,7 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 		candidates = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(PDEPlugin.getPluginId(), "templates"); //$NON-NLS-1$
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			addTemplate(element, candidates);
 		}
 		fCandidates = candidates.toArray(new ITemplateSection[candidates.size()]);

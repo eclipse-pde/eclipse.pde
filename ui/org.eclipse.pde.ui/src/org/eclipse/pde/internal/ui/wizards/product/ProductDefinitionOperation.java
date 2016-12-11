@@ -481,11 +481,11 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 
 	private IPluginExtension findProductExtension(IPluginModelBase model) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			String point = extensions[i].getPoint();
-			String id = extensions[i].getId();
+		for (IPluginExtension extension : extensions) {
+			String point = extension.getPoint();
+			String id = extension.getId();
 			if (fProductId.equals(id) && "org.eclipse.core.runtime.products".equals(point)) { //$NON-NLS-1$
-				return extensions[i];
+				return extension;
 			}
 		}
 		return null;
@@ -529,8 +529,8 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private void synchronizeChild(IPluginElement element, String propertyName, String value) throws CoreException {
 		IPluginElement child = null;
 		IPluginObject[] children = element.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPluginElement candidate = (IPluginElement) children[i];
+		for (IPluginObject childObject : children) {
+			IPluginElement candidate = (IPluginElement) childObject;
 			if (candidate.getName().equals("property")) { //$NON-NLS-1$
 				IPluginAttribute attr = candidate.getAttribute("name"); //$NON-NLS-1$
 				if (attr != null && attr.getValue().equals(propertyName)) {

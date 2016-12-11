@@ -201,10 +201,10 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		// Get all the extensions
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		// Get the first extension matching the specified extension point ID
-		for (int i = 0; i < extensions.length; i++) {
-			String point = extensions[i].getPoint();
+		for (IPluginExtension extension : extensions) {
+			String point = extension.getPoint();
 			if (extensionPointID.equals(point)) {
-				return extensions[i];
+				return extension;
 			}
 		}
 		return null;
@@ -215,11 +215,11 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		IPluginExtensionPoint[] extensionPoints = fModel.getPluginBase().getExtensionPoints();
 		// Get the first extension point (should only be one) matching the
 		// specified extension point ID
-		for (int i = 0; i < extensionPoints.length; i++) {
+		for (IPluginExtensionPoint extensionPoint : extensionPoints) {
 			// Not full ID
-			String point = extensionPoints[i].getId();
+			String point = extensionPoint.getId();
 			if (extensionPointID.equals(point)) {
-				return extensionPoints[i];
+				return extensionPoint;
 			}
 		}
 		return null;
@@ -353,9 +353,9 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 		IPluginObject[] pluginObjects = extension.getChildren();
 		// Process all children
-		for (int j = 0; j < pluginObjects.length; j++) {
-			if (pluginObjects[j] instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObjects[j];
+		for (IPluginObject pluginObject : pluginObjects) {
+			if (pluginObject instanceof IPluginElement) {
+				IPluginElement element = (IPluginElement) pluginObject;
 				// Find splash handler elements
 				if (element.getName().equals(F_ELEMENT_PRODUCT_BINDING)) {
 					// Get the splash ID attribute
@@ -386,9 +386,9 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 		IPluginObject[] pluginObjects = extension.getChildren();
 		// Process all children
-		for (int j = 0; j < pluginObjects.length; j++) {
-			if (pluginObjects[j] instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObjects[j];
+		for (IPluginObject pluginObject : pluginObjects) {
+			if (pluginObject instanceof IPluginElement) {
+				IPluginElement element = (IPluginElement) pluginObject;
 				// Find splash handler elements
 				if (element.getName().equals(F_ELEMENT_SPLASH_HANDLER)) {
 					// Get the id attribute
@@ -436,9 +436,9 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 		IPluginObject[] pluginObjects = extension.getChildren();
 		// Process all children
-		for (int j = 0; j < pluginObjects.length; j++) {
-			if (pluginObjects[j] instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObjects[j];
+		for (IPluginObject pluginObject : pluginObjects) {
+			if (pluginObject instanceof IPluginElement) {
+				IPluginElement element = (IPluginElement) pluginObject;
 				// Find product binding elements
 				if (element.getName().equals(F_ELEMENT_PRODUCT_BINDING)) {
 					// Get the id attribute
