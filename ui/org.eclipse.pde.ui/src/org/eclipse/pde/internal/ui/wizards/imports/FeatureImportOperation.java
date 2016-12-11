@@ -75,9 +75,9 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 				fModels.length);
 		MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK,
 				PDEUIMessages.FeatureImportWizard_operation_multiProblem, null);
-		for (int i = 0; i < fModels.length; i++) {
+		for (IFeatureModel model : fModels) {
 			try {
-				createProject(fModels[i], subMonitor.split(1));
+				createProject(model, subMonitor.split(1));
 			} catch (CoreException e) {
 				multiStatus.merge(e.getStatus());
 			}
@@ -94,8 +94,8 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		String name = model.getFeature().getId();
 
 		IFeaturePlugin[] plugins = model.getFeature().getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			if (name.equals(plugins[i].getId())) {
+		for (IFeaturePlugin plugin : plugins) {
+			if (name.equals(plugin.getId())) {
 				name += "-feature"; //$NON-NLS-1$
 				break;
 			}
@@ -231,8 +231,8 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			IBuildEntry ientry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 			try {
 				IResource[] res = project.members();
-				for (int i = 0; i < res.length; i++) {
-					String path = res[i].getProjectRelativePath().toString();
+				for (IResource resource : res) {
+					String path = resource.getProjectRelativePath().toString();
 					if (!path.equals(".project")) //$NON-NLS-1$
 						ientry.addToken(path);
 				}

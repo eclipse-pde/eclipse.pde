@@ -175,8 +175,8 @@ public class PluginImportHelper {
 	 * @param packageList a set that will be updated with the discovered packages
 	 */
 	public static void collectJavaPackages(IImportStructureProvider provider, List<Object> javaFiles, IPath prefixPath, Set<IPath> packageList) {
-		for (Iterator<Object> iterator = javaFiles.iterator(); iterator.hasNext();) {
-			String stringPath = provider.getFullPath(iterator.next());
+		for (Object object : javaFiles) {
+			String stringPath = provider.getFullPath(object);
 			IPath path = new Path(stringPath);
 			path = path.removeLastSegments(1);
 
@@ -448,8 +448,7 @@ public class PluginImportHelper {
 					// Check if we are in an ignored folder
 					List<IPath> ignoreSubFolders = new ArrayList<>();
 					boolean ignoreThisChild = false;
-					for (Iterator<IPath> iterator = ignoreFolders.iterator(); iterator.hasNext();) {
-						IPath currentPath = iterator.next();
+					for (IPath currentPath : ignoreFolders) {
 						if (provider.getLabel(curr).equals(currentPath.segment(0))) {
 							if (currentPath.segmentCount() > 1) {
 								// There is a subfolder that should be ignored
@@ -490,8 +489,7 @@ public class PluginImportHelper {
 					// Check if we are in an ignored folder
 					List<IPath> ignoreSubFolders = new ArrayList<>();
 					boolean ignoreThisChild = false;
-					for (Iterator<IPath> iterator = ignoreFolders.iterator(); iterator.hasNext();) {
-						IPath currentPath = iterator.next();
+					for (IPath currentPath : ignoreFolders) {
 						if (provider.getLabel(curr).equals(currentPath.segment(0))) {
 							if (currentPath.segmentCount() > 1) {
 								// There is a subfolder that should be ignored.  Remove segment referencing current folder.

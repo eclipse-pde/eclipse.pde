@@ -97,8 +97,8 @@ public class RepositoryImportWizard extends Wizard {
 		List<Object> plugins = new ArrayList<>();
 		IWizardPage[] pages = getPages();
 		Map<IBundleImporter, ScmUrlImportDescription[]> importMap = new HashMap<>();
-		for (int i = 0; i < pages.length; i++) {
-			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) pages[i];
+		for (IWizardPage wizardPage : pages) {
+			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) wizardPage;
 			if (page.finish()) {
 				ScmUrlImportDescription[] descriptions = page.getSelection();
 				if (descriptions != null && descriptions.length > 0) {

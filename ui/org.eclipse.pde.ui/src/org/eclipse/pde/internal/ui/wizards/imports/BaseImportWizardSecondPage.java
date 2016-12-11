@@ -146,23 +146,23 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	private IPluginModelBase findModel(String id, String version) {
 		// Look for a matching version, if one cannot be found, take the highest version
 		IPluginModelBase bestMatch = null;
-		for (int i = 0; i < fModels.length; i++) {
-			String modelId = fModels[i].getPluginBase().getId();
+		for (IPluginModelBase model : fModels) {
+			String modelId = model.getPluginBase().getId();
 			if (modelId != null && modelId.equals(id)) {
-				String modelVersion = fModels[i].getPluginBase().getVersion();
+				String modelVersion = model.getPluginBase().getVersion();
 				if (modelVersion != null && modelVersion.equals(version)) {
 					// Strict version match, return this model
-					return fModels[i];
+					return model;
 				}
 				if (bestMatch == null || bestMatch.getPluginBase().getVersion() == null || version == null) {
 					// No good match yet, use current model
-					bestMatch = fModels[i];
+					bestMatch = model;
 				} else {
 					// At least one good match, use highest version
 					Version bestVersion = Version.parseVersion(bestMatch.getPluginBase().getVersion());
 					Version currentVersion = Version.parseVersion(version);
 					if (bestVersion.compareTo(currentVersion) < 0) {
-						bestMatch = fModels[i];
+						bestMatch = model;
 					}
 				}
 			}
@@ -172,11 +172,11 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 
 	private IFragmentModel[] findFragments(IPlugin plugin) {
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
-		for (int i = 0; i < fModels.length; i++) {
-			if (fModels[i] instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
+		for (IPluginModelBase model : fModels) {
+			if (model instanceof IFragmentModel) {
+				IFragment fragment = ((IFragmentModel) model).getFragment();
 				if (plugin.getId().equalsIgnoreCase(fragment.getPluginId())) {
-					result.add(fModels[i]);
+					result.add(model);
 				}
 			}
 		}
@@ -191,8 +191,8 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 			boolean hasextensibleAPI = ClasspathUtilCore.hasExtensibleAPI(model);
 			if (!addFragments && !hasextensibleAPI && model instanceof IPluginModel) {
 				IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-				for (int i = 0; i < libraries.length; i++) {
-					if (ClasspathUtilCore.containsVariables(libraries[i].getName())) {
+				for (IPluginLibrary library : libraries) {
+					if (ClasspathUtilCore.containsVariables(library.getName())) {
 						containsVariable = true;
 						break;
 					}
@@ -206,8 +206,8 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 
 		IPluginImport[] required = model.getPluginBase().getImports();
 		if (required.length > 0) {
-			for (int i = 0; i < required.length; i++) {
-				IPluginModelBase found = findModel(required[i].getId(), required[i].getVersion());
+			for (IPluginImport pluginImport : required) {
+				IPluginModelBase found = findModel(pluginImport.getId(), pluginImport.getVersion());
 				if (found != null) {
 					addPluginAndDependencies(found, selected, addFragments);
 				}
@@ -217,8 +217,8 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		if (addFragments) {
 			if (model instanceof IPluginModel) {
 				IFragmentModel[] fragments = findFragments(((IPluginModel) model).getPlugin());
-				for (int i = 0; i < fragments.length; i++) {
-					addPluginAndDependencies(fragments[i], selected, addFragments);
+				for (IFragmentModel fragment : fragments) {
+					addPluginAndDependencies(fragment, selected, addFragments);
 				}
 			} else {
 				IFragment fragment = ((IFragmentModel) model).getFragment();
@@ -233,8 +233,8 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	public IPluginModelBase[] getModelsToImport() {
 		TableItem[] items = fImportListViewer.getTable().getItems();
 		ArrayList<Object> result = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			result.add(items[i].getData());
+		for (TableItem item : items) {
+			result.add(item.getData());
 		}
 		return result.toArray(new IPluginModelBase[result.size()]);
 	}

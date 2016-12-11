@@ -226,9 +226,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		if (service != null) {
 			ITargetHandle[] targets = service.getTargets(null);
 			targetDefinitions = new ArrayList<>();
-			for (int i = 0; i < targets.length; i++) {
+			for (ITargetHandle target : targets) {
 				try {
-					targetDefinitions.add(targets[i].getTargetDefinition());
+					targetDefinitions.add(target.getTargetDefinition());
 				} catch (CoreException e) {
 					PDEPlugin.log(e);
 				}
@@ -558,8 +558,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				TargetBundle[] allBundles = target.getAllBundles();
 				Map<SourceLocationKey, TargetBundle> sourceMap = new HashMap<>();
 				List<URL> all = new ArrayList<>();
-				for (int i = 0; i < allBundles.length; i++) {
-					TargetBundle bundle = allBundles[i];
+				for (TargetBundle bundle : allBundles) {
 					try {
 						if (bundle.getStatus().isOK()) {
 							all.add(new File(bundle.getBundleInfo().getLocation()).toURI().toURL());
@@ -577,11 +576,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				models = state.getTargetModels();
 				List<IPluginModelBase> sourceModels = new ArrayList<>();
 				List<TargetBundle> sourceBundles = new ArrayList<>();
-				for (int i = 0; i < models.length; i++) {
-					IPluginBase base = models[i].getPluginBase();
+				for (IPluginModelBase model : models) {
+					IPluginBase base = model.getPluginBase();
 					TargetBundle bundle = sourceMap.get(new SourceLocationKey(base.getId(), new Version(base.getVersion())));
 					if (bundle != null) {
-						sourceModels.add(models[i]);
+						sourceModels.add(model);
 						sourceBundles.add(bundle);
 					}
 				}
@@ -616,8 +615,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					if (!monitor.isCanceled()) {
 						Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
 						ScmUrlImportDescription[] descriptions = entry.getValue();
-						for (int i = 0; i < descriptions.length; i++) {
-							repositoryModels.add(descriptions[i].getProperty(BundleProjectService.PLUGIN));
+						for (ScmUrlImportDescription desc : descriptions) {
+							repositoryModels.add(desc.getProperty(BundleProjectService.PLUGIN));
 						}
 					}
 				}
@@ -691,8 +690,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		Map<IBundleImporter, ScmUrlImportDescription[]> map = new HashMap<>();
 		if (getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
 			IBundleImporter[] importers = Team.getBundleImporters();
-			for (int i = 0; i < importers.length; i++) {
-				IBundleImporter importer = importers[i];
+			for (IBundleImporter importer : importers) {
 				if (importerToInstructions.containsKey(importer)) {
 					IScmUrlImportWizardPage page = importIdToWizardPage.get(importer.getId());
 					if (page != null && nextPages.contains(page) && page.getSelection() != null) {
@@ -845,8 +843,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	public void configureBundleImportPages(IPluginModelBase[] models) {
 		// make a set of the models to import for quick lookup
 		Set<IPluginModelBase> modelsSet = new HashSet<>();
-		for (int i = 0; i < models.length; i++) {
-			modelsSet.add(models[i]);
+		for (IPluginModelBase model : models) {
+			modelsSet.add(model);
 		}
 		Map<IBundleImporter, List<ScmUrlImportDescription>> importerToImportees = new HashMap<>();
 		Iterator<Entry<IBundleImporter, ScmUrlImportDescription[]>> iterator = importerToInstructions.entrySet().iterator();
@@ -854,15 +852,15 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
 			IBundleImporter importer = entry.getKey();
 			ScmUrlImportDescription[] descriptions = entry.getValue();
-			for (int i = 0; i < descriptions.length; i++) {
-				IPluginModelBase model = (IPluginModelBase) descriptions[i].getProperty(BundleProjectService.PLUGIN);
+			for (ScmUrlImportDescription desc : descriptions) {
+				IPluginModelBase model = (IPluginModelBase) desc.getProperty(BundleProjectService.PLUGIN);
 				if (modelsSet.contains(model)) {
 					List<ScmUrlImportDescription> importees = importerToImportees.get(importer);
 					if (importees == null) {
 						importees = new ArrayList<>();
 						importerToImportees.put(importer, importees);
 					}
-					importees.add(descriptions[i]);
+					importees.add(desc);
 				}
 			}
 		}

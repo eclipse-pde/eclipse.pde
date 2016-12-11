@@ -171,8 +171,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			projectText.setLayoutData(gd);
 
 			StringBuffer projectListBuffer = new StringBuffer();
-			for (Iterator<String> iterator = fNamesOfNotImportedProjects.iterator(); iterator.hasNext();) {
-				String project = iterator.next();
+			for (String project : fNamesOfNotImportedProjects) {
 				projectListBuffer.append(project).append('\n');
 			}
 			projectText.setText(projectListBuffer.toString());
@@ -208,11 +207,11 @@ public class PluginImportOperation extends WorkspaceJob {
 					continue;
 
 				ArrayList<String> namesOfImportedProjects = new ArrayList<>(importedProjects.length);
-				for (int i = 0; i < importedProjects.length; i++) {
-					namesOfImportedProjects.add(importedProjects[i].getName());
+				for (IProject importedProject : importedProjects) {
+					namesOfImportedProjects.add(importedProject.getName());
 				}
-				for (int i = 0; i < descriptions.length; i++) {
-					String projectName = descriptions[i].getProject();
+				for (ScmUrlImportDescription description : descriptions) {
+					String projectName = description.getProject();
 					if (!namesOfImportedProjects.contains(projectName)) {
 						namesOfNotImportedProjects.add(projectName);
 					}
@@ -240,11 +239,11 @@ public class PluginImportOperation extends WorkspaceJob {
 				}
 			}
 		} else {
-			for (int i = 0; i < fModels.length; i++) {
+			for (IPluginModelBase model : fModels) {
 				subMonitor.setTaskName(NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin,
-						fModels[i].getPluginBase().getId()));
+						model.getPluginBase().getId()));
 				try {
-					importPlugin(fModels[i], fImportType, subMonitor.split(1));
+					importPlugin(model, fImportType, subMonitor.split(1));
 				} catch (CoreException e) {
 					multiStatus.merge(e.getStatus());
 				}
@@ -281,8 +280,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		monitor.beginTask("", 5); //$NON-NLS-1$
 		IPluginModelBase[] workspacePlugins = PluginRegistry.getWorkspaceModels();
 		HashMap<String, ArrayList<IPluginModelBase>> workspacePluginMap = new HashMap<>();
-		for (int i = 0; i < workspacePlugins.length; i++) {
-			IPluginModelBase plugin = workspacePlugins[i];
+		for (IPluginModelBase plugin : workspacePlugins) {
 			if (plugin.getBundleDescription() != null) {
 				String symbolicName = plugin.getBundleDescription().getSymbolicName();
 				ArrayList<IPluginModelBase> pluginsWithSameSymbolicName = workspacePluginMap.get(symbolicName);
@@ -296,11 +294,11 @@ public class PluginImportOperation extends WorkspaceJob {
 		monitor.worked(1);
 
 		final ArrayList<IPluginModelBase> conflictingPlugins = new ArrayList<>();
-		for (int i = 0; i < fModels.length; i++) {
-			if (fModels[i].getBundleDescription() == null) {
+		for (IPluginModelBase model : fModels) {
+			if (model.getBundleDescription() == null) {
 				continue;
 			}
-			String symbolicName = fModels[i].getBundleDescription().getSymbolicName();
+			String symbolicName = model.getBundleDescription().getSymbolicName();
 			ArrayList<IPluginModelBase> plugins = workspacePluginMap.get(symbolicName);
 			if (plugins == null || plugins.size() == 0) {
 				continue;
@@ -344,10 +342,10 @@ public class PluginImportOperation extends WorkspaceJob {
 			// collect working set information
 			IWorkingSetManager wsManager = PlatformUI.getWorkbench().getWorkingSetManager();
 			IWorkingSet[] sets = wsManager.getAllWorkingSets();
-			for (int i = 0; i < sets.length; i++) {
-				IAdaptable[] contents = sets[i].getElements();
-				for (int j = 0; j < contents.length; j++) {
-					IResource resource = contents[j].getAdapter(IResource.class);
+			for (IWorkingSet set : sets) {
+				IAdaptable[] contents = set.getElements();
+				for (IAdaptable content : contents) {
+					IResource resource = content.getAdapter(IResource.class);
 					if (resource instanceof IProject) {
 						// TODO For now just list everything in the map
 						String id = ((IProject) resource).getName();
@@ -356,7 +354,7 @@ public class PluginImportOperation extends WorkspaceJob {
 							workingSets = new ArrayList<>();
 							fProjectWorkingSets.put(id, workingSets);
 						}
-						workingSets.add(sets[i]);
+						workingSets.add(set);
 					}
 				}
 			}
@@ -604,8 +602,7 @@ public class PluginImportOperation extends WorkspaceJob {
 					Map<IPath, List<Object>> collected = new HashMap<>();
 					PluginImportHelper.collectBinaryFiles(provider, provider.getRoot(), packageLocations, collected);
 					iterationMonitor.setWorkRemaining(collected.size());
-					for (Iterator<IPath> iterator = collected.keySet().iterator(); iterator.hasNext();) {
-						IPath currentDestination = iterator.next();
+					for (IPath currentDestination : collected.keySet()) {
 						IPath destination = project.getFullPath();
 						destination = destination.append(currentDestination);
 						PluginImportHelper.importContent(provider.getRoot(), destination, provider,
@@ -622,8 +619,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				File srcFile = new File(model.getInstallLocation());
 				PluginImportHelper.collectBinaryFiles(FileSystemStructureProvider.INSTANCE, srcFile, packageLocations, collected);
 				iterationMonitor.setWorkRemaining(collected.size());
-				for (Iterator<IPath> iterator = collected.keySet().iterator(); iterator.hasNext();) {
-					IPath currentDestination = iterator.next();
+				for (IPath currentDestination : collected.keySet()) {
 					IPath destination = project.getFullPath();
 					destination = destination.append(currentDestination);
 					PluginImportHelper.importContent(srcFile, destination, FileSystemStructureProvider.INSTANCE,
@@ -689,8 +685,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		// or more working sets, add the new project to them
 		List<IWorkingSet> workingSets = fProjectWorkingSets.get(project.getName());
 		if (workingSets != null) {
-			for (Iterator<IWorkingSet> iterator = workingSets.iterator(); iterator.hasNext();) {
-				IWorkingSet ws = iterator.next();
+			for (IWorkingSet ws : workingSets) {
 				IAdaptable newElement = project;
 				IAdaptable[] projectAdaptables = ws.adaptElements(new IAdaptable[] { project });
 				if (projectAdaptables.length > 0) {
@@ -734,8 +729,8 @@ public class PluginImportOperation extends WorkspaceJob {
 		IPluginModelBase base = PluginRegistry.findModel(project);
 		if (base != null) {
 			IPluginLibrary[] libraries = base.getPluginBase().getLibraries();
-			for (int i = 0; i < libraries.length; i++) {
-				IResource res = project.findMember(libraries[i].getName());
+			for (IPluginLibrary library : libraries) {
+				IResource res = project.findMember(library.getName());
 				if (res != null)
 					try {
 						if (!(ResourcesPlugin.getWorkspace().delete(new IResource[] {res}, true, monitor).isOK()))
@@ -773,8 +768,8 @@ public class PluginImportOperation extends WorkspaceJob {
 				root = new File(model.getInstallLocation());
 			}
 			List<?> children = provider.getChildren(root);
-			for (Iterator<?> iterator = children.iterator(); iterator.hasNext();) {
-				String label = provider.getLabel(iterator.next());
+			for (Object child : children) {
+				String label = provider.getLabel(child);
 				if (label.equals(DEFAULT_SOURCE_DIR)) {
 					return true;
 				}
@@ -812,8 +807,8 @@ public class PluginImportOperation extends WorkspaceJob {
 
 			// Check for an old style source plug-in
 			String[] libraries = getLibraryNames(model);
-			for (int i = 0; i < libraries.length; i++) {
-				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+			for (String library : libraries) {
+				String zipName = ClasspathUtilCore.getSourceZipName(library);
 				IPath srcPath = fAlternateSource.findSourcePath(model.getPluginBase(), new Path(zipName));
 				if (srcPath != null) {
 					return fAlternateSource;
@@ -831,8 +826,8 @@ public class PluginImportOperation extends WorkspaceJob {
 
 		// Check for an old style source plug-in
 		String[] libraries = getLibraryNames(model);
-		for (int i = 0; i < libraries.length; i++) {
-			String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+		for (String library : libraries) {
+			String zipName = ClasspathUtilCore.getSourceZipName(library);
 			IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
 			if (srcPath != null) {
 				return manager;
@@ -932,15 +927,14 @@ public class PluginImportOperation extends WorkspaceJob {
 			if (manager.hasBundleManifestLocation(model.getPluginBase())) {
 				File srcFile = manager.findSourcePlugin(model.getPluginBase());
 				Set<String> sourceRoots = manager.findSourceRoots(model.getPluginBase());
-				for (int i = 0; i < libraries.length; i++) {
-					if (libraries[i].equals(DEFAULT_LIBRARY_NAME)) {
+				for (String library : libraries) {
+					if (library.equals(DEFAULT_LIBRARY_NAME)) {
 						// Need to pull out any java source that is not in
 						// another source root
 						IResource destination = project.getFolder(DEFAULT_SOURCE_DIR);
 						if (!destination.exists()) {
 							List<IPath> excludeFolders = new ArrayList<>(sourceRoots.size());
-							for (Iterator<String> iterator = sourceRoots.iterator(); iterator.hasNext();) {
-								String root = iterator.next();
+							for (String root : sourceRoots) {
 								if (!root.equals(DEFAULT_LIBRARY_NAME)) {
 									excludeFolders.add(new Path(root));
 								}
@@ -952,13 +946,13 @@ public class PluginImportOperation extends WorkspaceJob {
 							addPackageEntries(collectedPackages, new Path(DEFAULT_SOURCE_DIR), packageLocations);
 
 						}
-					} else if (sourceRoots.contains(getSourceDirName(libraries[i]))) {
-						IPath sourceDir = new Path(getSourceDirName(libraries[i]));
+					} else if (sourceRoots.contains(getSourceDirName(library))) {
+						IPath sourceDir = new Path(getSourceDirName(library));
 						if (!project.getFolder(sourceDir).exists()) {
 							Set<IPath> collectedPackages = new HashSet<>();
 							PluginImportHelper.extractFolderFromArchive(srcFile, sourceDir, project.getFullPath(),
 									collectedPackages, subMonitor.split(1));
-							addBuildEntry(buildModel, "source." + libraries[i], sourceDir.toString()); //$NON-NLS-1$
+							addBuildEntry(buildModel, "source." + library, sourceDir.toString()); //$NON-NLS-1$
 							addPackageEntries(collectedPackages, sourceDir, packageLocations);
 						}
 					}
@@ -969,18 +963,18 @@ public class PluginImportOperation extends WorkspaceJob {
 			// Old style, zips in folders, determine the source zip
 			// name/location and extract it to the project
 			boolean sourceFound = false;
-			for (int i = 0; i < libraries.length; i++) {
-				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+			for (String library : libraries) {
+				String zipName = ClasspathUtilCore.getSourceZipName(library);
 				IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
 				if (srcPath != null) {
 					sourceFound = true;
-					IPath dstPath = new Path(getSourceDirName(libraries[i]));
+					IPath dstPath = new Path(getSourceDirName(library));
 					IResource destination = project.getFolder(dstPath);
 					if (!destination.exists()) {
 						Set<IPath> collectedPackages = new HashSet<>();
 						PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(),
 								collectedPackages, subMonitor.split(1));
-						addBuildEntry(buildModel, "source." + libraries[i], dstPath.toString()); //$NON-NLS-1$
+						addBuildEntry(buildModel, "source." + library, dstPath.toString()); //$NON-NLS-1$
 						addPackageEntries(collectedPackages, dstPath, packageLocations);
 					}
 				}
@@ -1051,8 +1045,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @param packageLocations the map to add the entries to
 	 */
 	private void addPackageEntries(Set<IPath> packages, IPath destination, Map<IPath, IPath> packageLocations) {
-		for (Iterator<IPath> iterator = packages.iterator(); iterator.hasNext();) {
-			IPath currentPackage = iterator.next();
+		for (IPath currentPackage : packages) {
 			packageLocations.put(currentPackage, destination);
 
 			// Add package fragment locations
@@ -1164,11 +1157,11 @@ public class PluginImportOperation extends WorkspaceJob {
 			File location = new File(model.getInstallLocation());
 			if (location.isDirectory()) {
 				File[] files = location.listFiles();
-				for (int i = 0; i < files.length; i++) {
-					String token = files[i].getName();
+				for (File file : files) {
+					String token = file.getName();
 					if ((project.findMember(token) == null) && (build.getEntry(IBuildEntry.JAR_PREFIX + token) == null))
 						continue;
-					if (files[i].isDirectory()) {
+					if (file.isDirectory()) {
 						token = token + "/"; //$NON-NLS-1$
 						if (libraryDirs.containsKey(token))
 							token = libraryDirs.get(token).toString();
@@ -1177,13 +1170,13 @@ public class PluginImportOperation extends WorkspaceJob {
 				}
 			} else {
 				String[] tokens = PluginImportHelper.getTopLevelResources(location);
-				for (int i = 0; i < tokens.length; i++) {
-					IResource res = project.findMember(tokens[i]);
-					if ((res == null) && (build.getEntry(IBuildEntry.JAR_PREFIX + tokens[i]) == null))
+				for (String token : tokens) {
+					IResource res = project.findMember(token);
+					if ((res == null) && (build.getEntry(IBuildEntry.JAR_PREFIX + token) == null))
 						continue;
-					if ((res instanceof IFolder) && (libraryDirs.containsKey(tokens[i])))
+					if ((res instanceof IFolder) && (libraryDirs.containsKey(token)))
 						continue;
-					entry.addToken(tokens[i]);
+					entry.addToken(token);
 				}
 			}
 			buildModel.getBuild().add(entry);
@@ -1193,13 +1186,13 @@ public class PluginImportOperation extends WorkspaceJob {
 	private HashMap<String, String> getSourceDirectories(IBuild build) {
 		HashMap<String, String> set = new HashMap<>();
 		IBuildEntry[] entries = build.getBuildEntries();
-		for (int i = 0; i < entries.length; i++) {
-			String name = entries[i].getName();
+		for (IBuildEntry entry : entries) {
+			String name = entry.getName();
 			if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
 				name = name.substring(7);
-				String[] tokens = entries[i].getTokens();
-				for (int j = 0; j < tokens.length; j++) {
-					set.put(tokens[j], name);
+				String[] tokens = entry.getTokens();
+				for (String token : tokens) {
+					set.put(token, name);
 				}
 			}
 		}
@@ -1225,16 +1218,16 @@ public class PluginImportOperation extends WorkspaceJob {
 				try {
 					ManifestElement[] elements = ManifestElement.parseHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH, classpath);
 					StringBuffer buffer = new StringBuffer();
-					for (int i = 0; i < elements.length; i++) {
+					for (ManifestElement element : elements) {
 						if (buffer.length() > 0) {
 							buffer.append(","); //$NON-NLS-1$
 							buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
 							buffer.append(" "); //$NON-NLS-1$
 						}
-						if (elements[i].getValue().equals(".")) //$NON-NLS-1$
+						if (element.getValue().equals(".")) //$NON-NLS-1$
 							buffer.append(ClasspathUtilCore.getFilename(base));
 						else
-							buffer.append(elements[i].getValue());
+							buffer.append(element.getValue());
 					}
 					bundle.setHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH, buffer.toString());
 				} catch (BundleException e) {
@@ -1298,8 +1291,8 @@ public class PluginImportOperation extends WorkspaceJob {
 	private String[] getLibraryNames(IPluginModelBase model) {
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		ArrayList<String> list = new ArrayList<>();
-		for (int i = 0; i < libraries.length; i++) {
-			list.add(ClasspathUtilCore.expandLibraryName(libraries[i].getName()));
+		for (IPluginLibrary library : libraries) {
+			list.add(ClasspathUtilCore.expandLibraryName(library.getName()));
 		}
 		if (libraries.length == 0 && isJARd(model))
 			list.add(DEFAULT_LIBRARY_NAME);

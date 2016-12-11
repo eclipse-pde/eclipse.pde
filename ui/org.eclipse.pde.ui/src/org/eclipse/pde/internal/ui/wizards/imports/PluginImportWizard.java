@@ -125,8 +125,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		int count = 0;
 		ILaunch[] launches = launchManager.getLaunches();
 		HashSet<String> imported = new HashSet<>((4 * modelsToImport.length) / 3 + 1);
-		for (int j = 0; j < modelsToImport.length; ++j) {
-			BundleDescription bd = modelsToImport[j].getBundleDescription();
+		for (IPluginModelBase model : modelsToImport) {
+			BundleDescription bd = model.getBundleDescription();
 			if (bd != null) {
 				imported.add(bd.getSymbolicName());
 			}
@@ -138,8 +138,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 					continue;
 				try {
 					Map<?, ?> workspaceBundleMap = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
-					for (Iterator<?> iter = workspaceBundleMap.keySet().iterator(); iter.hasNext();) {
-						IPluginModelBase bm = (IPluginModelBase) iter.next();
+					for (Object key : workspaceBundleMap.keySet()) {
+						IPluginModelBase bm = (IPluginModelBase) key;
 						BundleDescription description = bm.getBundleDescription();
 						if (description != null) {
 							if (imported.contains(description.getSymbolicName())) {

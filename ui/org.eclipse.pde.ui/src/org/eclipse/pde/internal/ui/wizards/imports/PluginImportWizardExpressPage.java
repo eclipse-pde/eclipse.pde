@@ -195,8 +195,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void initialize() {
 		Object[] items = fInitialSelection.toArray();
 		ArrayList<IPluginModelBase> list = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			Object item = items[i];
+		for (Object item : items) {
 			if (item instanceof IJavaProject) {
 				item = ((IJavaProject) item).getProject();
 			}
@@ -217,8 +216,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		Object[] wModels = fTablePart.getSelection();
-		for (int i = 0; i < wModels.length; i++) {
-			IPluginModelBase model = (IPluginModelBase) wModels[i];
+		for (Object wModel : wModels) {
+			IPluginModelBase model = (IPluginModelBase) wModel;
 			addDependencies(model, result, fAddFragmentsButton.getSelection());
 			addExtraPrerequisites(model, result);
 		}
@@ -232,15 +231,15 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 	private void removeSharedModels(ArrayList<IPluginModelBase> result) {
 		IPluginModelBase[] smodels = result.toArray(new IPluginModelBase[result.size()]);
-		for (int i = 0; i < smodels.length; i++) {
-			String id = smodels[i].getPluginBase().getId();
+		for (IPluginModelBase smodel : smodels) {
+			String id = smodel.getPluginBase().getId();
 			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null) {
 				IResource resource = model.getUnderlyingResource();
 				if (resource != null) {
 					IProject project = resource.getProject();
 					if (!WorkspaceModelManager.isUnsharedProject(project)) {
-						result.remove(smodels[i]);
+						result.remove(smodel);
 					}
 				}
 			}
@@ -258,8 +257,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 				return;
 
 			String[] tokens = entry.getTokens();
-			for (int i = 0; i < tokens.length; i++) {
-				Path path = new Path(tokens[i]);
+			for (String token : tokens) {
+				Path path = new Path(token);
 				if (path.segmentCount() >= 2 && path.segment(0).equals("..")) { //$NON-NLS-1$
 					for (int j = 0; j < fModels.length; j++) {
 						if (fModels[j].getPluginBase().getId().equals(path.segment(1)) && !result.contains(fModels[j])) {

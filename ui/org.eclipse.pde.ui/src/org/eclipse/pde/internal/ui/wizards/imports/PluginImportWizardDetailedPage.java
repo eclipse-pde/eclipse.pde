@@ -131,9 +131,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			if (plugins != null && plugins.length > 0) {
 				versions.clear();
 			}
-			for (int i = 0; i < plugins.length; ++i) {
-				String name = plugins[i].getBundleDescription().getSymbolicName();
-				Version version = plugins[i].getBundleDescription().getVersion();
+			for (IPluginModelBase plugin : plugins) {
+				String name = plugin.getBundleDescription().getSymbolicName();
+				Version version = plugin.getBundleDescription().getVersion();
 				Version oldVersion = versions.get(name);
 				if (oldVersion == null || oldVersion.compareTo(version) < 0) {
 					versions.put(name, version);
@@ -512,8 +512,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		TableItem[] items = fAvailableListViewer.getTable().getItems();
 
 		ArrayList<Object> data = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			data.add(items[i].getData());
+		for (TableItem item : items) {
+			data.add(item.getData());
 		}
 		if (data.size() > 0) {
 			doAdd(data);
@@ -560,8 +560,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		TableItem[] items = fImportListViewer.getTable().getItems();
 
 		ArrayList<Object> data = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			data.add(items[i].getData());
+		for (TableItem item : items) {
+			data.add(item.getData());
 		}
 		if (data.size() > 0) {
 			doRemove(data);
@@ -583,11 +583,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 		// remove items that were in the old selection, but are not in the new one
 		List<Object> itemsToRemove = new ArrayList<>();
-		for (int i = 0; i < oldSelection.length; i++) {
-			if (newSelectionList.contains(oldSelection[i])) {
-				newSelectionList.remove(oldSelection[i]);
+		for (Object element : oldSelection) {
+			if (newSelectionList.contains(element)) {
+				newSelectionList.remove(element);
 			} else {
-				itemsToRemove.add(oldSelection[i]);
+				itemsToRemove.add(element);
 			}
 		}
 		doRemove(itemsToRemove);
@@ -603,16 +603,16 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		TableItem[] iItems = fImportListViewer.getTable().getItems();
 
 		ArrayList<Object> data = new ArrayList<>();
-		for (int i = 0; i < iItems.length; i++) {
-			data.add(iItems[i].getData());
+		for (TableItem item : iItems) {
+			data.add(item.getData());
 		}
 		if (data.size() > 0) {
 			doRemove(data);
 		}
 
 		data.clear();
-		for (int i = 0; i < aItems.length; i++) {
-			data.add(aItems[i].getData());
+		for (TableItem item : aItems) {
+			data.add(item.getData());
 		}
 		if (data.size() > 0) {
 			doAdd(data);
@@ -622,11 +622,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	private void handleExistingProjects() {
 		ArrayList<Object> result = new ArrayList<>();
-		for (int i = 0; i < fModels.length; i++) {
-			String id = fModels[i].getPluginBase().getId();
+		for (IPluginModelBase model : fModels) {
+			String id = model.getPluginBase().getId();
 			IProject project = (IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
 			if (project != null && project.isOpen() && WorkspaceModelManager.isPluginProject(project)) {
-				result.add(fModels[i]);
+				result.add(model);
 			}
 		}
 		handleSetImportSelection(result);
@@ -634,11 +634,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	private void handleExistingUnshared() {
 		ArrayList<Object> result = new ArrayList<>();
-		for (int i = 0; i < fModels.length; i++) {
-			String id = fModels[i].getPluginBase().getId();
+		for (IPluginModelBase model : fModels) {
+			String id = model.getPluginBase().getId();
 			IProject project = (IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
 			if (project != null && WorkspaceModelManager.isUnsharedProject(project) && WorkspaceModelManager.isPluginProject(project)) {
-				result.add(fModels[i]);
+				result.add(model);
 			}
 		}
 		handleSetImportSelection(result);
@@ -656,8 +656,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result, fAddFragmentsButton.getSelection());
+		for (TableItem item : items) {
+			addPluginAndDependencies((IPluginModelBase) item.getData(), result, fAddFragmentsButton.getSelection());
 		}
 		ArrayList<Object> resultObject = new ArrayList<>(result.size());
 		resultObject.addAll(result);

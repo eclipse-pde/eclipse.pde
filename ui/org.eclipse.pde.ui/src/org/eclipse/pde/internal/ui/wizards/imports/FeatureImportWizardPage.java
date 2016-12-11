@@ -201,8 +201,8 @@ public class FeatureImportWizardPage extends WizardPage {
 				// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
 				boolean isItem = false;
 				String[] items = fDropLocation.getItems();
-				for (int i = 0; i < items.length; i++) {
-					if (fDropLocation.getText().equals(items[i])) {
+				for (String item : items) {
+					if (fDropLocation.getText().equals(item)) {
 						isItem = true;
 						break;
 					}
@@ -466,9 +466,9 @@ public class FeatureImportWizardPage extends WizardPage {
 				ArrayList<IFeatureModel> result = new ArrayList<>();
 				if (useRuntimeLocation) {
 					IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-					for (int i = 0; i < allModels.length; i++)
-						if (allModels[i].getUnderlyingResource() == null)
-							result.add(allModels[i]);
+					for (IFeatureModel model : allModels)
+						if (model.getUnderlyingResource() == null)
+							result.add(model);
 				} else {
 					MultiStatus errors = doLoadFeatures(result, createPath(home));
 					if (errors != null && errors.getChildren().length > 0)
@@ -502,8 +502,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		if (dirs == null)
 			return null;
 		ArrayList<IStatus> resultStatus = new ArrayList<>();
-		for (int i = 0; i < dirs.length; i++) {
-			File dir = dirs[i];
+		for (File dir : dirs) {
 			if (dir.isDirectory()) {
 				File manifest = new File(dir, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 				if (manifest.exists()) {
