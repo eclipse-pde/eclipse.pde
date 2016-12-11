@@ -17,9 +17,9 @@ public class BuildUtil {
 
 	public static IBuildEntry[] getBuildLibraries(IBuildEntry[] entries) {
 		Vector<IBuildEntry> temp = new Vector<>();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getName().startsWith(IBuildEntry.JAR_PREFIX))
-				temp.add(entries[i]);
+		for (IBuildEntry entry : entries) {
+			if (entry.getName().startsWith(IBuildEntry.JAR_PREFIX))
+				temp.add(entry);
 		}
 		IBuildEntry[] result = new IBuildEntry[temp.size()];
 		temp.copyInto(result);

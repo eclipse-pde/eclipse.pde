@@ -119,8 +119,8 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 				Vector<IBuildEntry> libList = new Vector<>();
 				String[] tokens = jarOrderEntry.getTokens();
-				for (int i = 0; i < tokens.length; i++) {
-					IBuildEntry entry = build.getEntry(IBuildEntry.JAR_PREFIX + tokens[i]);
+				for (String token : tokens) {
+					IBuildEntry entry = build.getEntry(IBuildEntry.JAR_PREFIX + token);
 					if (entry != null)
 						libList.add(entry);
 				}
@@ -153,8 +153,8 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		@Override
 		public boolean hasChildren(Object element) {
 			Object[] children = getChildren(element);
-			for (int i = 0; i < children.length; i++)
-				if (children[i] instanceof IFolder)
+			for (Object child : children)
+				if (child instanceof IFolder)
 					return true;
 			return false;
 		}
@@ -246,8 +246,8 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 			IBuildEntry[] libraries = BuildUtil.getBuildLibraries(model.getBuild().getBuildEntries());
 			if (libraries.length != 0) {
-				for (int j = 0; j < libraries.length; j++) {
-					String libraryName = libraries[j].getName().substring(7);
+				for (IBuildEntry library : libraries) {
+					String libraryName = library.getName().substring(7);
 					IPath path = project.getFile(libraryName).getProjectRelativePath();
 					if (path.segmentCount() == 1 && !binIncl.contains(libraryName))
 						binIncl.addToken(libraryName);
@@ -282,9 +282,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jProject = JavaCore.create(project);
 				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-				for (int i = 0; i < roots.length; i++)
-					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE)
-						folders.add(roots[i]);
+				for (IPackageFragmentRoot fragmentRoot : roots)
+					if (fragmentRoot.getKind() == IPackageFragmentRoot.K_SOURCE)
+						folders.add(fragmentRoot);
 			}
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
@@ -545,8 +545,8 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		Set<String> outputFolders = new HashSet<>();
 		String[] jarFolders = buildEntry.getTokens();
 		IPackageFragmentRoot[] sourceFolders = computeSourceFolders();
-		for (int j = 0; j < jarFolders.length; j++) {
-			IPackageFragmentRoot sourceFolder = getSourceFolder(jarFolders[j], sourceFolders);
+		for (String folder : jarFolders) {
+			IPackageFragmentRoot sourceFolder = getSourceFolder(folder, sourceFolders);
 			if (sourceFolder != null) {
 				try {
 					IClasspathEntry entry = sourceFolder.getRawClasspathEntry();
@@ -676,8 +676,8 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 							// remove and re-add all runtime libraries to compile order
 							String[] tokens = jarOrderEntry.getTokens();
-							for (int i = 0; i < tokens.length; i++)
-								jarOrderEntry.removeToken(tokens[i]);
+							for (String token : tokens)
+								jarOrderEntry.removeToken(token);
 
 							for (int i = 0; i < numLib; i++) {
 								String lib = ((IBuildEntry) fLibraryViewer.getElementAt(i)).getName().substring(7);
@@ -701,9 +701,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	private IPackageFragmentRoot getSourceFolder(String folderName, IPackageFragmentRoot[] sourceFolders) {
-		for (int i = 0; i < sourceFolders.length; i++)
-			if (sourceFolders[i].getPath().removeFirstSegments(1).equals(new Path(folderName)))
-				return sourceFolders[i];
+		for (IPackageFragmentRoot sourceFolder : sourceFolders)
+			if (sourceFolder.getPath().removeFirstSegments(1).equals(new Path(folderName)))
+				return sourceFolder;
 		return null;
 	}
 
@@ -731,8 +731,8 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 					// remove and re-add all runtime libraries to compile order
 					String[] tokens = entry.getTokens();
-					for (int i = 0; i < tokens.length; i++)
-						entry.removeToken(tokens[i]);
+					for (String token : tokens)
+						entry.removeToken(token);
 
 					for (int i = 0; i < numLib; i++) {
 						Object element = fLibraryViewer.getElementAt(i);
@@ -868,8 +868,8 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 				build.add(jarOrderEntry);
 			} else {
 				String tokens[] = jarOrderEntry.getTokens();
-				for (int i = 0; i < tokens.length; i++)
-					jarOrderEntry.removeToken(tokens[i]);
+				for (String token : tokens)
+					jarOrderEntry.removeToken(token);
 			}
 
 			int numLib = fLibraryViewer.getTable().getItemCount();

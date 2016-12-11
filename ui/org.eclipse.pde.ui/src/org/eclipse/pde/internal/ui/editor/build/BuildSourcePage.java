@@ -107,8 +107,8 @@ public class BuildSourcePage extends KeyValueSourcePage {
 	}
 
 	private BuildEntry findBuildNode(IBuildEntry[] nodes, int offset) {
-		for (int i = 0; i < nodes.length; i++) {
-			BuildEntry node = (BuildEntry) nodes[i];
+		for (IBuildEntry n : nodes) {
+			BuildEntry node = (BuildEntry) n;
 			if (offset >= node.getOffset() && offset < node.getOffset() + node.getLength()) {
 				return node;
 			}
@@ -135,8 +135,8 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		IBuildModel model = (IBuildModel) getInputContext().getModel();
 		IBuildEntry[] buildEntries = model.getBuild().getBuildEntries();
 
-		for (int i = 0; i < buildEntries.length; i++) {
-			IDocumentKey key = (IDocumentKey) buildEntries[i];
+		for (IBuildEntry entry : buildEntries) {
+			IDocumentKey key = (IDocumentKey) entry;
 			if (offset >= key.getOffset() && offset < key.getOffset() + key.getLength())
 				return key;
 		}

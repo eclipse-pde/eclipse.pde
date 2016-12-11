@@ -76,9 +76,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 					return new Object[0];
 				members = ((IFolder) parent).members();
 				ArrayList<IResource> results = new ArrayList<>();
-				for (int i = 0; i < members.length; i++) {
-					if ((members[i].getType() == IResource.FOLDER)) {
-						results.add(members[i]);
+				for (IResource member : members) {
+					if ((member.getType() == IResource.FOLDER)) {
+						results.add(member);
 					}
 				}
 				return results.toArray();
@@ -226,8 +226,8 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		fTreeViewer.setGrayed(folder, isGray);
 		if (((TreeContentProvider) fTreeViewer.getContentProvider()).hasChildren(folder)) {
 			Object[] members = ((TreeContentProvider) fTreeViewer.getContentProvider()).getFolderChildren(folder);
-			for (int i = 0; i < members.length; i++) {
-				setChildrenGrayed((IFolder) members[i], isGray);
+			for (Object member : members) {
+				setChildrenGrayed((IFolder) member, isGray);
 			}
 		}
 	}
@@ -273,10 +273,10 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 						if (excludes != null)
 							exclTokens = excludes.getTokens();
 						Set<String> temp = new TreeSet<>();
-						for (int i = 0; i < inclTokens.length; i++)
-							temp.add(inclTokens[i]);
-						for (int i = 0; i < exclTokens.length; i++)
-							temp.add(exclTokens[i]);
+						for (String inclToken : inclTokens)
+							temp.add(inclToken);
+						for (String exclToken : exclTokens)
+							temp.add(exclToken);
 						Iterator<String> iter = temp.iterator();
 						while (iter.hasNext()) {
 							String resource = iter.next().toString();
@@ -387,8 +387,8 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 						IBuildEntry[] libraries = BuildUtil.getBuildLibraries(fBuildModel.getBuild().getBuildEntries());
 						if (resource.getFileExtension().equals("jar") //$NON-NLS-1$
 								&& libraries.length != 0) {
-							for (int j = 0; j < libraries.length; j++) {
-								String libName = libraries[j].getName().substring(7);
+							for (IBuildEntry library : libraries) {
+								String libName = library.getName().substring(7);
 								IPath path = fBundleRoot.getFile(new Path(libName)).getProjectRelativePath().makeRelativeTo(fBundleRoot.getProjectRelativePath());
 								if (path.segmentCount() == 1 && !includes.contains(libName) && !libName.equals(resource.getName()))
 									includes.addToken(libName);
@@ -442,9 +442,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		IBuild build = fBuildModel.getBuild();
 		IBuildEntry[] entries = {build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES), build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES), build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES), build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES)};
 		try {
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i] != null && entries[i].getTokens().length == 0)
-					build.remove(entries[i]);
+			for (IBuildEntry entry : entries) {
+				if (entry != null && entry.getTokens().length == 0)
+					build.remove(entry);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);

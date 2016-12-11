@@ -65,9 +65,7 @@ public class BuildUndoManager extends ModelUndoManager {
 		IBuild build = model.getBuild();
 
 		try {
-			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-
+			for (Object element : elements) {
 				if (element instanceof IBuildEntry) {
 					build.add((IBuildEntry) element);
 				}
@@ -81,9 +79,7 @@ public class BuildUndoManager extends ModelUndoManager {
 		IBuild build = model.getBuild();
 
 		try {
-			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-
+			for (Object element : elements) {
 				if (element instanceof IBuildEntry) {
 					build.remove((IBuildEntry) element);
 				}

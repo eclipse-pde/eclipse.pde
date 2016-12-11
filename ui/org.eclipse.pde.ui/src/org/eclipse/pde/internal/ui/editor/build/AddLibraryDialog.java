@@ -51,8 +51,8 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 			if (!text.endsWith(".jar") && !text.endsWith("/") && !text.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				text += "/"; //$NON-NLS-1$
 
-			for (int i = 0; i < libraries.length; i++) {
-				if (libraries[i].equals(text))
+			for (String library : libraries) {
+				if (library.equals(text))
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateLibrary, null);
 			}
 			return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$

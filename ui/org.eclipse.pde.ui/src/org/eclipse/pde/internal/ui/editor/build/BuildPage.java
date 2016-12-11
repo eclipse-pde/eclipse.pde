@@ -137,8 +137,8 @@ public class BuildPage extends PDEFormPage {
 		String[] tokens = customEntry.getTokens();
 		try {
 			if (tokens.length != 0) {
-				for (int i = 0; i < tokens.length; i++)
-					customEntry.removeToken(tokens[i]);
+				for (String token : tokens)
+					customEntry.removeToken(token);
 			}
 			if (isCustom)
 				customEntry.addToken("true"); //$NON-NLS-1$

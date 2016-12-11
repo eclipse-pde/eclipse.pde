@@ -76,8 +76,7 @@ public class BuildInputContext extends InputContext {
 	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			Object object = objects[i];
+		for (Object object : objects) {
 			IDocumentKey key = (IDocumentKey) object;
 			TextEdit op = fOperationTable.get(key);
 			if (op != null) {

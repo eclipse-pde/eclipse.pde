@@ -82,8 +82,8 @@ public class BuildClasspathSection extends TableSection {
 		}
 
 		private boolean isOfAcceptedType(Object o) {
-			for (int i = 0; i < fAcceptedTypes.length; i++) {
-				if (fAcceptedTypes[i].isInstance(o)) {
+			for (Class<?> type : fAcceptedTypes) {
+				if (type.isInstance(o)) {
 					return true;
 				}
 			}
@@ -99,8 +99,7 @@ public class BuildClasspathSection extends TableSection {
 				return false;
 			}
 
-			for (int i = 0; i < selection.length; i++) {
-				Object o = selection[i];
+			for (Object o : selection) {
 				if (!isOfAcceptedType(o)) {
 					return false;
 				}
@@ -301,8 +300,8 @@ public class BuildClasspathSection extends TableSection {
 		initializeDialogSettings(dialog);
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
-			for (int i = 0; i < elements.length; i++) {
-				IResource elem = (IResource) elements[i];
+			for (Object element : elements) {
+				IResource elem = (IResource) element;
 				String tokenName = getRelativePathTokenName(elem);
 				if (tokenName == null)
 					continue;
