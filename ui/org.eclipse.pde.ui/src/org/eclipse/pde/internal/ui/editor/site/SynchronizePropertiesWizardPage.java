@@ -138,8 +138,8 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		}
 		boolean patch = false;
 		IFeatureImport[] imports = feature.getImports();
-		for (int i = 0; i < imports.length; i++) {
-			if (imports[i].isPatch()) {
+		for (IFeatureImport featureImport : imports) {
+			if (featureImport.isPatch()) {
 				patch = true;
 				break;
 			}
@@ -162,12 +162,12 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	}
 
 	private void importEnvironment(ISiteFeature[] siteFeatures, IProgressMonitor monitor) {
-		for (int i = 0; i < siteFeatures.length; i++) {
+		for (ISiteFeature siteFeature : siteFeatures) {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			monitor.subTask(siteFeatures[i].getId() + "_" + siteFeatures[i].getVersion()); //$NON-NLS-1$
-			importEnvironment(siteFeatures[i]);
+			monitor.subTask(siteFeature.getId() + "_" + siteFeature.getVersion()); //$NON-NLS-1$
+			importEnvironment(siteFeature);
 			monitor.worked(1);
 		}
 	}

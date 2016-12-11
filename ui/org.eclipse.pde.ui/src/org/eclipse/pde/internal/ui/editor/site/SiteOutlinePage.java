@@ -39,13 +39,13 @@ public class SiteOutlinePage extends FormOutlinePage {
 				if (page.getId().equals(FeaturesPage.PAGE_ID)) {
 					ArrayList<IWritable> result = new ArrayList<>();
 					ISiteCategoryDefinition[] catDefs = site.getCategoryDefinitions();
-					for (int i = 0; i < catDefs.length; i++) {
-						result.add(catDefs[i]);
+					for (ISiteCategoryDefinition catDef : catDefs) {
+						result.add(catDef);
 					}
 					ISiteFeature[] features = site.getFeatures();
-					for (int i = 0; i < features.length; i++) {
-						if (features[i].getCategories().length == 0)
-							result.add(new SiteFeatureAdapter(null, features[i]));
+					for (ISiteFeature feature : features) {
+						if (feature.getCategories().length == 0)
+							result.add(new SiteFeatureAdapter(null, feature));
 					}
 					return result.toArray();
 				}
@@ -60,11 +60,11 @@ public class SiteOutlinePage extends FormOutlinePage {
 				ISite site = model.getSite();
 				ISiteFeature[] features = site.getFeatures();
 				HashSet<SiteFeatureAdapter> result = new HashSet<>();
-				for (int i = 0; i < features.length; i++) {
-					ISiteCategory[] cats = features[i].getCategories();
-					for (int j = 0; j < cats.length; j++) {
-						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
-							result.add(new SiteFeatureAdapter(cats[j].getName(), features[i]));
+				for (ISiteFeature feature : features) {
+					ISiteCategory[] cats = feature.getCategories();
+					for (ISiteCategory cat : cats) {
+						if (cat.getDefinition() != null && cat.getDefinition().equals(catDef)) {
+							result.add(new SiteFeatureAdapter(cat.getName(), feature));
 						}
 					}
 				}

@@ -73,9 +73,7 @@ public class SiteUndoManager extends ModelUndoManager {
 		ISite site = siteModel != null ? siteModel.getSite() : null;
 
 		try {
-			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-
+			for (Object element : elements) {
 				if (element instanceof ISiteFeature) {
 					site.addFeatures(new ISiteFeature[] {(ISiteFeature) element});
 				} else if (element instanceof ISiteArchive) {
@@ -98,9 +96,7 @@ public class SiteUndoManager extends ModelUndoManager {
 		ISite site = siteModel != null ? siteModel.getSite() : null;
 
 		try {
-			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-
+			for (Object element : elements) {
 				if (element instanceof ISiteFeature) {
 					site.removeFeatures(new ISiteFeature[] {(ISiteFeature) element});
 				} else if (element instanceof ISiteArchive) {

@@ -143,8 +143,7 @@ public class NewArchiveDialog extends StatusDialog {
 
 		ISiteModel model = fSiteModel;
 		ISiteArchive[] archives = model.getSite().getArchives();
-		for (int i = 0; i < archives.length; i++) {
-			ISiteArchive archive = archives[i];
+		for (ISiteArchive archive : archives) {
 			String apath = archive.getPath();
 			if (currentPath != null && currentPath.equals(path)) {
 				// do not have to change path while editing

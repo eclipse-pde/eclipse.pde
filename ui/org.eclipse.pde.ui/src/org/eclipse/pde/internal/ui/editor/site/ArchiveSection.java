@@ -49,8 +49,8 @@ public class ArchiveSection extends PDESection {
 		@Override
 		public boolean hasChildren(Object element) {
 			Object[] children = getChildren(element);
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof IFolder) {
+			for (Object child : children) {
+				if (child instanceof IFolder) {
 					return true;
 				}
 			}
