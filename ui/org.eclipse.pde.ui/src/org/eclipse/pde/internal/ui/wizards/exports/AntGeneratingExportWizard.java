@@ -60,8 +60,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 		if (!MessageDialogWithToggle.ALWAYS.equals(PDEPlugin.getDefault().getPreferenceStore().getString(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT))) {
 			Object[] objects = fPage.getSelectedItems();
 			List<Object> problemModels = new ArrayList<>();
-			for (int i = 0; i < objects.length; i++) {
-				Object object = objects[i];
+			for (Object object : objects) {
 				String installLocation = null;
 				IResource underlyingResource = null;
 				if (object instanceof WorkspacePluginModelBase) {
@@ -92,8 +91,8 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 				StringBuffer buf = new StringBuffer();
 				PDELabelProvider labelProvider = new PDELabelProvider();
 				int maxCount = 10;
-				for (Iterator<Object> iterator = problemModels.iterator(); iterator.hasNext();) {
-					buf.append(labelProvider.getText(iterator.next()));
+				for (Object object : problemModels) {
+					buf.append(labelProvider.getText(object));
 					buf.append('\n');
 					maxCount--;
 					if (maxCount <= 0) {

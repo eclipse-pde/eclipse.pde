@@ -98,8 +98,8 @@ public class ProductExportWizard extends BaseExportWizard {
 		ArrayList<IFeatureModel> list = new ArrayList<>();
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IProductFeature[] features = fProductModel.getProduct().getFeatures();
-		for (int i = 0; i < features.length; i++) {
-			IFeatureModel model = manager.findFeatureModel(features[i].getId(), features[i].getVersion());
+		for (IProductFeature feature : features) {
+			IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
 			if (model != null)
 				list.add(model);
 		}
@@ -110,15 +110,15 @@ public class ProductExportWizard extends BaseExportWizard {
 		ArrayList<BundleDescription> list = new ArrayList<>();
 		State state = TargetPlatformHelper.getState();
 		IProductPlugin[] plugins = fProductModel.getProduct().getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
+		for (IProductPlugin plugin : plugins) {
 			BundleDescription bundle = null;
-			String v = plugins[i].getVersion();
+			String v = plugin.getVersion();
 			if (v != null && v.length() > 0) {
-				bundle = state.getBundle(plugins[i].getId(), Version.parseVersion(v));
+				bundle = state.getBundle(plugin.getId(), Version.parseVersion(v));
 			}
 			// if there's no version, just grab a bundle like before
 			if (bundle == null)
-				bundle = state.getBundle(plugins[i].getId(), null);
+				bundle = state.getBundle(plugin.getId(), null);
 			if (bundle != null)
 				list.add(bundle);
 		}

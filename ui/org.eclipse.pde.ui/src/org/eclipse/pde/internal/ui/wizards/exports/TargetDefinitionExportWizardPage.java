@@ -159,8 +159,8 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 				newLocation = newLocation.substring(0, newLocation.length() - 1);
 			}
 			String[] items = fDestinationCombo.getItems();
-			for (int i = 0; i < items.length; i++) {
-				if (items[i].equals(newLocation)) {
+			for (String item : items) {
+				if (item.equals(newLocation)) {
 					// Already have this location stored
 					return;
 				}

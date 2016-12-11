@@ -124,12 +124,12 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 				ArrayList<Object> result = new ArrayList<>();
 				if (fTemplateCollection.getWizards() != null) {
 					Object[] wizards = fTemplateCollection.getWizards().getChildren();
-					for (int i = 0; i < wizards.length; i++) {
-						String wizardContributorId = ((WizardElement) wizards[i]).getContributingId();
+					for (Object wizardObject : wizards) {
+						String wizardContributorId = ((WizardElement) wizardObject).getContributingId();
 						if (wizardContributorId == null || pointID == null)
 							continue;
-						if (wizards[i] instanceof WizardElement && wizardContributorId.equals(pointID))
-							result.add(wizards[i]);
+						if (wizardObject instanceof WizardElement && wizardContributorId.equals(pointID))
+							result.add(wizardObject);
 					}
 					return result.toArray();
 				}
@@ -143,18 +143,18 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		public Object[] getElements(Object parent) {
 			ArrayList<IPluginExtensionPoint> extPoints = new ArrayList<>();
 			IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
-			for (int i = 0; i < plugins.length; i++) {
-				IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();
-				String id = plugins[i].getPluginBase().getId();
+			for (IPluginModelBase plugin : plugins) {
+				IPluginExtensionPoint[] points = plugin.getPluginBase().getExtensionPoints();
+				String id = plugin.getPluginBase().getId();
 				if (id.equals(fModel.getPluginBase().getId()))
 					continue;
-				for (int j = 0; j < points.length; j++)
-					extPoints.add(points[j]);
+				for (IPluginExtensionPoint point : points)
+					extPoints.add(point);
 			}
 
 			IPluginExtensionPoint[] points = fModel.getPluginBase().getExtensionPoints();
-			for (int i = 0; i < points.length; i++)
-				extPoints.add(points[i]);
+			for (IPluginExtensionPoint point : points)
+				extPoints.add(point);
 
 			return extPoints.toArray();
 		}

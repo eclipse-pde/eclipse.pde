@@ -53,13 +53,13 @@ public class NewExtensionWizard extends NewWizard {
 	}
 
 	private void collectTemplates(Object[] children, WizardCollectionElement list) {
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof WizardCollectionElement) {
-				WizardCollectionElement element = (WizardCollectionElement) children[i];
+		for (Object child : children) {
+			if (child instanceof WizardCollectionElement) {
+				WizardCollectionElement element = (WizardCollectionElement) child;
 				collectTemplates(element.getChildren(), list);
 				collectTemplates(element.getWizards().getChildren(), list);
-			} else if (children[i] instanceof WizardElement) {
-				WizardElement wizard = (WizardElement) children[i];
+			} else if (child instanceof WizardElement) {
+				WizardElement wizard = (WizardElement) child;
 				if (wizard.isTemplate())
 					list.getWizards().add(wizard);
 			}

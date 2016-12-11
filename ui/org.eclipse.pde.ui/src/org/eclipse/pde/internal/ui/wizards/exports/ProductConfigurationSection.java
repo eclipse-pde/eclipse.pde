@@ -132,8 +132,7 @@ public class ProductConfigurationSection {
 				try {
 					if (container.isAccessible()) {
 						IResource[] resources = container.members();
-						for (int i = 0; i < resources.length; i++) {
-							IResource resource = resources[i];
+						for (IResource resource : resources) {
 							if (resource instanceof IFile && resource.getName().endsWith(".product")) { //$NON-NLS-1$
 								String path = resource.getFullPath().toString();
 								if (fProductCombo.indexOf(path) == -1)

@@ -238,10 +238,10 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 			//collect proper models from working set
 			Set<IModel> selected = new HashSet<>();
 			IWorkingSet[] workingSets = dialog.getSelection();
-			for (int i = 0; i < workingSets.length; i++) {
-				IAdaptable[] elements = workingSets[i].getElements();
-				for (int j = 0; j < elements.length; j++) {
-					IModel model = findModelFor(elements[j]);
+			for (IWorkingSet workingSet : workingSets) {
+				IAdaptable[] elements = workingSet.getElements();
+				for (IAdaptable element : elements) {
+					IModel model = findModelFor(element);
 					if (isValidModel(model)) {
 						selected.add(model);
 					}

@@ -78,8 +78,8 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 	protected void saveSettings() {
 		IDialogSettings settings = getDialogSettings();
 		IWizardPage[] pages = getPages();
-		for (int i = 0; i < pages.length; i++) {
-			((AbstractExportWizardPage) pages[i]).saveSettings(settings);
+		for (IWizardPage page : pages) {
+			((AbstractExportWizardPage) page).saveSettings(settings);
 		}
 	}
 

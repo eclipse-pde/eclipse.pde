@@ -125,8 +125,8 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 			}
 			ArrayList<Configuration> selected = new ArrayList<>();
 			TableItem[] items = fPlatformPart.getTableViewer().getTable().getItems();
-			for (int i = 0; i < items.length; i++) {
-				Configuration config = (Configuration) items[i].getData();
+			for (TableItem item : items) {
+				Configuration config = (Configuration) item.getData();
 				if (set.contains(config.toString())) {
 					selected.add(config);
 				}
@@ -139,8 +139,8 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 			config.os = TargetPlatform.getOS();
 			config.arch = TargetPlatform.getOSArch();
 			TableItem[] items = fPlatformPart.getTableViewer().getTable().getItems();
-			for (int i = 0; i < items.length; i++) {
-				Configuration c = (Configuration) items[i].getData();
+			for (TableItem item : items) {
+				Configuration c = (Configuration) item.getData();
 				if (c.equals(config)) {
 					fPlatformPart.getTableViewer().setChecked(c, true);
 					fPlatformPart.updateCounter(1);
@@ -154,10 +154,10 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 	public void saveSettings(IDialogSettings settings) {
 		Object[] objects = fPlatformPart.getSelection();
 		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < objects.length; i++) {
+		for (Object object : objects) {
 			if (buffer.length() > 0)
 				buffer.append(","); //$NON-NLS-1$
-			buffer.append(objects[i].toString());
+			buffer.append(object.toString());
 		}
 		settings.put(CROSS_PLATFORM, buffer.toString());
 	}
@@ -168,9 +168,9 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 			File bin = new File(fModel.getInstallLocation(), "bin"); //$NON-NLS-1$
 			if (bin.exists() && bin.isDirectory()) {
 				File[] children = bin.listFiles();
-				for (int i = 0; i < children.length; i++) {
-					if (children[i].isDirectory())
-						getWS(list, children[i]);
+				for (File child : children) {
+					if (child.isDirectory())
+						getWS(list, child);
 				}
 			}
 		}
@@ -179,9 +179,9 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 
 	private void getWS(ArrayList<Configuration> list, File file) {
 		File[] children = file.listFiles();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].isDirectory())
-				getOS(list, children[i], file.getName());
+		for (File child : children) {
+			if (child.isDirectory())
+				getOS(list, child, file.getName());
 		}
 	}
 

@@ -100,8 +100,8 @@ public class NewExtensionRegistryReader {
 		Object[] children = parent.getChildren();
 
 		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				WizardCollectionElement currentChild = (WizardCollectionElement) children[i];
+			for (Object child : children) {
+				WizardCollectionElement currentChild = (WizardCollectionElement) child;
 				if (currentChild.getId().equals(id))
 					return currentChild;
 			}
@@ -160,8 +160,8 @@ public class NewExtensionRegistryReader {
 		WizardCollectionElement parent = result; // ie.- root
 
 		if (categoryPath != null) {
-			for (int i = 0; i < categoryPath.length; i++) {
-				WizardCollectionElement tempElement = getChildWithID(parent, categoryPath[i]);
+			for (String element : categoryPath) {
+				WizardCollectionElement tempElement = getChildWithID(parent, element);
 				if (tempElement == null) {
 					parent = null;
 					break;
@@ -207,10 +207,9 @@ public class NewExtensionRegistryReader {
 			return null;
 
 		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				IConfigurationElement config = elements[j];
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (IConfigurationElement config : elements) {
 				processElement(config, result, shortcutsOnly);
 			}
 		}
