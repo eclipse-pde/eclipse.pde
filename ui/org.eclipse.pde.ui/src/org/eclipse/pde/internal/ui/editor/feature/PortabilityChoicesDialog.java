@@ -113,8 +113,7 @@ public class PortabilityChoicesDialog extends TrayDialog {
 	}
 
 	private Choice findChoice(String value) {
-		for (int i = 0; i < choices.length; i++) {
-			Choice choice = choices[i];
+		for (Choice choice : choices) {
 			if (choice.getValue().equalsIgnoreCase(value))
 				return choice;
 		}

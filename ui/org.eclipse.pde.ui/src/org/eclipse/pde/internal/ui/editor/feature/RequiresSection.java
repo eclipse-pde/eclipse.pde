@@ -71,10 +71,10 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			if (parent instanceof IFeature) {
 				IFeatureImport[] imports = ((IFeature) parent).getImports();
 				ArrayList<IFeatureImport> displayable = new ArrayList<>();
-				for (int i = 0; i < imports.length; i++) {
-					if (imports[i].isPatch())
+				for (IFeatureImport featureImport : imports) {
+					if (featureImport.isPatch())
 						continue;
-					displayable.add(imports[i]);
+					displayable.add(featureImport);
 				}
 
 				return displayable.toArray();
@@ -192,9 +192,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
 				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
-				for (int i = 0; i < allModels.length; i++) {
-					if (canAdd(allModels[i]))
-						newModels.add(allModels[i]);
+				for (IPluginModelBase model : allModels) {
+					if (canAdd(model))
+						newModels.add(model);
 				}
 				IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
 				PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
@@ -218,16 +218,14 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeatureImport[] imports = model.getFeature().getImports();
 
-		for (int i = 0; i < imports.length; i++) {
-			IFeatureImport fimport = imports[i];
-			if (plugin.getId().equals(fimport.getId()))
+		for (IFeatureImport featureImport : imports) {
+			if (plugin.getId().equals(featureImport.getId()))
 				return false;
 		}
 		// don't show plug-ins that are listed in this feature
 		IFeaturePlugin[] fplugins = model.getFeature().getPlugins();
-		for (int i = 0; i < fplugins.length; i++) {
-			IFeaturePlugin fplugin = fplugins[i];
-			if (plugin.getId().equals(fplugin.getId()))
+		for (IFeaturePlugin featurePlugin : fplugins) {
+			if (plugin.getId().equals(featurePlugin.getId()))
 				return false;
 		}
 		return true;
@@ -239,9 +237,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 				ArrayList<IFeatureModel> newModels = new ArrayList<>();
-				for (int i = 0; i < allModels.length; i++) {
-					if (canAdd(allModels[i]))
-						newModels.add(allModels[i]);
+				for (IFeatureModel model : allModels) {
+					if (canAdd(model))
+						newModels.add(model);
 				}
 				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
@@ -288,8 +286,8 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 		IFeatureImport[] features = feature.getImports();
 
-		for (int i = 0; i < features.length; i++) {
-			if (features[i].getId().equals(cfeature.getId()) && features[i].getVersion() != null && features[i].getVersion().equals(cfeature.getVersion()))
+		for (IFeatureImport featureImport : features) {
+			if (featureImport.getId().equals(cfeature.getId()) && featureImport.getVersion() != null && featureImport.getVersion().equals(cfeature.getVersion()))
 				return false;
 		}
 		return true;
@@ -531,8 +529,8 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		if (models == null)
 			return false;
 		IFeatureModel thisModel = (IFeatureModel) getPage().getModel();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i] != thisModel) {
+		for (IFeatureModel model : models) {
+			if (model != thisModel) {
 				return true;
 			}
 		}

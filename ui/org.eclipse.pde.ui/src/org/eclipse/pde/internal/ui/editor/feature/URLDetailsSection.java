@@ -219,9 +219,9 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
-		for (int i = 0; i < types.length; i++) {
-			for (int j = 0; j < transfers.length; j++) {
-				if (transfers[j].isSupportedType(types[i]))
+		for (TransferData type : types) {
+			for (Transfer transfer : transfers) {
+				if (transfer.isSupportedType(type))
 					return true;
 			}
 		}

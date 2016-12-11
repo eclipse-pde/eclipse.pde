@@ -95,10 +95,9 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 
 	private IPluginModelBase findModel(String id) {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase modelBase = models[i];
-			if (modelBase != null && id.equals(modelBase.getPluginBase().getId()))
-				return modelBase;
+		for (IPluginModelBase model : models) {
+			if (model != null && id.equals(model.getPluginBase().getId()))
+				return model;
 		}
 		return null;
 	}
@@ -184,8 +183,8 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 		IFeaturePlugin[] plugins = feature.getPlugins();
 		int size = plugins.length;
 		monitor.beginTask(PDEUIMessages.VersionSyncWizard_synchronizing, size);
-		for (int i = 0; i < plugins.length; i++)
-			synchronizeVersion(mode, feature.getVersion(), plugins[i], monitor);
+		for (IFeaturePlugin plugin : plugins)
+			synchronizeVersion(mode, feature.getVersion(), plugin, monitor);
 	}
 
 	private int saveSettings() {

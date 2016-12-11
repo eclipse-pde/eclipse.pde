@@ -177,9 +177,9 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
 				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
-				for (int i = 0; i < allModels.length; i++) {
-					if (canAdd(allModels[i]))
-						newModels.add(allModels[i]);
+				for (IPluginModelBase model : allModels) {
+					if (canAdd(model))
+						newModels.add(model);
 				}
 				IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
 				PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
@@ -216,8 +216,8 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeaturePlugin[] fplugins = model.getFeature().getPlugins();
 
-		for (int i = 0; i < fplugins.length; i++) {
-			if (fplugins[i].getId().equals(plugin.getId()))
+		for (IFeaturePlugin featurePlugin : fplugins) {
+			if (featurePlugin.getId().equals(plugin.getId()))
 				return false;
 		}
 		return true;
