@@ -263,12 +263,12 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 							break;
 						int offset = ((IDocumentAttributeNode) fRange).getEnclosingElement().getOffset();
 						IPluginExtension[] extensions = base.getExtensions();
-						for (int i = 0; i < extensions.length; i++) {
-							if (((IDocumentElementNode) extensions[i]).getOffset() == offset) {
-								if (extensions[i].getChildCount() != 0)
+						for (IPluginExtension extension : extensions) {
+							if (((IDocumentElementNode) extension).getOffset() == offset) {
+								if (extension.getChildCount() != 0)
 									break; // don't modify existing extensions
-								fPluginParent = extensions[i];
-								fSchemaElement = XMLUtil.getSchemaElement((IDocumentElementNode) extensions[i], extensions[i].getPoint());
+								fPluginParent = extension;
+								fSchemaElement = XMLUtil.getSchemaElement((IDocumentElementNode) extension, extension.getPoint());
 								break;
 							}
 						}
@@ -297,9 +297,9 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 				}
 				if (newSearch != null) {
 					IDocumentElementNode[] children = newSearch.getChildNodes();
-					for (int i = 0; i < children.length; i++) {
-						if (children[i].getOffset() == fOffset && children[i] instanceof IPluginElement) {
-							fPluginParent = (IPluginElement) children[i];
+					for (IDocumentElementNode childNode : children) {
+						if (childNode.getOffset() == fOffset && childNode instanceof IPluginElement) {
+							fPluginParent = (IPluginElement) childNode;
 							fSchemaElement = (ISchemaElement) fSchemaObject;
 							break;
 						}
@@ -345,15 +345,15 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		int targetOffset = ((IDocumentElementNode) range).getOffset();
 		// Search this plug-ins extensions for the proper one
 		IPluginExtension[] extensions = base.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
+		for (IPluginExtension extension : extensions) {
 			// Get the offset of the current extension
-			int extensionOffset = ((IDocumentElementNode) extensions[i]).getOffset();
+			int extensionOffset = ((IDocumentElementNode) extension).getOffset();
 			// If the offsets match we foudn the extension element
 			// Note: The extension element should have no children
-			if ((extensionOffset == targetOffset) && (extensions[i].getChildCount() == 0)) {
-				fPluginParent = extensions[i];
+			if ((extensionOffset == targetOffset) && (extension.getChildCount() == 0)) {
+				fPluginParent = extension;
 				// Get the corresponding schema element
-				fSchemaElement = XMLUtil.getSchemaElement((IDocumentElementNode) extensions[i], extensions[i].getPoint());
+				fSchemaElement = XMLUtil.getSchemaElement((IDocumentElementNode) extension, extension.getPoint());
 				break;
 			}
 		}
@@ -413,8 +413,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			int indent = offset - lineOffset;
 			char[] indentChars = document.get(lineOffset, indent).toCharArray();
 			// for every tab append a tab, for anything else append a space
-			for (int i = 0; i < indentChars.length; i++)
-				indBuff.append(indentChars[i] == '\t' ? '\t' : ' ');
+			for (char indentChar : indentChars)
+				indBuff.append(indentChar == '\t' ? '\t' : ' ');
 		} catch (BadLocationException e) {
 		}
 		return indBuff.toString();

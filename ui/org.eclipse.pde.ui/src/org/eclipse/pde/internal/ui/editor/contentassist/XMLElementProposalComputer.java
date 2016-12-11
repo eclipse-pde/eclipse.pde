@@ -55,8 +55,8 @@ public class XMLElementProposalComputer {
 	private static HashMap<String, Integer> countXMLChildrenByTagName(IDocumentElementNode node) {
 		IDocumentElementNode[] children = node.getChildNodes();
 		HashMap<String, Integer> tagNameMap = new HashMap<>();
-		for (int i = 0; i < children.length; i++) {
-			String key = children[i].getXMLTagName();
+		for (IDocumentElementNode childNode : children) {
+			String key = childNode.getXMLTagName();
 			if (tagNameMap.containsKey(key)) {
 				int value = tagNameMap.get(key).intValue();
 				value++;

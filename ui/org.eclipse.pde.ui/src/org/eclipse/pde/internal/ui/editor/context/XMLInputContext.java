@@ -41,8 +41,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		if (objects != null) {
-			for (int i = 0; i < objects.length; i++) {
-				Object object = objects[i];
+			for (Object object : objects) {
 				switch (event.getChangeType()) {
 					case IModelChangedEvent.REMOVE :
 						if (object instanceof IDocumentElementNode)
@@ -477,8 +476,8 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				IDocumentElementNode node = (IDocumentElementNode) object;
 				if (node.getOffset() > -1) {
 					IDocumentAttributeNode[] attrs = node.getNodeAttributes();
-					for (int i = 0; i < attrs.length; i++) {
-						Object op = fOperationTable.remove(attrs[i]);
+					for (IDocumentAttributeNode attr : attrs) {
+						Object op = fOperationTable.remove(attr);
 						if (op != null)
 							fEditOperations.remove(op);
 					}

@@ -159,8 +159,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (print == false) {
 			return proposals;
 		}
-		for (int i = 0; i < proposals.length; i++) {
-			System.out.println(proposals[i].getDisplayString());
+		for (ICompletionProposal proposal : proposals) {
+			System.out.println(proposal.getDisplayString());
 		}
 		return proposals;
 	}
@@ -241,8 +241,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				String[] validAttributes = PDESchemaHelper.getValidAttributes(sAttr).keySet().toArray(new String[0]);
 				Arrays.sort(validAttributes);
 				ArrayList<VirtualSchemaObject> objs = new ArrayList<>(validAttributes.length);
-				for (int i = 0; i < validAttributes.length; i++)
-					objs.add(new VirtualSchemaObject(validAttributes[i], null, F_ATTRIBUTE_ID_VALUE));
+				for (String validAttribute : validAttributes)
+					objs.add(new VirtualSchemaObject(validAttribute, null, F_ATTRIBUTE_ID_VALUE));
 				return computeAttributeProposal(attr, offset, attrValue, objs);
 			} else { // we have an IMetaAttribute.STRING kind
 				if (sAttr.getType() == null)
@@ -255,9 +255,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 						objs = F_V_BOOLS;
 				} else {
 					Object[] restrictions = sRestr.getChildren();
-					for (int i = 0; i < restrictions.length; i++)
-						if (restrictions[i] instanceof ISchemaObject)
-							objs.add(new VirtualSchemaObject(((ISchemaObject) restrictions[i]).getName(), null, F_ATTRIBUTE_VALUE));
+					for (Object restriction : restrictions)
+						if (restriction instanceof ISchemaObject)
+							objs.add(new VirtualSchemaObject(((ISchemaObject) restriction).getName(), null, F_ATTRIBUTE_VALUE));
 				}
 				return computeAttributeProposal(attr, offset, attrValue, objs);
 			}
@@ -611,13 +611,13 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		IDocumentAttributeNode[] attrs = node != null ? node.getNodeAttributes() : new IDocumentAttributeNode[0];
 
 		ArrayList<ISchemaObject> list = new ArrayList<>();
-		for (int i = 0; i < sAttrs.length; i++) {
+		for (ISchemaObject attr : sAttrs) {
 			int k; // if we break early we wont add
 			for (k = 0; k < attrs.length; k++)
-				if (attrs[k].getAttributeName().equals(sAttrs[i].getName()))
+				if (attrs[k].getAttributeName().equals(attr.getName()))
 					break;
 			if (k == attrs.length)
-				addToList(list, filter, sAttrs[i]);
+				addToList(list, filter, attr);
 		}
 		if (filter != null && filter.length() == 0)
 			list.add(0, new VirtualSchemaObject(parentName, null, F_CLOSE_TAG));
@@ -695,20 +695,20 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// Get all plug-ins in the workspace
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 		// Process each plugin
-		for (int i = 0; i < plugins.length; i++) {
+		for (IPluginModelBase plugin : plugins) {
 			// Make sure this plugin is not the one we are currently
 			// editing which defines internal extension points.
 			// We don't want to cache internal extension points because the
 			// workspace can change.
-			if (plugins[i].getPluginBase().getId().equals(model.getPluginBase().getId())) {
+			if (plugin.getPluginBase().getId().equals(model.getPluginBase().getId())) {
 				// Skip this plugin
 				continue;
 			}
 			// Get all extension points defined by this plugin
-			IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();
+			IPluginExtensionPoint[] points = plugin.getPluginBase().getExtensionPoints();
 			// Process each extension point
-			for (int j = 0; j < points.length; j++) {
-				VirtualSchemaObject vObject = new VirtualSchemaObject(IdUtil.getFullId(points[j], model), points[j], vSchemaType);
+			for (IPluginExtensionPoint point : points) {
+				VirtualSchemaObject vObject = new VirtualSchemaObject(IdUtil.getFullId(point, model), point, vSchemaType);
 				// Add the proposal to the list
 				fExternalExtPoints.add(vObject);
 			}
@@ -755,8 +755,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// Get all extension points defined by this plugin
 		IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
 		// Process each extension point
-		for (int j = 0; j < points.length; j++) {
-			VirtualSchemaObject vObject = new VirtualSchemaObject(IdUtil.getFullId(points[j], model), points[j], vSchemaType);
+		for (IPluginExtensionPoint point : points) {
+			VirtualSchemaObject vObject = new VirtualSchemaObject(IdUtil.getFullId(point, model), point, vSchemaType);
 			// Add the proposal to the list
 			fInternalExtPoints.add(vObject);
 		}

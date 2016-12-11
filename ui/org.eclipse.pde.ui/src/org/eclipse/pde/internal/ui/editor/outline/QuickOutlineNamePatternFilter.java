@@ -46,8 +46,8 @@ public class QuickOutlineNamePatternFilter extends ViewerFilter {
 		// If the element has a child that passes the filter, then we want to
 		// keep the parent around - even if it does not pass the filter itself
 		Object[] children = ((ITreeContentProvider) viewer.getContentProvider()).getChildren(element);
-		for (int i = 0; i < children.length; i++) {
-			if (select(viewer, element, children[i])) {
+		for (Object child : children) {
+			if (select(viewer, element, child)) {
 				return true;
 			}
 		}

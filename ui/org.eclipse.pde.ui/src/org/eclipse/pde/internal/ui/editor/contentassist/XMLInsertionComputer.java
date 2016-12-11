@@ -353,8 +353,8 @@ public class XMLInsertionComputer {
 
 	public static boolean hasOptionalAttributes(ISchemaElement ele) {
 		ISchemaAttribute[] attrs = ele.getAttributes();
-		for (int i = 0; i < attrs.length; i++)
-			if (attrs[i].getUse() == ISchemaAttribute.OPTIONAL || attrs[i].getUse() == ISchemaAttribute.DEFAULT)
+		for (ISchemaAttribute attr : attrs)
+			if (attr.getUse() == ISchemaAttribute.OPTIONAL || attr.getUse() == ISchemaAttribute.DEFAULT)
 				return true;
 		return false;
 	}
@@ -372,8 +372,8 @@ public class XMLInsertionComputer {
 		} else if (obj instanceof ISchemaCompositor) {
 			ISchemaObject[] children = ((ISchemaCompositor) obj).getChildren();
 			if (children != null)
-				for (int i = 0; i < children.length; i++)
-					if (hasOptionalChildren(children[i], true, set))
+				for (ISchemaObject child : children)
+					if (hasOptionalChildren(child, true, set))
 						return true;
 		}
 		return false;
