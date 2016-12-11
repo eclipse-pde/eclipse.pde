@@ -239,8 +239,8 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof IProductFeature)
+		for (Object object : objects) {
+			if (object instanceof IProductFeature)
 				return true;
 		}
 		return false;
@@ -323,8 +323,8 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailableChoices(), true);
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
-			for (int i = 0; i < models.length; i++) {
-				IFeature feature = ((IFeatureModel) models[i]).getFeature();
+			for (Object model : models) {
+				IFeature feature = ((IFeatureModel) model).getFeature();
 				addFeature(feature.getId(), feature.getVersion());
 			}
 		}
@@ -334,16 +334,15 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IProductFeature[] currentFeatures = getProduct().getFeatures();
 		Set<String> requiredFeatures = new HashSet<>();
-		for (int i = 0; i < currentFeatures.length; i++) {
-			IFeatureModel model = manager.findFeatureModel(currentFeatures[i].getId(), currentFeatures[i].getVersion());
+		for (IProductFeature feature : currentFeatures) {
+			IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
 			if (model != null) {
-				requiredFeatures.add(currentFeatures[i].getId());
+				requiredFeatures.add(feature.getId());
 				getFeatureDependencies(model, requiredFeatures);
 			}
 		}
 
-		for (Iterator<String> iterator = requiredFeatures.iterator(); iterator.hasNext();) {
-			String id = iterator.next();
+		for (String id : requiredFeatures) {
 			// Do not add features that already exist
 			if (!getProduct().containsFeature(id)) {
 				addFeature(id, ""); //$NON-NLS-1$
@@ -383,10 +382,10 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
 		IProduct product = getProduct();
 		ArrayList<IFeatureModel> list = new ArrayList<>();
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getFeature().getId();
+		for (IFeatureModel model : models) {
+			String id = model.getFeature().getId();
 			if (id != null && !product.containsFeature(id)) {
-				list.add(models[i]);
+				list.add(model);
 			}
 		}
 		return list.toArray(new IFeatureModel[list.size()]);
@@ -408,18 +407,18 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 			handleModelEventWorldChanged(e);
 			return;
 		} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof IProductFeature)
-					fFeatureTable.add(objects[i]);
+			for (Object object : objects) {
+				if (object instanceof IProductFeature)
+					fFeatureTable.add(object);
 			}
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 
 			Table table = fFeatureTable.getTable();
 			int index = table.getSelectionIndex();
 
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof IProductFeature)
-					fFeatureTable.remove(objects[i]);
+			for (Object object : objects) {
+				if (object instanceof IProductFeature)
+					fFeatureTable.remove(object);
 			}
 
 			// Update Selection

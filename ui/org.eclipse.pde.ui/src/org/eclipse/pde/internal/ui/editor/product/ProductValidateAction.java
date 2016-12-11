@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -42,13 +40,13 @@ public class ProductValidateAction extends Action {
 		Set<IPluginModelBase> launchPlugins = new HashSet<>();
 		if (fProduct.useFeatures()) {
 			IFeatureModel[] features = getUniqueFeatures();
-			for (int i = 0; i < features.length; i++) {
-				addFeaturePlugins(features[i].getFeature(), launchPlugins);
+			for (IFeatureModel feature : features) {
+				addFeaturePlugins(feature.getFeature(), launchPlugins);
 			}
 		} else {
 			IProductPlugin[] plugins = fProduct.getPlugins();
-			for (int i = 0; i < plugins.length; i++) {
-				String id = plugins[i].getId();
+			for (IProductPlugin plugin : plugins) {
+				String id = plugin.getId();
 				if (id == null)
 					continue;
 				IPluginModelBase model = PluginRegistry.findModel(id);
@@ -70,9 +68,9 @@ public class ProductValidateAction extends Action {
 
 	private void addFeaturePlugins(IFeature feature, Set<IPluginModelBase> launchPlugins) {
 		IFeaturePlugin[] plugins = feature.getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			String id = plugins[i].getId();
-			String version = plugins[i].getVersion();
+		for (IFeaturePlugin plugin : plugins) {
+			String id = plugin.getId();
+			String version = plugin.getVersion();
 			if (id == null || version == null)
 				continue;
 			IPluginModelBase model = PluginRegistry.findModel(id, version, IMatchRules.EQUIVALENT, null);
@@ -86,9 +84,9 @@ public class ProductValidateAction extends Action {
 	private IFeatureModel[] getUniqueFeatures() {
 		ArrayList<IFeatureModel> list = new ArrayList<>();
 		IProductFeature[] features = fProduct.getFeatures();
-		for (int i = 0; i < features.length; i++) {
-			String id = features[i].getId();
-			String version = features[i].getVersion();
+		for (IProductFeature feature : features) {
+			String id = feature.getId();
+			String version = feature.getVersion();
 			addFeatureAndChildren(id, version, list);
 		}
 		return list.toArray(new IFeatureModel[list.size()]);
@@ -103,8 +101,8 @@ public class ProductValidateAction extends Action {
 		list.add(model);
 
 		IFeatureChild[] children = model.getFeature().getIncludedFeatures();
-		for (int i = 0; i < children.length; i++) {
-			addFeatureAndChildren(children[i].getId(), children[i].getVersion(), list);
+		for (IFeatureChild child : children) {
+			addFeatureAndChildren(child.getId(), child.getVersion(), list);
 		}
 	}
 }

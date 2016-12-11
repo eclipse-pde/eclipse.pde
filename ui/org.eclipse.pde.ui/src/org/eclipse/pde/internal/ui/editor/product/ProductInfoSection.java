@@ -98,14 +98,14 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		}
 
 		public void handleExtensionDelta(IExtensionDelta[] deltas) {
-			for (int i = 0; i < deltas.length; i++) {
-				IExtension extension = deltas[i].getExtension();
+			for (IExtensionDelta delta : deltas) {
+				IExtension extension = delta.getExtension();
 				if (extension == null)
 					return;
 				String id = extension.getUniqueIdentifier();
 				if (id == null || !isValidId(id))
 					continue;
-				if (deltas[i].getKind() == IExtensionDelta.ADDED) {
+				if (delta.getKind() == IExtensionDelta.ADDED) {
 					int index = computeIndex(id);
 					// index of -1 means id is already in combo
 					if (index >= 0)

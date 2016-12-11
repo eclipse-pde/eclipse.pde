@@ -401,8 +401,8 @@ public class PropertiesSection extends TableSection {
 	private Set<String> getExistingNames() {
 		Set<String> result = new HashSet<>();
 		IConfigurationProperty[] properties = getProduct().getConfigurationProperties();
-		for (int i = 0; i < properties.length; i++) {
-			result.add(properties[i].getName());
+		for (IConfigurationProperty property : properties) {
+			result.add(property.getName());
 		}
 		return result;
 	}

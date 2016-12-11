@@ -518,18 +518,18 @@ public class PluginConfigurationSection extends TableSection {
 			if (count == 0) {
 				refreshRemoveAll = true;
 			}
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof IPluginConfiguration)
-					fConfigurationsTable.add(objects[i]);
+			for (Object object : objects) {
+				if (object instanceof IPluginConfiguration)
+					fConfigurationsTable.add(object);
 			}
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			refreshRemove = refreshRemoveAll = true;
 			int index = table.getSelectionIndex();
 			boolean global = false;
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof IPluginConfiguration)
-					fConfigurationsTable.remove(objects[i]);
-				else if (objects[i] instanceof IProductPlugin) {
+			for (Object object : objects) {
+				if (object instanceof IPluginConfiguration)
+					fConfigurationsTable.remove(object);
+				else if (object instanceof IProductPlugin) {
 					global = true;
 					break;
 				}

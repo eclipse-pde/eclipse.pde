@@ -132,21 +132,21 @@ public class IntroSection extends PDESection {
 		TreeSet<String> result = new TreeSet<>();
 		String introId;
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.ui.intro", true); //$NON-NLS-1$
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] children = extensions[i].getConfigurationElements();
-			for (int j = 0; j < children.length; j++) {
-				if ("introProductBinding".equals(children[j].getName())) {//$NON-NLS-1$
-					String attribute = children[j].getAttribute("productId"); //$NON-NLS-1$
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] children = extension.getConfigurationElements();
+			for (IConfigurationElement element : children) {
+				if ("introProductBinding".equals(element.getName())) {//$NON-NLS-1$
+					String attribute = element.getAttribute("productId"); //$NON-NLS-1$
 					if (attribute != null && attribute.equals(getProduct().getProductId())) {
 						if (fManifest == null) {
-							IPluginModelBase base = PluginRegistry.findModel(extensions[i].getContributor().getName());
+							IPluginModelBase base = PluginRegistry.findModel(extension.getContributor().getName());
 							if (base == null)
 								continue;
 							fManifest = (IFile) base.getUnderlyingResource();
 						}
 						if (onlyLoadManifest)
 							return;
-						introId = children[j].getAttribute("introId"); //$NON-NLS-1$
+						introId = element.getAttribute("introId"); //$NON-NLS-1$
 						if (introId != null)
 							result.add(introId);
 					}
@@ -239,8 +239,8 @@ public class IntroSection extends PDESection {
 				IManifestHeader header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 				if (header instanceof RequireBundleHeader) {
 					RequireBundleObject[] requires = ((RequireBundleHeader) header).getRequiredBundles();
-					for (int i = 0; i < requires.length; i++)
-						if (requires[i].getId().equals(INTRO_PLUGIN_ID))
+					for (RequireBundleObject requiredBundle : requires)
+						if (requiredBundle.getId().equals(INTRO_PLUGIN_ID))
 							return;
 					((RequireBundleHeader) header).addBundle(INTRO_PLUGIN_ID);
 				} else

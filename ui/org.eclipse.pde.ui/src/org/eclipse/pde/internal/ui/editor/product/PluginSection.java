@@ -291,8 +291,8 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof IProductPlugin)
+		for (Object object : objects) {
+			if (object instanceof IProductPlugin)
 				return true;
 		}
 		return false;
@@ -350,17 +350,17 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			return;
 
 		ArrayList<BundleDescription> list = new ArrayList<>(plugins.length);
-		for (int i = 0; i < plugins.length; i++) {
-			list.add(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null));
+		for (IProductPlugin plugin : plugins) {
+			list.add(TargetPlatformHelper.getState().getBundle(plugin.getId(), null));
 		}
 		DependencyCalculator calculator = new DependencyCalculator(includeOptional);
 		calculator.findDependencies(list.toArray());
 
 		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			HostSpecification host = bundles[i].getHost();
+		for (BundleDescription bundle : bundles) {
+			HostSpecification host = bundle.getHost();
 			if (host != null && calculator.containsPluginId(host.getName())) {
-				calculator.findDependency(bundles[i]);
+				calculator.findDependency(bundle);
 			}
 		}
 
@@ -388,10 +388,10 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			IProduct product = getProduct();
 			IProductModelFactory factory = product.getModel().getFactory();
 			ArrayList<IProductPlugin> pluginList = new ArrayList<>();
-			for (int i = 0; i < workingSets.length; i++) {
-				IAdaptable[] elements = workingSets[i].getElements();
-				for (int j = 0; j < elements.length; j++) {
-					IPluginModelBase model = findModel(elements[j]);
+			for (IWorkingSet workingSet : workingSets) {
+				IAdaptable[] elements = workingSet.getElements();
+				for (IAdaptable element : elements) {
+					IPluginModelBase model = findModel(element);
 					if (model != null) {
 						IProductPlugin plugin = factory.createPlugin();
 						IPluginBase base = model.getPluginBase();
@@ -474,18 +474,18 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		}
 		Object[] objects = e.getChangedObjects();
 		if (e.getChangeType() == IModelChangedEvent.INSERT) {
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof IProductPlugin)
-					fPluginTable.add(objects[i]);
+			for (Object object : objects) {
+				if (object instanceof IProductPlugin)
+					fPluginTable.add(object);
 			}
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 
 			Table table = fPluginTable.getTable();
 			int index = table.getSelectionIndex();
 
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof IProductPlugin)
-					fPluginTable.remove(objects[i]);
+			for (Object object : objects) {
+				if (object instanceof IProductPlugin)
+					fPluginTable.remove(object);
 			}
 
 			// Update Selection

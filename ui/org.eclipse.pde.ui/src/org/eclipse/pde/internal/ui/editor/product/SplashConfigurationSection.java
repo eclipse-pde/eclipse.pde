@@ -248,9 +248,9 @@ public class SplashConfigurationSection extends PDESection {
 		// Add tooltips to coordinate controls
 		addOffsetTooltips(fBarControls);
 
-		for (int i = 0; i < fBarSpinners.length; i++) {
-			fBarSpinners[i].setEnabled(isEditable());
-			fBarSpinners[i].addModifyListener(new ModifyListener() {
+		for (Spinner spinner : fBarSpinners) {
+			spinner.setEnabled(isEditable());
+			spinner.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {
 					applySpinners(true);
@@ -303,9 +303,9 @@ public class SplashConfigurationSection extends PDESection {
 		// Add tooltips to coordinate controls
 		addOffsetTooltips(fMessageControls);
 
-		for (int i = 0; i < fMessageSpinners.length; i++) {
-			fMessageSpinners[i].setEnabled(isEditable());
-			fMessageSpinners[i].addModifyListener(new ModifyListener() {
+		for (Spinner spinner : fMessageSpinners) {
+			spinner.setEnabled(isEditable());
+			spinner.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {
 					applySpinners(false);
@@ -433,10 +433,10 @@ public class SplashConfigurationSection extends PDESection {
 		}
 		String splashHandlerType = info.getFieldSplashHandlerType();
 		// Update the splash handler type in the combo box
-		for (int i = 0; i < ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES.length; i++) {
-			String key = ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES[i][0];
+		for (String[] typeChoice : ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES) {
+			String key = typeChoice[0];
 			if (splashHandlerType.equals(key)) {
-				String displayName = ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES[i][1];
+				String displayName = typeChoice[1];
 				fFieldTemplateCombo.setText(displayName);
 			}
 		}
@@ -552,15 +552,15 @@ public class SplashConfigurationSection extends PDESection {
 
 	private void updateFieldProgressBarEnablement(boolean buttonEnabled) {
 		boolean enable = (fAddBarButton.getSelection() && buttonEnabled);
-		for (int i = 0; i < fBarControls.length; i++) {
-			fBarControls[i].setEnabled(enable);
+		for (Control barControl : fBarControls) {
+			barControl.setEnabled(enable);
 		}
 	}
 
 	private void updateFieldProgressMessageEnablement(boolean buttonEnabled) {
 		boolean enable = (fAddMessageButton.getSelection() && buttonEnabled);
-		for (int i = 0; i < fMessageControls.length; i++) {
-			fMessageControls[i].setEnabled(enable);
+		for (Control messageControl : fMessageControls) {
+			messageControl.setEnabled(enable);
 		}
 	}
 

@@ -364,8 +364,8 @@ public class LauncherSection extends PDESection {
 		// Update validator
 		fSingleWinIconValidator.setEnabled(isEditable() && useIco);
 		// Update validators
-		for (int i = 0; i < fMultipleWinIconValidator.length; i++) {
-			fMultipleWinIconValidator[i].setEnabled(isEditable() && !useIco);
+		for (TextValidator validator : fMultipleWinIconValidator) {
+			validator.setEnabled(isEditable() && !useIco);
 		}
 		// Turn back on auto message update
 		fSingleWinIconValidator.setRefresh(true);

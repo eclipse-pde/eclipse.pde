@@ -292,9 +292,9 @@ public class ConfigurationSection extends PDESection {
 	}
 
 	private void createTabs() {
-		for (int i = 0; i < TAB_LABELS.length; i++) {
+		for (String tabLabel : TAB_LABELS) {
 			CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
-			item.setText(TAB_LABELS[i]);
+			item.setText(tabLabel);
 			item.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ));
 		}
 		fLastTab = 0;
