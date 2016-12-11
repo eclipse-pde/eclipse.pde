@@ -297,8 +297,8 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 
 	private void setPageComplete() {
 		boolean pageComplete = false;
-		for (int i = 0; i < fTopLevelButtons.length; i++) {
-			if (fTopLevelButtons[i].getSelection()) {
+		for (Button button : fTopLevelButtons) {
+			if (button.getSelection()) {
 				pageComplete = true;
 				break;
 			}
@@ -369,14 +369,14 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	}
 
 	private void hookSelectionListener(Button[] buttons, SelectionAdapter adapter) {
-		for (int i = 0; i < buttons.length; i++) {
-			buttons[i].addSelectionListener(adapter);
+		for (Button button : buttons) {
+			button.addSelectionListener(adapter);
 		}
 	}
 
 	private void hookTextListener(Text[] texts, ModifyListener listener) {
-		for (int i = 0; i < texts.length; i++) {
-			texts[i].addModifyListener(listener);
+		for (Text text : texts) {
+			text.addModifyListener(listener);
 		}
 	}
 

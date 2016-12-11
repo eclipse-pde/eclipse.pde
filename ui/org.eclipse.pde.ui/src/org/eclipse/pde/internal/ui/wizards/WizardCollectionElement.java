@@ -32,8 +32,8 @@ public class WizardCollectionElement extends ElementList implements IPluginContr
 		String searchString = searchPath.segment(0);
 
 		Object[] children = getChildren();
-		for (int i = 0; i < children.length; i++) {
-			WizardCollectionElement currentCategory = (WizardCollectionElement) children[i];
+		for (Object child : children) {
+			WizardCollectionElement currentCategory = (WizardCollectionElement) child;
 			if (currentCategory.getLabel().equals(searchString)) {
 				if (searchPath.segmentCount() == 1)
 					return currentCategory;
@@ -48,8 +48,8 @@ public class WizardCollectionElement extends ElementList implements IPluginContr
 	public WizardElement findWizard(String searchId) {
 		Object[] children = getWizards().getChildren();
 
-		for (int i = 0; i < children.length; i++) {
-			WizardElement currentWizard = (WizardElement) children[i];
+		for (Object child : children) {
+			WizardElement currentWizard = (WizardElement) child;
 			if (currentWizard.getID().equals(searchId))
 				return currentWizard;
 		}

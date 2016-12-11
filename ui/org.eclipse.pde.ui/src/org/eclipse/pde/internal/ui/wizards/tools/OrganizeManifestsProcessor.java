@@ -71,8 +71,8 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context)
 			throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
-		for (Iterator<?> i = fProjectList.iterator(); i.hasNext();) {
-			if (!(i.next() instanceof IProject))
+		for (Object name : fProjectList) {
+			if (!(name instanceof IProject))
 				status.addFatalError(PDEUIMessages.OrganizeManifestsProcessor_invalidParam);
 		}
 		return status;
@@ -121,8 +121,8 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			}
 		};
 		Change[] changes = PDEModelUtility.changesForModelModication(modification, subMonitor);
-		for (int i = 0; i < changes.length; i++)
-			change.add(changes[i]);
+		for (Change changeItem : changes)
+			change.add(changeItem);
 		if (result[0] != null)
 			change.add(result[0]);
 		if (result[1] != null)

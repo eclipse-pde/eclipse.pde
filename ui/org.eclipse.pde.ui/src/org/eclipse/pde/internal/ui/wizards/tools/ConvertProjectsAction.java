@@ -48,8 +48,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			Vector<IProject> initialSelection = new Vector<>(elems.length);
 
-			for (int i = 0; i < elems.length; i++) {
-				Object elem = elems[i];
+			for (Object elem : elems) {
 				IProject project = null;
 
 				if (elem instanceof IFile) {

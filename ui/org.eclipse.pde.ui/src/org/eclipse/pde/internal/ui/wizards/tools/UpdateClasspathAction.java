@@ -46,8 +46,7 @@ public class UpdateClasspathAction extends AbstractHandler {
 		if (selection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) selection).toArray();
 			ArrayList<IPluginModelBase> models = new ArrayList<>(elems.length);
-			for (int i = 0; i < elems.length; i++) {
-				Object elem = elems[i];
+			for (Object elem : elems) {
 				IProject project = null;
 
 				if (elem instanceof IFile) {
@@ -88,9 +87,9 @@ public class UpdateClasspathAction extends AbstractHandler {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		ArrayList<IPluginModelBase> modelArray = new ArrayList<>();
 		try {
-			for (int i = 0; i < models.length; i++) {
-				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
-					modelArray.add(models[i]);
+			for (IPluginModelBase model : models) {
+				if (model.getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
+					modelArray.add(model);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);

@@ -76,9 +76,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		try {
 			monitor.beginTask(PDEUIMessages.ConvertedProjectWizard_converting, projectsToConvert.length);
 
-			for (int i = 0; i < projectsToConvert.length; i++) {
-				IProject projectToConvert = projectsToConvert[i];
-
+			for (IProject projectToConvert : projectsToConvert) {
 				convertProject(projectToConvert, monitor);
 				monitor.worked(1);
 			}
@@ -126,15 +124,15 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 				entry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 			if (PDEProject.getManifest(projectToConvert).exists())
 				entry.addToken(ICoreConstants.MANIFEST_FOLDER_NAME);
-			for (int i = 0; i < fLibEntries.length; i++) {
-				entry.addToken(fLibEntries[i]);
+			for (String libEntry : fLibEntries) {
+				entry.addToken(libEntry);
 			}
 
 			if (fSrcEntries.length > 0) {
 				entry.addToken(fLibraryName);
 				IBuildEntry source = model.getFactory().createEntry(IBuildEntry.JAR_PREFIX + fLibraryName);
-				for (int i = 0; i < fSrcEntries.length; i++) {
-					source.addToken(fSrcEntries[i]);
+				for (String srcEntry : fSrcEntries) {
+					source.addToken(srcEntry);
 				}
 				build.add(source);
 			}
@@ -154,17 +152,17 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 			currentClassPath = javaProject.getRawClasspath();
 		} catch (JavaModelException e) {
 		}
-		for (int i = 0; i < currentClassPath.length; i++) {
-			int contentType = currentClassPath[i].getEntryKind();
+		for (IClasspathEntry element : currentClassPath) {
+			int contentType = element.getEntryKind();
 			if (contentType == IClasspathEntry.CPE_SOURCE) {
-				String relativePath = getRelativePath(currentClassPath[i], project);
+				String relativePath = getRelativePath(element, project);
 				if (relativePath.equals("")) { //$NON-NLS-1$
 					sources.add("."); //$NON-NLS-1$
 				} else {
 					sources.add(relativePath + "/"); //$NON-NLS-1$
 				}
 			} else if (contentType == IClasspathEntry.CPE_LIBRARY) {
-				String path = getRelativePath(currentClassPath[i], project);
+				String path = getRelativePath(element, project);
 				if (path.length() > 0)
 					libraries.add(path);
 				else
@@ -260,9 +258,9 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 				library.setExported(true);
 				base.add(library);
 			}
-			for (int i = 0; i < fLibEntries.length; i++) {
+			for (String libEntry : fLibEntries) {
 				IPluginLibrary library = factory.createLibrary();
-				library.setName(fLibEntries[i]);
+				library.setName(libEntry);
 				library.setExported(true);
 				base.add(library);
 			}

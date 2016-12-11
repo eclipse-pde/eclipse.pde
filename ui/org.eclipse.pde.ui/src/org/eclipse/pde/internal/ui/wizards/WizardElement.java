@@ -138,8 +138,7 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 		if (templateId == null)
 			return null;
 		IConfigurationElement[] templates = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.templates"); //$NON-NLS-1$
-		for (int i = 0; i < templates.length; i++) {
-			IConfigurationElement template = templates[i];
+		for (IConfigurationElement template : templates) {
 			String id = template.getAttribute("id"); //$NON-NLS-1$
 			if (id != null && id.equals(templateId))
 				return template;

@@ -58,8 +58,8 @@ public class RenameDialog extends SelectionStatusDialog {
 		this.isCaseSensitive = isCaseSensitive;
 		initialize();
 		if (names != null) {
-			for (int i = 0; i < names.length; i++)
-				addOldName(names[i]);
+			for (String name : names)
+				addOldName(name);
 		}
 		setOldName(oldName);
 	}

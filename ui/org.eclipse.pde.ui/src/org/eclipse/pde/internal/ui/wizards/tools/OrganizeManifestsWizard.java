@@ -62,10 +62,10 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 	 */
 	private Set/*<IProject>*/<IProject> getProjectsWithCustomBuild(Object[] elements) {
 		Set<IProject> result = new HashSet<>();
-		for (int i = 0; i < elements.length; i++) {
+		for (Object element : elements) {
 			try {
-				if (elements[i] instanceof IResource) {
-					IProject project = ((IResource) elements[i]).getProject();
+				if (element instanceof IResource) {
+					IProject project = ((IResource) element).getProject();
 					if (project != null) {
 						if (project.hasNature(IBundleProjectDescription.PLUGIN_NATURE)) {
 							IPluginModelBase pluginModel = PDECore.getDefault().getModelManager().findModel(project);

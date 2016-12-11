@@ -56,13 +56,13 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		RequireBundleHeader header = (RequireBundleHeader) ((Bundle) bundle).getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header != null) {
 			RequireBundleObject[] bundles = header.getRequiredBundles();
-			for (int i = 0; i < bundles.length; i++) {
-				String pluginId = bundles[i].getId();
+			for (RequireBundleObject requiredBundle : bundles) {
+				String pluginId = requiredBundle.getId();
 				if (PluginRegistry.findModel(pluginId) == null) {
 					if (removeImports)
-						header.removeBundle(bundles[i]);
+						header.removeBundle(requiredBundle);
 					else {
-						bundles[i].setOptional(true);
+						requiredBundle.setOptional(true);
 					}
 				}
 			}
@@ -90,13 +90,13 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		IPackageFragmentRoot[] roots = ManifestUtils.findPackageFragmentRoots(bundleClasspathheader, project);
 		// Running list of packages in the project
 		Set<String> packages = new HashSet<>();
-		for (int i = 0; i < roots.length; i++) {
+		for (IPackageFragmentRoot root : roots) {
 			try {
-				if (ManifestUtils.isImmediateRoot(roots[i])) {
-					IJavaElement[] elements = roots[i].getChildren();
-					for (int j = 0; j < elements.length; j++)
-						if (elements[j] instanceof IPackageFragment) {
-							IPackageFragment fragment = (IPackageFragment) elements[j];
+				if (ManifestUtils.isImmediateRoot(root)) {
+					IJavaElement[] elements = root.getChildren();
+					for (IJavaElement element : elements)
+						if (element instanceof IPackageFragment) {
+							IPackageFragment fragment = (IPackageFragment) element;
 							String name = fragment.getElementName();
 							if (name.length() == 0)
 								name = "."; //$NON-NLS-1$
@@ -146,13 +146,13 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		ImportPackageObject[] importedPackages = header.getPackages();
 		Set<String> availablePackages = getAvailableExportedPackages();
 		// get Preference
-		for (int i = 0; i < importedPackages.length; i++) {
-			String pkgName = importedPackages[i].getName();
+		for (ImportPackageObject importedPackage : importedPackages) {
+			String pkgName = importedPackage.getName();
 			if (!availablePackages.contains(pkgName)) {
 				if (removeImports)
-					header.removePackage(importedPackages[i]);
+					header.removePackage(importedPackage);
 				else {
-					importedPackages[i].setOptional(true);
+					importedPackage.setOptional(true);
 				}
 			}
 		}
@@ -162,8 +162,8 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		State state = TargetPlatformHelper.getState();
 		ExportPackageDescription[] packages = state.getExportedPackages();
 		Set<String> set = new HashSet<>();
-		for (int i = 0; i < packages.length; i++) {
-			set.add(packages[i].getName());
+		for (ExportPackageDescription exportedPackage : packages) {
+			set.add(exportedPackage.getName());
 		}
 		return set;
 	}
@@ -173,8 +173,8 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			return;
 		if (bundle.getHeader(Constants.BUNDLE_ACTIVATOR) == null && bundle.getHeader(ICoreConstants.SERVICE_COMPONENT) == null) {
 			String[] remove = new String[] {ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY};
-			for (int i = 0; i < remove.length; i++) {
-				IManifestHeader lazy = ((Bundle) bundle).getManifestHeader(remove[i]);
+			for (String element : remove) {
+				IManifestHeader lazy = ((Bundle) bundle).getManifestHeader(element);
 				if (lazy instanceof SingleManifestHeader)
 					((SingleManifestHeader) lazy).setMainComponent(null);
 			}
@@ -224,8 +224,8 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 					return;
 
 				// scan properties file for keys referencing other keys
-				for (int i = 0; i < entries.length; i++) {
-					String[] tokens = entries[i].getTokens();
+				for (IBuildEntry buildEntry : entries) {
+					String[] tokens = buildEntry.getTokens();
 					if (tokens == null || tokens.length == 0)
 						continue;
 					String entry = tokens[0];
@@ -263,8 +263,8 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		HostSpecification hostSpec = bundleDesc.getHost();
 		if (hostSpec != null) {
 			BundleDescription[] hosts = hostSpec.getHosts();
-			for (int i = 0; i < hosts.length; i++) {
-				IPluginModelBase hostModel = PluginRegistry.findModel(hosts[i]);
+			for (BundleDescription host : hosts) {
+				IPluginModelBase hostModel = PluginRegistry.findModel(host);
 				if (hostModel != null) {
 					findTranslatedXMLStrings(getTextModel(hostModel, false), list);
 					findTranslatedMFStrings(getTextBundle(hostModel), list);
@@ -272,9 +272,9 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			}
 		} else {
 			IFragmentModel[] fragmentModels = PDEManager.findFragmentsFor(model);
-			for (int i = 0; i < fragmentModels.length; i++) {
-				findTranslatedXMLStrings(getTextModel(fragmentModels[i], true), list);
-				findTranslatedMFStrings(getTextBundle(fragmentModels[i]), list);
+			for (IFragmentModel fragmentModel : fragmentModels) {
+				findTranslatedXMLStrings(getTextModel(fragmentModel, true), list);
+				findTranslatedMFStrings(getTextBundle(fragmentModel), list);
 			}
 		}
 	}
@@ -325,15 +325,15 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			return;
 
 		IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
-		for (int i = 0; i < points.length; i++) {
-			String value = getTranslatedKey(points[i].getName());
+		for (IPluginExtensionPoint point : points) {
+			String value = getTranslatedKey(point.getName());
 			if (value != null && !list.contains(value))
 				list.add(value);
 		}
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		for (int i = 0; i < extensions.length; i++)
-			if (extensions[i] instanceof IDocumentElementNode)
-				inspectElementForTranslation((IDocumentElementNode) extensions[i], list);
+		for (IPluginExtension extension : extensions)
+			if (extension instanceof IDocumentElementNode)
+				inspectElementForTranslation((IDocumentElementNode) extension, list);
 	}
 
 	private static void inspectElementForTranslation(IDocumentElementNode parent, ArrayList<String> list) {
@@ -343,8 +343,8 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			list.add(textValue);
 
 		IDocumentAttributeNode[] attributes = parent.getNodeAttributes();
-		for (int j = 0; j < attributes.length; j++) {
-			String attrValue = getTranslatedKey(attributes[j].getAttributeValue());
+		for (IDocumentAttributeNode attribute : attributes) {
+			String attrValue = getTranslatedKey(attribute.getAttributeValue());
 			if (attrValue != null && !list.contains(attrValue))
 				list.add(attrValue);
 		}
@@ -353,16 +353,16 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			return;
 
 		IPluginObject[] children = ((IPluginParent) parent).getChildren();
-		for (int i = 0; i < children.length; i++)
-			if (children[i] instanceof IDocumentElementNode)
-				inspectElementForTranslation((IDocumentElementNode) children[i], list);
+		for (IPluginObject element : children)
+			if (element instanceof IDocumentElementNode)
+				inspectElementForTranslation((IDocumentElementNode) element, list);
 	}
 
 	private static void findTranslatedMFStrings(IBundle bundle, ArrayList<String> list) {
 		if (bundle == null)
 			return;
-		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
-			String key = getTranslatedKey(bundle.getHeader(ICoreConstants.TRANSLATABLE_HEADERS[i]));
+		for (String element : ICoreConstants.TRANSLATABLE_HEADERS) {
+			String key = getTranslatedKey(bundle.getHeader(element));
 			if (key != null && !list.contains(key))
 				list.add(key);
 		}
@@ -391,39 +391,39 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 
 		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			ISchema schema = registry.getSchema(extensions[i].getPoint());
+		for (IPluginExtension extension : extensions) {
+			ISchema schema = registry.getSchema(extension.getPoint());
 			if (schema != null)
-				inspectElementsIconPaths(schema, extensions[i]);
+				inspectElementsIconPaths(schema, extension);
 		}
 	}
 
 	private static void inspectElementsIconPaths(ISchema schema, IPluginParent parent) {
 		IPluginObject[] children = parent.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPluginElement child = (IPluginElement) children[i];
+		for (IPluginObject childObject : children) {
+			IPluginElement child = (IPluginElement) childObject;
 			ISchemaElement schemaElement = schema.findElement(child.getName());
 			if (schemaElement != null) {
 				IPluginAttribute[] attributes = child.getAttributes();
-				for (int j = 0; j < attributes.length; j++) {
-					ISchemaAttribute attInfo = schemaElement.getAttribute(attributes[j].getName());
+				for (IPluginAttribute attribute : attributes) {
+					ISchemaAttribute attInfo = schemaElement.getAttribute(attribute.getName());
 					if (attInfo != null && attInfo.getKind() == IMetaAttribute.RESOURCE) {
-						String value = attributes[j].getValue();
+						String value = attribute.getValue();
 						if (value.startsWith(F_NL_PREFIX))
 							continue;
 						int fileExtIndex = value.lastIndexOf('.');
 						if (fileExtIndex == -1)
 							continue;
 						value = value.substring(fileExtIndex + 1);
-						for (int e = 0; e < F_ICON_EXTENSIONS.length; e++) {
-							if (value.equalsIgnoreCase(F_ICON_EXTENSIONS[e])) {
+						for (String iconExtension : F_ICON_EXTENSIONS) {
+							if (value.equalsIgnoreCase(iconExtension)) {
 								IPath path = new Path(F_NL_PREFIX);
-								String newValue = attributes[j].getValue();
+								String newValue = attribute.getValue();
 								if (newValue.charAt(0) != IPath.SEPARATOR)
 									path = path.addTrailingSeparator();
 								newValue = path.toString() + newValue;
 								try {
-									child.setAttribute(attributes[j].getName(), newValue);
+									child.setAttribute(attribute.getName(), newValue);
 								} catch (CoreException e1) {
 								}
 								break;

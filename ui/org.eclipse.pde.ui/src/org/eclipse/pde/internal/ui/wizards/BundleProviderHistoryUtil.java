@@ -38,8 +38,8 @@ public class BundleProviderHistoryUtil {
 		}
 		String providers[] = settings.getArray(S_PROVIDERS);
 		if (null != providers) {
-			for (int i = 0; i < providers.length; ++i) {
-				combo.add(providers[i]);
+			for (String provider : providers) {
+				combo.add(provider);
 			}
 		}
 	}

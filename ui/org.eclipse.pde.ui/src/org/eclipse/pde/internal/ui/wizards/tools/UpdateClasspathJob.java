@@ -31,9 +31,8 @@ public class UpdateClasspathJob extends Job {
 	public boolean doUpdateClasspath(IProgressMonitor monitor, IPluginModelBase[] models) throws CoreException {
 		monitor.beginTask(PDEUIMessages.UpdateClasspathJob_task, models.length);
 		try {
-			for (int i = 0; i < models.length; i++) {
-				IPluginModelBase model = models[i];
-				monitor.subTask(models[i].getPluginBase().getId());
+			for (IPluginModelBase model : models) {
+				monitor.subTask(model.getPluginBase().getId());
 				// no reason to compile classpath for a non-Java model
 				IProject project = model.getUnderlyingResource().getProject();
 				if (!project.hasNature(JavaCore.NATURE_ID)) {
