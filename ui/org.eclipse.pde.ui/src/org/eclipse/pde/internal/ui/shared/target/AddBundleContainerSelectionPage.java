@@ -315,10 +315,10 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		if (point == null)
 			return list;
 		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				WizardElement element = createWizardElement(elements[j]);
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (IConfigurationElement element2 : elements) {
+				WizardElement element = createWizardElement(element2);
 				if (element != null) {
 					final String pluginId = element.getPluginId();
 					final String contributionId = element.getID();
@@ -354,10 +354,10 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		if (point == null)
 			return list;
 		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				WizardElement element = createWizardElement(elements[j]);
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] confElements = extension.getConfigurationElements();
+			for (IConfigurationElement confElement : confElements) {
+				WizardElement element = createWizardElement(confElement);
 				if (element != null) {
 					final String pluginId = element.getPluginId();
 					final String contributionId = element.getID();
@@ -427,8 +427,8 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						fWizard.setContainer(getContainer());
 						fWizard.addPages();
 						IWizardPage[] pages = fWizard.getPages();
-						for (int i = 0; i < pages.length; i++)
-							addPage(pages[i]);
+						for (IWizardPage page : pages)
+							addPage(page);
 					}
 
 					@Override
@@ -483,8 +483,8 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						fWizard.setContainer(getContainer());
 						fWizard.addPages();
 						IWizardPage[] pages = fWizard.getPages();
-						for (int i = 0; i < pages.length; i++)
-							addPage(pages[i]);
+						for (IWizardPage page : pages)
+							addPage(page);
 					}
 
 					@Override

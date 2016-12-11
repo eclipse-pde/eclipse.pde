@@ -45,8 +45,8 @@ public class IUContentProvider implements ITreeContentProvider {
 				IInstallableUnit[] units = location.getInstallableUnits();
 				// Wrap the units so that they remember their parent container
 				List<IUWrapper> wrappedUnits = new ArrayList<>(units.length);
-				for (int i = 0; i < units.length; i++) {
-					wrappedUnits.add(new IUWrapper(units[i], location));
+				for (IInstallableUnit unit : units) {
+					wrappedUnits.add(new IUWrapper(unit, location));
 				}
 				return wrappedUnits.toArray();
 			} catch (CoreException e) {

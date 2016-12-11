@@ -208,11 +208,11 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	public ITargetLocation[] getBundleContainers() throws CoreException {
 		Object[] elements = fFeatureTable.getCheckedElements();
 		List<ITargetLocation> containers = new ArrayList<>(elements.length);
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof IFeatureModel) {
+		for (Object element : elements) {
+			if (element instanceof IFeatureModel) {
 				String version = null;
 				if (fIncludeVersionButton.getSelection()) {
-					version = ((IFeatureModel) elements[i]).getFeature().getVersion();
+					version = ((IFeatureModel) element).getFeature().getVersion();
 				}
 				File location = new File(fInstallLocation.getText());
 				// The bundle container home must be the directory containing the feature folder, but we should accept either as input
@@ -220,7 +220,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 					location = location.getParentFile();
 				}
 
-				containers.add(getTargetPlatformService().newFeatureLocation(location.getPath(), ((IFeatureModel) elements[i]).getFeature().getId(), version));
+				containers.add(getTargetPlatformService().newFeatureLocation(location.getPath(), ((IFeatureModel) element).getFeature().getId(), version));
 			}
 		}
 		if (containers.size() == 0) {
@@ -243,8 +243,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		if (dirs == null)
 			return null;
 		ArrayList<IStatus> resultStatus = new ArrayList<>();
-		for (int i = 0; i < dirs.length; i++) {
-			File dir = dirs[i];
+		for (File dir : dirs) {
 			if (dir.isDirectory()) {
 				File manifest = new File(dir, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 				if (manifest.exists()) {

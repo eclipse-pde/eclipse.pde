@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
@@ -76,8 +77,7 @@ public class UpdateTargetJob extends Job {
 		SubMonitor progress = SubMonitor.convert(monitor, Messages.UpdateTargetJob_UpdatingTarget, toUpdate.size() * 100);
 		MultiStatus errors = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.UpdateTargetJob_TargetUpdateFailedStatus, null);
 		boolean noChange = true;
-		for (Iterator<Map.Entry<ITargetLocation, Set<Object>>> iterator = toUpdate.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry<ITargetLocation, Set<Object>> entry = iterator.next();
+		for (Entry<ITargetLocation, Set<Object>> entry : toUpdate.entrySet()) {
 			ITargetLocation location = entry.getKey();
 			Set<Object> children = entry.getValue();
 

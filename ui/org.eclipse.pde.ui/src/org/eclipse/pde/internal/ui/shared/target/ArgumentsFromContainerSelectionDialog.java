@@ -67,14 +67,14 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 		boolean foundArguments = false;
 		if (containers != null) {
 			fAllArguments = new HashMap<>(containers.length);
-			for (int i = 0; i < containers.length; i++) {
-				String[] args = containers[i].getVMArguments();
+			for (ITargetLocation container : containers) {
+				String[] args = container.getVMArguments();
 				if (args != null) {
 					if (args.length > 0) {
-						fAllArguments.put(containers[i], args);
+						fAllArguments.put(container, args);
 						foundArguments = true;
 					} else {
-						fAllArguments.put(containers[i], new Object[] {new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.ArgumentsFromContainerSelectionDialog_1)});
+						fAllArguments.put(container, new Object[] {new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.ArgumentsFromContainerSelectionDialog_1)});
 					}
 				}
 			}
@@ -204,23 +204,23 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 			fTree.setSubtreeChecked(element, fTree.getChecked(element));
 		} else {
 			TreeItem[] containers = fTree.getTree().getItems();
-			for (int i = 0; i < containers.length; i++) {
-				TreeItem[] arguments = containers[i].getItems();
+			for (TreeItem container : containers) {
+				TreeItem[] arguments = container.getItems();
 				int checked = 0;
-				for (int j = 0; j < arguments.length; j++) {
-					if (arguments[j].getChecked()) {
+				for (TreeItem argument : arguments) {
+					if (argument.getChecked()) {
 						checked++;
 					}
 				}
 				if (checked == 0) {
-					containers[i].setChecked(false);
-					containers[i].setGrayed(false);
+					container.setChecked(false);
+					container.setGrayed(false);
 				} else if (arguments.length > checked) {
-					containers[i].setChecked(true);
-					containers[i].setGrayed(true);
+					container.setChecked(true);
+					container.setGrayed(true);
 				} else {
-					containers[i].setChecked(true);
-					containers[i].setGrayed(false);
+					container.setChecked(true);
+					container.setGrayed(false);
 				}
 			}
 		}
@@ -234,8 +234,8 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 		if (okButton != null) {
 			boolean ok = false;
 			Object[] checked = fTree.getCheckedElements();
-			for (int i = 0; i < checked.length; i++) {
-				if (checked[i] instanceof String) {
+			for (Object element : checked) {
+				if (element instanceof String) {
 					ok = true;
 					break;
 				}
@@ -261,10 +261,10 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 	protected void okPressed() {
 		List<String> arguments = new ArrayList<>();
 		Object[] checked = fTree.getCheckedElements();
-		for (int i = 0; i < checked.length; i++) {
-			if (checked[i] instanceof String) {
+		for (Object element : checked) {
+			if (element instanceof String) {
 				// If the argument contains a space, surround it in quotes so it is treated as a single argument
-				String arg = ((String) checked[i]).trim();
+				String arg = ((String) element).trim();
 				if (arg.indexOf(' ') > 0) {
 					arg = "\"" + arg + "\""; //$NON-NLS-1$//$NON-NLS-2$
 				}

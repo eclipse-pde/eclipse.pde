@@ -350,9 +350,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	}
 
 	private void checkAll(boolean checked, TreeItem[] items) {
-		for (int i = 0; i < items.length; i++) {
-			items[i].setChecked(checked);
-			TreeItem[] children = items[i].getItems();
+		for (TreeItem item : items) {
+			item.setChecked(checked);
+			TreeItem[] children = item.getItems();
 			checkAll(checked, children);
 		}
 	}
@@ -459,9 +459,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		ITargetLocation[] containers = fTarget.getTargetLocations();
 		if (containers != null) {
 			// Look for a IUBundleContainer to compare against.
-			for (int i = 0; i < containers.length; i++) {
-				if (containers[i] instanceof IUBundleContainer && containers[i] != fEditContainer) {
-					iuContainer = (IUBundleContainer) containers[i];
+			for (ITargetLocation container : containers) {
+				if (container instanceof IUBundleContainer && container != fEditContainer) {
+					iuContainer = (IUBundleContainer) container;
 					break;
 				}
 			}
@@ -617,12 +617,12 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			// If we are creating a new container, but there is an existing iu container we should use it's settings (otherwise we overwrite them)
 			ITargetLocation[] knownContainers = fTarget.getTargetLocations();
 			if (knownContainers != null) {
-				for (int i = 0; i < knownContainers.length; i++) {
-					if (knownContainers[i] instanceof IUBundleContainer) {
-						fIncludeRequiredButton.setSelection(((IUBundleContainer) knownContainers[i]).getIncludeAllRequired());
-						fAllPlatformsButton.setSelection(((IUBundleContainer) knownContainers[i]).getIncludeAllEnvironments());
-						fIncludeSourceButton.setSelection(((IUBundleContainer) knownContainers[i]).getIncludeSource());
-						fConfigurePhaseButton.setSelection(((IUBundleContainer) knownContainers[i]).getIncludeConfigurePhase());
+				for (ITargetLocation knownContainer : knownContainers) {
+					if (knownContainer instanceof IUBundleContainer) {
+						fIncludeRequiredButton.setSelection(((IUBundleContainer) knownContainer).getIncludeAllRequired());
+						fAllPlatformsButton.setSelection(((IUBundleContainer) knownContainer).getIncludeAllEnvironments());
+						fIncludeSourceButton.setSelection(((IUBundleContainer) knownContainer).getIncludeSource());
+						fConfigurePhaseButton.setSelection(((IUBundleContainer) knownContainer).getIncludeConfigurePhase());
 					}
 				}
 			}
@@ -633,10 +633,10 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		if (fTarget != null) {
 			ITargetLocation[] containers = fTarget.getTargetLocations();
 			if (containers != null) {
-				for (int i = 0; i < containers.length; i++) {
-					if (containers[i] instanceof IUBundleContainer && containers[i] != fEditContainer) {
-						fIncludeRequiredButton.setSelection(((IUBundleContainer) containers[i]).getIncludeAllRequired());
-						fAllPlatformsButton.setSelection(((IUBundleContainer) containers[i]).getIncludeAllEnvironments());
+				for (ITargetLocation container : containers) {
+					if (container instanceof IUBundleContainer && container != fEditContainer) {
+						fIncludeRequiredButton.setSelection(((IUBundleContainer) container).getIncludeAllRequired());
+						fAllPlatformsButton.setSelection(((IUBundleContainer) container).getIncludeAllEnvironments());
 						break;
 					}
 				}

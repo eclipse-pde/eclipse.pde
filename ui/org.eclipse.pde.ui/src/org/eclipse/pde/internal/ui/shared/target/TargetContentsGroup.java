@@ -476,8 +476,8 @@ public class TargetContentsGroup {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
-					for (int i = 0; i < selected.length; i++) {
-						fTree.setChecked(selected[i], true);
+					for (Object selectedObject : selected) {
+						fTree.setChecked(selectedObject, true);
 					}
 					saveIncludedBundleState();
 					contentChanged();
@@ -492,8 +492,8 @@ public class TargetContentsGroup {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
-					for (int i = 0; i < selected.length; i++) {
-						fTree.setChecked(selected[i], false);
+					for (Object selectedObject : selected) {
+						fTree.setChecked(selectedObject, false);
 					}
 					saveIncludedBundleState();
 					contentChanged();
@@ -535,8 +535,8 @@ public class TargetContentsGroup {
 				} else {
 					required.addAll(getRequiredPlugins(fAllBundles, allChecked));
 				}
-				for (Iterator<Object> iterator = required.iterator(); iterator.hasNext();) {
-					fTree.setChecked(iterator.next(), true);
+				for (Object requiredObject : required) {
+					fTree.setChecked(requiredObject, true);
 				}
 				saveIncludedBundleState();
 				contentChanged();
@@ -747,12 +747,11 @@ public class TargetContentsGroup {
 
 				// Get all the bundle locations
 				List<URL> allLocations = new ArrayList<>(allBundles.size());
-				for (Iterator<TargetBundle> iterator = allBundles.iterator(); iterator.hasNext();) {
-					TargetBundle current = iterator.next();
+				for (TargetBundle bundle : allBundles) {
 					try {
 						// Some bundles, such as those with errors, may not have
 						// locations
-						URI location = current.getBundleInfo().getLocation();
+						URI location = bundle.getBundleInfo().getLocation();
 						if (location != null) {
 							allLocations.add(new File(location).toURI().toURL());
 						}
@@ -776,14 +775,14 @@ public class TargetContentsGroup {
 				// Figure out which of the models have been checked
 				IPluginModelBase[] models = state.getTargetModels();
 				List<IPluginModelBase> checkedModels = new ArrayList<>(checkedBundles.length);
-				for (int i = 0; i < checkedBundles.length; i++) {
-					if (checkedBundles[i] instanceof TargetBundle) {
-						BundleInfo bundle = ((TargetBundle) checkedBundles[i]).getBundleInfo();
-						for (int j = 0; j < models.length; j++) {
-							if (models[j].getBundleDescription().getSymbolicName().equals(bundle.getSymbolicName())
-									&& models[j].getBundleDescription().getVersion().toString()
+				for (Object checkedBundle : checkedBundles) {
+					if (checkedBundle instanceof TargetBundle) {
+						BundleInfo bundle = ((TargetBundle) checkedBundle).getBundleInfo();
+						for (IPluginModelBase model : models) {
+							if (model.getBundleDescription().getSymbolicName().equals(bundle.getSymbolicName())
+									&& model.getBundleDescription().getVersion().toString()
 											.equals(bundle.getVersion())) {
-								checkedModels.add(models[j]);
+								checkedModels.add(model);
 								break;
 							}
 						}
@@ -800,8 +799,8 @@ public class TargetContentsGroup {
 				NameVersionDescriptor[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
 				List<String> implicitIDs = new ArrayList<>();
 				if (implicitDependencies != null) {
-					for (int i = 0; i < implicitDependencies.length; i++) {
-						implicitIDs.add(implicitDependencies[i].getId());
+					for (NameVersionDescriptor dependency : implicitDependencies) {
+						implicitIDs.add(dependency.getId());
 					}
 				}
 				subMonitor.worked(10);
@@ -818,15 +817,14 @@ public class TargetContentsGroup {
 
 			// We want to check the dependents, the source of the dependents, and the source of the originally checked
 			Set<String> checkedNames = new HashSet<>(checkedBundles.length);
-			for (int i = 0; i < checkedBundles.length; i++) {
-				if (checkedBundles[i] instanceof TargetBundle) {
-					checkedNames.add(((TargetBundle) checkedBundles[i]).getBundleInfo().getSymbolicName());
+			for (Object checkedBundle : checkedBundles) {
+				if (checkedBundle instanceof TargetBundle) {
+					checkedNames.add(((TargetBundle) checkedBundle).getBundleInfo().getSymbolicName());
 				}
 			}
 
 			List<TargetBundle> toCheck = new ArrayList<>();
-			for (Iterator<TargetBundle> iterator = fAllBundles.iterator(); iterator.hasNext();) {
-				TargetBundle bundle = iterator.next();
+			for (TargetBundle bundle : fAllBundles) {
 				if (bundle.isSourceBundle()) {
 					String name = bundle.getSourceTarget().getSymbolicName();
 					if (name != null && (dependencies.contains(name) || checkedNames.contains(name))) {
@@ -855,9 +853,9 @@ public class TargetContentsGroup {
 	 */
 	private Set<TargetFeature> getRequiredFeatures(final TargetFeature[] allFeatures, final Object[] checkedFeatures) {
 		Set<TargetFeature> required = new HashSet<>();
-		for (int j = 0; j < checkedFeatures.length; j++) {
-			if (checkedFeatures[j] instanceof TargetFeature) {
-				getFeatureDependencies((TargetFeature) checkedFeatures[j], allFeatures, required);
+		for (Object checkedFeature : checkedFeatures) {
+			if (checkedFeature instanceof TargetFeature) {
+				getFeatureDependencies((TargetFeature) checkedFeature, allFeatures, required);
 			}
 		}
 		return required;
@@ -875,9 +873,9 @@ public class TargetContentsGroup {
 	 */
 	private void getFeatureDependencies(TargetFeature feature, TargetFeature[] allFeatures, Set<TargetFeature> requiredFeatures) {
 		NameVersionDescriptor[] dependents = feature.getDependentFeatures();
-		for (int i = 0; i < dependents.length; i++) {
+		for (NameVersionDescriptor dependent : dependents) {
 			for (int j = 0; j < allFeatures.length; j++) {
-				if (allFeatures[j].getId().equals(dependents[i].getId())) {
+				if (allFeatures[j].getId().equals(dependent.getId())) {
 					if (!requiredFeatures.contains(allFeatures[j])) {
 						requiredFeatures.add(allFeatures[j]);
 						getFeatureDependencies(allFeatures[j], allFeatures, requiredFeatures);
@@ -914,15 +912,15 @@ public class TargetContentsGroup {
 			boolean hasParent = false;
 			boolean allSelected = true;
 			boolean noneSelected = true;
-			for (int i = 0; i < selection.length; i++) {
+			for (Object element : selection) {
 				if (!hasResolveBundle || !hasParent) {
-					if (selection[i] instanceof TargetBundle) {
+					if (element instanceof TargetBundle) {
 						hasResolveBundle = true;
 					} else {
 						hasParent = true;
 					}
 				}
-				boolean checked = fTree.getChecked(selection[i]);
+				boolean checked = fTree.getChecked(element);
 				if (checked) {
 					noneSelected = false;
 				} else {
@@ -995,10 +993,10 @@ public class TargetContentsGroup {
 			return;
 		}
 
-		for (int i = 0; i < allResolvedBundles.length; i++) {
+		for (TargetBundle bundle : allResolvedBundles) {
 			// We only display bundles that have symbolic names
-			if (allResolvedBundles[i].getBundleInfo().getSymbolicName() != null) {
-				fAllBundles.add(allResolvedBundles[i]);
+			if (bundle.getBundleInfo().getSymbolicName() != null) {
+				fAllBundles.add(bundle);
 			}
 		}
 
@@ -1028,9 +1026,9 @@ public class TargetContentsGroup {
 		} else {
 			// Bundles with errors are already included from fMissing, do not add twice
 			TargetBundle[] bundles = fTargetDefinition.getBundles();
-			for (int i = 0; i < bundles.length; i++) {
-				if (bundles[i].getStatus().isOK()) {
-					result.add(bundles[i]);
+			for (TargetBundle bundle : bundles) {
+				if (bundle.getStatus().isOK()) {
+					result.add(bundle);
 				}
 			}
 		}
@@ -1058,8 +1056,7 @@ public class TargetContentsGroup {
 
 		// Map the bundles into their file locations
 		fFileBundleMapping = new HashMap<>();
-		for (Iterator<TargetBundle> iterator = fAllBundles.iterator(); iterator.hasNext();) {
-			TargetBundle currentBundle = iterator.next();
+		for (TargetBundle currentBundle : fAllBundles) {
 			IPath parentPath = getParentPath(currentBundle);
 			List<TargetBundle> bundles = fFileBundleMapping.get(parentPath);
 			if (bundles == null) {
@@ -1133,20 +1130,20 @@ public class TargetContentsGroup {
 			List<NameVersionDescriptor> included = new ArrayList<>();
 			int missingCount = 0;
 			Object[] checked = fTree.getCheckedLeafElements();
-			for (int i = 0; i < checked.length; i++) {
-				if (checked[i] instanceof TargetFeature) {
-					included.add(new NameVersionDescriptor(((TargetFeature) checked[i]).getId(), null, NameVersionDescriptor.TYPE_FEATURE));
+			for (Object checkedElement : checked) {
+				if (checkedElement instanceof TargetFeature) {
+					included.add(new NameVersionDescriptor(((TargetFeature) checkedElement).getId(), null, NameVersionDescriptor.TYPE_FEATURE));
 				}
-				if (checked[i] instanceof TargetBundle) {
+				if (checkedElement instanceof TargetBundle) {
 					// Missing features are included as TargetBundles, save them as features instead
-					if (((TargetBundle) checked[i]).getStatus().getCode() == TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST) {
-						included.add(new NameVersionDescriptor(((TargetBundle) checked[i]).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_PLUGIN));
+					if (((TargetBundle) checkedElement).getStatus().getCode() == TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST) {
+						included.add(new NameVersionDescriptor(((TargetBundle) checkedElement).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_PLUGIN));
 						missingCount++;
-					} else if (((TargetBundle) checked[i]).getStatus().getCode() == TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
-						included.add(new NameVersionDescriptor(((TargetBundle) checked[i]).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_FEATURE));
+					} else if (((TargetBundle) checkedElement).getStatus().getCode() == TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
+						included.add(new NameVersionDescriptor(((TargetBundle) checkedElement).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_FEATURE));
 						missingCount++;
 					} else {
-						included.add(new NameVersionDescriptor(((TargetBundle) checked[i]).getBundleInfo().getSymbolicName(), null));
+						included.add(new NameVersionDescriptor(((TargetBundle) checkedElement).getBundleInfo().getSymbolicName(), null));
 					}
 				}
 			}
@@ -1162,25 +1159,24 @@ public class TargetContentsGroup {
 			// Figure out if there are multiple bundles sharing the same id
 			Set<String> multi = new HashSet<>(); // BSNs of bundles with multiple versions available
 			Set<String> all = new HashSet<>();
-			for (Iterator<TargetBundle> iterator = fAllBundles.iterator(); iterator.hasNext();) {
-				TargetBundle rb = iterator.next();
-				if (!all.add(rb.getBundleInfo().getSymbolicName())) {
-					multi.add(rb.getBundleInfo().getSymbolicName());
+			for (TargetBundle bundle : fAllBundles) {
+				if (!all.add(bundle.getBundleInfo().getSymbolicName())) {
+					multi.add(bundle.getBundleInfo().getSymbolicName());
 				}
 			}
 
 			// Create a list of checked bundle infos
 			List<NameVersionDescriptor> included = new ArrayList<>();
 			Object[] checked = fTree.getCheckedLeafElements();
-			for (int i = 0; i < checked.length; i++) {
-				if (checked[i] instanceof TargetBundle) {
+			for (Object checkedElement : checked) {
+				if (checkedElement instanceof TargetBundle) {
 					// Create the bundle info object, if the bundle has no symbolic name don't save it
-					String bsn = ((TargetBundle) checked[i]).getBundleInfo().getSymbolicName();
+					String bsn = ((TargetBundle) checkedElement).getBundleInfo().getSymbolicName();
 					if (bsn != null) {
 						NameVersionDescriptor info = null;
 						if (multi.contains(bsn)) {
 							// include version info
-							info = new NameVersionDescriptor(bsn, ((TargetBundle) checked[i]).getBundleInfo().getVersion());
+							info = new NameVersionDescriptor(bsn, ((TargetBundle) checkedElement).getBundleInfo().getVersion());
 						} else {
 							// don't store version info
 							info = new NameVersionDescriptor(bsn, null);
@@ -1265,10 +1261,10 @@ public class TargetContentsGroup {
 				} else if (fGrouping == GROUP_BY_NONE) {
 					// Missing bundles are already handled by adding to fMissing, avoid adding twice
 					TargetBundle[] allBundles = fTargetDefinition.getAllBundles();
-					for (int i = 0; i < allBundles.length; i++) {
-						if (allBundles[i].getStatus().isOK()) {
+					for (TargetBundle bundle : allBundles) {
+						if (bundle.getStatus().isOK()) {
 							// Assume that if the bundle is OK, it has a symbolic name
-							result.add(allBundles[i]);
+							result.add(bundle);
 						}
 					}
 				} else {

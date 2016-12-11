@@ -426,10 +426,9 @@ public class TargetLocationsGroup {
 				fTreeViewer.refresh(false);
 				updateButtons();
 			} else {
-				for (Iterator<Object> iterator = toRemove.iterator(); iterator.hasNext();) {
-					Object current = iterator.next();
-					if (current instanceof IUWrapper) {
-						((IUWrapper) current).getParent().removeInstallableUnit(((IUWrapper) current).getIU());
+				for (Object object : toRemove) {
+					if (object instanceof IUWrapper) {
+						((IUWrapper) object).getParent().removeInstallableUnit(((IUWrapper) object).getIU());
 					}
 				}
 				contentsChanged(removedSite);

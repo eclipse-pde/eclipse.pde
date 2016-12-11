@@ -149,8 +149,8 @@ public class TargetStatus {
 			StringBuffer result = new StringBuffer();
 			if (status.isMultiStatus()) {
 				IStatus[] children = status.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					result.append(getStatusMessage(children[i]));
+				for (IStatus child : children) {
+					result.append(getStatusMessage(child));
 				}
 			} else {
 				result.append('\n').append(status.getMessage());
@@ -194,8 +194,8 @@ public class TargetStatus {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-					for (int i = 0; i < windows.length; i++) {
-						IStatusLineManager slManager = getStatusLineManager(windows[i]);
+					for (IWorkbenchWindow window : windows) {
+						IStatusLineManager slManager = getStatusLineManager(window);
 						if (slManager != null) {
 							slManager.appendToGroup(StatusLineManager.BEGIN_GROUP, getContributionItem());
 							slManager.update(false);
@@ -223,8 +223,8 @@ public class TargetStatus {
 		boolean showStatus = prefs.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS);
 
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			IStatusLineManager manager = getStatusLineManager(windows[i]);
+		for (IWorkbenchWindow window : windows) {
+			IStatusLineManager manager = getStatusLineManager(window);
 			if (manager != null) {
 				if (showStatus) {
 					manager.remove(TARGET_STATUS_ID);

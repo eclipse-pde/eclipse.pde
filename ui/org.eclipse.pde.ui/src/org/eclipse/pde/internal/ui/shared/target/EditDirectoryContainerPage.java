@@ -132,8 +132,8 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 				// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
 				boolean isItem = false;
 				String[] items = fInstallLocation.getItems();
-				for (int i = 0; i < items.length; i++) {
-					if (fInstallLocation.getText().equals(items[i])) {
+				for (String item : items) {
+					if (fInstallLocation.getText().equals(item)) {
 						isItem = true;
 						break;
 					}
@@ -194,8 +194,8 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 				String currentLocation = ((AbstractBundleContainer) container).getLocation(false);
 				boolean found = false;
 				String[] items = fInstallLocation.getItems();
-				for (int i = 0; i < items.length; i++) {
-					if (items[i].equals(currentLocation)) {
+				for (String item : items) {
+					if (item.equals(currentLocation)) {
 						found = true;
 						break;
 					}
@@ -254,8 +254,8 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 			newLocation = newLocation.substring(0, length - 1);
 		}
 		String[] items = fInstallLocation.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i].equals(newLocation)) {
+		for (String item : items) {
+			if (item.equals(newLocation)) {
 				// Already have this location stored
 				return;
 			}

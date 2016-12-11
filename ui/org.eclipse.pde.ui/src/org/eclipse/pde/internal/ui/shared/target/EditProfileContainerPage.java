@@ -116,8 +116,8 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 				// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
 				boolean isItem = false;
 				String[] items = fConfigLocation.getItems();
-				for (int i = 0; i < items.length; i++) {
-					if (fConfigLocation.getText().equals(items[i])) {
+				for (String item : items) {
+					if (fConfigLocation.getText().equals(item)) {
 						isItem = true;
 						break;
 					}
@@ -186,8 +186,8 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		if (fConfigLocation.isEnabled()) {
 			String newLocation = fConfigLocation.getText().trim();
 			String[] items = fConfigLocation.getItems();
-			for (int i = 0; i < items.length; i++) {
-				if (items[i].equals(newLocation)) {
+			for (String item : items) {
+				if (item.equals(newLocation)) {
 					// Already have this location stored
 					return;
 				}

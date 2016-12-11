@@ -284,9 +284,9 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 					if (targetDefinitionValues.size() > 0) {
 						ITargetLocation[] locs = targetDefinitionValues.get(0).getTargetLocations();
 						if (locs != null) {
-							for (int i = 0; i < locs.length; i++) {
-								if (container.equals(locs[i])) {
-									IStatus status = locs[i].getStatus();
+							for (ITargetLocation loc : locs) {
+								if (container.equals(loc)) {
+									IStatus status = loc.getStatus();
 									if (status == null)
 										continue;
 									if (status.getSeverity() == IStatus.WARNING
