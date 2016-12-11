@@ -186,8 +186,8 @@ public class JRESection extends SectionPart {
 		fExecEnvChoices = new TreeSet<>();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (int i = 0; i < envs.length; i++)
-			fExecEnvChoices.add(envs[i].getId());
+		for (IExecutionEnvironment env : envs)
+			fExecEnvChoices.add(env.getId());
 	}
 
 	protected void updateWidgets() {

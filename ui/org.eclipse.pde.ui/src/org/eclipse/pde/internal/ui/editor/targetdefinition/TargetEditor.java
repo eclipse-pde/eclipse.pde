@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -191,11 +190,11 @@ public class TargetEditor extends FormEditor {
 	 */
 	public void doRevert() {
 		fInputHandler.reset();
-		for (Iterator<IManagedForm> iterator = fManagedFormPages.iterator(); iterator.hasNext();) {
-			IFormPart[] parts = iterator.next().getParts();
-			for (int i = 0; i < parts.length; i++) {
-				if (parts[i] instanceof AbstractFormPart) {
-					((AbstractFormPart) parts[i]).markStale();
+		for (IManagedForm form : fManagedFormPages) {
+			IFormPart[] parts = form.getParts();
+			for (IFormPart part : parts) {
+				if (part instanceof AbstractFormPart) {
+					((AbstractFormPart) part).markStale();
 				}
 			}
 		}

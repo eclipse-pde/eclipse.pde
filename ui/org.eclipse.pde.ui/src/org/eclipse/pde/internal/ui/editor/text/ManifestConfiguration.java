@@ -140,8 +140,8 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			rule.addWord(ICoreConstants.INTERNAL_DIRECTIVE, fAttributeToken);
 			rule.addWord(ICoreConstants.PACKAGE_SPECIFICATION_VERSION, fAttributeToken);
 			// EASTER EGG
-			for (int i = 0; i < ICoreConstants.EE_TOKENS.length; i++)
-				rule.addWord(ICoreConstants.EE_TOKENS[i], fAttributeToken);
+			for (String token : ICoreConstants.EE_TOKENS)
+				rule.addWord(token, fAttributeToken);
 			rules[1] = rule;
 
 			setRules(rules);

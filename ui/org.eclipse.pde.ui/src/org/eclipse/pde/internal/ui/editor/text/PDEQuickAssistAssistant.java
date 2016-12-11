@@ -231,8 +231,8 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 						SpellingAnnotation annotation = (SpellingAnnotation) key;
 						if (amodel.getPosition(annotation).overlapsWith(offset, 1)) {
 							ICompletionProposal[] proposals = annotation.getSpellingProblem().getProposals();
-							for (int index = 0; index < proposals.length; index++) {
-								proposalSet.add(proposals[index]);
+							for (ICompletionProposal proposal : proposals) {
+								proposalSet.add(proposal);
 							}
 						}
 					}
@@ -253,8 +253,8 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 						int delimLength = delim != null ? delim.length() : 0;
 						int end = doc.getLineLength(line) + start - delimLength;
 						if (offset >= start && offset <= end) {
-							for (int i = 0; i < mapping.length; i++) {
-								PDECompletionProposal proposal = new PDECompletionProposal(mapping[i], pos, marker);
+							for (IMarkerResolution markerResolution : mapping) {
+								PDECompletionProposal proposal = new PDECompletionProposal(markerResolution, pos, marker);
 								if (!proposalSet.contains(proposal)) {
 									proposalSet.add(proposal);
 								}

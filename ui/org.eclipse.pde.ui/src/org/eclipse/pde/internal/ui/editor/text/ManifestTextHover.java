@@ -53,8 +53,8 @@ public class ManifestTextHover extends PDETextHover {
 	private String checkForTranslatable(IManifestHeader header) {
 		String name = header.getName();
 		String value = header.getValue();
-		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
-			if (name.equals(ICoreConstants.TRANSLATABLE_HEADERS[i]) && value.startsWith("%")) { //$NON-NLS-1$
+		for (String transalatableHeader : ICoreConstants.TRANSLATABLE_HEADERS) {
+			if (name.equals(transalatableHeader) && value.startsWith("%")) { //$NON-NLS-1$
 				IBaseModel model = ((PDEFormEditor) fSourcePage.getEditor()).getAggregateModel();
 				if (model instanceof IModel)
 					return ((IModel) model).getResourceString(value);

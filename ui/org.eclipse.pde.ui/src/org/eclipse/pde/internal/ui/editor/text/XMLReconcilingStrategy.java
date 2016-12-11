@@ -77,8 +77,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		@Override
 		public void endCollecting() {
 			synchronized (fLockObject) {
-				for (Iterator<SpellingAnnotation> iter = fAddAnnotations.keySet().iterator(); iter.hasNext();) {
-					Annotation annotation = iter.next();
+				for (SpellingAnnotation annotation : fAddAnnotations.keySet()) {
 					fAnnotationModel.addAnnotation(annotation, fAddAnnotations.get(annotation));
 				}
 				deleteNonstringSpellingAnnotations(fAddAnnotations.keySet().iterator());

@@ -77,8 +77,8 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		putColor(pstore, P_HEADER_ATTRIBUTES);
 		putColor(pstore, P_HEADER_ASSIGNMENT);
 		pstore = PreferenceConstants.getPreferenceStore();
-		for (int i = 0; i < IColorManager.PROPERTIES_COLORS.length; i++) {
-			putColor(pstore, IColorManager.PROPERTIES_COLORS[i]);
+		for (String color : IColorManager.PROPERTIES_COLORS) {
+			putColor(pstore, color);
 		}
 	}
 

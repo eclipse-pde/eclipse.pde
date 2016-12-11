@@ -218,8 +218,8 @@ public class EnvironmentSection extends SectionPart {
 		ITargetDefinition target = getTarget();
 		fOSChoices = new TreeSet<>();
 		String[] os = Platform.knownOSValues();
-		for (int i = 0; i < os.length; i++)
-			fOSChoices.add(os[i]);
+		for (String osValue : os)
+			fOSChoices.add(osValue);
 		fOSChoices.add(""); //$NON-NLS-1$
 		String fileValue = target.getOS();
 		if (fileValue != null)
@@ -227,8 +227,8 @@ public class EnvironmentSection extends SectionPart {
 
 		fWSChoices = new TreeSet<>();
 		String[] ws = Platform.knownWSValues();
-		for (int i = 0; i < ws.length; i++)
-			fWSChoices.add(ws[i]);
+		for (String wsValue : ws)
+			fWSChoices.add(wsValue);
 		fWSChoices.add(""); //$NON-NLS-1$
 		fileValue = target.getWS();
 		if (fileValue != null)
@@ -236,8 +236,8 @@ public class EnvironmentSection extends SectionPart {
 
 		fArchChoices = new TreeSet<>();
 		String[] arch = Platform.knownOSArchValues();
-		for (int i = 0; i < arch.length; i++)
-			fArchChoices.add(arch[i]);
+		for (String archValue : arch)
+			fArchChoices.add(archValue);
 		fArchChoices.add(""); //$NON-NLS-1$
 		fileValue = target.getArch();
 		if (fileValue != null)
@@ -249,8 +249,8 @@ public class EnvironmentSection extends SectionPart {
 
 	private void initializeAllLocales() {
 		String[] nl = LocaleUtil.getLocales();
-		for (int i = 0; i < nl.length; i++)
-			fNLChoices.add(nl[i]);
+		for (String localeValue : nl)
+			fNLChoices.add(localeValue);
 		String fileValue = getTarget().getNL();
 		if (fileValue != null)
 			fNLChoices.add(LocaleUtil.expandLocaleName(fileValue));

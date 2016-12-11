@@ -211,8 +211,8 @@ public class ImplicitDependenciesSection extends SectionPart {
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
 			ArrayList<NameVersionDescriptor> pluginsToAdd = new ArrayList<>();
-			for (int i = 0; i < models.length; i++) {
-				BundleInfo selected = ((BundleInfo) models[i]);
+			for (Object model : models) {
+				BundleInfo selected = ((BundleInfo) model);
 				pluginsToAdd.add(new NameVersionDescriptor(selected.getSymbolicName(), null));
 			}
 			Set<NameVersionDescriptor> allDependencies = new HashSet<>();
@@ -235,8 +235,8 @@ public class ImplicitDependenciesSection extends SectionPart {
 		NameVersionDescriptor[] current = getTarget().getImplicitDependencies();
 		Set<String> currentBundles = new HashSet<>();
 		if (current != null) {
-			for (int i = 0; i < current.length; i++) {
-				currentBundles.add(current[i].getId());
+			for (NameVersionDescriptor descriptor : current) {
+				currentBundles.add(descriptor.getId());
 			}
 		}
 
@@ -259,9 +259,9 @@ public class ImplicitDependenciesSection extends SectionPart {
 		bundles.addAll(Arrays.asList(getTarget().getImplicitDependencies()));
 		Object[] removeBundles = ((IStructuredSelection) fViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {
-			for (int i = 0; i < removeBundles.length; i++) {
-				if (removeBundles[i] instanceof NameVersionDescriptor) {
-					bundles.remove(removeBundles[i]);
+			for (Object removeBundle : removeBundles) {
+				if (removeBundle instanceof NameVersionDescriptor) {
+					bundles.remove(removeBundle);
 				}
 			}
 			getTarget().setImplicitDependencies(bundles.toArray((new NameVersionDescriptor[bundles.size()])));

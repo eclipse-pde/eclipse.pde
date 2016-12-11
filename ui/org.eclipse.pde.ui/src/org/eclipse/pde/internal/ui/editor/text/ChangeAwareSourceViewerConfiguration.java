@@ -86,8 +86,8 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 			// Register information provider
 			IInformationProvider provider = new SourceInformationProvider(fSourcePage, icc, getInfoImplementationType());
 			String[] contentTypes = getConfiguredContentTypes(sourceViewer);
-			for (int i = 0; i < contentTypes.length; i++)
-				fInfoPresenter.setInformationProvider(provider, contentTypes[i]);
+			for (String contentType : contentTypes)
+				fInfoPresenter.setInformationProvider(provider, contentType);
 
 			fInfoPresenter.setSizeConstraints(60, 10, true, true);
 		}
@@ -111,8 +111,8 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 		IInformationProvider provider = new PDESourceInfoProvider(fSourcePage);
 		// Set the provider on all defined content types
 		String[] contentTypes = getConfiguredContentTypes(sourceViewer);
-		for (int i = 0; i < contentTypes.length; i++) {
-			fOutlinePresenter.setInformationProvider(provider, contentTypes[i]);
+		for (String contentType : contentTypes) {
+			fOutlinePresenter.setInformationProvider(provider, contentType);
 		}
 		// Set the presenter size constraints
 		fOutlinePresenter.setSizeConstraints(50, 20, true, false);

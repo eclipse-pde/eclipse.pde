@@ -152,8 +152,8 @@ public class ArgumentsSection extends SectionPart {
 					String[] args = dialog.getSelectedArguments();
 					if (args != null && args.length > 0) {
 						StringBuffer resultBuffer = new StringBuffer();
-						for (int index = 0; index < args.length; ++index) {
-							resultBuffer.append(args[index] + " "); //$NON-NLS-1$
+						for (String arg : args) {
+							resultBuffer.append(arg + " "); //$NON-NLS-1$
 						}
 						fVMArguments.getText().insert(resultBuffer.toString());
 					}
