@@ -109,16 +109,15 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 	protected void setOptionEnabled(boolean enabled) {
 		if (fLabel != null) {
 			fLabel.setEnabled(enabled);
-			for (int i = 0; i < fButtons.length; i++) {
-				fButtons[i].setEnabled(enabled);
+			for (Button button : fButtons) {
+				button.setEnabled(enabled);
 			}
 		}
 	}
 
 	@Override
 	protected void selectOptionChoice(String choice) {
-		for (int i = 0; i < fButtons.length; i++) {
-			Button button = fButtons[i];
+		for (Button button : fButtons) {
 			String bname = button.getData().toString();
 			if (bname.equals(choice)) {
 				button.setSelection(true);

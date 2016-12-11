@@ -97,8 +97,8 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 			ITemplateSection[] sections = getTemplateSections();
 
 			SubMonitor subMonitor = SubMonitor.convert(monitor, sections.length);
-			for (int i = 0; i < sections.length; i++) {
-				sections[i].execute(project, model, subMonitor.split(1));
+			for (ITemplateSection section : sections) {
+				section.execute(project, model, subMonitor.split(1));
 			}
 			//No reason to do this any more with the new editors
 			//saveTemplateFile(project, null);
@@ -121,8 +121,8 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList<IPluginReference> result = new ArrayList<>();
 		ITemplateSection[] sections = getTemplateSections();
-		for (int i = 0; i < sections.length; i++) {
-			IPluginReference[] refs = sections[i].getDependencies(schemaVersion);
+		for (ITemplateSection section : sections) {
+			IPluginReference[] refs = section.getDependencies(schemaVersion);
 			for (int j = 0; j < refs.length; j++) {
 				if (!result.contains(refs[j]))
 					result.add(refs[j]);
@@ -135,8 +135,8 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	public String[] getNewFiles() {
 		ArrayList<String> result = new ArrayList<>();
 		ITemplateSection[] sections = getTemplateSections();
-		for (int i = 0; i < sections.length; i++) {
-			String[] newFiles = sections[i].getNewFiles();
+		for (ITemplateSection section : sections) {
+			String[] newFiles = section.getNewFiles();
 			for (int j = 0; j < newFiles.length; j++) {
 				if (!result.contains(newFiles[j]))
 					result.add(newFiles[j]);

@@ -116,8 +116,8 @@ public class ChoiceOption extends TemplateOption {
 		super.setEnabled(enabled);
 		if (labelControl != null) {
 			labelControl.setEnabled(enabled);
-			for (int i = 0; i < buttons.length; i++) {
-				buttons[i].setEnabled(isEnabled());
+			for (Button button : buttons) {
+				button.setEnabled(isEnabled());
 			}
 		}
 	}
@@ -146,8 +146,7 @@ public class ChoiceOption extends TemplateOption {
 
 	private void selectChoice(String choice) {
 		blockListener = true;
-		for (int i = 0; i < buttons.length; i++) {
-			Button button = buttons[i];
+		for (Button button : buttons) {
 			String bname = button.getData().toString();
 			if (bname.equals(choice)) {
 				button.setSelection(true);

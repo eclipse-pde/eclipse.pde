@@ -57,8 +57,8 @@ public abstract class NewPluginTemplateWizard extends AbstractNewPluginTemplateW
 	@Override
 	protected final void addAdditionalPages() {
 		// add template pages
-		for (int i = 0; i < sections.length; i++) {
-			sections[i].addPages(this);
+		for (ITemplateSection section : sections) {
+			section.addPages(this);
 		}
 	}
 }

@@ -125,8 +125,8 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 			fTemplateWizard.init(fPluginData);
 			fTemplateWizard.addPages();
 			IWizardPage[] pages = fTemplateWizard.getPages();
-			for (int i = 0; i < pages.length; i++) {
-				addPage(pages[i]);
+			for (IWizardPage page : pages) {
+				addPage(page);
 			}
 		} catch (CoreException e) {
 			MessageDialog.openError(getShell(), PDEUIMessages.NewPluginProjectFromTemplateWizard_1, NLS.bind(PDEUIMessages.NewPluginProjectFromTemplateWizard_0, getTemplateID()));
@@ -210,12 +210,12 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 			return null;
 		}
 		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				if (elements[j].getName().equals(TAG_WIZARD)) {
-					if (templateID.equals(elements[j].getAttribute(WizardElement.ATT_ID))) {
-						return WizardElement.create(elements[j]);
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (IConfigurationElement element : elements) {
+				if (element.getName().equals(TAG_WIZARD)) {
+					if (templateID.equals(element.getAttribute(WizardElement.ATT_ID))) {
+						return WizardElement.create(element);
 					}
 				}
 			}

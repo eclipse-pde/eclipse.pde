@@ -223,8 +223,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 		try {
 			IJavaProject javaProject = JavaCore.create(project);
 			IClasspathEntry[] classpath = javaProject.getRawClasspath();
-			for (int i = 0; i < classpath.length; i++) {
-				IClasspathEntry entry = classpath[i];
+			for (IClasspathEntry entry : classpath) {
 				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					IPath path = entry.getPath().removeFirstSegments(1);
 					if (path.segmentCount() > 0)
@@ -393,8 +392,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	protected IPluginExtension createExtension(String pointId, boolean reuse) throws CoreException {
 		if (reuse) {
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
-				IPluginExtension extension = extensions[i];
+			for (IPluginExtension extension : extensions) {
 				if (extension.getPoint().equalsIgnoreCase(pointId)) {
 					return extension;
 				}
@@ -408,8 +406,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	private void generateFiles(File src, IContainer dst, boolean firstLevel, boolean binary, IProgressMonitor monitor) throws CoreException {
 		File[] members = src.listFiles();
 
-		for (int i = 0; i < members.length; i++) {
-			File member = members[i];
+		for (File member : members) {
 			if (member.isDirectory()) {
 				IContainer dstContainer = null;
 
@@ -483,8 +480,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 			}
 		}
 
-		for (Iterator<ZipEntry> it = childZipEntries.values().iterator(); it.hasNext();) {
-			ZipEntry zipEnry = it.next();
+		for (ZipEntry zipEnry : childZipEntries.values()) {
 			String name = new Path(zipEnry.getName()).lastSegment().toString();
 			if (zipEnry.isDirectory()) {
 				IContainer dstContainer = null;
