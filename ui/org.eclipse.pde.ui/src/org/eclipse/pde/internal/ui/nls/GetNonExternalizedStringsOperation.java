@@ -127,8 +127,8 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 	private void inspectManifest(IBundlePluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		IFile manifestFile = (IFile) model.getBundleModel().getUnderlyingResource();
 		IBundle bundle = model.getBundleModel().getBundle();
-		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
-			IManifestHeader header = bundle.getManifestHeader(ICoreConstants.TRANSLATABLE_HEADERS[i]);
+		for (String translatableHeader : ICoreConstants.TRANSLATABLE_HEADERS) {
+			IManifestHeader header = bundle.getManifestHeader(translatableHeader);
 			if (header != null && isNotTranslated(header.getValue()))
 				fModelChangeTable.addToChangeTable(model, manifestFile, header, selected(manifestFile));
 		}
@@ -165,15 +165,15 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 
 		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			ISchema schema = registry.getSchema(extensions[i].getPoint());
+		for (IPluginExtension extension : extensions) {
+			ISchema schema = registry.getSchema(extension.getPoint());
 			if (schema != null)
-				inspectExtension(schema, extensions[i], model, file);
+				inspectExtension(schema, extension, model, file);
 		}
 
 		IPluginExtensionPoint[] extensionPoints = model.getPluginBase().getExtensionPoints();
-		for (int i = 0; i < extensionPoints.length; i++) {
-			inspectExtensionPoint(extensionPoints[i], model, file);
+		for (IPluginExtensionPoint extensionPoint : extensionPoints) {
+			inspectExtensionPoint(extensionPoint, model, file);
 		}
 	}
 
@@ -183,8 +183,8 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 			IDocumentAttributeNode[] attributes = parentNode.getNodeAttributes();
 			ISchemaElement schemaElement = schema.findElement(parentNode.getXMLTagName());
 			if (schemaElement != null) {
-				for (int j = 0; j < attributes.length; j++) {
-					IPluginAttribute attr = (IPluginAttribute) attributes[j];
+				for (IDocumentAttributeNode attribute : attributes) {
+					IPluginAttribute attr = (IPluginAttribute) attribute;
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 					if (attInfo != null && attInfo.isTranslatable())
 						if (isNotTranslated(attr.getValue()))
@@ -194,8 +194,8 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		}
 
 		IPluginObject[] children = parent.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPluginElement child = (IPluginElement) children[i];
+		for (IPluginObject element : children) {
+			IPluginElement child = (IPluginElement) element;
 			ISchemaElement schemaElement = schema.findElement(child.getName());
 			if (schemaElement != null) {
 				if (schemaElement.hasTranslatableContent())
@@ -203,8 +203,7 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 						fModelChangeTable.addToChangeTable(memModel, file, child, selected(file));
 
 				IPluginAttribute[] attributes = child.getAttributes();
-				for (int j = 0; j < attributes.length; j++) {
-					IPluginAttribute attr = attributes[j];
+				for (IPluginAttribute attr : attributes) {
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 					if (attInfo != null && attInfo.isTranslatable())
 						if (isNotTranslated(attr.getValue()))

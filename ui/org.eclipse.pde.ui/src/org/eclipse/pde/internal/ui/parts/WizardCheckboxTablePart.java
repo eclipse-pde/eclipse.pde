@@ -186,9 +186,8 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		CheckboxTableViewer viewer = getTableViewer();
 		if (viewer.getTable().getSelection().length > 0) {
 			TableItem[] selected = viewer.getTable().getSelection();
-			for (int i = 0; i < selected.length; i++) {
-				TableItem item = selected[i];
-				item.setChecked(select);
+			for (TableItem selectedItem : selected) {
+				selectedItem.setChecked(select);
 			}
 			updateCounter(viewer.getCheckedElements().length);
 		}

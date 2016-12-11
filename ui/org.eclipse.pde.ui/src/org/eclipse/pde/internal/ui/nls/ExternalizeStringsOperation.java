@@ -55,9 +55,9 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 
 	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-		for (int i = 0; i < fChangeFiles.length; i++) {
-			if (fChangeFiles[i] instanceof ModelChangeFile) {
-				ModelChangeFile changeFile = (ModelChangeFile) fChangeFiles[i];
+		for (Object changeFileObject : fChangeFiles) {
+			if (changeFileObject instanceof ModelChangeFile) {
+				ModelChangeFile changeFile = (ModelChangeFile) changeFileObject;
 				CompositeChange pluginChange = getChangeForPlugin(changeFile.getModel().getParentModel().getPluginBase().getId());
 				ModelChange change = changeFile.getModel();
 				IFile pFile = change.getPropertiesFile();

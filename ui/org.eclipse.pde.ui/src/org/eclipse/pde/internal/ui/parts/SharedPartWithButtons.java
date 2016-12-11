@@ -131,8 +131,8 @@ public abstract class SharedPartWithButtons extends SharedPart {
 
 	@Override
 	protected void updateEnabledState() {
-		for (int i = 0; i < fButtons.length; i++) {
-			fButtons[i].setEnabled(isEnabled());
+		for (Button button : fButtons) {
+			button.setEnabled(isEnabled());
 		}
 	}
 

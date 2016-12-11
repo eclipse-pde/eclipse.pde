@@ -64,8 +64,8 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	private void populateLocaleModelTable() {
 		fInternationalizeLocaleModelTable = new InternationalizeModelTable();
 		Locale[] availableLocales = Locale.getAvailableLocales();
-		for (int i = 0; i < availableLocales.length; i++) {
-			fInternationalizeLocaleModelTable.addModel(availableLocales[i]);
+		for (Locale locale : availableLocales) {
+			fInternationalizeLocaleModelTable.addModel(locale);
 		}
 	}
 
@@ -171,8 +171,8 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 		List<IProject> projects = new ArrayList<>();
 		List<?> pluginModels = getPluginModelsForInternationalization();
 
-		for (Iterator<?> it = pluginModels.iterator(); it.hasNext();) {
-			IPluginModelBase pluginModel = (IPluginModelBase) it.next();
+		for (Object pluginModelObject : pluginModels) {
+			IPluginModelBase pluginModel = (IPluginModelBase) pluginModelObject;
 			//Externalize only workspace plug-ins since external plug-ins are already externalized
 			if (!(pluginModel instanceof ExternalPluginModel)) {
 				IProject project = pluginModel.getUnderlyingResource().getProject();

@@ -178,11 +178,11 @@ public class NLSFragmentGenerator {
 
 		Set<IProject> created = new HashSet<>();
 
-		for (Iterator<?> it = plugins.iterator(); it.hasNext();) {
-			IPluginModelBase plugin = (IPluginModelBase) it.next();
+		for (Object pluginObject : plugins) {
+			IPluginModelBase plugin = (IPluginModelBase) pluginObject;
 
-			for (Iterator<?> iter = locales.iterator(); iter.hasNext();) {
-				Locale locale = (Locale) iter.next();
+			for (Object localeObject : locales) {
+				Locale locale = (Locale) localeObject;
 
 				IProject project = getNLProject(plugin, locale);
 				if (created.contains(project) || overwriteWithoutAsking || !project.exists() || OVERWRITE == overwrites.get(project.getName())) {
@@ -211,10 +211,10 @@ public class NLSFragmentGenerator {
 		if (overwriteWithoutAsking)
 			return overwrites;
 
-		for (Iterator<?> iter = plugins.iterator(); iter.hasNext();) {
-			IPluginModelBase plugin = (IPluginModelBase) iter.next();
-			for (Iterator<?> it = locales.iterator(); it.hasNext();) {
-				Locale locale = (Locale) it.next();
+		for (Object name : plugins) {
+			IPluginModelBase plugin = (IPluginModelBase) name;
+			for (Object localeObject : locales) {
+				Locale locale = (Locale) localeObject;
 				IProject project = getNLProject(plugin, locale);
 
 				if (project.exists() && !overwrites.containsKey(project.getName())) {
@@ -396,8 +396,8 @@ public class NLSFragmentGenerator {
 
 						if (file.isDirectory()) {
 							File[] children = file.listFiles();
-							for (int i = 0; i < children.length; i++) {
-								visit(children[i]);
+							for (File child : children) {
+								visit(child);
 							}
 						}
 					}
@@ -446,8 +446,8 @@ public class NLSFragmentGenerator {
 		String[] segments = parent.segments();
 		String path = ""; //$NON-NLS-1$
 
-		for (int i = 0; i < segments.length; i++) {
-			path += SLASH + segments[i];
+		for (String segment : segments) {
+			path += SLASH + segment;
 			IFolder folder = fragmentProject.getFolder(path);
 			if (!folder.exists()) {
 				folder.create(true, true, getProgressMonitor());
@@ -495,8 +495,7 @@ public class NLSFragmentGenerator {
 				object = path.toPortableString();
 			}
 
-			for (Iterator<Filter> iter = filters.iterator(); iter.hasNext();) {
-				Filter filter = iter.next();
+			for (Filter filter : filters) {
 				if (filter.matches(object)) {
 					return filter.inclusive();
 				}

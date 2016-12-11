@@ -263,21 +263,21 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	private IPluginModelBase findModel(String id) {
-		for (int i = 0; i < fModels.length; i++) {
-			String modelId = fModels[i].getPluginBase().getId();
+		for (IPluginModelBase model : fModels) {
+			String modelId = model.getPluginBase().getId();
 			if (modelId != null && modelId.equals(id))
-				return fModels[i];
+				return model;
 		}
 		return null;
 	}
 
 	private IFragmentModel[] findFragments(IPlugin plugin) {
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
-		for (int i = 0; i < fModels.length; i++) {
-			if (fModels[i] instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
+		for (IPluginModelBase model : fModels) {
+			if (model instanceof IFragmentModel) {
+				IFragment fragment = ((IFragmentModel) model).getFragment();
 				if (plugin.getId().equalsIgnoreCase(fragment.getPluginId())) {
-					result.add(fModels[i]);
+					result.add(model);
 				}
 			}
 		}
@@ -292,8 +292,8 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 			boolean hasextensibleAPI = ClasspathUtilCore.hasExtensibleAPI(model);
 			if (!addFragments && !hasextensibleAPI && model instanceof IPluginModel) {
 				IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-				for (int i = 0; i < libraries.length; i++) {
-					if (ClasspathUtilCore.containsVariables(libraries[i].getName())) {
+				for (IPluginLibrary library : libraries) {
+					if (ClasspathUtilCore.containsVariables(library.getName())) {
 						containsVariable = true;
 						break;
 					}
@@ -307,8 +307,8 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 
 		IPluginImport[] required = model.getPluginBase().getImports();
 		if (required.length > 0) {
-			for (int i = 0; i < required.length; i++) {
-				IPluginModelBase found = findModel(required[i].getId());
+			for (IPluginImport pluginImport : required) {
+				IPluginModelBase found = findModel(pluginImport.getId());
 				if (found != null) {
 					addPluginAndDependencies(found, selected, addFragments);
 				}
@@ -318,8 +318,8 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		if (addFragments) {
 			if (model instanceof IPluginModel) {
 				IFragmentModel[] fragments = findFragments(((IPluginModel) model).getPlugin());
-				for (int i = 0; i < fragments.length; i++) {
-					addPluginAndDependencies(fragments[i], selected, addFragments);
+				for (IFragmentModel fragment : fragments) {
+					addPluginAndDependencies(fragment, selected, addFragments);
 				}
 			} else {
 				IFragment fragment = ((IFragmentModel) model).getFragment();
@@ -334,8 +334,8 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	public List<Object> getModelsToInternationalize() {
 		TableItem[] items = fSelectedViewer.getTable().getItems();
 		List<Object> result = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			result.add(items[i].getData());
+		for (TableItem item : items) {
+			result.add(item.getData());
 		}
 		return result;
 	}
@@ -533,8 +533,8 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 			Object[] selection = ssel.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (int i = 0; i < selection.length; i++) {
-				doAdd(selection[i]);
+			for (Object selectedObject : selection) {
+				doAdd(selectedObject);
 			}
 			setRedraw(true);
 			setBlockSelectionListeners(false);
@@ -547,15 +547,15 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		TableItem[] items = fAvailableViewer.getTable().getItems();
 
 		ArrayList<Object> data = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			data.add(items[i].getData());
+		for (TableItem item : items) {
+			data.add(item.getData());
 		}
 		if (data.size() > 0) {
 			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (int i = 0; i < datas.length; i++) {
-				doAdd(datas[i]);
+			for (Object dataObject : datas) {
+				doAdd(dataObject);
 			}
 			setRedraw(true);
 			setBlockSelectionListeners(false);
@@ -571,8 +571,8 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 			Object[] selection = ssel.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (int i = 0; i < selection.length; i++) {
-				doRemove(selection[i]);
+			for (Object selectedObject : selection) {
+				doRemove(selectedObject);
 			}
 			setRedraw(true);
 			setBlockSelectionListeners(false);
@@ -605,15 +605,15 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		TableItem[] items = fSelectedViewer.getTable().getItems();
 
 		ArrayList<Object> data = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			data.add(items[i].getData());
+		for (TableItem item : items) {
+			data.add(item.getData());
 		}
 		if (data.size() > 0) {
 			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (int i = 0; i < datas.length; i++) {
-				doRemove(datas[i]);
+			for (Object dataObject : datas) {
+				doRemove(dataObject);
 			}
 			setRedraw(true);
 			setBlockSelectionListeners(false);

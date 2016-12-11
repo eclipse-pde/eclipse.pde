@@ -182,10 +182,9 @@ public class WizardCheckboxTreePart extends CheckboxTreePart {
 		CachedCheckboxTreeViewer viewer = getTreeViewer();
 		if (viewer.getTree().getSelection().length > 0) {
 			TreeItem[] selected = viewer.getTree().getSelection();
-			for (int i = 0; i < selected.length; i++) {
-				TreeItem item = selected[i];
+			for (TreeItem selectedItem : selected) {
 				// item.setChecked(select);
-				viewer.setChecked(item.getData(), select);
+				viewer.setChecked(selectedItem.getData(), select);
 			}
 			updateCounterLabel();
 		}

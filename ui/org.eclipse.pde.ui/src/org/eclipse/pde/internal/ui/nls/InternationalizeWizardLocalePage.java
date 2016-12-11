@@ -183,8 +183,8 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	public List<Object> getLocalesForInternationalization() {
 		TableItem[] items = fSelectedListViewer.getTable().getItems();
 		List<Object> result = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			result.add(items[i].getData());
+		for (TableItem item : items) {
+			result.add(item.getData());
 		}
 		return result;
 	}
@@ -399,8 +399,8 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 			Object[] selection = ssel.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (int i = 0; i < selection.length; i++) {
-				doAdd(selection[i]);
+			for (Object selectedObject : selection) {
+				doAdd(selectedObject);
 			}
 			setRedraw(true);
 			setBlockSelectionListeners(false);
@@ -413,15 +413,15 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		TableItem[] items = fAvailableListViewer.getTable().getItems();
 
 		ArrayList<Object> data = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			data.add(items[i].getData());
+		for (TableItem item : items) {
+			data.add(item.getData());
 		}
 		if (data.size() > 0) {
 			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (int i = 0; i < datas.length; i++) {
-				doAdd(datas[i]);
+			for (Object dataObject : datas) {
+				doAdd(dataObject);
 			}
 			setRedraw(true);
 			setBlockSelectionListeners(false);
@@ -437,8 +437,8 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 			Object[] selection = ssel.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (int i = 0; i < selection.length; i++) {
-				doRemove(selection[i]);
+			for (Object selectedObject : selection) {
+				doRemove(selectedObject);
 			}
 			setRedraw(true);
 			setBlockSelectionListeners(false);
@@ -471,15 +471,15 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		TableItem[] items = fSelectedListViewer.getTable().getItems();
 
 		ArrayList<Object> data = new ArrayList<>();
-		for (int i = 0; i < items.length; i++) {
-			data.add(items[i].getData());
+		for (TableItem item : items) {
+			data.add(item.getData());
 		}
 		if (data.size() > 0) {
 			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (int i = 0; i < datas.length; i++) {
-				doRemove(datas[i]);
+			for (Object dataObject : datas) {
+				doRemove(dataObject);
 			}
 			setRedraw(true);
 			setBlockSelectionListeners(false);

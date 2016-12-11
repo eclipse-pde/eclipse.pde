@@ -73,8 +73,8 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 
 		//Populate list to an InternationalizeModelTable
 		fModelPluginTable = new InternationalizeModelTable();
-		for (int i = 0; i < pluginModels.length; i++) {
-			fModelPluginTable.addToModelTable(pluginModels[i], pluginModels[i].getUnderlyingResource() != null ? selected(pluginModels[i].getUnderlyingResource().getProject()) : false);
+		for (IPluginModelBase pluginModel : pluginModels) {
+			fModelPluginTable.addToModelTable(pluginModel, pluginModel.getUnderlyingResource() != null ? selected(pluginModel.getUnderlyingResource().getProject()) : false);
 		}
 	}
 

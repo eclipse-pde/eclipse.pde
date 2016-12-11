@@ -76,8 +76,8 @@ public class ComboViewerPart {
 
 	public void setItems(Object[] items) {
 		fObjects.clear();
-		for (int i = 0; i < items.length; i++)
-			fObjects.add((items[i] == null) ? NULL_OBJECT : items[i]);
+		for (Object item : items)
+			fObjects.add((item == null) ? NULL_OBJECT : item);
 		refresh();
 	}
 
