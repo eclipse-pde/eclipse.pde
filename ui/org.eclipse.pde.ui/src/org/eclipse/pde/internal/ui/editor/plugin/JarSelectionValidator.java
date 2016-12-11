@@ -57,8 +57,7 @@ public class JarSelectionValidator implements ISelectionStatusValidator {
 			return false;
 		}
 
-		for (int i = 0; i < selection.length; i++) {
-			Object o = selection[i];
+		for (Object o : selection) {
 			if (!isValid(o)) {
 				return false;
 			}
@@ -67,8 +66,8 @@ public class JarSelectionValidator implements ISelectionStatusValidator {
 	}
 
 	public boolean isValid(Object element) {
-		for (int i = 0; i < fAcceptedTypes.length; i++) {
-			if (fAcceptedTypes[i].isInstance(element)) {
+		for (Class<?> acceptedType : fAcceptedTypes) {
+			if (acceptedType.isInstance(element)) {
 				return true;
 			}
 		}

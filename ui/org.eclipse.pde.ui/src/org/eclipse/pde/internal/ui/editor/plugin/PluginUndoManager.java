@@ -96,9 +96,7 @@ public class PluginUndoManager extends ModelUndoManager {
 		}
 
 		try {
-			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-
+			for (Object element : elements) {
 				if (element instanceof IPluginImport) {
 					pluginBase.add((IPluginImport) element);
 				} else if (element instanceof IPluginLibrary) {
@@ -175,9 +173,7 @@ public class PluginUndoManager extends ModelUndoManager {
 		}
 
 		try {
-			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-
+			for (Object element : elements) {
 				if (element instanceof IPluginImport) {
 					pluginBase.remove((IPluginImport) element);
 				} else if (element instanceof IPluginLibrary) {
@@ -211,11 +207,10 @@ public class PluginUndoManager extends ModelUndoManager {
 							pluginBase = mod.getPluginBase();
 							IPluginImport[] imports = pluginBase.getImports();
 							IPluginImport currentImport = null;
-							for (int j = 0; j < imports.length; j++) {
-								IPluginImport iPluginImport = imports[j];
+							for (IPluginImport pluginImport : imports) {
 								String elementValue = ((RequireBundleObject) element).getValue();
-								if (iPluginImport.getId().equals(elementValue)) {
-									currentImport = iPluginImport;
+								if (pluginImport.getId().equals(elementValue)) {
+									currentImport = pluginImport;
 									break;
 								}
 							}

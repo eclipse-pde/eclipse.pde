@@ -219,16 +219,16 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 				names = fCurrentLibrary.getContentFilters();
 				Vector<String> existing = new Vector<>();
 				if (names != null) {
-					for (int i = 0; i < names.length; i++) {
-						existing.add(names[i]);
+					for (String name : names) {
+						existing.add(name);
 					}
 				}
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				PackageSelectionDialog dialog = new PackageSelectionDialog(fPackageExportViewer.getTable().getShell(), labelProvider, JavaCore.create(project), existing, true);
 				if (dialog.open() == Window.OK) {
 					Object[] elements = dialog.getResult();
-					for (int i = 0; i < elements.length; i++) {
-						IPackageFragment fragment = (IPackageFragment) elements[i];
+					for (Object element : elements) {
+						IPackageFragment fragment = (IPackageFragment) element;
 						fCurrentLibrary.addContentFilter(fragment.getElementName());
 					}
 				}
@@ -242,8 +242,8 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		IStructuredSelection ssel = (IStructuredSelection) fPackageExportViewer.getSelection();
 		Object[] items = ssel.toArray();
 		try {
-			for (int i = 0; i < items.length; i++) {
-				fCurrentLibrary.removeContentFilter(items[i].toString());
+			for (Object item : items) {
+				fCurrentLibrary.removeContentFilter(item.toString());
 			}
 		} catch (CoreException e) {
 		}

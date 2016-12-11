@@ -105,8 +105,8 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 				LazyStartHeader[] headers = getLazyStartHeaders();
 				// must block the refresh otherwise we have problems with multiple activation headers.
 				fBlockListener = true;
-				for (int i = 0; i < headers.length; i++)
-					headers[i].setLazyStart(fLazyStart.getSelection());
+				for (LazyStartHeader header : headers)
+					header.setLazyStart(fLazyStart.getSelection());
 				if (headers.length == 0)
 					getBundle().setHeader(getLazyStartHeaderName(), getLazyStateHeaderValue(fLazyStart.getSelection()));
 				fBlockListener = false;
@@ -201,8 +201,8 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		ArrayList<IManifestHeader> headers = new ArrayList<>(3);
 		if (bundle instanceof Bundle) {
 			String[] keys = new String[] {ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY};
-			for (int i = 0; i < keys.length; i++) {
-				IManifestHeader header = bundle.getManifestHeader(keys[i]);
+			for (String key : keys) {
+				IManifestHeader header = bundle.getManifestHeader(key);
 				if (header != null)
 					headers.add(header);
 			}

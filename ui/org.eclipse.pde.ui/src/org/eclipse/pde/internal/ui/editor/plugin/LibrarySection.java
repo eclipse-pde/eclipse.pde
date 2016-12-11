@@ -273,9 +273,9 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		Object[] selection = ((IStructuredSelection) fLibraryTable.getSelection()).toArray();
 		int index = fLibraryTable.getTable().getSelectionIndex();
 		int[] indices = fLibraryTable.getTable().getSelectionIndices();
-		for (int i = 0; i < indices.length; i++)
-			if (indices[i] < index)
-				index = indices[i];
+		for (int indice : indices)
+			if (indice < index)
+				index = indice;
 
 		String[] remove = new String[selection.length];
 		for (int i = 0; i < selection.length; i++) {
@@ -363,16 +363,16 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	private void checkSourceRootEntry() {
 		IPluginModelBase pluginModel = getModel();
 		IPluginLibrary[] libraries = pluginModel.getPluginBase().getLibraries();
-		for (int i = 0; i < libraries.length; i++)
-			if (libraries[i].getName().equals(".")) //$NON-NLS-1$
+		for (IPluginLibrary library : libraries)
+			if (library.getName().equals(".")) //$NON-NLS-1$
 				return;
 		IBuildModel model = getBuildModel();
 		if (model == null)
 			return;
 
 		IBuildEntry[] entires = model.getBuild().getBuildEntries();
-		for (int i = 0; i < entires.length; i++) {
-			if (entires[i].getName().equals(PROPERTY_SOURCE_PREFIX + '.')) {
+		for (IBuildEntry entry : entires) {
+			if (entry.getName().equals(PROPERTY_SOURCE_PREFIX + '.')) {
 				IPluginLibrary library = pluginModel.getPluginFactory().createLibrary();
 				try {
 					library.setName("."); //$NON-NLS-1$
@@ -404,9 +404,9 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 					IJavaProject jproject = JavaCore.create(project);
 					ArrayList<String> tokens = new ArrayList<>();
 					IClasspathEntry[] entries = jproject.getRawClasspath();
-					for (int i = 0; i < entries.length; i++)
-						if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE)
-							tokens.add(entries[i].getPath().removeFirstSegments(1).addTrailingSeparator().toString());
+					for (IClasspathEntry cpe : entries)
+						if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE)
+							tokens.add(cpe.getPath().removeFirstSegments(1).addTrailingSeparator().toString());
 					if (tokens.size() == 0)
 						return;
 
@@ -449,8 +449,8 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
 		IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
 		HashSet<IPath> set = new HashSet<>();
-		for (int i = 0; i < libraries.length; i++) {
-			IPath bundlePath = new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName()));
+		for (IPluginLibrary library : libraries) {
+			IPath bundlePath = new Path(ClasspathUtilCore.expandLibraryName(library.getName()));
 			IPath buildPath = PDEProject.getBundleRoot(project).getProjectRelativePath().append(bundlePath);
 			set.add(buildPath);
 		}
@@ -512,19 +512,19 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		try {
 			// adding new entries
 			if (oldPaths[0] == null) {
-				for (int i = 0; i < newPaths.length; i++)
-					if (newPaths[i] != null) {
-						entry.addToken(newPaths[i]);
+				for (String newPath : newPaths)
+					if (newPath != null) {
+						entry.addToken(newPath);
 						if (modifySourceEntry)
-							configureSourceBuildEntry(bmodel, null, newPaths[i]);
+							configureSourceBuildEntry(bmodel, null, newPath);
 					}
 				// removing entries
 			} else if (newPaths[0] == null) {
-				for (int i = 0; i < oldPaths.length; i++)
-					if (oldPaths[i] != null) {
-						entry.removeToken(oldPaths[i]);
+				for (String oldPath : oldPaths)
+					if (oldPath != null) {
+						entry.removeToken(oldPath);
 						if (modifySourceEntry)
-							configureSourceBuildEntry(bmodel, oldPaths[i], null);
+							configureSourceBuildEntry(bmodel, oldPath, null);
 					}
 				if (entry.getTokens().length == 0)
 					build.remove(entry);
@@ -566,10 +566,10 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 				index = entries.length;
 
 			// add paths
-			for (int i = 0; i < newPaths.length; i++) {
-				if (newPaths[i] == null)
+			for (String newPath : newPaths) {
+				if (newPath == null)
 					continue;
-				IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath().append(newPaths[i]), null, null, true);
+				IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath().append(newPath), null, null, true);
 				if (!toBeAdded.contains(entry))
 					toBeAdded.add(index++, entry);
 			}
@@ -626,8 +626,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		IPluginBase plugin = model.getPluginBase();
 		try {
 			// Paste all source objects
-			for (int i = 0; i < sourceObjects.length; i++) {
-				Object sourceObject = sourceObjects[i];
+			for (Object sourceObject : sourceObjects) {
 				if (sourceObject instanceof PluginLibrary) {
 					// Plugin library object
 					PluginLibrary library = (PluginLibrary) sourceObject;
@@ -648,9 +647,9 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		HashSet<Path> librarySet = null;
 		// Only source objects that are plugin libraries that have not already
 		// been specified can be pasted
-		for (int i = 0; i < sourceObjects.length; i++) {
+		for (Object sourceObject : sourceObjects) {
 			// Only plugin libraries are allowed
-			if ((sourceObjects[i] instanceof IPluginLibrary) == false) {
+			if ((sourceObject instanceof IPluginLibrary) == false) {
 				return false;
 			}
 			// We have a plugin library
@@ -660,7 +659,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 				librarySet = createPluginLibrarySet();
 			}
 			// No duplicate libraries are allowed
-			IPluginLibrary library = (IPluginLibrary) sourceObjects[i];
+			IPluginLibrary library = (IPluginLibrary) sourceObject;
 			if (librarySet.contains(new Path(ClasspathUtilCore.expandLibraryName(library.getName())))) {
 				return false;
 			}
@@ -672,8 +671,8 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		// Get the current libraries and add them to a set for easy searching
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
 		HashSet<Path> librarySet = new HashSet<>();
-		for (int i = 0; i < libraries.length; i++) {
-			librarySet.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
+		for (IPluginLibrary library : libraries) {
+			librarySet.add(new Path(ClasspathUtilCore.expandLibraryName(library.getName())));
 		}
 		return librarySet;
 	}

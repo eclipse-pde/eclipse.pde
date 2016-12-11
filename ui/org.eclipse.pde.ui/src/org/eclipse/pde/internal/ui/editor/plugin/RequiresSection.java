@@ -243,9 +243,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		HashSet<?> existingImportsSet = null;
 		// Only import objects that are not already existing imports can be
 		// pasted
-		for (int i = 0; i < sourceObjects.length; i++) {
+		for (Object sourceObject : sourceObjects) {
 			// Only import objects allowed
-			if ((sourceObjects[i] instanceof ImportObject) == false) {
+			if ((sourceObject instanceof ImportObject) == false) {
 				return false;
 			}
 			// Get the current import objects and store them for searching
@@ -254,7 +254,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 				existingImportsSet = PluginSelectionDialog.getExistingImports(getModel(), false);
 			}
 			// Only import object that do not exist are allowed
-			ImportObject importObject = (ImportObject) sourceObjects[i];
+			ImportObject importObject = (ImportObject) sourceObject;
 			if (existingImportsSet.contains(importObject.getImport().getId())) {
 				return false;
 			}
@@ -269,8 +269,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		IPluginBase pluginBase = model.getPluginBase();
 		try {
 			// Paste all source objects
-			for (int i = 0; i < sourceObjects.length; i++) {
-				Object sourceObject = sourceObjects[i];
+			for (Object sourceObject : sourceObjects) {
 				if (sourceObject instanceof ImportObject) {
 					// Import object
 					ImportObject importObject = (ImportObject) sourceObject;
@@ -555,9 +554,8 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 				Object[] changedObjects = event.getChangedObjects();
 				if (changedObjects[0] instanceof IPluginImport) {
 					int index = 0;
-					for (int i = 0; i < changedObjects.length; i++) {
-						Object changeObject = changedObjects[i];
-						IPluginImport iimport = (IPluginImport) changeObject;
+					for (Object changedObject : changedObjects) {
+						IPluginImport iimport = (IPluginImport) changedObject;
 						if (event.getChangeType() == IModelChangedEvent.INSERT) {
 							ImportObject iobj = new ImportObject(iimport);
 							if (fImports == null) {
@@ -650,8 +648,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		fImports = new Vector<>();
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginImport[] iimports = model.getPluginBase().getImports();
-		for (int i = 0; i < iimports.length; i++) {
-			IPluginImport iimport = iimports[i];
+		for (IPluginImport iimport : iimports) {
 			fImports.add(new ImportObject(iimport));
 		}
 	}

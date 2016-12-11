@@ -114,8 +114,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			IPluginModelBase[] models = entry.getActiveModels();
-			for (int i = 0; i < models.length; i++) {
-				IPluginModelBase model = models[i];
+			for (IPluginModelBase model : models) {
 				if (version.equals(model.getPluginBase().getVersion()))
 					return open(model.getPluginBase(), true);
 			}

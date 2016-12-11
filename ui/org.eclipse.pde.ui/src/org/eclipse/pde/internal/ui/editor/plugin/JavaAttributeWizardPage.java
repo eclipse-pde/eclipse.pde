@@ -144,9 +144,9 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			if (initialValues.packageFragmentRoot == null) {
 				IPackageFragmentRoot srcEntryDft = null;
 				IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
-				for (int i = 0; i < roots.length; i++) {
-					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
-						srcEntryDft = roots[i];
+				for (IPackageFragmentRoot root : roots) {
+					if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+						srcEntryDft = root;
 						break;
 					}
 				}
@@ -170,8 +170,8 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 				}
 				if (model != null) {
 					IPluginImport[] imports = model.getPluginBase().getImports();
-					for (int i = 0; i < imports.length; i++) {
-						if (imports[i].getId().equals("org.eclipse.ui")) { //$NON-NLS-1$
+					for (IPluginImport import1 : imports) {
+						if (import1.getId().equals("org.eclipse.ui")) { //$NON-NLS-1$
 							initialValues.superClassName = "org.eclipse.ui.plugin.AbstractUIPlugin"; //$NON-NLS-1$
 							initialValues.interfaceName = null;
 							initialValues.interfaceType = null;

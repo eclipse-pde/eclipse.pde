@@ -250,9 +250,9 @@ public class ImportPackageSection extends TableSection {
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		// Only non-duplicate import packages can be pasted
-		for (int i = 0; i < sourceObjects.length; i++) {
+		for (Object sourceObject : sourceObjects) {
 			// Only import package objects are allowed
-			if ((sourceObjects[i] instanceof ImportPackageObject) == false) {
+			if ((sourceObject instanceof ImportPackageObject) == false) {
 				return false;
 			}
 			// Note:  Should check if the package fragment represented by the
@@ -268,7 +268,7 @@ public class ImportPackageSection extends TableSection {
 			}
 			// Only import package objects that have not already been
 			// specified are allowed (no duplicates)
-			ImportPackageObject importPackageObject = (ImportPackageObject) sourceObjects[i];
+			ImportPackageObject importPackageObject = (ImportPackageObject) sourceObject;
 			if (fHeader.hasPackage(importPackageObject.getName())) {
 				return false;
 			}
@@ -295,8 +295,7 @@ public class ImportPackageSection extends TableSection {
 		// Get the bundle
 		IBundle bundle = model.getBundle();
 		// Paste all source objects
-		for (int i = 0; i < sourceObjects.length; i++) {
-			Object sourceObject = sourceObjects[i];
+		for (Object sourceObject : sourceObjects) {
 			if (sourceObject instanceof ImportPackageObject) {
 				ImportPackageObject importPackageObject = (ImportPackageObject) sourceObject;
 				// Import package object
@@ -397,8 +396,8 @@ public class ImportPackageSection extends TableSection {
 		if (dialog.open() == Window.OK && isEditable()) {
 			String newVersion = dialog.getVersion();
 			boolean newOptional = dialog.isOptional();
-			for (int i = 0; i < selected.length; i++) {
-				ImportPackageObject object = (ImportPackageObject) selected[i];
+			for (Object selectedObject : selected) {
+				ImportPackageObject object = (ImportPackageObject) selectedObject;
 				if (!newVersion.equals(object.getVersion()))
 					object.setVersion(newVersion);
 				if (!newOptional == object.isOptional())
@@ -409,8 +408,8 @@ public class ImportPackageSection extends TableSection {
 
 	private void handleRemove() {
 		Object[] removed = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
-		for (int i = 0; i < removed.length; i++) {
-			fHeader.removePackage((PackageObject) removed[i]);
+		for (Object removedObject : removed) {
+			fHeader.removePackage((PackageObject) removedObject);
 		}
 	}
 
@@ -487,11 +486,11 @@ public class ImportPackageSection extends TableSection {
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
 		Set<NameVersionDescriptor> nameVersions = new HashSet<>(); // Set of NameVersionDescriptors, used to remove duplicate entries
 
-		for (int i = 0; i < models.length; i++) {
-			BundleDescription desc = models[i].getBundleDescription();
+		for (IPluginModelBase pluginModel : models) {
+			BundleDescription desc = pluginModel.getBundleDescription();
 
 			// If the current model is a fragment, it can export packages only if its parent has hasExtensibleAPI set
-			if (isFragmentThatCannotExportPackages(models[i]))
+			if (isFragmentThatCannotExportPackages(pluginModel))
 				continue;
 
 			String id = desc == null ? null : desc.getSymbolicName();
@@ -499,13 +498,13 @@ public class ImportPackageSection extends TableSection {
 				continue;
 
 			ExportPackageDescription[] exported = desc.getExportPackages();
-			for (int j = 0; j < exported.length; j++) {
-				String name = exported[j].getName();
-				NameVersionDescriptor nameVersion = new NameVersionDescriptor(exported[j].getName(), exported[j].getVersion().toString(), NameVersionDescriptor.TYPE_PACKAGE);
+			for (ExportPackageDescription exportedPackage : exported) {
+				String name = exportedPackage.getName();
+				NameVersionDescriptor nameVersion = new NameVersionDescriptor(exportedPackage.getName(), exportedPackage.getVersion().toString(), NameVersionDescriptor.TYPE_PACKAGE);
 				if (("java".equals(name) || name.startsWith("java.")) && !allowJava) //$NON-NLS-1$ //$NON-NLS-2$
 					continue;
 				if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name)))
-					elements.add(new ImportItemWrapper(exported[j]));
+					elements.add(new ImportItemWrapper(exportedPackage));
 			}
 			IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
 			if (model instanceof IBundlePluginModelBase) {
@@ -514,28 +513,28 @@ public class ImportPackageSection extends TableSection {
 					ExportPackageHeader header = (ExportPackageHeader) bmodel.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
 					if (header != null) {
 						ExportPackageObject[] pkgs = header.getPackages();
-						for (int j = 0; j < pkgs.length; j++) {
-							String name = pkgs[j].getName();
-							String version = pkgs[j].getVersion();
+						for (ExportPackageObject pkg : pkgs) {
+							String name = pkg.getName();
+							String version = pkg.getVersion();
 							NameVersionDescriptor nameVersion = new NameVersionDescriptor(name, version, NameVersionDescriptor.TYPE_PACKAGE);
 							if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name)))
-								elements.add(new ImportItemWrapper(pkgs[j]));
+								elements.add(new ImportItemWrapper(pkg));
 						}
 					}
 				}
 
 			}
 		}
-		for (int i = 0; i < models.length; i++) {
+		for (IPluginModelBase model : models) {
 			try {
 				// add un-exported packages in workspace non-binary plug-ins
-				IResource resource = models[i].getUnderlyingResource();
+				IResource resource = model.getUnderlyingResource();
 				IProject project = resource != null ? resource.getProject() : null;
 				if (project == null || !project.hasNature(JavaCore.NATURE_ID) || WorkspaceModelManager.isBinaryProject(project) || !PDEProject.getManifest(project).exists())
 					continue;
 
 				// If the current model is a fragment, it can export packages only if its parent has hasExtensibleAPI set
-				if (isFragmentThatCannotExportPackages(models[i]))
+				if (isFragmentThatCannotExportPackages(model))
 					continue;
 
 				IJavaProject jp = JavaCore.create(project);
@@ -543,8 +542,8 @@ public class ImportPackageSection extends TableSection {
 				for (int j = 0; j < roots.length; j++) {
 					if (roots[j].getKind() == IPackageFragmentRoot.K_SOURCE || (roots[j].getKind() == IPackageFragmentRoot.K_BINARY && !roots[j].isExternal())) {
 						IJavaElement[] children = roots[j].getChildren();
-						for (int k = 0; k < children.length; k++) {
-							IPackageFragment f = (IPackageFragment) children[k];
+						for (IJavaElement child : children) {
+							IPackageFragment f = (IPackageFragment) child;
 							String name = f.getElementName();
 							NameVersionDescriptor nameVersion = new NameVersionDescriptor(name, null, NameVersionDescriptor.TYPE_PACKAGE);
 							if (name.equals("")) //$NON-NLS-1$
@@ -586,8 +585,8 @@ public class ImportPackageSection extends TableSection {
 		}
 		BundleDescription[] hosts = hostSpec.getHosts();
 		// At least one of fragment hosts has to have extensible API
-		for (int i = 0; i < hosts.length; i++) {
-			if (ClasspathUtilCore.hasExtensibleAPI(PluginRegistry.findModel(hosts[i])))
+		for (BundleDescription host : hosts) {
+			if (ClasspathUtilCore.hasExtensibleAPI(PluginRegistry.findModel(host)))
 				return false;
 		}
 		// Fragment that cannot export
@@ -620,9 +619,9 @@ public class ImportPackageSection extends TableSection {
 				}
 
 				Object[] objects = event.getChangedObjects();
-				for (int i = 0; i < objects.length; i++) {
-					if (objects[i] instanceof ImportPackageObject) {
-						ImportPackageObject object = (ImportPackageObject) objects[i];
+				for (Object changedObject : objects) {
+					if (changedObject instanceof ImportPackageObject) {
+						ImportPackageObject object = (ImportPackageObject) changedObject;
 						switch (event.getChangeType()) {
 							case IModelChangedEvent.INSERT :
 								fPackageViewer.remove(object); // If another thread has modified the header, avoid creating a duplicate
@@ -791,8 +790,8 @@ public class ImportPackageSection extends TableSection {
 			set.add(id);
 		IPluginImport[] imports = model.getPluginBase().getImports();
 		State state = TargetPlatformHelper.getState();
-		for (int i = 0; i < imports.length; i++) {
-			addDependency(state, imports[i].getId(), set);
+		for (IPluginImport pluginImport : imports) {
+			addDependency(state, pluginImport.getId(), set);
 		}
 		return set;
 	}
@@ -806,14 +805,14 @@ public class ImportPackageSection extends TableSection {
 			return;
 
 		BundleDescription[] fragments = desc.getFragments();
-		for (int i = 0; i < fragments.length; i++) {
-			addDependency(state, fragments[i].getSymbolicName(), set);
+		for (BundleDescription fragment : fragments) {
+			addDependency(state, fragment.getSymbolicName(), set);
 		}
 
 		BundleSpecification[] specs = desc.getRequiredBundles();
-		for (int j = 0; j < specs.length; j++) {
-			if (specs[j].isResolved() && specs[j].isExported()) {
-				addDependency(state, specs[j].getName(), set);
+		for (BundleSpecification spec : specs) {
+			if (spec.isResolved() && spec.isExported()) {
+				addDependency(state, spec.getName(), set);
 			}
 		}
 	}
