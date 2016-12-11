@@ -63,16 +63,16 @@ public class DependencyExtentSearchResult extends SearchResult {
 	private void collectMatches(Set<Match> matches, IJavaElement element) {
 		Match[] m = getMatches(element);
 		if (m.length != 0) {
-			for (int i = 0; i < m.length; i++) {
-				matches.add(m[i]);
+			for (Match elementMatch : m) {
+				matches.add(elementMatch);
 			}
 		}
 		if (element instanceof IParent) {
 			IParent parent = (IParent) element;
 			try {
 				IJavaElement[] children = parent.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					collectMatches(matches, children[i]);
+				for (IJavaElement child : children) {
+					collectMatches(matches, child);
 				}
 			} catch (JavaModelException e) {
 				// we will not be tracking these results

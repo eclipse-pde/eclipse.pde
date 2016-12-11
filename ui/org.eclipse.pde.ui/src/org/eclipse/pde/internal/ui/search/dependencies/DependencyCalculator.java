@@ -33,8 +33,8 @@ public class DependencyCalculator {
 	public void findDependencies(Object[] includedBundles) {
 		if (fDependencies == null)
 			fDependencies = new HashMap<>();
-		for (int i = 0; i < includedBundles.length; i++) {
-			findObjectDependencies(includedBundles[i]);
+		for (Object bundle : includedBundles) {
+			findObjectDependencies(bundle);
 		}
 	}
 
@@ -91,10 +91,10 @@ public class DependencyCalculator {
 	}
 
 	protected void addRequiredBundles(BundleSpecification[] requiredBundles) {
-		for (int i = 0; i < requiredBundles.length; i++) {
-			if (requiredBundles[i].isOptional() && !fIncludeOptional)
+		for (BundleSpecification bundle : requiredBundles) {
+			if (bundle.isOptional() && !fIncludeOptional)
 				continue;
-			BaseDescription bd = requiredBundles[i].getSupplier();
+			BaseDescription bd = bundle.getSupplier();
 			// only recursively search statisfied require-bundles
 			if (bd != null && bd instanceof BundleDescription)
 				findDependencies((BundleDescription) bd);
@@ -102,12 +102,12 @@ public class DependencyCalculator {
 	}
 
 	protected void addImportedPackages(ImportPackageSpecification[] packages) {
-		for (int i = 0; i < packages.length; i++) {
+		for (ImportPackageSpecification pkg : packages) {
 			if (!fIncludeOptional)
-				if (Constants.RESOLUTION_OPTIONAL.equals(packages[i].getDirective(Constants.RESOLUTION_DIRECTIVE))) {
+				if (Constants.RESOLUTION_OPTIONAL.equals(pkg.getDirective(Constants.RESOLUTION_DIRECTIVE))) {
 					continue;
 				}
-			BaseDescription bd = packages[i].getSupplier();
+			BaseDescription bd = pkg.getSupplier();
 			// only recursively search statisfied import-packages
 			if (bd != null && bd instanceof ExportPackageDescription) {
 				BundleDescription exporter = ((ExportPackageDescription) bd).getExporter();
@@ -119,9 +119,9 @@ public class DependencyCalculator {
 
 	protected void addFragments(BundleDescription desc) {
 		BundleDescription[] fragments = desc.getFragments();
-		for (int i = 0; i < fragments.length; i++)
-			if (fragments[i].isResolved()) {
-				findDependencies(fragments[i]);
+		for (BundleDescription fragment : fragments)
+			if (fragment.isResolved()) {
+				findDependencies(fragment);
 			}
 	}
 

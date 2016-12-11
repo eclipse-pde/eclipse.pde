@@ -78,20 +78,20 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		ArrayList<Match> list = new ArrayList<>();
 		Object[] objects = result.getElements();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof IPluginObject) {
-				IPluginObject object = (IPluginObject) objects[i];
+		for (Object o : objects) {
+			if (o instanceof IPluginObject) {
+				IPluginObject object = (IPluginObject) o;
 				if (isMatchContained(editor, object)) {
 					Match[] matches = getMatches(object);
-					for (int j = 0; j < matches.length; j++) {
-						IDocument document = getDocument(editor, matches[j]);
+					for (Match matche : matches) {
+						IDocument document = getDocument(editor, matche);
 						if (document != null)
-							list.add(ManifestEditorOpener.findExactMatch(document, matches[j], editor));
+							list.add(ManifestEditorOpener.findExactMatch(document, matche, editor));
 					}
 				}
 			}
-			if (objects[i] instanceof IFeaturePlugin) {
-				IFeaturePlugin object = (IFeaturePlugin) objects[i];
+			if (o instanceof IFeaturePlugin) {
+				IFeaturePlugin object = (IFeaturePlugin) o;
 				if (isMatchContained(editor, object)) {
 					for (Match match : getMatches(object)) {
 						list.add(match);

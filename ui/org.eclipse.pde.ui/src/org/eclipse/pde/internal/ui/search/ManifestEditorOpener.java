@@ -148,8 +148,7 @@ public class ManifestEditorOpener {
 			elements = ((IPluginModelBase) editor.getAggregateModel()).getPluginBase().getExtensionPoints();
 
 		// iterate through the UI text models to find a match for a Search object.
-		for (int i = 0; i < elements.length; i++) {
-			IPluginObject element = elements[i];
+		for (IPluginObject element : elements) {
 			if (element != null && object.equals(element)) {
 				int offset = ((PluginObjectNode) element).getOffset();
 				offset += ((PluginObjectNode) element).getLength();

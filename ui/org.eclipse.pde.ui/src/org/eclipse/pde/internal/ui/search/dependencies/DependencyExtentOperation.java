@@ -72,16 +72,16 @@ public class DependencyExtentOperation {
 				PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10); //$NON-NLS-1$//$NON-NLS-2$
 		checkForJavaDependencies(plugins, subMonitor.split(9));
 		subMonitor.setWorkRemaining(plugins.length);
-		for (int i = 0; i < plugins.length; i++) {
-			checkForExtensionPointsUsed(plugins[i]);
+		for (IPluginModelBase plugin : plugins) {
+			checkForExtensionPointsUsed(plugin);
 			subMonitor.worked(1);
 		}
 	}
 
 	private void checkForExtensionPointsUsed(IPluginModelBase model) {
 		IPluginExtensionPoint[] extPoints = model.getPluginBase().getExtensionPoints();
-		for (int i = 0; i < extPoints.length; i++) {
-			findMatches(extPoints[i]);
+		for (IPluginExtensionPoint extPoint : extPoints) {
+			findMatches(extPoint);
 		}
 	}
 
@@ -91,9 +91,9 @@ public class DependencyExtentOperation {
 			return;
 
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			if (fullID.equals(extensions[i].getPoint())) {
-				int line = ((ISourceObject) extensions[i]).getStartLine() - 1;
+		for (IPluginExtension extension : extensions) {
+			if (fullID.equals(extension.getPoint())) {
+				int line = ((ISourceObject) extension).getStartLine() - 1;
 				if (line >= 0) {
 					fSearchResult.addMatch(new Match(point, Match.UNIT_LINE, line, 1));
 					break;
@@ -111,17 +111,15 @@ public class DependencyExtentOperation {
 			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(models, jProject, true);
 			monitor.beginTask("", packageFragments.length); //$NON-NLS-1$
 			SearchEngine engine = new SearchEngine();
-			for (int i = 0; i < packageFragments.length; i++) {
+			for (IPackageFragment pkgFragment : packageFragments) {
 				if (monitor.isCanceled())
 					break;
-				IPackageFragment pkgFragment = packageFragments[i];
 				monitor.subTask(PDEUIMessages.DependencyExtentOperation_inspecting + " " + pkgFragment.getElementName()); //$NON-NLS-1$
 				if (pkgFragment.hasChildren()) {
 					IJavaElement[] children = pkgFragment.getChildren();
-					for (int j = 0; j < children.length; j++) {
+					for (IJavaElement child : children) {
 						if (monitor.isCanceled())
 							break;
-						IJavaElement child = children[j];
 						IType[] types = new IType[0];
 						if (child instanceof IClassFile) {
 							types = new IType[] {((IClassFile) child).getType()};
@@ -139,14 +137,14 @@ public class DependencyExtentOperation {
 	}
 
 	private void searchForTypesUsed(SearchEngine engine, IJavaElement parent, IType[] types, IJavaSearchScope scope) throws CoreException {
-		for (int i = 0; i < types.length; i++) {
-			if (types[i].isAnonymous())
+		for (IType type : types) {
+			if (type.isAnonymous())
 				continue;
 			TypeReferenceSearchRequestor requestor = new TypeReferenceSearchRequestor();
-			engine.search(SearchPattern.createPattern(types[i], IJavaSearchConstants.REFERENCES), new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, scope, requestor, null);
+			engine.search(SearchPattern.createPattern(type, IJavaSearchConstants.REFERENCES), new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, scope, requestor, null);
 			if (requestor.containMatches()) {
 				TypeDeclarationSearchRequestor decRequestor = new TypeDeclarationSearchRequestor();
-				engine.search(SearchPattern.createPattern(types[i], IJavaSearchConstants.DECLARATIONS), new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, SearchEngine.createJavaSearchScope(new IJavaElement[] {parent}), decRequestor, null);
+				engine.search(SearchPattern.createPattern(type, IJavaSearchConstants.DECLARATIONS), new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, SearchEngine.createJavaSearchScope(new IJavaElement[] {parent}), decRequestor, null);
 				Match match = decRequestor.getMatch();
 				if (match != null)
 					fSearchResult.addMatch(match);

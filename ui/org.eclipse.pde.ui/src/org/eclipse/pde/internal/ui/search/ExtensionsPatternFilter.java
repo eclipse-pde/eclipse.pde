@@ -73,8 +73,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 		List<String> syntheticAttributes = ExtensionsFilterUtil.handlePropertyTester(pluginElement);
 		if (fSearchPatterns != null && fSearchPatterns.size() > 0) {
 			int attributeNumber = 0;
-			for (Iterator<String> iterator = fSearchPatterns.iterator(); iterator.hasNext();) {
-				String searchPattern = iterator.next();
+			for (String searchPattern : fSearchPatterns) {
 				if (attributeNumber < fSearchPatterns.size() && attributeNumber < ATTRIBUTE_LIMIT) {
 					boolean quoted = isQuoted(searchPattern);
 					if (searchPattern != null && searchPattern.length() > 0) {
@@ -222,9 +221,9 @@ public class ExtensionsPatternFilter extends PatternFilter {
 		}
 		if (fFoundAnyElementsCache.size() > 0) {
 			List<Object> found = new ArrayList<>();
-			for (int i = 0; i < elements.length; i++) {
-				if (fFoundAnyElementsCache.contains(elements[i])) {
-					found.add(elements[i]);
+			for (Object element : elements) {
+				if (fFoundAnyElementsCache.contains(element)) {
+					found.add(element);
 				}
 			}
 			return found.toArray();
@@ -237,8 +236,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 		// find leaf matches
 		boolean isAnyLeafMatch = false;
-		for (int j = 0; j < children.length; j++) {
-			IPluginObject iPluginObject = children[j];
+		for (IPluginObject iPluginObject : children) {
 			boolean isChildMatch = true;
 			if (!isParentMatch || children.length > 0) {
 				isChildMatch = this.isLeafMatch(viewer, iPluginObject);
@@ -254,8 +252,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 		// traverse children when available
 		boolean isAnyChildMatch = false;
-		for (int i = 0; i < children.length; i++) {
-			IPluginObject iPluginObject = children[i];
+		for (IPluginObject iPluginObject : children) {
 			if (iPluginObject instanceof IPluginParent) {
 				IPluginParent pluginElement = (IPluginParent) iPluginObject;
 				if (pluginElement.getChildren().length > 0) {

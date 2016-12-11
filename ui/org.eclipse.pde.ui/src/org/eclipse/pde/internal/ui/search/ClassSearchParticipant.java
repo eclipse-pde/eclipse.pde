@@ -99,16 +99,16 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		IPath[] enclosingPaths = querySpecification.getScope().enclosingProjectsAndJars();
 		IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
 		monitor.beginTask(PDEUIMessages.ClassSearchParticipant_taskMessage, pluginModels.length);
-		for (int i = 0; i < pluginModels.length; i++) {
-			IProject project = pluginModels[i].getUnderlyingResource().getProject();
+		for (IPluginModelBase pluginModel : pluginModels) {
+			IProject project = pluginModel.getUnderlyingResource().getProject();
 			if (!monitor.isCanceled() && encloses(enclosingPaths, project.getFullPath()))
 				searchProject(project, monitor);
 		}
 	}
 
 	private boolean encloses(IPath[] paths, IPath path) {
-		for (int i = 0; i < paths.length; i++)
-			if (paths[i].equals(path))
+		for (IPath p : paths)
+			if (p.equals(path))
 				return true;
 		return false;
 	}
@@ -127,10 +127,10 @@ public class ClassSearchParticipant implements IQueryParticipant {
 					SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 					IPluginBase pbase = ((IPluginModelBase) model).getPluginBase();
 					IPluginExtension[] extensions = pbase.getExtensions();
-					for (int j = 0; j < extensions.length; j++) {
-						ISchema schema = registry.getSchema(extensions[j].getPoint());
+					for (IPluginExtension extension : extensions) {
+						ISchema schema = registry.getSchema(extension.getPoint());
 						if (schema != null && !monitor.isCanceled())
-							inspectExtension(schema, extensions[j], file);
+							inspectExtension(schema, extension, file);
 					}
 				}
 			}
@@ -153,13 +153,12 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			}
 		}
 
-		for (int i = 0; i < children.length; i++) {
-			IPluginElement child = (IPluginElement) children[i];
+		for (IPluginObject childObject : children) {
+			IPluginElement child = (IPluginElement) childObject;
 			ISchemaElement schemaElement = schema.findElement(child.getName());
 			if (schemaElement != null) {
 				IPluginAttribute[] attributes = child.getAttributes();
-				for (int j = 0; j < attributes.length; j++) {
-					IPluginAttribute attr = attributes[j];
+				for (IPluginAttribute attr : attributes) {
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 					if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA && attr instanceof IDocumentAttributeNode)
 						checkMatch(attr, file);
@@ -208,15 +207,15 @@ public class ClassSearchParticipant implements IQueryParticipant {
 					ManifestElement[] elements = ManifestElement.parseHeader(header.getName(), header.getValue());
 					if (elements == null)
 						continue;
-					for (int j = 0; j < elements.length; j++) {
+					for (ManifestElement element : elements) {
 						String value = null;
 						Matcher matcher = null;
 						if (fSearchFor == S_FOR_TYPES) {
-							value = elements[j].getValue();
+							value = element.getValue();
 							matcher = getMatcher(value);
 						}
 						if (value == null || (matcher != null && !matcher.matches())) {
-							value = getProperValue(elements[j].getValue());
+							value = getProperValue(element.getValue());
 							matcher = getMatcher(value);
 						}
 						if (matcher.matches()) {

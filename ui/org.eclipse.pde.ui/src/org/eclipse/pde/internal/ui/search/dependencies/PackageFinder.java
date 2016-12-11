@@ -29,8 +29,8 @@ public class PackageFinder {
 	public static Set<String> findPackagesInClassFiles(IClassFile[] files, IProgressMonitor monitor) {
 		Set<String> packages = new HashSet<>();
 		monitor.beginTask(PDEUIMessages.PackageFinder_taskName, files.length);
-		for (int i = 0; i < files.length; i++) {
-			IClassFileReader reader = ToolFactory.createDefaultClassFileReader(files[i], IClassFileReader.ALL);
+		for (IClassFile file : files) {
+			IClassFileReader reader = ToolFactory.createDefaultClassFileReader(file, IClassFileReader.ALL);
 			if (reader != null)
 				computeReferencedTypes(reader, packages);
 			monitor.worked(1);
@@ -42,9 +42,9 @@ public class PackageFinder {
 
 		char[][] interfaces = cfr.getInterfaceNames();
 		if (interfaces != null) {
-			for (int i = 0; i < interfaces.length; i++) {
+			for (char[] interfaceName : interfaces) {
 				//note: have to convert names like Ljava/lang/Object; to java.lang.Object
-				packages.add(getPackage(new String(interfaces[i]).replace('/', '.')));
+				packages.add(getPackage(new String(interfaceName).replace('/', '.')));
 			}
 		}
 
@@ -53,27 +53,27 @@ public class PackageFinder {
 			packages.add(getPackage(new String(scn).replace('/', '.')));
 		}
 
-		IFieldInfo[] fieldInfo = cfr.getFieldInfos();
-		for (int i = 0; i < fieldInfo.length; i++) {
+		IFieldInfo[] fieldInfos = cfr.getFieldInfos();
+		for (IFieldInfo fieldInfo : fieldInfos) {
 
-			String fieldName = new String(fieldInfo[i].getDescriptor());
+			String fieldName = new String(fieldInfo.getDescriptor());
 			if (!isPrimitiveTypeSignature(fieldName)) {
 				String fieldDescriptor = extractFullyQualifiedTopLevelType(fieldName);
 				packages.add(getPackage(new String(fieldDescriptor)));
 			}
 		}
 
-		IMethodInfo[] methodInfo = cfr.getMethodInfos();
-		for (int i = 0; i < methodInfo.length; i++) {
-			IExceptionAttribute exceptionAttribute = methodInfo[i].getExceptionAttribute();
+		IMethodInfo[] methodInfos = cfr.getMethodInfos();
+		for (IMethodInfo methodInfo : methodInfos) {
+			IExceptionAttribute exceptionAttribute = methodInfo.getExceptionAttribute();
 			if (exceptionAttribute != null) {
 				char[][] exceptionNames = exceptionAttribute.getExceptionNames();
-				for (int j = 0; j < exceptionNames.length; j++) {
-					packages.add(getPackage(new String(exceptionNames[j]).replace('/', '.')));
+				for (char[] exceptionName : exceptionNames) {
+					packages.add(getPackage(new String(exceptionName).replace('/', '.')));
 				}
 			}
 
-			String descriptor = new String(methodInfo[i].getDescriptor());
+			String descriptor = new String(methodInfo.getDescriptor());
 			//add parameter types
 			String[] parameterTypes = Signature.getParameterTypes(descriptor);
 			for (int j = 0; j < parameterTypes.length; j++) {
@@ -195,8 +195,8 @@ public class PackageFinder {
 		} catch (BundleException e) {
 			return new IClassFile[0];
 		}
-		for (int i = 0; i < elems.length; i++) {
-			String lib = elems[i].getValue();
+		for (ManifestElement elem : elems) {
+			String lib = elem.getValue();
 			IResource res = project.findMember(lib);
 			if (res != null) {
 				addClassFilesFromResource(res, classFiles);
@@ -214,11 +214,11 @@ public class PackageFinder {
 			while (!stack.isEmpty()) {
 				try {
 					IResource[] children = ((IContainer) stack.pop()).members();
-					for (int i = 0; i < children.length; i++)
-						if (children[i] instanceof IFile && "class".equals(children[i].getFileExtension())) { //$NON-NLS-1$
-							classFiles.add(JavaCore.createClassFileFrom((IFile) children[i]));
-						} else if (children[i] instanceof IContainer)
-							stack.push(children[i]);
+					for (IResource child : children)
+						if (child instanceof IFile && "class".equals(child.getFileExtension())) { //$NON-NLS-1$
+							classFiles.add(JavaCore.createClassFileFrom((IFile) child));
+						} else if (child instanceof IContainer)
+							stack.push(child);
 				} catch (CoreException e) {
 				}
 			}
@@ -229,12 +229,12 @@ public class PackageFinder {
 					return;
 				try {
 					IJavaElement[] children = root.getChildren();
-					for (int i = 0; i < children.length; i++) {
-						if (children[i] instanceof IPackageFragment) {
-							IPackageFragment frag = (IPackageFragment) children[i];
+					for (IJavaElement child : children) {
+						if (child instanceof IPackageFragment) {
+							IPackageFragment frag = (IPackageFragment) child;
 							IClassFile[] files = frag.getClassFiles();
-							for (int j = 0; j < files.length; j++)
-								classFiles.add(files[j]);
+							for (IClassFile file : files)
+								classFiles.add(file);
 						}
 					}
 				} catch (JavaModelException e) {

@@ -72,19 +72,19 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		HashMap<String, HashSet<String>> pkgsAndUses = new HashMap<>();
 		IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, Collections.EMPTY_SET, false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, frags.length * 2);
-		for (int i = 0; i < frags.length; i++) {
+		for (IPackageFragment fragment : frags) {
 			SubMonitor iterationMonitor = subMonitor.split(2);
 			if (iterationMonitor.isCanceled()) {
 				return pkgsAndUses;
 			}
 			iterationMonitor.subTask(
-					NLS.bind(PDEUIMessages.CalculateUsesOperation_calculatingDirective, frags[i].getElementName()));
-			if (packages.contains(frags[i].getElementName())) {
+					NLS.bind(PDEUIMessages.CalculateUsesOperation_calculatingDirective, fragment.getElementName()));
+			if (packages.contains(fragment.getElementName())) {
 				HashSet<String> pkgs = new HashSet<>();
-				pkgsAndUses.put(frags[i].getElementName(), pkgs);
+				pkgsAndUses.put(fragment.getElementName(), pkgs);
 				try {
-					findReferences(frags[i].getCompilationUnits(), pkgs, iterationMonitor.split(1), false);
-					findReferences(frags[i].getClassFiles(), pkgs, iterationMonitor.split(1), true);
+					findReferences(fragment.getCompilationUnits(), pkgs, iterationMonitor.split(1), false);
+					findReferences(fragment.getClassFiles(), pkgs, iterationMonitor.split(1), true);
 				} catch (JavaModelException e) {
 				}
 			}
@@ -94,8 +94,8 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 
 	protected void findReferences(ITypeRoot[] roots, Set<String> pkgs, IProgressMonitor monitor, boolean binary) throws JavaModelException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, roots.length);
-		for (int i = 0; i < roots.length; i++) {
-			findReferences(roots[i].findPrimaryType(), pkgs, binary, subMonitor.split(1));
+		for (ITypeRoot root : roots) {
+			findReferences(root.findPrimaryType(), pkgs, binary, subMonitor.split(1));
 		}
 	}
 
@@ -129,8 +129,8 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		addPackages(type.getSuperInterfaceTypeSignatures(), pkgs, type, binary, subMonitor.split(1));
 
 		// make sure to check sub classes defined in the class
-		for (int i = 0; i < subTypes.length; i++) {
-			findReferences(subTypes[i], pkgs, binary, subMonitor.split(1));
+		for (IType subType : subTypes) {
+			findReferences(subType, pkgs, binary, subMonitor.split(1));
 		}
 	}
 
@@ -167,8 +167,8 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 	protected final void addPackages(String[] typeSignatures, Set<String> pkgs, IType type, boolean binary,
 			IProgressMonitor monitor) throws JavaModelException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, typeSignatures.length);
-		for (int i = 0; i < typeSignatures.length; i++)
-			addPackage(typeSignatures[i], pkgs, type, binary, subMonitor.split(1));
+		for (String typeSignature : typeSignatures)
+			addPackage(typeSignature, pkgs, type, binary, subMonitor.split(1));
 	}
 
 	protected void handleSetUsesDirectives(Map<String, HashSet<String>> pkgsAndUses) {

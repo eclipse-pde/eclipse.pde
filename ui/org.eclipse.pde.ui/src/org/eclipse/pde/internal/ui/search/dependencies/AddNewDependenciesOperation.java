@@ -139,14 +139,14 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		RequireBundleObject[] bundles = header.getRequiredBundles();
 		Set<String> result = new HashSet<>((4 / 3) * (bundles.length) + 2);
 		ArrayList<IPluginBase> plugins = new ArrayList<>();
-		for (int i = 0; i < bundles.length; i++) {
-			String id = bundles[i].getId();
+		for (RequireBundleObject bundle : bundles) {
+			String id = bundle.getId();
 			result.add(id);
 			IPluginModelBase base = PluginRegistry.findModel(id);
 			if (base != null) {
 				ExportPackageDescription[] exportedPkgs = findExportedPackages(base.getBundleDescription());
-				for (int j = 0; j < exportedPkgs.length; j++)
-					ignorePkgs.add(exportedPkgs[j].getName());
+				for (ExportPackageDescription exportedPkg : exportedPkgs)
+					ignorePkgs.add(exportedPkg.getName());
 				plugins.add(base.getPluginBase());
 			}
 		}
@@ -157,14 +157,14 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		BundleSpecification[] bundles = fBase.getBundleDescription().getRequiredBundles();
 		Set<String> result = new HashSet<>((4 / 3) * (bundles.length) + 2);
 		ArrayList<IPluginBase> plugins = new ArrayList<>();
-		for (int i = 0; i < bundles.length; i++) {
-			String id = bundles[i].getName();
+		for (BundleSpecification bundle : bundles) {
+			String id = bundle.getName();
 			result.add(id);
 			IPluginModelBase base = PluginRegistry.findModel(id);
 			if (base != null) {
 				ExportPackageDescription[] exportedPkgs = findExportedPackages(base.getBundleDescription());
-				for (int j = 0; j < exportedPkgs.length; j++)
-					ignorePkgs.add(exportedPkgs[j].getName());
+				for (ExportPackageDescription exportedPkg : exportedPkgs)
+					ignorePkgs.add(exportedPkg.getName());
 				plugins.add(base.getPluginBase());
 			}
 		}
@@ -183,15 +183,15 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			while (!stack.isEmpty()) {
 				BundleDescription bdesc = (BundleDescription) stack.pop();
 				ExportPackageDescription[] expkgs = bdesc.getExportPackages();
-				for (int i = 0; i < expkgs.length; i++)
-					if (addPackage(projectBundleId, expkgs[i]))
-						result.add(expkgs[i]);
+				for (ExportPackageDescription expkg : expkgs)
+					if (addPackage(projectBundleId, expkg))
+						result.add(expkg);
 
 				// Look at re-exported Require-Bundles for any other exported packages
 				BundleSpecification[] requiredBundles = bdesc.getRequiredBundles();
-				for (int i = 0; i < requiredBundles.length; i++)
-					if (requiredBundles[i].isExported()) {
-						BaseDescription bd = requiredBundles[i].getSupplier();
+				for (BundleSpecification requiredBundle : requiredBundles)
+					if (requiredBundle.isExported()) {
+						BaseDescription bd = requiredBundle.getSupplier();
 						if (bd != null && bd instanceof BundleDescription)
 							stack.add(bd);
 					}
@@ -206,8 +206,8 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			return true;
 		String[] friends = (String[]) pkg.getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
 		if (friends != null) {
-			for (int i = 0; i < friends.length; i++) {
-				if (symbolicName.equals(friends[i]))
+			for (String friend : friends) {
+				if (symbolicName.equals(friend))
 					return true;
 			}
 			return false;
@@ -221,12 +221,12 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			return;
 		if (header instanceof ImportPackageHeader) {
 			ImportPackageObject[] pkgs = ((ImportPackageHeader) header).getPackages();
-			for (int i = 0; i < pkgs.length; i++)
-				ignorePkgs.add(pkgs[i].getName());
+			for (ImportPackageObject pkg : pkgs)
+				ignorePkgs.add(pkg.getName());
 		} else {
 			ImportPackageSpecification[] pkgs = fBase.getBundleDescription().getImportPackages();
-			for (int i = 0; i < pkgs.length; i++)
-				ignorePkgs.add(pkgs[i].getName());
+			for (ImportPackageSpecification pkg : pkgs)
+				ignorePkgs.add(pkg.getName());
 		}
 	}
 
@@ -237,14 +237,13 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			ignorePkgs = new HashSet<>(2);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.AddNewDependenciesOperation_searchProject,
 				secDeps.length);
-		for (int j = 0; j < secDeps.length; j++) {
+		for (String pluginId : secDeps) {
 			try {
 				SubMonitor iterationMonitor = subMonitor.split(1);
 				if (iterationMonitor.isCanceled()) {
 					return;
 				}
-				String pluginId = secDeps[j];
-				IPluginModelBase base = PluginRegistry.findModel(secDeps[j]);
+				IPluginModelBase base = PluginRegistry.findModel(pluginId);
 				if (base != null) {
 					ExportPackageDescription[] exported = findExportedPackages(base.getBundleDescription());
 					IJavaSearchScope searchScope = PluginJavaSearchUtil.createSeachScope(jProject);
@@ -292,16 +291,16 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 				return;
 			}
 			IJavaProject jProject = JavaCore.create(fProject);
-			for (int i = 0; i < elems.length; i++) {
-				String library = elems[i].getValue();
+			for (ManifestElement elem : elems) {
+				String library = elem.getValue();
 				// we only want to include packages that will be avialable after exporting (ie. whatever is included in bin.includes)
 				if (binIncludes.contains(library)) {
 					// if the library is in the bin.includes, see if it is source folder that will be compile.  This way we can search source folders
 					IBuildEntry entry = build.getEntry(IBuildEntry.JAR_PREFIX + library);
 					if (entry != null) {
 						String[] resources = entry.getTokens();
-						for (int j = 0; j < resources.length; j++)
-							addPackagesFromResource(jProject, fProject.findMember(resources[j]), ignorePkgs);
+						for (String resource : resources)
+							addPackagesFromResource(jProject, fProject.findMember(resource), ignorePkgs);
 					} else {
 						// if there is no source entry for the library, assume it is a binary jar and try to add it if it exists
 						addPackagesFromResource(jProject, fProject.findMember(library), ignorePkgs);
@@ -326,11 +325,11 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		try {
 			IPackageFragmentRoot root = jProject.getPackageFragmentRoot(res);
 			IJavaElement[] children = root.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				String pkgName = children[i].getElementName();
-				if (children[i] instanceof IParent)
-					if (pkgName.length() > 0 && ((IParent) children[i]).hasChildren())
-						ignorePkgs.add(children[i].getElementName());
+			for (IJavaElement child : children) {
+				String pkgName = child.getElementName();
+				if (child instanceof IParent)
+					if (pkgName.length() > 0 && ((IParent) child).hasChildren())
+						ignorePkgs.add(child.getElementName());
 			}
 		} catch (JavaModelException e) {
 		}
@@ -463,10 +462,10 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 				continue;
 			IPluginImport[] imports = base.getPluginBase().getImports();
 
-			for (int j = 0; j < imports.length; j++)
-				if (imports[j].isReexported()) {
-					String reExportedId = imports[j].getId();
-					pluginIds.remove(imports[j].getId());
+			for (IPluginImport pluginImport : imports)
+				if (pluginImport.isReexported()) {
+					String reExportedId = pluginImport.getId();
+					pluginIds.remove(pluginImport.getId());
 					stack.push(reExportedId);
 				}
 		}

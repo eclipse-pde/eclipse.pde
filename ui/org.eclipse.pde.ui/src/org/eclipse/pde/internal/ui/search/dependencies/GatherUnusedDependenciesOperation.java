@@ -79,26 +79,26 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 
 		HashMap<String, IPluginImport> usedPlugins = new HashMap<>();
 		fList = new ArrayList<>();
-		for (int i = 0; i < imports.length; i++) {
+		for (IPluginImport pluginImport : imports) {
 			if (subMonitor.isCanceled())
 				break;
-			if (isUnused(imports[i], subMonitor.split(3))) {
-				fList.add(imports[i]);
+			if (isUnused(pluginImport, subMonitor.split(3))) {
+				fList.add(pluginImport);
 			} else
-				usedPlugins.put(imports[i].getId(), imports[i]);
+				usedPlugins.put(pluginImport.getId(), pluginImport);
 			updateMonitor(subMonitor, fList.size());
 		}
 
 		ArrayList<ImportPackageObject> usedPackages = new ArrayList<>();
 		if (packages != null && !subMonitor.isCanceled()) {
-			for (int i = 0; i < packages.length; i++) {
+			for (ImportPackageObject importPackage : packages) {
 				if (subMonitor.isCanceled())
 					break;
-				if (isUnused(packages[i], exportedPackages, subMonitor.split(1))) {
-					fList.add(packages[i]);
+				if (isUnused(importPackage, exportedPackages, subMonitor.split(1))) {
+					fList.add(importPackage);
 					updateMonitor(subMonitor, fList.size());
 				} else
-					usedPackages.add(packages[i]);
+					usedPackages.add(importPackage);
 			}
 		}
 		if (!subMonitor.isCanceled()) {
@@ -137,16 +137,15 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			IJavaSearchScope searchScope = PluginJavaSearchUtil.createSeachScope(jProject);
 
 			SubMonitor subMonitor = SubMonitor.convert(monitor, packageFragments.length * 2);
-			for (int i = 0; i < packageFragments.length; i++) {
+			for (IPackageFragment pkgFragment : packageFragments) {
 				SubMonitor iterationMonitor = subMonitor.split(2);
-				IPackageFragment pkgFragment = packageFragments[i];
 				if (pkgFragment.hasChildren()) {
 					Requestor requestor = new Requestor();
 					engine.search(SearchPattern.createPattern(pkgFragment, IJavaSearchConstants.REFERENCES),
 							new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope,
 							requestor, iterationMonitor.split(1));
 					if (requestor.foundMatches()) {
-						if (provideJavaClasses(packageFragments[i], engine, searchScope,
+						if (provideJavaClasses(pkgFragment, engine, searchScope,
 								iterationMonitor.split(1))) {
 							return true;
 						}
@@ -164,18 +163,18 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		IJavaElement[] children = packageFragment.getChildren();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, children.length);
 
-		for (int j = 0; j < children.length; j++) {
+		for (IJavaElement child : children) {
 			IType[] types = null;
-			if (children[j] instanceof ICompilationUnit) {
-				types = ((ICompilationUnit) children[j]).getAllTypes();
-			} else if (children[j] instanceof IClassFile) {
-				types = new IType[] { ((IClassFile) children[j]).getType() };
+			if (child instanceof ICompilationUnit) {
+				types = ((ICompilationUnit) child).getAllTypes();
+			} else if (child instanceof IClassFile) {
+				types = new IType[] { ((IClassFile) child).getType() };
 			}
 			if (types != null) {
 				SubMonitor iterationMonitor = subMonitor.split(1).setWorkRemaining(types.length);
-				for (int t = 0; t < types.length; t++) {
+				for (IType type : types) {
 					requestor = new Requestor();
-					engine.search(SearchPattern.createPattern(types[t], IJavaSearchConstants.REFERENCES),
+					engine.search(SearchPattern.createPattern(type, IJavaSearchConstants.REFERENCES),
 							new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope,
 							requestor, iterationMonitor.split(1));
 					if (requestor.foundMatches()) {
@@ -223,16 +222,16 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 
 	public static void removeDependencies(IPluginModelBase model, Object[] elements) {
 		ImportPackageHeader pkgHeader = null;
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof IPluginImport)
+		for (Object element : elements) {
+			if (element instanceof IPluginImport)
 				try {
-					model.getPluginBase().remove((IPluginImport) elements[i]);
+					model.getPluginBase().remove((IPluginImport) element);
 				} catch (CoreException e) {
 				}
-			else if (elements[i] instanceof ImportPackageObject) {
+			else if (element instanceof ImportPackageObject) {
 				if (pkgHeader == null)
-					pkgHeader = (ImportPackageHeader) ((ImportPackageObject) elements[i]).getHeader();
-				pkgHeader.removePackage((ImportPackageObject) elements[i]);
+					pkgHeader = (ImportPackageHeader) ((ImportPackageObject) element).getHeader();
+				pkgHeader.removePackage((ImportPackageObject) element);
 			}
 		}
 	}
@@ -259,10 +258,10 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			IPluginImport[] imports = base.getPluginBase().getImports();
 			SubMonitor iterationMonitor = subMonitor.setWorkRemaining(Math.max(plugins.size() + 1, 5)).split(1)
 					.setWorkRemaining(imports.length);
-			for (int j = 0; j < imports.length; j++) {
-				if (imports[j].isReexported()) {
-					String reExportedId = imports[j].getId();
-					Object pluginImport = usedPlugins.remove(imports[j].getId());
+			for (IPluginImport imp : imports) {
+				if (imp.isReexported()) {
+					String reExportedId = imp.getId();
+					Object pluginImport = usedPlugins.remove(imp.getId());
 					if (pluginImport != null) {
 						fList.add(pluginImport);
 						updateMonitor(iterationMonitor, fList.size());

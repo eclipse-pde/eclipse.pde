@@ -45,14 +45,14 @@ public class AddNewBinaryDependenciesOperation extends AddNewDependenciesOperati
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IProgressMonitor searchMonitor = subMonitor.split(25);
 		searchMonitor.beginTask("", secDeps.length); //$NON-NLS-1$
-		for (int i = 0; i < secDeps.length; i++) {
-			IPluginModelBase base = manager.findModel(secDeps[i]);
+		for (String secDep : secDeps) {
+			IPluginModelBase base = manager.findModel(secDep);
 			if (base != null) {
 				ExportPackageDescription pkgs[] = findExportedPackages(base.getBundleDescription());
 				for (int j = 0; j < pkgs.length; j++) {
 					String pkgName = pkgs[j].getName();
 					if (!ignorePkgs.contains(pkgName) && projectPkgs.contains(pkgName)) {
-						additionalDeps.put(pkgs[j], secDeps[i]);
+						additionalDeps.put(pkgs[j], secDep);
 						ignorePkgs.add(pkgName);
 						if (useRequireBundle) {
 							while (j < pkgs.length) {

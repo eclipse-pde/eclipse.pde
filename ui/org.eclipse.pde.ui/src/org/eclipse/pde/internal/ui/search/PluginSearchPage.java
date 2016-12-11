@@ -196,10 +196,10 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		} else if (scope == ISearchPageContainer.WORKING_SET_SCOPE) {
 			IWorkingSet[] workingSets = container.getSelectedWorkingSets();
 			if (workingSets != null) {
-				for (int i = 0; i < workingSets.length; i++) {
-					IAdaptable[] elements = workingSets[i].getElements();
-					for (int j = 0; j < elements.length; j++) {
-						IResource resource = elements[j].getAdapter(IResource.class);
+				for (IWorkingSet workingSet : workingSets) {
+					IAdaptable[] elements = workingSet.getElements();
+					for (IAdaptable element : elements) {
+						IResource resource = element.getAdapter(IResource.class);
 						if (resource != null) {
 							result.add(resource.getProject());
 						}
