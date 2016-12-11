@@ -164,9 +164,9 @@ public class ImportActionGroup extends ActionGroup {
 			if (root.isExternal()) {
 				String path = root.getPath().toOSString();
 				IPluginModelBase[] externalModels = PDECore.getDefault().getModelManager().getExternalModels();
-				for (int i = 0; i < externalModels.length; i++) {
-					if (path.equals(externalModels[i].getInstallLocation())) {
-						return externalModels[i];
+				for (IPluginModelBase externalModel : externalModels) {
+					if (path.equals(externalModel.getInstallLocation())) {
+						return externalModel;
 					}
 				}
 			}

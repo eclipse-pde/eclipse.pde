@@ -422,8 +422,8 @@ public abstract class DependenciesViewPage extends Page {
 			boolean showFragments = fHideFragmentFilterAction.isChecked();
 			boolean containsFragments = true;
 			ViewerFilter[] filters = fViewer.getFilters();
-			for (int i = 0; i < filters.length; i++) {
-				if (filters[i].equals(fHideFragmentFilter)) {
+			for (ViewerFilter filter : filters) {
+				if (filter.equals(fHideFragmentFilter)) {
 					containsFragments = false;
 					break;
 				}

@@ -50,8 +50,7 @@ public class DependenciesViewPageContentProvider implements IContentProvider, IP
 			BundleDescription desc = ((IPluginModelBase) input).getBundleDescription();
 			String inputID = (desc != null) ? desc.getSymbolicName() : ((IPluginModelBase) input).getPluginBase().getId();
 
-			for (int i = 0; i < modified.length; i++) {
-				ModelEntry entry = modified[i];
+			for (ModelEntry entry : modified) {
 				if (entry.getId().equals(inputID)) {
 					// if we find a matching id to our current input, check to see if the input still exists
 					if (modelExists(entry, (IPluginModelBase) input))

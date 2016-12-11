@@ -638,8 +638,8 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		Set<?> set = DependencyManager.getSelfandDependencies(models, null);
 		Object[] symbolicNames = set.toArray();
 		ArrayList<IPluginModelBase> result = new ArrayList<>(set.size());
-		for (int i = 0; i < symbolicNames.length; i++) {
-			IPluginModelBase model = PluginRegistry.findModel(symbolicNames[i].toString());
+		for (Object symbolicName : symbolicNames) {
+			IPluginModelBase model = PluginRegistry.findModel(symbolicName.toString());
 			if (model != null)
 				result.add(model);
 		}
@@ -650,8 +650,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		PluginsContentProvider provider = (PluginsContentProvider) fTreeViewer.getContentProvider();
 		Object[] elements = provider.getElements(fTreeViewer.getInput());
 		ArrayList<Object> result = new ArrayList<>();
-		for (int i = 0; i < elements.length; i++) {
-			Object element = elements[i];
+		for (Object element : elements) {
 			if (element instanceof IPluginModelBase) {
 				String id = ((IPluginModelBase) element).getPluginBase().getId();
 				if (PDECore.getDefault().getSearchablePluginsManager().isInJavaSearch(id))
@@ -844,11 +843,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 					fTreeViewer.refresh();
 				} else if ((kind & PluginModelDelta.ADDED) != 0) {
 					ModelEntry[] added = delta.getAddedEntries();
-					for (int i = 0; i < added.length; i++) {
-						IPluginModelBase[] models = getModels(added[i]);
-						for (int j = 0; j < models.length; j++) {
-							if (isVisible(models[j]))
-								fTreeViewer.add(fRoot, models[j]);
+					for (ModelEntry element : added) {
+						IPluginModelBase[] models = getModels(element);
+						for (IPluginModelBase model : models) {
+							if (isVisible(model))
+								fTreeViewer.add(fRoot, model);
 						}
 					}
 				}

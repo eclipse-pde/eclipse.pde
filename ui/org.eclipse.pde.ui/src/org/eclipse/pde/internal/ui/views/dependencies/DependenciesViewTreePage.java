@@ -97,8 +97,8 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 	@Override
 	protected boolean isShowingOptional() {
 		ViewerFilter[] filters = fTreeViewer.getFilters();
-		for (int i = 0; i < filters.length; i++)
-			if (filters[i].equals(fHideOptionalFilter))
+		for (ViewerFilter filter : filters)
+			if (filter.equals(fHideOptionalFilter))
 				return false;
 		return true;
 	}
