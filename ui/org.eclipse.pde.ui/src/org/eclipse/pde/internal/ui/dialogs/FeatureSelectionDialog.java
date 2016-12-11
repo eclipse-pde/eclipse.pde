@@ -83,9 +83,9 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		 */
 		public String matchesPluginId(IFeatureModel model) {
 			IFeaturePlugin[] plugins = model.getFeature().getPlugins();
-			for (int i = 0; i < plugins.length; i++) {
-				if (matches(plugins[i].getId())) {
-					return plugins[i].getId();
+			for (IFeaturePlugin plugin : plugins) {
+				if (matches(plugin.getId())) {
+					return plugin.getId();
 				}
 			}
 			return null;
@@ -194,8 +194,8 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 
 	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
-		for (int i = 0; i < fModels.length; i++) {
-			contentProvider.add(fModels[i], itemsFilter);
+		for (IFeatureModel model : fModels) {
+			contentProvider.add(model, itemsFilter);
 			progressMonitor.worked(1);
 		}
 		progressMonitor.done();

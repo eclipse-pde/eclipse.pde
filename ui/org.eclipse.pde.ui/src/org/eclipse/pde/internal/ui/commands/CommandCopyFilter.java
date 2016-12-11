@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.commands;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public abstract class CommandCopyFilter {
@@ -47,8 +46,7 @@ public abstract class CommandCopyFilter {
 	public static int indexOf(CommandCopyFilter filter) {
 
 		int index = 0;
-		for (Iterator<CommandCopyFilter> i = fFilters.iterator(); i.hasNext();) {
-			CommandCopyFilter f = i.next();
+		for (CommandCopyFilter f : fFilters) {
 			if (f == filter)
 				return index;
 			index++;

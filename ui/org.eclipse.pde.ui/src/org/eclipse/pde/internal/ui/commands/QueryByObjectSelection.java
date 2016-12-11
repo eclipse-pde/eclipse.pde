@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
-import org.eclipse.core.commands.Command;
-
 import java.util.ArrayList;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.commands.common.CommandException;
@@ -106,8 +104,7 @@ public class QueryByObjectSelection extends QueryControl {
 	private boolean hasTypedParameterMatch(Command command, Object object) throws CommandException {
 		IParameter[] params = command.getParameters();
 		if (params != null) {
-			for (int i = 0; i < params.length; i++) {
-				IParameter param = params[i];
+			for (IParameter param : params) {
 				ParameterType parameterType = command.getParameterType(param.getId());
 				if (parameterType != null) {
 					if (parameterType.isCompatible(object))
@@ -127,8 +124,7 @@ public class QueryByObjectSelection extends QueryControl {
 
 		ArrayList<Command> hitList = new ArrayList<>();
 		Command[] commands = getCommandService().getDefinedCommands();
-		for (int i = 0; i < commands.length; i++) {
-			Command command = commands[i];
+		for (Command command : commands) {
 			try {
 				if (hasTypedParameterMatch(command, objectSelection))
 					hitList.add(command);

@@ -149,8 +149,8 @@ public class CommandDetails {
 
 		fFilterCombo = new Combo(preLabelComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		CommandCopyFilter[] filters = CommandCopyFilter.getFilters();
-		for (int i = 0; i < filters.length; i++)
-			fFilterCombo.add(filters[i].getLabelText());
+		for (CommandCopyFilter filter : filters)
+			fFilterCombo.add(filter.getLabelText());
 		fFilterCombo.select(CommandCopyFilter.indexOf(CommandCopyFilter.NONE));
 		fFilterCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -170,8 +170,7 @@ public class CommandDetails {
 	protected ParameterizedCommand buildParameterizedCommand() {
 
 		ArrayList<Parameterization> list = new ArrayList<>();
-		for (Iterator<IParameter> i = fParameterToValue.keySet().iterator(); i.hasNext();) {
-			IParameter parameter = i.next();
+		for (IParameter parameter : fParameterToValue.keySet()) {
 			String value = fParameterToValue.get(parameter);
 			list.add(new Parameterization(parameter, value));
 		}
@@ -257,8 +256,7 @@ public class CommandDetails {
 			if (fPreSel != null && fValues != null) {
 				Object obj = fPreSel.getParameterMap().get(parameter.getId());
 				if (obj != null) {
-					for (Iterator<?> i = fValues.keySet().iterator(); i.hasNext();) {
-						Object next = i.next();
+					for (Object next : fValues.keySet()) {
 						if (obj.equals(fValues.get(next))) {
 							fValuesCombo.setText(next.toString());
 							break;
@@ -420,9 +418,7 @@ public class CommandDetails {
 			paramLineLayout.numColumns = 3;
 			paramLineLayout.marginHeight = 0;
 			paramLine.setLayout(paramLineLayout);
-			for (int i = 0; i < parameters.length; i++) {
-				IParameter parameter = parameters[i];
-
+			for (IParameter parameter : parameters) {
 				String nameText = parameter.getName();
 				if (!parameter.isOptional())
 					nameText += '*';
@@ -435,8 +431,8 @@ public class CommandDetails {
 					fToolkit.adapt(parameterValuesCombo, true, true);
 
 					Map<?, ?> values = parameterValues.getParameterValues();
-					for (Iterator<?> keys = values.keySet().iterator(); keys.hasNext();)
-						parameterValuesCombo.add((String) keys.next());
+					for (Object key : values.keySet())
+						parameterValuesCombo.add((String) key);
 
 					Button clearButton = fToolkit.createButton(paramLine, PDEUIMessages.CommandDetails_clear, SWT.PUSH);
 

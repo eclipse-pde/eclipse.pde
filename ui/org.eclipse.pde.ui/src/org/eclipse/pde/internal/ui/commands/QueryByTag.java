@@ -56,8 +56,8 @@ public class QueryByTag extends QueryControl {
 	private void refreshTags() {
 		fTagsCombo.removeAll();
 		String[] tags = fTagManager.getTags();
-		for (int i = 0; i < tags.length; i++) {
-			fTagsCombo.add(tags[i]);
+		for (String tag : tags) {
+			fTagsCombo.add(tag);
 		}
 	}
 

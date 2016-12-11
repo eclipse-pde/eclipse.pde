@@ -30,8 +30,8 @@ public class TagManager {
 
 	private boolean hasTag(String tags, String tag) {
 		String[] tagArray = tags.split(","); //$NON-NLS-1$
-		for (int i = 0; i < tagArray.length; i++) {
-			String trimTag = tagArray[i].trim();
+		for (String string : tagArray) {
+			String trimTag = string.trim();
 			if (tag.equalsIgnoreCase(trimTag))
 				return true;
 		}
@@ -41,12 +41,10 @@ public class TagManager {
 
 	public String[] getTags() {
 		HashSet<String> tagSet = new HashSet<>();
-		for (Iterator<String> i = fCommandToTags.values().iterator(); i.hasNext();) {
-			String tags = i.next();
-
+		for (String tags : fCommandToTags.values()) {
 			String[] tagArray = tags.split(","); //$NON-NLS-1$
-			for (int j = 0; j < tagArray.length; j++) {
-				String trimTag = tagArray[j].trim();
+			for (String string : tagArray) {
+				String trimTag = string.trim();
 				tagSet.add(trimTag);
 			}
 		}
@@ -64,8 +62,7 @@ public class TagManager {
 	public Command[] getCommands(String tag) {
 		ArrayList<Command> list = new ArrayList<>();
 
-		for (Iterator<Command> i = fCommandToTags.keySet().iterator(); i.hasNext();) {
-			Command command = i.next();
+		for (Command command : fCommandToTags.keySet()) {
 			String tags = fCommandToTags.get(command);
 			if (hasTag(tags, tag)) {
 				list.add(command);

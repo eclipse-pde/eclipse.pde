@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.commands;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.commands.Category;
@@ -78,8 +77,8 @@ public class CommandList {
 
 		@Override
 		public void dispose() {
-			for (Iterator<Object> i = fImgMap.keySet().iterator(); i.hasNext();)
-				fImgMap.get(i.next()).dispose();
+			for (Object object : fImgMap.keySet())
+				fImgMap.get(object).dispose();
 			if (fDefaultImage != null)
 				fDefaultImage.dispose();
 			super.dispose();
@@ -109,8 +108,8 @@ public class CommandList {
 			if (element instanceof Category) {
 				ITreeContentProvider prov = (ITreeContentProvider) fTreeViewer.getContentProvider();
 				Command[] commands = (Command[]) prov.getChildren(element);
-				for (int i = 0; i < commands.length; i++) {
-					String text = getText(commands[i]);
+				for (Command command : commands) {
+					String text = getText(command);
 					if (pattern.matcher(text.subSequence(0, text.length())).matches())
 						return true;
 				}
