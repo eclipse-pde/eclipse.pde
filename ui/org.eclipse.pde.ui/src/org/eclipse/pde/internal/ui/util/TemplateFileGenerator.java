@@ -120,9 +120,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 
 		try {
 			String[] candidates = getDirectoryCandidates();
-			for (int i = 0; i < candidates.length; i++) {
-				if (bundle.getEntry(candidates[i]) != null) {
-					URL candidate = new URL(bundle.getEntry("/"), candidates[i]); //$NON-NLS-1$
+			for (String directoryCandidate : candidates) {
+				if (bundle.getEntry(directoryCandidate) != null) {
+					URL candidate = new URL(bundle.getEntry("/"), directoryCandidate); //$NON-NLS-1$
 					return candidate;
 				}
 			}
@@ -207,8 +207,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	private void generateFiles(File src, IContainer dst, boolean firstLevel, boolean binary, IProgressMonitor monitor) throws CoreException {
 		File[] members = src.listFiles();
 
-		for (int i = 0; i < members.length; i++) {
-			File member = members[i];
+		for (File member : members) {
 			if (member.isDirectory()) {
 				IContainer dstContainer = null;
 
@@ -301,8 +300,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 			}
 		}
 
-		for (Iterator<ZipEntry> it = childZipEntries.values().iterator(); it.hasNext();) {
-			ZipEntry zipEnry = it.next();
+		for (ZipEntry zipEnry : childZipEntries.values()) {
 			String name = new Path(zipEnry.getName()).lastSegment().toString();
 			if (zipEnry.isDirectory()) {
 				IContainer dstContainer = null;
@@ -440,8 +438,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 		try {
 			IJavaProject javaProject = JavaCore.create(fProject);
 			IClasspathEntry[] classpath = javaProject.getRawClasspath();
-			for (int i = 0; i < classpath.length; i++) {
-				IClasspathEntry entry = classpath[i];
+			for (IClasspathEntry entry : classpath) {
 				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					IPath path = entry.getPath().removeFirstSegments(1);
 					if (path.segmentCount() > 0)

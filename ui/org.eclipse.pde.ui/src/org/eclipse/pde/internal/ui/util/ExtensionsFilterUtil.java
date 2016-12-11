@@ -105,8 +105,8 @@ public class ExtensionsFilterUtil {
 		Object attributes = CUSTOM_RELATIONS.get(elementName);
 		if (attributes != null) {
 			String[] attributesArray = (String[]) attributes;
-			for (int i = 0; i < attributesArray.length; i++) {
-				add(pattern, pluginElement, attributesArray[i]);
+			for (String attribute : attributesArray) {
+				add(pattern, pluginElement, attribute);
 			}
 		}
 	}
@@ -145,8 +145,7 @@ public class ExtensionsFilterUtil {
 				IPluginElement pluginElement = (IPluginElement) treeElement;
 				Set<String> customAttributes = getCustomRelations(pluginElement);
 				if (customAttributes.size() == 0) {
-					for (int i = 0; i < RELATED_ATTRIBUTES.length; i++) {
-						String property = RELATED_ATTRIBUTES[i];
+					for (String property : RELATED_ATTRIBUTES) {
 						IPluginAttribute attribute = pluginElement.getAttribute(property);
 						if (attribute != null && attribute.getValue() != null && attribute.getValue().length() > 0) {
 							String value = attribute.getValue();
@@ -181,9 +180,8 @@ public class ExtensionsFilterUtil {
 		}
 		StringBuffer patternBuffer = new StringBuffer();
 		int attributeCount = 0;
-		for (Iterator<String> iterator = filterPatterns.iterator(); iterator.hasNext();) {
+		for (String pattern : filterPatterns) {
 			attributeCount++;
-			Object pattern = iterator.next();
 			if (attributeCount < ExtensionsPatternFilter.ATTRIBUTE_LIMIT) {
 				if (pattern != null) {
 					patternBuffer.append(pattern);
@@ -230,9 +228,9 @@ public class ExtensionsFilterUtil {
 	private static boolean addMatchingElements(Set<String> customAttributes, IPluginElement pluginElement, String elementName, final String[] elements) {
 		boolean elementMatch = false;
 		if (elementName != null) {
-			for (int i = 0; i < elements.length; i++) {
-				if (elementName.endsWith(elements[i])) {
-					addAll(customAttributes, pluginElement, elements[i]);
+			for (String element : elements) {
+				if (elementName.endsWith(element)) {
+					addAll(customAttributes, pluginElement, element);
 					elementMatch = true;
 				}
 			}
@@ -245,8 +243,8 @@ public class ExtensionsFilterUtil {
 		String properties = pluginElement.getAttribute(ATTRIBUTE_PROPERTIES).getValue();
 		if (namespace.length() > 0) {
 			String[] propertiesArray = properties.split(","); //$NON-NLS-1$
-			for (int i = 0; i < propertiesArray.length; i++) {
-				String property = propertiesArray[i].trim();
+			for (String propertyString : propertiesArray) {
+				String property = propertyString.trim();
 				if (property.length() > 0) {
 					customAttributes.add(namespace + '.' + property);
 				}
@@ -262,8 +260,8 @@ public class ExtensionsFilterUtil {
 		List<String> propertyTestAttributes = new ArrayList<>();
 		if (isElementNameMatch(pluginElement, ELEMENT_PROPERTYTESTER)) {
 			Set<String> attributes = handlePropertyTester(new HashSet<String>(), pluginElement);
-			for (Iterator<String> iterator = attributes.iterator(); iterator.hasNext();) {
-				propertyTestAttributes.add(iterator.next());
+			for (String attribute : attributes) {
+				propertyTestAttributes.add(attribute);
 			}
 		}
 		return propertyTestAttributes;
@@ -283,8 +281,7 @@ public class ExtensionsFilterUtil {
 	}
 
 	public static boolean isAttributeNameMatch(String attributeName, String[] matches) {
-		for (int i = 0; i < matches.length; i++) {
-			String matchingAttribute = matches[i];
+		for (String matchingAttribute : matches) {
 			if (matchingAttribute.equals(attributeName)) {
 				return true;
 			}
@@ -293,8 +290,7 @@ public class ExtensionsFilterUtil {
 	}
 
 	public static boolean isFilterRelatedEnabled(IPluginElement pluginElement) {
-		for (int i = 0; i < RELATED_ATTRIBUTES.length; i++) {
-			String property = RELATED_ATTRIBUTES[i];
+		for (String property : RELATED_ATTRIBUTES) {
 			IPluginAttribute attribute = pluginElement.getAttribute(property);
 			if (attribute != null) {
 				return true;
@@ -304,14 +300,13 @@ public class ExtensionsFilterUtil {
 		String elementName = getElementPath(pluginElement);
 		if (elementName != null) {
 			Set<String> keySet = CUSTOM_RELATIONS.keySet();
-			for (Iterator<String> iterator = keySet.iterator(); iterator.hasNext();) {
-				String key = iterator.next();
+			for (String key : keySet) {
 				if (elementName.endsWith(key)) {
 					Object attributes = CUSTOM_RELATIONS.get(key);
 					if (attributes != null) {
 						String[] attributesArray = (String[]) attributes;
-						for (int i = 0; i < attributesArray.length; i++) {
-							IPluginAttribute attribute = pluginElement.getAttribute(attributesArray[i]);
+						for (String element : attributesArray) {
+							IPluginAttribute attribute = pluginElement.getAttribute(element);
 							if (attribute != null) {
 								return true;
 							}

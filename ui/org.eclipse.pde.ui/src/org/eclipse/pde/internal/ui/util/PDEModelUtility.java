@@ -347,10 +347,10 @@ public class PDEModelUtility {
 					// If the edits were performed right away (performEdits == true) then
 					// all the names are null and we don't need the granular detail anyway.
 					if (!performEdits) {
-						for (int j = 0; j < currentEdits.length; j++) {
-							String name = listeners[i].getReadableName(currentEdits[j]);
+						for (TextEdit edit : currentEdits) {
+							String name = listeners[i].getReadableName(edit);
 							if (name != null)
-								change.addTextEditGroup(new TextEditGroup(name, currentEdits[j]));
+								change.addTextEditGroup(new TextEditGroup(name, edit));
 						}
 					}
 					// save the file after the change applied
@@ -403,10 +403,10 @@ public class PDEModelUtility {
 				try {
 					mod.modifyModel(model, monitor);
 					IFile[] files = new IFile[] {mod.getManifestFile(), mod.getXMLFile(), mod.getPropertiesFile()};
-					for (int i = 0; i < files.length; i++) {
-						if (files[i] == null)
+					for (IFile file : files) {
+						if (file == null)
 							continue;
-						InputContext con = editor.getContextManager().findContext(files[i]);
+						InputContext con = editor.getContextManager().findContext(file);
 						if (con != null)
 							con.flushEditorInput();
 					}

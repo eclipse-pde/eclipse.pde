@@ -118,8 +118,8 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	public void finish() {
 		Object[] checked = fTree.getCheckboxTreeViewer().getCheckedElements();
 		ArrayList<PersistablePluginObject> list = new ArrayList<>();
-		for (int i = 0; i < checked.length; i++) {
-			String id = ((IPluginModelBase) checked[i]).getPluginBase().getId();
+		for (Object checkedElement : checked) {
+			String id = ((IPluginModelBase) checkedElement).getPluginBase().getId();
 			if (id != null && id.length() > 0)
 				list.add(new PersistablePluginObject(id));
 		}
@@ -233,19 +233,19 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		if (fWorkingSet != null) {
 			HashSet<String> set = new HashSet<>();
 			IAdaptable[] elements = fWorkingSet.getElements();
-			for (int i = 0; i < elements.length; i++) {
-				if (elements[i] instanceof PersistablePluginObject)
-					set.add(((PersistablePluginObject) elements[i]).getPluginID());
+			for (IAdaptable element : elements) {
+				if (element instanceof PersistablePluginObject)
+					set.add(((PersistablePluginObject) element).getPluginID());
 			}
 
 			IPluginModelBase[] bases = PluginRegistry.getAllModels();
-			for (int i = 0; i < bases.length; i++) {
+			for (IPluginModelBase model : bases) {
 
-				String id = bases[i].getPluginBase().getId();
+				String id = model.getPluginBase().getId();
 				if (id == null)
 					continue;
 				if (set.contains(id)) {
-					fTree.getCheckboxTreeViewer().setChecked(bases[i], true);
+					fTree.getCheckboxTreeViewer().setChecked(model, true);
 					set.remove(id);
 				}
 				if (set.isEmpty())
@@ -279,8 +279,8 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 
 		if (errorMessage == null && fWorkingSet == null) {
 			IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
-			for (int i = 0; i < workingSets.length; i++) {
-				if (newText.equals(workingSets[i].getName())) {
+			for (IWorkingSet workingSet : workingSets) {
+				if (newText.equals(workingSet.getName())) {
 					errorMessage = PDEUIMessages.PluginWorkingSet_nameInUse;
 					break;
 				}

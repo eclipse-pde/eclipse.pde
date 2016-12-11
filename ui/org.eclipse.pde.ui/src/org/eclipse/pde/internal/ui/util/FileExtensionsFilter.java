@@ -47,8 +47,8 @@ public class FileExtensionsFilter extends ViewerFilter {
 		// Process the container's members
 		try {
 			IResource[] resources = container.members();
-			for (int i = 0; i < resources.length; i++) {
-				if (select(viewer, parentElement, resources[i])) {
+			for (IResource resource : resources) {
+				if (select(viewer, parentElement, resource)) {
 					return true;
 				}
 			}

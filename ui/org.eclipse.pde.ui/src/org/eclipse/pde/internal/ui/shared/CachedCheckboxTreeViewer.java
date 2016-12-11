@@ -63,8 +63,8 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 			if (contentProvider != null) {
 				Object[] children = contentProvider.getChildren(element);
 				if (children != null && children.length > 0) {
-					for (int i = 0; i < children.length; i++) {
-						updateCheckState(children[i], state);
+					for (Object child : children) {
+						updateCheckState(child, state);
 					}
 				} else if (!checkState.contains(element)) {
 					// Check if already added to avoid concurrent modification exceptions
@@ -84,8 +84,8 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 			if (contentProvider != null) {
 				Object[] children = contentProvider.getChildren(element);
 				if (children.length > 0) {
-					for (int i = 0; i < children.length; i++) {
-						updateCheckState(children[i], state);
+					for (Object child : children) {
+						updateCheckState(child, state);
 					}
 
 				}
@@ -197,13 +197,13 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 			}
 
 			if (contentProvider == null) {
-				for (int i = 0; i < visible.length; i++) {
-					checkState.add(visible[i]);
+				for (Object visibleObject : visible) {
+					checkState.add(visibleObject);
 				}
 			} else {
 				Set<Object> toCheck = new HashSet<>();
-				for (int i = 0; i < visible.length; i++) {
-					addFilteredChildren(visible[i], contentProvider, toCheck);
+				for (Object visibleObject : visible) {
+					addFilteredChildren(visibleObject, contentProvider, toCheck);
 				}
 				checkState.addAll(toCheck);
 			}
@@ -211,8 +211,8 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 			// Remove any item in the check state that is visible (passes the filters)
 			if (checkState != null) {
 				Object[] visible = filter(checkState.toArray());
-				for (int i = 0; i < visible.length; i++) {
-					checkState.remove(visible[i]);
+				for (Object visibleObject : visible) {
+					checkState.remove(visibleObject);
 				}
 			}
 		}
@@ -232,16 +232,16 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 			result.add(element);
 		} else {
 			Object[] visibleChildren = getFilteredChildren(element);
-			for (int i = 0; i < visibleChildren.length; i++) {
-				addFilteredChildren(visibleChildren[i], contentProvider, result);
+			for (Object visibleChild : visibleChildren) {
+				addFilteredChildren(visibleChild, contentProvider, result);
 			}
 		}
 	}
 
 	@Override
 	public void remove(Object[] elementsOrTreePaths) {
-		for (int i = 0; i < elementsOrTreePaths.length; i++) {
-			updateCheckState(elementsOrTreePaths[i], false);
+		for (Object elementOrTreePath : elementsOrTreePaths) {
+			updateCheckState(elementOrTreePath, false);
 		}
 		super.remove(elementsOrTreePaths);
 	}

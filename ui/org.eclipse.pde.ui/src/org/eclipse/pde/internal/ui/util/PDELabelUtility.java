@@ -204,8 +204,8 @@ public class PDELabelUtility {
 		// Linear search O(n).
 		// Performance hit unnoticeable because number of items per cheatsheet
 		// should be minimal.
-		for (int i = 0; i < names.length; i++) {
-			PDELabelUtility.compareTitleWithBase(base, bracketed, set, names[i]);
+		for (String name : names) {
+			PDELabelUtility.compareTitleWithBase(base, bracketed, set, name);
 		}
 		// Add an auto-generated number
 		PDELabelUtility.addNumberToBase(result, bracketed, set);
