@@ -29,10 +29,10 @@ public class OptionalRequireBundleResolution extends AbstractManifestMarkerResol
 		Bundle bundle = (Bundle) model.getBundle();
 		RequireBundleHeader header = (RequireBundleHeader) bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header != null) {
-			RequireBundleObject[] required = header.getRequiredBundles();
-			for (int i = 0; i < required.length; i++) {
-				if (fBundleId.equals(required[i].getId()))
-					required[i].setOptional(true);
+			RequireBundleObject[] requiredBundles = header.getRequiredBundles();
+			for (RequireBundleObject requiredBundle : requiredBundles) {
+				if (fBundleId.equals(requiredBundle.getId()))
+					requiredBundle.setOptional(true);
 			}
 		}
 	}

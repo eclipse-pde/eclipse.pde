@@ -82,8 +82,8 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 		}
 		if (!problemViewQuickFix) {
 			IMarker[] otherMarkers = findOtherMarkers(markers);
-			for (int i = 0; i < otherMarkers.length; i++) {
-				fixMarker(otherMarkers[i]);
+			for (IMarker otherMarker : otherMarkers) {
+				fixMarker(otherMarker);
 			}
 		}
 		fixMarker(marker);
@@ -92,8 +92,7 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 	private void fixMarker(IMarker marker) {
 		ResolutionGenerator resGen = new ResolutionGenerator();
 		IMarkerResolution[] resolutions = resGen.getResolutions(marker);
-		for (int i = 0; i < resolutions.length; i++) {
-			IMarkerResolution resolution = resolutions[i];
+		for (IMarkerResolution resolution : resolutions) {
 			if (!(resolution instanceof MultiFixResolution)) { // To avoid infinite loop
 				resolution.run(marker);
 				break;

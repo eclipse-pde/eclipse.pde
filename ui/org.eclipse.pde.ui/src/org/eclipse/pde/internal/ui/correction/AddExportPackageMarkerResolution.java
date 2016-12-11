@@ -53,9 +53,9 @@ public class AddExportPackageMarkerResolution extends AbstractManifestMarkerReso
 		if (filter == null)
 			filter = IOrganizeManifestsSettings.VALUE_DEFAULT_FILTER;
 		Pattern pat = PatternConstructor.createPattern(filter, false);
-		for (int i = 0; i < packages.length; i++) {
-			ExportPackageObject obj = header.addPackage(packages[i]);
-			if (pat.matcher(packages[i]).matches())
+		for (String packageId : packages) {
+			ExportPackageObject obj = header.addPackage(packageId);
+			if (pat.matcher(packageId).matches())
 				obj.setInternal(true);
 		}
 	}

@@ -44,10 +44,11 @@ public class AddSourceBuildEntryResolution extends BuildEntryMarkerResolution {
 				unlistedOnly = false;
 			}
 			String[] unlisted = getSourcePaths(build, unlistedOnly);
-			for (int i = 0; i < unlisted.length; i++) {
-				if (unlisted[i] == null)
+			for (String token : unlisted) {
+				if (token == null){
 					break;
-				buildEntry.addToken(unlisted[i]);
+				}
+				buildEntry.addToken(token);
 			}
 		} catch (CoreException e) {
 		}
@@ -59,10 +60,13 @@ public class AddSourceBuildEntryResolution extends BuildEntryMarkerResolution {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				ArrayList<IBuildEntry> sourceEntries = new ArrayList<>();
 				IBuildEntry[] entries = build.getBuildEntries();
-				if (unlistedOnly)
-					for (int i = 0; i < entries.length; i++)
-						if (entries[i].getName().startsWith(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX))
-							sourceEntries.add(entries[i]);
+				if (unlistedOnly) {
+					for (IBuildEntry entry : entries) {
+						if (entry.getName().startsWith(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX)) {
+							sourceEntries.add(entry);
+						}
+					}
+				}
 
 				IJavaProject jp = JavaCore.create(project);
 				IClasspathEntry[] cpes = jp.getRawClasspath();

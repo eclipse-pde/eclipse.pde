@@ -131,9 +131,9 @@ public class JavaResolutionFactory {
 						base.getPluginBase().add(impt);
 					} else {
 						IPluginImport[] imports = base.getPluginBase().getImports();
-						for (int i = 0; i < imports.length; i++)
-							if (imports[i].getId().equals(pluginId))
-								base.getPluginBase().remove(imports[i]);
+						for (IPluginImport pluginImport : imports)
+							if (pluginImport.getId().equals(pluginId))
+								base.getPluginBase().remove(pluginImport);
 					}
 				}
 			}, new NullProgressMonitor());
@@ -169,9 +169,9 @@ public class JavaResolutionFactory {
 		@Override
 		public Object getModifiedElement() {
 			IFile[] files = new IFile[] {PDEProject.getManifest(getProject()), PDEProject.getPluginXml(getProject())};
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].exists())
-					return files[i];
+			for (IFile file : files) {
+				if (file.exists())
+					return file;
 			}
 			return super.getModifiedElement();
 		}

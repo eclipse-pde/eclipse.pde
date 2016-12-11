@@ -38,8 +38,8 @@ public class ReplaceBuildEntryResolution extends BuildEntryMarkerResolution {
 				build.remove(buildEntry);
 			else {
 				String[] tokens = buildEntry.getTokens();
-				for (int i = 0; i < tokens.length; i++) {
-					buildEntry.removeToken(tokens[i]);
+				for (String token : tokens) {
+					buildEntry.removeToken(token);
 				}
 				buildEntry.addToken(fToken);
 			}

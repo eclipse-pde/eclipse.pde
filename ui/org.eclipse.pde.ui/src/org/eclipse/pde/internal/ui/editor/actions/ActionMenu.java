@@ -23,8 +23,8 @@ public class ActionMenu extends Action implements IMenuCreator {
 
 	public ActionMenu(LauncherAction[] actions) {
 		fActions = new LinkedList<>();
-		for (int i = 0; i < actions.length; i++) {
-			fActions.add(actions[i]);
+		for (LauncherAction action : actions) {
+			fActions.add(action);
 		}
 		if (!fActions.isEmpty()) {
 			setToolTipText(fActions.get(0).getToolTipText());
@@ -53,8 +53,8 @@ public class ActionMenu extends Action implements IMenuCreator {
 		if (fMenu != null)
 			fMenu.dispose();
 		fMenu = new Menu(parent);
-		for (Iterator<LauncherAction> iterator = fActions.iterator(); iterator.hasNext();) {
-			ActionContributionItem item = new ActionContributionItem(iterator.next());
+		for (LauncherAction action : fActions) {
+			ActionContributionItem item = new ActionContributionItem(action);
 			item.fill(fMenu, -1);
 		}
 		return fMenu;

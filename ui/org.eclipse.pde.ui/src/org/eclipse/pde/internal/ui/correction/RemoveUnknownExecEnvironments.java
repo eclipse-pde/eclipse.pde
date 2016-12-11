@@ -30,16 +30,16 @@ public class RemoveUnknownExecEnvironments extends AbstractManifestMarkerResolut
 			RequiredExecutionEnvironmentHeader reqHeader = (RequiredExecutionEnvironmentHeader) header;
 			ExecutionEnvironment[] bundleEnvs = reqHeader.getEnvironments();
 			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-			for (int i = 0; i < bundleEnvs.length; i++) {
+			for (ExecutionEnvironment bundleEnv : bundleEnvs) {
 				boolean found = false;
-				for (int j = 0; j < systemEnvs.length; j++) {
-					if (bundleEnvs[i].getName().equals(systemEnvs[j].getId())) {
+				for (IExecutionEnvironment systemEnv : systemEnvs) {
+					if (bundleEnv.getName().equals(systemEnv.getId())) {
 						found = true;
 						break;
 					}
 				}
 				if (!found)
-					reqHeader.removeExecutionEnvironment(bundleEnvs[i]);
+					reqHeader.removeExecutionEnvironment(bundleEnv);
 			}
 		}
 	}

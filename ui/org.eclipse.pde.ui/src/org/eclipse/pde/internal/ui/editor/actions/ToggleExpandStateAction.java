@@ -81,11 +81,10 @@ public class ToggleExpandStateAction extends Action {
 	 */
 	protected boolean traverseStateChangeRequired(TreeItem[] items) {
 		if (items != null) {
-			for (int i = 0; i < items.length; i++) {
-				TreeItem treeItem = items[i];
-				TreeItem[] children = treeItem.getItems();
+			for (TreeItem item : items) {
+				TreeItem[] children = item.getItems();
 				if (children.length > 0) {
-					if (treeItem.getExpanded()) {
+					if (item.getExpanded()) {
 						if (traverseStateChangeRequired(children)) {
 							return true;
 						}
@@ -106,8 +105,8 @@ public class ToggleExpandStateAction extends Action {
 	 * @param items tree items to be expand with their children
 	 */
 	private void traverseChildrenAndSetExpanded(TreeItem[] items) {
-		for (int i = 0; i < items.length; i++) {
-			TreeItem treeItem = items[i];
+		for (TreeItem item : items) {
+			TreeItem treeItem = item;
 			TreeItem[] children = treeItem.getItems();
 			int extensionsChildCount = getExtensionsChildCount((IPluginParent) treeItem.getData());
 			boolean furtherExpanding = !(extensionsChildCount > 1 && (!treeItem.getExpanded()));
@@ -138,8 +137,7 @@ public class ToggleExpandStateAction extends Action {
 	 * @param children list of elements to be expand with their children
 	 */
 	private void expandChildrenElements(Object[] children, boolean fullExpand) {
-		for (int i = 0; i < children.length; i++) {
-			Object child = children[i];
+		for (Object child : children) {
 			if (child instanceof PluginParentNode) {
 				PluginParentNode node = (PluginParentNode) child;
 				if (node.getChildCount() > 0 && fullExpand) {
