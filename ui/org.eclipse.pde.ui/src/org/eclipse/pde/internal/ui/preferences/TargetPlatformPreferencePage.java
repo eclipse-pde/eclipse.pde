@@ -83,8 +83,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			if (fTextFont == null) {
 				Font dialogFont = JFaceResources.getDialogFont();
 				FontData[] fontData = dialogFont.getFontData();
-				for (int i = 0; i < fontData.length; i++) {
-					FontData data = fontData[i];
+				for (FontData data : fontData) {
 					data.setStyle(SWT.BOLD);
 				}
 				Display display = getShell().getDisplay();
@@ -462,13 +461,13 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		ITargetPlatformService service = getTargetService();
 		if (service != null) {
 			ITargetHandle[] targets = service.getTargets(null);
-			for (int i = 0; i < targets.length; i++) {
+			for (ITargetHandle target : targets) {
 				try {
-					fTargets.add(targets[i].getTargetDefinition());
+					fTargets.add(target.getTargetDefinition());
 				} catch (CoreException e) {
-					if (targets[i] instanceof WorkspaceFileTargetHandle) {
+					if (target instanceof WorkspaceFileTargetHandle) {
 						setErrorMessage(e.getMessage() + " " //$NON-NLS-1$
-								+ ((WorkspaceFileTargetHandle) targets[i]).getTargetFile().getFullPath());
+								+ ((WorkspaceFileTargetHandle) target).getTargetFile().getFullPath());
 					}
 					else
 						setErrorMessage(e.getMessage());
@@ -708,8 +707,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 			// If we are going to remove a workspace file, prompt to ask the user first
 			boolean isWorkspace = false;
-			for (Iterator<ITargetDefinition> iterator = selected.iterator(); iterator.hasNext();) {
-				ITargetDefinition currentTarget = iterator.next();
+			for (ITargetDefinition currentTarget : selected) {
 				if (currentTarget.getHandle() instanceof WorkspaceFileTargetHandle) {
 					isWorkspace = true;
 					break;
@@ -978,8 +976,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 							TargetBundle[] bundles;
 							bundles = fActiveTarget.getAllBundles();
 							if (bundles != null) {
-								for (int index = 0; index < bundles.length; index++) {
-									BundleInfo bundleInfo = bundles[index].getBundleInfo();
+								for (TargetBundle bundle : bundles) {
+									BundleInfo bundleInfo = bundle.getBundleInfo();
 									if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(bundleInfo.getSymbolicName())) {
 										// Ignore the qualifier when comparing (otherwise N builds always newer than I builds)
 										Version bundleVersion = Version.parseVersion(bundleInfo.getVersion());

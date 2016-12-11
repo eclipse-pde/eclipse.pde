@@ -345,8 +345,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			fOldProjectSettings = null;
 		} else {
 			fOldProjectSettings = new IdentityHashMap<>();
-			for (int i = 0; i < fgAllKeys.length; i++) {
-				fOldProjectSettings.put(fgAllKeys[i], fgAllKeys[i].getStoredValue(fLookupOrder, false, fManager));
+			for (Key key : fgAllKeys) {
+				fOldProjectSettings.put(key, key.getStoredValue(fLookupOrder, false, fManager));
 			}
 		}
 		//make it load so we have access to the pde preferences initialized via pde core preferences
@@ -361,8 +361,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	public boolean hasProjectSpecificSettings(IProject project) {
 		if (project != null) {
 			IScopeContext projectContext = new ProjectScope(project);
-			for (int i = 0; i < fgAllKeys.length; i++) {
-				if (fgAllKeys[i].getStoredValue(projectContext, fManager) != null) {
+			for (Key key : fgAllKeys) {
+				if (key.getStoredValue(projectContext, fManager) != null) {
 					return true;
 				}
 			}
@@ -378,18 +378,18 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		boolean disabled = fOldProjectSettings == null;
 		if (enable != disabled && fProject != null) {
 			if (enable) {
-				for (int i = 0; i < fgAllKeys.length; i++) {
-					fgAllKeys[i].setStoredValue(fLookupOrder[0], fOldProjectSettings.get(fgAllKeys[i]), fManager);
+				for (Key key : fgAllKeys) {
+					key.setStoredValue(fLookupOrder[0], fOldProjectSettings.get(key), fManager);
 				}
 				fOldProjectSettings = null;
 				updateControls();
 			} else {
 				fOldProjectSettings = new IdentityHashMap<>();
 				String old = null;
-				for (int i = 0; i < fgAllKeys.length; i++) {
-					old = fgAllKeys[i].getStoredValue(fLookupOrder, false, fManager);
-					fOldProjectSettings.put(fgAllKeys[i], old);
-					fgAllKeys[i].setStoredValue(fLookupOrder[0], null, fManager);
+				for (Key key : fgAllKeys) {
+					old = key.getStoredValue(fLookupOrder, false, fManager);
+					fOldProjectSettings.put(key, old);
+					key.setStoredValue(fLookupOrder[0], null, fManager);
 				}
 			}
 		}
@@ -405,13 +405,13 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private void updateControls() {
 		HashSet<?> controls = null;
 		Control control = null;
-		for (Iterator<Integer> iter = fControlMap.keySet().iterator(); iter.hasNext();) {
-			controls = fControlMap.get(iter.next());
+		for (Integer key : fControlMap.keySet()) {
+			controls = fControlMap.get(key);
 			if (controls == null) {
 				continue;
 			}
-			for (Iterator<?> iter2 = controls.iterator(); iter2.hasNext();) {
-				control = (Control) iter2.next();
+			for (Object controlObject : controls) {
+				control = (Control) controlObject;
 				if (control instanceof Combo) {
 					Combo combo = (Combo) control;
 					ControlData data = (ControlData) combo.getData();
@@ -446,8 +446,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		if (ctrl instanceof Composite) {
 			Composite comp = (Composite) ctrl;
 			Control[] children = comp.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				enableControl(children[i], enabled);
+			for (Control child : children) {
+				enableControl(child, enabled);
 			}
 		}
 	}
@@ -786,8 +786,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		Key key = null;
 		String origval = null, newval = null;
 		boolean complete = fOldProjectSettings == null && fProject != null;
-		for (int i = 0; i < fgAllKeys.length; i++) {
-			key = fgAllKeys[i];
+		for (Key fgKey : fgAllKeys) {
+			key = fgKey;
 			origval = key.getStoredValue(context, null);
 			newval = key.getStoredValue(context, fManager);
 			if (newval == null) {
@@ -815,9 +815,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 */
 	public void performDefaults() {
 		String defval = null;
-		for (int i = 0; i < fgAllKeys.length; i++) {
-			defval = fgAllKeys[i].getStoredValue(fLookupOrder, true, fManager);
-			fgAllKeys[i].setStoredValue(fLookupOrder[0], defval, fManager);
+		for (Key key : fgAllKeys) {
+			defval = key.getStoredValue(fLookupOrder, true, fManager);
+			key.setStoredValue(fLookupOrder[0], defval, fManager);
 		}
 		updateControls();
 		fDirty = true;
@@ -904,9 +904,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 						projects = new IProject[] {fProject};
 					}
 					SubMonitor subMonitor = SubMonitor.convert(monitor, projects.length * 2);
-					for (int i = 0; i < projects.length; i++) {
+					for (IProject project : projects) {
 						SubMonitor iterationMonitor = subMonitor.split(2).setWorkRemaining(2);
-						IProject projectToBuild = projects[i];
+						IProject projectToBuild = project;
 						if (!projectToBuild.isOpen())
 							continue;
 						if (projectToBuild.hasNature(PDE.PLUGIN_NATURE)) {

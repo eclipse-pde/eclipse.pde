@@ -61,8 +61,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 				IJavaProject jProject = JavaCore.create(project);
 				list.add(jProject.getOutputLocation().toString());
 				IClasspathEntry[] entries = jProject.getRawClasspath();
-				for (int i = 0; i < entries.length; i++) {
-					IClasspathEntry entry = entries[i];
+				for (IClasspathEntry entry : entries) {
 					if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE && entry.getContentKind() == IPackageFragmentRoot.K_SOURCE) {
 						IPath path = entry.getOutputLocation();
 						if (path != null)

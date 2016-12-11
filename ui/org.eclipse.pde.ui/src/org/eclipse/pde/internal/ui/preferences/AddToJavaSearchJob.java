@@ -131,8 +131,8 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 			TargetBundle[] bundles = fTargetDefinition.getBundles();
 			fAdd = true;
 			List<IPluginModelBase> models = new ArrayList<>(bundles.length);
-			for (int index = 0; index < bundles.length; index++) {
-				IPluginModelBase model = PluginRegistry.findModel(bundles[index].getBundleInfo().getSymbolicName());
+			for (TargetBundle bundle : bundles) {
+				IPluginModelBase model = PluginRegistry.findModel(bundle.getBundleInfo().getSymbolicName());
 				if (model != null) {
 					models.add(model);
 				}

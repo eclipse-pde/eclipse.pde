@@ -46,8 +46,8 @@ public class TabFolderLayout extends Layout {
 		Rectangle rect = composite.getClientArea();
 
 		Control[] children = composite.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			children[i].setBounds(rect);
+		for (Control child : children) {
+			child.setBounds(rect);
 		}
 	}
 

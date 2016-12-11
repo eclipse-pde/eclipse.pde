@@ -74,11 +74,11 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 				try {
 					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
 					IProject project = null;
-					for (int i = 0; i < projects.length; i++) {
-						project = projects[i].getProject();
+					for (IJavaProject javaProject : projects) {
+						project = javaProject.getProject();
 						try {
 							if (project.hasNature(PDE.PLUGIN_NATURE) && fBlock.hasProjectSpecificSettings(project)) {
-								set.add(projects[i]);
+								set.add(javaProject);
 							}
 						} catch (CoreException ce) {
 							//do nothing ignore the project

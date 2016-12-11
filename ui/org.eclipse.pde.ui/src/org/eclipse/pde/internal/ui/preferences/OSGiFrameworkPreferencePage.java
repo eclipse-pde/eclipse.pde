@@ -72,8 +72,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 					if (this.font == null) {
 						Font dialogFont = JFaceResources.getDialogFont();
 						FontData[] fontData = dialogFont.getFontData();
-						for (int i = 0; i < fontData.length; i++) {
-							FontData data = fontData[i];
+						for (FontData data : fontData) {
 							data.setStyle(SWT.BOLD);
 						}
 						Display display = getControl().getShell().getDisplay();
