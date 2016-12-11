@@ -63,8 +63,8 @@ public abstract class PDEFormPage extends FormPage {
 		if (c instanceof Composite) {
 			Composite comp = (Composite) c;
 			Control[] children = comp.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				resetMenu(menu, children[i]);
+			for (Control child : children) {
+				resetMenu(menu, child);
 			}
 		}
 		Menu cmenu = c.getMenu();
@@ -97,13 +97,13 @@ public abstract class PDEFormPage extends FormPage {
 		}
 		//check to see if our form parts are contributing actions
 		IFormPart[] parts = managedForm.getParts();
-		for (int i = 0; i < parts.length; i++) {
-			if (parts[i] instanceof IAdaptable) {
-				IAdaptable adapter = (IAdaptable) parts[i];
+		for (IFormPart part : parts) {
+			if (part instanceof IAdaptable) {
+				IAdaptable adapter = (IAdaptable) part;
 				IAction[] actions = adapter.getAdapter(IAction[].class);
 				if (actions != null) {
-					for (int j = 0; j < actions.length; j++) {
-						form.getToolBarManager().add(actions[j]);
+					for (IAction action : actions) {
+						form.getToolBarManager().add(action);
 					}
 				}
 			}
@@ -253,8 +253,7 @@ public abstract class PDEFormPage extends FormPage {
 
 	public void cancelEdit() {
 		IFormPart[] parts = getManagedForm().getParts();
-		for (int i = 0; i < parts.length; i++) {
-			IFormPart part = parts[i];
+		for (IFormPart part : parts) {
 			if (part instanceof IContextPart)
 				((IContextPart) part).cancelEdit();
 		}
@@ -280,8 +279,7 @@ public abstract class PDEFormPage extends FormPage {
 	 */
 	public void addLastFocusListeners(Composite composite) {
 		Control[] controls = composite.getChildren();
-		for (int i = 0; i < controls.length; i++) {
-			Control control = controls[i];
+		for (Control control : controls) {
 			// Add a focus listener if the control is any one of the below types
 			// Note that the controls listed below represent all the controls
 			// currently in use by all form pages in PDE.  In the future,

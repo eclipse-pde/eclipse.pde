@@ -87,8 +87,8 @@ public class PDEEditorLaunchManager {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettingsSection(SETTINGS_SECTION);
 		String[] result = settings.getArray(SETTINGS_RECENT_LAUNCHES);
 		if (result != null) {
-			for (int i = 0; i < result.length; i++) {
-				recentLaunches.add(result[i]);
+			for (String resultString : result) {
+				recentLaunches.add(resultString);
 			}
 		}
 	}

@@ -94,9 +94,9 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 					// Have all toolbar items update their order
 					PDEEditorLaunchManager.getDefault().setRecentLaunch(getConfigurationElement().getAttribute("id")); //$NON-NLS-1$
 					List<String> updatedActionOrder = PDEEditorLaunchManager.getDefault().getRecentLaunches();
-					for (int j = 0; j < fToolbarActions.length; j++) {
-						if (fToolbarActions[j] != null) {
-							fToolbarActions[j].updateActionOrder(updatedActionOrder);
+					for (ActionMenu action : fToolbarActions) {
+						if (action != null) {
+							action.updateActionOrder(updatedActionOrder);
 						}
 					}
 				}
@@ -118,10 +118,10 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 	public void launch(String launcherID, String mode, Runnable preLaunch, Object launchObject) {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.debug.ui.launchShortcuts"); //$NON-NLS-1$
-		for (int i = 0; i < elements.length; i++) {
-			if (launcherID.equals(elements[i].getAttribute("id"))) { //$NON-NLS-1$
+		for (IConfigurationElement element : elements) {
+			if (launcherID.equals(element.getAttribute("id"))) { //$NON-NLS-1$
 				try {
-					ILaunchShortcut shortcut = (ILaunchShortcut) elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+					ILaunchShortcut shortcut = (ILaunchShortcut) element.createExecutableExtension("class"); //$NON-NLS-1$
 					preLaunch.run();
 					StructuredSelection selection = launchObject != null ? new StructuredSelection(launchObject) : StructuredSelection.EMPTY;
 					shortcut.launch(selection, mode);
@@ -147,30 +147,30 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 				String[] values = PDEProject.getLaunchShortcuts(project);
 				if (values != null) {
 					specificIds = new HashSet<>();
-					for (int i = 0; i < values.length; i++) {
-						specificIds.add(values[i]);
+					for (String value : values) {
+						specificIds.add(value);
 					}
 				}
 			}
 		}
-		for (int i = 0; i < elements.length; i++) {
-			String mode = elements[i].getAttribute("mode"); //$NON-NLS-1$
-			String id = elements[i].getAttribute("id"); //$NON-NLS-1$
-			String projectSpecific = elements[i].getAttribute("projectSpecific"); //$NON-NLS-1$
-			if (mode != null && elements[i].getAttribute("label") != null && id != null) { //$NON-NLS-1$
+		for (IConfigurationElement element : elements) {
+			String mode = element.getAttribute("mode"); //$NON-NLS-1$
+			String id = element.getAttribute("id"); //$NON-NLS-1$
+			String projectSpecific = element.getAttribute("projectSpecific"); //$NON-NLS-1$
+			if (mode != null && element.getAttribute("label") != null && id != null) { //$NON-NLS-1$
 				boolean include = false;
 				if (specificIds != null) {
 					include = specificIds.contains(id);
 				} else {
-					include = osgi == "true".equals(elements[i].getAttribute("osgi")) && !"true".equals(projectSpecific); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+					include = osgi == "true".equals(element.getAttribute("osgi")) && !"true".equals(projectSpecific); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 				}
 				if (include) {
 					if (mode.equals(ILaunchManager.RUN_MODE))
-						runList.add(elements[i]);
+						runList.add(element);
 					else if (mode.equals(ILaunchManager.DEBUG_MODE))
-						debugList.add(elements[i]);
+						debugList.add(element);
 					else if (mode.equals(ILaunchManager.PROFILE_MODE))
-						profileList.add(elements[i]);
+						profileList.add(element);
 				}
 			}
 		}

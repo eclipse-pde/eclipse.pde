@@ -131,8 +131,8 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		// equal
 		// Ensure the target is valid for a move operation and not redundant
 		// Meaning there is no effect of the move
-		for (int i = 0; i < sourceObjects.length; i++) {
-			if (targetObject.equals(sourceObjects[i])) {
+		for (Object sourceObject : sourceObjects) {
+			if (targetObject.equals(sourceObject)) {
 				// No source objects are allowed to be dropped on themselves for
 				// move operations
 				return false;

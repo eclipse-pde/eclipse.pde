@@ -80,17 +80,17 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 		StringBuffer buffer = new StringBuffer();
 		String indent = Short.toString(getIndent());
 
-		for (int i = 0; i < elements.length; i++) {
-			for (int j = 0; j < elements[i].length; j++) {
-				String mode = elements[i][j].getAttribute("mode"); //$NON-NLS-1$
+		for (IConfigurationElement[] element : elements) {
+			for (int j = 0; j < element.length; j++) {
+				String mode = element[j].getAttribute("mode"); //$NON-NLS-1$
 				buffer.append("<li style=\"image\" value=\""); //$NON-NLS-1$
 				buffer.append(mode);
 				buffer.append("\" bindent=\"" + indent + "\"><a href=\"launchShortcut."); //$NON-NLS-1$ //$NON-NLS-2$
 				buffer.append(mode);
 				buffer.append('.');
-				buffer.append(elements[i][j].getAttribute("id")); //$NON-NLS-1$
+				buffer.append(element[j].getAttribute("id")); //$NON-NLS-1$
 				buffer.append("\">"); //$NON-NLS-1$
-				buffer.append(elements[i][j].getAttribute("label")); //$NON-NLS-1$
+				buffer.append(element[j].getAttribute("label")); //$NON-NLS-1$
 				buffer.append("</a></li>"); //$NON-NLS-1$
 			}
 		}

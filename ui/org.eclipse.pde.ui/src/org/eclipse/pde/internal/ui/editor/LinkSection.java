@@ -105,16 +105,16 @@ public class LinkSection extends PDESection {
 	}
 
 	public void add(Object[] links) {
-		for (int i = 0; i < links.length; i++) {
-			createLink(links[i]);
+		for (Object link : links) {
+			createLink(link);
 		}
 		updateMoreState(linkContainer.getChildren().length > linkNumberLimit);
 		reflow();
 	}
 
 	public void remove(Object[] links) {
-		for (int i = 0; i < links.length; i++) {
-			disposeLink(links[i]);
+		for (Object link : links) {
+			disposeLink(link);
 		}
 		updateMoreState(linkContainer.getChildren().length > linkNumberLimit);
 		reflow();
@@ -128,8 +128,7 @@ public class LinkSection extends PDESection {
 
 	private Hyperlink find(Object object) {
 		Control[] children = linkContainer.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			Control child = children[i];
+		for (Control child : children) {
 			if (child.getData().equals(object))
 				return (Hyperlink) child;
 		}
@@ -137,8 +136,8 @@ public class LinkSection extends PDESection {
 	}
 
 	public void update(Object[] links) {
-		for (int i = 0; i < links.length; i++) {
-			update(links[i]);
+		for (Object link : links) {
+			update(link);
 		}
 		reflow();
 	}
@@ -164,8 +163,8 @@ public class LinkSection extends PDESection {
 	public void refresh() {
 		// dispose old links
 		Control[] children = linkContainer.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			children[i].dispose();
+		for (Control child : children) {
+			child.dispose();
 		}
 		createLinks();
 		reflow();

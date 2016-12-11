@@ -589,8 +589,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * @return Node the offset is in
 	 */
 	protected IDocumentRange findNode(Object[] nodes, int offset, boolean searchChildren) {
-		for (int i = 0; i < nodes.length; i++) {
-			IDocumentElementNode node = (IDocumentElementNode) nodes[i];
+		for (Object nodeObject : nodes) {
+			IDocumentElementNode node = (IDocumentElementNode) nodeObject;
 			if (node.getOffset() <= offset && offset < node.getOffset() + node.getLength()) {
 
 				if (!searchChildren)
@@ -601,9 +601,9 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 				IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 				if (attrs != null)
-					for (int a = 0; a < attrs.length; a++)
-						if (attrs[a].getNameOffset() <= offset && offset <= attrs[a].getValueOffset() + attrs[a].getValueLength())
-							return attrs[a];
+					for (IDocumentAttributeNode attr : attrs)
+						if (attr.getNameOffset() <= offset && offset <= attr.getValueOffset() + attr.getValueLength())
+							return attr;
 
 				IDocumentTextNode textNode = node.getTextNode();
 				if (textNode != null && textNode.getOffset() <= offset && offset < textNode.getOffset() + textNode.getLength())
@@ -611,9 +611,9 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 				IDocumentElementNode[] children = node.getChildNodes();
 				if (children != null)
-					for (int c = 0; c < children.length; c++)
-						if (children[c].getOffset() <= offset && offset < children[c].getOffset() + children[c].getLength())
-							return findNode(children[c], offset, searchChildren);
+					for (IDocumentElementNode child : children)
+						if (child.getOffset() <= offset && offset < child.getOffset() + child.getLength())
+							return findNode(child, offset, searchChildren);
 
 				// not contained inside any sub elements, must be inside node
 				return node;

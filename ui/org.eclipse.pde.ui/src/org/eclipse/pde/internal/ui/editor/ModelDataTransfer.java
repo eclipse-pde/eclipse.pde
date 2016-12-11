@@ -66,8 +66,8 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 			objectOut.writeInt(count);
 
 			//write each object
-			for (int i = 0; i < objects.length; i++) {
-				objectOut.writeObject(objects[i]);
+			for (Object object : objects) {
+				objectOut.writeObject(object);
 			}
 
 			//cleanup

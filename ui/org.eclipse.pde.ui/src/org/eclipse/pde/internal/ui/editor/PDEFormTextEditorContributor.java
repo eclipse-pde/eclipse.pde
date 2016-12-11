@@ -137,8 +137,8 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 			Map<?, ?> handlers = fSourceActionBars.getGlobalActionHandlers();
 			if (handlers != null) {
 				Set<?> keys = handlers.keySet();
-				for (Iterator<?> iter = keys.iterator(); iter.hasNext();) {
-					String id = (String) iter.next();
+				for (Object key : keys) {
+					String id = (String) key;
 					rootBars.setGlobalActionHandler(id, (IAction) handlers.get(id));
 				}
 			}

@@ -311,9 +311,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		if (invalidContexts.length == 0)
 			return null;
 		// If primary context is among the invalid ones, return that.
-		for (int i = 0; i < invalidContexts.length; i++) {
-			if (invalidContexts[i].isPrimary())
-				return invalidContexts[i].getId();
+		for (InputContext context : invalidContexts) {
+			if (context.isPrimary())
+				return context.getId();
 		}
 		// Return the first one
 		return invalidContexts[0].getId();
@@ -386,9 +386,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	private boolean doRevertSourcePages() {
 		boolean reverted = false;
 		IFormPage[] pages = getPages();
-		for (int i = 0; i < pages.length; i++) {
-			if (pages[i] instanceof PDESourcePage) {
-				PDESourcePage sourcePage = (PDESourcePage) pages[i];
+		for (IFormPage page : pages) {
+			if (page instanceof PDESourcePage) {
+				PDESourcePage sourcePage = (PDESourcePage) page;
 				// Flush any pending editor operations into the document
 				// so that the revert operation executes (revert operation is
 				// aborted if the current document has not changed)
@@ -423,9 +423,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		IManagedForm mForm = pages[getActivePage()].getManagedForm();
 		if (mForm != null)
 			mForm.commit(false);
-		for (int i = 0; i < pages.length; i++) {
-			if (pages[i] instanceof PDESourcePage) {
-				PDESourcePage sourcePage = (PDESourcePage) pages[i];
+		for (IFormPage page : pages) {
+			if (page instanceof PDESourcePage) {
+				PDESourcePage sourcePage = (PDESourcePage) page;
 				sourcePage.getInputContext().flushEditorInput();
 			}
 		}

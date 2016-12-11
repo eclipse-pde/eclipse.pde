@@ -144,10 +144,10 @@ public class EditorUtilities {
 	private static ValidationMessage getMS_icoImage(ImageData[] imagedata) {
 		int totalSizes = LauncherSection.F_WIN_ICON_DIMENSIONS.length;
 		boolean[] found = new boolean[totalSizes];
-		for (int i = 0; i < imagedata.length; i++) {
-			int width = imagedata[i].width;
-			int height = imagedata[i].height;
-			int depth = imagedata[i].depth;
+		for (ImageData data : imagedata) {
+			int width = data.width;
+			int height = data.height;
+			int depth = data.depth;
 			for (int w = 0; w < totalSizes; w++)
 				if (width == LauncherSection.F_WIN_ICON_DIMENSIONS[w][0] && height == LauncherSection.F_WIN_ICON_DIMENSIONS[w][1] && depth == LauncherSection.F_WIN_ICON_DEPTHS[w])
 					found[w] = true;

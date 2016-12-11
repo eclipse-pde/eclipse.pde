@@ -47,8 +47,7 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 		Annotation[] deletions = computeDifferences(model, currentRegions);
 
 		Map<ProjectionAnnotation, Position> additionsMap = new HashMap<>();
-		for (Iterator<Position> iter = currentRegions.iterator(); iter.hasNext();) {
-			Position position = iter.next();
+		for (Position position : currentRegions) {
 			additionsMap.put(new ProjectionAnnotation(false), position);
 		}
 

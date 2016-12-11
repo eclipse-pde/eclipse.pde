@@ -163,8 +163,7 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		boolean firstIteration = true;
 		Object[] sourceObjects = getSourceObjects();
 		// Serialize each source object to text
-		for (int i = 0; i < sourceObjects.length; i++) {
-			Object object = sourceObjects[i];
+		for (Object object : sourceObjects) {
 			if (object instanceof IWritable) {
 				if ((firstIteration == false) && (object instanceof IWritableDelimiter)) {
 					// Add a customized delimiter in between all serialized

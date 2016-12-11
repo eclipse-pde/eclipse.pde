@@ -27,15 +27,15 @@ public abstract class PDEDetailsSections extends PDEDetails {
 	public void createContents(Composite parent) {
 		sections = createSections(getPage(), parent);
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
-		for (int i = 0; i < sections.length; i++) {
-			getManagedForm().addPart(sections[i]);
+		for (PDESection section : sections) {
+			getManagedForm().addPart(section);
 		}
 	}
 
 	@Override
 	public void dispose() {
-		for (int i = 0; i < sections.length; i++) {
-			sections[i].dispose();
+		for (PDESection section : sections) {
+			section.dispose();
 		}
 	}
 
@@ -55,8 +55,8 @@ public abstract class PDEDetailsSections extends PDEDetails {
 
 	@Override
 	public boolean isDirty() {
-		for (int i = 0; i < sections.length; i++) {
-			if (sections[i].isDirty()) {
+		for (PDESection section : sections) {
+			if (section.isDirty()) {
 				return true;
 			}
 		}
@@ -70,8 +70,8 @@ public abstract class PDEDetailsSections extends PDEDetails {
 
 	@Override
 	public boolean isStale() {
-		for (int i = 0; i < sections.length; i++) {
-			if (sections[i].isStale()) {
+		for (PDESection section : sections) {
+			if (section.isStale()) {
 				return true;
 			}
 		}
