@@ -64,9 +64,9 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 			return;
 		}
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof ISchemaCompositor)
-				fDtdSection.updateDTDLabel(objects[i]);
+		for (Object object : objects) {
+			if (object instanceof ISchemaCompositor)
+				fDtdSection.updateDTDLabel(object);
 		}
 	}
 

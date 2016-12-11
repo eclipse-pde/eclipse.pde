@@ -122,12 +122,12 @@ public class SchemaIncludesSection extends TableSection {
 			return;
 		}
 		Object[] objects = e.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof ISchemaInclude) {
+		for (Object changedObject : objects) {
+			if (changedObject instanceof ISchemaInclude) {
 				if (changeType == IModelChangedEvent.INSERT) {
-					fViewer.add(objects[i]);
+					fViewer.add(changedObject);
 				} else if (changeType == IModelChangedEvent.REMOVE) {
-					fViewer.remove(objects[i]);
+					fViewer.remove(changedObject);
 				}
 			}
 		}
@@ -154,8 +154,8 @@ public class SchemaIncludesSection extends TableSection {
 		if (selection instanceof IStructuredSelection) {
 			selected = ((IStructuredSelection) selection).toArray();
 			Schema schema = (Schema) getSchema();
-			for (int i = 0; i < selected.length; i++) {
-				schema.removeInclude((ISchemaInclude) selected[i]);
+			for (Object selectedObject : selected) {
+				schema.removeInclude((ISchemaInclude) selectedObject);
 			}
 		}
 	}
@@ -221,8 +221,8 @@ public class SchemaIncludesSection extends TableSection {
 			return false;
 		boolean unlisted = true;
 		ISchemaInclude[] includes = getSchema().getIncludes();
-		for (int i = 0; i < includes.length; i++) {
-			if (includes[i].getLocation().equals(location)) {
+		for (ISchemaInclude include : includes) {
+			if (include.getLocation().equals(location)) {
 				unlisted = false;
 				break;
 			}

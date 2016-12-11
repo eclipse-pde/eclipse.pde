@@ -512,7 +512,7 @@ public class ElementSection extends TreeSection {
 			return;
 		}
 		Object[] objects = e.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
+		for (Object object : objects) {
 			Object obj = objects[0];
 			if (obj instanceof SchemaElementReference) {
 				fTreeViewer.refresh(((SchemaElementReference) obj).getCompositor());
@@ -692,8 +692,8 @@ public class ElementSection extends TreeSection {
 
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			Object obj = objects[i];
+		for (Object object : objects) {
+			Object obj = object;
 			if (obj instanceof ISchemaAttribute && target instanceof ISchemaAttribute) {
 				continue;
 			} else if (obj instanceof ISchemaObjectReference && target instanceof ISchemaCompositor) {
@@ -722,10 +722,10 @@ public class ElementSection extends TreeSection {
 				fireSelection(new StructuredSelection(element));
 			else {
 				ISchemaInclude[] includes = fSchema.getIncludes();
-				for (int i = 0; i < includes.length; i++) {
-					ISchema includedSchema = includes[i].getIncludedSchema();
+				for (ISchemaInclude include : includes) {
+					ISchema includedSchema = include.getIncludedSchema();
 					if (includedSchema != null && includedSchema.equals(schema)) {
-						String location = includes[i].getLocation();
+						String location = include.getLocation();
 						SchemaEditor.openToElement(new Path(location), element);
 						break;
 					}

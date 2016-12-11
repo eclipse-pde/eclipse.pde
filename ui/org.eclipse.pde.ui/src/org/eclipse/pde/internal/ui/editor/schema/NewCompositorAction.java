@@ -69,8 +69,8 @@ public class NewCompositorAction extends Action {
 				ISchemaCompositor oldComp = type.getCompositor();
 				if (oldComp != null) {
 					ISchemaObject[] oldChildren = oldComp.getChildren();
-					for (int i = 0; i < oldChildren.length; i++) {
-						compositor.addChild(oldChildren[i]);
+					for (ISchemaObject oldChild : oldChildren) {
+						compositor.addChild(oldChild);
 					}
 				}
 				type.setCompositor(compositor);

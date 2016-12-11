@@ -191,23 +191,21 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 		// cycle through all active plug-ins and their extension points
 		progressMonitor.beginTask(PDEUIMessages.FilteredSchemaAttributeSelectionDialog_searching, models.length);
-		for (int i = 0; i < models.length; i++) {
-			IPluginExtensionPoint[] points = models[i].getPluginBase().getExtensionPoints();
+		for (IPluginModelBase model : models) {
+			IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
 
-			for (int j = 0; j < points.length; j++) {
-				String pointID = IdUtil.getFullId(points[j], models[i]);
+			for (IPluginExtensionPoint point : points) {
+				String pointID = IdUtil.getFullId(point, model);
 
 				ISchema schema = registry.getSchema(pointID);
 				if (schema == null) // if we don't find a schema
 					continue;
 				ISchemaElement[] elements = schema.getElements();
 
-				for (int k = 0; k < elements.length; k++) {
-					ISchemaElement element = elements[k];
+				for (ISchemaElement element : elements) {
 					ISchemaAttribute[] attributes = element.getAttributes();
 
-					for (int l = 0; l < attributes.length; l++) {
-						ISchemaAttribute attribute = attributes[l];
+					for (ISchemaAttribute attribute : attributes) {
 						// only add attributes of the string kind and isn't translatable
 						if (attribute.getKind() == IMetaAttribute.STRING && ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND].equals(attribute.getType().getName()) && !attribute.isTranslatable())
 							contentProvider.add(attribute, itemsFilter);

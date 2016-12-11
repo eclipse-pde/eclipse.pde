@@ -241,8 +241,7 @@ public class DocSection extends PDESection {
 	private void createTabs() {
 		IDocumentSection[] sections = fSchema.getDocumentSections();
 		addTab(fSchema);
-		for (int i = 0; i < sections.length; i++) {
-			IDocumentSection section = sections[i];
+		for (IDocumentSection section : sections) {
 			addTab(section);
 		}
 	}

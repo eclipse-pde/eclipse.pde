@@ -68,9 +68,9 @@ public class NewClassCreationWizard extends JavaAttributeWizard {
 		IJavaProject javaProject = JavaCore.create(project);
 		IPackageFragmentRoot srcEntryDft = null;
 		IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
-		for (int i = 0; i < roots.length; i++) {
-			if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
-				srcEntryDft = roots[i];
+		for (IPackageFragmentRoot root : roots) {
+			if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+				srcEntryDft = root;
 				break;
 			}
 		}

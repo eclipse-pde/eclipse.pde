@@ -171,8 +171,8 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 						parent = parent.getParent();
 					ISchemaElement element = (ISchemaElement) parent;
 					ISchemaAttribute[] attributes = element.getAttributes();
-					for (int i = 0; i < attributes.length; i++) {
-						if (attributes[i] != fAttribute && attributes[i].getName().equalsIgnoreCase(fName.getValue())) {
+					for (ISchemaAttribute attribute : attributes) {
+						if (attribute != fAttribute && attribute.getName().equalsIgnoreCase(fName.getValue())) {
 							revert = true;
 							break;
 						}

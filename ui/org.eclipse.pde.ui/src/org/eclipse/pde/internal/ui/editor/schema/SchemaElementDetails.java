@@ -104,8 +104,8 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 					revert = true;
 				else {
 					ISchemaElement[] elements = fElement.getSchema().getElements();
-					for (int i = 0; i < elements.length; i++) {
-						if (elements[i] != fElement && elements[i].getName().equalsIgnoreCase(fName.getValue())) {
+					for (ISchemaElement element : elements) {
+						if (element != fElement && element.getName().equalsIgnoreCase(fName.getValue())) {
 							revert = true;
 							break;
 						}

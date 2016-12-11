@@ -129,8 +129,8 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 					java.util.List<ISchemaEnumeration> vres = new Vector<>();
 					if (res != null) {
 						ISchemaEnumeration[] currRes = res.getChildren();
-						for (int i = 0; i < currRes.length; i++) {
-							vres.add(currRes[i]);
+						for (ISchemaEnumeration currRe : currRes) {
+							vres.add(currRe);
 						}
 					}
 					vres.add(new SchemaEnumeration(getAttribute().getSchema(), text));
@@ -160,14 +160,14 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 				java.util.List<ISchemaEnumeration> vres = new Vector<>();
 				if (res != null) {
 					ISchemaEnumeration[] currRes = res.getChildren();
-					for (int i = 0; i < currRes.length; i++) {
+					for (ISchemaEnumeration currRe : currRes) {
 						boolean stays = true;
-						for (int j = 0; j < aselection.length; j++) {
-							if (currRes[i].equals(aselection[j]))
+						for (Object element : aselection) {
+							if (currRe.equals(element))
 								stays = false;
 						}
 						if (stays)
-							vres.add(currRes[i]);
+							vres.add(currRe);
 					}
 					res.setChildren(vres);
 					if (type instanceof SchemaSimpleType) {
