@@ -68,9 +68,7 @@ public class FeatureUndoManager extends ModelUndoManager {
 		IFeature feature = model.getFeature();
 
 		try {
-			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-
+			for (Object element : elements) {
 				if (element instanceof IFeaturePlugin) {
 					feature.addPlugins(new IFeaturePlugin[] {(IFeaturePlugin) element});
 				} else if (element instanceof IFeatureImport) {
@@ -88,9 +86,7 @@ public class FeatureUndoManager extends ModelUndoManager {
 		IFeature feature = model.getFeature();
 
 		try {
-			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-
+			for (Object element : elements) {
 				if (element instanceof IFeaturePlugin) {
 					feature.removePlugins(new IFeaturePlugin[] {(IFeaturePlugin) element});
 				} else if (element instanceof IFeatureImport) {

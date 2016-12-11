@@ -198,9 +198,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 				ArrayList<IFeatureModel> newModels = new ArrayList<>();
-				for (int i = 0; i < allModels.length; i++) {
-					if (canAdd(allModels[i]))
-						newModels.add(allModels[i]);
+				for (IFeatureModel model : allModels) {
+					if (canAdd(model))
+						newModels.add(model);
 				}
 				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fIncludesViewer.getTable().getShell(), candidateModels, true);
@@ -257,8 +257,8 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 		IFeatureChild[] features = feature.getIncludedFeatures();
 
-		for (int i = 0; i < features.length; i++) {
-			if (features[i].getId().equals(cfeature.getId()) && features[i].getVersion().equals(cfeature.getVersion()))
+		for (IFeatureChild featureChild : features) {
+			if (featureChild.getId().equals(cfeature.getId()) && featureChild.getVersion().equals(cfeature.getVersion()))
 				return false;
 		}
 		return true;
@@ -266,8 +266,8 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 	private static boolean isFeaturePatch(IFeature feature) {
 		IFeatureImport[] imports = feature.getImports();
-		for (int i = 0; i < imports.length; i++) {
-			if (imports[i].isPatch())
+		for (IFeatureImport featureImport : imports) {
+			if (featureImport.isPatch())
 				return true;
 		}
 		return false;
@@ -423,8 +423,8 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		IFeatureModel thisModel = (IFeatureModel) getPage().getModel();
 		if (thisModel == null)
 			return false;
-		for (int i = 0; i < models.length; i++) {
-			if (models[i] != thisModel) {
+		for (IFeatureModel model : models) {
+			if (model != thisModel) {
 				return true;
 			}
 		}
