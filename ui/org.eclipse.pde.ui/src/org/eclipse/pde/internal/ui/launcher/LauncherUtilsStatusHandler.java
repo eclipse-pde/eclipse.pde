@@ -72,8 +72,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 
 	private void selectWorkspaceField(ILaunchConfigurationDialog dialog) {
 		ILaunchConfigurationTab[] tabs = dialog.getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			ILaunchConfigurationTab tab = tabs[i];
+		for (ILaunchConfigurationTab tab : tabs) {
 			if (tab instanceof MainTab) {
 				MainTab mainTab = (MainTab) tab;
 				dialog.setActiveTab(mainTab);

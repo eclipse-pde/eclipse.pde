@@ -35,9 +35,9 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		PluginModelNameBuffer wBuffer = new PluginModelNameBuffer();
 		PluginModelNameBuffer tBuffer = new PluginModelNameBuffer();
 
-		for (int i = 0; i < selected.length; i++) {
-			if (selected[i] instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) selected[i];
+		for (Object selectedElement : selected) {
+			if (selectedElement instanceof IPluginModelBase) {
+				IPluginModelBase model = (IPluginModelBase) selectedElement;
 				if (model.getUnderlyingResource() == null) {
 					tBuffer.add(model);
 				} else {

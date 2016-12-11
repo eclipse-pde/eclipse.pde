@@ -45,8 +45,8 @@ public class JUnitProgramBlock extends ProgramBlock {
 		TreeSet<String> result = new TreeSet<>();
 		result.add(PDEUIMessages.JUnitProgramBlock_headless);
 		String[] appNames = super.getApplicationNames();
-		for (int i = 0; i < appNames.length; i++) {
-			result.add(appNames[i]);
+		for (String appName : appNames) {
+			result.add(appName);
 		}
 		return result.toArray(new String[result.size()]);
 	}

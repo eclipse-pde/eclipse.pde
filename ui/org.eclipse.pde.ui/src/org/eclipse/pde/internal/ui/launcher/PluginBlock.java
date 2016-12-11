@@ -147,17 +147,16 @@ public class PluginBlock extends AbstractPluginBlock {
 				// If this is the first time the table is enabled, default the checkstate to all workspace plug-ins
 				TreeSet<String> checkedWorkspace = new TreeSet<>();
 				IPluginModelBase[] workspaceModels = getWorkspaceModels();
-				for (int i = 0; i < workspaceModels.length; i++) {
-					String id = workspaceModels[i].getPluginBase().getId();
+				for (IPluginModelBase workspaceModel : workspaceModels) {
+					String id = workspaceModel.getPluginBase().getId();
 					if (id != null) {
-						wBuffer.add(workspaceModels[i]);
+						wBuffer.add(workspaceModel);
 						checkedWorkspace.add(id);
 					}
 				}
 
 				IPluginModelBase[] externalModels = getExternalModels();
-				for (int i = 0; i < externalModels.length; i++) {
-					IPluginModelBase model = externalModels[i];
+				for (IPluginModelBase model : externalModels) {
 					// If there is a workspace bundle with the same id, don't check the external version
 					if (!checkedWorkspace.contains(model.getPluginBase().getId()) && model.isEnabled()) {
 						tBuffer.add(model);
@@ -167,9 +166,9 @@ public class PluginBlock extends AbstractPluginBlock {
 			} else {
 				// If we have checked elements, save them to the config
 				Object[] selected = fPluginTreeViewer.getCheckedElements();
-				for (int i = 0; i < selected.length; i++) {
-					if (selected[i] instanceof IPluginModelBase) {
-						IPluginModelBase model = (IPluginModelBase) selected[i];
+				for (Object selectedElement : selected) {
+					if (selectedElement instanceof IPluginModelBase) {
+						IPluginModelBase model = (IPluginModelBase) selectedElement;
 						if (model.getUnderlyingResource() == null) {
 							tBuffer.add(model);
 						} else {
@@ -200,11 +199,11 @@ public class PluginBlock extends AbstractPluginBlock {
 		// Check that the application or product we are launching has its requirements included
 		try {
 			String[] requiredIds = RequirementHelper.getApplicationRequirements(fLaunchConfig);
-			for (int i = 0; i < requiredIds.length; i++) {
+			for (String requiredId : requiredIds) {
 				// see if launcher plugin is already included
-				IPluginModelBase base = findPlugin(requiredIds[i]);
+				IPluginModelBase base = findPlugin(requiredId);
 				if (base == null) {
-					base = PluginRegistry.findModel(requiredIds[i]);
+					base = PluginRegistry.findModel(requiredId);
 					if (base != null) {
 						fPluginTreeViewer.setChecked(base, true);
 					}

@@ -52,8 +52,7 @@ public class LaunchAction extends Action {
 		// TODO
 		fPluginConfigurations = new HashMap<>();
 		IPluginConfiguration[] configurations = fProduct.getPluginConfigurations();
-		for (int i = 0; i < configurations.length; i++) {
-			IPluginConfiguration config = configurations[i];
+		for (IPluginConfiguration config : configurations) {
 			fPluginConfigurations.put(config.getId(), config);
 		}
 	}
@@ -99,8 +98,7 @@ public class LaunchAction extends Action {
 		StringBuffer wsplugins = new StringBuffer();
 		StringBuffer explugins = new StringBuffer();
 		IPluginModelBase[] models = getModels();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+		for (IPluginModelBase model : models) {
 			if (model.getUnderlyingResource() == null) {
 				appendBundle(explugins, model);
 			} else {
@@ -150,8 +148,7 @@ public class LaunchAction extends Action {
 		if (userArgs != null && userArgs.length() > 0) {
 			List<String> userArgsList = Arrays.asList(DebugPlugin.splitArguments(userArgs));
 			boolean previousHasSubArgument = false;
-			for (Iterator<String> iterator = userArgsList.iterator(); iterator.hasNext();) {
-				Object userArg = iterator.next();
+			for (String userArg : userArgsList) {
 				boolean hasSubArgument = userArg.toString().equals('-' + IEnvironment.P_OS) || userArg.toString().equals('-' + IEnvironment.P_WS);
 				hasSubArgument = hasSubArgument || userArg.toString().equals('-' + IEnvironment.P_ARCH) || userArg.toString().equals('-' + IEnvironment.P_NL);
 				if (!initialArgsList.contains(userArg) || hasSubArgument || previousHasSubArgument) {
@@ -178,9 +175,9 @@ public class LaunchAction extends Action {
 											// LaunchArgumentHelper
 		ArrayList<String> userArgsList = new ArrayList<>(
 				Arrays.asList(DebugPlugin.splitArguments(initialArgs.toString())));
-		for (int i = 0; i < progArguments.length; i++) {
-			int index1 = userArgsList.indexOf(progArguments[i]);
-			int index2 = userArgsList.lastIndexOf(progArguments[i]);
+		for (String progArgument : progArguments) {
+			int index1 = userArgsList.indexOf(progArgument);
+			int index2 = userArgsList.lastIndexOf(progArgument);
 			if (index1 != index2) {
 				String s1 = userArgsList.get(index1 + 1);
 				String s2 = userArgsList.get(index2 + 1);
@@ -219,13 +216,13 @@ public class LaunchAction extends Action {
 		Set<IPluginModelBase> launchPlugins = new HashSet<>();
 		if (fProduct.useFeatures()) {
 			IFeatureModel[] features = getUniqueFeatures();
-			for (int i = 0; i < features.length; i++) {
-				addFeaturePlugins(features[i].getFeature(), launchPlugins);
+			for (IFeatureModel feature : features) {
+				addFeaturePlugins(feature.getFeature(), launchPlugins);
 			}
 		} else {
 			IProductPlugin[] plugins = fProduct.getPlugins();
-			for (int i = 0; i < plugins.length; i++) {
-				String id = plugins[i].getId();
+			for (IProductPlugin plugin : plugins) {
+				String id = plugin.getId();
 				if (id == null)
 					continue;
 				IPluginModelBase model = PluginRegistry.findModel(id);
@@ -239,9 +236,9 @@ public class LaunchAction extends Action {
 	private IFeatureModel[] getUniqueFeatures() {
 		ArrayList<IFeatureModel> list = new ArrayList<>();
 		IProductFeature[] features = fProduct.getFeatures();
-		for (int i = 0; i < features.length; i++) {
-			String id = features[i].getId();
-			String version = features[i].getVersion();
+		for (IProductFeature feature : features) {
+			String id = feature.getId();
+			String version = feature.getVersion();
 			addFeatureAndChildren(id, version, list);
 		}
 		return list.toArray(new IFeatureModel[list.size()]);
@@ -256,16 +253,16 @@ public class LaunchAction extends Action {
 		list.add(model);
 
 		IFeatureChild[] children = model.getFeature().getIncludedFeatures();
-		for (int i = 0; i < children.length; i++) {
-			addFeatureAndChildren(children[i].getId(), children[i].getVersion(), list);
+		for (IFeatureChild element : children) {
+			addFeatureAndChildren(element.getId(), element.getVersion(), list);
 		}
 	}
 
 	private void addFeaturePlugins(IFeature feature, Set<IPluginModelBase> launchPlugins) {
 		IFeaturePlugin[] plugins = feature.getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			String id = plugins[i].getId();
-			String version = plugins[i].getVersion();
+		for (IFeaturePlugin plugin : plugins) {
+			String id = plugin.getId();
+			String version = plugin.getVersion();
 			if (id == null || version == null)
 				continue;
 			IPluginModelBase model = PluginRegistry.findModel(id, version, IMatchRules.EQUIVALENT, null);

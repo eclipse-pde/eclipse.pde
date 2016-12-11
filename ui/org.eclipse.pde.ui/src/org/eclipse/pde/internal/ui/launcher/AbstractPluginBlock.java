@@ -121,8 +121,7 @@ public abstract class AbstractPluginBlock {
 		public String toString() {
 			Collections.sort(nameList);
 			StringBuffer result = new StringBuffer();
-			for (Iterator<String> iterator = nameList.iterator(); iterator.hasNext();) {
-				String name = iterator.next();
+			for (String name : nameList) {
 				if (result.length() > 0)
 					result.append(',');
 				result.append(name);
@@ -278,9 +277,9 @@ public abstract class AbstractPluginBlock {
 		if (fWorkspaceModels == null) {
 			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 			ArrayList<IPluginModelBase> list = new ArrayList<>(models.length);
-			for (int i = 0; i < models.length; i++) {
-				if (models[i].getBundleDescription() != null) {
-					list.add(models[i]);
+			for (IPluginModelBase model : models) {
+				if (model.getBundleDescription() != null) {
+					list.add(model);
 				}
 			}
 			fWorkspaceModels = list.toArray(new IPluginModelBase[list.size()]);
@@ -404,8 +403,8 @@ public abstract class AbstractPluginBlock {
 				// It is not clear if this is the best approach, but it
 				// is hard to tell without user feedback.
 				TreeItem[] items = fPluginTreeViewer.getTree().getItems();
-				for (int i = 0; i < items.length; i++) {
-					if (event.getElement() == items[i].getData()) {
+				for (TreeItem item : items) {
+					if (event.getElement() == item.getData()) {
 						// If the even happens on the root of the tree
 						fFilterButton.setSelection(false);
 						handleFilterButton();
@@ -721,8 +720,7 @@ public abstract class AbstractPluginBlock {
 				TreeItem[] children = item.getItems();
 				if (children == null)
 					return;
-				for (int i = 0; i < children.length; i++) {
-					TreeItem childItem = children[i];
+				for (TreeItem childItem : children) {
 					Object child = childItem.getData();
 					if (child instanceof IPluginModelBase) {
 						resetText((IPluginModelBase) child);
@@ -747,8 +745,8 @@ public abstract class AbstractPluginBlock {
 		IWorkingSetSelectionDialog dialog = workingSetManager.createWorkingSetSelectionDialog(getShell(), true);
 		if (dialog.open() == Window.OK) {
 			String[] ids = getPluginIDs(dialog.getSelection());
-			for (int i = 0; i < ids.length; i++) {
-				IPluginModelBase model = PluginRegistry.findModel(ids[i]);
+			for (String id : ids) {
+				IPluginModelBase model = PluginRegistry.findModel(id);
 				if (model != null) {
 					if (!fPluginTreeViewer.getChecked(model)) {
 						setChecked(model, true);
@@ -770,10 +768,10 @@ public abstract class AbstractPluginBlock {
 
 	private String[] getPluginIDs(IWorkingSet[] workingSets) {
 		HashSet<String> set = new HashSet<>();
-		for (int i = 0; i < workingSets.length; i++) {
-			IAdaptable[] elements = workingSets[i].getElements();
-			for (int j = 0; j < elements.length; j++) {
-				Object element = elements[j];
+		for (IWorkingSet workingSet : workingSets) {
+			IAdaptable[] elements = workingSet.getElements();
+			for (IAdaptable element2 : elements) {
+				Object element = element2;
 				if (element instanceof PersistablePluginObject) {
 					set.add(((PersistablePluginObject) element).getPluginID());
 				} else {
@@ -822,9 +820,9 @@ public abstract class AbstractPluginBlock {
 	protected void addRequiredPlugins() {
 		Object[] checked = fPluginTreeViewer.getCheckedElements();
 		ArrayList<Object> toCheck = new ArrayList<>(checked.length);
-		for (int i = 0; i < checked.length; i++)
-			if (checked[i] instanceof IPluginModelBase)
-				toCheck.add(checked[i]);
+		for (Object checkedElement : checked)
+			if (checkedElement instanceof IPluginModelBase)
+				toCheck.add(checkedElement);
 
 		Set<?> additionalIds = DependencyManager.getDependencies(checked, fIncludeOptionalButton.getSelection(), null);
 
@@ -845,8 +843,8 @@ public abstract class AbstractPluginBlock {
 		setCheckedElements(checked);
 		fNumExternalChecked = 0;
 		fNumWorkspaceChecked = 0;
-		for (int i = 0; i < checked.length; i++) {
-			if (((IPluginModelBase) checked[i]).getUnderlyingResource() != null)
+		for (Object checkedElement : checked) {
+			if (((IPluginModelBase) checkedElement).getUnderlyingResource() != null)
 				fNumWorkspaceChecked += 1;
 			else
 				fNumExternalChecked += 1;
@@ -862,15 +860,15 @@ public abstract class AbstractPluginBlock {
 				return model;
 
 			IPluginModelBase[] models = entry.getWorkspaceModels();
-			for (int i = 0; i < models.length; i++) {
-				if (fPluginTreeViewer.getChecked(models[i]))
-					return models[i];
+			for (IPluginModelBase pluginModel : models) {
+				if (fPluginTreeViewer.getChecked(pluginModel))
+					return pluginModel;
 			}
 
 			models = entry.getExternalModels();
-			for (int i = 0; i < models.length; i++) {
-				if (fPluginTreeViewer.getChecked(models[i]))
-					return models[i];
+			for (IPluginModelBase pluginModel : models) {
+				if (fPluginTreeViewer.getChecked(pluginModel))
+					return pluginModel;
 			}
 			return null;
 		}
@@ -887,10 +885,9 @@ public abstract class AbstractPluginBlock {
 		Widget item = fPluginTreeViewer.testFindItem(group);
 		if (item instanceof TreeItem) {
 			TreeItem[] items = ((TreeItem) item).getItems();
-			for (int i = 0; i < items.length; i++) {
-				TreeItem child = items[i];
-				if (child.getChecked() == (child.getText(1).length() == 0)) {
-					Object model = items[i].getData();
+			for (TreeItem childItem : items) {
+				if (childItem.getChecked() == (childItem.getText(1).length() == 0)) {
+					Object model = childItem.getData();
 					if (model instanceof IPluginModelBase) {
 						resetText((IPluginModelBase) model);
 					}
@@ -963,8 +960,7 @@ public abstract class AbstractPluginBlock {
 
 		fNumExternalChecked = 0;
 		IPluginModelBase[] externalModels = getExternalModels();
-		for (int i = 0; i < externalModels.length; i++) {
-			IPluginModelBase model = externalModels[i];
+		for (IPluginModelBase model : externalModels) {
 			boolean masked = wtable.contains(model.getPluginBase().getId());
 			if (!masked && model.isEnabled()) {
 				fPluginTreeViewer.setChecked(model, true);
@@ -974,9 +970,9 @@ public abstract class AbstractPluginBlock {
 		adjustGroupState();
 
 		Object[] selected = fPluginTreeViewer.getCheckedElements();
-		for (int i = 0; i < selected.length; i++) {
-			if (selected[i] instanceof IPluginModelBase) {
-				resetText((IPluginModelBase) selected[i]);
+		for (Object selectedElement : selected) {
+			if (selectedElement instanceof IPluginModelBase) {
+				resetText((IPluginModelBase) selectedElement);
 			}
 		}
 	}

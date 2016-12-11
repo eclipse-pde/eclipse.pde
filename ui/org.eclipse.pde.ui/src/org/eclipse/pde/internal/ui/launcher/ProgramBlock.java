@@ -68,8 +68,7 @@ public class ProgramBlock {
 			String productValue = fProductCombo.getText();
 			String[] knownProducts = TargetPlatform.getProducts();
 			boolean found = false;
-			for (int i = 0; i < knownProducts.length; i++) {
-				String knownProduct = knownProducts[i];
+			for (String knownProduct : knownProducts) {
 				if (knownProduct.equals(productValue)) {
 					found = true;
 					break;

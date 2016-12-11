@@ -338,9 +338,9 @@ public class TracingBlock {
 		if (fTraceableModels == null) {
 			IPluginModelBase[] models = PluginRegistry.getActiveModels();
 			ArrayList<IPluginModelBase> result = new ArrayList<>();
-			for (int i = 0; i < models.length; i++) {
-				if (TracingOptionsManager.isTraceable(models[i]))
-					result.add(models[i]);
+			for (IPluginModelBase model : models) {
+				if (TracingOptionsManager.isTraceable(model))
+					result.add(model);
 			}
 			fTraceableModels = result.toArray(new IPluginModelBase[result.size()]);
 		}

@@ -91,8 +91,8 @@ public class OSGiFrameworkBlock {
 		label.setLayoutData(gd);
 
 		fLauncherCombo = new Combo(composite, SWT.READ_ONLY);
-		for (int i = 0; i < fConfigElements.length; i++)
-			fLauncherCombo.add(fConfigElements[i].getAttribute("name")); //$NON-NLS-1$
+		for (IConfigurationElement configElement : fConfigElements)
+			fLauncherCombo.add(configElement.getAttribute("name")); //$NON-NLS-1$
 		fLauncherCombo.addSelectionListener(fListener);
 
 		label = new Label(composite, SWT.NONE);

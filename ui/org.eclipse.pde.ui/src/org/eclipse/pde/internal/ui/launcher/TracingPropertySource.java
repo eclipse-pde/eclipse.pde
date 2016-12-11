@@ -237,8 +237,8 @@ public class TracingPropertySource {
 		parent.setLayout(layout);
 		boolean bordersNeeded = false;
 		Object[] sortedKeys = getSortedKeys(fTemplate.size());
-		for (int i = 0; i < sortedKeys.length; i++) {
-			String key = (String) sortedKeys[i];
+		for (Object keyObject : sortedKeys) {
+			String key = (String) keyObject;
 			IPath path = new Path(key);
 			path = path.removeFirstSegments(1);
 			String shortKey = path.toString();

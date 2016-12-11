@@ -238,14 +238,13 @@ class FilteredCheckboxTree extends FilteredTree {
 		public void setCheckedElements(Object[] elements) {
 			Set<Object> s = new HashSet<>(itemCache.keySet());
 			s.removeAll(new HashSet<>(Arrays.asList(elements)));
-			for (int i = 0; i < elements.length; i++) {
-				FilteredCheckboxTreeItem item = itemCache.get(elements[i]);
+			for (Object element : elements) {
+				FilteredCheckboxTreeItem item = itemCache.get(element);
 				if (item != null) {
 					item.state = CHECKED;
 				}
 			}
-			for (Iterator<Object> iterator = s.iterator(); iterator.hasNext();) {
-				Object object = iterator.next();
+			for (Object object : s) {
 				FilteredCheckboxTreeItem item = itemCache.get(object);
 				if (item != null) {
 					item.state = NONE;
@@ -262,8 +261,8 @@ class FilteredCheckboxTree extends FilteredTree {
 			if (item != null && filteredCheckboxTreeItem != null) {
 				filteredCheckboxTreeItem.state = newState;
 				TreeItem[] items = item.getItems();
-				for (int i = 0; i < items.length; i++) {
-					item = items[i];
+				for (TreeItem treeItem : items) {
+					item = treeItem;
 					if (item != null) {
 						filteredCheckboxTreeItem = itemCache.get(item.getData());
 						if (filteredCheckboxTreeItem != null) {
@@ -297,8 +296,7 @@ class FilteredCheckboxTree extends FilteredTree {
 
 			// Re-apply the checked state
 			ArrayList<TreeItem> allTreeItems = getAllTreeItems(treeViewer.getTree().getItems());
-			for (Iterator<TreeItem> iterator = allTreeItems.iterator(); iterator.hasNext();) {
-				TreeItem item = iterator.next();
+			for (TreeItem item : allTreeItems) {
 				doApplyCheckedState(item, item.getData());
 			}
 		}
@@ -310,8 +308,7 @@ class FilteredCheckboxTree extends FilteredTree {
 			boolean filtered = (text.length() > 0 && !initial);
 
 			// Notify anybody who is listening for the refresh
-			for (Iterator<PreRefreshNotifier> iterator = refreshingListeners.iterator(); iterator.hasNext();) {
-				PreRefreshNotifier notifier = iterator.next();
+			for (PreRefreshNotifier notifier : refreshingListeners) {
 				notifier.preRefresh(FilterableCheckboxTreeViewer.this, filtered);
 			}
 			saveCheckedState();
@@ -351,8 +348,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		 */
 		private ArrayList<TreeItem> getAllTreeItems(TreeItem[] roots) {
 			ArrayList<TreeItem> list = new ArrayList<>();
-			for (int i = 0; i < roots.length; i++) {
-				TreeItem item = roots[i];
+			for (TreeItem item : roots) {
 				list.add(item);
 				list.addAll(getAllTreeItems(item.getItems()));
 			}
@@ -364,8 +360,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		 */
 		private void saveCheckedState() {
 			TreeItem[] items = treeViewer.getTree().getItems();
-			for (int i = 0; i < items.length; i++) {
-				TreeItem item = items[i];
+			for (TreeItem item : items) {
 				if (!itemCache.containsKey(item.getData())) {
 					new FilteredCheckboxTreeItem(item.getData(), getItemState(item), itemCache, null);
 				}
@@ -380,8 +375,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		 */
 		private void saveCheckedState(FilteredCheckboxTreeItem parent, TreeItem parentItem) {
 			TreeItem[] items = parentItem.getItems();
-			for (int i = 0; i < items.length; i++) {
-				TreeItem item = items[i];
+			for (TreeItem item : items) {
 				if (!itemCache.containsKey(item.getData())) {
 					new FilteredCheckboxTreeItem(item.getData(), getItemState(item), itemCache, parent);
 				}
