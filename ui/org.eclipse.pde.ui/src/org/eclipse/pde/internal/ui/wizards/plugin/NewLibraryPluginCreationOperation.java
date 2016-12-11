@@ -80,11 +80,11 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 	private void adjustExportRoot(IProject project, IBundle bundle) throws CoreException {
 		IResource[] resources = project.members(false);
-		for (int j = 0; j < resources.length; j++) {
-			if (resources[j] instanceof IFile) {
-				if (".project".equals(resources[j].getName()) //$NON-NLS-1$
-						|| ".classpath".equals(resources[j] //$NON-NLS-1$
-								.getName()) || ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equals(resources[j].getName()) || ICoreConstants.BUILD_FILENAME_DESCRIPTOR.equals(resources[j].getName())) {
+		for (IResource resource : resources) {
+			if (resource instanceof IFile) {
+				if (".project".equals(resource.getName()) //$NON-NLS-1$
+						|| ".classpath".equals(resource
+								.getName()) || ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equals(resource.getName()) || ICoreConstants.BUILD_FILENAME_DESCRIPTOR.equals(resource.getName())) {
 					continue;
 				}
 				// resource at the root, export root
@@ -119,9 +119,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		IJavaProject currentProject = JavaCore.create(project);
 		IPluginModelBase[] pluginstoUpdate = fData.getPluginsToUpdate();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, pluginstoUpdate.length);
-		for (int i = 0; i < pluginstoUpdate.length; ++i) {
+		for (IPluginModelBase element : pluginstoUpdate) {
 			SubMonitor iterationMonitor = subMonitor.split(1).setWorkRemaining(2);
-			IProject proj = pluginstoUpdate[i].getUnderlyingResource().getProject();
+			IProject proj = element.getUnderlyingResource().getProject();
 			if (currentProject.getProject().equals(proj))
 				continue;
 			IJavaProject javaProject = JavaCore.create(proj);
@@ -132,7 +132,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			}
 			iterationMonitor.setWorkRemaining(1);
 			try {
-				updateRequiredPlugins(javaProject, iterationMonitor.split(1), pluginstoUpdate[i]);
+				updateRequiredPlugins(javaProject, iterationMonitor.split(1), element);
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			}
@@ -143,11 +143,11 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		IClasspathEntry[] entries = javaProject.getRawClasspath();
 		List<IClasspathEntry> classpath = new ArrayList<>();
 		List<IClasspathEntry> requiredProjects = new ArrayList<>();
-		for (int i = 0; i < entries.length; i++) {
-			if (isPluginProjectEntry(entries[i])) {
-				requiredProjects.add(entries[i]);
+		for (IClasspathEntry entry : entries) {
+			if (isPluginProjectEntry(entry)) {
+				requiredProjects.add(entry);
 			} else {
-				classpath.add(entries[i]);
+				classpath.add(entry);
 			}
 		}
 		if (requiredProjects.size() <= 0)
@@ -225,8 +225,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			}
 		}
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		for (int i = 0; i < cp.length; ++i) {
-			IClasspathEntry cpe = cp[i];
+		for (IClasspathEntry cpe : cp) {
 			switch (cpe.getEntryKind()) {
 				case IClasspathEntry.CPE_LIBRARY :
 					String path = null;
@@ -313,9 +312,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 		if (fData.isUnzipLibraries()) {
 			IResource[] resources = project.members(false);
-			for (int j = 0; j < resources.length; j++) {
-				String resourceName = resources[j].getName();
-				if (resources[j] instanceof IFolder) {
+			for (IResource resource : resources) {
+				String resourceName = resource.getName();
+				if (resource instanceof IFolder) {
 					if (!".settings".equals(resourceName) && !binEntry.contains(resourceName + "/")) //$NON-NLS-1$ //$NON-NLS-2$
 						binEntry.addToken(resourceName + "/"); //$NON-NLS-1$
 				} else {
@@ -330,8 +329,8 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			}
 		} else {
 			String[] libraryPaths = fData.getLibraryPaths();
-			for (int j = 0; j < libraryPaths.length; j++) {
-				File jarFile = new File(libraryPaths[j]);
+			for (String libraryPath : libraryPaths) {
+				File jarFile = new File(libraryPath);
 				String name = jarFile.getName();
 				if (!binEntry.contains(name))
 					binEntry.addToken(name);
@@ -412,8 +411,8 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			pluginBase.add(library);
 		} else {
 			String[] paths = fData.getLibraryPaths();
-			for (int i = 0; i < paths.length; i++) {
-				File jarFile = new File(paths[i]);
+			for (String path : paths) {
+				File jarFile = new File(path);
 				IPluginLibrary library = model.getPluginFactory().createLibrary();
 				library.setName(jarFile.getName());
 				library.setExported(true);
@@ -444,10 +443,10 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		try {
 			ManifestElement[] elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
 			HashMap<String, ArrayList<String>> map = new HashMap<>();
-			for (int i = 0; i < elems.length; i++) {
+			for (ManifestElement elem : elems) {
 				ArrayList<String> filter = new ArrayList<>();
 				filter.add("*"); //$NON-NLS-1$
-				map.put(elems[i].getValue(), filter);
+				map.put(elem.getValue(), filter);
 			}
 			Set<String> packages = getExports(project, map);
 			String pkgValue = getCommaValuesFromPackagesSet(packages, fData.getVersion());
@@ -480,12 +479,12 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			IBuildEntry libEntry = build.getEntry(SOURCE_PREFIX + libName);
 			if (libEntry != null) {
 				String[] tokens = libEntry.getTokens();
-				for (int i = 0; i < tokens.length; i++) {
+				for (String token : tokens) {
 					IResource folder = null;
-					if (tokens[i].equals(".")) //$NON-NLS-1$
+					if (token.equals(".")) //$NON-NLS-1$
 						folder = proj;
 					else
-						folder = proj.getFolder(tokens[i]);
+						folder = proj.getFolder(token);
 					if (folder != null)
 						addPackagesFromFragRoot(jp.getPackageFragmentRoot(folder), result, filter);
 				}
@@ -516,8 +515,8 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				return;
 			}
 			IJavaElement[] children = root.getChildren();
-			for (int j = 0; j < children.length; j++) {
-				IPackageFragment fragment = (IPackageFragment) children[j];
+			for (IJavaElement child : children) {
+				IPackageFragment fragment = (IPackageFragment) child;
 				String name = fragment.getElementName();
 				if (fragment.hasChildren() && !result.contains(name)) {
 					result.add(name);
@@ -564,10 +563,10 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 						while (!stack.isEmpty()) {
 							IContainer folder = (IContainer) stack.pop();
 							IResource[] children = folder.members();
-							for (int i = 0; i < children.length; i++) {
-								if (children[i] instanceof IContainer)
-									stack.push(children[i]);
-								else if ("class".equals(((IFile) children[i]).getFileExtension())) { //$NON-NLS-1$
+							for (IResource child : children) {
+								if (child instanceof IContainer)
+									stack.push(child);
+								else if ("class".equals(((IFile) child).getFileExtension())) { //$NON-NLS-1$
 									String path = folder.getProjectRelativePath().toString();
 									ignorePkgs.add(path.replace('/', '.'));
 								}

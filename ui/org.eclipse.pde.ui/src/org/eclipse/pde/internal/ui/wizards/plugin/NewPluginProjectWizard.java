@@ -168,11 +168,11 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		if (point == null)
 			return wizards;
 		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				if (elements[j].getName().equals(TAG_WIZARD)) {
-					WizardElement element = createWizardElement(elements[j]);
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (IConfigurationElement element2 : elements) {
+				if (element2.getName().equals(TAG_WIZARD)) {
+					WizardElement element = createWizardElement(element2);
 					if (element != null) {
 						wizards.add(element);
 					}

@@ -125,8 +125,8 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 
 	private void selectInitialTemplate() {
 		Object[] children = wizardElements.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			WizardElement welement = (WizardElement) children[i];
+		for (Object child : children) {
+			WizardElement welement = (WizardElement) child;
 			if (welement.getID().equals(getInitialTemplateId())) {
 				wizardSelectionViewer.setSelection(new StructuredSelection(welement), true);
 				setSelectedNode(createWizardNode(welement));

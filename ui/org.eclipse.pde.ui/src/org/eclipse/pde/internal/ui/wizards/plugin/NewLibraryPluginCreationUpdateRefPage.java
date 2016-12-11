@@ -122,9 +122,9 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		ArrayList<IPluginModelBase> modelArray = new ArrayList<>();
 		try {
-			for (int i = 0; i < models.length; i++) {
-				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
-					modelArray.add(models[i]);
+			for (IPluginModelBase model : models) {
+				if (model.getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
+					modelArray.add(model);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);

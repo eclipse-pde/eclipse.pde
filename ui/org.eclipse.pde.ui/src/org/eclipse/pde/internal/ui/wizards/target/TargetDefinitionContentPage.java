@@ -415,8 +415,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fOSChoices = new TreeSet<>();
 		String[] os = Platform.knownOSValues();
-		for (int i = 0; i < os.length; i++) {
-			fOSChoices.add(os[i]);
+		for (String osValue : os) {
+			fOSChoices.add(osValue);
 		}
 		String pref = node.get(ICoreConstants.OS_EXTRA, EMPTY_STRING);
 		if (!EMPTY_STRING.equals(pref)) {
@@ -425,8 +425,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fWSChoices = new TreeSet<>();
 		String[] ws = Platform.knownWSValues();
-		for (int i = 0; i < ws.length; i++) {
-			fWSChoices.add(ws[i]);
+		for (String wsValue : ws) {
+			fWSChoices.add(wsValue);
 		}
 		pref = node.get(ICoreConstants.WS_EXTRA, EMPTY_STRING);
 		if (!EMPTY_STRING.equals(pref)) {
@@ -435,8 +435,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fArchChoices = new TreeSet<>();
 		String[] arch = Platform.knownOSArchValues();
-		for (int i = 0; i < arch.length; i++) {
-			fArchChoices.add(arch[i]);
+		for (String archValue : arch) {
+			fArchChoices.add(archValue);
 		}
 		pref = node.get(ICoreConstants.ARCH_EXTRA, EMPTY_STRING);
 		if (!EMPTY_STRING.equals(pref)) {
@@ -445,8 +445,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fNLChoices = new TreeSet<>();
 		String[] nl = LocaleUtil.getLocales();
-		for (int i = 0; i < nl.length; i++) {
-			fNLChoices.add(nl[i]);
+		for (String localeValue : nl) {
+			fNLChoices.add(localeValue);
 		}
 		pref = node.get(ICoreConstants.NL_EXTRA, EMPTY_STRING);
 		if (!EMPTY_STRING.equals(pref)) {
@@ -513,8 +513,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fExecEnvChoices = new TreeSet<>();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (int i = 0; i < envs.length; i++)
-			fExecEnvChoices.add(envs[i].getId());
+		for (IExecutionEnvironment env : envs)
+			fExecEnvChoices.add(env.getId());
 	}
 
 	protected void updateJREWidgets() {
@@ -583,8 +583,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					String[] args = dialog.getSelectedArguments();
 					if (args != null && args.length > 0) {
 						StringBuffer resultBuffer = new StringBuffer();
-						for (int index = 0; index < args.length; ++index) {
-							resultBuffer.append(args[index] + " "); //$NON-NLS-1$
+						for (String arg : args) {
+							resultBuffer.append(arg + " "); //$NON-NLS-1$
 						}
 						fVMArgs.insert(resultBuffer.toString());
 					}
@@ -811,9 +811,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		bundles.addAll(Arrays.asList(getTargetDefinition().getImplicitDependencies()));
 		Object[] removeBundles = ((IStructuredSelection) fElementViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {
-			for (int i = 0; i < removeBundles.length; i++) {
-				if (removeBundles[i] instanceof NameVersionDescriptor) {
-					bundles.remove(removeBundles[i]);
+			for (Object bundle : removeBundles) {
+				if (bundle instanceof NameVersionDescriptor) {
+					bundles.remove(bundle);
 				}
 			}
 			getTargetDefinition().setImplicitDependencies(bundles.toArray((new NameVersionDescriptor[bundles.size()])));

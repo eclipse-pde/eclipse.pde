@@ -195,8 +195,8 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		// Gather EEs
 		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
 		TreeSet<String> availableEEs = new TreeSet<>();
-		for (int i = 0; i < exeEnvs.length; i++) {
-			availableEEs.add(exeEnvs[i].getId());
+		for (IExecutionEnvironment exeEnv : exeEnvs) {
+			availableEEs.add(exeEnv.getId());
 		}
 		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
 

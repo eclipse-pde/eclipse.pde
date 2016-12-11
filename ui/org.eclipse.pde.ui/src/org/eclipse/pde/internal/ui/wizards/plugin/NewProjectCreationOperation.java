@@ -77,16 +77,16 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		// if libraries are exported, compute export package (173393)
 		IPluginLibrary[] libs = fModel.getPluginBase().getLibraries();
 		Set<String> packages = new TreeSet<>();
-		for (int i = 0; i < libs.length; i++) {
-			String[] filters = libs[i].getContentFilters();
+		for (IPluginLibrary lib : libs) {
+			String[] filters = lib.getContentFilters();
 			// if a library is fully exported, then export all source packages (since we don't know which source folders go with which library)
 			if (filters.length == 1 && filters[0].equals("**")) { //$NON-NLS-1$
 				addAllSourcePackages(project, packages);
 				break;
 			}
-			for (int j = 0; j < filters.length; j++) {
-				if (filters[j].endsWith(".*")) //$NON-NLS-1$
-					packages.add(filters[j].substring(0, filters[j].length() - 2));
+			for (String filter : filters) {
+				if (filter.endsWith(".*")) //$NON-NLS-1$
+					packages.add(filter.substring(0, filter.length() - 2));
 			}
 		}
 		if (!packages.isEmpty()) {
@@ -188,8 +188,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 
 		IPluginReference[] dependencies = getDependencies();
-		for (int i = 0; i < dependencies.length; i++) {
-			IPluginReference ref = dependencies[i];
+		for (IPluginReference ref : dependencies) {
 			IPluginImport iimport = fModel.getPluginFactory().createImport();
 			iimport.setId(ref.getId());
 			iimport.setVersion(ref.getVersion());
@@ -234,8 +233,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			if (fContentWizard != null) {
 				String[] newFiles = fContentWizard.getNewFiles();
 				if (newFiles != null)
-					for (int i = 0; i < newFiles.length; i++) {
-						if ("plugin.properties".equals(newFiles[i])) { //$NON-NLS-1$
+					for (String newFile : newFiles) {
+						if ("plugin.properties".equals(newFile)) { //$NON-NLS-1$
 							bundle.setHeader(Constants.BUNDLE_LOCALIZATION, "plugin"); //$NON-NLS-1$
 							break;
 						}
@@ -345,14 +344,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		TreeSet<String> set = new TreeSet<>();
 		if (fGenerator != null) {
 			String[] packages = fGenerator.getImportPackages();
-			for (int i = 0; i < packages.length; i++) {
-				set.add(packages[i]);
+			for (String pkg : packages) {
+				set.add(pkg);
 			}
 		}
 		if (fContentWizard instanceof IBundleContentWizard) {
 			String[] packages = ((IBundleContentWizard) fContentWizard).getImportPackages();
-			for (int i = 0; i < packages.length; i++) {
-				set.add(packages[i]);
+			for (String pkg : packages) {
+				set.add(pkg);
 			}
 		}
 		return set;
@@ -403,8 +402,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		ArrayList<IPluginReference> result = new ArrayList<>();
 		if (fGenerator != null) {
 			IPluginReference[] refs = fGenerator.getDependencies();
-			for (int i = 0; i < refs.length; i++) {
-				result.add(refs[i]);
+			for (IPluginReference ref : refs) {
+				result.add(ref);
 			}
 		}
 
@@ -524,17 +523,16 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		try {
 			IJavaProject javaProject = JavaCore.create(project);
 			IClasspathEntry[] classpath = javaProject.getRawClasspath();
-			for (int i = 0; i < classpath.length; i++) {
-				IClasspathEntry entry = classpath[i];
+			for (IClasspathEntry entry : classpath) {
 				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					IPath path = entry.getPath().removeFirstSegments(1);
 					if (path.segmentCount() > 0) {
 						IPackageFragmentRoot root = javaProject.getPackageFragmentRoot(project.getFolder(path));
 						IJavaElement[] children = root.getChildren();
-						for (int j = 0; j < children.length; j++) {
-							IPackageFragment frag = (IPackageFragment) children[j];
+						for (IJavaElement element : children) {
+							IPackageFragment frag = (IPackageFragment) element;
 							if (frag.getChildren().length > 0 || frag.getNonJavaResources().length > 0)
-								list.add(children[j].getElementName());
+								list.add(element.getElementName());
 						}
 					}
 				}

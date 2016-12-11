@@ -61,9 +61,9 @@ public class LibraryPluginJarsPage extends WizardPage {
 		if (res != null) {
 			String path = new File(res).getParent();
 			String[] fileNames = dialog.getFileNames();
-			for (int i = 0; i < fileNames.length; i++) {
-				File newJarFile = new File(path, fileNames[i]);
-				removeJar(fileNames[i]);
+			for (String fileName : fileNames) {
+				File newJarFile = new File(path, fileName);
+				removeJar(fileName);
 				fJarPaths.add(newJarFile);
 				fTableViewer.add(newJarFile);
 			}
@@ -85,8 +85,8 @@ public class LibraryPluginJarsPage extends WizardPage {
 
 		if (dialog.open() == Window.OK) {
 			Object[] files = dialog.getResult();
-			for (int i = 0; i < files.length; i++) {
-				IFile newJarFile = (IFile) files[i];
+			for (Object file : files) {
+				IFile newJarFile = (IFile) file;
 				removeJar(newJarFile.getName());
 				fJarPaths.add(newJarFile);
 				fTableViewer.add(newJarFile);

@@ -115,8 +115,8 @@ public class EditTargetDefinitionWizard extends Wizard {
 		}
 		fDefinition = workingCopy;
 		IWizardPage[] pages = getPages();
-		for (int i = 0; i < pages.length; i++) {
-			((TargetDefinitionPage) pages[i]).targetChanged(workingCopy);
+		for (IWizardPage page : pages) {
+			((TargetDefinitionPage) page).targetChanged(workingCopy);
 		}
 	}
 
