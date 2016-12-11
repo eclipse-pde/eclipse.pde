@@ -739,8 +739,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	private void loadExtensionWizards() {
 		fEditorWizards = new Hashtable<>();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.newExtension"); //$NON-NLS-1$
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			if (element.getName().equals("editorWizard")) { //$NON-NLS-1$
 				String pointId = element.getAttribute("point"); //$NON-NLS-1$
 				if (pointId == null)
@@ -878,8 +877,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				// enables adding extensions while tree is filtered
 				if (fFilteredTree.isFiltered()) {
 					Object[] inserted = event.getChangedObjects();
-					for (int i = 0; i < inserted.length; i++) {
-						fPatternFilter.addElement(inserted[i]);
+					for (Object insertedObject : inserted) {
+						fPatternFilter.addElement(insertedObject);
 					}
 					if (inserted.length == 1) {
 						fFilteredTree.getViewer().setSelection(new StructuredSelection(inserted[0]));
@@ -901,8 +900,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 					IPluginExtension[] extensions = ((IPluginBase) parent).getExtensions();
 					boolean found = false;
 					// search if there is at least another extension extending the same point than the one being removed
-					for (int i = 0; i < extensions.length; i++) {
-						String point = extensions[i].getPoint();
+					for (IPluginExtension extension : extensions) {
+						String point = extension.getPoint();
 						if (ext.getPoint().equals(point)) {
 							found = true;
 							break;
@@ -965,8 +964,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 					return null;
 				boolean valid = false;
 				// ensure the resource is an image
-				for (int i = 0; i < VALID_IMAGE_TYPES.length; i++) {
-					if (ext.equalsIgnoreCase(VALID_IMAGE_TYPES[i])) {
+				for (String imageType : VALID_IMAGE_TYPES) {
+					if (ext.equalsIgnoreCase(imageType)) {
 						valid = true;
 						break;
 					}
@@ -1029,8 +1028,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			if (labelAtt == null) {
 				// try some hard-coded attributes that
 				// are used frequently
-				for (int i = 0; i < COMMON_LABEL_ATTRIBUTES.length; i++) {
-					labelAtt = element.getAttribute(COMMON_LABEL_ATTRIBUTES[i]);
+				for (String labelAttribute : COMMON_LABEL_ATTRIBUTES) {
+					labelAtt = element.getAttribute(labelAttribute);
 					if (labelAtt != null && labelAtt.getValue().length() > 0)
 						break;
 				}
@@ -1127,10 +1126,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		// Ensure all the sourceObjects are either extensions or elements
 		boolean allExtensions = true;
 		boolean allElements = true;
-		for (int i = 0; i < sourceObjects.length; i++) {
-			if (sourceObjects[i] instanceof IPluginExtension) {
+		for (Object sourceObject : sourceObjects) {
+			if (sourceObject instanceof IPluginExtension) {
 				allElements = false;
-			} else if (sourceObjects[i] instanceof IPluginElement) {
+			} else if (sourceObject instanceof IPluginElement) {
 				allExtensions = false;
 			} else {
 				return false;
@@ -1210,8 +1209,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		// due to choice, sequence multiplicity constraints.  Even if source
 		// elements that are pasted violate multiplicity constraints the
 		// extensions builder will flag them with errors
-		for (int i = 0; i < sourceElements.length; i++) {
-			String sourceTagName = sourceElements[i].getName();
+		for (IPluginElement sourceElement : sourceElements) {
+			String sourceTagName = sourceElement.getName();
 			if (targetElementNameSet.contains(sourceTagName) == false) {
 				return false;
 			}
@@ -1278,9 +1277,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		IPluginBase pluginBase = model.getPluginBase();
 		try {
 			// Paste all source objects into the target object
-			for (int i = 0; i < sourceObjects.length; i++) {
-				Object sourceObject = sourceObjects[i];
-
+			for (Object sourceObject : sourceObjects) {
 				if ((sourceObject instanceof IPluginExtension) && (pluginBase instanceof IDocumentElementNode)) {
 					// Extension object
 					IDocumentElementNode extension = (IDocumentElementNode) sourceObject;
@@ -1452,8 +1449,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 								ExtensionsPatternFilter extensionsPatternFilter = ((ExtensionsPatternFilter) fFilteredTree.getPatternFilter());
 								fExtensionTree.collapseAll();
 								Object[] leafs = extensionsPatternFilter.getMatchingLeafsAsArray();
-								for (int i = 0; i < leafs.length; i++) {
-									fExtensionTree.expandToLevel(leafs[i], 0);
+								for (Object leaf : leafs) {
+									fExtensionTree.expandToLevel(leaf, 0);
 								}
 								if (selection != null && !(selection.isEmpty())) {
 									fExtensionTree.setSelection(selection, true);
@@ -2042,8 +2039,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 
 	private void reportMissingExtensionPointSchemas(IPluginBase pluginBase) {
 		IPluginExtension[] extensions = pluginBase.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IPluginExtension ext = extensions[i];
+		for (IPluginExtension ext : extensions) {
 			if (ext.getSchema() == null)
 				reportMissingExtensionPointSchema(ext.getPoint());
 		}

@@ -81,8 +81,7 @@ public class BundleInputContext extends UTF8InputContext {
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		if (objects != null) {
-			for (int i = 0; i < objects.length; i++) {
-				Object object = objects[i];
+			for (Object object : objects) {
 				if (object instanceof PDEManifestElement)
 					object = ((PDEManifestElement) object).getHeader();
 				else if (object instanceof PackageFriend)

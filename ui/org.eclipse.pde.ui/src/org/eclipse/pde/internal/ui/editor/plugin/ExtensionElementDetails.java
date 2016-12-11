@@ -90,8 +90,8 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			ISchemaAttribute atts[] = schemaElement.getAttributes();
 			if (isEditable()) {
 				// Compute horizontal span
-				for (int i = 0; i < atts.length; i++) {
-					if (atts[i].getKind() == IMetaAttribute.JAVA || atts[i].getKind() == IMetaAttribute.RESOURCE || atts[i].getKind() == IMetaAttribute.IDENTIFIER) {
+				for (ISchemaAttribute attribute : atts) {
+					if (attribute.getKind() == IMetaAttribute.JAVA || attribute.getKind() == IMetaAttribute.RESOURCE || attribute.getKind() == IMetaAttribute.IDENTIFIER) {
 						span = 3;
 						break;
 					}
@@ -99,14 +99,14 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			}
 			glayout.numColumns = span;
 			// Add required attributes first
-			for (int i = 0; i < atts.length; i++) {
-				if (atts[i].getUse() == ISchemaAttribute.REQUIRED)
-					rows.add(createAttributeRow(atts[i], client, toolkit, span));
+			for (ISchemaAttribute attribute : atts) {
+				if (attribute.getUse() == ISchemaAttribute.REQUIRED)
+					rows.add(createAttributeRow(attribute, client, toolkit, span));
 			}
 			// Add the non-required attributes
-			for (int i = 0; i < atts.length; i++) {
-				if (atts[i].getUse() != ISchemaAttribute.REQUIRED)
-					rows.add(createAttributeRow(atts[i], client, toolkit, span));
+			for (ISchemaAttribute attribute : atts) {
+				if (attribute.getUse() != ISchemaAttribute.REQUIRED)
+					rows.add(createAttributeRow(attribute, client, toolkit, span));
 			}
 			createSpacer(toolkit, client, span);
 		} else {

@@ -111,8 +111,8 @@ public class BundleSourcePage extends KeyValueSourcePage {
 				BundleModel model = (BundleModel) parent;
 				Map<?, ?> manifest = ((Bundle) model.getBundle()).getHeaders();
 				ArrayList<IDocumentKey> keys = new ArrayList<>();
-				for (Iterator<?> elements = manifest.keySet().iterator(); elements.hasNext();) {
-					IDocumentKey key = (IDocumentKey) manifest.get(elements.next());
+				for (Object manifestKey : manifest.keySet()) {
+					IDocumentKey key = (IDocumentKey) manifest.get(manifestKey);
 					if (key.getOffset() > -1)
 						keys.add(key);
 				}
@@ -277,8 +277,8 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		// Reset
 		resetTargetOutlineSelection();
 		// Search each manifest header
-		for (Iterator<?> elements = manifest.values().iterator(); elements.hasNext();) {
-			IDocumentRange node = (IDocumentRange) elements.next();
+		for (Object manifestVaue : manifest.values()) {
+			IDocumentRange node = (IDocumentRange) manifestVaue;
 			// Check to see if the parent is within range
 			if (isWithinCurrentRange(offset, node)) {
 				// Search the children of composite manifest headers first if
@@ -374,8 +374,8 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		IDocumentRange previousRange = null;
 		IDocumentRange currentRange = null;
 		// Process each element
-		for (int i = 0; i < elements.length; i++) {
-			currentElement = elements[i];
+		for (PDEManifestElement element : elements) {
+			currentElement = element;
 			// Find the range for the element
 			currentRange = getSpecificRange(model, headerName, currentElement.getValue());
 			// Determine whether the element is within range
@@ -445,10 +445,10 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			return null;
 		}
 		// Linearly search for the equivalent library object
-		for (int i = 0; i < libraries.length; i++) {
-			if (manifestElement.getValue().equals(libraries[i].getName())) {
+		for (IPluginLibrary library : libraries) {
+			if (manifestElement.getValue().equals(library.getName())) {
 				// Found
-				return libraries[i];
+				return library;
 			}
 		}
 		// None found

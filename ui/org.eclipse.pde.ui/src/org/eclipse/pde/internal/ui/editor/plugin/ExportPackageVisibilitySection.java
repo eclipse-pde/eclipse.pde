@@ -99,8 +99,8 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				if (!fBlockChanges) {
-					for (int i = 0; i < fSelectedObjects.length; i++) {
-						fSelectedObjects[i].setInternal(fInternalButton.getSelection());
+					for (ExportPackageObject selectedObject : fSelectedObjects) {
+						selectedObject.setInternal(fInternalButton.getSelection());
 					}
 					getTablePart().setButtonEnabled(ADD_INDEX, fInternalButton.getSelection());
 					getTablePart().setButtonEnabled(REMOVE_INDEX, fInternalButton.getSelection());
@@ -202,13 +202,13 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		}
 		// All source objects have to be package friend objects and not already
 		// be a friend of the selected export package object
-		for (int i = 0; i < sourceObjects.length; i++) {
+		for (Object sourceObject : sourceObjects) {
 			// Only package friends allowed
-			if ((sourceObjects[i] instanceof PackageFriend) == false) {
+			if ((sourceObject instanceof PackageFriend) == false) {
 				return false;
 			}
 			// No duplicate package friends allowed
-			PackageFriend friend = (PackageFriend) sourceObjects[i];
+			PackageFriend friend = (PackageFriend) sourceObject;
 			if (fSelectedObjects[0].hasFriend(friend.getName())) {
 				return false;
 			}
@@ -226,8 +226,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Paste all source objects
-		for (int i = 0; i < sourceObjects.length; i++) {
-			Object sourceObject = sourceObjects[i];
+		for (Object sourceObject : sourceObjects) {
 			if ((sourceObject instanceof PackageFriend) && isOneObjectSelected()) {
 				// Package friend object
 				PackageFriend friend = (PackageFriend) sourceObject;
@@ -260,10 +259,10 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
-			for (int i = 0; i < selected.length; i++) {
-				IPluginModelBase model = (IPluginModelBase) selected[i];
-				for (int j = 0; j < fSelectedObjects.length; j++) {
-					fSelectedObjects[j].addFriend(new PackageFriend(fSelectedObjects[j], model.getPluginBase().getId()));
+			for (Object selectedObject : selected) {
+				IPluginModelBase model = (IPluginModelBase) selectedObject;
+				for (ExportPackageObject fSelectedObject : fSelectedObjects) {
+					fSelectedObject.addFriend(new PackageFriend(fSelectedObject, model.getPluginBase().getId()));
 				}
 			}
 		}
@@ -272,19 +271,19 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	private IPluginModelBase[] getModels() {
 		ArrayList<IPluginModelBase> list = new ArrayList<>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels(true);
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
+		for (IPluginModelBase model : models) {
+			String id = model.getPluginBase().getId();
 			if (!fSelectedObjects[0].hasFriend(id))
-				list.add(models[i]);
+				list.add(model);
 		}
 		return list.toArray(new IPluginModelBase[list.size()]);
 	}
 
 	private void handleRemove() {
 		Object[] removed = ((IStructuredSelection) fFriendViewer.getSelection()).toArray();
-		for (int i = 0; i < removed.length; i++) {
-			for (int j = 0; j < fSelectedObjects.length; j++) {
-				fSelectedObjects[j].removeFriend((PackageFriend) removed[i]);
+		for (Object removedObject : removed) {
+			for (ExportPackageObject fSelectedObject : fSelectedObjects) {
+				fSelectedObject.removeFriend((PackageFriend) removedObject);
 			}
 		}
 	}

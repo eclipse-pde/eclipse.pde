@@ -111,8 +111,8 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 				if (entry != null) {
 					String[] tokens = entry.getTokens();
 					fAdditionalBundles = new Vector<>(tokens.length);
-					for (int i = 0; i < tokens.length; i++) {
-						fAdditionalBundles.add(tokens[i].trim());
+					for (String token : tokens) {
+						fAdditionalBundles.add(token.trim());
 					}
 					return fAdditionalBundles.toArray();
 				}
@@ -396,8 +396,8 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 					build.add(entry);
 				}
 				Object[] models = dialog.getResult();
-				for (int i = 0; i < models.length; i++) {
-					IPluginModel pmodel = (IPluginModel) models[i];
+				for (Object m : models) {
+					IPluginModel pmodel = (IPluginModel) m;
 					entry.addToken(pmodel.getPlugin().getId());
 				}
 				markDirty();
@@ -519,9 +519,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		HashSet<String> secondaryDepSet = null;
 		// Only String objects representing non-duplicate secondary
 		// dependencies can be pasted
-		for (int i = 0; i < sourceObjects.length; i++) {
+		for (Object sourceObject : sourceObjects) {
 			// Only String objects are allowed
-			if ((sourceObjects[i] instanceof String) == false) {
+			if ((sourceObject instanceof String) == false) {
 				return false;
 			}
 			// Get the current secondary dependencies and store them to
@@ -530,7 +530,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 				secondaryDepSet = createSecondaryDepSet();
 			}
 			// No duplicate secondary dependencies allowed
-			String secondaryDep = (String) sourceObjects[i];
+			String secondaryDep = (String) sourceObject;
 			if (secondaryDepSet.contains(secondaryDep)) {
 				return false;
 			}
@@ -561,8 +561,8 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			return secondaryDepSet;
 		}
 		// Add all token values to the dependencies set
-		for (int i = 0; i < tokens.length; i++) {
-			secondaryDepSet.add(tokens[i]);
+		for (String token : tokens) {
+			secondaryDepSet.add(token);
 		}
 		return secondaryDepSet;
 	}
@@ -581,8 +581,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 		try {
 			// Paste all source objects
-			for (int i = 0; i < sourceObjects.length; i++) {
-				Object sourceObject = sourceObjects[i];
+			for (Object sourceObject : sourceObjects) {
 				if (sourceObject instanceof String) {
 					// If the build entry is not defined, create one
 					if (entry == null) {

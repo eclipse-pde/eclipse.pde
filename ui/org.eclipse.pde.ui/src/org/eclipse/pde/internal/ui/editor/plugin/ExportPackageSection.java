@@ -168,9 +168,9 @@ public class ExportPackageSection extends TableSection {
 		// Only export package objects that represent existing package
 		// fragments within the Java project that this plugin.xml is stored
 		// can be pasted
-		for (int i = 0; i < sourceObjects.length; i++) {
+		for (Object sourceObject : sourceObjects) {
 			// Only export package objects are allowed
-			if ((sourceObjects[i] instanceof ExportPackageObject) == false) {
+			if ((sourceObject instanceof ExportPackageObject) == false) {
 				return false;
 			}
 			// Get the package fragments that are allowed and store them to
@@ -180,7 +180,7 @@ public class ExportPackageSection extends TableSection {
 			}
 			// Only export packages that are in the list of allowed package
 			// fragments are allowed
-			ExportPackageObject exportPackageObject = (ExportPackageObject) sourceObjects[i];
+			ExportPackageObject exportPackageObject = (ExportPackageObject) sourceObject;
 			if (currentPackageFragments.containsKey(exportPackageObject.getName()) == false) {
 				return false;
 			}
@@ -291,8 +291,7 @@ public class ExportPackageSection extends TableSection {
 		// Get the bundle
 		IBundle bundle = model.getBundle();
 		// Paste all source objects
-		for (int i = 0; i < sourceObjects.length; i++) {
-			Object sourceObject = sourceObjects[i];
+		for (Object sourceObject : sourceObjects) {
 			if (sourceObject instanceof ExportPackageObject) {
 				ExportPackageObject exportPackageObject = (ExportPackageObject) sourceObject;
 				// Export package object
@@ -413,8 +412,8 @@ public class ExportPackageSection extends TableSection {
 			dialog.setTitle(PDEUIMessages.ExportPackageSection_props);
 		if (dialog.open() == Window.OK && isEditable()) {
 			String newVersion = dialog.getVersion();
-			for (int i = 0; i < selected.length; i++) {
-				ExportPackageObject object = (ExportPackageObject) selected[i];
+			for (Object selectedObject : selected) {
+				ExportPackageObject object = (ExportPackageObject) selectedObject;
 				if (!newVersion.equals(object.getVersion()))
 					object.setVersion(newVersion);
 			}
@@ -423,8 +422,8 @@ public class ExportPackageSection extends TableSection {
 
 	private void handleRemove() {
 		Object[] removed = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
-		for (int i = 0; i < removed.length; i++) {
-			fHeader.removePackage((PackageObject) removed[i]);
+		for (Object removedObject : removed) {
+			fHeader.removePackage((PackageObject) removedObject);
 		}
 	}
 
@@ -443,12 +442,12 @@ public class ExportPackageSection extends TableSection {
 						ArrayList<IPackageFragment> elements = new ArrayList<>();
 						ArrayList<IPackageFragment> conditional = new ArrayList<>();
 						IPackageFragment[] fragments = PDEJavaHelper.getPackageFragments(JavaCore.create(project), pckgs, allowJava);
-						for (int i = 0; i < fragments.length; i++) {
+						for (IPackageFragment fragment : fragments) {
 							try {
-								if (fragments[i].containsJavaResources()) {
-									elements.add(fragments[i]);
+								if (fragment.containsJavaResources()) {
+									elements.add(fragment);
 								} else {
-									conditional.add(fragments[i]);
+									conditional.add(fragment);
 								}
 							} catch (JavaModelException e) {
 							}
@@ -467,8 +466,8 @@ public class ExportPackageSection extends TableSection {
 				if (dialog.open() == Window.OK) {
 					Object[] selected = dialog.getResult();
 					if (fHeader != null) {
-						for (int i = 0; i < selected.length; i++) {
-							IPackageFragment candidate = (IPackageFragment) selected[i];
+						for (Object selectedObject : selected) {
+							IPackageFragment candidate = (IPackageFragment) selectedObject;
 							fHeader.addPackage(new ExportPackageObject(fHeader, candidate, getVersionAttribute()));
 						}
 					} else {
@@ -486,8 +485,8 @@ public class ExportPackageSection extends TableSection {
 
 	private String getValue(Object[] objects) {
 		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < objects.length; i++) {
-			IPackageFragment fragment = (IPackageFragment) objects[i];
+		for (Object object : objects) {
+			IPackageFragment fragment = (IPackageFragment) object;
 			if (buffer.length() > 0)
 				buffer.append("," + getLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append(fragment.getElementName());
@@ -518,9 +517,9 @@ public class ExportPackageSection extends TableSection {
 		}
 
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof ExportPackageObject) {
-				ExportPackageObject object = (ExportPackageObject) objects[i];
+		for (Object changedObject : objects) {
+			if (changedObject instanceof ExportPackageObject) {
+				ExportPackageObject object = (ExportPackageObject) changedObject;
 				switch (event.getChangeType()) {
 					case IModelChangedEvent.INSERT :
 						fPackageViewer.add(object);

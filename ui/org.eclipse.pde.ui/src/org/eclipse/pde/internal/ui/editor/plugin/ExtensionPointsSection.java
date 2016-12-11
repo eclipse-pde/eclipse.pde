@@ -241,11 +241,10 @@ public class ExtensionPointsSection extends TableSection {
 
 	private void handleDelete() {
 		Object[] selection = ((IStructuredSelection) pointTable.getSelection()).toArray();
-		for (int i = 0; i < selection.length; i++) {
-			Object object = selection[i];
-			if (object != null && object instanceof IPluginExtensionPoint) {
+		for (Object selectedObject : selection) {
+			if (selectedObject != null && selectedObject instanceof IPluginExtensionPoint) {
 				IStructuredSelection newSelection = null;
-				IPluginExtensionPoint ep = (IPluginExtensionPoint) object;
+				IPluginExtensionPoint ep = (IPluginExtensionPoint) selectedObject;
 				IPluginBase plugin = ep.getPluginBase();
 				IPluginExtensionPoint[] points = plugin.getExtensionPoints();
 				int index = getNewSelectionIndex(getArrayIndex(points, ep), points.length);
@@ -322,9 +321,7 @@ public class ExtensionPointsSection extends TableSection {
 			// Paste all source objects
 			// Since, the extension points are a flat non-hierarchical list,
 			// the target object is not needed
-			for (int i = 0; i < sourceObjects.length; i++) {
-				Object sourceObject = sourceObjects[i];
-
+			for (Object sourceObject : sourceObjects) {
 				if ((sourceObject instanceof IPluginExtensionPoint) && (pluginBase instanceof IDocumentElementNode)) {
 					// Extension point object
 					IDocumentElementNode extensionPoint = (IDocumentElementNode) sourceObject;
@@ -344,8 +341,8 @@ public class ExtensionPointsSection extends TableSection {
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		// All source objects must be extension points
 		// No restriction on duplicates
-		for (int i = 0; i < sourceObjects.length; i++) {
-			if ((sourceObjects[i] instanceof IPluginExtensionPoint) == false) {
+		for (Object sourceObject : sourceObjects) {
+			if ((sourceObject instanceof IPluginExtensionPoint) == false) {
 				return false;
 			}
 		}

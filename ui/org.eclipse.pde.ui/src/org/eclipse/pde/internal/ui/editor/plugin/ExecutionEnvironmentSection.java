@@ -307,12 +307,12 @@ public class ExecutionEnvironmentSection extends TableSection {
 		IManifestHeader header = getHeader();
 		if (header == null) {
 			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < result.length; i++) {
+			for (Object resultObject : result) {
 				String id = null;
-				if (result[i] instanceof IExecutionEnvironment)
-					id = ((IExecutionEnvironment) result[i]).getId();
-				else if (result[i] instanceof ExecutionEnvironment)
-					id = ((ExecutionEnvironment) result[i]).getName();
+				if (resultObject instanceof IExecutionEnvironment)
+					id = ((IExecutionEnvironment) resultObject).getId();
+				else if (resultObject instanceof ExecutionEnvironment)
+					id = ((ExecutionEnvironment) resultObject).getName();
 				else
 					continue;
 				if (buffer.length() > 0) {
@@ -356,11 +356,11 @@ public class ExecutionEnvironmentSection extends TableSection {
 			markStale();
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			Object[] objects = e.getChangedObjects();
-			for (int i = 0; i < objects.length; i++) {
+			for (Object object : objects) {
 				Table table = fEETable.getTable();
-				if (objects[i] instanceof ExecutionEnvironment) {
+				if (object instanceof ExecutionEnvironment) {
 					int index = table.getSelectionIndex();
-					fEETable.remove(objects[i]);
+					fEETable.remove(object);
 					if (canSelect()) {
 						table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
 					}
@@ -447,9 +447,9 @@ public class ExecutionEnvironmentSection extends TableSection {
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		RequiredExecutionEnvironmentHeader header = getHeader();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof ExecutionEnvironment) {
-				String env = ((ExecutionEnvironment) objects[i]).getName();
+		for (Object object : objects) {
+			if (object instanceof ExecutionEnvironment) {
+				String env = ((ExecutionEnvironment) object).getName();
 				if (header == null || !header.hasElement(env))
 					return true;
 			}
