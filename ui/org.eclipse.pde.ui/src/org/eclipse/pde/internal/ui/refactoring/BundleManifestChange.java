@@ -65,9 +65,9 @@ public class BundleManifestChange {
 			bundle.getModel().addModelChangedListener(listener);
 
 			ArrayList<PDEManifestElement> list = new ArrayList<>();
-			for (int i = 0; i < elements.length; i++) {
-				if (elements[i] instanceof IJavaElement) {
-					String packageName = ((IJavaElement) elements[i]).getElementName();
+			for (Object element : elements) {
+				if (element instanceof IJavaElement) {
+					String packageName = ((IJavaElement) element).getElementName();
 					PDEManifestElement export = removePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), packageName);
 					if (export != null)
 						list.add(export);

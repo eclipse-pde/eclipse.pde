@@ -363,24 +363,23 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 				PDEUIMessages.FilteredPluginArtifactsSelectionDialog_searching, models.length * 2 + fModels.length);
 
 		// cycle through all the features first
-		for (int i = 0; i < fModels.length; i++) {
-			contentProvider.add(fModels[i], itemsFilter);
+		for (IFeatureModel model : fModels) {
+			contentProvider.add(model, itemsFilter);
 			subMonitor.worked(1);
 		}
 
 		// cycle through all the models and grab entries
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+		for (IPluginModelBase model : models) {
 			IPluginExtensionPoint[] eps = model.getPluginBase().getExtensionPoints();
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			int length = eps.length + extensions.length;
 			SubMonitor subMonitor2 = subMonitor.split(1).setWorkRemaining(length);
-			for (int j = 0; j < eps.length; j++) {
-				contentProvider.add(eps[j], itemsFilter);
+			for (IPluginExtensionPoint ep : eps) {
+				contentProvider.add(ep, itemsFilter);
 				subMonitor2.worked(1);
 			}
-			for (int j = 0; j < extensions.length; j++) {
-				contentProvider.add(extensions[j], itemsFilter);
+			for (IPluginExtension extension : extensions) {
+				contentProvider.add(extension, itemsFilter);
 				subMonitor2.worked(1);
 			}
 
@@ -389,8 +388,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			if (desc != null) {
 				ExportPackageDescription[] epds = desc.getExportPackages();
 				subMonitor2.setWorkRemaining(epds.length);
-				for (int j = 0; j < epds.length; j++) {
-					ExportPackageDescription epd = epds[j];
+				for (ExportPackageDescription epd : epds) {
 					// ensure we don't get EE packages
 					int ee = ((Integer) epd.getDirective("x-equinox-ee")).intValue(); //$NON-NLS-1$
 					if (ee < 0) {
@@ -400,7 +398,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 				}
 			}
 
-			contentProvider.add(models[i], itemsFilter);
+			contentProvider.add(model, itemsFilter);
 		}
 	}
 
@@ -522,8 +520,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 						return null;
 					IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
 					String epid = memento.getString(M_ID);
-					for (int i = 0; i < points.length; i++) {
-						IPluginExtensionPoint point = points[i];
+					for (IPluginExtensionPoint point : points) {
 						if (epid.equals(point.getFullId()))
 							return point;
 					}
@@ -534,8 +531,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 						return null;
 					IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 					String eid = memento.getString(M_ID);
-					for (int i = 0; i < extensions.length; i++) {
-						IPluginExtension extension = extensions[i];
+					for (IPluginExtension extension : extensions) {
 						if (eid.equals(extension.getPoint()))
 							return extension;
 					}
@@ -546,8 +542,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 						return null;
 					ExportPackageDescription[] descriptions = model.getBundleDescription().getExportPackages();
 					String pid = memento.getString(M_ID);
-					for (int i = 0; i < descriptions.length; i++) {
-						ExportPackageDescription desc = descriptions[i];
+					for (ExportPackageDescription desc : descriptions) {
 						if (pid.equals(desc.getName()))
 							return desc;
 					}
@@ -564,8 +559,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			String id = memento.getString(M_ID);
 			String version = memento.getString(M_PLUGIN_VERSION);
 			IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-			for (int i = 0; i < models.length; i++) {
-				IFeatureModel model = models[i];
+			for (IFeatureModel model : models) {
 				IFeature feature = model.getFeature();
 				if (feature.getId().equals(id) && feature.getVersion().equals(version)) {
 					return model;
@@ -581,8 +575,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			if (entry == null)
 				return null;
 			IPluginModelBase[] models = entry.getActiveModels();
-			for (int i = 0; i < models.length; i++) {
-				IPluginModelBase model = models[i];
+			for (IPluginModelBase model : models) {
 				if (version.equals(model.getPluginBase().getVersion()))
 					return model;
 			}
@@ -773,8 +766,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	private IPluginModelBase getModel(String id, String version) {
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		IPluginModelBase[] models = entry.getActiveModels();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+		for (IPluginModelBase model : models) {
 			if (version.equals(model.getPluginBase().getVersion()))
 				return model;
 		}

@@ -61,9 +61,9 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
 				BundleDescription[] dependents = desc.getDependents();
-				for (int i = 0; i < dependents.length; i++) {
-					if (isAffected(desc, dependents[i])) {
-						IPluginModelBase candidate = PluginRegistry.findModel(dependents[i]);
+				for (BundleDescription dependent : dependents) {
+					if (isAffected(desc, dependent)) {
+						IPluginModelBase candidate = PluginRegistry.findModel(dependent);
 						if (candidate instanceof IBundlePluginModelBase) {
 							IFile file = (IFile) candidate.getUnderlyingResource();
 							addBundleManifestChange(file, result, pm);
@@ -79,9 +79,9 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 		Iterator<Object> iter = fElements.keySet().iterator();
 		while (iter.hasNext()) {
 			String name = ((IJavaElement) iter.next()).getElementName();
-			for (int i = 0; i < imports.length; i++) {
-				if (name.equals(imports[i].getName())) {
-					BaseDescription supplier = imports[i].getSupplier();
+			for (ImportPackageSpecification spec : imports) {
+				if (name.equals(spec.getName())) {
+					BaseDescription supplier = spec.getSupplier();
 					if (supplier instanceof ExportPackageDescription) {
 						if (desc.equals(((ExportPackageDescription) supplier).getExporter()))
 							return true;

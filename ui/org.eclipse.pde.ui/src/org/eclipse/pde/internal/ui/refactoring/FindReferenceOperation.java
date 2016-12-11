@@ -52,12 +52,12 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		String oldId = fDesc.getSymbolicName();
 		BundleDescription[] dependents = fDesc.getDependents();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, dependents.length);
-		for (int i = 0; i < dependents.length; i++) {
-			BundleSpecification[] requires = dependents[i].getRequiredBundles();
+		for (BundleDescription dependent : dependents) {
+			BundleSpecification[] requires = dependent.getRequiredBundles();
 			SubMonitor iterationMonitor = subMonitor.split(1);
-			for (int j = 0; j < requires.length; j++) {
-				if (requires[j].getName().equals(oldId)) {
-					CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(PluginRegistry.findModel(dependents[i]), Constants.REQUIRE_BUNDLE, oldId, fNewId);
+			for (BundleSpecification require : requires) {
+				if (require.getName().equals(oldId)) {
+					CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(PluginRegistry.findModel(dependent), Constants.REQUIRE_BUNDLE, oldId, fNewId);
 					op.run(iterationMonitor);
 					TextFileChange change = op.getChange();
 					if (change != null) {
@@ -73,8 +73,8 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		BundleDescription[] fragments = fDesc.getFragments();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, fragments.length);
 		String id = fDesc.getSymbolicName();
-		for (int i = 0; i < fragments.length; i++) {
-			IPluginModelBase base = PluginRegistry.findModel(fragments[i]);
+		for (BundleDescription fragment : fragments) {
+			IPluginModelBase base = PluginRegistry.findModel(fragment);
 			SubMonitor iterationMonitor = subMonitor.split(1);
 			if (base instanceof IFragmentModel && id.equals(((IFragmentModel) (base)).getFragment().getPluginId())) {
 				CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(base, Constants.FRAGMENT_HOST, id, fNewId);
@@ -92,13 +92,13 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		ExportPackageDescription[] pkgs = helper.getVisiblePackages(fDesc);
 		String id = fDesc.getSymbolicName();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, pkgs.length);
-		for (int i = 0; i < pkgs.length; i++) {
+		for (ExportPackageDescription pkg : pkgs) {
 			SubMonitor iterationMonitor = subMonitor.split(1);
-			String[] friends = (String[]) pkgs[i].getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
+			String[] friends = (String[]) pkg.getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
 			if (friends != null)
-				for (int j = 0; j < friends.length; j++) {
-					if (friends[j].equals(id)) {
-						CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(PluginRegistry.findModel(pkgs[i].getExporter()), Constants.EXPORT_PACKAGE, id, fNewId);
+				for (String friend : friends) {
+					if (friend.equals(id)) {
+						CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(PluginRegistry.findModel(pkg.getExporter()), Constants.EXPORT_PACKAGE, id, fNewId);
 						op.run(iterationMonitor);
 						TextFileChange change = op.getChange();
 						if (change != null)

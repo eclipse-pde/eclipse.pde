@@ -52,11 +52,11 @@ public class TargetRepositorySearchHandler extends AbstractHandler {
 			Object[] result = dialog.getResult();
 			if (result != null) {
 				Set<Object> set = new HashSet<>();
-				for (int i = 0; i < result.length; i++) {
-					if (result[i] instanceof IUPackage)
-						set.add(((IUPackage) result[i]).getIU());
-					else if (result[i] instanceof IInstallableUnit)
-						set.add(result[i]);
+				for (Object resultObject : result) {
+					if (resultObject instanceof IUPackage)
+						set.add(((IUPackage) resultObject).getIU());
+					else if (resultObject instanceof IInstallableUnit)
+						set.add(resultObject);
 				}
 				IInstallableUnit[] units = set.toArray(new IInstallableUnit[set.size()]);
 				try {

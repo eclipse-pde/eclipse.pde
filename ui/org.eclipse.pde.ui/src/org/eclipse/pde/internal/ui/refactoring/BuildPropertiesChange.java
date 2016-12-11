@@ -51,8 +51,8 @@ public class BuildPropertiesChange {
 					// if resource instanceof IProject, then the project is being renamed and there is no action to do in the build.properties for the resource
 					if (res instanceof IProject)
 						continue;
-					for (int j = 0; j < entries.length; j++) {
-						addBuildEntryEdit(entries[j], res, newNames[i]);
+					for (IBuildEntry entry : entries) {
+						addBuildEntryEdit(entry, res, newNames[i]);
 					}
 				}
 
@@ -77,10 +77,10 @@ public class BuildPropertiesChange {
 	private static void addBuildEntryEdit(IBuildEntry entry, IResource res, String string) {
 		IPath resPath = res.getProjectRelativePath();
 		String[] tokens = entry.getTokens();
-		for (int i = 0; i < tokens.length; i++) {
-			if (resPath.isPrefixOf(new Path(tokens[i]))) {
+		for (String token : tokens) {
+			if (resPath.isPrefixOf(new Path(token))) {
 				try {
-					entry.renameToken(tokens[i], string.concat(tokens[i].substring(resPath.toString().length())));
+					entry.renameToken(token, string.concat(token.substring(resPath.toString().length())));
 				} catch (CoreException e) {
 				}
 			}

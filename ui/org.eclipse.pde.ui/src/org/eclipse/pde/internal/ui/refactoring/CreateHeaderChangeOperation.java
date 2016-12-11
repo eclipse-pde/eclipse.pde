@@ -72,20 +72,20 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 					} else if (mHeader instanceof RequireBundleHeader) {
 						RequireBundleHeader header = (RequireBundleHeader) mHeader;
 						RequireBundleObject bundles[] = header.getRequiredBundles();
-						for (int i = 0; i < bundles.length; i++) {
-							if (bundles[i].getId().equals(fOldValue))
-								bundles[i].setId(fNewValue);
+						for (RequireBundleObject requiredBundle : bundles) {
+							if (requiredBundle.getId().equals(fOldValue))
+								requiredBundle.setId(fNewValue);
 						}
 					} else if (mHeader instanceof FragmentHostHeader) {
 						((FragmentHostHeader) mHeader).setHostId(fNewValue);
 					} else if (mHeader instanceof ExportPackageHeader) {
 						ExportPackageObject[] packages = ((ExportPackageHeader) mHeader).getPackages();
-						for (int i = 0; i < packages.length; i++) {
-							PackageFriend[] friends = packages[i].getFriends();
-							for (int j = 0; j < friends.length; j++) {
-								if (friends[j].getName().equals(fOldValue)) {
-									packages[i].removeFriend(friends[j]);
-									packages[i].addFriend(new PackageFriend(packages[i], fNewValue));
+						for (ExportPackageObject pkg : packages) {
+							PackageFriend[] friends = pkg.getFriends();
+							for (PackageFriend friend : friends) {
+								if (friend.getName().equals(fOldValue)) {
+									pkg.removeFriend(friend);
+									pkg.addFriend(new PackageFriend(pkg, fNewValue));
 								}
 							}
 						}

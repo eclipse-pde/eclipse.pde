@@ -60,10 +60,10 @@ public class PluginManifestChange {
 
 					SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 					IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-					for (int j = 0; j < extensions.length; j++) {
-						ISchema schema = registry.getSchema(extensions[j].getPoint());
+					for (IPluginExtension extension : extensions) {
+						ISchema schema = registry.getSchema(extension.getPoint());
 						if (schema != null)
-							addExtensionAttributeEdit(schema, extensions[j], multiEdit, affectedElements[i], newNames[i]);
+							addExtensionAttributeEdit(schema, extension, multiEdit, affectedElements[i], newNames[i]);
 					}
 				}
 
@@ -93,13 +93,12 @@ public class PluginManifestChange {
 
 	private static void addExtensionAttributeEdit(ISchema schema, IPluginParent parent, MultiTextEdit multi, Object element, String newName) {
 		IPluginObject[] children = parent.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPluginElement child = (IPluginElement) children[i];
+		for (IPluginObject childObject : children) {
+			IPluginElement child = (IPluginElement) childObject;
 			ISchemaElement schemaElement = schema.findElement(child.getName());
 			if (schemaElement != null) {
 				IPluginAttribute[] attributes = child.getAttributes();
-				for (int j = 0; j < attributes.length; j++) {
-					IPluginAttribute attr = attributes[j];
+				for (IPluginAttribute attr : attributes) {
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 					if (attInfo != null) {
 						if (element instanceof IJavaElement && attInfo.getKind() == IMetaAttribute.JAVA) {

@@ -137,9 +137,9 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 				IPluginModelBase modelBase = (IPluginModelBase) model;
 				IPluginBase base = modelBase.getPluginBase();
 				IPluginExtensionPoint[] points = base.getExtensionPoints();
-				for (int i = 0; i < points.length; i++) {
-					if (points[i].getId().equals(fInfo.getCurrentValue())) {
-						points[i].setId(fInfo.getNewValue());
+				for (IPluginExtensionPoint point : points) {
+					if (point.getId().equals(fInfo.getCurrentValue())) {
+						point.setId(fInfo.getNewValue());
 						// TODO Update schema
 //						String schema = points[i].getSchema();
 					}
@@ -159,9 +159,9 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 				IPluginBase base = modelBase.getPluginBase();
 				IPluginExtension[] extensions = base.getExtensions();
 				String oldValue = getId();
-				for (int i = 0; i < extensions.length; i++)
-					if (extensions[i].getPoint().equals(oldValue))
-						extensions[i].setPoint(getNewId());
+				for (IPluginExtension extension : extensions)
+					if (extension.getPoint().equals(oldValue))
+						extension.setPoint(getNewId());
 			}
 		};
 	}

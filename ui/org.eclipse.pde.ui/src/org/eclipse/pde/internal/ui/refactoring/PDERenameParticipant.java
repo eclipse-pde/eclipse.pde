@@ -99,8 +99,8 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 
 	protected boolean containsElement(boolean javaElement) {
 		Object[] objs = fElements.keySet().toArray();
-		for (int i = 0; i < objs.length; i++)
-			if (objs[i] instanceof IJavaElement == javaElement)
+		for (Object obj : objs)
+			if (obj instanceof IJavaElement == javaElement)
 				return true;
 		return false;
 	}
