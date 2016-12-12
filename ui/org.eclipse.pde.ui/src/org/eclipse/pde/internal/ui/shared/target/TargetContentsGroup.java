@@ -1094,6 +1094,12 @@ public class TargetContentsGroup {
 		return result;
 	}
 
+	public boolean isFeatureModeEnabled() {
+		if (fFeaureModeButton != null)
+			return fFeaureModeButton.getSelection();
+		return false;
+	}
+
 	public void setEnabled(boolean enabled) {
 		fTree.getControl().setEnabled(enabled);
 		if (enabled) {

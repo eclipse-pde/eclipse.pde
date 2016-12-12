@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import org.eclipse.pde.core.target.ITargetDefinition;
-
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.shared.target.ITargetChangedListener;
@@ -69,6 +68,12 @@ public class ContentSection extends SectionPart {
 		fContentGroup.addTargetChangedListener(new ITargetChangedListener() {
 			@Override
 			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
+				if (source instanceof TargetContentsGroup) {
+					if (((TargetContentsGroup) source).isFeatureModeEnabled())
+						section.setDescription(PDEUIMessages.ContentSection_2);
+					else
+						section.setDescription(PDEUIMessages.ContentSection_1);
+				}
 				markDirty();
 			}
 		});
