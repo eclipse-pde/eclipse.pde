@@ -2104,6 +2104,18 @@ public class ClassFileComparator {
 								} else {
 									int access3 = method3.getModifiers();
 									if (Flags.isPublic(access3) || Flags.isProtected(access3)) {
+										IApiAnnotations apiAnnotations = null;
+										if (apiDescription != null) {
+											apiAnnotations = apiDescription.resolveAnnotations(method3.getHandle());
+										}
+										if (apiAnnotations != null) {
+											int restrictions = apiAnnotations.getRestrictions();
+											// if overriding no reference method, break the loop and report method addition
+											if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+												found = false;
+												break loop;
+											}
+										}
 										// method has been move up in the
 										// hierarchy - report the delta and
 										// abort loop
@@ -2153,6 +2165,21 @@ public class ClassFileComparator {
 									} else {
 										int access3 = method3.getModifiers();
 										if (Flags.isPublic(access3) || Flags.isProtected(access3)) {
+											IApiAnnotations apiAnnotations = null;
+											if (apiDescription != null) {
+												apiAnnotations = apiDescription.resolveAnnotations(method3.getHandle());
+											}
+											if (apiAnnotations != null) {
+												int restrictions = apiAnnotations.getRestrictions();
+												// if overriding no reference
+												// method, break the loop and
+												// report method addition
+												if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+													found = false;
+													break loop;
+												}
+
+											}
 											// method has been pushed down in
 											// the hierarchy - report the delta
 											// and abort loop

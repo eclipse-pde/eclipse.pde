@@ -191,6 +191,25 @@ public class MissingSinceTagTests extends SinceTagTest {
 	}
 
 	/**
+	 * Tests that @noreference should not exclude all overriding methods from
+	 * API change analysis - See bug 507701
+	 */
+	private void xAddInheritedMethod2(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInheritedMethod2.java"); //$NON-NLS-1$
+		// expect a since tag
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "newMethod()"); //$NON-NLS-1$
+		performCompatibilityTest(filePath, incremental);
+	}
+
+	public void testAddInheritedMethodI2() throws Exception {
+		xAddInheritedMethod2(true);
+	}
+
+	public void testAddInheritedMethodF2() throws Exception {
+		xAddInheritedMethod2(false);
+	}
+
+	/**
 	 * Tests adding a non-visible method
 	 */
 	private void xAddNonVisibleMethod(boolean incremental) throws Exception {
