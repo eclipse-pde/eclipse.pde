@@ -434,7 +434,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				if (file != null) {
 					Map<IFileArtifactRepository, File> repoFile = new ConcurrentHashMap<>();
 					repoFile.put(repo, file);
-					P2TargetUtils.fgArtifactKeyRepoFile.put(artifactKey, repoFile);
+					P2TargetUtils.fgArtifactKeyRepoFile.putIfAbsent(artifactKey, repoFile);
 				}
 			}
 			if (file != null) {

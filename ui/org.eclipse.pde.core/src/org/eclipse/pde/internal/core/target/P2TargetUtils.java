@@ -115,12 +115,12 @@ public class P2TargetUtils {
 	/**
 	 * Table mapping of  ITargetDefinition and IFileArtifactRepository
 	 */
-	public static ConcurrentHashMap<ITargetDefinition, IFileArtifactRepository> fgTargetArtifactRepo = new ConcurrentHashMap<>();
+	public static Map<ITargetDefinition, IFileArtifactRepository> fgTargetArtifactRepo = new ConcurrentHashMap<>();
 
 	/**
 	 * Table mapping IArtifactKey to table map of IFileArtifactRepository and IFileArtifactRepository
 	 */
-	public static ConcurrentHashMap<IArtifactKey, Map<IFileArtifactRepository, File>> fgArtifactKeyRepoFile = new ConcurrentHashMap<>();
+	public static Map<IArtifactKey, Map<IFileArtifactRepository, File>> fgArtifactKeyRepoFile = new ConcurrentHashMap<>();
 
 	/**
 	 * The profile to be synchronized
