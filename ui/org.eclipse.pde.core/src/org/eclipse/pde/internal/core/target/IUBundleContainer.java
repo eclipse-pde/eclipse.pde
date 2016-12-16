@@ -422,10 +422,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		Collection<IArtifactKey> artifacts = unit.getArtifacts();
 		for (IArtifactKey artifactKey : artifacts) {
 			File file = null;
-			if (P2TargetUtils.fgArtifactKeyRepoFile.containsKey(artifactKey)) {
-				if (P2TargetUtils.fgArtifactKeyRepoFile.get(artifactKey).containsKey(repo))
-					file = P2TargetUtils.fgArtifactKeyRepoFile.get(artifactKey).get(repo);
+
+			HashMap<IFileArtifactRepository, File> mapRepoFile = P2TargetUtils.fgArtifactKeyRepoFile.get(artifactKey);
+			if (mapRepoFile != null){
+				file = mapRepoFile.get(repo);
 			}
+
 			if( file == null){
 				file = repo.getArtifactFile(artifactKey);
 				if (file != null) {

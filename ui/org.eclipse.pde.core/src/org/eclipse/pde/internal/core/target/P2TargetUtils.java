@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.target;
 import java.io.File;
 import java.net.URI;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
@@ -114,12 +115,12 @@ public class P2TargetUtils {
 	/**
 	 * Table mapping of  ITargetDefinition and IFileArtifactRepository
 	 */
-	public static HashMap<ITargetDefinition, IFileArtifactRepository> fgTargetArtifactRepo = new HashMap<>();
+	public static ConcurrentHashMap<ITargetDefinition, IFileArtifactRepository> fgTargetArtifactRepo = new ConcurrentHashMap<>();
 
 	/**
 	 * Table mapping IArtifactKey to table map of IFileArtifactRepository and IFileArtifactRepository
 	 */
-	public static HashMap<IArtifactKey, HashMap<IFileArtifactRepository, File>> fgArtifactKeyRepoFile = new HashMap<>();
+	public static ConcurrentHashMap<IArtifactKey, HashMap<IFileArtifactRepository, File>> fgArtifactKeyRepoFile = new ConcurrentHashMap<>();
 
 	/**
 	 * The profile to be synchronized
