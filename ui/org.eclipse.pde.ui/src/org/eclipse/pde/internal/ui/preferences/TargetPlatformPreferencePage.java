@@ -466,8 +466,12 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				try {
 					fTargets.add(targets[i].getTargetDefinition());
 				} catch (CoreException e) {
-					PDECore.log(e);
-					setErrorMessage(e.getMessage());
+					if (targets[i] instanceof WorkspaceFileTargetHandle) {
+						setErrorMessage(e.getMessage() + " " //$NON-NLS-1$
+								+ ((WorkspaceFileTargetHandle) targets[i]).getTargetFile().getFullPath());
+					}
+					else
+						setErrorMessage(e.getMessage());
 				}
 			}
 			fTableViewer.setInput(fTargets);
