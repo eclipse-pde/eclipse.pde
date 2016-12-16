@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -423,7 +424,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		for (IArtifactKey artifactKey : artifacts) {
 			File file = null;
 
-			HashMap<IFileArtifactRepository, File> mapRepoFile = P2TargetUtils.fgArtifactKeyRepoFile.get(artifactKey);
+			Map<IFileArtifactRepository, File> mapRepoFile = P2TargetUtils.fgArtifactKeyRepoFile.get(artifactKey);
 			if (mapRepoFile != null){
 				file = mapRepoFile.get(repo);
 			}
@@ -431,7 +432,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			if( file == null){
 				file = repo.getArtifactFile(artifactKey);
 				if (file != null) {
-					HashMap<IFileArtifactRepository, File> repoFile = new HashMap<>();
+					Map<IFileArtifactRepository, File> repoFile = new ConcurrentHashMap<>();
 					repoFile.put(repo, file);
 					P2TargetUtils.fgArtifactKeyRepoFile.put(artifactKey, repoFile);
 				}
