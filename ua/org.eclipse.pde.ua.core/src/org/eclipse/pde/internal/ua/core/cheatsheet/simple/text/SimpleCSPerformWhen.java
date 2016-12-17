@@ -54,16 +54,9 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 		return getXMLAttributeValue(ATTRIBUTE_CONDITION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSPerformWhen
-	 * #getExecutables()
-	 */
+	@Override
 	public ISimpleCSRunObject[] getExecutables() {
-		ArrayList filteredChildren = getChildNodesList(
-				ISimpleCSRunObject.class, true);
+		List<IDocumentElementNode> filteredChildren = getChildNodesList(ISimpleCSRunObject.class, true);
 		return (ISimpleCSRunObject[]) filteredChildren
 				.toArray(new ISimpleCSRunObject[filteredChildren.size()]);
 	}
@@ -91,14 +84,9 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 		setXMLAttribute(ATTRIBUTE_CONDITION, condition);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
-	 * getChildren()
-	 */
-	public List getChildren() {
-		return new ArrayList();
+	@Override
+	public List<IDocumentElementNode> getChildren() {
+		return new ArrayList<>();
 	}
 
 	/*

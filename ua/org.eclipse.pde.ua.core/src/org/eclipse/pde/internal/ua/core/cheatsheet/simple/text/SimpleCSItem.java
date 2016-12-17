@@ -11,17 +11,10 @@
 
 package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSOnCompletion;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSPerformWhen;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRunContainerObject;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 
 public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 
@@ -134,16 +127,9 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 		return getChildNodeCount(ISimpleCSSubItemObject.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getSubItems
-	 * ()
-	 */
+	@Override
 	public ISimpleCSSubItemObject[] getSubItems() {
-		ArrayList filteredChildren = getChildNodesList(
-				ISimpleCSSubItemObject.class, true);
+		List<IDocumentElementNode> filteredChildren = getChildNodesList(ISimpleCSSubItemObject.class, true);
 		return (ISimpleCSSubItemObject[]) filteredChildren
 				.toArray(new ISimpleCSSubItemObject[filteredChildren.size()]);
 	}
@@ -386,17 +372,11 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 		return TYPE_ITEM;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.simple.SimpleCSObject#getChildren
-	 * ()
-	 */
-	public List getChildren() {
+	@Override
+	public List<IDocumentElementNode> getChildren() {
 		// Add subitems
 		// Add unsupported perform-when if it is set as the executable
-		Class[] classes = { ISimpleCSSubItemObject.class,
+		Class<?>[] classes = { ISimpleCSSubItemObject.class,
 				ISimpleCSPerformWhen.class };
 		return getChildNodesList(classes, true);
 	}

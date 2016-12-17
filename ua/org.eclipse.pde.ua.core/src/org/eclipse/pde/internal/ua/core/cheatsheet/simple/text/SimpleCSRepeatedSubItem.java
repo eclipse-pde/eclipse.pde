@@ -76,13 +76,8 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 		setXMLAttribute(ATTRIBUTE_VALUES, values);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
-	 * getChildren()
-	 */
-	public List getChildren() {
+	@Override
+	public List<IDocumentElementNode> getChildren() {
 		// Add subitem
 		// TODO: MP: TEO: LOW: Write general method to return first occurrence
 		// only?

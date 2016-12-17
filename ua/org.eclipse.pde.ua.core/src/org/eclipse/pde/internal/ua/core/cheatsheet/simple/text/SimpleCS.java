@@ -11,7 +11,7 @@
 
 package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
@@ -74,15 +74,9 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 		return getChildNodeCount(ISimpleCSItem.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCS#getItems()
-	 */
+	@Override
 	public ISimpleCSItem[] getItems() {
-		ArrayList filteredChildren = getChildNodesList(ISimpleCSItem.class,
-				true);
+		List<IDocumentElementNode> filteredChildren = getChildNodesList(ISimpleCSItem.class, true);
 		return (ISimpleCSItem[]) filteredChildren
 				.toArray(new ISimpleCSItem[filteredChildren.size()]);
 	}

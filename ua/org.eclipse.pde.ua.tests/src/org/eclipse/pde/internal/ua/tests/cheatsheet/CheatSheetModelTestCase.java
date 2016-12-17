@@ -10,19 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSAction;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSCommand;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConditionalSubItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSOnCompletion;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSPerformWhen;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRepeatedSubItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRunContainerObject;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 
 /**
  * Provides helper methods to create and validate cheatsheet model elements.
@@ -31,7 +19,7 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject
  * that can be validated using validate* methods.
  *
  */
-public class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
+public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 
 	protected ISimpleCSAction createAction() {
 		ISimpleCSAction action = fModel.getFactory().createSimpleCSAction(null);

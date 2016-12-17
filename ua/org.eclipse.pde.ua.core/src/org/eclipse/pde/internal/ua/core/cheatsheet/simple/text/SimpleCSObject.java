@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
 import org.eclipse.pde.internal.core.text.DocumentObject;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.plugin.DocumentGenericNode;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
@@ -36,13 +37,8 @@ public abstract class SimpleCSObject extends DocumentObject implements
 		super(model, tagName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
-	 * getChildren()
-	 */
-	public List getChildren() {
+	@Override
+	public List<IDocumentElementNode> getChildren() {
 		return getChildNodesList(DocumentGenericNode.class, false);
 	}
 

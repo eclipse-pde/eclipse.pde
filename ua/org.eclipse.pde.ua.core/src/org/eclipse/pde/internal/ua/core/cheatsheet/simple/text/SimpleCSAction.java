@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSAction;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
 
@@ -63,15 +64,9 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 		return getXMLAttributeValue(buffer.toString());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSAction#getParams
-	 * ()
-	 */
+	@Override
 	public String[] getParams() {
-		ArrayList list = new ArrayList();
+		List<String> list = new ArrayList<>();
 		// Get all set parameters
 		for (int i = 1; i <= F_MAX_PARAMS; i++) {
 			String parameter = getParam(i);
@@ -133,14 +128,9 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 		setXMLAttribute(ATTRIBUTE_PLUGINID, pluginId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
-	 * getChildren()
-	 */
-	public List getChildren() {
-		return new ArrayList();
+	@Override
+	public List<IDocumentElementNode> getChildren() {
+		return new ArrayList<>();
 	}
 
 	/*

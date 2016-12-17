@@ -97,15 +97,9 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 		setXMLAttribute(ATTRIBUTE_HREF, href);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
-	 * getChildren()
-	 */
-	public List getChildren() {
-		return new ArrayList();
+	@Override
+	public List<IDocumentElementNode> getChildren() {
+		return new ArrayList<>();
 	}
 
 	/*

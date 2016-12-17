@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
@@ -55,16 +54,9 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 		return getXMLAttributeValue(ATTRIBUTE_CONDITION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
-	 * #getSubItems()
-	 */
+	@Override
 	public ISimpleCSSubItem[] getSubItems() {
-		ArrayList filteredChildren = getChildNodesList(ISimpleCSSubItem.class,
-				true);
+		List<IDocumentElementNode> filteredChildren = getChildNodesList(ISimpleCSSubItem.class, true);
 		return (ISimpleCSSubItem[]) filteredChildren
 				.toArray(new ISimpleCSSubItem[filteredChildren.size()]);
 	}
@@ -92,15 +84,8 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 		setXMLAttribute(ATTRIBUTE_CONDITION, condition);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getChildren
-	 * ()
-	 */
-	public List getChildren() {
-		// Add subitems
+	@Override
+	public List<IDocumentElementNode> getChildren() {
 		return getChildNodesList(ISimpleCSSubItem.class, true);
 	}
 

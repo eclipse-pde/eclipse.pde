@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
 
@@ -51,14 +52,9 @@ public class SimpleCSDescription extends SimpleCSObject implements
 		setXMLContent(content);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
-	 * getChildren()
-	 */
-	public List getChildren() {
-		return new ArrayList();
+	@Override
+	public List<IDocumentElementNode> getChildren() {
+		return new ArrayList<>();
 	}
 
 	/*
