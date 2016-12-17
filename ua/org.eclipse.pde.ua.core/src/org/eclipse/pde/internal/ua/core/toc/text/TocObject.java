@@ -46,17 +46,18 @@ public abstract class TocObject extends DocumentObject implements
 	/**
 	 * @return the children of the object or an empty List if none exist.
 	 */
-	public List getChildren() { // Create a copy of the child list instead of
+	public List<TocObject> getChildren() {
+		// Create a copy of the child list instead of
 		// returning the list itself. That way, our list
 		// of children cannot be altered from outside
-		ArrayList list = new ArrayList();
+		List<TocObject> list = new ArrayList<>();
 
 		// Add children of this topic
 		IDocumentElementNode[] childNodes = getChildNodes();
 		if (childNodes.length > 0) {
 			for (int i = 0; i < childNodes.length; ++i) {
 				if (childNodes[i] instanceof TocObject) {
-					list.add(childNodes[i]);
+					list.add((TocObject) childNodes[i]);
 				}
 			}
 		}

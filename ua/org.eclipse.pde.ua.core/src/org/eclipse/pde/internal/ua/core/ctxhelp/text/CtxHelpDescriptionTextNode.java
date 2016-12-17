@@ -20,7 +20,7 @@ public class CtxHelpDescriptionTextNode extends DocumentTextNode {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final HashSet TAG_EXCEPTIONS = new HashSet(2);
+	private static final HashSet<String> TAG_EXCEPTIONS = new HashSet<>(2);
 
 	static {
 		TAG_EXCEPTIONS.add("b"); //$NON-NLS-1$

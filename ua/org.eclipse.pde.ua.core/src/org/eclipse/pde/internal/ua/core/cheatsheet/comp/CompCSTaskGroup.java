@@ -18,18 +18,13 @@ import java.util.List;
 
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
 import org.w3c.dom.Element;
 
 public class CompCSTaskGroup extends CompCSTaskObject implements
 		ICompCSTaskGroup {
 
-	private ArrayList fFieldTaskObjects;
+	private List<ICompCSTaskObject> fFieldTaskObjects;
 
 	/**
 	 *
@@ -45,15 +40,9 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		reset();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#getChildren
-	 * ()
-	 */
-	public List getChildren() {
-		ArrayList list = new ArrayList();
+	@Override
+	public List<ICompCSTaskObject> getChildren() {
+		List<ICompCSTaskObject> list = new ArrayList<>();
 		// Add task objects
 		if (fFieldTaskObjects.size() > 0) {
 			list.addAll(fFieldTaskObjects);
@@ -90,7 +79,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 	public void reset() {
 		super.reset();
 
-		fFieldTaskObjects = new ArrayList();
+		fFieldTaskObjects = new ArrayList<>();
 	}
 
 	/*
@@ -272,7 +261,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		super.writeElements(indent, writer);
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		// Print dependency elements
-		Iterator iterator = fFieldTaskObjects.iterator();
+		Iterator<ICompCSTaskObject> iterator = fFieldTaskObjects.iterator();
 		while (iterator.hasNext()) {
 			ICompCSTaskObject taskObject = (ICompCSTaskObject) iterator.next();
 			taskObject.write(newIndent, writer);

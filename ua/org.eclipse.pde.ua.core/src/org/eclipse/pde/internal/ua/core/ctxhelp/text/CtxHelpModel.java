@@ -34,7 +34,7 @@ public class CtxHelpModel extends XMLEditingModel {
 	private CtxHelpDocumentHandler fHandler;
 	private CtxHelpDocumentFactory fFactory;
 	private CtxHelpRoot fRoot;
-	private List fErrors;
+	private List<Exception> fErrors;
 	private boolean fMarkerRefreshNeeded;
 
 	public CtxHelpModel(IDocument document, boolean isReconciling) {
@@ -102,14 +102,14 @@ public class CtxHelpModel extends XMLEditingModel {
 
 	public void addError(Exception e) {
 		if (fErrors == null) {
-			fErrors = new ArrayList(1);
+			fErrors = new ArrayList<>(1);
 		}
 		if (!fErrors.contains(e)) {
 			fErrors.add(e);
 		}
 	}
 
-	public Collection getErrors() {
+	public Collection<Exception> getErrors() {
 		return fErrors;
 	}
 

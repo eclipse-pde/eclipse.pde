@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ua.core.cheatsheet.simple;
 
 import java.util.List;
 
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentObject;
 import org.w3c.dom.Element;
 
@@ -43,7 +44,7 @@ public interface ISimpleCSObject extends IDocumentObject, ISimpleCSConstants {
 	 *
 	 * @return A empty / non-empty list - never null
 	 */
-	public List getChildren();
+	List<IDocumentElementNode> getChildren();
 
 	public ISimpleCSObject getParent();
 

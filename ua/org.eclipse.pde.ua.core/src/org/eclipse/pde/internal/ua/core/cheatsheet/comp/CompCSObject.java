@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -39,9 +40,9 @@ public abstract class CompCSObject extends PlatformObject implements
 
 	private transient ICompCSObject fParent;
 
-	protected static final HashSet DEFAULT_TAG_EXCEPTIONS = new HashSet(12);
+	protected static final HashSet<String> DEFAULT_TAG_EXCEPTIONS = new HashSet<>(12);
 
-	protected static final HashMap DEFAULT_SUBSTITUTE_CHARS = new HashMap(5);
+	protected static final HashMap<Character, String> DEFAULT_SUBSTITUTE_CHARS = new HashMap<>(5);
 
 	static {
 		DEFAULT_TAG_EXCEPTIONS.add("b"); //$NON-NLS-1$
@@ -73,14 +74,8 @@ public abstract class CompCSObject extends PlatformObject implements
 		fParent = parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getChildren
-	 * ()
-	 */
-	public abstract List getChildren();
+	@Override
+	public abstract List<ICompCSTaskObject> getChildren();
 
 	/*
 	 * (non-Javadoc)

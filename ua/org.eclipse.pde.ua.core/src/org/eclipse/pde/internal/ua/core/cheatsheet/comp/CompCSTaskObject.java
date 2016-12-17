@@ -19,13 +19,7 @@ import java.util.List;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDependency;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSIntro;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSOnCompletion;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
@@ -46,7 +40,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	protected boolean fFieldSkip;
 
-	protected ArrayList fFieldDependencies;
+	protected List<ICompCSDependency> fFieldDependencies;
 
 	/**
 	 * @param model
@@ -57,13 +51,8 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		// Reset called by child class
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getChildren()
-	 */
-	public abstract List getChildren();
+	@Override
+	public abstract List<ICompCSTaskObject> getChildren();
 
 	/*
 	 * (non-Javadoc)
@@ -91,7 +80,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		fFieldOnCompletion = null;
 		fFieldName = null;
 		fFieldSkip = false;
-		fFieldDependencies = new ArrayList();
+		fFieldDependencies = new ArrayList<>();
 	}
 
 	/*
@@ -404,7 +393,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 			fFieldOnCompletion.write(newIndent, writer);
 		}
 		// Print dependency elements
-		Iterator iterator = fFieldDependencies.iterator();
+		Iterator<ICompCSDependency> iterator = fFieldDependencies.iterator();
 		while (iterator.hasNext()) {
 			ICompCSDependency dependency = (ICompCSDependency) iterator.next();
 			dependency.write(newIndent, writer);

@@ -46,12 +46,12 @@ public class TocMarkerManager {
 	}
 
 	public static void createMarkers(TocModel model) {
-		Collection errors = model.getErrors();
+		Collection<Exception> errors = model.getErrors();
 		if (errors == null || errors.size() == 0) {
 			return;
 		}
 
-		Iterator iter = errors.iterator();
+		Iterator<Exception> iter = errors.iterator();
 		while (iter.hasNext()) {
 			Throwable exception = (Throwable) iter.next();
 			if (exception instanceof SAXParseException) {

@@ -19,16 +19,12 @@ import java.util.ListIterator;
 
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
 import org.w3c.dom.Element;
 
 public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 
-	private ArrayList fFieldParams;
+	private List<ICompCSParam> fFieldParams;
 
 	/**
 	 *
@@ -44,15 +40,8 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		reset();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#getChildren
-	 * ()
-	 */
-	public List getChildren() {
-		return new ArrayList();
+	public List<ICompCSTaskObject> getChildren() {
+		return new ArrayList<>();
 	}
 
 	/*
@@ -154,7 +143,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	public void reset() {
 		super.reset();
 
-		fFieldParams = new ArrayList();
+		fFieldParams = new ArrayList<>();
 	}
 
 	/*
@@ -168,7 +157,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		super.writeElements(indent, writer);
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		// Print param elements
-		Iterator iterator = fFieldParams.iterator();
+		Iterator<ICompCSParam> iterator = fFieldParams.iterator();
 		while (iterator.hasNext()) {
 			ICompCSParam param = (ICompCSParam) iterator.next();
 			param.write(newIndent, writer);
@@ -200,7 +189,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		if (fFieldParams.isEmpty()) {
 			return null;
 		}
-		ListIterator iterator = fFieldParams.listIterator();
+		ListIterator<ICompCSParam> iterator = fFieldParams.listIterator();
 		while (iterator.hasNext()) {
 			ICompCSParam parameter = (ICompCSParam) iterator.next();
 			if (parameter.getFieldName().equals(name)) {

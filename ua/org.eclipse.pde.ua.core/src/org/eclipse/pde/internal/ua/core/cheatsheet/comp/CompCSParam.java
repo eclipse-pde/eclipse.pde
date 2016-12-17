@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
@@ -43,14 +44,9 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 		reset();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getChildren()
-	 */
-	public List getChildren() {
-		return new ArrayList();
+	@Override
+	public List<ICompCSTaskObject> getChildren() {
+		return new ArrayList<>();
 	}
 
 	/*

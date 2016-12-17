@@ -30,7 +30,7 @@ public class TocModel extends XMLEditingModel {
 
 	private Toc fToc;
 
-	private List fErrors;
+	private List<Exception> fErrors;
 
 	private boolean fMarkerRefreshNeeded;
 
@@ -104,7 +104,7 @@ public class TocModel extends XMLEditingModel {
 
 	public void addError(Exception e) {
 		if (fErrors == null) {
-			fErrors = new ArrayList(1);
+			fErrors = new ArrayList<>(1);
 		}
 
 		if (!fErrors.contains(e)) {
@@ -112,7 +112,7 @@ public class TocModel extends XMLEditingModel {
 		}
 	}
 
-	public Collection getErrors() {
+	public Collection<Exception> getErrors() {
 		return fErrors;
 	}
 

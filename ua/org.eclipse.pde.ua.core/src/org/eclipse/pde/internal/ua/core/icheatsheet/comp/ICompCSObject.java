@@ -45,7 +45,7 @@ public interface ICompCSObject extends Serializable, IWritable,
 	 *
 	 * @return A empty / non-empty list - never null
 	 */
-	public List getChildren();
+	public List<? extends ICompCSObject> getChildren();
 
 	public ICompCSObject getParent();
 

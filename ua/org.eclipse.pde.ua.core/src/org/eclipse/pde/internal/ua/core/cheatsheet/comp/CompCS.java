@@ -18,11 +18,7 @@ import java.util.List;
 
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
@@ -49,14 +45,9 @@ public class CompCS extends CompCSObject implements ICompCS {
 		reset();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getChildren()
-	 */
-	public List getChildren() {
-		ArrayList list = new ArrayList();
+	@Override
+	public List<ICompCSTaskObject> getChildren() {
+		List<ICompCSTaskObject> list = new ArrayList<>();
 		// Add task / taskGroup
 		if (fFieldTaskObject != null) {
 			list.add(fFieldTaskObject);

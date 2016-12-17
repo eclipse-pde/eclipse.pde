@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.ua.core.CheatSheetUtil;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDataObject;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
@@ -39,14 +40,9 @@ public abstract class CompCSDataObject extends CompCSObject implements
 		// Reset called by child class
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getChildren()
-	 */
-	public List getChildren() {
-		return new ArrayList();
+	@Override
+	public List<ICompCSTaskObject> getChildren() {
+		return new ArrayList<>();
 	}
 
 	/*
