@@ -9,6 +9,7 @@
  *     Code 9 Corporation - initial API and implementation
  *     Ketan Padegaonkar <KetanPadegaonkar@gmail.com> - bug 241912
  *     Tomasz Zarna <tomasz.zarna@tasktop.com> - bug 299298
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 509400
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.sections;
 
@@ -16,8 +17,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.*;
@@ -55,10 +57,68 @@ public class ActiveFormEditorSection implements ISpySection {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<form>"); //$NON-NLS-1$
 		buffer.append(toolkit.createClassSection(text, NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, "editor tab"), new Class[] {activePage.getClass()})); //$NON-NLS-1$
+
+		SectionPart activeSection = getActiveFormSection(activePage);
+		if (activeSection != null) {
+			buffer.append(toolkit.createClassSection(text,
+					NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, "form section"), //$NON-NLS-1$
+					new Class[] { activeSection.getClass() }));
+
+		}
 		buffer.append("</form>"); //$NON-NLS-1$
 
 		text.setText(buffer.toString(), true, false);
 		text.layout();
 
+	}
+
+	/**
+	 * Answer form section which can be considered active (has focus).
+	 * @return form section or null in case there is no such section.
+	 */
+	private SectionPart getActiveFormSection(IFormPage activePage) {
+		Control focusedControl = Display.getCurrent().getFocusControl();
+		if (focusedControl == null) {
+			return null;
+		}
+
+		IManagedForm form = activePage.getManagedForm();
+		if (form == null) {
+			return null;
+		}
+
+		//find section which controls contains actual focus control (also recursively)
+		for (IFormPart formPart : form.getParts()) {
+			if (formPart instanceof SectionPart) {
+				SectionPart formSection = (SectionPart) formPart;
+				Control[] sectionWidgets = formSection.getSection().getChildren();
+				for (Control widget : sectionWidgets) {
+					if (contains(widget, focusedControl)) {
+						return formSection;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Answer if particular control is contained in other control (which can be composite).
+	 */
+	private boolean contains(Control whereToLook, Control whatToFind) {
+		if (whereToLook == null || whatToFind == null) {
+			return false;
+		}
+
+		if (whereToLook instanceof Composite) {
+			Composite compositeWhereToLook = (Composite) whereToLook;
+
+			for (Control child : compositeWhereToLook.getChildren()) {
+				if (contains(child, whatToFind)) {
+					return true;
+				}
+			}
+		}
+		return whereToLook == whatToFind;
 	}
 }
