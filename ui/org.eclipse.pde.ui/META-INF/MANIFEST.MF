@@ -38,7 +38,6 @@ Export-Package:
  org.eclipse.pde.internal.ui.preferences;x-friends:="org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.internal.ui.properties;x-internal:=true,
  org.eclipse.pde.internal.ui.refactoring;x-internal:=true,
- org.eclipse.pde.internal.ui.samples;x-internal:=true,
  org.eclipse.pde.internal.ui.search;x-internal:=true,
  org.eclipse.pde.internal.ui.search.dependencies;x-internal:=true,
  org.eclipse.pde.internal.ui.search.dialogs;x-internal:=true,

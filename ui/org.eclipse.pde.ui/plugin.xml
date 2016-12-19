@@ -398,14 +398,6 @@
             <contentTypeBinding contentTypeId="org.eclipse.pde.targetFile"/>
       </editor>
       <editor
-            name="%editors.sample.name"
-            default="true"
-            icon="$nl$/icons/obj16/build_exec.png"
-            filenames="sample.properties"
-            class="org.eclipse.pde.internal.ui.samples.SampleEditor"
-            id="org.eclipse.pde.ui.sampleEditor">
-      </editor>
-      <editor
             default="false"
             icon="$nl$/icons/obj16/discovery.png"
             id="org.eclipse.pde.ui.schemaPreviewLauncher"
