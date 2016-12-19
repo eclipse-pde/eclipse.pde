@@ -72,7 +72,7 @@ public class LayoutSpyDialog {
 
 	/**
 	 * Creates the dialog but does not make it visible.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell
 	 */
@@ -487,7 +487,7 @@ public class LayoutSpyDialog {
 	 * information about the selected child. This is a tracked getter -- if it
 	 * reads from a databinding observable, the text box will automatically
 	 * refresh in response to changes in that observable.
-	 * 
+	 *
 	 * @TrackedGetter
 	 */
 	private String computeChildInfo() {
@@ -638,7 +638,7 @@ public class LayoutSpyDialog {
 	 * information about the selected layout. This is a tracked getter: if it
 	 * reads from an observable, the text box will update automatically when the
 	 * observable changes.
-	 * 
+	 *
 	 * @TrackedGetter
 	 */
 	private String computeParentInfo() {

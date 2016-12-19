@@ -22,7 +22,7 @@ public class GeometryUtil {
 		if (parent == null || boundsControl instanceof Shell) {
 			return boundsControl.getBounds();
 		}
-	
+
 		return Geometry.toDisplay(parent, boundsControl.getBounds());
 	}
 
