@@ -534,6 +534,23 @@
                   %pluginContent.e4Handler.description
                </description>
             </wizard>
+         <wizard
+               class="org.eclipse.pde.internal.ui.templates.e4.E4ToolbarContributionNewWizard"
+               icon="$nl$/icons/etool16/e4.png"
+               id="org.eclipse.pde.ui.templates.e4ToolbarContribution"
+               java="true"
+               name="%pluginContent.e4ToolbarContribution.name"
+               pureOSGi="false"
+               rcp="false"
+               requiresActivator="false"
+               ui-content="true">
+            <description>
+               %pluginContent.e4ToolbarContribution.description
+            </description>
+         </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.pde.ui.templates">
    </extension>
    
 </plugin>

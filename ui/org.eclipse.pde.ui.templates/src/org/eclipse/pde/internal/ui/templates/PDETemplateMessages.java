@@ -129,6 +129,14 @@ public class PDETemplateMessages extends NLS {
 	public static String E4HandlerMessage;
 	public static String E4HandlerMessage_default;
 
+	public static String E4ToolbarContributionNewWizard_wtitle;
+	public static String E4ToolbarContributionTemplate_title;
+	public static String E4ToolbarContributionTemplate_desc;
+	public static String E4ToolbarContributionTemplate_packageName;
+	public static String E4ToolbarContributionTemplate_className;
+	public static String E4ToolbarContributionMessage;
+	public static String E4ToolbarContributionMessage_default;
+
 	public static String MultiPageEditorNewWizard_wtitle;
 	public static String MultiPageEditorTemplate_title;
 	public static String MultiPageEditorTemplate_desc;

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_QqSikIrOEeW7h_qdP9N9fw" featurename="commands" parentElementId="xpath:/">
+    <elements xsi:type="commands:Command" xmi:id="_UCYfwIrOEeW7h_qdP9N9fw" elementId="test.handler.helloWorldCommand" commandName="Hello World"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_fW12kIrOEeW7h_qdP9N9fw" featurename="handlers" parentElementId="xpath:/">
+    <elements xsi:type="commands:Handler" xmi:id="_k2L0IIrOEeW7h_qdP9N9fw" elementId="org.eclipse.pde.ui.templates.handler.0" contributionURI="bundleclass://$pluginId$/$packageName$.handlers.$className$" command="_UCYfwIrOEeW7h_qdP9N9fw"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_wcLoQMX-Eea_bKDmo1phvA" featurename="trimContributions" parentElementId="xpath:/">
+    <elements xsi:type="menu:TrimContribution" xmi:id="_z1UuUMX-Eea_bKDmo1phvA" elementId="org.eclipse.pde.ui.templates.trimcontribution.0" parentId="org.eclipse.ui.main.toolbar" positionInParent="after=org.eclipse.ui.workbench.help">
+      <children xsi:type="menu:ToolBar" xmi:id="_4jlNMMX-Eea_bKDmo1phvA" elementId="org.eclipse.pde.ui.templates.toolbar.0">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_5PyL4MX-Eea_bKDmo1phvA" elementId="org.eclipse.pde.ui.templates.handledtoolitem.helloworld" label="Hello world" iconURI="platform:/plugin/$pluginId$/icons/Sample.png" command="_UCYfwIrOEeW7h_qdP9N9fw"/>
+      </children>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>
