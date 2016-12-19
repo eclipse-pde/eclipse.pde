@@ -94,17 +94,6 @@
       </wizard>
       <wizard
             availableAsShortcut="true"
-            name="%newExtension.templates.popupMenus.name"
-            template="org.eclipse.pde.ui.templates.popup"
-            icon="$nl$/icons/etool16/newex_wiz.png"
-            category="templates"
-            id="org.eclipse.pde.ui.newExtension.popupMenus">
-         <description>
-            %newExtension.templates.popupMenus.desc
-         </description>
-      </wizard>
-      <wizard
-            availableAsShortcut="true"
             name="%newExtension.templates.editor.name"
             template="org.eclipse.pde.ui.templates.editor"
             icon="$nl$/icons/etool16/newex_wiz.png"
