@@ -122,13 +122,15 @@ public abstract class AbstractPluginBlock {
 			Collections.sort(nameList);
 			StringBuffer result = new StringBuffer();
 			for (String name : nameList) {
-				if (result.length() > 0)
+				if (result.length() > 0) {
 					result.append(',');
+				}
 				result.append(name);
 			}
 
-			if (result.length() == 0)
+			if (result.length() == 0) {
 				return null;
+			}
 
 			return result.toString();
 		}
@@ -151,12 +153,14 @@ public abstract class AbstractPluginBlock {
 				case 0 :
 					return super.getColumnText(obj, index);
 				case 1 :
-					if (isChecked && levelColumnCache != null && levelColumnCache.containsKey(obj))
+					if (isChecked && levelColumnCache != null && levelColumnCache.containsKey(obj)) {
 						return levelColumnCache.get(obj);
+					}
 					return ""; //$NON-NLS-1$
 				case 2 :
-					if (isChecked && autoColumnCache != null && autoColumnCache.containsKey(obj))
+					if (isChecked && autoColumnCache != null && autoColumnCache.containsKey(obj)) {
 						return autoColumnCache.get(obj);
+					}
 					return ""; //$NON-NLS-1$
 				default :
 					return ""; //$NON-NLS-1$
@@ -212,8 +216,9 @@ public abstract class AbstractPluginBlock {
 			} else if (source == fValidateButton) {
 				handleValidate();
 			}
-			if (!fIsDisposed)
+			if (!fIsDisposed) {
 				fTab.updateLaunchConfigurationDialog();
+			}
 		}
 	}
 
@@ -225,10 +230,12 @@ public abstract class AbstractPluginBlock {
 
 		@Override
 		public Object[] getChildren(Object parent) {
-			if (parent == fExternalPlugins)
+			if (parent == fExternalPlugins) {
 				return getExternalModels();
-			if (parent == fWorkspacePlugins)
+			}
+			if (parent == fWorkspacePlugins) {
 				return getWorkspaceModels();
+			}
 			return new Object[0];
 		}
 
@@ -244,10 +251,12 @@ public abstract class AbstractPluginBlock {
 		@Override
 		public Object[] getElements(Object input) {
 			ArrayList<NamedElement> list = new ArrayList<>();
-			if (getWorkspaceModels().length > 0)
+			if (getWorkspaceModels().length > 0) {
 				list.add(fWorkspacePlugins);
-			if (getExternalModels().length > 0)
+			}
+			if (getExternalModels().length > 0) {
 				list.add(fExternalPlugins);
+			}
 			return list.toArray();
 		}
 	}
@@ -399,7 +408,9 @@ public abstract class AbstractPluginBlock {
 				// this just "un-selects" the filter button.
 
 				if (!event.getChecked())
+				 {
 					return; // just return if the check state goes to false
+				}
 				// It is not clear if this is the best approach, but it
 				// is hard to tell without user feedback.
 				TreeItem[] items = fPluginTreeViewer.getTree().getItems();
@@ -432,8 +443,9 @@ public abstract class AbstractPluginBlock {
 		fPluginTreeViewer.setComparator(new ListUtil.PluginComparator() {
 			@Override
 			public int category(Object obj) {
-				if (obj == fWorkspacePlugins)
+				if (obj == fWorkspacePlugins) {
 					return -1;
+				}
 				return 0;
 			}
 		});
@@ -478,8 +490,9 @@ public abstract class AbstractPluginBlock {
 		levelColumnEditor = new TreeEditor(tree);
 		levelColumnEditor.horizontalAlignment = SWT.CENTER;
 		levelColumnEditor.minimumWidth = 60;
-		if (Util.isMac())
+		if (Util.isMac()) {
 			levelColumnEditor.minimumHeight = 27;
+		}
 
 		autoColumnEditor = new TreeEditor(tree);
 		autoColumnEditor.horizontalAlignment = SWT.CENTER;
@@ -491,17 +504,20 @@ public abstract class AbstractPluginBlock {
 			public void widgetSelected(SelectionEvent e) {
 				// Clean up any previous editor control
 				Control oldEditor = levelColumnEditor.getEditor();
-				if (oldEditor != null && !oldEditor.isDisposed())
+				if (oldEditor != null && !oldEditor.isDisposed()) {
 					oldEditor.dispose();
+				}
 
 				oldEditor = autoColumnEditor.getEditor();
-				if (oldEditor != null && !oldEditor.isDisposed())
+				if (oldEditor != null && !oldEditor.isDisposed()) {
 					oldEditor.dispose();
+				}
 
 				// Identify the selected row
 				final TreeItem item = (TreeItem) e.item;
-				if (item != null && !isEditable(item))
+				if (item != null && !isEditable(item)) {
 					return;
+				}
 
 				if (item != null && !isFragment(item)) { // only display editing controls if we're not a fragment
 					final Spinner spinner = new Spinner(tree, SWT.BORDER);
@@ -548,8 +564,9 @@ public abstract class AbstractPluginBlock {
 		if (obj instanceof IPluginModelBase) {
 			IPluginModelBase model = (IPluginModelBase) obj;
 			String systemBundleId = PDECore.getDefault().getModelManager().getSystemBundleId();
-			if (!(systemBundleId.equals(model.getPluginBase().getId())))
+			if (!(systemBundleId.equals(model.getPluginBase().getId()))) {
 				return fPluginTreeViewer.getChecked(model);
+			}
 		}
 		return false;
 	}
@@ -705,21 +722,24 @@ public abstract class AbstractPluginBlock {
 
 		Object[] checkedChildren = ((FilteredCheckboxTree.FilterableCheckboxTreeViewer) fPluginTreeViewer).getCheckedChildren(group);
 		int numberOfChildren = 0;
-		if (checkedChildren != null)
+		if (checkedChildren != null) {
 			numberOfChildren = checkedChildren.length;
+		}
 
-		if (group == fWorkspacePlugins)
+		if (group == fWorkspacePlugins) {
 			fNumWorkspaceChecked = numberOfChildren;
-		else if (group == fExternalPlugins)
+		} else if (group == fExternalPlugins) {
 			fNumExternalChecked = numberOfChildren;
+		}
 
 		if (group instanceof NamedElement) {
 			NamedElement namedElement = (NamedElement) group;
 			TreeItem item = (TreeItem) fPluginTreeViewer.testFindItem(namedElement);
 			if (item != null) {
 				TreeItem[] children = item.getItems();
-				if (children == null)
+				if (children == null) {
 					return;
+				}
 				for (TreeItem childItem : children) {
 					Object child = childItem.getData();
 					if (child instanceof IPluginModelBase) {
@@ -750,10 +770,11 @@ public abstract class AbstractPluginBlock {
 				if (model != null) {
 					if (!fPluginTreeViewer.getChecked(model)) {
 						setChecked(model, true);
-						if (model.getUnderlyingResource() == null)
+						if (model.getUnderlyingResource() == null) {
 							fNumExternalChecked += 1;
-						else
+						} else {
 							fNumWorkspaceChecked += 1;
+						}
 					}
 				}
 			}
@@ -775,12 +796,14 @@ public abstract class AbstractPluginBlock {
 				if (element instanceof PersistablePluginObject) {
 					set.add(((PersistablePluginObject) element).getPluginID());
 				} else {
-					if (element instanceof IJavaProject)
+					if (element instanceof IJavaProject) {
 						element = ((IJavaProject) element).getProject();
+					}
 					if (element instanceof IProject) {
 						IPluginModelBase model = PluginRegistry.findModel((IProject) element);
-						if (model != null)
+						if (model != null) {
 							set.add(model.getPluginBase().getId());
+						}
 					}
 				}
 			}
@@ -820,9 +843,11 @@ public abstract class AbstractPluginBlock {
 	protected void addRequiredPlugins() {
 		Object[] checked = fPluginTreeViewer.getCheckedElements();
 		ArrayList<Object> toCheck = new ArrayList<>(checked.length);
-		for (Object checkedElement : checked)
-			if (checkedElement instanceof IPluginModelBase)
+		for (Object checkedElement : checked) {
+			if (checkedElement instanceof IPluginModelBase) {
 				toCheck.add(checkedElement);
+			}
+		}
 
 		Set<?> additionalIds = DependencyManager.getDependencies(checked, fIncludeOptionalButton.getSelection(), null);
 
@@ -833,8 +858,9 @@ public abstract class AbstractPluginBlock {
 				ModelEntry entry = PluginRegistry.findEntry(id);
 				if (entry != null) {
 					IPluginModelBase model = entry.getModel();
-					if (model != null)
+					if (model != null) {
 						toCheck.add(model);
+					}
 				}
 			}
 		}
@@ -844,10 +870,11 @@ public abstract class AbstractPluginBlock {
 		fNumExternalChecked = 0;
 		fNumWorkspaceChecked = 0;
 		for (Object checkedElement : checked) {
-			if (((IPluginModelBase) checkedElement).getUnderlyingResource() != null)
+			if (((IPluginModelBase) checkedElement).getUnderlyingResource() != null) {
 				fNumWorkspaceChecked += 1;
-			else
+			} else {
 				fNumExternalChecked += 1;
+			}
 		}
 		adjustGroupState();
 	}
@@ -856,19 +883,22 @@ public abstract class AbstractPluginBlock {
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		if (entry != null) {
 			IPluginModelBase model = entry.getModel();
-			if (fPluginTreeViewer.getChecked(model))
+			if (fPluginTreeViewer.getChecked(model)) {
 				return model;
+			}
 
 			IPluginModelBase[] models = entry.getWorkspaceModels();
 			for (IPluginModelBase pluginModel : models) {
-				if (fPluginTreeViewer.getChecked(pluginModel))
+				if (fPluginTreeViewer.getChecked(pluginModel)) {
 					return pluginModel;
+				}
 			}
 
 			models = entry.getExternalModels();
 			for (IPluginModelBase pluginModel : models) {
-				if (fPluginTreeViewer.getChecked(pluginModel))
+				if (fPluginTreeViewer.getChecked(pluginModel)) {
 					return pluginModel;
+				}
 			}
 			return null;
 		}
@@ -953,8 +983,9 @@ public abstract class AbstractPluginBlock {
 			IPluginModelBase model = getWorkspaceModels()[i];
 			fNumWorkspaceChecked += 1;
 			String id = model.getPluginBase().getId();
-			if (id != null)
+			if (id != null) {
 				wtable.add(model.getPluginBase().getId());
+			}
 		}
 		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, true);
 
@@ -981,16 +1012,18 @@ public abstract class AbstractPluginBlock {
 		// use Shell of launcher window.  If launcher window is disposed (not sure how it could happen), use workbenchwindow.  Bug 168198
 		try {
 			Control c = fTab.getControl();
-			if (!c.isDisposed())
+			if (!c.isDisposed()) {
 				return c.getShell();
+			}
 		} catch (SWTException e) {
 		}
 		return PDEPlugin.getActiveWorkbenchShell();
 	}
 
 	public void handleValidate() {
-		if (fOperation == null)
+		if (fOperation == null) {
 			fOperation = createValidationOperation();
+		}
 		try {
 			fOperation.run(new NullProgressMonitor());
 
@@ -1013,9 +1046,9 @@ public abstract class AbstractPluginBlock {
 					MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
 				}
 			} else {
-				if (fOperation.getInput().size() > 0)
+				if (fOperation.getInput().size() > 0) {
 					fDialog.refresh(fOperation.getInput());
-				else {
+				} else {
 					Map<String, IStatus> input = new HashMap<>(1);
 					input.put(PDEUIMessages.AbstractLauncherToolbar_noProblems, Status.OK_STATUS);
 					fDialog.refresh(input);
