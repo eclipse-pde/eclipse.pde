@@ -512,8 +512,7 @@ public class ElementSection extends TreeSection {
 			return;
 		}
 		Object[] objects = e.getChangedObjects();
-		for (Object object : objects) {
-			Object obj = objects[0];
+		for (Object obj : objects) {
 			if (obj instanceof SchemaElementReference) {
 				fTreeViewer.refresh(((SchemaElementReference) obj).getCompositor());
 				if (e.getChangeType() == IModelChangedEvent.INSERT)
