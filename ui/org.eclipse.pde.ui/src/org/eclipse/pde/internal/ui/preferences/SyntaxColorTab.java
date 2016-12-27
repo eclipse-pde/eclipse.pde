@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public abstract class SyntaxColorTab {
 	private ChangeAwareSourceViewerConfiguration fSourceViewerConfiguration;
 	private Button fBoldButton;
 	private Button fItalicButton;
+	private ColorSelector fColorSelector;
 
 	class ColorElement {
 		private String fDisplayName;
@@ -168,15 +169,15 @@ public abstract class SyntaxColorTab {
 		label = new Label(colorComposite, SWT.LEFT);
 		label.setText(PDEUIMessages.SyntaxColorTab_color);
 
-		final ColorSelector colorSelector = new ColorSelector(colorComposite);
-		Button colorButton = colorSelector.getButton();
+		fColorSelector = new ColorSelector(colorComposite);
+		Button colorButton = fColorSelector.getButton();
 		colorButton.setLayoutData(new GridData(GridData.BEGINNING));
 
 		colorButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ColorElement item = getColorElement(fElementViewer);
-				item.setColorValue(colorSelector.getColorValue());
+				item.setColorValue(fColorSelector.getColorValue());
 			}
 		});
 
@@ -210,7 +211,7 @@ public abstract class SyntaxColorTab {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ColorElement item = getColorElement(fElementViewer);
-				colorSelector.setColorValue(item.getColorValue());
+				fColorSelector.setColorValue(item.getColorValue());
 				fBoldButton.setSelection(item.isBold());
 				fItalicButton.setSelection(item.isItalic());
 			}
@@ -269,6 +270,7 @@ public abstract class SyntaxColorTab {
 			item.setItalic(store.getDefaultBoolean(item.getColorKey() + IPDEColorConstants.P_ITALIC_SUFFIX));
 		}
 		ColorElement element = getColorElement(fElementViewer);
+		fColorSelector.setColorValue(element.fColorValue);
 		fBoldButton.setSelection(element.isBold());
 		fItalicButton.setSelection(element.isItalic());
 	}
