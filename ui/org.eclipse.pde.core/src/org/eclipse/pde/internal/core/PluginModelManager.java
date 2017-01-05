@@ -627,6 +627,12 @@ public class PluginModelManager implements IModelProviderListener {
 		if (target.isResolved()) {
 			if (target.getStatus().getSeverity() == IStatus.ERROR) {
 				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.PluginModelManager_CurrentTargetPlatformContainsErrors, new CoreException(target.getStatus())));
+				if (target.getStatus() instanceof MultiStatus) {
+					MultiStatus multiStatus = (MultiStatus) target.getStatus();
+					for (IStatus childStatus : multiStatus.getChildren()) {
+						PDECore.log(childStatus);
+					}
+				}
 			}
 		}
 
