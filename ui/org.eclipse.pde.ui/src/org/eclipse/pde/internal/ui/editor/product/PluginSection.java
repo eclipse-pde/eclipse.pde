@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *     Simon Scholz <simon.scholz@vogella.com> - bug 440275, 444808
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -286,7 +287,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			doPaste();
 			return true;
 		}
-		return false;
+		return super.doGlobalAction(actionId);
 	}
 
 	@Override

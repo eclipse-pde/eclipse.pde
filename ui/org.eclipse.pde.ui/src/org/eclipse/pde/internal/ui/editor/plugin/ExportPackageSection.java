@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 200756
  *     Joern Dinkla <devnull@dinkla.com> - bug 200757
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.plugin;
@@ -151,7 +152,7 @@ public class ExportPackageSection extends TableSection {
 			doPaste();
 			return true;
 		}
-		return false;
+		return super.doGlobalAction(actionId);
 	}
 
 	@Override

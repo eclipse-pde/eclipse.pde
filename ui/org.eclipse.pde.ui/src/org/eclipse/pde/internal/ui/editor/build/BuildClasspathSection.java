@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
@@ -159,7 +160,7 @@ public class BuildClasspathSection extends TableSection {
 	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
-		createViewerPartControl(container, SWT.FULL_SELECTION, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI | SWT.FULL_SELECTION, 2, toolkit);
 
 		EditableTablePart tablePart = getTablePart();
 		tablePart.setEditable(true);
@@ -228,7 +229,7 @@ public class BuildClasspathSection extends TableSection {
 			}
 			return true;
 		}
-		return false;
+		return super.doGlobalAction(actionId);
 	}
 
 	public void enableSection(boolean enable) {
@@ -245,20 +246,21 @@ public class BuildClasspathSection extends TableSection {
 	}
 
 	private void handleDelete() {
-		Object selection = ((IStructuredSelection) fTableViewer.getSelection()).getFirstElement();
-		if (selection != null && selection instanceof String) {
-			IBuild build = getBuildModel().getBuild();
-			IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
-			if (entry != null) {
-				try {
-					entry.removeToken(selection.toString());
+		for (Object selection : fTableViewer.getStructuredSelection().toList()) {
+			if (selection != null && selection instanceof String) {
+				IBuild build = getBuildModel().getBuild();
+				IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+				if (entry != null) {
+					try {
+						entry.removeToken(selection.toString());
 
-					String[] tokens = entry.getTokens();
-					if (tokens.length == 0)
-						build.remove(entry);
+						String[] tokens = entry.getTokens();
+						if (tokens.length == 0)
+							build.remove(entry);
 
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
 				}
 			}
 		}

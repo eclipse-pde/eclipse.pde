@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.comp;
@@ -117,7 +118,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	private void createTree(Composite container, FormToolkit toolkit) {
 		TreePart treePart = getTreePart();
-		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		fTreeViewer = treePart.getTreeViewer();
 		fTreeViewer.setContentProvider(new CompCSContentProvider());
 		fTreeViewer.setLabelProvider(PDEUserAssistanceUIPlugin.getDefault()
@@ -571,7 +572,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 			handleDeleteAction();
 			return true;
 		}
-		return false;
+		return super.doGlobalAction(actionId);
 	}
 
 	private void handleDeleteAction() {

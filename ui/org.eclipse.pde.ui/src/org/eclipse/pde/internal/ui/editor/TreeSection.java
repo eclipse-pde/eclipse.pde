@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
@@ -15,8 +16,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class TreeSection extends StructuredViewerSection {
@@ -98,5 +98,19 @@ public abstract class TreeSection extends StructuredViewerSection {
 	}
 
 	protected void enableButtons() {
+	}
+
+	@Override
+	protected void handleSelectAll() {
+		TreeViewer viewer = getTreePart().getTreeViewer();
+		if (viewer == null) {
+			return;
+		}
+		Tree tree = viewer.getTree();
+		if (tree == null) {
+			return;
+		}
+		tree.selectAll();
+		selectionChanged(viewer.getStructuredSelection());
 	}
 }

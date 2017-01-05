@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.site;
@@ -161,7 +162,7 @@ public class ArchiveSection extends PDESection {
 	}
 
 	private void createTable(Composite container, FormToolkit toolkit) {
-		fTable = toolkit.createTable(container, SWT.FULL_SELECTION);
+		fTable = toolkit.createTable(container, SWT.MULTI | SWT.FULL_SELECTION);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		fTable.setLayoutData(gd);
@@ -246,7 +247,13 @@ public class ArchiveSection extends PDESection {
 			});
 			return true;
 		}
-		return false;
+
+		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
+			handleSelectAll();
+			return true;
+		}
+
+		return super.doGlobalAction(actionId);
 	}
 
 	@Override
@@ -294,5 +301,19 @@ public class ArchiveSection extends PDESection {
 			return true;
 		}
 		return super.setFormInput(input);
+	}
+
+	@Override
+	protected void handleSelectAll() {
+		TableViewer viewer = fViewer;
+		if (viewer == null) {
+			return;
+		}
+		Table table = viewer.getTable();
+		if (table == null) {
+			return;
+		}
+		table.selectAll();
+		handleSelectionChanged();
 	}
 }

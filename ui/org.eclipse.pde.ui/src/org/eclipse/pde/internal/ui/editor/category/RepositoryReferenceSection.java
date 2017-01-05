@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Rapicorp Corporation and others.
+ * Copyright (c) 2014, 2017 Rapicorp Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Rapicorp Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
@@ -304,7 +305,7 @@ public class RepositoryReferenceSection extends TableSection {
 			handleDelete();
 			return false;
 		}
-		return false;
+		return super.doGlobalAction(actionId);
 	}
 
 

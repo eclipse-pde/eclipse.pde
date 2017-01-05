@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
@@ -127,5 +129,19 @@ public abstract class TableSection extends StructuredViewerSection {
 
 	protected boolean createCount() {
 		return false;
+	}
+
+	@Override
+	protected void handleSelectAll() {
+		TableViewer viewer = getTablePart().getTableViewer();
+		if (viewer == null) {
+			return;
+		}
+		Table table = viewer.getTable();
+		if (table == null) {
+			return;
+		}
+		table.selectAll();
+		selectionChanged(viewer.getStructuredSelection());
 	}
 }

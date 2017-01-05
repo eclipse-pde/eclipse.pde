@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *     Brian de Alwis (MTI) - bug 429420
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -393,12 +394,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			}
 			return true;
 		}
-		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			handleSelectAll();
-			return true;
-		}
 
-		return false;
+		return super.doGlobalAction(actionId);
 	}
 
 	@Override
@@ -707,7 +704,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
-	private void handleSelectAll() {
+	@Override
+	protected void handleSelectAll() {
 		fExtensionTree.getTree().selectAll();
 		updateButtons(fFilteredTree.getViewer().getSelection());
 	}
