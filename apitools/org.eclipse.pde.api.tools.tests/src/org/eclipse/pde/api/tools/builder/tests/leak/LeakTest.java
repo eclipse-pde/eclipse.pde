@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,6 @@ package org.eclipse.pde.api.tools.builder.tests.leak;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -24,6 +21,9 @@ import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the builder to make sure it correctly reports non-API type leaks
@@ -148,11 +148,21 @@ public abstract class LeakTest extends ApiBuilderTest {
 	}
 
 	/**
+	 * Verifies that the project has no problems.
+	 */
+	@Override
+	protected void expectingNoProblems() {
+		IProject project = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
+		expectingNoProblemsFor(project.getFullPath());
+	}
+
+	/**
 	 * Deploys a leak test
 	 *
-	 * @param sourcename the name of the source files to create in the testing
-	 *            project.
-	 * @param incremental if an incremental build should be performed
+	 * @param sourcename
+	 *            the name of the source files to create in the testing project.
+	 * @param incremental
+	 *            if an incremental build should be performed
 	 */
 	protected void deployLeakTest(String sourcename, boolean incremantal) {
 		try {

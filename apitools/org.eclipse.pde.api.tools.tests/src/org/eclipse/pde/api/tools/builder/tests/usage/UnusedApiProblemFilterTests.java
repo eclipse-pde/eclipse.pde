@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
-import junit.framework.Test;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -27,6 +26,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.util.tests.ResourceEventWaiter;
+
+import junit.framework.Test;
 
 /**
  * Tests that unused
@@ -187,10 +188,12 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 			fullBuild();
 		}
 		expectingNoJDTProblems();
-		if (getExpectedProblemIds().length > 0) {
-			assertProblems(getEnv().getProblems());
+		IProject projectCurrent = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
+		ApiProblem[] apiProblems = allSortedApiProblems(new IPath[] { projectCurrent.getFullPath() });
+		if (apiProblems != null && apiProblems.length > 0) {
+			assertProblems(apiProblems);
 		} else {
-			expectingNoProblems();
+			expectingNoProblemsFor(projectCurrent.getFullPath());
 		}
 	}
 

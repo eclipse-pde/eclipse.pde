@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
@@ -48,6 +49,17 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 		}
 		// could be a reference to a package visible type
 		IApiMember member = reference.getMember();
+		
+		// if reference has noimplement restriction, it could leak non-API types
+		if (RestrictionModifiers.isImplementRestriction(member.getModifiers())) {
+			return true;
+		}
+		// if reference has noextend restriction, it could be indirectly be
+		// extended bypassing the noextend
+		if (RestrictionModifiers.isImplementRestriction(member.getModifiers())) {
+			return true;
+		}
+
 		IApiType type = null;
 		if (member.getType() == IApiElement.TYPE) {
 			type = (IApiType) member;

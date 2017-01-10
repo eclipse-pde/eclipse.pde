@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -37,6 +38,8 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
  * @since 1.1
  */
 public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
+
+	int problemFlags = IApiProblem.LEAK_EXTENDS;
 
 	/**
 	 * @param nonApiPackageNames
@@ -57,12 +60,43 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 
 	@Override
 	protected int getProblemFlags(IReference reference) {
-		return IApiProblem.LEAK_EXTENDS;
+		return problemFlags;
 	}
 
 	@Override
 	public boolean isProblem(IReference reference) {
-		if (super.isProblem(reference)) {
+		boolean isProb = super.isProblem(reference);
+		problemFlags = IApiProblem.LEAK_EXTENDS;
+		//check if the no extend type is left to be extended
+		// or if noimplement interface is extended but not marked noimplement
+		if (isProb == false) {
+			IApiMember member = reference.getResolvedReference();
+			IApiMember sourceMember = reference.getMember();
+			try {
+				IApiAnnotations annotations = member.getApiComponent().getApiDescription().resolveAnnotations(member.getHandle());
+				if (annotations != null) {
+					if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
+						IApiAnnotations annotationsSource = member.getApiComponent().getApiDescription().resolveAnnotations(sourceMember.getHandle());
+						if (annotationsSource != null && !RestrictionModifiers.isExtendRestriction(annotationsSource.getRestrictions())) {
+							problemFlags = IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE;
+							return true;
+						}
+					}
+					if (RestrictionModifiers.isImplementRestriction(annotations.getRestrictions())) {
+						IApiAnnotations annotationsSource = member.getApiComponent().getApiDescription().resolveAnnotations(sourceMember.getHandle());
+						if (annotationsSource != null && !RestrictionModifiers.isImplementRestriction(annotationsSource.getRestrictions())) {
+							// problemFlags =
+							// IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE;
+							return true;
+						}
+					}
+				}
+			}
+			catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+		}
+		if (isProb) {
 			// check the use restrictions on the API type (can be extended or
 			// not)
 			IApiType type = (IApiType) reference.getMember();

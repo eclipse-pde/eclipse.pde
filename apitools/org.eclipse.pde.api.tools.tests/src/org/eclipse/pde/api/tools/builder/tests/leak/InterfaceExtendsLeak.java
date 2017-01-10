@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.leak;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests that an API interface leaking an internal type via extends is
@@ -299,5 +299,82 @@ public class InterfaceExtendsLeak extends LeakTest {
 		String typename = "Etest10"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{"Iouter", typename}}); //$NON-NLS-1$
 		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests extending a noimplement interface is a leak of a non-API type.
+	 */
+	public void testInterfaceExtendsNoImplementInterface11F() {
+		x11(false);
+	}
+
+	public void testInterfaceExtendsNoImplementInterface11I() {
+		x11(true);
+	}
+
+	private void x11(boolean inc) {
+		setExpectedProblemIds(new int[] { getDefaultProblemId() });
+		String typename = "Etest11"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] { { "interfaceNoImplement", typename } }); //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests extending a noimplement interface is a leak of a non-API type
+	 * unless it itself is noimplement
+	 */
+	public void testInterfaceExtendsNoImplementInterface12F() {
+		x12(false);
+	}
+
+
+	public void testInterfaceExtendsNoImplementInterface12I() {
+		x12(true);
+	}
+
+	private void x12(boolean inc) {
+		expectingNoProblems();
+		String typename = "Etest12"; //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
+	}
+
+	// *******
+	/**
+	 * Tests extending a noextend interface is am indirect leak.
+	 */
+	public void testInterfaceExtendsNoExtendInterface13F() {
+		x13(false);
+	}
+
+	public void testInterfaceExtendsNoExtendInterface13I() {
+		x13(true);
+	}
+
+	private void x13(boolean inc) {
+		int pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE,
+				IApiProblem.API_LEAK, IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE);
+		setExpectedProblemIds(new int[] { pid });
+		String typename = "Etest13"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] { { "interfaceNoExtend", typename } }); //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc);//$NON-NLS-1$
+	}
+
+	/**
+	 * Tests extending a noextend interface is a leak of a non-API type
+	 * unless it itself is noextend
+	 */
+	public void testInterfaceExtendsNoExtendInterface14F() {
+		x14(false);
+	}
+
+
+	public void testInterfaceExtendsNoExtendInterface14I() {
+		x14(true);
+	}
+
+	private void x14(boolean inc) {
+		expectingNoProblems();
+		String typename = "Etest14"; //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc);//$NON-NLS-1$
 	}
 }

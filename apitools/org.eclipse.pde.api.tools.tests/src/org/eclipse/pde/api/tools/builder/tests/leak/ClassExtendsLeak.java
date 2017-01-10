@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.leak;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests that leaked members via extends for classes is properly detected
@@ -596,4 +596,46 @@ public class ClassExtendsLeak extends LeakTest {
 		String typename = "test32"; //$NON-NLS-1$
 		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
 	}
+
+	/**
+	 * Tests that an API class that extends a  noextend class is a leak
+	 */
+	public void testClassExtendsNoExtendClass33F() {
+		x34(false);
+	}
+
+
+	public void testClassExtendsNoExtendClass13I() {
+		x34(true);
+	}
+
+	private void x34(boolean inc) {
+		int pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE,
+				IApiProblem.API_LEAK, IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE);
+		setExpectedProblemIds(new int[] { pid });
+		String typename = "test34"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] { { "classNoExtend", typename } }); //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
+	}
+
+	/**
+	 * Test that an API class that extends a  noextend class is not a  leak
+	 * if it is noextend
+	 */
+	public void testNoExtendClassExtendsNoExtendClass14F() {
+		x35(false);
+	}
+
+
+	public void testNoExtendClassExtendsNoExtendClass14I() {
+		x35(true);
+	}
+
+	private void x35(boolean inc) {
+		expectingNoProblems();
+		String typename = "test35"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] { { "class1", typename } }); //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
+	}
+
 }

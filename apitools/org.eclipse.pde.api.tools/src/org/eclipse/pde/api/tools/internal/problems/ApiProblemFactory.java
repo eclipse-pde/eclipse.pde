@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -676,6 +676,8 @@ public class ApiProblemFactory {
 						switch (flags) {
 							case IApiProblem.LEAK_EXTENDS:
 								return 13;
+							case IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE:
+								return 48;
 							case IApiProblem.LEAK_IMPLEMENTS:
 								return 14;
 							case IApiProblem.LEAK_FIELD:
@@ -1052,6 +1054,7 @@ public class ApiProblemFactory {
 					case IApiProblem.API_LEAK: {
 						switch (problem.getFlags()) {
 							case IApiProblem.LEAK_EXTENDS:
+							case IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE:
 								return IApiProblemTypes.LEAK_EXTEND;
 							case IApiProblem.LEAK_FIELD:
 								return IApiProblemTypes.LEAK_FIELD_DECL;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.leak;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests that an API type that implements an internal type
@@ -324,4 +324,25 @@ public class ClassImplementsLeak extends LeakTest {
 		setExpectedMessageArgs(new String[][] {{"Iouter", typename}}); //$NON-NLS-1$
 		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
+
+	/**
+	 * Tests that an API class that implements noimplement interface is a leak
+	 */
+	public void testClassImplementsNoImplementInterface12F() {
+		x12(false);
+	}
+
+
+	public void testClassImplementsNoImplementInterface12I() {
+		x12(true);
+	}
+
+	private void x12(boolean inc) {
+		setExpectedProblemIds(new int[] { getDefaultProblemId() });
+		String typename = "test33"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] { { "interfaceNoImplement", typename } }); //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
+	}
+
+
 }
