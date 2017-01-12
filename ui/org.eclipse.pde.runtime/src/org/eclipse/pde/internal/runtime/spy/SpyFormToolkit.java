@@ -235,7 +235,7 @@ public class SpyFormToolkit extends FormToolkit {
 			bundleClassByName.put(clazz.getName(), bundle);
 			buffer.append("<a href=\"").append(CLASS_PROTOCOL_PREFIX).append( //$NON-NLS-1$
 					clazz.getName()).append("\">") //$NON-NLS-1$
-					.append(getSimpleName(clazz)).append("</a>"); //$NON-NLS-1$
+					.append(clazz.getSimpleName()).append("</a>"); //$NON-NLS-1$
 		} else {
 			buffer.append(clazz.getName());
 		}
@@ -277,15 +277,6 @@ public class SpyFormToolkit extends FormToolkit {
 				buffer.append("</li>"); //$NON-NLS-1$
 			}
 		}
-	}
-
-	private String getSimpleName(Class clazz) {
-		String fullName = clazz.getName();
-		int index = fullName.lastIndexOf('.');
-		String name = fullName.substring(index + 1, fullName.length());
-		if (name != null)
-			return name;
-		return fullName;
 	}
 
 	private ToolBarManager createSectionToolbar(Section section) {
