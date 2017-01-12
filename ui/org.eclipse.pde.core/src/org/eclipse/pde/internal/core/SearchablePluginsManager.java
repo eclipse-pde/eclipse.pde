@@ -166,8 +166,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 			for (int i = 0; i < result.size(); i++) {
 				IClasspathEntry entry = result.get(i);
 				String key = entry.getPath().lastSegment().toString();
-				if (map.containsKey(key)) {
-					key += System.currentTimeMillis();
+				while (map.containsKey(key)) {
+					key += i;
 				}
 				map.put(key, entry);
 			}
