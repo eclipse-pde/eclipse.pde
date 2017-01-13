@@ -195,12 +195,6 @@
    <extension
          point="org.eclipse.pde.ui.templates">
       <template
-            contributingId="org.eclipse.ui.actionSets"
-            name="%template.helloWorld.name"
-            class="org.eclipse.pde.internal.ui.templates.ide.HelloWorldTemplate"
-            id="org.eclipse.pde.ui.templates.helloWorld">
-      </template>
-      <template
             contributingId="org.eclipse.ui.commands"
             name="%template.helloWorldCmd.name"
             class="org.eclipse.pde.internal.ui.templates.ide.HelloWorldCmdTemplate"
