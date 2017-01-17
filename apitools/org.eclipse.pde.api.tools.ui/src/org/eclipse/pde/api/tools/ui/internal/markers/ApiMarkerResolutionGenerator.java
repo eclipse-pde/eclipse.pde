@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
@@ -63,6 +64,12 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 						new FilterProblemWithCommentResolution(marker) };
 			}
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID: {
+			int id = ApiProblemFactory.getProblemId(marker);
+			if (id > -1 && id == ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
+					IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD)) {
+				return new IMarkerResolution[] { new ProblemExplainIncompatibilityResolution(marker),
+						new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker) };
+			}
 				return new IMarkerResolution[] {
 						new FilterProblemResolution(marker),
 						new FilterProblemWithCommentResolution(marker) };

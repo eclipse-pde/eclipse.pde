@@ -18,6 +18,7 @@ public class PreferenceMessages extends NLS {
 	public static String ApiErrorsWarningsConfigurationBlock_1;
 	public static String ApiErrorsWarningsConfigurationBlock_2;
 	public static String ApiErrorsWarningsConfigurationBlock_3;
+	public static String ApiErrorsWarningsConfigurationBlock_4;
 	public static String ApiErrorsWarningsConfigurationBlock_automatically_remove_problem_filters;
 	public static String ApiErrorsWarningsPreferencePage_0;
 	public static String ApiErrorsWarningsPreferencePage_1;
@@ -113,6 +114,7 @@ public class PreferenceMessages extends NLS {
 	public static String ENUM_REMOVED_METHOD;
 	public static String ENUM_REMOVED_TYPE_MEMBER;
 
+	public static String CLASS_ADDED_FIELD;
 	public static String CLASS_ADDED_METHOD;
 	public static String CLASS_ADDED_TYPE_PARAMETER;
 	public static String CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET;

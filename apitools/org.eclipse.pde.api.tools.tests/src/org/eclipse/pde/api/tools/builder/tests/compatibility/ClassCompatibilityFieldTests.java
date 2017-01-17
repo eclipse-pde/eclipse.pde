@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -374,7 +374,10 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 	 */
 	private void xAddProtectedField(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddProtectedField.java"); //$NON-NLS-1$
-		// there are no expected problems
+		// there is 1 expected problems
+		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD) };
+		setExpectedProblemIds(ids);
 		performCompatibilityTest(filePath, incremental);
 	}
 
@@ -391,7 +394,10 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 	 */
 	private void xAddPublicField(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPublicField.java"); //$NON-NLS-1$
-		// there are no expected problems
+		// there is 1 expected problem
+		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD) };
+		setExpectedProblemIds(ids);
 		performCompatibilityTest(filePath, incremental);
 	}
 

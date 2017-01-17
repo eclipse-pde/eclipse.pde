@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
 import java.awt.Checkbox;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
@@ -284,6 +286,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	private static final Key KEY_ENUM_REMOVED_TYPE_MEMBER = getApiToolsKey(IApiProblemTypes.ENUM_REMOVED_TYPE_MEMBER);
 
 	// class key constant
+	private static final Key KEY_CLASS_ADDED_FIELD = getApiToolsKey(IApiProblemTypes.CLASS_ADDED_FIELD);
 	private static final Key KEY_CLASS_ADDED_METHOD = getApiToolsKey(IApiProblemTypes.CLASS_ADDED_METHOD);
 	private static final Key KEY_CLASS_ADDED_RESTRICTIONS = getApiToolsKey(IApiProblemTypes.CLASS_ADDED_RESTRICTIONS);
 	private static final Key KEY_CLASS_ADDED_TYPE_PARAMETER = getApiToolsKey(IApiProblemTypes.CLASS_ADDED_TYPE_PARAMETER);
@@ -389,7 +392,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			KEY_ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
 			KEY_ENUM_CHANGED_TYPE_CONVERSION, KEY_ENUM_REMOVED_FIELD,
 			KEY_ENUM_REMOVED_ENUM_CONSTANT, KEY_ENUM_REMOVED_METHOD,
-			KEY_ENUM_REMOVED_TYPE_MEMBER, KEY_CLASS_ADDED_METHOD,
+			KEY_ENUM_REMOVED_TYPE_MEMBER, KEY_CLASS_ADDED_FIELD, KEY_CLASS_ADDED_METHOD,
 			KEY_CLASS_ADDED_RESTRICTIONS, KEY_CLASS_ADDED_TYPE_PARAMETER,
 			KEY_CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
 			KEY_CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
@@ -491,6 +494,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			KEY_ENUM_REMOVED_ENUM_CONSTANT,
 			KEY_ENUM_REMOVED_METHOD,
 			KEY_ENUM_REMOVED_TYPE_MEMBER,
+			KEY_CLASS_ADDED_FIELD,
 			KEY_CLASS_ADDED_METHOD,
 			KEY_CLASS_ADDED_RESTRICTIONS,
 			KEY_CLASS_ADDED_TYPE_PARAMETER,
@@ -861,6 +865,26 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		tab.setControl(page);
 
 		SWTFactory.createVerticalSpacer(page, 1);
+
+		// Add 'Achieving API Binary Compatibility' link at the top for compatibility tab
+		if (tabID == COMPATIBILITY_PAGE_ID) {
+			Link link = new Link(page, SWT.CENTER);
+			link.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 7));
+			String linkHttp = "<a href=\"https://wiki.eclipse.org/Evolving_Java-based_APIs_2\">'Achieving API Binary Compatibility'</a>"; //$NON-NLS-1$
+			link.setText(NLS.bind(PreferenceMessages.ApiErrorsWarningsConfigurationBlock_4, linkHttp));
+			link.setSize(400, 100);
+			link.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					try {
+						PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(e.text));
+					} catch (Exception ex) {
+
+					}
+				}
+			});
+		}
+
 		SWTFactory.createWrapLabel(page, description, 1);
 		SWTFactory.createVerticalSpacer(page, 1);
 
@@ -940,6 +964,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 				KEY_API_COMPONENT_REMOVED_REEXPORTED_TYPE, });
 		client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityClassElement);
 		initializeComboControls(client, new String[] {
+				PreferenceMessages.CLASS_ADDED_FIELD,
 				PreferenceMessages.CLASS_ADDED_METHOD,
 				PreferenceMessages.CLASS_ADDED_RESTRICTIONS,
 				PreferenceMessages.CLASS_ADDED_TYPE_PARAMETER,
@@ -953,7 +978,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 				PreferenceMessages.CLASS_REMOVED_CONSTRUCTOR,
 				PreferenceMessages.CLASS_REMOVED_SUPERCLASS,
 				PreferenceMessages.CLASS_REMOVED_TYPE_MEMBER,
-				PreferenceMessages.CLASS_REMOVED_TYPE_PARAMETER, }, new Key[] {
+				PreferenceMessages.CLASS_REMOVED_TYPE_PARAMETER, },
+				new Key[] { KEY_CLASS_ADDED_FIELD,
 				KEY_CLASS_ADDED_METHOD, KEY_CLASS_ADDED_RESTRICTIONS,
 				KEY_CLASS_ADDED_TYPE_PARAMETER,
 				KEY_CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET,

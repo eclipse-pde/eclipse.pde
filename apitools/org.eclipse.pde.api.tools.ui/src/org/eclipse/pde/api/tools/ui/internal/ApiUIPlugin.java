@@ -302,6 +302,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_FILTER, ELCL + "filter_ps.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_REMOVE, ELCL + "remove_exc.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_OPEN_PAGE, ELCL + "open_page.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_HELP_PAGE, ELCL + "help.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS, ELCL + "compare_apis.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS_DISABLED, DLCL + "compare_apis.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_EXPORT, ELCL + "export.gif"); //$NON-NLS-1$

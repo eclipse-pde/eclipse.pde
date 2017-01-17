@@ -22,9 +22,9 @@ import org.eclipse.pde.api.tools.ui.internal.use.DescriptionPatternPage;
 import org.eclipse.pde.api.tools.ui.internal.use.PatternSelectionPage;
 import org.eclipse.pde.api.tools.ui.internal.use.ReportPatternPage;
 import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
-import org.eclipse.pde.api.tools.ui.internal.wizards.DirectoryBasedApiBaselineWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.CompareToBaselineWizard;
+import org.eclipse.pde.api.tools.ui.internal.wizards.DirectoryBasedApiBaselineWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.JavadocConversionPage;
 
 /**
@@ -60,6 +60,14 @@ public interface IApiToolsHelpContextIds {
 	 * {@link ApiErrorsWarningsPreferencePage}
 	 */
 	public static final String APITOOLS_ERROR_WARNING_PREF_PAGE = PREFIX + "apitools_error_warning_preference_page"; //$NON-NLS-1$
+
+	/**
+	 * Constant representing the help id for the explain incompatibility of
+	 * field addition to class
+	 */
+
+	public static final String APITOOLS_ERROR_EXPLAIN_INCOMPATIBILITY_FIELD_ADDITION_TO_CLASS = PREFIX
+			+ "apitools_error_warning_explain_incompatibility_field_addition_class"; //$NON-NLS-1$
 	/**
 	 * Constant representing the help id for the
 	 * {@link ApiErrorsWarningsPropertyPage}

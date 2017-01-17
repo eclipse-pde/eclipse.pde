@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -294,6 +294,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 			IApiProblemTypes.ENUM_REMOVED_ENUM_CONSTANT,
 			IApiProblemTypes.ENUM_REMOVED_METHOD,
 			IApiProblemTypes.ENUM_REMOVED_TYPE_MEMBER,
+			IApiProblemTypes.CLASS_ADDED_FIELD,
 			IApiProblemTypes.CLASS_ADDED_METHOD,
 			IApiProblemTypes.CLASS_ADDED_RESTRICTIONS,
 			IApiProblemTypes.CLASS_ADDED_TYPE_PARAMETER,
