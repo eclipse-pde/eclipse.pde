@@ -99,13 +99,7 @@ public class ActivePartSection implements ISpySection {
 				Image menuImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_MENU_OBJ);
 				text.setImage("menu", menuImage); //$NON-NLS-1$
 			}
-		} catch (SecurityException e) {
-			PDERuntimePlugin.log(e);
-		} catch (NoSuchFieldException e) {
-			PDERuntimePlugin.log(e);
-		} catch (IllegalArgumentException e) {
-			PDERuntimePlugin.log(e);
-		} catch (IllegalAccessException e) {
+		} catch (SecurityException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			PDERuntimePlugin.log(e);
 		}
 
