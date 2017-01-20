@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.pde.genericeditor.target.extension.autocomplete.VersionProposal;
 import org.eclipse.pde.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.pde.genericeditor.target.extension.model.LocationNode;
 import org.eclipse.pde.genericeditor.target.extension.model.RepositoryCache;
@@ -67,6 +68,7 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 
 		}
 
+		boolean replace = false;
 		if (acKey.equalsIgnoreCase(ITargetConstants.UNIT_VERSION_ATTR)) {
 			if (node != null) {
 				LocationNode location = node.getParent();
@@ -81,10 +83,8 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 				}
 				List<UnitNode> byPrefix = cache.getUnitsByPrefix(repoLocation, node.getId());
 				List<String> versions = byPrefix.get(0).getAvailableVersions();
-				if (!versions.isEmpty()){
-					versions.add(ITargetConstants.UNIT_VERSION_ATTR_GENERIC);
-				}
-				return convertToVersionProposals(versions);
+				replace = !("".equals(node.getVersion()));//$NON-NLS-1$
+				return convertToVersionProposals(versions, replace);
 			}
 
 		}
@@ -98,27 +98,37 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 		job.schedule();
 	}
 
-	private ICompletionProposal[] convertToVersionProposals(List<String> versions) {
-		List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
-		for (String version : versions) {
+	private ICompletionProposal[] convertToVersionProposals(List<String> versions, boolean replace) {
+		List<String> dest = new ArrayList<>();
+		dest.addAll(versions);
+		if (!versions.contains(ITargetConstants.UNIT_VERSION_ATTR_GENERIC)) {
+			dest.add(ITargetConstants.UNIT_VERSION_ATTR_GENERIC);
+		}
+
+		List<ICompletionProposal> result = new ArrayList<>();
+		for (String version : dest) {
+			if (version == null) {
+				continue;
+			}
 			if (!version.startsWith(prefix)){
 				continue;
 			}
-			CompletionProposal proposal = new CompletionProposal(version, offset - prefix.length(), prefix.length(),
-					version.length() + 1);
+
+			ICompletionProposal proposal = new VersionProposal(version, offset, prefix.length(),
+					replace);
 			result.add(proposal);
 		}
-		return (ICompletionProposal[]) result.toArray(new ICompletionProposal[result.size()]);
+		return result.toArray(new ICompletionProposal[result.size()]);
 	}
 
 	private ICompletionProposal[] convertToProposals(List<UnitNode> units) {
-		List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> result = new ArrayList<>();
 		for (UnitNode unit : units) {
 			CompletionProposal proposal = new CompletionProposal(unit.getId(), offset - prefix.length(),
 					prefix.length(), unit.getId().length() + 1);
 			result.add(proposal);
 		}
-		return (ICompletionProposal[]) result.toArray(new ICompletionProposal[result.size()]);
+		return result.toArray(new ICompletionProposal[result.size()]);
 	}
 
 	private ICompletionProposal[] getInformativeProposal() {
