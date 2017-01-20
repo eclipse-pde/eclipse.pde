@@ -109,7 +109,7 @@ public class ActivePartSection implements ISpySection {
 		text.setImage("id", idImage); //$NON-NLS-1$
 
 		text.setText(buffer.toString(), true, false);
-		text.layout();
+		text.requestLayout();
 	}
 
 }

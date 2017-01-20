@@ -68,7 +68,7 @@ public class ActiveFormEditorSection implements ISpySection {
 		buffer.append("</form>"); //$NON-NLS-1$
 
 		text.setText(buffer.toString(), true, false);
-		text.layout();
+		text.requestLayout();
 
 	}
 
