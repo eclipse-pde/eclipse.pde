@@ -11,7 +11,6 @@ package org.eclipse.pde.build.internal.tests.p2;
 import java.io.File;
 import java.net.URI;
 import java.util.*;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
@@ -19,7 +18,6 @@ import org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepo
 import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository;
-import org.eclipse.equinox.internal.p2.repository.helpers.ChecksumProducer;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.query.IQueryResult;
@@ -132,16 +130,6 @@ public class P2TestCase extends PDETestCase {
 		artifact.addChild(URIUtil.toURI(Platform.getInstallLocation().getURL()));
 
 		return baseURI;
-	}
-
-	public void assertMD5(IFolder repository, IArtifactDescriptor descriptor) throws Exception {
-		String md5 = descriptor.getProperty(IArtifactDescriptor.DOWNLOAD_MD5);
-		if (md5 == null)
-			return;
-
-		IFile artifact = repository.getFile(getArtifactLocation(descriptor));
-		String actualMD5 = ChecksumProducer.computeMD5(artifact.getLocation().toFile());
-		assertEquals(md5, actualMD5);
 	}
 
 	public String getArtifactLocation(IArtifactDescriptor descriptor) {

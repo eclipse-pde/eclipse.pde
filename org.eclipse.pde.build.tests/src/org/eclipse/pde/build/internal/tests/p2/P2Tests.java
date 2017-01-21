@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
+import org.eclipse.equinox.internal.p2.repository.helpers.ChecksumProducer;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
@@ -574,6 +575,16 @@ public class P2Tests extends P2TestCase {
 			assertResourceFile(repoFolder, getArtifactLocation(descriptors[0]));
 			assertResourceFile(repoFolder, getArtifactLocation(descriptors[1]));
 		}
+	}
+
+	private void assertMD5(IFolder repository, IArtifactDescriptor descriptor) throws Exception {
+		String md5 = descriptor.getProperty(IArtifactDescriptor.DOWNLOAD_MD5);
+		if (md5 == null)
+			return;
+
+		IFile artifact = repository.getFile(getArtifactLocation(descriptor));
+		String actualMD5 = ChecksumProducer.computeMD5(artifact.getLocation().toFile());
+		assertEquals(md5, actualMD5);
 	}
 
 	public void testBug263272() throws Exception {
