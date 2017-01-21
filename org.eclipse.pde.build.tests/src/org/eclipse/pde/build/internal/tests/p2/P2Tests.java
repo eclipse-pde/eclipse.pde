@@ -552,7 +552,6 @@ public class P2Tests extends P2TestCase {
 		IArtifactRepository repository = loadArtifactRepository(repoLocation);
 		Map repoProps = repository.getProperties();
 		assertEquals(repoProps.get("publishPackFilesAsSiblings"), "true");
-		final String PACKED_FORMAT = "packed"; //$NON-NLS-1$
 		IQueryResult keys = repository.query(ArtifactKeyQuery.ALL_KEYS, null);
 		for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
 			IArtifactKey key = (IArtifactKey) iterator.next();
@@ -564,9 +563,9 @@ public class P2Tests extends P2TestCase {
 			}
 			assertEquals(descriptors.length, 2);
 
-			if (PACKED_FORMAT.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))) {
+			if (IArtifactDescriptor.FORMAT_PACKED.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))) {
 				assertMD5(repoFolder, descriptors[1]);
-			} else if (PACKED_FORMAT.equals(descriptors[1].getProperty(IArtifactDescriptor.FORMAT))) {
+			} else if (IArtifactDescriptor.FORMAT_PACKED.equals(descriptors[1].getProperty(IArtifactDescriptor.FORMAT))) {
 				assertMD5(repoFolder, descriptors[0]);
 			} else {
 				fail("No pack.gz desriptor");
