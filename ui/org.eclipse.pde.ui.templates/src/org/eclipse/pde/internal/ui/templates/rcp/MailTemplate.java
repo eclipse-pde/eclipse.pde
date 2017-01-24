@@ -18,7 +18,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.PluginReference;
 
 public class MailTemplate extends PDETemplateSection {
 
@@ -285,10 +284,7 @@ public class MailTemplate extends PDETemplateSection {
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		IPluginReference[] dep = new IPluginReference[2];
-		dep[0] = new PluginReference("org.eclipse.core.runtime"); //$NON-NLS-1$
-		dep[1] = new PluginReference("org.eclipse.ui"); //$NON-NLS-1$
-		return dep;
+		return getRCP3xDependencies();
 	}
 
 	@Override

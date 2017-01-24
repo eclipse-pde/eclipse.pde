@@ -16,7 +16,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.ui.templates.OptionTemplateSection;
+import org.eclipse.pde.ui.templates.PluginReference;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -107,6 +109,16 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 
 	protected void createBrandingOptions() {
 		addOption(KEY_PRODUCT_BRANDING, PDETemplateMessages.HelloRCPTemplate_productBranding, false, 0);
+	}
+
+	protected IPluginReference[] getRCP3xDependencies() {
+		IPluginReference[] dep = new IPluginReference[5];
+		dep[0] = new PluginReference("org.eclipse.core.runtime"); //$NON-NLS-1$
+		dep[1] = new PluginReference("org.eclipse.ui"); //$NON-NLS-1$
+		dep[2] = new PluginReference("org.eclipse.equinox.ds"); //$NON-NLS-1$
+		dep[3] = new PluginReference("org.eclipse.equinox.util"); //$NON-NLS-1$
+		dep[4] = new PluginReference("org.eclipse.equinox.event"); //$NON-NLS-1$
+		return dep;
 	}
 
 }
