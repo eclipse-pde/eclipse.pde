@@ -728,7 +728,7 @@ public class ApiProblemFactory {
 							case IDelta.CLASS_ELEMENT_TYPE: {
 								switch (flags) {
 									case IDelta.FIELD:
-										return 48;
+										return 49;
 									case IDelta.METHOD:
 										return 41;
 									case IDelta.RESTRICTIONS:
