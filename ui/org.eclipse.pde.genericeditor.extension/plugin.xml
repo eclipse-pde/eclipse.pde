@@ -4,14 +4,14 @@
    <extension
          point="org.eclipse.ui.genericeditor.presentationReconcilers">
       <presentationReconciler
-            class="org.eclipse.pde.genericeditor.target.extension.reconciler.presentation.TargetPlatformPresentationReconciler"
+            class="org.eclipse.pde.internal.genericeditor.target.extension.reconciler.presentation.TargetPlatformPresentationReconciler"
             contentType="org.eclipse.pde.targetFile">
       </presentationReconciler>
    </extension>
    <extension
          point="org.eclipse.ui.genericeditor.contentAssistProcessors">
       <contentAssistProcessor
-            class="org.eclipse.pde.genericeditor.target.extension.autocomplete.TargetDefinitionContentAssist"
+            class="org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetDefinitionContentAssist"
             contentType="org.eclipse.pde.targetFile">
       </contentAssistProcessor>
    </extension>
