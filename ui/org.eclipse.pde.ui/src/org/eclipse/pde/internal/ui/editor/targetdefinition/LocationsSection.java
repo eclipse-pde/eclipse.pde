@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.shared.target.ITargetChangedListener;
 import org.eclipse.pde.internal.ui.shared.target.TargetLocationsGroup;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -66,12 +65,7 @@ public class LocationsSection extends SectionPart {
 		fEditor.getTargetChangedListener().setLocationTree(fContainerGroup);
 		fContainerGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
 		fContainerGroup.addTargetReloadListener(fEditor.getTargetChangedListener());
-		fContainerGroup.addTargetChangedListener(new ITargetChangedListener() {
-			@Override
-			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
-				markDirty();
-			}
-		});
+		fContainerGroup.addTargetChangedListener((definition, source, resolve, forceResolve) -> markDirty());
 
 		toolkit.paintBordersFor(client);
 		section.setClient(client);

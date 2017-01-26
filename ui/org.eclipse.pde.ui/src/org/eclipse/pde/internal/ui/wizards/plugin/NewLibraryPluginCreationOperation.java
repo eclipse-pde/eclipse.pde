@@ -369,12 +369,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			try {
 				input = new ZipFile(jar);
 				ZipFileStructureProvider provider = new ZipFileStructureProvider(input);
-				ImportOperation op = new ImportOperation(destination.getFullPath(), provider.getRoot(), provider, new IOverwriteQuery() {
-					@Override
-					public String queryOverwrite(String pathString) {
-						return IOverwriteQuery.ALL;
-					}
-				});
+				ImportOperation op = new ImportOperation(destination.getFullPath(), provider.getRoot(), provider, pathString -> IOverwriteQuery.ALL);
 				op.run(monitor);
 			} finally {
 				if (input != null)

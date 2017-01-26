@@ -118,13 +118,10 @@ public class JRESection extends SectionPart {
 		String[] installs = VMUtil.getVMInstallNames();
 		fNamedJREsCombo.setItems(installs);
 		fNamedJREsCombo.setVisibleItemCount(30);
-		fNamedJREsCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (!fBlockChanges) {
-					getTarget().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getSelection())));
-					markDirty();
-				}
+		fNamedJREsCombo.addModifyListener(e -> {
+			if (!fBlockChanges) {
+				getTarget().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getSelection())));
+				markDirty();
 			}
 		});
 
@@ -155,13 +152,10 @@ public class JRESection extends SectionPart {
 		fExecEnvsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fExecEnvsCombo.setItems(fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
 		fExecEnvsCombo.setVisibleItemCount(30);
-		fExecEnvsCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (!fBlockChanges) {
-					getTarget().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getSelection())));
-					markDirty();
-				}
+		fExecEnvsCombo.addModifyListener(e -> {
+			if (!fBlockChanges) {
+				getTarget().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getSelection())));
+				markDirty();
 			}
 		});
 

@@ -109,12 +109,7 @@ public class LicenseFeatureSection extends PDESection {
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fLicenseFeatureIDText = toolkit.createText(licenseFeatureComposite, null, SWT.SINGLE);
-		fLicenseFeatureIDText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				infoModified();
-			}
-		});
+		fLicenseFeatureIDText.addModifyListener(e -> infoModified());
 
 		fLicenseFeatureIDText.setEditable(true);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -132,12 +127,7 @@ public class LicenseFeatureSection extends PDESection {
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fLicenseFeatureVersionText = toolkit.createText(licenseFeatureComposite, null, SWT.SINGLE);
-		fLicenseFeatureVersionText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				infoModified();
-			}
-		});
+		fLicenseFeatureVersionText.addModifyListener(e -> infoModified());
 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -161,12 +151,7 @@ public class LicenseFeatureSection extends PDESection {
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fUrlText = toolkit.createText(localLicenseComposite, null, SWT.SINGLE);
-		fUrlText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				infoModified();
-			}
-		});
+		fUrlText.addModifyListener(e -> infoModified());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fUrlText.setLayoutData(gd);
 
@@ -179,12 +164,7 @@ public class LicenseFeatureSection extends PDESection {
 		fSourceViewer = new SourceViewer(localLicenseComposite, null, styles);
 		fSourceViewer.configure(fSourceConfiguration);
 		fSourceViewer.setDocument(fDocument);
-		fSourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateSelection(event.getSelection());
-			}
-		});
+		fSourceViewer.addSelectionChangedListener(event -> updateSelection(event.getSelection()));
 		StyledText styledText = fSourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());

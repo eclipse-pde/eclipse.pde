@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.core.isite.ISiteArchive;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -62,12 +61,7 @@ public class NewArchiveDialog extends StatusDialog {
 
 		createEntries(container);
 
-		ModifyListener listener = new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		};
+		ModifyListener listener = e -> dialogChanged();
 		fPathText.addModifyListener(listener);
 		fUrlText.addModifyListener(listener);
 		setTitle(PDEUIMessages.SiteEditor_NewArchiveDialog_title);

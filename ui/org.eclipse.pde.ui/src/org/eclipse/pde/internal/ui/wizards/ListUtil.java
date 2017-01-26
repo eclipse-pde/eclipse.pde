@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.Comparator;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -25,14 +24,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class ListUtil {
 
-	private static final Comparator<String> stringComparator = new Comparator<String>() {
-
-		@Override
-		public int compare(String arg0, String arg1) {
-			return arg0.compareToIgnoreCase(arg1);
-		}
-
-	};
+	private static final Comparator<String> stringComparator = (arg0, arg1) -> arg0.compareToIgnoreCase(arg1);
 
 	static class NameComparator extends ViewerComparator {
 		public NameComparator() {
@@ -62,13 +54,9 @@ public class ListUtil {
 
 	public static class PluginComparator extends NameComparator {
 
-		private static IPropertyChangeListener listener = new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (IPreferenceConstants.PROP_SHOW_OBJECTS.equals(event.getProperty())) {
-					cachedIsFullNameModelEnabled = IPreferenceConstants.VALUE_USE_NAMES.equals(event.getNewValue());
-				}
+		private static IPropertyChangeListener listener = event -> {
+			if (IPreferenceConstants.PROP_SHOW_OBJECTS.equals(event.getProperty())) {
+				cachedIsFullNameModelEnabled = IPreferenceConstants.VALUE_USE_NAMES.equals(event.getNewValue());
 			}
 		};
 

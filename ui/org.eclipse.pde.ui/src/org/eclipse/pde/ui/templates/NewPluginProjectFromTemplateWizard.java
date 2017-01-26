@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
@@ -158,14 +157,11 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 			// If the PDE models are not initialized, initialize with option to cancel
 			if (!PDECore.getDefault().areModelsInitialized()) {
 				try {
-					getContainer().run(true, true, new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
-							PDECore.getDefault().getModelManager().targetReloaded(monitor);
-							if (monitor.isCanceled()) {
-								throw new InterruptedException();
-							}
+					getContainer().run(true, true, monitor -> {
+						// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
+						PDECore.getDefault().getModelManager().targetReloaded(monitor);
+						if (monitor.isCanceled()) {
+							throw new InterruptedException();
 						}
 					});
 				} catch (InterruptedException e) {

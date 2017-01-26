@@ -121,27 +121,19 @@ public class JRESection extends PDESection {
 		fEEsCombo.setComparator(new ViewerComparator());
 		fEEsCombo.setItems(VMUtil.getExecutionEnvironments());
 		fEEsCombo.addItem("", 0); //$NON-NLS-1$
-		fEEsCombo.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (!fBlockChanges) {
-					Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
-					setEE(selection instanceof IExecutionEnvironment ? (IExecutionEnvironment) selection : null);
-					fEEButton.setEnabled(selection instanceof IExecutionEnvironment);
-				}
+		fEEsCombo.addSelectionChangedListener(event -> {
+			if (!fBlockChanges) {
+				Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
+				setEE(selection instanceof IExecutionEnvironment ? (IExecutionEnvironment) selection : null);
+				fEEButton.setEnabled(selection instanceof IExecutionEnvironment);
 			}
 		});
 		fEEsCombo.setEnabled(isEditable());
 
 		fExecutionEnvironmentsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseEEs, SWT.PUSH);
 		GridDataFactory.fillDefaults().applyTo(fExecutionEnvironmentsButton);
-		fExecutionEnvironmentsButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				PreferencesUtil.createPreferenceDialogOn(getSection().getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
-						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$
-			}
-		});
+		fExecutionEnvironmentsButton.addListener(SWT.Selection, event -> PreferencesUtil.createPreferenceDialogOn(getSection().getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
+				new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open());
 		fExecutionEnvironmentsButton.setEnabled(isEditable());
 
 		fEEButton = toolkit.createButton(client, PDEUIMessages.ProdctJRESection_bundleJRE, SWT.CHECK);

@@ -77,12 +77,7 @@ public class JNLPTab {
 	protected Text createText(Composite parent) {
 		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fPage.pageChanged();
-			}
-		});
+		text.addModifyListener(e -> fPage.pageChanged());
 		return text;
 	}
 

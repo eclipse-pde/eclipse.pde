@@ -22,7 +22,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.contentassist.ManifestContentAssistProcessor;
-import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Constants;
 
 public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration {
@@ -258,12 +257,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, ManifestPartitionScanner.MANIFEST_HEADER_VALUE);
 				fContentAssistant.addCompletionListener(fContentAssistantProcessor);
 				fContentAssistant.enableAutoInsert(true);
-				fContentAssistant.setInformationControlCreator(new IInformationControlCreator() {
-					@Override
-					public IInformationControl createInformationControl(Shell parent) {
-						return new DefaultInformationControl(parent, false);
-					}
-				});
+				fContentAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, false));
 				fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 			}
 			return fContentAssistant;

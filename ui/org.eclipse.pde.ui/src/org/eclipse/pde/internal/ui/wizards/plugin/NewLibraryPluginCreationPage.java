@@ -225,13 +225,8 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fExeEnvButton = new Button(container, SWT.PUSH);
 		fExeEnvButton.setLayoutData(new GridData());
 		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);
-		fExeEnvButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
-						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$
-			}
-		});
+		fExeEnvButton.addListener(SWT.Selection, event -> PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
+				new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open());
 	}
 
 	private void createPluginPropertiesGroup(Composite container) {

@@ -76,12 +76,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		fExecEnvs = new String[envs.length];
 		for (int i = 0; i < envs.length; i++)
 			fExecEnvs[i] = envs[i].getId();
-		Arrays.sort(fExecEnvs, new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				return ((String) o1).compareToIgnoreCase((String) o2);
-			}
-		});
+		Arrays.sort(fExecEnvs, (o1, o2) -> ((String) o1).compareToIgnoreCase((String) o2));
 	}
 
 	/**

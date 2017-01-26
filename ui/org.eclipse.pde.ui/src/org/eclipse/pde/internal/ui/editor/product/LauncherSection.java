@@ -230,12 +230,7 @@ public class LauncherSection extends PDESection {
 			// Disable initially
 			fMultipleWinIconValidator[index].setEnabled(false);
 			// Validate on modify
-			ientry.getText().addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					fMultipleWinIconValidator[index].validate();
-				}
-			});
+			ientry.getText().addModifyListener(e -> fMultipleWinIconValidator[index].validate());
 
 			fIcons.add(ientry);
 		}

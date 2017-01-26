@@ -315,12 +315,7 @@ public class JREBlock {
 	}
 
 	private Comparator<Object> getComparator() {
-		return new Comparator<Object>() {
-			@Override
-			public int compare(Object arg0, Object arg1) {
-				return arg0.toString().compareTo(arg1.toString());
-			}
-		};
+		return (arg0, arg1) -> arg0.toString().compareTo(arg1.toString());
 	}
 
 	public String validate() {

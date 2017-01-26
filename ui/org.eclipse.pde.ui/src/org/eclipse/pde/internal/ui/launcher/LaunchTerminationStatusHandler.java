@@ -44,37 +44,29 @@ public class LaunchTerminationStatusHandler implements IStatusHandler {
 	}
 
 	private void handleWorkspaceInUse() {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Launcher_error_title, PDEMessages.Launcher_error_code15);
-			}
-		});
+		Display.getDefault().asyncExec(() -> MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Launcher_error_title, PDEMessages.Launcher_error_code15));
 	}
 
 	private void handleOtherReasonsFoundInLog(final ILaunch launch) {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					File log = LaunchListener.getMostRecentLogFile(launch.getLaunchConfiguration());
-					if (log != null && log.exists()) {
-						MessageDialog dialog = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Launcher_error_title, null, // accept the default window icon
-								PDEUIMessages.Launcher_error_code13, MessageDialog.ERROR, new String[] {PDEUIMessages.Launcher_error_displayInLogView, PDEUIMessages.Launcher_error_displayInSystemEditor, IDialogConstants.NO_LABEL}, OPEN_IN_ERROR_LOG_VIEW);
-						int dialog_value = dialog.open();
-						if (dialog_value == OPEN_IN_ERROR_LOG_VIEW) {
-							IWorkbenchPage page = PDEPlugin.getActivePage();
-							if (page != null) {
-								LogView errlog = (LogView) page.showView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
-								errlog.handleImportPath(log.getAbsolutePath());
-								errlog.sortByDateDescending();
-							}
-						} else if (dialog_value == OPEN_IN_SYSTEM_EDITOR) {
-							openInEditor(log);
+		Display.getDefault().asyncExec(() -> {
+			try {
+				File log = LaunchListener.getMostRecentLogFile(launch.getLaunchConfiguration());
+				if (log != null && log.exists()) {
+					MessageDialog dialog = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Launcher_error_title, null, // accept the default window icon
+							PDEUIMessages.Launcher_error_code13, MessageDialog.ERROR, new String[] {PDEUIMessages.Launcher_error_displayInLogView, PDEUIMessages.Launcher_error_displayInSystemEditor, IDialogConstants.NO_LABEL}, OPEN_IN_ERROR_LOG_VIEW);
+					int dialog_value = dialog.open();
+					if (dialog_value == OPEN_IN_ERROR_LOG_VIEW) {
+						IWorkbenchPage page = PDEPlugin.getActivePage();
+						if (page != null) {
+							LogView errlog = (LogView) page.showView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
+							errlog.handleImportPath(log.getAbsolutePath());
+							errlog.sortByDateDescending();
 						}
+					} else if (dialog_value == OPEN_IN_SYSTEM_EDITOR) {
+						openInEditor(log);
 					}
-				} catch (CoreException e) {
 				}
+			} catch (CoreException e) {
 			}
 		});
 	}

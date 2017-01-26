@@ -31,13 +31,10 @@ public class ManifestEditorContributor extends PDEFormTextEditorContributor {
 		@Override
 		public void run() {
 			if (getEditor() != null) {
-				BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						GetNonExternalizedStringsAction externalizeAction = new GetNonExternalizedStringsAction();
-						IStructuredSelection selection = new StructuredSelection(getEditor().getCommonProject());
-						externalizeAction.runGetNonExternalizedStringsAction(selection);
-					}
+				BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), () -> {
+					GetNonExternalizedStringsAction externalizeAction = new GetNonExternalizedStringsAction();
+					IStructuredSelection selection = new StructuredSelection(getEditor().getCommonProject());
+					externalizeAction.runGetNonExternalizedStringsAction(selection);
 				});
 			}
 		}

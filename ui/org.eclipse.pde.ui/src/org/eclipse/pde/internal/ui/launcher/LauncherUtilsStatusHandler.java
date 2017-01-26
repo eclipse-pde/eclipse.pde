@@ -100,23 +100,20 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 	}
 
 	private void organizeManifests(final ArrayList<?> projects, final IProgressMonitor monitor, final Properties lastRun) {
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				OrganizeManifestsProcessor processor = new OrganizeManifestsProcessor(projects);
-				initializeProcessor(processor);
-				try {
-					Change change = processor.createChange(monitor);
-					change.perform(monitor);
-					// update table for each project with current time stamp
-					Properties table = lastRun;
-					String ts = Long.toString(System.currentTimeMillis());
-					Iterator<?> it = projects.iterator();
-					while (it.hasNext())
-						table.put(((IProject) it.next()).getName(), ts);
-				} catch (OperationCanceledException e) {
-				} catch (CoreException e) {
-				}
+		Display.getDefault().syncExec(() -> {
+			OrganizeManifestsProcessor processor = new OrganizeManifestsProcessor(projects);
+			initializeProcessor(processor);
+			try {
+				Change change = processor.createChange(monitor);
+				change.perform(monitor);
+				// update table for each project with current time stamp
+				Properties table = lastRun;
+				String ts = Long.toString(System.currentTimeMillis());
+				Iterator<?> it = projects.iterator();
+				while (it.hasNext())
+					table.put(((IProject) it.next()).getName(), ts);
+			} catch (OperationCanceledException e1) {
+			} catch (CoreException e2) {
 			}
 		});
 	}
@@ -162,31 +159,25 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 	 */
 	private static Integer generateDialog(final String message) {
 		final int[] result = new int[1];
-		getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				String title = PDEUIMessages.LauncherUtils_title;
-				MessageDialog dialog = new MessageDialog(getActiveShell(), title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
-				result[0] = dialog.open();
-			}
+		getDisplay().syncExec(() -> {
+			String title = PDEUIMessages.LauncherUtils_title;
+			MessageDialog dialog = new MessageDialog(getActiveShell(), title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
+			result[0] = dialog.open();
 		});
 		return Integer.valueOf(result[0]);
 	}
 
 	private static void generateErrorDialog(final String title, final String message, final ILaunchConfiguration launchConfig, final String mode) {
-		getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				Shell parentShell = getActiveShell();
-				MessageDialog dialog = new MessageDialog(parentShell, title, null, message, MessageDialog.ERROR, new String[] {PDEUIMessages.LauncherUtils_edit, IDialogConstants.OK_LABEL}, 1);
-				int res = dialog.open();
-				if (res == 0) {
-					IStructuredSelection selection = new StructuredSelection(launchConfig);
-					ILaunchGroup group = DebugUITools.getLaunchGroup(launchConfig, mode);
-					String groupIdentifier = group == null ? IDebugUIConstants.ID_RUN_LAUNCH_GROUP : group.getIdentifier();
-					IStatus status = new Status(IStatus.OK, PDELaunchingPlugin.getPluginId(), LauncherUtils.SELECT_WORKSPACE_FIELD, "", null); //$NON-NLS-1$
-					DebugUITools.openLaunchConfigurationDialogOnGroup(parentShell, selection, groupIdentifier, status);
-				}
+		getDisplay().syncExec(() -> {
+			Shell parentShell = getActiveShell();
+			MessageDialog dialog = new MessageDialog(parentShell, title, null, message, MessageDialog.ERROR, new String[] {PDEUIMessages.LauncherUtils_edit, IDialogConstants.OK_LABEL}, 1);
+			int res = dialog.open();
+			if (res == 0) {
+				IStructuredSelection selection = new StructuredSelection(launchConfig);
+				ILaunchGroup group = DebugUITools.getLaunchGroup(launchConfig, mode);
+				String groupIdentifier = group == null ? IDebugUIConstants.ID_RUN_LAUNCH_GROUP : group.getIdentifier();
+				IStatus status = new Status(IStatus.OK, PDELaunchingPlugin.getPluginId(), LauncherUtils.SELECT_WORKSPACE_FIELD, "", null); //$NON-NLS-1$
+				DebugUITools.openLaunchConfigurationDialogOnGroup(parentShell, selection, groupIdentifier, status);
 			}
 		});
 	}

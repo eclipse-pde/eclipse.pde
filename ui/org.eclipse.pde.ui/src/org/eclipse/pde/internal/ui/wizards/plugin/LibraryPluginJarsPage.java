@@ -110,12 +110,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		data.horizontalSpan = 2;
 		l.setLayoutData(data);
 		fTableViewer = new TableViewer(control, SWT.MULTI | SWT.BORDER);
-		fTableViewer.setContentProvider(new IStructuredContentProvider() {
-			@Override
-			public Object[] getElements(Object inputElement) {
-				return fJarPaths.toArray();
-			}
-		});
+		fTableViewer.setContentProvider((IStructuredContentProvider) inputElement -> fJarPaths.toArray());
 
 		fTableViewer.setLabelProvider(new LabelProvider() {
 			@Override

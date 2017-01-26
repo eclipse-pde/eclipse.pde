@@ -93,12 +93,7 @@ public class LinkSection extends PDESection {
 		moreButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				BusyIndicator.showWhile(getSection().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						getPage().getEditor().setActivePage(morePageId);
-					}
-				});
+				BusyIndicator.showWhile(getSection().getDisplay(), () -> getPage().getEditor().setActivePage(morePageId));
 			}
 		});
 		moreButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));

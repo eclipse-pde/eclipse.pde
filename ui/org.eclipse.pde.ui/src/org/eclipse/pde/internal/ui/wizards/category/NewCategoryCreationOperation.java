@@ -66,25 +66,22 @@ public class NewCategoryCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private void openFile(final IFile file) {
-		fDisplay.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
-				if (ww == null) {
-					return;
-				}
-				IWorkbenchPage page = ww.getActivePage();
-				if (page == null || !file.exists())
-					return;
-				IWorkbenchPart focusPart = page.getActivePart();
-				if (focusPart instanceof ISetSelectionTarget) {
-					ISelection selection = new StructuredSelection(file);
-					((ISetSelectionTarget) focusPart).selectReveal(selection);
-				}
-				try {
-					page.openEditor(new FileEditorInput(file), IPDEUIConstants.CATEGORY_EDITOR_ID);
-				} catch (PartInitException e) {
-				}
+		fDisplay.asyncExec(() -> {
+			IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
+			if (ww == null) {
+				return;
+			}
+			IWorkbenchPage page = ww.getActivePage();
+			if (page == null || !file.exists())
+				return;
+			IWorkbenchPart focusPart = page.getActivePart();
+			if (focusPart instanceof ISetSelectionTarget) {
+				ISelection selection = new StructuredSelection(file);
+				((ISetSelectionTarget) focusPart).selectReveal(selection);
+			}
+			try {
+				page.openEditor(new FileEditorInput(file), IPDEUIConstants.CATEGORY_EDITOR_ID);
+			} catch (PartInitException e) {
 			}
 		});
 	}

@@ -75,23 +75,20 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 
 		// Add listener for each control to recalculate scroll bar when it is entered.
 		// This results in scrollbar scrolling when user tabs to a control that is not in the field of view.
-		Listener listener = new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				Control child = (Control) e.widget;
-				Rectangle bounds = child.getBounds();
-				Rectangle area = scrollContainer.getClientArea();
-				Point origin = scrollContainer.getOrigin();
-				if (origin.x > bounds.x)
-					origin.x = Math.max(0, bounds.x);
-				if (origin.y > bounds.y)
-					origin.y = Math.max(0, bounds.y);
-				if (origin.x + area.width < bounds.x + bounds.width)
-					origin.x = Math.max(0, bounds.x + bounds.width - area.width);
-				if (origin.y + area.height < bounds.y + bounds.height)
-					origin.y = Math.max(0, bounds.y + bounds.height - area.height);
-				scrollContainer.setOrigin(origin);
-			}
+		Listener listener = e -> {
+			Control child = (Control) e.widget;
+			Rectangle bounds = child.getBounds();
+			Rectangle area = scrollContainer.getClientArea();
+			Point origin = scrollContainer.getOrigin();
+			if (origin.x > bounds.x)
+				origin.x = Math.max(0, bounds.x);
+			if (origin.y > bounds.y)
+				origin.y = Math.max(0, bounds.y);
+			if (origin.x + area.width < bounds.x + bounds.width)
+				origin.x = Math.max(0, bounds.x + bounds.width - area.width);
+			if (origin.y + area.height < bounds.y + bounds.height)
+				origin.y = Math.max(0, bounds.y + bounds.height - area.height);
+			scrollContainer.setOrigin(origin);
 		};
 		Control[] controls = composite.getChildren();
 		for (Control control : controls)
