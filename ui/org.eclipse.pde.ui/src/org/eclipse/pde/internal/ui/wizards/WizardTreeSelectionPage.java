@@ -71,18 +71,10 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 		wizardSelectionViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
 		wizardSelectionViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		wizardSelectionViewer.addSelectionChangedListener(this);
-		wizardSelectionViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				BusyIndicator.showWhile(wizardSelectionViewer.getControl().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						selectionChanged(new SelectionChangedEvent(wizardSelectionViewer, wizardSelectionViewer.getSelection()));
-						advanceToNextPage();
-					}
-				});
-			}
-		});
+		wizardSelectionViewer.addDoubleClickListener(event -> BusyIndicator.showWhile(wizardSelectionViewer.getControl().getDisplay(), () -> {
+			selectionChanged(new SelectionChangedEvent(wizardSelectionViewer, wizardSelectionViewer.getSelection()));
+			advanceToNextPage();
+		}));
 
 		// the new composite below is needed in order to make the label span the two
 		// defined columns of outerContainer

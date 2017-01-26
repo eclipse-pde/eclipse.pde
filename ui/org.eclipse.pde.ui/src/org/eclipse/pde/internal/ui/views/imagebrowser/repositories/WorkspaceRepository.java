@@ -45,37 +45,33 @@ public class WorkspaceRepository extends AbstractRepository {
 					final String pluginName = getPluginName(manifest.getContents());
 
 					// parse all folders
-					project.accept(new IResourceProxyVisitor() {
+					project.accept((IResourceProxyVisitor) proxy -> {
 
-						@Override
-						public boolean visit(IResourceProxy proxy) throws CoreException {
+						switch (proxy.getType()) {
+							case IResource.PROJECT :
+								// fall through
+							case IResource.FOLDER :
+								// parse subfolders
+								return true;
 
-							switch (proxy.getType()) {
-								case IResource.PROJECT :
-									// fall through
-								case IResource.FOLDER :
-									// parse subfolders
-									return true;
-
-								case IResource.FILE :
-									// look for image files
-									if (isImageName(proxy.getName())) {
-										try {
-											IFile resource = (IFile) proxy.requestResource();
-											addImageElement(new ImageElement(createImageData(resource), pluginName, resource.getProjectRelativePath().toPortableString()));
-										} catch (Exception e) {
-											// could not create image for location
-										}
-
-										if (monitor.isCanceled())
-											throw new OperationCanceledException();
+							case IResource.FILE :
+								// look for image files
+								if (isImageName(proxy.getName())) {
+									try {
+										IFile resource = (IFile) proxy.requestResource();
+										addImageElement(new ImageElement(createImageData(resource), pluginName, resource.getProjectRelativePath().toPortableString()));
+									} catch (Exception e) {
+										// could not create image for location
 									}
 
-									break;
-							}
+									if (monitor.isCanceled())
+										throw new OperationCanceledException();
+								}
 
-							return false;
+								break;
 						}
+
+						return false;
 					}, IResource.DEPTH_INFINITE, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 				} catch (CoreException e) {
 					PDEPlugin.log(e);

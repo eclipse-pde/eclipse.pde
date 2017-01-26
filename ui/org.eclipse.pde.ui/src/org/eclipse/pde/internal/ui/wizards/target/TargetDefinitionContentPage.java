@@ -24,7 +24,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -130,19 +129,16 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		SWTFactory.createLabel(nameComp, PDEUIMessages.TargetDefinitionContentPage_4, 1);
 
 		fNameText = SWTFactory.createSingleText(nameComp, 1);
-		fNameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String name = fNameText.getText().trim();
-				if (name.length() == 0) {
-					setErrorMessage(PDEUIMessages.TargetDefinitionContentPage_7);
-				} else {
-					setErrorMessage(null);
-					setMessage(PDEUIMessages.TargetDefinitionContentPage_2);
-				}
-				getTargetDefinition().setName(name);
-				setPageComplete(isPageComplete());
+		fNameText.addModifyListener(e -> {
+			String name = fNameText.getText().trim();
+			if (name.length() == 0) {
+				setErrorMessage(PDEUIMessages.TargetDefinitionContentPage_7);
+			} else {
+				setErrorMessage(null);
+				setMessage(PDEUIMessages.TargetDefinitionContentPage_2);
 			}
+			getTargetDefinition().setName(name);
+			setPageComplete(isPageComplete());
 		});
 
 		TabFolder tabs = new TabFolder(comp, SWT.NONE);
@@ -191,42 +187,36 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	private void initializeListeners() {
-		ITargetChangedListener listener = new ITargetChangedListener() {
-			@Override
-			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
-				boolean setCancelled = false;
-				if (forceResolve || (resolve && !definition.isResolved())) {
-					try {
-						getContainer().run(true, true, new IRunnableWithProgress() {
-							@Override
-							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor));
-								if (monitor.isCanceled()) {
-									throw new InterruptedException();
-								}
-							}
-						});
-					} catch (InvocationTargetException e) {
-						PDECore.log(e);
-					} catch (InterruptedException e) {
-						setCancelled = true;
-					}
+		ITargetChangedListener listener = (definition, source, resolve, forceResolve) -> {
+			boolean setCancelled = false;
+			if (forceResolve || (resolve && !definition.isResolved())) {
+				try {
+					getContainer().run(true, true, monitor -> {
+						getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor));
+						if (monitor.isCanceled()) {
+							throw new InterruptedException();
+						}
+					});
+				} catch (InvocationTargetException e1) {
+					PDECore.log(e1);
+				} catch (InterruptedException e2) {
+					setCancelled = true;
 				}
-				if (fContentTree != source) {
-					if (setCancelled) {
-						fContentTree.setCancelled(); // If the user cancelled the resolve, change the text to say it was cancelled
-					} else {
-						fContentTree.setInput(definition);
-					}
-				}
-				if (fLocationTree != source) {
-					fLocationTree.setInput(definition);
-				}
-				if (definition.isResolved() && definition.getStatus().getSeverity() == IStatus.ERROR) {
-					fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+			}
+			if (fContentTree != source) {
+				if (setCancelled) {
+					fContentTree.setCancelled(); // If the user cancelled the resolve, change the text to say it was cancelled
 				} else {
-					fLocationTab.setImage(null);
+					fContentTree.setInput(definition);
 				}
+			}
+			if (fLocationTree != source) {
+				fLocationTree.setInput(definition);
+			}
+			if (definition.isResolved() && definition.getStatus().getSeverity() == IStatus.ERROR) {
+				fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+			} else {
+				fLocationTab.setImage(null);
 			}
 		};
 		fContentTree.addTargetChangedListener(listener);
@@ -244,13 +234,10 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					ITargetDefinition definition = getTargetDefinition();
 					if (!definition.isResolved()) {
 						try {
-							getContainer().run(true, true, new IRunnableWithProgress() {
-								@Override
-								public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-									getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor));
-									if (monitor.isCanceled()) {
-										throw new InterruptedException();
-									}
+							getContainer().run(true, true, monitor1 -> {
+								getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor1));
+								if (monitor1.isCanceled()) {
+									throw new InterruptedException();
 								}
 							});
 						} catch (InvocationTargetException e) {
@@ -336,45 +323,27 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_os, 1);
 
 		fOSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fOSChoices.toArray(new String[fOSChoices.size()]));
-		fOSCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				getTargetDefinition().setOS(getModelValue(fOSCombo.getText()));
-			}
-		});
+		fOSCombo.addModifyListener(e -> getTargetDefinition().setOS(getModelValue(fOSCombo.getText())));
 
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_ws, 1);
 
 		fWSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fWSChoices.toArray(new String[fWSChoices.size()]));
-		fWSCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				getTargetDefinition().setWS(getModelValue(fWSCombo.getText()));
-			}
-		});
+		fWSCombo.addModifyListener(e -> getTargetDefinition().setWS(getModelValue(fWSCombo.getText())));
 
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_arch, 1);
 
 		fArchCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fArchChoices.toArray(new String[fArchChoices.size()]));
-		fArchCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				getTargetDefinition().setArch(getModelValue(fArchCombo.getText()));
-			}
-		});
+		fArchCombo.addModifyListener(e -> getTargetDefinition().setArch(getModelValue(fArchCombo.getText())));
 
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_nl, 1);
 
 		fNLCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fNLChoices.toArray(new String[fNLChoices.size()]));
-		fNLCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String value = fNLCombo.getText();
-				int index = value.indexOf("-"); //$NON-NLS-1$
-				if (index > 0)
-					value = value.substring(0, index);
-				getTargetDefinition().setNL(getModelValue(value));
-			}
+		fNLCombo.addModifyListener(e -> {
+			String value = fNLCombo.getText();
+			int index = value.indexOf("-"); //$NON-NLS-1$
+			if (index > 0)
+				value = value.substring(0, index);
+			getTargetDefinition().setNL(getModelValue(value));
 		});
 	}
 
@@ -480,12 +449,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		});
 
 		fNamedJREsCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, VMUtil.getVMInstallNames());
-		fNamedJREsCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getText())));
-			}
-		});
+		fNamedJREsCombo.addModifyListener(e -> getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getText()))));
 
 		fExecEnvButton = SWTFactory.createRadioButton(group, PDEUIMessages.JRESection_ExecutionEnv);
 		fExecEnvButton.addSelectionListener(new SelectionAdapter() {
@@ -497,12 +461,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		});
 
 		fExecEnvsCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
-		fExecEnvsCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getText())));
-			}
-		});
+		fExecEnvsCombo.addModifyListener(e -> getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getText()))));
 
 	}
 
@@ -530,12 +489,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		Group programGroup = SWTFactory.createGroup(container, PDEUIMessages.JavaArgumentsTab_progamArgsGroup, 1, 1, GridData.FILL_HORIZONTAL);
 
 		fProgramArgs = SWTFactory.createText(programGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL, 1, 200, 60, GridData.FILL_BOTH);
-		fProgramArgs.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				getTargetDefinition().setProgramArguments(fProgramArgs.getText().trim());
-			}
-		});
+		fProgramArgs.addModifyListener(e -> getTargetDefinition().setProgramArguments(fProgramArgs.getText().trim()));
 
 		Composite programButtons = SWTFactory.createComposite(programGroup, 1, 1, GridData.HORIZONTAL_ALIGN_END, 0, 0);
 
@@ -549,12 +503,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		vmGroup.setFont(container.getFont());
 
 		fVMArgs = SWTFactory.createText(vmGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL, 1, 200, 60, GridData.FILL_BOTH);
-		fVMArgs.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				getTargetDefinition().setVMArguments(fVMArgs.getText().trim());
-			}
-		});
+		fVMArgs.addModifyListener(e -> getTargetDefinition().setVMArguments(fVMArgs.getText().trim()));
 
 		Composite buttons = SWTFactory.createComposite(vmGroup, 2, 1, GridData.HORIZONTAL_ALIGN_END, 0, 0);
 
@@ -643,18 +592,15 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		gd.heightHint = 250;
 		fElementViewer.getControl().setLayoutData(gd);
 		fElementViewer.getControl().setFont(container.getFont());
-		fElementViewer.setContentProvider(new IStructuredContentProvider() {
-			@Override
-			public Object[] getElements(Object inputElement) {
-				ITargetDefinition target = getTargetDefinition();
-				if (target != null) {
-					NameVersionDescriptor[] bundles = target.getImplicitDependencies();
-					if (bundles != null) {
-						return bundles;
-					}
+		fElementViewer.setContentProvider((IStructuredContentProvider) inputElement -> {
+			ITargetDefinition target = getTargetDefinition();
+			if (target != null) {
+				NameVersionDescriptor[] bundles = target.getImplicitDependencies();
+				if (bundles != null) {
+					return bundles;
 				}
-				return new NameVersionDescriptor[0];
 			}
+			return new NameVersionDescriptor[0];
 		});
 		fElementViewer.setLabelProvider(new StyledBundleLabelProvider(false, false));
 		fElementViewer.setInput(PDEPlugin.getDefault());
@@ -666,12 +612,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				return super.compare(viewer, bundle1.getId(), bundle2.getId());
 			}
 		});
-		fElementViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateImpButtons();
-			}
-		});
+		fElementViewer.addSelectionChangedListener(event -> updateImpButtons());
 		fElementViewer.getTable().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {

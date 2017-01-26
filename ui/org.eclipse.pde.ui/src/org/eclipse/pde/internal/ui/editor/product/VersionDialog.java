@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.editor.product;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.PluginVersionPart;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.*;
 
@@ -41,12 +40,7 @@ public class VersionDialog extends StatusDialog {
 		Composite comp = (Composite) super.createDialogArea(parent);
 
 		fVersionPart.createVersionFields(comp, true, fEditable);
-		ModifyListener ml = new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateStatus(fVersionPart.validateFullVersionRangeText(true));
-			}
-		};
+		ModifyListener ml = e -> updateStatus(fVersionPart.validateFullVersionRangeText(true));
 		fVersionPart.addListeners(ml, ml);
 
 		return comp;

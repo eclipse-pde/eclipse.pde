@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
@@ -366,14 +365,11 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		resolveJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
-				Display.getDefault().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (!fTableViewer.getControl().isDisposed())
-							fTableViewer.refresh(true);
-						if (!fDetails.getControl().isDisposed())
-							fDetails.refresh(true);
-					}
+				Display.getDefault().syncExec(() -> {
+					if (!fTableViewer.getControl().isDisposed())
+						fTableViewer.refresh(true);
+					if (!fDetails.getControl().isDisposed())
+						fDetails.refresh(true);
 				});
 			}
 		});
@@ -420,33 +416,22 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fTableViewer.getControl().setLayoutData(gd);
 		fTableViewer.setLabelProvider(fLabelProvider);
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		fTableViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getChecked()) {
-					fTableViewer.setCheckedElements(new Object[] {event.getElement()});
-					handleActivate();
-					// resolve the target if not already resolved
-					performResolve(event.getElement());
-				} else {
-					handleActivate();
-				}
+		fTableViewer.addCheckStateListener(event -> {
+			if (event.getChecked()) {
+				fTableViewer.setCheckedElements(new Object[] {event.getElement()});
+				handleActivate();
+				// resolve the target if not already resolved
+				performResolve(event.getElement());
+			} else {
+				handleActivate();
+			}
 
-			}
 		});
-		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
-				updateDetails();
-			}
+		fTableViewer.addSelectionChangedListener(event -> {
+			updateButtons();
+			updateDetails();
 		});
-		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleEdit();
-			}
-		});
+		fTableViewer.addDoubleClickListener(event -> handleEdit());
 		fTableViewer.getTable().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -598,17 +583,14 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				}
 			};
 			try {
-				dialog.run(true, true, new IRunnableWithProgress() {
-					@Override
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						if (monitor.isCanceled()) {
-							throw new InterruptedException();
-						}
-						// Resolve the target
-						fActiveTarget.resolve(monitor);
-						if (monitor.isCanceled()) {
-							throw new InterruptedException();
-						}
+				dialog.run(true, true, monitor -> {
+					if (monitor.isCanceled()) {
+						throw new InterruptedException();
+					}
+					// Resolve the target
+					fActiveTarget.resolve(monitor);
+					if (monitor.isCanceled()) {
+						throw new InterruptedException();
 					}
 				});
 			} catch (InvocationTargetException e) {
@@ -952,16 +934,13 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			IJobChangeListener listener = new JobChangeAdapter() {
 				@Override
 				public void done(IJobChangeEvent event) {
-					Display.getDefault().syncExec(new Runnable() {
-						@Override
-						public void run() {
-								// once resolve finishes, update the target tree
-								// viewer as well as location
-								if (!fTableViewer.getControl().isDisposed())
-									fTableViewer.refresh(true);
-								if (!fDetails.getControl().isDisposed())
-									fDetails.refresh(true);
-						}
+					Display.getDefault().syncExec(() -> {
+							// once resolve finishes, update the target tree
+							// viewer as well as location
+							if (!fTableViewer.getControl().isDisposed())
+								fTableViewer.refresh(true);
+							if (!fDetails.getControl().isDisposed())
+								fDetails.refresh(true);
 					});
 
 					if (event.getResult().getSeverity() == IStatus.OK) {
@@ -983,12 +962,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 										Version bundleVersion = Version.parseVersion(bundleInfo.getVersion());
 										bundleVersion = new Version(bundleVersion.getMajor(), bundleVersion.getMinor(), bundleVersion.getMicro());
 										if (platformOsgiVersion.compareTo(bundleVersion) < 0) {
-											Display.getDefault().syncExec(new Runnable() {
-												@Override
-												public void run() {
-													MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.TargetPlatformPreferencePage2_28, PDEUIMessages.TargetPlatformPreferencePage2_10);
-												}
-											});
+											Display.getDefault().syncExec(() -> MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.TargetPlatformPreferencePage2_28, PDEUIMessages.TargetPlatformPreferencePage2_10));
 										}
 										break;
 									}

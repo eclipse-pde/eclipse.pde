@@ -184,12 +184,7 @@ public class TracingPropertySource {
 		@Override
 		public void initialize() {
 			update();
-			text.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					valueModified(text.getText());
-				}
-			});
+			text.addModifyListener(e -> valueModified(text.getText()));
 		}
 	}
 
@@ -212,12 +207,7 @@ public class TracingPropertySource {
 			String key = (String) keys.nextElement();
 			keyArray[i++] = key;
 		}
-		Arrays.sort(keyArray, new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				return compareKeys(o1, o2);
-			}
-		});
+		Arrays.sort(keyArray, (o1, o2) -> compareKeys(o1, o2));
 		return keyArray;
 	}
 

@@ -86,12 +86,7 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		new Label(parent, SWT.NONE).setText(PDEUIMessages.ExportTargetChooseFolder);
 
 		fDestinationCombo = SWTFactory.createCombo(parent, SWT.BORDER, 1, null);
-		fDestinationCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				controlChanged();
-			}
-		});
+		fDestinationCombo.addModifyListener(e -> controlChanged());
 
 		fBrowseButton = new Button(parent, SWT.PUSH);
 		fBrowseButton.setText(PDEUIMessages.ExportTargetBrowse);

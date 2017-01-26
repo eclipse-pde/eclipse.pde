@@ -20,7 +20,6 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -177,12 +176,7 @@ public class SiteEditor extends MultiSourceEditor {
 			fBuildAllAction.setImageDescriptor(PDEPluginImages.DESC_BUILD_TOOL);
 			updateActionEnablement();
 
-			((ISiteModel) getAggregateModel()).addModelChangedListener(new IModelChangedListener() {
-				@Override
-				public void modelChanged(IModelChangedEvent event) {
-					updateActionEnablement();
-				}
-			});
+			((ISiteModel) getAggregateModel()).addModelChangedListener(event -> updateActionEnablement());
 		}
 		return fBuildAllAction;
 	}
@@ -227,12 +221,7 @@ public class SiteEditor extends MultiSourceEditor {
 	private void ensureContentSaved() {
 		if (isDirty()) {
 			try {
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					@Override
-					public void run(IProgressMonitor monitor) {
-						doSave(monitor);
-					}
-				};
+				IRunnableWithProgress op = monitor -> doSave(monitor);
 				PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);

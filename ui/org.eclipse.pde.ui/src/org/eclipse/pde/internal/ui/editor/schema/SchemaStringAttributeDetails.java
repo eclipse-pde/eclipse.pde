@@ -180,13 +180,10 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 				}
 			}
 		});
-		fRestrictionsTable.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (blockListeners())
-					return;
-				fRemoveRestriction.setEnabled(getAttribute().getSchema().isEditable() && !event.getSelection().isEmpty());
-			}
+		fRestrictionsTable.addSelectionChangedListener(event -> {
+			if (blockListeners())
+				return;
+			fRemoveRestriction.setEnabled(getAttribute().getSchema().isEditable() && !event.getSelection().isEmpty());
 		});
 	}
 }

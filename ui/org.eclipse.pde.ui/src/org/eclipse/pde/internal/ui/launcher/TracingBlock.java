@@ -106,34 +106,25 @@ public class TracingBlock {
 		fPluginViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fPluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fPluginViewer.setComparator(new ListUtil.PluginComparator());
-		fPluginViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent e) {
-				CheckboxTableViewer tableViewer = (CheckboxTableViewer) e.getSource();
-				boolean selected = tableViewer.getChecked(getSelectedModel());
-				pluginSelected(getSelectedModel(), selected);
-				storeSelectedModel();
-			}
+		fPluginViewer.addSelectionChangedListener(e -> {
+			CheckboxTableViewer tableViewer = (CheckboxTableViewer) e.getSource();
+			boolean selected = tableViewer.getChecked(getSelectedModel());
+			pluginSelected(getSelectedModel(), selected);
+			storeSelectedModel();
 		});
-		fPluginViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				CheckboxTableViewer tableViewer = (CheckboxTableViewer) event.getSource();
-				tableViewer.setSelection(new StructuredSelection(event.getElement()));
-				pluginSelected(getSelectedModel(), event.getChecked());
-				fTab.updateLaunchConfigurationDialog();
-			}
+		fPluginViewer.addCheckStateListener(event -> {
+			CheckboxTableViewer tableViewer = (CheckboxTableViewer) event.getSource();
+			tableViewer.setSelection(new StructuredSelection(event.getElement()));
+			pluginSelected(getSelectedModel(), event.getChecked());
+			fTab.updateLaunchConfigurationDialog();
 		});
-		fPluginViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				CheckboxTableViewer tableViewer = (CheckboxTableViewer) event.getSource();
-				Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
-				boolean addingCheck = !tableViewer.getChecked(selection);
-				tableViewer.setChecked(selection, addingCheck);
-				pluginSelected(getSelectedModel(), addingCheck);
-				fTab.updateLaunchConfigurationDialog();
-			}
+		fPluginViewer.addDoubleClickListener(event -> {
+			CheckboxTableViewer tableViewer = (CheckboxTableViewer) event.getSource();
+			Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
+			boolean addingCheck = !tableViewer.getChecked(selection);
+			tableViewer.setChecked(selection, addingCheck);
+			pluginSelected(getSelectedModel(), addingCheck);
+			fTab.updateLaunchConfigurationDialog();
 		});
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 125;

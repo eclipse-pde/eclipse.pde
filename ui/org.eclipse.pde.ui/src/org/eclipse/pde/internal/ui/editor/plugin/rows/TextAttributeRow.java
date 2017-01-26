@@ -46,13 +46,10 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 		createLabel(parent, toolkit);
 		text = toolkit.createText(parent, "", SWT.SINGLE); //$NON-NLS-1$
 		text.setLayoutData(createGridData(span));
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (!blockNotification)
-					markDirty();
-				PDETextHover.updateHover(fIC, getHoverContent(text));
-			}
+		text.addModifyListener(e -> {
+			if (!blockNotification)
+				markDirty();
+			PDETextHover.updateHover(fIC, getHoverContent(text));
 		});
 		text.setEditable(part.isEditable());
 		PDETextHover.addHoverListenerToControl(fIC, text, this);

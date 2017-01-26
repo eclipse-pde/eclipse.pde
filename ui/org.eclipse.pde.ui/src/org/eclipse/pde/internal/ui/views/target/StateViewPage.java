@@ -20,7 +20,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.internal.core.*;
@@ -237,13 +236,10 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 
 	public StateViewPage(PageBookView view) {
 		fView = view;
-		fPropertyListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				String property = event.getProperty();
-				if (property.equals(IPreferenceConstants.PROP_SHOW_OBJECTS)) {
-					fTreeViewer.refresh();
-				}
+		fPropertyListener = event -> {
+			String property = event.getProperty();
+			if (property.equals(IPreferenceConstants.PROP_SHOW_OBJECTS)) {
+				fTreeViewer.refresh();
 			}
 		};
 	}
@@ -292,14 +288,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		fTreeViewer.setContentProvider(new StateContentProvider());
 		fTreeViewer.setLabelProvider(new StateLabelProvider());
 		fTreeViewer.setComparator(DependenciesViewComparator.getViewerComparator());
-		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick();
-			}
-
-		});
+		fTreeViewer.addDoubleClickListener(event -> handleDoubleClick());
 
 		if (getSettings().getBoolean(HIDE_RESOLVED))
 			fTreeViewer.addFilter(fHideResolvedFilter);
@@ -402,12 +391,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(fTreeViewer.getControl());
 		fTreeViewer.getControl().setMenu(menu);
 
@@ -449,19 +433,16 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		if (!fView.getCurrentPage().equals(this) || fTreeViewer == null || fTreeViewer.getTree().isDisposed())
 			// if this page is not active, then wait until we call refresh on next activation
 			return;
-		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (delta == null) {
-					fTreeViewer.refresh();
-				} else {
-					BundleDelta[] deltas = delta.getChanges();
-					for (BundleDelta d : deltas) {
-						int type = d.getType();
-						if (type == BundleDelta.REMOVED || type == BundleDelta.RESOLVED || type == BundleDelta.ADDED || type == BundleDelta.UNRESOLVED) {
-							fTreeViewer.refresh();
-							break;
-						}
+		fTreeViewer.getTree().getDisplay().asyncExec(() -> {
+			if (delta == null) {
+				fTreeViewer.refresh();
+			} else {
+				BundleDelta[] deltas = delta.getChanges();
+				for (BundleDelta d : deltas) {
+					int type = d.getType();
+					if (type == BundleDelta.REMOVED || type == BundleDelta.RESOLVED || type == BundleDelta.ADDED || type == BundleDelta.UNRESOLVED) {
+						fTreeViewer.refresh();
+						break;
 					}
 				}
 			}
@@ -473,12 +454,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		if (!this.equals(fView.getCurrentPage()) || fTreeViewer == null || fTreeViewer.getTree().isDisposed())
 			// if this page is not active, then wait until we call refresh on next activation
 			return;
-		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				fTreeViewer.setInput(newState);
-			}
-		});
+		fTreeViewer.getTree().getDisplay().asyncExec(() -> fTreeViewer.setInput(newState));
 	}
 
 	private IDialogSettings getSettings() {
@@ -495,12 +471,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		if (fTreeViewer == null || fTreeViewer.getTree().isDisposed())
 			return;
 		if (delta.getAddedEntries().length > 0 || delta.getChangedEntries().length > 0 || delta.getRemovedEntries().length > 0)
-			fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					fTreeViewer.refresh();
-				}
-			});
+			fTreeViewer.getTree().getDisplay().asyncExec(() -> fTreeViewer.refresh());
 	}
 
 }

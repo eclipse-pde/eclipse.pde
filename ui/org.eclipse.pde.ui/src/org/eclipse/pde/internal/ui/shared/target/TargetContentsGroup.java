@@ -258,33 +258,22 @@ public class TargetContentsGroup {
 				return super.getText(element);
 			}
 		});
-		fTree.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				Object first = selection.getFirstElement();
-				fTree.setChecked(first, !fTree.getChecked(first));
-				saveIncludedBundleState();
-				contentChanged();
-				updateButtons();
-				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
-			}
+		fTree.addDoubleClickListener(event -> {
+			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			Object first = selection.getFirstElement();
+			fTree.setChecked(first, !fTree.getChecked(first));
+			saveIncludedBundleState();
+			contentChanged();
+			updateButtons();
+			fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 		});
-		fTree.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				saveIncludedBundleState();
-				contentChanged();
-				updateButtons();
-				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
-			}
+		fTree.addCheckStateListener(event -> {
+			saveIncludedBundleState();
+			contentChanged();
+			updateButtons();
+			fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 		});
-		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
-			}
-		});
+		fTree.addSelectionChangedListener(event -> updateButtons());
 		fTree.setSorter(new ViewerSorter() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -740,76 +729,73 @@ public class TargetContentsGroup {
 	 */
 	private List<TargetBundle> getRequiredPlugins(final Collection<TargetBundle> allBundles, final Object[] checkedBundles) {
 		final Set<String> dependencies = new HashSet<>();
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetContentsGroup_5, 150);
+		IRunnableWithProgress op = monitor -> {
+			SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetContentsGroup_5, 150);
 
-				// Get all the bundle locations
-				List<URL> allLocations = new ArrayList<>(allBundles.size());
-				for (TargetBundle bundle : allBundles) {
-					try {
-						// Some bundles, such as those with errors, may not have
-						// locations
-						URI location = bundle.getBundleInfo().getLocation();
-						if (location != null) {
-							allLocations.add(new File(location).toURI().toURL());
-						}
-					} catch (MalformedURLException e) {
-						PDEPlugin.log(e);
-						return;
+			// Get all the bundle locations
+			List<URL> allLocations = new ArrayList<>(allBundles.size());
+			for (TargetBundle bundle1 : allBundles) {
+				try {
+					// Some bundles, such as those with errors, may not have
+					// locations
+					URI location = bundle1.getBundleInfo().getLocation();
+					if (location != null) {
+						allLocations.add(new File(location).toURI().toURL());
 					}
-				}
-				if (subMonitor.isCanceled()) {
+				} catch (MalformedURLException e) {
+					PDEPlugin.log(e);
 					return;
 				}
-				subMonitor.worked(20);
-
-				// Create a PDE State containing all of the target bundles
-				PDEState state = new PDEState(allLocations.toArray(new URL[allLocations.size()]), true, false,
-						subMonitor.split(50));
-				if (subMonitor.isCanceled()) {
-					return;
-				}
-
-				// Figure out which of the models have been checked
-				IPluginModelBase[] models = state.getTargetModels();
-				List<IPluginModelBase> checkedModels = new ArrayList<>(checkedBundles.length);
-				for (Object checkedBundle : checkedBundles) {
-					if (checkedBundle instanceof TargetBundle) {
-						BundleInfo bundle = ((TargetBundle) checkedBundle).getBundleInfo();
-						for (IPluginModelBase model : models) {
-							if (model.getBundleDescription().getSymbolicName().equals(bundle.getSymbolicName())
-									&& model.getBundleDescription().getVersion().toString()
-											.equals(bundle.getVersion())) {
-								checkedModels.add(model);
-								break;
-							}
-						}
-					}
-				}
-				subMonitor.worked(20);
-				if (subMonitor.isCanceled()) {
-					return;
-				}
-
-				// Get implicit dependencies as a list of strings
-				// This is wasteful since the dependency calculation puts them
-				// back into BundleInfos
-				NameVersionDescriptor[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
-				List<String> implicitIDs = new ArrayList<>();
-				if (implicitDependencies != null) {
-					for (NameVersionDescriptor dependency : implicitDependencies) {
-						implicitIDs.add(dependency.getId());
-					}
-				}
-				subMonitor.worked(10);
-
-				// Get all dependency bundles
-				dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(),
-						implicitIDs.toArray(new String[implicitIDs.size()]), state.getState(), null));
-				subMonitor.worked(50);
 			}
+			if (subMonitor.isCanceled()) {
+				return;
+			}
+			subMonitor.worked(20);
+
+			// Create a PDE State containing all of the target bundles
+			PDEState state = new PDEState(allLocations.toArray(new URL[allLocations.size()]), true, false,
+					subMonitor.split(50));
+			if (subMonitor.isCanceled()) {
+				return;
+			}
+
+			// Figure out which of the models have been checked
+			IPluginModelBase[] models = state.getTargetModels();
+			List<IPluginModelBase> checkedModels = new ArrayList<>(checkedBundles.length);
+			for (Object checkedBundle : checkedBundles) {
+				if (checkedBundle instanceof TargetBundle) {
+					BundleInfo bundle2 = ((TargetBundle) checkedBundle).getBundleInfo();
+					for (IPluginModelBase model : models) {
+						if (model.getBundleDescription().getSymbolicName().equals(bundle2.getSymbolicName())
+								&& model.getBundleDescription().getVersion().toString()
+										.equals(bundle2.getVersion())) {
+							checkedModels.add(model);
+							break;
+						}
+					}
+				}
+			}
+			subMonitor.worked(20);
+			if (subMonitor.isCanceled()) {
+				return;
+			}
+
+			// Get implicit dependencies as a list of strings
+			// This is wasteful since the dependency calculation puts them
+			// back into BundleInfos
+			NameVersionDescriptor[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
+			List<String> implicitIDs = new ArrayList<>();
+			if (implicitDependencies != null) {
+				for (NameVersionDescriptor dependency : implicitDependencies) {
+					implicitIDs.add(dependency.getId());
+				}
+			}
+			subMonitor.worked(10);
+
+			// Get all dependency bundles
+			dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(),
+					implicitIDs.toArray(new String[implicitIDs.size()]), state.getState(), null));
+			subMonitor.worked(50);
 		};
 		try {
 			// Calculate the dependencies

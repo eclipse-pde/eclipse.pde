@@ -73,12 +73,7 @@ public class UpdateClasspathAction extends AbstractHandler {
 
 			UpdateBuildpathWizard wizard = new UpdateBuildpathWizard(fUnupdated, modelArray);
 			final WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					dialog.open();
-				}
-			});
+			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), () -> dialog.open());
 		}
 		return null;
 	}

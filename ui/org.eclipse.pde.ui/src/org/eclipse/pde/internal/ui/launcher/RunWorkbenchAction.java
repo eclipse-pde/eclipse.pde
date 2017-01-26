@@ -26,12 +26,9 @@ public class RunWorkbenchAction extends Action {
 	@Override
 	public void run() {
 		final EclipseLaunchShortcut shortcut = new EclipseLaunchShortcut();
-		BusyIndicator.showWhile(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				shortcut.launch(new StructuredSelection(), ILaunchManager.RUN_MODE);
-				notifyResult(true);
-			}
+		BusyIndicator.showWhile(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay(), () -> {
+			shortcut.launch(new StructuredSelection(), ILaunchManager.RUN_MODE);
+			notifyResult(true);
 		});
 	}
 }

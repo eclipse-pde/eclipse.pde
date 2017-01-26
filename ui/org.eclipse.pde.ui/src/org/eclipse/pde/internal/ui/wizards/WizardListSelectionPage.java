@@ -82,12 +82,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 		wizardSelectionViewer.setContentProvider(new ListContentProvider());
 		wizardSelectionViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
 		wizardSelectionViewer.setComparator(ListUtil.NAME_COMPARATOR);
-		wizardSelectionViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
+		wizardSelectionViewer.addDoubleClickListener(event -> doubleClickAction.run());
 		createDescriptionIn(sashForm);
 		createBelow(container, 1);
 		initializeViewer();

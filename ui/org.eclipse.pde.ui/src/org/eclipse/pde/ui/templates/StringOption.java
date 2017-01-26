@@ -11,8 +11,6 @@
 package org.eclipse.pde.ui.templates;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
@@ -120,14 +118,11 @@ public class StringOption extends TemplateOption {
 		gd.horizontalSpan = span - 1;
 		text.setLayoutData(gd);
 		text.setEnabled(isEnabled());
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (ignoreListener)
-					return;
-				StringOption.super.setValue(text.getText());
-				getSection().validateOptions(StringOption.this);
-			}
+		text.addModifyListener(e -> {
+			if (ignoreListener)
+				return;
+			StringOption.super.setValue(text.getText());
+			getSection().validateOptions(StringOption.this);
 		});
 	}
 

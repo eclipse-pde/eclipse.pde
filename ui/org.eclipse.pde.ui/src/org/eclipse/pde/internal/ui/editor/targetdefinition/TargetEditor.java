@@ -251,12 +251,7 @@ public class TargetEditor extends FormEditor {
 		Action help = new Action("help") { //$NON-NLS-1$
 			@Override
 			public void run() {
-				BusyIndicator.showWhile(form.getForm().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID);
-					}
-				});
+				BusyIndicator.showWhile(form.getForm().getDisplay(), () -> PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID));
 			}
 		};
 		help.setToolTipText(PDEUIMessages.PDEFormPage_help);
@@ -297,12 +292,7 @@ public class TargetEditor extends FormEditor {
 	 */
 	public void showError(final String message, final CoreException exception) {
 		Display display = getSite().getShell().getDisplay();
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				ErrorDialog.openError(getSite().getShell(), PDEUIMessages.TargetEditor_4, message, exception.getStatus());
-			}
-		});
+		display.asyncExec(() -> ErrorDialog.openError(getSite().getShell(), PDEUIMessages.TargetEditor_4, message, exception.getStatus()));
 	}
 
 	/**
@@ -409,12 +399,9 @@ public class TargetEditor extends FormEditor {
 					} else if (delta.getKind() == IResourceDelta.CHANGED || delta.getKind() == IResourceDelta.REPLACED) {
 						if (!fSaving) {
 							Display display = getSite().getShell().getDisplay();
-							display.asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									if (getActivePage() != -1)
-										TargetEditor.this.doRevert();
-								}
+							display.asyncExec(() -> {
+								if (getActivePage() != -1)
+									TargetEditor.this.doRevert();
 							});
 						}
 					}

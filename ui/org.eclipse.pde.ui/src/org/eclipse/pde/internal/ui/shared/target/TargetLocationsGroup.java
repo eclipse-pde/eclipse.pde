@@ -222,18 +222,10 @@ public class TargetLocationsGroup {
 				return super.compare(viewer, e1, e2);
 			}
 		});
-		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
-			}
-		});
-		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (!event.getSelection().isEmpty()) {
-					handleEdit();
-				}
+		fTreeViewer.addSelectionChangedListener(event -> updateButtons());
+		fTreeViewer.addDoubleClickListener(event -> {
+			if (!event.getSelection().isEmpty()) {
+				handleEdit();
 			}
 		});
 		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);

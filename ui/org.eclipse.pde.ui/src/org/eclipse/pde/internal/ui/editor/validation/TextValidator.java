@@ -71,12 +71,7 @@ public abstract class TextValidator extends AbstractControlValidator {
 	}
 
 	protected void createListeners() {
-		fModifyListener = new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				handleModifyTextEvent(e);
-			}
-		};
+		fModifyListener = e -> handleModifyTextEvent(e);
 	}
 
 	protected void handleModifyTextEvent(ModifyEvent e) {

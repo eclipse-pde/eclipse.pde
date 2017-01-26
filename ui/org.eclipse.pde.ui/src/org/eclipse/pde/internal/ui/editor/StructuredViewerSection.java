@@ -53,12 +53,7 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 	protected void createViewerPartControl(Composite parent, int style, int span, FormToolkit toolkit) {
 		fViewerPart.createControl(parent, style, span, toolkit);
 		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager mng) {
-				fillContextMenu(mng);
-			}
-		};
+		IMenuListener listener = mng -> fillContextMenu(mng);
 		popupMenuManager.addMenuListener(listener);
 		popupMenuManager.setRemoveAllWhenShown(true);
 		Control control = fViewerPart.getControl();

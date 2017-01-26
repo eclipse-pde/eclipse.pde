@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -135,14 +134,11 @@ public class TargetStatus {
 			}
 		}
 
-		private final IPreferenceChangeListener prefListener = new IPreferenceChangeListener() {
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				if (ICoreConstants.WORKSPACE_TARGET_HANDLE.equals(event.getKey())) {
-					update();
-				}
-
+		private final IPreferenceChangeListener prefListener = event -> {
+			if (ICoreConstants.WORKSPACE_TARGET_HANDLE.equals(event.getKey())) {
+				update();
 			}
+
 		};
 
 		private StringBuffer getStatusMessage(IStatus status) {

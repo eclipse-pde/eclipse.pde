@@ -187,12 +187,7 @@ public class URLSection extends TableSection {
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					handleDelete();
-				}
-			});
+			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), () -> handleDelete());
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
@@ -206,12 +201,7 @@ public class URLSection extends TableSection {
 			return true;
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					handleSelectAll();
-				}
-			});
+			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), () -> handleSelectAll());
 			return true;
 		}
 		return false;
@@ -273,12 +263,7 @@ public class URLSection extends TableSection {
 		fDeleteAction = new Action() {
 			@Override
 			public void run() {
-				BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						handleDelete();
-					}
-				});
+				BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), () -> handleDelete());
 			}
 		};
 		fDeleteAction.setText(PDEUIMessages.Actions_delete_label);

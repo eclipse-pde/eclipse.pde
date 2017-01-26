@@ -50,11 +50,6 @@ public class UnusedDependenciesJob extends Job {
 	}
 
 	protected void showResults(final Object[] unused) {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				getShowResultsAction(unused).run();
-			}
-		});
+		Display.getDefault().asyncExec(() -> getShowResultsAction(unused).run());
 	}
 }

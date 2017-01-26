@@ -28,12 +28,7 @@ public class SchemaEditorContributor extends PDEFormTextEditorContributor {
 		public void run() {
 			if (getEditor() != null) {
 				final SchemaEditor schemaEditor = (SchemaEditor) getEditor();
-				BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						schemaEditor.previewReferenceDocument();
-					}
-				});
+				BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), () -> schemaEditor.previewReferenceDocument());
 			}
 		}
 	}

@@ -18,8 +18,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.IFormColors;
@@ -69,12 +67,7 @@ public abstract class TableSection extends StructuredViewerSection {
 				fCount = toolkit.createLabel(comp, ""); //$NON-NLS-1$
 				fCount.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 				fCount.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				getTablePart().getTableViewer().getTable().addPaintListener(new PaintListener() {
-					@Override
-					public void paintControl(PaintEvent e) {
-						updateLabel();
-					}
-				});
+				getTablePart().getTableViewer().getTable().addPaintListener(e -> updateLabel());
 			}
 		}
 

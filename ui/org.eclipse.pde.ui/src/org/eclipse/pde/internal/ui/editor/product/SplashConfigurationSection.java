@@ -13,8 +13,6 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.jface.fieldassist.*;
 import org.eclipse.jface.preference.ColorSelector;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -250,12 +248,7 @@ public class SplashConfigurationSection extends PDESection {
 
 		for (Spinner spinner : fBarSpinners) {
 			spinner.setEnabled(isEditable());
-			spinner.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					applySpinners(true);
-				}
-			});
+			spinner.addModifyListener(e -> applySpinners(true));
 		}
 
 		Composite filler = fToolkit.createComposite(parent);
@@ -291,12 +284,9 @@ public class SplashConfigurationSection extends PDESection {
 
 		fMessageControls[8] = createLabel(parent, fToolkit, foreground, PDEUIMessages.SplashSection_messageColor);
 		fColorSelector = new ColorSelector(parent);
-		fColorSelector.addListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (!event.getNewValue().equals(event.getOldValue()))
-					applyColor();
-			}
+		fColorSelector.addListener(event -> {
+			if (!event.getNewValue().equals(event.getOldValue()))
+				applyColor();
 		});
 		fToolkit.adapt(fColorSelector.getButton(), true, true);
 		fMessageControls[9] = fColorSelector.getButton();
@@ -305,12 +295,7 @@ public class SplashConfigurationSection extends PDESection {
 
 		for (Spinner spinner : fMessageSpinners) {
 			spinner.setEnabled(isEditable());
-			spinner.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					applySpinners(false);
-				}
-			});
+			spinner.addModifyListener(e -> applySpinners(false));
 		}
 	}
 

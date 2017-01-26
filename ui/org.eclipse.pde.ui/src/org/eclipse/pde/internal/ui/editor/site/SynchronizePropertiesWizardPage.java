@@ -145,18 +145,15 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 			}
 		}
 		final boolean isPatch = patch;
-		getShell().getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					siteFeature.setNL(feature.getNL());
-					siteFeature.setOS(feature.getOS());
-					siteFeature.setWS(feature.getWS());
-					siteFeature.setArch(feature.getArch());
-					siteFeature.setIsPatch(isPatch);
-				} catch (CoreException ce) {
-					PDEPlugin.log(ce);
-				}
+		getShell().getDisplay().syncExec(() -> {
+			try {
+				siteFeature.setNL(feature.getNL());
+				siteFeature.setOS(feature.getOS());
+				siteFeature.setWS(feature.getWS());
+				siteFeature.setArch(feature.getArch());
+				siteFeature.setIsPatch(isPatch);
+			} catch (CoreException ce) {
+				PDEPlugin.log(ce);
 			}
 		});
 	}

@@ -207,14 +207,11 @@ public abstract class SyntaxColorTab {
 			}
 		});
 
-		fElementViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				ColorElement item = getColorElement(fElementViewer);
-				fColorSelector.setColorValue(item.getColorValue());
-				fBoldButton.setSelection(item.isBold());
-				fItalicButton.setSelection(item.isItalic());
-			}
+		fElementViewer.addSelectionChangedListener(event -> {
+			ColorElement item = getColorElement(fElementViewer);
+			fColorSelector.setColorValue(item.getColorValue());
+			fBoldButton.setSelection(item.isBold());
+			fItalicButton.setSelection(item.isItalic());
 		});
 		fElementViewer.setInput(getColorData());
 		fElementViewer.setComparator(new ViewerComparator());

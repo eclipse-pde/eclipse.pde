@@ -116,12 +116,9 @@ public class TemplateSelectionPage extends WizardPage {
 		viewer.setLabelProvider(new ListLabelProvider());
 		initializeTable(viewer.getTable());
 
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-				handleSelectionChanged((ITemplateSection) sel.getFirstElement());
-			}
+		viewer.addSelectionChangedListener(event -> {
+			IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+			handleSelectionChanged((ITemplateSection) sel.getFirstElement());
 		});
 		fDescriptionBrowser.createControl(container);
 		Control c = fDescriptionBrowser.getControl();

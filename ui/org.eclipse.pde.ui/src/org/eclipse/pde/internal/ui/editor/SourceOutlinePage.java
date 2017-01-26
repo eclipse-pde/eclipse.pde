@@ -79,22 +79,19 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		final Control control = getControl();
 		if (control == null || control.isDisposed())
 			return;
-		control.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (control.isDisposed())
-					return;
-				control.setRedraw(false);
-				// Temporarily remove all selection listeners from the tree
-				// viewer.  This is required because the refresh fires a
-				// selection event back to the source page (observered in
-				// the bundle source page) when typing
-				removeAllSelectionChangedListeners();
-				getTreeViewer().refresh();
-				addAllSelectionChangedListeners();
-				getTreeViewer().expandAll();
-				control.setRedraw(true);
-			}
+		control.getDisplay().asyncExec(() -> {
+			if (control.isDisposed())
+				return;
+			control.setRedraw(false);
+			// Temporarily remove all selection listeners from the tree
+			// viewer.  This is required because the refresh fires a
+			// selection event back to the source page (observered in
+			// the bundle source page) when typing
+			removeAllSelectionChangedListeners();
+			getTreeViewer().refresh();
+			addAllSelectionChangedListeners();
+			getTreeViewer().expandAll();
+			control.setRedraw(true);
 		});
 	}
 
