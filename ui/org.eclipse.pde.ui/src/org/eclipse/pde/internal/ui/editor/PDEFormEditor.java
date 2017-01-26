@@ -231,12 +231,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	protected void createPages() {
 		clipboard = new Clipboard(getContainer().getDisplay());
 		MenuManager manager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				contextMenuAboutToShow(manager);
-			}
-		};
+		IMenuListener listener = manager1 -> contextMenuAboutToShow(manager1);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(listener);
 		fContextMenu = manager.createContextMenu(getContainer());
@@ -619,12 +614,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	private void validateEdit(IEditorInput input) {
 		final InputContext context = fInputContextManager.getContext(input);
 		if (!context.validateEdit()) {
-			getSite().getShell().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					doRevert(context.getInput());
-					context.setValidated(false);
-				}
+			getSite().getShell().getDisplay().asyncExec(() -> {
+				doRevert(context.getInput());
+				context.setValidated(false);
 			});
 		}
 	}

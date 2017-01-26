@@ -211,18 +211,13 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 			int offset = invocationContext.getOffset();
 			Iterator<?> it = amodel.getAnnotationIterator();
-			TreeSet<ICompletionProposal> proposalSet = new TreeSet<>(new Comparator<Object>() {
-
-				@Override
-				public int compare(Object o1, Object o2) {
-					if (o1 instanceof ICompletionProposal && o2 instanceof ICompletionProposal) {
-						ICompletionProposal proposal1 = (ICompletionProposal) o1;
-						ICompletionProposal proposal2 = (ICompletionProposal) o2;
-						return proposal1.getDisplayString().compareToIgnoreCase(proposal2.getDisplayString());
-					}
-					return 0;
+			TreeSet<ICompletionProposal> proposalSet = new TreeSet<>((o1, o2) -> {
+				if (o1 instanceof ICompletionProposal && o2 instanceof ICompletionProposal) {
+					ICompletionProposal proposal1 = (ICompletionProposal) o1;
+					ICompletionProposal proposal2 = (ICompletionProposal) o2;
+					return proposal1.getDisplayString().compareToIgnoreCase(proposal2.getDisplayString());
 				}
-
+				return 0;
 			});
 			while (it.hasNext()) {
 				Object key = it.next();

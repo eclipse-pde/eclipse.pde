@@ -138,14 +138,11 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.setLabelProvider(new FrameworkLabelProvider());
 		fTableViewer.setInput(PDELaunchingPlugin.getDefault().getOSGiFrameworkManager().getSortedFrameworks());
-		fTableViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				IConfigurationElement element = (IConfigurationElement) event.getElement();
-				fTableViewer.setCheckedElements(new Object[] {element});
-				fDefaultFramework = element.getAttribute(OSGiFrameworkManager.ATT_ID);
-				fTableViewer.refresh();
-			}
+		fTableViewer.addCheckStateListener(event -> {
+			IConfigurationElement element = (IConfigurationElement) event.getElement();
+			fTableViewer.setCheckedElements(new Object[] {element});
+			fDefaultFramework = element.getAttribute(OSGiFrameworkManager.ATT_ID);
+			fTableViewer.refresh();
 		});
 		if (fDefaultFramework != null) {
 			IConfigurationElement element = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager().getFramework(fDefaultFramework);

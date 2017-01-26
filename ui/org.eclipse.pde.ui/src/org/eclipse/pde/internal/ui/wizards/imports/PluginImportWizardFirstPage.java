@@ -233,16 +233,12 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					PDEPlugin.log(e);
 				}
 			}
-			Collections.sort(targetDefinitions, new Comparator<Object>() {
-
-				@Override
-				public int compare(Object o1, Object o2) {
-					ITargetDefinition td1 = (ITargetDefinition) o1;
-					ITargetDefinition td2 = (ITargetDefinition) o2;
-					String name1 = td1.getName() == null ? "" : td1.getName(); //$NON-NLS-1$
-					String name2 = td2.getName() == null ? "" : td2.getName(); //$NON-NLS-1$
-					return name1.compareTo(name2);
-				}
+			Collections.sort(targetDefinitions, (o1, o2) -> {
+				ITargetDefinition td1 = (ITargetDefinition) o1;
+				ITargetDefinition td2 = (ITargetDefinition) o2;
+				String name1 = td1.getName() == null ? "" : td1.getName(); //$NON-NLS-1$
+				String name2 = td2.getName() == null ? "" : td2.getName(); //$NON-NLS-1$
+				return name1.compareTo(name2);
 			});
 			String[] names = new String[targetDefinitions.size()];
 			for (int i = 0; i < targetDefinitions.size(); i++) {
@@ -345,12 +341,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 
 		importDirectory = SWTFactory.createCombo(composite, SWT.DROP_DOWN, 1, GridData.FILL_HORIZONTAL, null);
-		importDirectory.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validateDropLocation();
-			}
-		});
+		importDirectory.addModifyListener(e -> validateDropLocation());
 
 		browseButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_browse, null, GridData.HORIZONTAL_ALIGN_FILL);
 		browseButton.addSelectionListener(new SelectionAdapter() {
@@ -368,14 +359,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog = new PreferenceDialog(shell, manager);
 		final boolean[] result = new boolean[] {false};
-		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				if (dialog.open() == Window.OK)
-					result[0] = true;
-			}
+		BusyIndicator.showWhile(shell.getDisplay(), () -> {
+			dialog.create();
+			dialog.setMessage(targetNode.getLabelText());
+			if (dialog.open() == Window.OK)
+				result[0] = true;
 		});
 		return result[0];
 	}
@@ -542,56 +530,53 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @param type import operation type
 	 */
 	private void resolveTargetDefinition(final ITargetDefinition target, final int type) {
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				SubMonitor subMon = SubMonitor.convert(monitor);
-				subMon.beginTask(PDEUIMessages.PluginImportWizardFirstPage_1, 100);
-				if (!target.isResolved()) {
-					target.resolve(subMon.split(50));
-				}
-				subMon.setWorkRemaining(50);
-				if (subMon.isCanceled()) {
+		IRunnableWithProgress op = monitor -> {
+			SubMonitor subMon = SubMonitor.convert(monitor);
+			subMon.beginTask(PDEUIMessages.PluginImportWizardFirstPage_1, 100);
+			if (!target.isResolved()) {
+				target.resolve(subMon.split(50));
+			}
+			subMon.setWorkRemaining(50);
+			if (subMon.isCanceled()) {
+				return;
+			}
+			// We allow importing of bundles that are unchecked in the target definition
+			TargetBundle[] allBundles = target.getAllBundles();
+			Map<SourceLocationKey, TargetBundle> sourceMap = new HashMap<>();
+			List<URL> all = new ArrayList<>();
+			for (TargetBundle bundle1 : allBundles) {
+				try {
+					if (bundle1.getStatus().isOK()) {
+						all.add(new File(bundle1.getBundleInfo().getLocation()).toURI().toURL());
+						if (bundle1.isSourceBundle()) {
+							sourceMap.put(new SourceLocationKey(bundle1.getBundleInfo().getSymbolicName(), new Version(bundle1.getBundleInfo().getVersion())), bundle1);
+						}
+					}
+				} catch (MalformedURLException e1) {
+					setErrorMessage(e1.getMessage());
+					subMon.setCanceled(true);
 					return;
 				}
-				// We allow importing of bundles that are unchecked in the target definition
-				TargetBundle[] allBundles = target.getAllBundles();
-				Map<SourceLocationKey, TargetBundle> sourceMap = new HashMap<>();
-				List<URL> all = new ArrayList<>();
-				for (TargetBundle bundle : allBundles) {
-					try {
-						if (bundle.getStatus().isOK()) {
-							all.add(new File(bundle.getBundleInfo().getLocation()).toURI().toURL());
-							if (bundle.isSourceBundle()) {
-								sourceMap.put(new SourceLocationKey(bundle.getBundleInfo().getSymbolicName(), new Version(bundle.getBundleInfo().getVersion())), bundle);
-							}
-						}
-					} catch (MalformedURLException e) {
-						setErrorMessage(e.getMessage());
-						subMon.setCanceled(true);
-						return;
-					}
-				}
-				state = new PDEState(all.toArray(new URL[0]), false, false, subMon.split(30));
-				models = state.getTargetModels();
-				List<IPluginModelBase> sourceModels = new ArrayList<>();
-				List<TargetBundle> sourceBundles = new ArrayList<>();
-				for (IPluginModelBase model : models) {
-					IPluginBase base = model.getPluginBase();
-					TargetBundle bundle = sourceMap.get(new SourceLocationKey(base.getId(), new Version(base.getVersion())));
-					if (bundle != null) {
-						sourceModels.add(model);
-						sourceBundles.add(bundle);
-					}
-				}
-				alternateSource = new AlternateSourceLocations(sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), sourceBundles.toArray(new TargetBundle[sourceBundles.size()]));
-				try {
-					buildImportDescriptions(subMon.split(20), type);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-				canceled = subMon.isCanceled();
 			}
+			state = new PDEState(all.toArray(new URL[0]), false, false, subMon.split(30));
+			models = state.getTargetModels();
+			List<IPluginModelBase> sourceModels = new ArrayList<>();
+			List<TargetBundle> sourceBundles = new ArrayList<>();
+			for (IPluginModelBase model : models) {
+				IPluginBase base = model.getPluginBase();
+				TargetBundle bundle2 = sourceMap.get(new SourceLocationKey(base.getId(), new Version(base.getVersion())));
+				if (bundle2 != null) {
+					sourceModels.add(model);
+					sourceBundles.add(bundle2);
+				}
+			}
+			alternateSource = new AlternateSourceLocations(sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), sourceBundles.toArray(new TargetBundle[sourceBundles.size()]));
+			try {
+				buildImportDescriptions(subMon.split(20), type);
+			} catch (CoreException e2) {
+				throw new InvocationTargetException(e2);
+			}
+			canceled = subMon.isCanceled();
 		};
 		try {
 			getContainer().run(true, true, op);

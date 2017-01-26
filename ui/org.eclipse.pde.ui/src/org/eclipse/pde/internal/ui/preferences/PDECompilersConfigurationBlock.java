@@ -316,16 +316,13 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Default modify listener for text controls
 	 */
-	private ModifyListener modifylistener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			if (e.widget instanceof Text) {
-				Text text = (Text) e.widget;
-				ControlData data = (ControlData) text.getData();
-				data.key.setStoredValue(fLookupOrder[0], text.getText().trim(), fManager);
-				fDirty = true;
-				fRebuildcount = 0;
-			}
+	private ModifyListener modifylistener = e -> {
+		if (e.widget instanceof Text) {
+			Text text = (Text) e.widget;
+			ControlData data = (ControlData) text.getData();
+			data.key.setStoredValue(fLookupOrder[0], text.getText().trim(), fManager);
+			fDirty = true;
+			fRebuildcount = 0;
 		}
 	};
 
@@ -661,12 +658,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		scomp.setExpandVertical(true);
 		scomp.setLayout(new GridLayout(1, false));
 		scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		scomp.addListener(SWT.Resize, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				handleExpand(getScrollingParent(event.widget));
-			}
-		});
+		scomp.addListener(SWT.Resize, event -> handleExpand(getScrollingParent(event.widget)));
 		return scomp;
 	}
 

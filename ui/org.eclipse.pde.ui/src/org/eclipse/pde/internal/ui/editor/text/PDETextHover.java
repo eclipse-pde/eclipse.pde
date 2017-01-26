@@ -15,7 +15,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 
 public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
@@ -31,12 +30,7 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 	}
 
 	public static IInformationControlCreator getInformationControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new PDEDefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
-			}
-		};
+		return parent -> new PDEDefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 	}
 
 	/**

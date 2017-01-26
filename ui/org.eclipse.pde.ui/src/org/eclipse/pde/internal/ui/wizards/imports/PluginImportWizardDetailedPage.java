@@ -237,40 +237,17 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void addViewerListeners() {
-		fAvailableListViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleAdd();
-			}
-		});
+		fAvailableListViewer.addDoubleClickListener(event -> handleAdd());
 
-		fImportListViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleRemove();
-			}
-		});
+		fImportListViewer.addDoubleClickListener(event -> handleRemove());
 
-		fAvailableListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateSelectionBasedEnablement(event.getSelection(), true);
-			}
-		});
+		fAvailableListViewer.addSelectionChangedListener(event -> updateSelectionBasedEnablement(event.getSelection(), true));
 
-		fImportListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateSelectionBasedEnablement(event.getSelection(), false);
-			}
-		});
+		fImportListViewer.addSelectionChangedListener(event -> updateSelectionBasedEnablement(event.getSelection(), false));
 
-		fFilterText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fFilterJob.cancel();
-				fFilterJob.schedule(200);
-			}
+		fFilterText.addModifyListener(e -> {
+			fFilterJob.cancel();
+			fFilterJob.schedule(200);
 		});
 
 	}

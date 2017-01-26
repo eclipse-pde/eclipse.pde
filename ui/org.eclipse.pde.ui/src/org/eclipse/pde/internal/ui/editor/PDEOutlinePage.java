@@ -33,16 +33,13 @@ public abstract class PDEOutlinePage extends ContentOutlinePage {
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 
 		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				ISelection selection = getSelection();
-				PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
-				if (fEditor != null)
-					actionGroup.setBaseModel(fEditor.getAggregateModel());
-				actionGroup.setContext(new ActionContext(selection));
-				actionGroup.fillContextMenu(manager);
-			}
+		IMenuListener listener = manager -> {
+			ISelection selection = getSelection();
+			PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
+			if (fEditor != null)
+				actionGroup.setBaseModel(fEditor.getAggregateModel());
+			actionGroup.setContext(new ActionContext(selection));
+			actionGroup.fillContextMenu(manager);
 		};
 
 		popupMenuManager.addMenuListener(listener);

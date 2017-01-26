@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -47,12 +46,7 @@ public class PluginExportAction extends Action {
 	private void ensureContentSaved() {
 		if (fEditor.isDirty()) {
 			try {
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					@Override
-					public void run(IProgressMonitor monitor) {
-						fEditor.doSave(monitor);
-					}
-				};
+				IRunnableWithProgress op = monitor -> fEditor.doSave(monitor);
 				PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);

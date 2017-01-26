@@ -20,14 +20,12 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 
@@ -46,22 +44,14 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 			if (fColorManager == null)
 				fColorManager = ColorManager.getDefault();
 			final XMLConfiguration configuration = new XMLConfiguration(fColorManager);
-			textViewer.getControl().addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					configuration.dispose();
-				}
-			});
-			IPropertyChangeListener propertyChangedListener = new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					// the configuration will test if the properties affect the presentation also,
-					// but checking it here allows us to prevent the viewer from being invalidated
-					// and saves some unnecessary work
-					if (configuration.affectsColorPresentation(event) || configuration.affectsTextPresentation(event)) {
-						configuration.adaptToPreferenceChange(event);
-						textViewer.invalidateTextPresentation();
-					}
+			textViewer.getControl().addDisposeListener(e -> configuration.dispose());
+			IPropertyChangeListener propertyChangedListener = event -> {
+				// the configuration will test if the properties affect the presentation also,
+				// but checking it here allows us to prevent the viewer from being invalidated
+				// and saves some unnecessary work
+				if (configuration.affectsColorPresentation(event) || configuration.affectsTextPresentation(event)) {
+					configuration.adaptToPreferenceChange(event);
+					textViewer.invalidateTextPresentation();
 				}
 			};
 			PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyChangedListener);

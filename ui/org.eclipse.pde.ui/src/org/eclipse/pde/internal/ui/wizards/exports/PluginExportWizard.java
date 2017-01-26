@@ -74,12 +74,9 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 					// If there were errors when running the ant scripts, inform the user where the logs can be found.
 					final File logLocation = new File(info.destinationDirectory, "logs.zip"); //$NON-NLS-1$
 					if (logLocation.exists()) {
-						PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								AntErrorDialog dialog = new AntErrorDialog(logLocation);
-								dialog.open();
-							}
+						PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
+							AntErrorDialog dialog = new AntErrorDialog(logLocation);
+							dialog.open();
 						});
 					}
 				} else if (event.getResult().isOK() && installAfterExport) {

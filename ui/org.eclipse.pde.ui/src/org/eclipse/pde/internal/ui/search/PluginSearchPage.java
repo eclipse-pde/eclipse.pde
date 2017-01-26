@@ -248,12 +248,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 			}
 		});
 
-		patternCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				container.setPerformActionEnabled(patternCombo.getText().trim().length() > 0);
-			}
-		});
+		patternCombo.addModifyListener(e -> container.setPerformActionEnabled(patternCombo.getText().trim().length() > 0));
 	}
 
 	@Override

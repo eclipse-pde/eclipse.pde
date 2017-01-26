@@ -79,12 +79,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		fWebText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fWebText.setText("web"); //$NON-NLS-1$
 		fWebText.setEnabled(false);
-		fWebText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setPageComplete(validatePage());
-			}
-		});
+		fWebText.addModifyListener(e -> setPageComplete(validatePage()));
 
 		setPageComplete(validatePage());
 		setControl(control);

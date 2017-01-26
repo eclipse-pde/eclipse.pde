@@ -466,14 +466,11 @@ public class PluginConfigurationSection extends TableSection {
 			String level = item.getText(1);
 			int defaultLevel = level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
 			spinner.setSelection(defaultLevel);
-			spinner.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					int selection = spinner.getSelection();
-					item.setText(1, selection == 0 ? "default" //$NON-NLS-1$
-							: Integer.toString(selection));
-					ppc.setStartLevel(selection);
-				}
+			spinner.addModifyListener(e -> {
+				int selection1 = spinner.getSelection();
+				item.setText(1, selection1 == 0 ? "default" //$NON-NLS-1$
+						: Integer.toString(selection1));
+				ppc.setStartLevel(selection1);
 			});
 			fLevelColumnEditor.setEditor(spinner, item, 1);
 

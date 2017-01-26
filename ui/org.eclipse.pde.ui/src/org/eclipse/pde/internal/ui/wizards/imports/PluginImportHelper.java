@@ -37,12 +37,7 @@ public class PluginImportHelper {
 	 * @throws CoreException
 	 */
 	public static void importContent(Object source, IPath dstPath, IImportStructureProvider provider, List<Object> filesToImport, IProgressMonitor monitor) throws CoreException {
-		IOverwriteQuery query = new IOverwriteQuery() {
-			@Override
-			public String queryOverwrite(String file) {
-				return ALL;
-			}
-		};
+		IOverwriteQuery query = file -> IOverwriteQuery.ALL;
 		try {
 			ImportOperation op = new ImportOperation(dstPath, source, provider, query);
 			op.setCreateContainerStructure(false);

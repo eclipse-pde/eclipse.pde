@@ -34,17 +34,14 @@ public class PluginSearchQuery implements ISearchQuery {
 	public IStatus run(IProgressMonitor monitor) {
 		final AbstractTextSearchResult result = (AbstractTextSearchResult) getSearchResult();
 		result.removeAll();
-		ISearchResultCollector collector = new ISearchResultCollector() {
-			@Override
-			public void accept(Object match) {
-				if (match instanceof ISourceObject) {
-					ISourceObject object = (ISourceObject) match;
-					result.addMatch(new Match(match, Match.UNIT_LINE, object.getStartLine() - 1, 1));
-				}
-				if (match instanceof IFeaturePlugin) {
-					IFeaturePlugin object = (IFeaturePlugin) match;
-					result.addMatch(new Match(object, Match.UNIT_LINE, -1, 1));
-				}
+		ISearchResultCollector collector = match -> {
+			if (match instanceof ISourceObject) {
+				ISourceObject object1 = (ISourceObject) match;
+				result.addMatch(new Match(match, Match.UNIT_LINE, object1.getStartLine() - 1, 1));
+			}
+			if (match instanceof IFeaturePlugin) {
+				IFeaturePlugin object2 = (IFeaturePlugin) match;
+				result.addMatch(new Match(object2, Match.UNIT_LINE, -1, 1));
 			}
 		};
 		PluginSearchOperation op = new PluginSearchOperation(fSearchInput, collector);

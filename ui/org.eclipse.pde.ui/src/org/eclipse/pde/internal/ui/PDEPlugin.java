@@ -158,12 +158,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 		Display display = SWTUtil.getStandardDisplay();
 		final IStatus fstatus = status;
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				ErrorDialog.openError(null, title, null, fstatus);
-			}
-		});
+		display.asyncExec(() -> ErrorDialog.openError(null, title, null, fstatus));
 	}
 
 	public static void logException(Throwable e) {

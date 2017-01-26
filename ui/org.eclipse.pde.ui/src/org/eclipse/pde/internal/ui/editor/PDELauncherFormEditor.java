@@ -107,12 +107,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 	}
 
 	protected Runnable getPreLaunchRunnable() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				getLauncherHelper().preLaunch();
-			}
-		};
+		return () -> getLauncherHelper().preLaunch();
 	}
 
 	public void launch(String launcherID, String mode, Runnable preLaunch, Object launchObject) {

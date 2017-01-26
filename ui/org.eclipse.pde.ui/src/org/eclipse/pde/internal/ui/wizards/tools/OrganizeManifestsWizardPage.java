@@ -327,12 +327,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 				doProcessorSetting(e.getSource());
 			}
 		});
-		hookTextListener(new Text[] {fPackageFilter}, new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				doProcessorSetting(e.getSource());
-			}
-		});
+		hookTextListener(new Text[] {fPackageFilter}, e -> doProcessorSetting(e.getSource()));
 	}
 
 	private void doProcessorSetting(Object source) {

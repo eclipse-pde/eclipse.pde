@@ -280,12 +280,9 @@ public class PDEModelUtility {
 	public static TextFileChange[] changesForModelModication(final ModelModification modification, final IProgressMonitor monitor) {
 		final PDEFormEditor editor = getOpenEditor(modification);
 		if (editor != null) {
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (editor.isDirty())
-						editor.flushEdits();
-				}
+			Display.getDefault().syncExec(() -> {
+				if (editor.isDirty())
+					editor.flushEdits();
 			});
 		}
 		return generateModelEdits(modification, monitor, false);
@@ -397,24 +394,21 @@ public class PDEModelUtility {
 	}
 
 	private static void modifyEditorModel(final ModelModification mod, final PDEFormEditor editor, final IBaseModel model, final IProgressMonitor monitor) {
-		getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					mod.modifyModel(model, monitor);
-					IFile[] files = new IFile[] {mod.getManifestFile(), mod.getXMLFile(), mod.getPropertiesFile()};
-					for (IFile file : files) {
-						if (file == null)
-							continue;
-						InputContext con = editor.getContextManager().findContext(file);
-						if (con != null)
-							con.flushEditorInput();
-					}
-					if (mod.saveOpenEditor())
-						editor.doSave(monitor);
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
+		getDisplay().syncExec(() -> {
+			try {
+				mod.modifyModel(model, monitor);
+				IFile[] files = new IFile[] {mod.getManifestFile(), mod.getXMLFile(), mod.getPropertiesFile()};
+				for (IFile file : files) {
+					if (file == null)
+						continue;
+					InputContext con = editor.getContextManager().findContext(file);
+					if (con != null)
+						con.flushEditorInput();
 				}
+				if (mod.saveOpenEditor())
+					editor.doSave(monitor);
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
 			}
 		});
 	}

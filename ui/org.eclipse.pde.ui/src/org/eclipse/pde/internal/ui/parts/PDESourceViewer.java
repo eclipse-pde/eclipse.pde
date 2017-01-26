@@ -14,8 +14,6 @@ package org.eclipse.pde.internal.ui.parts;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.pde.internal.ui.editor.text.*;
@@ -102,12 +100,7 @@ public class PDESourceViewer {
 		}
 		// Create source viewer listeners
 		// Create selection listener
-		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				fPage.getPDEEditor().setSelection(event.getSelection());
-			}
-		});
+		fViewer.addSelectionChangedListener(event -> fPage.getPDEEditor().setSelection(event.getSelection()));
 		// Create focus listener
 		fViewer.getTextWidget().addFocusListener(new FocusAdapter() {
 			@Override
@@ -123,13 +116,10 @@ public class PDESourceViewer {
 		// The color manager and source viewer configuration should be disposed
 		// When the last source viewer is diposed, dispose of the color manager
 		// and source viewer configuration
-		textWidget.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				fSourceViewerCount--;
-				if (fSourceViewerCount == 0) {
-					dispose();
-				}
+		textWidget.addDisposeListener(e -> {
+			fSourceViewerCount--;
+			if (fSourceViewerCount == 0) {
+				dispose();
 			}
 		});
 	}

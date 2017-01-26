@@ -16,12 +16,10 @@ import com.ibm.icu.text.Collator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
@@ -49,14 +47,11 @@ public class PluginListPage extends BasePluginListPage {
 			// If the PDE models are not initialized, initialize with option to cancel
 			if (newInput != null && !PDECore.getDefault().areModelsInitialized()) {
 				try {
-					getContainer().run(true, false, new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
-							PDECore.getDefault().getModelManager().targetReloaded(monitor);
-							if (monitor.isCanceled()) {
-								throw new InterruptedException();
-							}
+					getContainer().run(true, false, monitor -> {
+						// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
+						PDECore.getDefault().getModelManager().targetReloaded(monitor);
+						if (monitor.isCanceled()) {
+							throw new InterruptedException();
 						}
 					});
 				} catch (InvocationTargetException e) {
@@ -150,13 +145,10 @@ public class PluginListPage extends BasePluginListPage {
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_FEATURE_REFERENCED_PLUGINS);
-		pluginViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				TreeItem firstTI = pluginViewer.getTree().getSelection()[0];
-				treePart.getTreeViewer().setChecked(firstTI.getData(), !firstTI.getChecked());
-				treePart.updateCounterLabel();
-			}
+		pluginViewer.addDoubleClickListener(event -> {
+			TreeItem firstTI = pluginViewer.getTree().getSelection()[0];
+			treePart.getTreeViewer().setChecked(firstTI.getData(), !firstTI.getChecked());
+			treePart.updateCounterLabel();
 		});
 	}
 

@@ -123,13 +123,10 @@ public class PluginInputContextManager extends InputContextManager {
 			// refresh
 			smodel.fireModelChanged(new ModelChangedEvent(smodel, IModelChangedEvent.WORLD_CHANGED, null, null));
 			// now pass the listener to the target model
-			smodel.transferListenersTo(tmodel, new IModelChangedListenerFilter() {
-				@Override
-				public boolean accept(IModelChangedListener listener) {
-					if (listener instanceof IFormPart || listener instanceof FormOutlinePage)
-						return true;
-					return false;
-				}
+			smodel.transferListenersTo(tmodel, listener -> {
+				if (listener instanceof IFormPart || listener instanceof FormOutlinePage)
+					return true;
+				return false;
 			});
 		}
 	}
