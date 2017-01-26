@@ -121,27 +121,21 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 				return super.getImage(element);
 			}
 		});
-		wizardSelectionViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				if (!selection.isEmpty()) {
-					setSelectedNode((IWizardNode) selection.getFirstElement());
-					getContainer().showPage(getNextPage());
-				}
+		wizardSelectionViewer.addDoubleClickListener(event -> {
+			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			if (!selection.isEmpty()) {
+				setSelectedNode((IWizardNode) selection.getFirstElement());
+				getContainer().showPage(getNextPage());
 			}
 		});
-		wizardSelectionViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				if (!selection.isEmpty()) {
-					Object element = selection.getFirstElement();
-					if (element instanceof AbstractBundleContainerNode) {
-						fDescription.setText(((AbstractBundleContainerNode) element).getDescription());
-					}
-					setSelectedNode((IWizardNode) selection.getFirstElement());
+		wizardSelectionViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			if (!selection.isEmpty()) {
+				Object element = selection.getFirstElement();
+				if (element instanceof AbstractBundleContainerNode) {
+					fDescription.setText(((AbstractBundleContainerNode) element).getDescription());
 				}
+				setSelectedNode((IWizardNode) selection.getFirstElement());
 			}
 		});
 		wizardSelectionViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));

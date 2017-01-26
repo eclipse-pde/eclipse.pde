@@ -34,12 +34,7 @@ public class AddNewDependenciesAction extends Action {
 		@Override
 		protected void handleNewDependencies(final Map<ExportPackageDescription, String> additionalDeps, final boolean useRequireBundle, IProgressMonitor monitor) {
 			if (!additionalDeps.isEmpty())
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						addDependencies(additionalDeps, useRequireBundle);
-					}
-				});
+				Display.getDefault().asyncExec(() -> addDependencies(additionalDeps, useRequireBundle));
 			monitor.done();
 		}
 	}
@@ -62,12 +57,7 @@ public class AddNewDependenciesAction extends Action {
 					AddNewDependenciesOperation op = getOperation();
 					op.run(monitor);
 					if (!op.foundNewDependencies())
-						Display.getDefault().asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.AddNewDependenciesAction_title, PDEUIMessages.AddNewDependenciesAction_notFound);
-							}
-						});
+						Display.getDefault().asyncExec(() -> MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.AddNewDependenciesAction_title, PDEUIMessages.AddNewDependenciesAction_notFound));
 				} catch (InvocationTargetException e) {
 				} catch (InterruptedException e) {
 				} finally {

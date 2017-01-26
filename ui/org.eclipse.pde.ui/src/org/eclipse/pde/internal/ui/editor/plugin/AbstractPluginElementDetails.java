@@ -39,13 +39,7 @@ public abstract class AbstractPluginElementDetails extends PDEDetails {
 				if (filterText != null) {
 					// add value of the currently focused attribute text to the filter
 					((ExtensionsSection) fMasterSection).addAttributeToFilter(filterText, true);
-					Display.getCurrent().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							// bugfix: after tree refresh bring focus back to the element details form
-							getPage().updateFormSelection();
-						}
-					});
+					Display.getCurrent().asyncExec(() -> getPage().updateFormSelection());
 				}
 			}
 		}

@@ -72,34 +72,31 @@ public class ActionMenu extends Action implements IMenuCreator {
 	 */
 	public void updateActionOrder(final List<String> orderedLauncherIds) {
 		if (!fActions.isEmpty()) {
-			Collections.sort(fActions, new Comparator<LauncherAction>() {
-				@Override
-				public int compare(LauncherAction o1, LauncherAction o2) {
-					// Entries in the recent launcher list go first
-					String id1 = o1.getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
-					String id2 = o2.getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
-					int index1 = orderedLauncherIds.indexOf(id1);
-					int index2 = orderedLauncherIds.indexOf(id2);
-					if (index1 == -1 && index2 == -1) {
-						return 0;
+			Collections.sort(fActions, (o1, o2) -> {
+				// Entries in the recent launcher list go first
+				String id1 = o1.getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
+				String id2 = o2.getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
+				int index1 = orderedLauncherIds.indexOf(id1);
+				int index2 = orderedLauncherIds.indexOf(id2);
+				if (index1 == -1 && index2 == -1) {
+					return 0;
 //						if (id1.contains("pde"))
 //						org.eclipse.pde.ui.runtimeWorkbenchShortcut
 //
 //						String label1 = o1.getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
 //						String label2 = o2.getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
 //						return label1.compareTo(label2);
-					}
-					if (index1 == -1) {
-						return 1;
-					}
-					if (index2 == -1) {
-						return -1;
-					}
-					if (index1 <= index2) {
-						return -1;
-					}
+				}
+				if (index1 == -1) {
 					return 1;
 				}
+				if (index2 == -1) {
+					return -1;
+				}
+				if (index1 <= index2) {
+					return -1;
+				}
+				return 1;
 			});
 			setToolTipText(fActions.get(0).getToolTipText());
 			setImageDescriptor(fActions.get(0).getImageDescriptor());

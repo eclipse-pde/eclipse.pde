@@ -12,8 +12,6 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
@@ -117,22 +115,19 @@ public class ArgumentsSection extends PDESection {
 			((Combo) archComboControl).select(fLastArch[fLastTab]);
 		else
 			((CCombo) archComboControl).select(fLastArch[fLastTab]);
-		fArchCombo.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (fProgramArgs.isDirty())
-					fProgramArgs.commit();
-				if (fVMArgs.isDirty())
-					fVMArgs.commit();
-				// remember the change in combo for currently selected platform
-				Control fArchComboControl = fArchCombo.getControl();
-				if (fArchComboControl instanceof Combo)
-					fLastArch[fLastTab] = ((Combo) fArchComboControl).getSelectionIndex();
-				else
-					fLastArch[fLastTab] = ((CCombo) fArchComboControl).getSelectionIndex();
+		fArchCombo.addSelectionChangedListener(event -> {
+			if (fProgramArgs.isDirty())
+				fProgramArgs.commit();
+			if (fVMArgs.isDirty())
+				fVMArgs.commit();
+			// remember the change in combo for currently selected platform
+			Control fArchComboControl = fArchCombo.getControl();
+			if (fArchComboControl instanceof Combo)
+				fLastArch[fLastTab] = ((Combo) fArchComboControl).getSelectionIndex();
+			else
+				fLastArch[fLastTab] = ((CCombo) fArchComboControl).getSelectionIndex();
 
-				refresh();
-			}
+			refresh();
 		});
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();

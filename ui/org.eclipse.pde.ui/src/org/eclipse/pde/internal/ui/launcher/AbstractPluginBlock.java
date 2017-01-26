@@ -398,47 +398,39 @@ public abstract class AbstractPluginBlock {
 			}
 		});
 
-		fPluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
+		fPluginTreeViewer.addCheckStateListener(event -> {
+			// Since a check on the root of a CheckBoxTreeViewer selects all its children
+			// (hidden or not), we need to ensure that all items are shown
+			// if this happens.  Since it not clear what the best behaviour is here
+			// this just "un-selects" the filter button.
 
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				// Since a check on the root of a CheckBoxTreeViewer selects all its children
-				// (hidden or not), we need to ensure that all items are shown
-				// if this happens.  Since it not clear what the best behaviour is here
-				// this just "un-selects" the filter button.
-
-				if (!event.getChecked())
-				 {
-					return; // just return if the check state goes to false
-				}
-				// It is not clear if this is the best approach, but it
-				// is hard to tell without user feedback.
-				TreeItem[] items = fPluginTreeViewer.getTree().getItems();
-				for (TreeItem item : items) {
-					if (event.getElement() == item.getData()) {
-						// If the even happens on the root of the tree
-						fFilterButton.setSelection(false);
-						handleFilterButton();
-						return;
-					}
+			if (!event.getChecked())
+			 {
+				return; // just return if the check state goes to false
+			}
+			// It is not clear if this is the best approach, but it
+			// is hard to tell without user feedback.
+			TreeItem[] items = fPluginTreeViewer.getTree().getItems();
+			for (TreeItem item : items) {
+				if (event.getElement() == item.getData()) {
+					// If the even happens on the root of the tree
+					fFilterButton.setSelection(false);
+					handleFilterButton();
+					return;
 				}
 			}
-
 		});
 		fPluginTreeViewer.setContentProvider(new PluginContentProvider());
 		fPluginTreeViewer.setLabelProvider(getLabelProvider());
 		fPluginTreeViewer.setAutoExpandLevel(2);
-		fPluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(final CheckStateChangedEvent event) {
-				Object element = event.getElement();
-				if (element instanceof IPluginModelBase) {
-					handleCheckStateChanged(event);
-				} else {
-					handleGroupStateChanged(element, event.getChecked());
-				}
-				fTab.updateLaunchConfigurationDialog();
+		fPluginTreeViewer.addCheckStateListener(event -> {
+			Object element = event.getElement();
+			if (element instanceof IPluginModelBase) {
+				handleCheckStateChanged(event);
+			} else {
+				handleGroupStateChanged(element, event.getChecked());
 			}
+			fTab.updateLaunchConfigurationDialog();
 		});
 		fPluginTreeViewer.setComparator(new ListUtil.PluginComparator() {
 			@Override
@@ -525,16 +517,13 @@ public abstract class AbstractPluginBlock {
 					String level = item.getText(1);
 					int defaultLevel = level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
 					spinner.setSelection(defaultLevel);
-					spinner.addModifyListener(new ModifyListener() {
-						@Override
-						public void modifyText(ModifyEvent e) {
-							if (item.getChecked()) {
-								int selection = spinner.getSelection();
-								item.setText(1, selection == 0 ? "default" //$NON-NLS-1$
-										: Integer.toString(selection));
-								levelColumnCache.put(item.getData(), item.getText(1));
-								fTab.updateLaunchConfigurationDialog();
-							}
+					spinner.addModifyListener(e1 -> {
+						if (item.getChecked()) {
+							int selection = spinner.getSelection();
+							item.setText(1, selection == 0 ? "default" //$NON-NLS-1$
+									: Integer.toString(selection));
+							levelColumnCache.put(item.getData(), item.getText(1));
+							fTab.updateLaunchConfigurationDialog();
 						}
 					});
 					levelColumnEditor.setEditor(spinner, item, 1);

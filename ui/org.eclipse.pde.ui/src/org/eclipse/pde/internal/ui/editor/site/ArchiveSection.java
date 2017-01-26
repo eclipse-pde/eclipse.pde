@@ -183,12 +183,7 @@ public class ArchiveSection extends PDESection {
 		fViewer.setContentProvider(new ContentProvider());
 		fViewer.setLabelProvider(new ArchiveLabelProvider());
 		fViewer.setInput(getPage().getModel());
-		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged();
-			}
-		});
+		fViewer.addSelectionChangedListener(event -> handleSelectionChanged());
 	}
 
 	private void handleSelectionChanged() {
@@ -210,14 +205,11 @@ public class ArchiveSection extends PDESection {
 
 	private void showDialog(final ISiteArchive archive) {
 		final ISiteModel model = (ISiteModel) getPage().getModel();
-		BusyIndicator.showWhile(fTable.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				NewArchiveDialog dialog = new NewArchiveDialog(fTable.getShell(), model, archive);
-				dialog.create();
-				SWTUtil.setDialogSize(dialog, 400, -1);
-				dialog.open();
-			}
+		BusyIndicator.showWhile(fTable.getDisplay(), () -> {
+			NewArchiveDialog dialog = new NewArchiveDialog(fTable.getShell(), model, archive);
+			dialog.create();
+			SWTUtil.setDialogSize(dialog, 400, -1);
+			dialog.open();
 		});
 	}
 
@@ -239,12 +231,7 @@ public class ArchiveSection extends PDESection {
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fTable.getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					handleDelete();
-				}
-			});
+			BusyIndicator.showWhile(fTable.getDisplay(), () -> handleDelete());
 			return true;
 		}
 
@@ -273,21 +260,18 @@ public class ArchiveSection extends PDESection {
 
 	private void createContextMenu(Control control) {
 		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager mng) {
-				Action removeAction = new Action(PDEUIMessages.SiteEditor_remove) {
-					@Override
-					public void run() {
-						doGlobalAction(ActionFactory.DELETE.getId());
-					}
-				};
-				removeAction.setEnabled(isEditable());
-				mng.add(removeAction);
-				mng.add(new Separator());
-				PDEFormEditorContributor contributor = getPage().getPDEEditor().getContributor();
-				contributor.contextMenuAboutToShow(mng);
-			}
+		IMenuListener listener = mng -> {
+			Action removeAction = new Action(PDEUIMessages.SiteEditor_remove) {
+				@Override
+				public void run() {
+					doGlobalAction(ActionFactory.DELETE.getId());
+				}
+			};
+			removeAction.setEnabled(isEditable());
+			mng.add(removeAction);
+			mng.add(new Separator());
+			PDEFormEditorContributor contributor = getPage().getPDEEditor().getContributor();
+			contributor.contextMenuAboutToShow(mng);
 		};
 		popupMenuManager.addMenuListener(listener);
 		popupMenuManager.setRemoveAllWhenShown(true);

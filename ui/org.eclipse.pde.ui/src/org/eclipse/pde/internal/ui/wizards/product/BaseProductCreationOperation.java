@@ -220,25 +220,22 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private void openFile() {
-		Display.getCurrent().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
-				if (ww == null) {
-					return;
-				}
-				IWorkbenchPage page = ww.getActivePage();
-				if (page == null || !fFile.exists())
-					return;
-				IWorkbenchPart focusPart = page.getActivePart();
-				if (focusPart instanceof ISetSelectionTarget) {
-					ISelection selection = new StructuredSelection(fFile);
-					((ISetSelectionTarget) focusPart).selectReveal(selection);
-				}
-				try {
-					IDE.openEditor(page, fFile, IPDEUIConstants.PRODUCT_EDITOR_ID);
-				} catch (PartInitException e) {
-				}
+		Display.getCurrent().asyncExec(() -> {
+			IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
+			if (ww == null) {
+				return;
+			}
+			IWorkbenchPage page = ww.getActivePage();
+			if (page == null || !fFile.exists())
+				return;
+			IWorkbenchPart focusPart = page.getActivePart();
+			if (focusPart instanceof ISetSelectionTarget) {
+				ISelection selection = new StructuredSelection(fFile);
+				((ISetSelectionTarget) focusPart).selectReveal(selection);
+			}
+			try {
+				IDE.openEditor(page, fFile, IPDEUIConstants.PRODUCT_EDITOR_ID);
+			} catch (PartInitException e) {
 			}
 		});
 	}

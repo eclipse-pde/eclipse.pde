@@ -376,30 +376,24 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 
 	protected void hookMinOccur(SelectionAdapter adapter) {
 		fMinOccurSpinner.addSelectionListener(adapter);
-		fMinOccurSpinner.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (blockListeners())
-					return;
-				int minOccur = fMinOccurSpinner.getSelection();
-				if (minOccur > getMaxOccur())
-					fMinOccurSpinner.setSelection(minOccur - 1);
-			}
+		fMinOccurSpinner.addModifyListener(e -> {
+			if (blockListeners())
+				return;
+			int minOccur = fMinOccurSpinner.getSelection();
+			if (minOccur > getMaxOccur())
+				fMinOccurSpinner.setSelection(minOccur - 1);
 		});
 	}
 
 	protected void hookMaxOccur(SelectionAdapter adapter) {
 		fUnboundSelect.addSelectionListener(adapter);
 		fMaxOccurSpinner.addSelectionListener(adapter);
-		fMaxOccurSpinner.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (blockListeners())
-					return;
-				int maxValue = fMaxOccurSpinner.getSelection();
-				if (maxValue < getMinOccur())
-					fMaxOccurSpinner.setSelection(maxValue + 1);
-			}
+		fMaxOccurSpinner.addModifyListener(e -> {
+			if (blockListeners())
+				return;
+			int maxValue = fMaxOccurSpinner.getSelection();
+			if (maxValue < getMinOccur())
+				fMaxOccurSpinner.setSelection(maxValue + 1);
 		});
 	}
 

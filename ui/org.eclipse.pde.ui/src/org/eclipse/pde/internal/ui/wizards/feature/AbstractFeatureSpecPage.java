@@ -19,7 +19,6 @@ import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -170,13 +169,10 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 	}
 
 	private void attachListeners() {
-		ModifyListener listener = new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (!fSelfModification) {
-					fUpdateName = false;
-					setPageComplete(validateBaseContent(true));
-				}
+		ModifyListener listener = e -> {
+			if (!fSelfModification) {
+				fUpdateName = false;
+				setPageComplete(validateBaseContent(true));
 			}
 		};
 		attachListeners(listener);

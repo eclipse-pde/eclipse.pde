@@ -113,12 +113,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 	@Override
 	protected void createViewerPartControl(Composite parent, int style, int span, FormToolkit toolkit) {
 		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager mng) {
-				fillContextMenu(mng);
-			}
-		};
+		IMenuListener listener = mng -> fillContextMenu(mng);
 		popupMenuManager.addMenuListener(listener);
 		popupMenuManager.setRemoveAllWhenShown(true);
 		Control control = fTreeViewer.getControl();
@@ -153,25 +148,17 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		fTreeViewer.setContentProvider(new TreeContentProvider());
 		fTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
 		fTreeViewer.setAutoExpandLevel(0);
-		fTreeViewer.addCheckStateListener(new ICheckStateListener() {
-
-			@Override
-			public void checkStateChanged(final CheckStateChangedEvent event) {
-				final Object element = event.getElement();
-				BusyIndicator.showWhile(section.getDisplay(), new Runnable() {
-
-					@Override
-					public void run() {
-						if (element instanceof IFile) {
-							IFile file = (IFile) event.getElement();
-							handleCheckStateChanged(file, event.getChecked());
-						} else if (element instanceof IFolder) {
-							IFolder folder = (IFolder) event.getElement();
-							handleCheckStateChanged(folder, event.getChecked());
-						}
-					}
-				});
-			}
+		fTreeViewer.addCheckStateListener(event -> {
+			final Object element = event.getElement();
+			BusyIndicator.showWhile(section.getDisplay(), () -> {
+				if (element instanceof IFile) {
+					IFile file = (IFile) event.getElement();
+					handleCheckStateChanged(file, event.getChecked());
+				} else if (element instanceof IFolder) {
+					IFolder folder = (IFolder) event.getElement();
+					handleCheckStateChanged(folder, event.getChecked());
+				}
+			});
 		});
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
@@ -254,79 +241,68 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 	}
 
 	protected void initializeCheckState(final IBuildEntry includes, final IBuildEntry excludes) {
-		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				// found slight improvements using Display.getCurrent() instead of fTreeViewer.getTree().getDisplay()
-				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-
-					@Override
-					public void run() {
-						if (fTreeViewer.getTree().isDisposed())
-							return;
-						Vector<String> fileExt = new Vector<>();
-						String[] inclTokens, exclTokens = new String[0];
-						if (fBundleRoot == null || includes == null)
-							return;
-						inclTokens = includes.getTokens();
-						if (excludes != null)
-							exclTokens = excludes.getTokens();
-						Set<String> temp = new TreeSet<>();
-						for (String inclToken : inclTokens)
-							temp.add(inclToken);
-						for (String exclToken : exclTokens)
-							temp.add(exclToken);
-						Iterator<String> iter = temp.iterator();
-						while (iter.hasNext()) {
-							String resource = iter.next().toString();
-							boolean isIncluded = includes.contains(resource);
-							if (resource.isEmpty()) {
-								// ignore - empty line
-							} else if (resource.equals(".") || resource.equals("./") || resource.equals(".\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-								// ignore - should be root directory
-							} else if (resource.lastIndexOf(IPath.SEPARATOR) == resource.length() - 1) {
-								IFolder folder = fBundleRoot.getFolder(new Path(resource));
-								if (!folder.exists())
-									continue;
-								fTreeViewer.setSubtreeChecked(folder, isIncluded);
-								fTreeViewer.setParentsGrayed(folder, true);
-								if (isIncluded) {
-									setParentsChecked(folder);
-									fTreeViewer.setGrayed(folder, false);
-								}
-							} else if (resource.startsWith("*.")) { //$NON-NLS-1$
-								if (isIncluded)
-									fileExt.add(resource.substring(2));
-							} else {
-								IFile file = fBundleRoot.getFile(new Path(resource));
-								if (!file.exists())
-									continue;
-								fTreeViewer.setChecked(file, isIncluded);
-								fTreeViewer.setParentsGrayed(file, true);
-								if (isIncluded) {
-									fTreeViewer.setGrayed(file, false);
-									setParentsChecked(file);
-								}
-							}
-						}
-						if (fileExt.size() == 0)
-							return;
-						try {
-							IResource[] members = fBundleRoot.members();
-							for (int i = 0; i < members.length; i++) {
-								if (!(members[i] instanceof IFolder) && (fileExt.contains(members[i].getFileExtension()))) {
-									fTreeViewer.setChecked(members[i], includes.contains("*." //$NON-NLS-1$
-											+ members[i].getFileExtension()));
-								}
-							}
-						} catch (CoreException e) {
-							PDEPlugin.logException(e);
-						}
+		fTreeViewer.getTree().getDisplay().asyncExec(() -> BusyIndicator.showWhile(Display.getCurrent(), () -> {
+			if (fTreeViewer.getTree().isDisposed())
+				return;
+			Vector<String> fileExt = new Vector<>();
+			String[] inclTokens, exclTokens = new String[0];
+			if (fBundleRoot == null || includes == null)
+				return;
+			inclTokens = includes.getTokens();
+			if (excludes != null)
+				exclTokens = excludes.getTokens();
+			Set<String> temp = new TreeSet<>();
+			for (String inclToken : inclTokens)
+				temp.add(inclToken);
+			for (String exclToken : exclTokens)
+				temp.add(exclToken);
+			Iterator<String> iter = temp.iterator();
+			while (iter.hasNext()) {
+				String resource = iter.next().toString();
+				boolean isIncluded = includes.contains(resource);
+				if (resource.isEmpty()) {
+					// ignore - empty line
+				} else if (resource.equals(".") || resource.equals("./") || resource.equals(".\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					// ignore - should be root directory
+				} else if (resource.lastIndexOf(IPath.SEPARATOR) == resource.length() - 1) {
+					IFolder folder = fBundleRoot.getFolder(new Path(resource));
+					if (!folder.exists())
+						continue;
+					fTreeViewer.setSubtreeChecked(folder, isIncluded);
+					fTreeViewer.setParentsGrayed(folder, true);
+					if (isIncluded) {
+						setParentsChecked(folder);
+						fTreeViewer.setGrayed(folder, false);
 					}
-				});
+				} else if (resource.startsWith("*.")) { //$NON-NLS-1$
+					if (isIncluded)
+						fileExt.add(resource.substring(2));
+				} else {
+					IFile file = fBundleRoot.getFile(new Path(resource));
+					if (!file.exists())
+						continue;
+					fTreeViewer.setChecked(file, isIncluded);
+					fTreeViewer.setParentsGrayed(file, true);
+					if (isIncluded) {
+						fTreeViewer.setGrayed(file, false);
+						setParentsChecked(file);
+					}
+				}
 			}
-		});
+			if (fileExt.size() == 0)
+				return;
+			try {
+				IResource[] members = fBundleRoot.members();
+				for (int i = 0; i < members.length; i++) {
+					if (!(members[i] instanceof IFolder) && (fileExt.contains(members[i].getFileExtension()))) {
+						fTreeViewer.setChecked(members[i], includes.contains("*." //$NON-NLS-1$
+								+ members[i].getFileExtension()));
+					}
+				}
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+		}));
 	}
 
 	protected abstract void handleBuildCheckStateChange(boolean wasTopParentChecked);
@@ -521,14 +497,10 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 	private void asyncRefresh() {
 		Control control = fTreeViewer.getControl();
 		if (!control.isDisposed()) {
-			control.getDisplay().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					if (!fTreeViewer.getControl().isDisposed()) {
-						fTreeViewer.refresh(true);
-						initializeCheckState();
-					}
+			control.getDisplay().asyncExec(() -> {
+				if (!fTreeViewer.getControl().isDisposed()) {
+					fTreeViewer.refresh(true);
+					initializeCheckState();
 				}
 			});
 		}

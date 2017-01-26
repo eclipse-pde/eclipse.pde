@@ -50,18 +50,15 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		final ILaunchConfiguration config = configuration;
 		final ILaunchConfigurationTab[] tabs = getTabs();
-		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (config instanceof ILaunchConfigurationWorkingCopy) {
-						checkBackwardCompatibility((ILaunchConfigurationWorkingCopy) config);
-					}
-				} catch (CoreException e) {
+		BusyIndicator.showWhile(Display.getCurrent(), () -> {
+			try {
+				if (config instanceof ILaunchConfigurationWorkingCopy) {
+					checkBackwardCompatibility((ILaunchConfigurationWorkingCopy) config);
 				}
-				for (ILaunchConfigurationTab tab : tabs) {
-					tab.initializeFrom(config);
-				}
+			} catch (CoreException e) {
+			}
+			for (ILaunchConfigurationTab tab : tabs) {
+				tab.initializeFrom(config);
 			}
 		});
 	}

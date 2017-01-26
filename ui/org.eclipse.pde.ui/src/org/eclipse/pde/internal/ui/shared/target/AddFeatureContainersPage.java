@@ -82,20 +82,12 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		fFeatureTable.getControl().setLayoutData(data);
 		fFeatureTable.getControl().setFont(tableComp.getFont());
 
-		fFeatureTable.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				AddFeatureContainersPage.this.checkStateChanged();
-			}
-		});
-		fFeatureTable.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (!event.getSelection().isEmpty()) {
-					Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
-					fFeatureTable.setChecked(selection, !fFeatureTable.getChecked(selection));
-					checkStateChanged();
-				}
+		fFeatureTable.addCheckStateListener(event -> AddFeatureContainersPage.this.checkStateChanged());
+		fFeatureTable.addDoubleClickListener(event -> {
+			if (!event.getSelection().isEmpty()) {
+				Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
+				fFeatureTable.setChecked(selection, !fFeatureTable.getChecked(selection));
+				checkStateChanged();
 			}
 		});
 

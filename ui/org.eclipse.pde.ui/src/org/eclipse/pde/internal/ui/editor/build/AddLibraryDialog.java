@@ -18,8 +18,6 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -120,12 +118,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		text = new Text(container, SWT.SINGLE | SWT.BORDER);
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateStatus(validator.validate(text.getText()));
-			}
-		});
+		text.addModifyListener(e -> updateStatus(validator.validate(text.getText())));
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Table table = new Table(container, SWT.FULL_SELECTION | SWT.BORDER);
@@ -136,13 +129,10 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		libraryViewer = new TableViewer(table);
 		libraryViewer.setContentProvider(new TableContentProvider());
 		libraryViewer.setLabelProvider(new TableLabelProvider());
-		libraryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent e) {
-				ISelection sel = e.getSelection();
-				IPluginLibrary obj = (IPluginLibrary) ((IStructuredSelection) sel).getFirstElement();
-				text.setText(obj != null ? obj.getName() : ""); //$NON-NLS-1$
-			}
+		libraryViewer.addSelectionChangedListener(e -> {
+			ISelection sel = e.getSelection();
+			IPluginLibrary obj = (IPluginLibrary) ((IStructuredSelection) sel).getFirstElement();
+			text.setText(obj != null ? obj.getName() : ""); //$NON-NLS-1$
 		});
 		libraryViewer.setInput(model);
 		applyDialogFont(container);

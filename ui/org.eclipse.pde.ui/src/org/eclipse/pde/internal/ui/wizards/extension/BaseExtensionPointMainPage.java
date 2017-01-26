@@ -84,12 +84,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd.horizontalSpan = 1;
 			gd.widthHint = 275;
 			fPluginIdText.setLayoutData(gd);
-			fPluginIdText.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validatePage();
-				}
-			});
+			fPluginIdText.addModifyListener(e -> validatePage());
 			fPluginBrowseButton = new Button(container, SWT.PUSH);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			gd.horizontalSpan = 1;
@@ -111,26 +106,14 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fIdText.setLayoutData(gd);
-		fIdText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				// setting the text will trigger validation
-				// do not implicitly validate here
-				fSchemaText.setText(getSchemaLocation() + (getSchemaLocation().length() > 0 ? "/" : "") + fIdText.getText() + ".exsd"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
-		});
+		fIdText.addModifyListener(e -> fSchemaText.setText(getSchemaLocation() + (getSchemaLocation().length() > 0 ? "/" : "") + fIdText.getText() + ".exsd"));
 		label = new Label(container, SWT.NONE);
 		label.setText(PDEUIMessages.BaseExtensionPoint_name);
 		fNameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fNameText.setLayoutData(gd);
-		fNameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validatePage();
-			}
-		});
+		fNameText.addModifyListener(e -> validatePage());
 		if (isPluginIdNeeded() && !isPluginIdFinal()) {
 			label = new Label(container, SWT.NONE);
 			label.setText(PDEUIMessages.BaseExtensionPoint_schemaLocation);
@@ -139,12 +122,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd.widthHint = 150;
 			gd.grabExcessHorizontalSpace = true;
 			fSchemaLocationText.setLayoutData(gd);
-			fSchemaLocationText.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validatePage();
-				}
-			});
+			fSchemaLocationText.addModifyListener(e -> validatePage());
 			fFindLocationButton = new Button(container, SWT.PUSH);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			gd.widthHint = 50;
@@ -165,12 +143,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fSchemaText.setLayoutData(gd);
-		fSchemaText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validatePage();
-			}
-		});
+		fSchemaText.addModifyListener(e -> validatePage());
 		if (isSharedSchemaSwitchNeeded()) {
 			fSharedSchemaButton = new Button(container, SWT.CHECK);
 			fSharedSchemaButton.setText(PDEUIMessages.BaseExtensionPoint_shared);
@@ -291,29 +264,24 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			@Override
 			public void execute(final IProgressMonitor monitor) {
 				try {
-					Display.getDefault().syncExec(new Runnable() {
+					Display.getDefault().syncExec(() -> {
+						String schemaName = schema;
+						if (!schema.endsWith(".exsd")) //$NON-NLS-1$
+							schemaName = schema + ".exsd"; //$NON-NLS-1$
 
-						@Override
-						public void run() {
-							String schemaName = schema;
-							if (!schema.endsWith(".exsd")) //$NON-NLS-1$
-								schemaName = schema + ".exsd"; //$NON-NLS-1$
-
-							IFile file = fContainer.getFile(new Path(schema));
-							// do not overwrite if schema already exists
-							if (!file.exists())
-								try {
-									file = generateSchemaFile(getPluginId(), id, name, shared, schemaName, monitor);
-								} catch (CoreException e) {
-									PDEPlugin.logException(e);
-								}
-
-							if (file != null && openFile) {
-								fSchemaText.setText(file.getProjectRelativePath().toString());
-								openSchemaFile(file);
+						IFile file = fContainer.getFile(new Path(schema));
+						// do not overwrite if schema already exists
+						if (!file.exists())
+							try {
+								file = generateSchemaFile(getPluginId(), id, name, shared, schemaName, monitor);
+							} catch (CoreException e) {
+								PDEPlugin.logException(e);
 							}
-						}
 
+						if (file != null && openFile) {
+							fSchemaText.setText(file.getProjectRelativePath().toString());
+							openSchemaFile(file);
+						}
 					});
 
 				} finally {
@@ -363,15 +331,12 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	private void openSchemaFile(final IFile file) {
 		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 		Display d = ww.getShell().getDisplay();
-		d.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					String editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
-					ww.getActivePage().openEditor(new FileEditorInput(file), editorId);
-				} catch (PartInitException e) {
-					PDEPlugin.logException(e);
-				}
+		d.asyncExec(() -> {
+			try {
+				String editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
+				ww.getActivePage().openEditor(new FileEditorInput(file), editorId);
+			} catch (PartInitException e) {
+				PDEPlugin.logException(e);
 			}
 		});
 	}

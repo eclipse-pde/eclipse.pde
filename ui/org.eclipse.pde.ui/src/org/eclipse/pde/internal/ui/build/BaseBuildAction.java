@@ -66,24 +66,18 @@ public abstract class BaseBuildAction extends AbstractHandler {
 			return null;
 		}
 
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				IWorkspaceRunnable wop = new IWorkspaceRunnable() {
-					@Override
-					public void run(IProgressMonitor monitor) throws CoreException {
-						try {
-							doBuild(monitor);
-						} catch (InvocationTargetException e) {
-							PDEPlugin.logException(e);
-						}
-					}
-				};
+		IRunnableWithProgress op = monitor -> {
+			IWorkspaceRunnable wop = monitor1 -> {
 				try {
-					PDEPlugin.getWorkspace().run(wop, monitor);
-				} catch (CoreException e) {
+					doBuild(monitor1);
+				} catch (InvocationTargetException e) {
 					PDEPlugin.logException(e);
 				}
+			};
+			try {
+				PDEPlugin.getWorkspace().run(wop, monitor);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
 			}
 		};
 		try {

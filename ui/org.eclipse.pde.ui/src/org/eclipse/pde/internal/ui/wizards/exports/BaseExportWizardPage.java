@@ -176,13 +176,10 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		viewer.setContentProvider(new ExportListProvider());
 		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				TreeItem firstTI = fExportPart.getTreeViewer().getTree().getSelection()[0];
-				fExportPart.getTreeViewer().setChecked(firstTI.getData(), !firstTI.getChecked());
-				fExportPart.updateCounterLabel();
-			}
+		viewer.addDoubleClickListener(event -> {
+			TreeItem firstTI = fExportPart.getTreeViewer().getTree().getSelection()[0];
+			fExportPart.getTreeViewer().setChecked(firstTI.getData(), !firstTI.getChecked());
+			fExportPart.updateCounterLabel();
 		});
 		fExportPart.getTreeViewer().setInput(getInput());
 	}

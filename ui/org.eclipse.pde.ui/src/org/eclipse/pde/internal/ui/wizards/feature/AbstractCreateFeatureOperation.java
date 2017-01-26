@@ -189,12 +189,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 		final IWorkbenchPart activePart = page.getActivePart();
 
 		if (activePart instanceof ISetSelectionTarget) {
-			fShell.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					((ISetSelectionTarget) activePart).selectReveal(selection);
-				}
-			});
+			fShell.getDisplay().asyncExec(() -> ((ISetSelectionTarget) activePart).selectReveal(selection));
 		}
 		// Open the editor
 		try {

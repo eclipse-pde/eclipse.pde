@@ -134,23 +134,17 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 			}
 
 		});
-		fTree.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				updateCheckState(event.getElement());
-				updateOKButton();
-			}
+		fTree.addCheckStateListener(event -> {
+			updateCheckState(event.getElement());
+			updateOKButton();
 		});
-		fTree.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (!event.getSelection().isEmpty()) {
-					Object selected = ((IStructuredSelection) event.getSelection()).getFirstElement();
-					fTree.setChecked(selected, !fTree.getChecked(selected));
-					updateCheckState(selected);
-					updateOKButton();
+		fTree.addDoubleClickListener(event -> {
+			if (!event.getSelection().isEmpty()) {
+				Object selected = ((IStructuredSelection) event.getSelection()).getFirstElement();
+				fTree.setChecked(selected, !fTree.getChecked(selected));
+				updateCheckState(selected);
+				updateOKButton();
 
-				}
 			}
 		});
 		fTree.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);

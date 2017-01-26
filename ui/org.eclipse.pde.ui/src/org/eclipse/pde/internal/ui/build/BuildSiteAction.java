@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -106,12 +105,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 			final SiteEditor editor = PDEModelUtility.getOpenUpdateSiteEditor(project);
 			if (editor != null && editor.isDirty()) {
 				try {
-					IRunnableWithProgress op = new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor) {
-							editor.doSave(monitor);
-						}
-					};
+					IRunnableWithProgress op = monitor -> editor.doSave(monitor);
 					PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 				} catch (InvocationTargetException e) {
 					PDEPlugin.logException(e);
