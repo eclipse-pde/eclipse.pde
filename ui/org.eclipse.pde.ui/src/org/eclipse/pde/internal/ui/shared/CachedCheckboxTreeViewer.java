@@ -39,12 +39,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	 */
 	protected CachedCheckboxTreeViewer(Tree tree) {
 		super(tree);
-		addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				updateCheckState(event.getElement(), event.getChecked());
-			}
-		});
+		addCheckStateListener(event -> updateCheckState(event.getElement(), event.getChecked()));
 		setUseHashlookup(true);
 	}
 

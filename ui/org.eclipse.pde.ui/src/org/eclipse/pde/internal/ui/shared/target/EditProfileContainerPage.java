@@ -110,20 +110,17 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		((GridData) fConfigLabel.getLayoutData()).horizontalIndent = 15;
 
 		fConfigLocation = SWTFactory.createCombo(configComp, SWT.BORDER, 1, getConfigComboItems());
-		fConfigLocation.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
-				boolean isItem = false;
-				String[] items = fConfigLocation.getItems();
-				for (String item : items) {
-					if (fConfigLocation.getText().equals(item)) {
-						isItem = true;
-						break;
-					}
+		fConfigLocation.addModifyListener(e -> {
+			// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
+			boolean isItem = false;
+			String[] items = fConfigLocation.getItems();
+			for (String item : items) {
+				if (fConfigLocation.getText().equals(item)) {
+					isItem = true;
+					break;
 				}
-				containerChanged(isItem ? 0 : TYPING_DELAY);
 			}
+			containerChanged(isItem ? 0 : TYPING_DELAY);
 		});
 
 		Composite buttonComp = SWTFactory.createComposite(configComp, 2, 2, GridData.CENTER, 0, 0);

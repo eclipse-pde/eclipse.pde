@@ -64,13 +64,10 @@ public class CalculateUsesAction extends Action {
 
 			@Override
 			protected void handleSetUsesDirectives(final Map<String, HashSet<String>> pkgsAndUses) {
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (pkgsAndUses.isEmpty())
-							return;
-						setUsesDirectives(pkgsAndUses);
-					}
+				Display.getDefault().asyncExec(() -> {
+					if (pkgsAndUses.isEmpty())
+						return;
+					setUsesDirectives(pkgsAndUses);
 				});
 			}
 

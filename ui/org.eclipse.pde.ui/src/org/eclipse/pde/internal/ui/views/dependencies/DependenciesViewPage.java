@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.*;
@@ -104,13 +103,10 @@ public abstract class DependenciesViewPage extends Page {
 	public DependenciesViewPage(DependenciesView view, IContentProvider contentProvider) {
 		this.fView = view;
 		this.fContentProvider = contentProvider;
-		fPropertyListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				String property = event.getProperty();
-				if (property.equals(IPreferenceConstants.PROP_SHOW_OBJECTS)) {
-					fViewer.refresh();
-				}
+		fPropertyListener = event -> {
+			String property = event.getProperty();
+			if (property.equals(IPreferenceConstants.PROP_SHOW_OBJECTS)) {
+				fViewer.refresh();
 			}
 		};
 	}
@@ -284,12 +280,7 @@ public abstract class DependenciesViewPage extends Page {
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				DependenciesViewPage.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> DependenciesViewPage.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(fViewer.getControl());
 		fViewer.getControl().setMenu(menu);
 
@@ -297,12 +288,7 @@ public abstract class DependenciesViewPage extends Page {
 	}
 
 	private void hookDoubleClickAction() {
-		fViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick();
-			}
-		});
+		fViewer.addDoubleClickListener(event -> handleDoubleClick());
 	}
 
 	private void makeActions() {

@@ -22,7 +22,6 @@ import org.eclipse.pde.internal.ui.wizards.BundleProviderHistoryUtil;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -43,13 +42,10 @@ public abstract class ContentPage extends WizardPage {
 
 	protected int fChangedGroups = 0;
 
-	protected ModifyListener propertiesListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			if (fInitialized)
-				fChangedGroups |= PROPERTIES_GROUP;
-			validatePage();
-		}
+	protected ModifyListener propertiesListener = e -> {
+		if (fInitialized)
+			fChangedGroups |= PROPERTIES_GROUP;
+		validatePage();
 	};
 
 	public ContentPage(String pageName, IProjectProvider provider, NewProjectCreationPage page, AbstractFieldData data) {

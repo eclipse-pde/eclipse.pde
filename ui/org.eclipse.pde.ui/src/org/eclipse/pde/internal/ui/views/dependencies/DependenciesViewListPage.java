@@ -12,8 +12,6 @@ package org.eclipse.pde.internal.ui.views.dependencies;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
@@ -34,12 +32,7 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 		fViewer.setContentProvider(fContentProvider);
 		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(false);
 		fViewer.setLabelProvider(labelProvider);
-		fViewer.getControl().addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				labelProvider.dispose();
-			}
-		});
+		fViewer.getControl().addDisposeListener(e -> labelProvider.dispose());
 
 		return fViewer;
 	}

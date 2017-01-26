@@ -27,7 +27,6 @@ import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.editor.outline.QuickOutlinePopupDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
@@ -129,13 +128,10 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	 * @return an information control creator
 	 */
 	private IInformationControlCreator getOutlinePresenterControlCreator(ISourceViewer sourceViewer, final String commandId) {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				int shellStyle = SWT.RESIZE;
-				QuickOutlinePopupDialog dialog = new QuickOutlinePopupDialog(parent, shellStyle, fSourcePage, fSourcePage);
-				return dialog;
-			}
+		return parent -> {
+			int shellStyle = SWT.RESIZE;
+			QuickOutlinePopupDialog dialog = new QuickOutlinePopupDialog(parent, shellStyle, fSourcePage, fSourcePage);
+			return dialog;
 		};
 	}
 
@@ -144,12 +140,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	}
 
 	protected IInformationControlCreator getInformationControlCreator(final boolean cutDown) {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, !cutDown);
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, !cutDown);
 	}
 
 	@Override

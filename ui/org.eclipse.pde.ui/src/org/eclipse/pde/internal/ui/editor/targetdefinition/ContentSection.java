@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.shared.target.ITargetChangedListener;
 import org.eclipse.pde.internal.ui.shared.target.TargetContentsGroup;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -65,17 +64,14 @@ public class ContentSection extends SectionPart {
 		fContentGroup = TargetContentsGroup.createInForm(client, toolkit);
 		fEditor.getTargetChangedListener().setContentTree(fContentGroup);
 		fContentGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
-		fContentGroup.addTargetChangedListener(new ITargetChangedListener() {
-			@Override
-			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
-				if (source instanceof TargetContentsGroup) {
-					if (((TargetContentsGroup) source).isFeatureModeEnabled())
-						section.setDescription(PDEUIMessages.ContentSection_2);
-					else
-						section.setDescription(PDEUIMessages.ContentSection_1);
-				}
-				markDirty();
+		fContentGroup.addTargetChangedListener((definition, source, resolve, forceResolve) -> {
+			if (source instanceof TargetContentsGroup) {
+				if (((TargetContentsGroup) source).isFeatureModeEnabled())
+					section.setDescription(PDEUIMessages.ContentSection_2);
+				else
+					section.setDescription(PDEUIMessages.ContentSection_1);
 			}
+			markDirty();
 		});
 
 		toolkit.paintBordersFor(client);

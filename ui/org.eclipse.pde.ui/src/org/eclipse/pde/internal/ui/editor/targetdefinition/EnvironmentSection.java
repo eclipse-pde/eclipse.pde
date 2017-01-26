@@ -14,9 +14,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.TreeSet;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -139,26 +137,17 @@ public class EnvironmentSection extends SectionPart {
 
 		refresh();
 
-		fOSCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				markDirty();
-				getTarget().setOS(getText(fOSCombo));
-			}
+		fOSCombo.addModifyListener(e -> {
+			markDirty();
+			getTarget().setOS(getText(fOSCombo));
 		});
-		fWSCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				markDirty();
-				getTarget().setWS(getText(fWSCombo));
-			}
+		fWSCombo.addModifyListener(e -> {
+			markDirty();
+			getTarget().setWS(getText(fWSCombo));
 		});
-		fArchCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				markDirty();
-				getTarget().setArch(getText(fArchCombo));
-			}
+		fArchCombo.addModifyListener(e -> {
+			markDirty();
+			getTarget().setArch(getText(fArchCombo));
 		});
 		fNLCombo.getControl().addFocusListener(new FocusAdapter() {
 			@Override
@@ -166,12 +155,9 @@ public class EnvironmentSection extends SectionPart {
 				// if we haven't gotten all the values for the NL's, display a busy cursor to the user while we find them.
 				if (!LOCALES_INITIALIZED) {
 					try {
-						PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
-							@Override
-							public void run(IProgressMonitor monitor) {
-								initializeAllLocales();
-								LOCALES_INITIALIZED = true;
-							}
+						PlatformUI.getWorkbench().getProgressService().busyCursorWhile(monitor -> {
+							initializeAllLocales();
+							LOCALES_INITIALIZED = true;
 						});
 					} catch (InvocationTargetException e) {
 						PDEPlugin.log(e);
@@ -190,20 +176,17 @@ public class EnvironmentSection extends SectionPart {
 						fNLCombo.setText(current);
 					}
 
-					fNLCombo.addModifyListener(new ModifyListener() {
-						@Override
-						public void modifyText(ModifyEvent e) {
-							String value = getText(fNLCombo);
-							if (value == null) {
-								getTarget().setNL(null);
-							} else {
-								int index = value.indexOf("-"); //$NON-NLS-1$
-								if (index > 0)
-									value = value.substring(0, index);
-								getTarget().setNL(value.trim());
-							}
-							markDirty();
+					fNLCombo.addModifyListener(e -> {
+						String value = getText(fNLCombo);
+						if (value == null) {
+							getTarget().setNL(null);
+						} else {
+							int index = value.indexOf("-"); //$NON-NLS-1$
+							if (index > 0)
+								value = value.substring(0, index);
+							getTarget().setNL(value.trim());
 						}
+						markDirty();
 					});
 				}
 
@@ -295,12 +278,7 @@ public class EnvironmentSection extends SectionPart {
 		if (LOCALES_INITIALIZED)
 			return;
 		// kick off thread in background to find the NL values
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				initializeAllLocales();
-			}
-		}).start();
+		new Thread(() -> initializeAllLocales()).start();
 	}
 
 }

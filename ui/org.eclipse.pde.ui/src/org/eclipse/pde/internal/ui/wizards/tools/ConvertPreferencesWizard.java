@@ -87,118 +87,113 @@ public class ConvertPreferencesWizard extends Wizard {
 	}
 
 	private IRunnableWithProgress getGenerateOperation() {
-		return new IRunnableWithProgress() {
-
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				monitor.beginTask(PDEUIMessages.ConvertPreferencesWizard_progress, 100);
-				File prefsFile = page.getPreferencesFile();
-				if (prefsFile != null) {
-					String sourceFilePath = prefsFile.getAbsolutePath();
-					String errorFilePath = sourceFilePath;
-					if (prefsFile.exists()) {
+		return monitor -> {
+			monitor.beginTask(PDEUIMessages.ConvertPreferencesWizard_progress, 100);
+			File prefsFile = page.getPreferencesFile();
+			if (prefsFile != null) {
+				String sourceFilePath = prefsFile.getAbsolutePath();
+				String errorFilePath = sourceFilePath;
+				if (prefsFile.exists()) {
+					try {
+						BufferedReader in = new BufferedReader(new FileReader(sourceFilePath));
+						// Build properties from the EPF file, ignoring any scope strings.
+						Properties properties = new Properties();
 						try {
-							BufferedReader in = new BufferedReader(new FileReader(sourceFilePath));
-							// Build properties from the EPF file, ignoring any scope strings.
-							Properties properties = new Properties();
-							try {
-								String line;
-								while ((line = in.readLine()) != null) {
-									// ignore any lines that don't start with a separator
-									if (line.length() > 0 && line.charAt(0) == IPath.SEPARATOR) {
-										// find next separator so that we are skipping a scope such as /instance/ or /configuration/
-										int index = line.indexOf(IPath.SEPARATOR, 1);
-										if (index > -1) {
-											int keyIndex = line.indexOf('=', index);
-											if (keyIndex > index + 1) {
-												String key = line.substring(index + 1, keyIndex).trim();
-												String value = line.substring(keyIndex + 1).trim();
-												properties.put(key, value);
-											}
+							String line1;
+							while ((line1 = in.readLine()) != null) {
+								// ignore any lines that don't start with a separator
+								if (line1.length() > 0 && line1.charAt(0) == IPath.SEPARATOR) {
+									// find next separator so that we are skipping a scope such as /instance/ or /configuration/
+									int index1 = line1.indexOf(IPath.SEPARATOR, 1);
+									if (index1 > -1) {
+										int keyIndex = line1.indexOf('=', index1);
+										if (keyIndex > index1 + 1) {
+											String key1 = line1.substring(index1 + 1, keyIndex).trim();
+											String value1 = line1.substring(keyIndex + 1).trim();
+											properties.put(key1, value1);
 										}
 									}
 								}
-							} finally {
-								in.close();
 							}
-							monitor.worked(50);
-
-							// If there are preferences to save, look for a plugin_customization.ini file and either
-							// overwrite it or merge it.
-							if (properties.size() > 0) {
-								// Ensure file exists in case it was deleted since we validated
-								IFile customizationFile = page.getPluginCustomizeFile();
-								errorFilePath = customizationFile.getFullPath().toString();
-								if (!customizationFile.exists()) {
-									byte[] bytes = "".getBytes(); //$NON-NLS-1$
-									InputStream source = new ByteArrayInputStream(bytes);
-									customizationFile.create(source, IResource.NONE, null);
-								}
-
-								StringBuilder out = new StringBuilder();
-
-								// merging old and new content
-								if (!fOverwrite) {
-									BufferedReader existingFile = new BufferedReader(new InputStreamReader(customizationFile.getContents()));
-									try {
-										String line;
-										while ((line = existingFile.readLine()) != null) {
-											int index = line.indexOf('=');
-											if (index > 1) {
-												String key = line.substring(0, index).trim();
-												// If this key is not in the new preferences, then we want to preserve it.
-												// If it is in the preferences, we'll be picking up the new value.
-												if (!properties.containsKey(key)) {
-													out.append(line);
-													out.append('\n');
-												}
-											} else {
-												PDEPlugin.log(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_skippedInvalidLine, fPreferencesFilePath));
-												PDEPlugin.log("    " + line); //$NON-NLS-1$
-											}
-										}
-									} finally {
-										existingFile.close();
-									}
-								}
-								monitor.worked(20);
-								Enumeration<Object> keys = properties.keys();
-								while (keys.hasMoreElements()) {
-									Object key = keys.nextElement();
-									Object value = properties.get(key);
-									out.append(key + "=" + value); //$NON-NLS-1$
-									out.append('\n');
-								}
-								// now write the (possibly merged) values from the string builder to the file
-								InputStream resultStream = new ByteArrayInputStream(out.toString().getBytes());
-								customizationFile.setContents(resultStream, true, true, null);
-								monitor.worked(30);
-							} else {
-								page.setMessage(PDEUIMessages.ConvertPreferencesWizard_errorNoPrefs, IMessageProvider.WARNING);
-							}
-						} catch (FileNotFoundException e) {
-							page.setErrorMessage(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFile, errorFilePath));
-							PDEPlugin.logException(e);
-							return;
-						} catch (CoreException e) {
-							page.setErrorMessage(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFile, errorFilePath));
-							PDEPlugin.logException(e);
-							return;
-						} catch (IOException e) {
-							page.setErrorMessage(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFile, errorFilePath));
-							PDEPlugin.logException(e);
-							return;
 						} finally {
-							monitor.done();
+							in.close();
 						}
-					} else {
-						page.setErrorMessage(PDEUIMessages.ConvertPreferencesWizard_errorFileNotFound);
+						monitor.worked(50);
+
+						// If there are preferences to save, look for a plugin_customization.ini file and either
+						// overwrite it or merge it.
+						if (properties.size() > 0) {
+							// Ensure file exists in case it was deleted since we validated
+							IFile customizationFile = page.getPluginCustomizeFile();
+							errorFilePath = customizationFile.getFullPath().toString();
+							if (!customizationFile.exists()) {
+								byte[] bytes = "".getBytes(); //$NON-NLS-1$
+								InputStream source = new ByteArrayInputStream(bytes);
+								customizationFile.create(source, IResource.NONE, null);
+							}
+
+							StringBuilder out = new StringBuilder();
+
+							// merging old and new content
+							if (!fOverwrite) {
+								BufferedReader existingFile = new BufferedReader(new InputStreamReader(customizationFile.getContents()));
+								try {
+									String line2;
+									while ((line2 = existingFile.readLine()) != null) {
+										int index2 = line2.indexOf('=');
+										if (index2 > 1) {
+											String key2 = line2.substring(0, index2).trim();
+											// If this key is not in the new preferences, then we want to preserve it.
+											// If it is in the preferences, we'll be picking up the new value.
+											if (!properties.containsKey(key2)) {
+												out.append(line2);
+												out.append('\n');
+											}
+										} else {
+											PDEPlugin.log(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_skippedInvalidLine, fPreferencesFilePath));
+											PDEPlugin.log("    " + line2); //$NON-NLS-1$
+										}
+									}
+								} finally {
+									existingFile.close();
+								}
+							}
+							monitor.worked(20);
+							Enumeration<Object> keys = properties.keys();
+							while (keys.hasMoreElements()) {
+								Object key3 = keys.nextElement();
+								Object value2 = properties.get(key3);
+								out.append(key3 + "=" + value2); //$NON-NLS-1$
+								out.append('\n');
+							}
+							// now write the (possibly merged) values from the string builder to the file
+							InputStream resultStream = new ByteArrayInputStream(out.toString().getBytes());
+							customizationFile.setContents(resultStream, true, true, null);
+							monitor.worked(30);
+						} else {
+							page.setMessage(PDEUIMessages.ConvertPreferencesWizard_errorNoPrefs, IMessageProvider.WARNING);
+						}
+					} catch (FileNotFoundException e1) {
+						page.setErrorMessage(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFile, errorFilePath));
+						PDEPlugin.logException(e1);
+						return;
+					} catch (CoreException e2) {
+						page.setErrorMessage(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFile, errorFilePath));
+						PDEPlugin.logException(e2);
+						return;
+					} catch (IOException e3) {
+						page.setErrorMessage(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFile, errorFilePath));
+						PDEPlugin.logException(e3);
+						return;
+					} finally {
+						monitor.done();
 					}
 				} else {
-					page.setErrorMessage(PDEUIMessages.ConvertPreferencesWizard_errorNoFileSpecified);
+					page.setErrorMessage(PDEUIMessages.ConvertPreferencesWizard_errorFileNotFound);
 				}
+			} else {
+				page.setErrorMessage(PDEUIMessages.ConvertPreferencesWizard_errorNoFileSpecified);
 			}
-
 		};
 	}
 

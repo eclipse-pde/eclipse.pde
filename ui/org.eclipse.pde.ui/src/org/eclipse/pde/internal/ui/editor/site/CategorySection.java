@@ -624,34 +624,26 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private void handleImportEnvironment() {
 		IStructuredSelection sel = (IStructuredSelection) fCategoryViewer.getSelection();
 		final ISiteFeature[] selectedFeatures = getFeaturesFromSelection(sel);
-		BusyIndicator.showWhile(fCategoryTreePart.getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				new SynchronizePropertiesAction(selectedFeatures, getModel()).run();
-			}
-		});
+		BusyIndicator.showWhile(fCategoryTreePart.getControl().getDisplay(), () -> new SynchronizePropertiesAction(selectedFeatures, getModel()).run());
 	}
 
 	private void handleNewFeature() {
 		final Control control = fCategoryViewer.getControl();
-		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList<IFeatureModel> newModels = new ArrayList<>();
-				for (IFeatureModel allModel : allModels) {
-					if (canAdd(allModel))
-						newModels.add(allModel);
-				}
-				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
-				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
-				if (dialog.open() == Window.OK) {
-					Object[] models = dialog.getResult();
-					try {
-						doAdd(models);
-					} catch (CoreException e) {
-						PDEPlugin.log(e);
-					}
+		BusyIndicator.showWhile(control.getDisplay(), () -> {
+			IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
+			ArrayList<IFeatureModel> newModels = new ArrayList<>();
+			for (IFeatureModel allModel : allModels) {
+				if (canAdd(allModel))
+					newModels.add(allModel);
+			}
+			IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
+			FeatureSelectionDialog dialog = new FeatureSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
+			if (dialog.open() == Window.OK) {
+				Object[] models = dialog.getResult();
+				try {
+					doAdd(models);
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
 				}
 			}
 		});

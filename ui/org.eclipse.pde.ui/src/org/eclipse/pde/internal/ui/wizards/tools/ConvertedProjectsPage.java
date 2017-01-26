@@ -87,12 +87,7 @@ public class ConvertedProjectsPage extends WizardPage {
 		fProjectViewer.setLabelProvider(new ProjectLabelProvider());
 		fProjectViewer.setInput(fAllUnconvertedProjects);
 		fProjectViewer.setCheckedElements(fInitialSelection);
-		fProjectViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				updateButtons();
-			}
-		});
+		fProjectViewer.addCheckStateListener(event -> updateButtons());
 
 		Composite buttonContainer = SWTFactory.createComposite(container, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 

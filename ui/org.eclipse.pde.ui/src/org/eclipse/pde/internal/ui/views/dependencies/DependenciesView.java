@@ -421,14 +421,11 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	private void findLoops() {
 		fLoops = NO_LOOPS;
 		if (fInput != null && fInput instanceof IPluginModel) {
-			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					IPlugin plugin = ((IPluginModel) fInput).getPlugin();
-					DependencyLoop[] loops = DependencyLoopFinder.findLoops(plugin);
-					if (loops.length > 0) {
-						fLoops = loops;
-					}
+			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), () -> {
+				IPlugin plugin = ((IPluginModel) fInput).getPlugin();
+				DependencyLoop[] loops = DependencyLoopFinder.findLoops(plugin);
+				if (loops.length > 0) {
+					fLoops = loops;
 				}
 			});
 		}

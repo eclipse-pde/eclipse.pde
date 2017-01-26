@@ -547,12 +547,7 @@ public class ElementSection extends TreeSection {
 					fTreeViewer.refresh(sobj);
 				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 					fTreeViewer.add(parent, sobj);
-					fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							fTreeViewer.setSelection(new StructuredSelection(sobj), true);
-						}
-					});
+					fTreeViewer.getTree().getDisplay().asyncExec(() -> fTreeViewer.setSelection(new StructuredSelection(sobj), true));
 				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 					fTreeViewer.remove(sobj);
 					// the new selection is handled by the handleDelete method for cuts and deletes,
@@ -569,12 +564,7 @@ public class ElementSection extends TreeSection {
 					ISchemaComplexType type = (ISchemaComplexType) obj;
 					final ISchemaCompositor compositor = type.getCompositor();
 					if (compositor != null) {
-						fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								fTreeViewer.setSelection(new StructuredSelection(compositor), true);
-							}
-						});
+						fTreeViewer.getTree().getDisplay().asyncExec(() -> fTreeViewer.setSelection(new StructuredSelection(compositor), true));
 					}
 				}
 			} else if (obj instanceof ISchema) {

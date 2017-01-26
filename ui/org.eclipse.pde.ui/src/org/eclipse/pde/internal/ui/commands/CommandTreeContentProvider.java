@@ -37,15 +37,12 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 	}
 
 	private void init() {
-		fCatMap = new TreeMap<>(new Comparator<Object>() {
-			@Override
-			public int compare(Object arg0, Object arg1) {
-				String comA = CommandList.getText(arg0);
-				String comB = CommandList.getText(arg1);
-				if (comA != null)
-					return comA.compareTo(comB);
-				return +1; // undefined ids should go last
-			}
+		fCatMap = new TreeMap<>((arg0, arg1) -> {
+			String comA = CommandList.getText(arg0);
+			String comB = CommandList.getText(arg1);
+			if (comA != null)
+				return comA.compareTo(comB);
+			return +1; // undefined ids should go last
 		});
 		fConMap = new TreeMap<>();
 		Command[] commands = fComServ.getDefinedCommands();

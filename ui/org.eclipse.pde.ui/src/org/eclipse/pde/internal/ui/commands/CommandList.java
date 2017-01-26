@@ -226,12 +226,7 @@ public class CommandList {
 		final Image hoverImg = PDEPluginImages.DESC_CLEAR.createImage();
 		clearButton.setImage(hoverImg);
 		clearButton.setToolTipText(PDEUIMessages.CommandList_clearTooltip);
-		clearButton.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				hoverImg.dispose();
-			}
-		});
+		clearButton.addDisposeListener(e -> hoverImg.dispose());
 		clearButton.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
@@ -240,12 +235,9 @@ public class CommandList {
 		});
 		clearButton.setVisible(false);
 
-		fFilterText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fTreeViewer.refresh();
-				clearButton.setVisible(fFilterText.getText().length() > 0);
-			}
+		fFilterText.addModifyListener(e -> {
+			fTreeViewer.refresh();
+			clearButton.setVisible(fFilterText.getText().length() > 0);
 		});
 	}
 

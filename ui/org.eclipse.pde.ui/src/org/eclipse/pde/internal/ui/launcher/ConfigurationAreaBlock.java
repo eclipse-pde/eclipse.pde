@@ -62,13 +62,10 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		});
 
 		createText(group, PDEUIMessages.ConfigurationTab_configLog, 20);
-		fLocationText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (!fUseDefaultLocationButton.getSelection()) {
-					// As the user types, save the text and restore it if default button is toggled
-					fLastEnteredConfigArea = getLocation();
-				}
+		fLocationText.addModifyListener(e -> {
+			if (!fUseDefaultLocationButton.getSelection()) {
+				// As the user types, save the text and restore it if default button is toggled
+				fLastEnteredConfigArea = getLocation();
 			}
 		});
 

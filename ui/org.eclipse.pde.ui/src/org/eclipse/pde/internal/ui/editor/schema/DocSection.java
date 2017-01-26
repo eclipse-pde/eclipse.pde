@@ -93,12 +93,7 @@ public class DocSection extends PDESection {
 		fSourceViewer = new SourceViewer(container, null, styles);
 		fSourceViewer.configure(fSourceConfiguration);
 		fSourceViewer.setDocument(fDocument);
-		fSourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateSelection(event.getSelection());
-			}
-		});
+		fSourceViewer.addSelectionChangedListener(event -> updateSelection(event.getSelection()));
 		StyledText styledText = fSourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());

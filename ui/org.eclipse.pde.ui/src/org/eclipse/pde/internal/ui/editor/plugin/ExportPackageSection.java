@@ -437,31 +437,28 @@ public class ExportPackageSection extends TableSection {
 				final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider, PDEUIMessages.ExportPackageSection_dialogButtonLabel);
 				final Collection<?> pckgs = fHeader == null ? new Vector<>() : fHeader.getPackageNames();
 				final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
-				Runnable runnable = new Runnable() {
-					@Override
-					public void run() {
-						ArrayList<IPackageFragment> elements = new ArrayList<>();
-						ArrayList<IPackageFragment> conditional = new ArrayList<>();
-						IPackageFragment[] fragments = PDEJavaHelper.getPackageFragments(JavaCore.create(project), pckgs, allowJava);
-						for (IPackageFragment fragment : fragments) {
-							try {
-								if (fragment.containsJavaResources()) {
-									elements.add(fragment);
-								} else {
-									conditional.add(fragment);
-								}
-							} catch (JavaModelException e) {
+				Runnable runnable = () -> {
+					ArrayList<IPackageFragment> elements = new ArrayList<>();
+					ArrayList<IPackageFragment> conditional = new ArrayList<>();
+					IPackageFragment[] fragments = PDEJavaHelper.getPackageFragments(JavaCore.create(project), pckgs, allowJava);
+					for (IPackageFragment fragment : fragments) {
+						try {
+							if (fragment.containsJavaResources()) {
+								elements.add(fragment);
+							} else {
+								conditional.add(fragment);
 							}
+						} catch (JavaModelException e) {
 						}
-						dialog.setElements(elements.toArray());
-						dialog.setConditionalElements(conditional.toArray());
-						dialog.setMultipleSelection(true);
-						dialog.setMessage(PDEUIMessages.PackageSelectionDialog_label);
-						dialog.setTitle(PDEUIMessages.ExportPackageSection_title);
-						dialog.create();
-						PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXPORT_PACKAGES);
-						SWTUtil.setDialogSize(dialog, 400, 500);
 					}
+					dialog.setElements(elements.toArray());
+					dialog.setConditionalElements(conditional.toArray());
+					dialog.setMultipleSelection(true);
+					dialog.setMessage(PDEUIMessages.PackageSelectionDialog_label);
+					dialog.setTitle(PDEUIMessages.ExportPackageSection_title);
+					dialog.create();
+					PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXPORT_PACKAGES);
+					SWTUtil.setDialogSize(dialog, 400, 500);
 				};
 				BusyIndicator.showWhile(Display.getCurrent(), runnable);
 				if (dialog.open() == Window.OK) {

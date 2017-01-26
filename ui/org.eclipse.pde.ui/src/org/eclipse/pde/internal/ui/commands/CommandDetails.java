@@ -111,12 +111,7 @@ public class CommandDetails {
 		fExecLink.addHyperlinkListener(new ExecCommand());
 		fExecLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fExecLink.setVisible(false);
-		fExecLink.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				execImage.dispose();
-			}
-		});
+		fExecLink.addDisposeListener(e -> execImage.dispose());
 
 		fCopyLink = fToolkit.createImageHyperlink(comp, SWT.NONE);
 		final Image clipImage = PDEPluginImages.DESC_CLIPBOARD.createImage();
@@ -126,12 +121,7 @@ public class CommandDetails {
 		fCopyLink.addHyperlinkListener(new CopyToClipboard());
 		fCopyLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fCopyLink.setVisible(false);
-		fCopyLink.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				clipImage.dispose();
-			}
-		});
+		fCopyLink.addDisposeListener(e -> clipImage.dispose());
 	}
 
 	private void createPreviewLabelComp(Composite parent) {

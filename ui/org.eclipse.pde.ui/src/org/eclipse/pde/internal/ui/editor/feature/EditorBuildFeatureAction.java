@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -36,12 +35,7 @@ public class EditorBuildFeatureAction extends Action {
 	private void ensureContentSaved() {
 		if (activeEditor.isDirty()) {
 			try {
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					@Override
-					public void run(IProgressMonitor monitor) {
-						activeEditor.doSave(monitor);
-					}
-				};
+				IRunnableWithProgress op = monitor -> activeEditor.doSave(monitor);
 				PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 
 			} catch (InvocationTargetException e) {

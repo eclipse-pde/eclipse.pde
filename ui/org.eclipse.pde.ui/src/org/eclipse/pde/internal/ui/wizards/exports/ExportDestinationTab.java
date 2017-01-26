@@ -136,19 +136,9 @@ public class ExportDestinationTab extends AbstractExportTab {
 				chooseFile(fArchiveCombo, new String[] {"*" + ZIP_EXTENSION}); //$NON-NLS-1$
 			}
 		});
-		fArchiveCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fPage.pageChanged();
-			}
-		});
+		fArchiveCombo.addModifyListener(e -> fPage.pageChanged());
 
-		fDirectoryCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fPage.pageChanged();
-			}
-		});
+		fDirectoryCombo.addModifyListener(e -> fPage.pageChanged());
 
 		fBrowseDirectory.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -166,12 +156,7 @@ public class ExportDestinationTab extends AbstractExportTab {
 				}
 			}
 		});
-		fInstallCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fPage.pageChanged();
-			}
-		});
+		fInstallCombo.addModifyListener(e -> fPage.pageChanged());
 		fBrowseInstall.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

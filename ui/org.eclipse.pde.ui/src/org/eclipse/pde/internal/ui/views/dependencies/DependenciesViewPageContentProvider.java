@@ -86,31 +86,28 @@ public class DependenciesViewPageContentProvider implements IContentProvider, IP
 		if (fViewer == null || fViewer.getControl().isDisposed())
 			return;
 
-		fViewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				int kind = delta.getKind();
-				if (fViewer.getControl().isDisposed())
-					return;
-				try {
-					if ((kind & PluginModelDelta.REMOVED) != 0) {
-						// called when all instances of a Bundle-SymbolicName are all removed
-						handleModifiedModels(delta.getRemovedEntries());
-					}
-					if ((kind & PluginModelDelta.CHANGED) != 0) {
-						// called when a plug-in is changed (possibly the input)
-						// AND when the model for the ModelEntry changes (new bundle with existing id/remove bundle with 2 instances with same id)
-						handleModifiedModels(delta.getChangedEntries());
-					}
-					if ((kind & PluginModelDelta.ADDED) != 0) {
-						// when user modifies Bundle-SymbolicName, a ModelEntry is created for the new name.  In this case, if the input matches
-						// the modified model, we need to update the title.
-						handleModifiedModels(delta.getAddedEntries());
-					}
-				} finally {
-					// no matter what, refresh the viewer since bundles might un/resolve with changes
-					fViewer.refresh();
+		fViewer.getControl().getDisplay().asyncExec(() -> {
+			int kind = delta.getKind();
+			if (fViewer.getControl().isDisposed())
+				return;
+			try {
+				if ((kind & PluginModelDelta.REMOVED) != 0) {
+					// called when all instances of a Bundle-SymbolicName are all removed
+					handleModifiedModels(delta.getRemovedEntries());
 				}
+				if ((kind & PluginModelDelta.CHANGED) != 0) {
+					// called when a plug-in is changed (possibly the input)
+					// AND when the model for the ModelEntry changes (new bundle with existing id/remove bundle with 2 instances with same id)
+					handleModifiedModels(delta.getChangedEntries());
+				}
+				if ((kind & PluginModelDelta.ADDED) != 0) {
+					// when user modifies Bundle-SymbolicName, a ModelEntry is created for the new name.  In this case, if the input matches
+					// the modified model, we need to update the title.
+					handleModifiedModels(delta.getAddedEntries());
+				}
+			} finally {
+				// no matter what, refresh the viewer since bundles might un/resolve with changes
+				fViewer.refresh();
 			}
 		});
 	}

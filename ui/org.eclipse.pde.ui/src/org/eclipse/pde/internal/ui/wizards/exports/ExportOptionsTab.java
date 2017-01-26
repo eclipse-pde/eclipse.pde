@@ -150,12 +150,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 		fQualifierText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		fQualifierText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fQualifierText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fPage.pageChanged();
-			}
-		});
+		fQualifierText.addModifyListener(e -> fPage.pageChanged());
 	}
 
 	@Override
@@ -250,12 +245,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 			}
 		});
 
-		fAntCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fPage.pageChanged();
-			}
-		});
+		fAntCombo.addModifyListener(e -> fPage.pageChanged());
 		fQualifierButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

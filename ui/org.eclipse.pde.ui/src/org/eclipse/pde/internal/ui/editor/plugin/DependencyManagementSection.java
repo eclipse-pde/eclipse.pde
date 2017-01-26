@@ -622,12 +622,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		fAdditionalBundles = null;
 		final Control control = fAdditionalTable.getControl();
 		if (!control.isDisposed()) {
-			control.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!control.isDisposed())
-						fAdditionalTable.refresh();
-				}
+			control.getDisplay().asyncExec(() -> {
+				if (!control.isDisposed())
+					fAdditionalTable.refresh();
 			});
 		}
 	}

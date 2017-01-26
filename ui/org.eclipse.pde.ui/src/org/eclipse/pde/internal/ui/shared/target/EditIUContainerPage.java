@@ -181,19 +181,16 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private void createRepositoryComboArea(final Composite parent) {
 		profileUI.getPolicy().setRepositoryPreferencePageId(null);
 		fRepoSelector = new RepositorySelectionGroup(profileUI, getContainer(), parent, fQueryContext);
-		fRepoSelector.addRepositorySelectionListener(new IRepositorySelectionListener() {
-			@Override
-			public void repositorySelectionChanged(int repoChoice, URI repoLocation) {
-				fAvailableIUGroup.setRepositoryFilter(repoChoice, repoLocation);
-				fRepoLocation = repoChoice == AvailableIUGroup.AVAILABLE_SPECIFIED ? repoLocation : null;
-				if (repoChoice == AvailableIUGroup.AVAILABLE_NONE) {
-					setDescription(Messages.EditIUContainerPage_10);
-				} else {
-					setDescription(Messages.EditIUContainerPage_11);
-					refreshAvailableIUArea(parent);
-				}
-				pageChanged();
+		fRepoSelector.addRepositorySelectionListener((repoChoice, repoLocation) -> {
+			fAvailableIUGroup.setRepositoryFilter(repoChoice, repoLocation);
+			fRepoLocation = repoChoice == AvailableIUGroup.AVAILABLE_SPECIFIED ? repoLocation : null;
+			if (repoChoice == AvailableIUGroup.AVAILABLE_NONE) {
+				setDescription(Messages.EditIUContainerPage_10);
+			} else {
+				setDescription(Messages.EditIUContainerPage_11);
+				refreshAvailableIUArea(parent);
 			}
+			pageChanged();
 		});
 	}
 
@@ -210,45 +207,35 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			return;
 		}
 
-		refreshThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					final AtomicBoolean loaded = new AtomicBoolean(false);
-					int tries = 0;
-					while (!loaded.get()) {
-						if (REFRESH_TRIES == tries++) {
-							throw new InterruptedException("reached maximum number of tries"); //$NON-NLS-1$
-						}
-
-						Thread.sleep(REFRESH_INTERVAL);
-
-						parent.getDisplay().syncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								final TreeItem[] children = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
-								final String pendingLabel = ProgressMessages.PendingUpdateAdapter_PendingLabel;
-								if (children.length > 0 && !children[0].getText().equals(pendingLabel)) {
-									try {
-										fAvailableIUGroup.getCheckboxTreeViewer().expandAll();
-										fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits());
-										fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
-									} catch (CoreException e) {
-										PDEPlugin.log(e);
-									}
-									loaded.set(true);
-								}
-							}
-
-						});
+		refreshThread = new Thread(() -> {
+			try {
+				final AtomicBoolean loaded = new AtomicBoolean(false);
+				int tries = 0;
+				while (!loaded.get()) {
+					if (REFRESH_TRIES == tries++) {
+						throw new InterruptedException("reached maximum number of tries"); //$NON-NLS-1$
 					}
-				} catch (InterruptedException e) {
-					PDEPlugin.log(e);
-				}
-			}
 
+					Thread.sleep(REFRESH_INTERVAL);
+
+					parent.getDisplay().syncExec(() -> {
+						final TreeItem[] children = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
+						final String pendingLabel = ProgressMessages.PendingUpdateAdapter_PendingLabel;
+						if (children.length > 0 && !children[0].getText().equals(pendingLabel)) {
+							try {
+								fAvailableIUGroup.getCheckboxTreeViewer().expandAll();
+								fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits());
+								fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
+							} catch (CoreException e) {
+								PDEPlugin.log(e);
+							}
+							loaded.set(true);
+						}
+					});
+				}
+			} catch (InterruptedException e) {
+				PDEPlugin.log(e);
+			}
 		});
 		refreshThread.start();
 	}
@@ -265,35 +252,29 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		if (!profileUI.getPolicy().getRepositoriesVisible())
 			filterConstant = AvailableIUGroup.AVAILABLE_ALL;
 		fAvailableIUGroup = new AvailableIUGroup(profileUI, parent, parent.getFont(), fQueryContext, null, filterConstant);
-		fAvailableIUGroup.getCheckboxTreeViewer().addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
-				if (units.length > 0) {
-					if (units.length == 1) {
-						fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemSelected, Integer.toString(units.length)));
-					} else {
-						fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(units.length)));
-					}
-					fSelectedIUStatus = Status.OK_STATUS;
+		fAvailableIUGroup.getCheckboxTreeViewer().addCheckStateListener(event -> {
+			IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
+			if (units.length > 0) {
+				if (units.length == 1) {
+					fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemSelected, Integer.toString(units.length)));
 				} else {
-
-					final TreeItem[] children = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
-					final String pendingLabel = ProgressMessages.PendingUpdateAdapter_PendingLabel;
-					if (children.length > 0 && !children[0].getText().equals(pendingLabel)) {
-						fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)));
-						fSelectedIUStatus = BAD_IU_SELECTION;
-					}
+					fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(units.length)));
 				}
-				pageChanged();
+				fSelectedIUStatus = Status.OK_STATUS;
+			} else {
+
+				final TreeItem[] children = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
+				final String pendingLabel = ProgressMessages.PendingUpdateAdapter_PendingLabel;
+				if (children.length > 0 && !children[0].getText().equals(pendingLabel)) {
+					fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)));
+					fSelectedIUStatus = BAD_IU_SELECTION;
+				}
 			}
+			pageChanged();
 		});
-		fAvailableIUGroup.getCheckboxTreeViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateDetails();
-				fPropertiesButton.setEnabled(fAvailableIUGroup.getSelectedIUElements().length == 1);
-			}
+		fAvailableIUGroup.getCheckboxTreeViewer().addSelectionChangedListener(event -> {
+			updateDetails();
+			fPropertiesButton.setEnabled(fAvailableIUGroup.getSelectedIUElements().length == 1);
 		});
 
 		fAvailableIUGroup.setUseBoldFontForFilteredItems(true);
@@ -315,23 +296,13 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 		selectAll.setLayoutData(new GridData());
 		SWTFactory.setButtonDimensionHint(selectAll);
-		selectAll.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				setAllChecked(true);
-			}
-		});
+		selectAll.addListener(SWT.Selection, event -> setAllChecked(true));
 
 		Button deselectAll = new Button(buttonParent, SWT.PUSH);
 		deselectAll.setText(ProvUIMessages.SelectableIUsPage_Deselect_All);
 		deselectAll.setLayoutData(new GridData());
 		SWTFactory.setButtonDimensionHint(deselectAll);
-		deselectAll.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				setAllChecked(false);
-			}
-		});
+		deselectAll.addListener(SWT.Selection, event -> setAllChecked(false));
 		fSelectionCount = SWTFactory.createLabel(buttonParent, NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)), 1);
 		GridData labelData = new GridData();
 		labelData.widthHint = 200;

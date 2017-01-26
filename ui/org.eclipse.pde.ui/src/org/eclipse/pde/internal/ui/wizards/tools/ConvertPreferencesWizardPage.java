@@ -96,12 +96,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 				this.setErrorMessage(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFileNotFound, prefs.getAbsolutePath()));
 			}
 		}
-		fPreferenceCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent event) {
-				pageChanged(true);
-			}
-		});
+		fPreferenceCombo.addModifyListener(event -> pageChanged(true));
 
 		group = new Group(container, SWT.NONE);
 		group.setLayout(new GridLayout(3, false));
@@ -121,12 +116,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 			fPluginCustomizeCombo.setText(fPluginCustomizeFilePath);
 		}
 
-		fPluginCustomizeCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent event) {
-				pageChanged(true);
-			}
-		});
+		fPluginCustomizeCombo.addModifyListener(event -> pageChanged(true));
 
 		browse = new Button(group, SWT.PUSH);
 		browse.setText(PDEUIMessages.ConvertPreferencesWizardPage_target_browse);

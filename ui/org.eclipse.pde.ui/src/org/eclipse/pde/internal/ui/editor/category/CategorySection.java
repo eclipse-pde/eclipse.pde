@@ -820,24 +820,21 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	private void handleNewFeature() {
 		final Control control = fCategoryViewer.getControl();
-		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList<IFeatureModel> newModels = new ArrayList<>();
-				for (IFeatureModel allModel : allModels) {
-					if (canAdd(allModel))
-						newModels.add(allModel);
-				}
-				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
-				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
-				if (dialog.open() == Window.OK) {
-					Object[] models = dialog.getResult();
-					try {
-						doAdd(models);
-					} catch (CoreException e) {
-						PDEPlugin.log(e);
-					}
+		BusyIndicator.showWhile(control.getDisplay(), () -> {
+			IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
+			ArrayList<IFeatureModel> newModels = new ArrayList<>();
+			for (IFeatureModel allModel : allModels) {
+				if (canAdd(allModel))
+					newModels.add(allModel);
+			}
+			IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
+			FeatureSelectionDialog dialog = new FeatureSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
+			if (dialog.open() == Window.OK) {
+				Object[] models = dialog.getResult();
+				try {
+					doAdd(models);
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
 				}
 			}
 		});
@@ -845,24 +842,21 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	private void handleNewBundle() {
 		final Control control = fCategoryViewer.getControl();
-		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				IPluginModelBase[] allModels = PluginRegistry.getAllModels();
-				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
-				for (IPluginModelBase allModel : allModels) {
-					if (canAdd(allModel))
-						newModels.add(allModel);
-				}
-				IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
-				PluginSelectionDialog dialog = new PluginSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
-				if (dialog.open() == Window.OK) {
-					Object[] models = dialog.getResult();
-					try {
-						doAddBundles(models);
-					} catch (CoreException e) {
-						PDEPlugin.log(e);
-					}
+		BusyIndicator.showWhile(control.getDisplay(), () -> {
+			IPluginModelBase[] allModels = PluginRegistry.getAllModels();
+			ArrayList<IPluginModelBase> newModels = new ArrayList<>();
+			for (IPluginModelBase allModel : allModels) {
+				if (canAdd(allModel))
+					newModels.add(allModel);
+			}
+			IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
+			PluginSelectionDialog dialog = new PluginSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
+			if (dialog.open() == Window.OK) {
+				Object[] models = dialog.getResult();
+				try {
+					doAddBundles(models);
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
 				}
 			}
 		});

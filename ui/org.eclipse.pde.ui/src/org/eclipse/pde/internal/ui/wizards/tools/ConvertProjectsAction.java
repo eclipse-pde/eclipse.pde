@@ -67,12 +67,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 
 			final Display display = getDisplay();
 			final WizardDialog dialog = new WizardDialog(display.getActiveShell(), wizard);
-			BusyIndicator.showWhile(display, new Runnable() {
-				@Override
-				public void run() {
-					dialog.open();
-				}
-			});
+			BusyIndicator.showWhile(display, () -> dialog.open());
 		}
 	}
 

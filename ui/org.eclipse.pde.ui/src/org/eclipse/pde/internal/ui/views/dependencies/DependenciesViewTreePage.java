@@ -17,8 +17,6 @@ import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.osgi.framework.Constants;
 
@@ -65,12 +63,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		fTreeViewer.setContentProvider(fContentProvider);
 		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(true);
 		fTreeViewer.setLabelProvider(labelProvider);
-		fTreeViewer.getControl().addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				labelProvider.dispose();
-			}
-		});
+		fTreeViewer.getControl().addDisposeListener(e -> labelProvider.dispose());
 		fTreeViewer.setAutoExpandLevel(2);
 
 		return fTreeViewer;

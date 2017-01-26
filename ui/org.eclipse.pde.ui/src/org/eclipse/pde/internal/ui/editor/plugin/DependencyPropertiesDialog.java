@@ -18,7 +18,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.PluginVersionPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -110,12 +109,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
 		}
 
 		fVersionPart.createVersionFields(comp, true, fEditable);
-		ModifyListener ml = new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateStatus(fVersionPart.validateFullVersionRangeText(true));
-			}
-		};
+		ModifyListener ml = e -> updateStatus(fVersionPart.validateFullVersionRangeText(true));
 		fVersionPart.addListeners(ml, ml);
 
 		// we need a better way to do this

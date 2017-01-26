@@ -60,12 +60,7 @@ public class EmptyOutlinePage implements ISortableContentOutlinePage {
 
 	@Override
 	public ISelection getSelection() {
-		return new ISelection() {
-			@Override
-			public boolean isEmpty() {
-				return true;
-			}
-		};
+		return () -> true;
 	}
 
 	@Override

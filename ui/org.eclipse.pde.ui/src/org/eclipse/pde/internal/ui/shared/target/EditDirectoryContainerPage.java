@@ -126,20 +126,17 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 		SWTFactory.createLabel(locationComp, Messages.AddDirectoryContainerPage_2, 1);
 
 		fInstallLocation = SWTFactory.createCombo(locationComp, SWT.BORDER, 1, getLocationComboItems());
-		fInstallLocation.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
-				boolean isItem = false;
-				String[] items = fInstallLocation.getItems();
-				for (String item : items) {
-					if (fInstallLocation.getText().equals(item)) {
-						isItem = true;
-						break;
-					}
+		fInstallLocation.addModifyListener(e -> {
+			// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
+			boolean isItem = false;
+			String[] items = fInstallLocation.getItems();
+			for (String item : items) {
+				if (fInstallLocation.getText().equals(item)) {
+					isItem = true;
+					break;
 				}
-				containerChanged(isItem ? 0 : TYPING_DELAY);
 			}
+			containerChanged(isItem ? 0 : TYPING_DELAY);
 		});
 		if (fContainer instanceof AbstractBundleContainer) {
 			try {

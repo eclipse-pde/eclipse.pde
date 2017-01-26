@@ -156,12 +156,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 			fAssignmentToken = new Token(createTextAttribute(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT));
 			rules[1] = new WordRule(new AssignmentDetector(), fAssignmentToken);
 
-			rules[2] = new WhitespaceRule(new IWhitespaceDetector() {
-				@Override
-				public boolean isWhitespace(char c) {
-					return Character.isWhitespace(c);
-				}
-			});
+			rules[2] = new WhitespaceRule(c -> Character.isWhitespace(c));
 			setRules(rules);
 			setDefaultReturnToken(new Token(createTextAttribute(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE)));
 		}
