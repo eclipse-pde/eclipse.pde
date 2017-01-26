@@ -19,6 +19,7 @@ import org.eclipse.ui.internal.views.log.LogView;
 public class ShowInConsolePropertyTester extends PropertyTester {
 	private static final String HAS_SELECTED_STACK_PROPERTY = "hasSelectedStack"; //$NON-NLS-1$
 
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (HAS_SELECTED_STACK_PROPERTY.equals(property)) {
 			if (receiver instanceof LogView) {

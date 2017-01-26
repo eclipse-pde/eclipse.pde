@@ -23,6 +23,7 @@ public class ShowErrorInStackTraceConsoleHandler extends AbstractHandler {
 	private JavaStackTraceConsoleFactory fFactory;
 	LogView logView = null;
 
+	@Override
 	public void setEnabled(Object evaluationContext) {
 		super.setEnabled(evaluationContext);
 
@@ -34,6 +35,7 @@ public class ShowErrorInStackTraceConsoleHandler extends AbstractHandler {
 		}
 	}
 
+	@Override
 	public boolean isEnabled() {
 		if (logView != null) {
 			if (logView.getSelectedStack() != null) {
@@ -44,6 +46,7 @@ public class ShowErrorInStackTraceConsoleHandler extends AbstractHandler {
 		return false;
 	}
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart activePart = HandlerUtil.getActivePart(event);
 		if (activePart instanceof LogView) {
