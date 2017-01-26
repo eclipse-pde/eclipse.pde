@@ -535,13 +535,10 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	public void modelsChanged(PluginModelDelta delta) {
 		final Control control = fPluginTable.getControl();
 		if (!control.isDisposed()) {
-			control.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!control.isDisposed()) {
-						fPluginTable.refresh();
-						updateRemoveButtons(true, true);
-					}
+			control.getDisplay().asyncExec(() -> {
+				if (!control.isDisposed()) {
+					fPluginTable.refresh();
+					updateRemoveButtons(true, true);
 				}
 			});
 		}

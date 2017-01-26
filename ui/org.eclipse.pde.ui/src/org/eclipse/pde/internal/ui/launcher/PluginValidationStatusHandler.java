@@ -43,14 +43,11 @@ public class PluginValidationStatusHandler implements IStatusHandler {
 	private void displayValidationError(final LaunchValidationOperation op) throws CoreException {
 		final int[] result = new int[1];
 		final Display display = LauncherUtilsStatusHandler.getDisplay();
-		display.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				PluginStatusDialog dialog = new PluginStatusDialog(display.getActiveShell());
-				dialog.showCancelButton(true);
-				dialog.setInput(op.getInput());
-				result[0] = dialog.open();
-			}
+		display.syncExec(() -> {
+			PluginStatusDialog dialog = new PluginStatusDialog(display.getActiveShell());
+			dialog.showCancelButton(true);
+			dialog.setInput(op.getInput());
+			result[0] = dialog.open();
 		});
 		if (result[0] == IDialogConstants.CANCEL_ID)
 			throw new CoreException(Status.CANCEL_STATUS);

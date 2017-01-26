@@ -624,12 +624,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		fImports = null;
 		final Control control = fImportViewer.getControl();
 		if (!control.isDisposed()) {
-			control.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!control.isDisposed())
-						fImportViewer.refresh();
-				}
+			control.getDisplay().asyncExec(() -> {
+				if (!control.isDisposed())
+					fImportViewer.refresh();
 			});
 		}
 	}

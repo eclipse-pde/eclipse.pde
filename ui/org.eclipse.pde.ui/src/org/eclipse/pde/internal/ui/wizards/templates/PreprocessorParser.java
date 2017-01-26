@@ -151,12 +151,7 @@ public class PreprocessorParser {
 		vars.put("a", Boolean.FALSE); //$NON-NLS-1$
 		vars.put("b", "3"); //$NON-NLS-1$ //$NON-NLS-2$
 		vars.put("c", Boolean.TRUE); //$NON-NLS-1$
-		PreprocessorParser parser = new PreprocessorParser(new IVariableProvider() {
-			@Override
-			public Object getValue(String variable) {
-				return vars.get(variable);
-			}
-		});
+		PreprocessorParser parser = new PreprocessorParser(variable -> vars.get(variable));
 		try {
 			boolean value = parser.parseAndEvaluate("!a || (b==\"2\" && c)"); //$NON-NLS-1$
 			System.out.println("Result: " + value); //$NON-NLS-1$

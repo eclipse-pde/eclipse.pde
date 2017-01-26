@@ -120,20 +120,10 @@ public class PropertiesSection extends TableSection {
 			((GridLayout) comp.getLayout()).numColumns = 2;
 			SWTFactory.createLabel(comp, PDEUIMessages.PropertiesSection_Name, 1);
 			fName = SWTFactory.createSingleText(comp, 1);
-			fName.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validate();
-				}
-			});
+			fName.addModifyListener(e -> validate());
 			SWTFactory.createLabel(comp, PDEUIMessages.PropertiesSection_Value, 1);
 			fValue = SWTFactory.createSingleText(comp, 1);
-			fValue.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validate();
-				}
-			});
+			fValue.addModifyListener(e -> validate());
 			SWTFactory.createLabel(comp, PDEUIMessages.PropertiesSection_OS, 1);
 			fOS = SWTFactory.createCombo(comp, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, COMBO_OSLABELS);
 			fOS.addSelectionListener(new SelectionListener() {
@@ -297,12 +287,7 @@ public class PropertiesSection extends TableSection {
 		createViewerPartControl(container, SWT.MULTI | SWT.FULL_SELECTION, 3, toolkit);
 		fPropertiesTable = getTablePart().getTableViewer();
 		fPropertiesTable.setSorter(new ViewerSorter());
-		fPropertiesTable.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleEdit();
-			}
-		});
+		fPropertiesTable.addDoubleClickListener(event -> handleEdit());
 		fPropertiesTable.getTable().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {

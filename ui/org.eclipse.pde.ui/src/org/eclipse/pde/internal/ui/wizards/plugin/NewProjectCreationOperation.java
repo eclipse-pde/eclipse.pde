@@ -452,22 +452,19 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	 * @param file file to open the editor on
 	 */
 	private void openFile(final IFile file) {
-		PDEPlugin.getDefault().getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
-				final IWorkbenchPage page = ww.getActivePage();
-				if (page == null)
-					return;
-				IWorkbenchPart focusPart = page.getActivePart();
-				if (focusPart instanceof ISetSelectionTarget) {
-					ISelection selection = new StructuredSelection(file);
-					((ISetSelectionTarget) focusPart).selectReveal(selection);
-				}
-				try {
-					IDE.openEditor(page, file, true);
-				} catch (PartInitException e) {
-				}
+		PDEPlugin.getDefault().getWorkbench().getDisplay().asyncExec(() -> {
+			final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
+			final IWorkbenchPage page = ww.getActivePage();
+			if (page == null)
+				return;
+			IWorkbenchPart focusPart = page.getActivePart();
+			if (focusPart instanceof ISetSelectionTarget) {
+				ISelection selection = new StructuredSelection(file);
+				((ISetSelectionTarget) focusPart).selectReveal(selection);
+			}
+			try {
+				IDE.openEditor(page, file, true);
+			} catch (PartInitException e) {
 			}
 		});
 	}

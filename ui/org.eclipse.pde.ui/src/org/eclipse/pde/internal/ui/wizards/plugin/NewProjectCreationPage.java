@@ -195,12 +195,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		text.setLayoutData(gd);
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setPageComplete(validatePage());
-			}
-		});
+		text.addModifyListener(e -> setPageComplete(validatePage()));
 		return text;
 	}
 

@@ -43,12 +43,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 	private TreeSet<String> fIntroIds;
 	private IProduct fProduct;
 
-	private ModifyListener fListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			validatePage();
-		}
-	};
+	private ModifyListener fListener = e -> validatePage();
 
 	public ProductIntroWizardPage(String pageName, IProduct product) {
 		super(pageName);

@@ -46,12 +46,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	private Combo fApplicationCombo;
 	private IProduct fProduct;
 
-	private ModifyListener fListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			validatePage();
-		}
-	};
+	private ModifyListener fListener = e -> validatePage();
 
 	public ProductDefinitonWizardPage(String pageName, IProduct product) {
 		super(pageName);

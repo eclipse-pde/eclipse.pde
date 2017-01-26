@@ -11,9 +11,7 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -72,19 +70,16 @@ public class PreviewContainerPage extends WizardPage {
 		}
 
 		try {
-			getContainer().run(true, true, new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					IStatus result = container.resolve(fTarget, monitor);
-					if (monitor.isCanceled()) {
-						fInput = new Object[] {Messages.PreviewContainerPage_0};
-					} else if (!result.isOK() && !result.isMultiStatus()) {
-						fInput = new Object[] {result};
-					} else {
-						fInput = container.getBundles();
-					}
-
+			getContainer().run(true, true, monitor -> {
+				IStatus result = container.resolve(fTarget, monitor);
+				if (monitor.isCanceled()) {
+					fInput = new Object[] {Messages.PreviewContainerPage_0};
+				} else if (!result.isOK() && !result.isMultiStatus()) {
+					fInput = new Object[] {result};
+				} else {
+					fInput = container.getBundles();
 				}
+
 			});
 			fPreviewTable.setInput(fInput);
 		} catch (InvocationTargetException e) {

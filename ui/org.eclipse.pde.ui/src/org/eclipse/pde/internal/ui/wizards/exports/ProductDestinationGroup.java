@@ -152,19 +152,9 @@ public class ProductDestinationGroup extends AbstractExportTab {
 			}
 		});
 
-		fArchiveCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fPage.pageChanged();
-			}
-		});
+		fArchiveCombo.addModifyListener(e -> fPage.pageChanged());
 
-		fDirectoryCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fPage.pageChanged();
-			}
-		});
+		fDirectoryCombo.addModifyListener(e -> fPage.pageChanged());
 
 		fBrowseDirectory.addSelectionListener(new SelectionAdapter() {
 			@Override

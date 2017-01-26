@@ -16,8 +16,6 @@ import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -53,12 +51,9 @@ public class QueryByObjectSelection extends QueryControl {
 			}
 		}
 
-		parent.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (fSelectionTracker != null) {
-					fSelectionTracker.dispose();
-				}
+		parent.addDisposeListener(e -> {
+			if (fSelectionTracker != null) {
+				fSelectionTracker.dispose();
 			}
 		});
 	}

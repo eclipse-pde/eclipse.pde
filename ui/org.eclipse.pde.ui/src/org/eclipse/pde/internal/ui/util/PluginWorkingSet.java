@@ -158,12 +158,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 
 		fWorkingSetName = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fWorkingSetName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fWorkingSetName.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validatePage();
-			}
-		});
+		fWorkingSetName.addModifyListener(e -> validatePage());
 		fWorkingSetName.setFocus();
 
 		label = new Label(composite, SWT.WRAP);
@@ -180,12 +175,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		fTree.getCheckboxTreeViewer().setUseHashlookup(true);
 		fTree.getCheckboxTreeViewer().setInput(PDECore.getDefault());
 
-		fTree.getCheckboxTreeViewer().addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				validatePage();
-			}
-		});
+		fTree.getCheckboxTreeViewer().addCheckStateListener(event -> validatePage());
 
 		// Add select / deselect all buttons for bug 46669
 		Composite buttonComposite = new Composite(composite, SWT.NONE);

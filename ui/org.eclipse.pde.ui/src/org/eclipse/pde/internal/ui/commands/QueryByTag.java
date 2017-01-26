@@ -12,8 +12,6 @@ package org.eclipse.pde.internal.ui.commands;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
@@ -38,12 +36,9 @@ public class QueryByTag extends QueryControl {
 		fTagManagerListener = new TagManagerListener();
 		fCSP.getTagManager().addListener(fTagManagerListener);
 
-		parent.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (fTagManagerListener != null) {
-					fTagManager.removeListener(fTagManagerListener);
-				}
+		parent.addDisposeListener(e -> {
+			if (fTagManagerListener != null) {
+				fTagManager.removeListener(fTagManagerListener);
 			}
 		});
 	}

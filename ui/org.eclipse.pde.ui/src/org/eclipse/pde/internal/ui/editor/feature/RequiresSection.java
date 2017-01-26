@@ -188,24 +188,21 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	private void handleNewPlugin() {
-		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
-				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
-				for (IPluginModelBase model : allModels) {
-					if (canAdd(model))
-						newModels.add(model);
-				}
-				IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
-				PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
-				if (dialog.open() == Window.OK) {
-					Object[] models = dialog.getResult();
-					try {
-						doAdd(models);
-					} catch (CoreException e) {
-						PDEPlugin.log(e);
-					}
+		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), () -> {
+			IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
+			ArrayList<IPluginModelBase> newModels = new ArrayList<>();
+			for (IPluginModelBase model : allModels) {
+				if (canAdd(model))
+					newModels.add(model);
+			}
+			IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
+			PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
+			if (dialog.open() == Window.OK) {
+				Object[] models = dialog.getResult();
+				try {
+					doAdd(models);
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
 				}
 			}
 		});
@@ -233,24 +230,21 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	private void handleNewFeature() {
-		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList<IFeatureModel> newModels = new ArrayList<>();
-				for (IFeatureModel model : allModels) {
-					if (canAdd(model))
-						newModels.add(model);
-				}
-				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
-				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
-				if (dialog.open() == Window.OK) {
-					Object[] models = dialog.getResult();
-					try {
-						doAdd(models);
-					} catch (CoreException e) {
-						PDECore.log(e);
-					}
+		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), () -> {
+			IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
+			ArrayList<IFeatureModel> newModels = new ArrayList<>();
+			for (IFeatureModel model : allModels) {
+				if (canAdd(model))
+					newModels.add(model);
+			}
+			IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
+			FeatureSelectionDialog dialog = new FeatureSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
+			if (dialog.open() == Window.OK) {
+				Object[] models = dialog.getResult();
+				try {
+					doAdd(models);
+				} catch (CoreException e) {
+					PDECore.log(e);
 				}
 			}
 		});
@@ -352,12 +346,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					handleDelete();
-				}
-			});
+			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), () -> handleDelete());
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
@@ -371,12 +360,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			return true;
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					handleSelectAll();
-				}
-			});
+			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), () -> handleSelectAll());
 			return true;
 		}
 		return false;
@@ -481,18 +465,15 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	@Override
 	public void modelsChanged(final PluginModelDelta delta) {
-		getSection().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (getSection().isDisposed()) {
-					return;
-				}
-				ModelEntry[] added = delta.getAddedEntries();
-				ModelEntry[] removed = delta.getRemovedEntries();
-				ModelEntry[] changed = delta.getChangedEntries();
-				if (hasModels(added) || hasModels(removed) || hasModels(changed))
-					markStale();
+		getSection().getDisplay().asyncExec(() -> {
+			if (getSection().isDisposed()) {
+				return;
 			}
+			ModelEntry[] added = delta.getAddedEntries();
+			ModelEntry[] removed = delta.getRemovedEntries();
+			ModelEntry[] changed = delta.getChangedEntries();
+			if (hasModels(added) || hasModels(removed) || hasModels(changed))
+				markStale();
 		});
 	}
 
@@ -504,18 +485,15 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	@Override
 	public void modelsChanged(final IFeatureModelDelta delta) {
-		getSection().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (getSection().isDisposed()) {
-					return;
-				}
-				IFeatureModel[] added = delta.getAdded();
-				IFeatureModel[] removed = delta.getRemoved();
-				IFeatureModel[] changed = delta.getChanged();
-				if (hasModels(added) || hasModels(removed) || hasModels(changed))
-					markStale();
+		getSection().getDisplay().asyncExec(() -> {
+			if (getSection().isDisposed()) {
+				return;
 			}
+			IFeatureModel[] added = delta.getAdded();
+			IFeatureModel[] removed = delta.getRemoved();
+			IFeatureModel[] changed = delta.getChanged();
+			if (hasModels(added) || hasModels(removed) || hasModels(changed))
+				markStale();
 		});
 	}
 

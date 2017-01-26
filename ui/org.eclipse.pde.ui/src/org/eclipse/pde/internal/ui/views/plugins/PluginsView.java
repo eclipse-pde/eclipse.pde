@@ -27,7 +27,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
@@ -147,13 +146,10 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	 * Constructor for PluginsView.
 	 */
 	public PluginsView() {
-		fPropertyListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				String property = event.getProperty();
-				if (property.equals(IPreferenceConstants.PROP_SHOW_OBJECTS)) {
-					fTreeViewer.refresh();
-				}
+		fPropertyListener = event -> {
+			String property = event.getProperty();
+			if (property.equals(IPreferenceConstants.PROP_SHOW_OBJECTS)) {
+				fTreeViewer.refresh();
 			}
 		};
 	}
@@ -198,12 +194,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		registerGlobalActions(actionBars);
 		hookContextMenu();
 		hookDoubleClickAction();
-		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent e) {
-				handleSelectionChanged(e.getSelection());
-			}
-		});
+		fTreeViewer.addSelectionChangedListener(e -> handleSelectionChanged(e.getSelection()));
 		PDECore.getDefault().getSearchablePluginsManager().addPluginModelListener(this);
 		fTreeViewer.setInput(fRoot = getDeferredTreeRoot());
 
@@ -570,12 +561,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				PluginsView.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> PluginsView.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(fTreeViewer.getControl());
 		fTreeViewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, fTreeViewer);
@@ -706,13 +692,10 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		// Start busy indicator.
 		final File file = localFile;
 		final boolean result[] = new boolean[1];
-		BusyIndicator.showWhile(fTreeViewer.getTree().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				// Open file using shell.
-				String path = file.getAbsolutePath();
-				result[0] = Program.launch(path);
-			}
+		BusyIndicator.showWhile(fTreeViewer.getTree().getDisplay(), () -> {
+			// Open file using shell.
+			String path = file.getAbsolutePath();
+			result[0] = Program.launch(path);
 		});
 
 		// ShellExecute returns whether call was successful
@@ -771,12 +754,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	private void hookDoubleClickAction() {
-		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick();
-			}
-		});
+		fTreeViewer.addDoubleClickListener(event -> handleDoubleClick());
 	}
 
 	@Override
@@ -831,28 +809,25 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		if (fTreeViewer == null || fTreeViewer.getTree().isDisposed())
 			return;
 
-		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				int kind = delta.getKind();
-				if (fTreeViewer.getTree().isDisposed())
-					return;
-				if ((kind & PluginModelDelta.CHANGED) != 0 || (kind & PluginModelDelta.REMOVED) != 0) {
-					// Don't know exactly what change -
-					// the safest way out is to refresh
-					fTreeViewer.refresh();
-				} else if ((kind & PluginModelDelta.ADDED) != 0) {
-					ModelEntry[] added = delta.getAddedEntries();
-					for (ModelEntry element : added) {
-						IPluginModelBase[] models = getModels(element);
-						for (IPluginModelBase model : models) {
-							if (isVisible(model))
-								fTreeViewer.add(fRoot, model);
-						}
+		fTreeViewer.getTree().getDisplay().asyncExec(() -> {
+			int kind = delta.getKind();
+			if (fTreeViewer.getTree().isDisposed())
+				return;
+			if ((kind & PluginModelDelta.CHANGED) != 0 || (kind & PluginModelDelta.REMOVED) != 0) {
+				// Don't know exactly what change -
+				// the safest way out is to refresh
+				fTreeViewer.refresh();
+			} else if ((kind & PluginModelDelta.ADDED) != 0) {
+				ModelEntry[] added = delta.getAddedEntries();
+				for (ModelEntry element : added) {
+					IPluginModelBase[] models = getModels(element);
+					for (IPluginModelBase model : models) {
+						if (isVisible(model))
+							fTreeViewer.add(fRoot, model);
 					}
 				}
-				updateContentDescription();
 			}
+			updateContentDescription();
 		});
 	}
 
@@ -888,26 +863,23 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	 * @return the <code>IShowInSource</code>
 	 */
 	protected IShowInSource getShowInSource() {
-		return new IShowInSource() {
-			@Override
-			public ShowInContext getShowInContext() {
-				ArrayList<IResource> resourceList = new ArrayList<>();
-				IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-				IStructuredSelection resources;
-				if (selection.isEmpty()) {
-					resources = null;
-				} else {
-					for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-						Object obj = iter.next();
-						if (obj instanceof IPluginModelBase) {
-							resourceList.add(((IPluginModelBase) obj).getUnderlyingResource());
-						}
+		return () -> {
+			ArrayList<IResource> resourceList = new ArrayList<>();
+			IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+			IStructuredSelection resources;
+			if (selection.isEmpty()) {
+				resources = null;
+			} else {
+				for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
+					Object obj = iter.next();
+					if (obj instanceof IPluginModelBase) {
+						resourceList.add(((IPluginModelBase) obj).getUnderlyingResource());
 					}
-					resources = new StructuredSelection(resourceList);
 				}
-
-				return new ShowInContext(fTreeViewer.getInput(), resources);
+				resources = new StructuredSelection(resourceList);
 			}
+
+			return new ShowInContext(fTreeViewer.getInput(), resources);
 		};
 	}
 
@@ -916,12 +888,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	 * @return the <code>IShowInTargetList</code>
 	 */
 	protected IShowInTargetList getShowInTargetList() {
-		return new IShowInTargetList() {
-			@Override
-			public String[] getShowInTargetIds() {
-				return new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER};
-			}
-		};
+		return () -> new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER};
 	}
 
 	/*

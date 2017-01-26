@@ -173,24 +173,21 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	}
 
 	private void handleNew() {
-		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
-				ArrayList<IPluginModelBase> newModels = new ArrayList<>();
-				for (IPluginModelBase model : allModels) {
-					if (canAdd(model))
-						newModels.add(model);
-				}
-				IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
-				PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
-				if (dialog.open() == Window.OK) {
-					Object[] models = dialog.getResult();
-					try {
-						doAdd(models);
-					} catch (CoreException e) {
-						PDEPlugin.log(e);
-					}
+		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), () -> {
+			IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
+			ArrayList<IPluginModelBase> newModels = new ArrayList<>();
+			for (IPluginModelBase model : allModels) {
+				if (canAdd(model))
+					newModels.add(model);
+			}
+			IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
+			PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
+			if (dialog.open() == Window.OK) {
+				Object[] models = dialog.getResult();
+				try {
+					doAdd(models);
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
 				}
 			}
 		});
@@ -250,23 +247,13 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 	private void handleSynchronize() {
 		final FeatureEditorContributor contributor = (FeatureEditorContributor) getPage().getPDEEditor().getContributor();
-		BusyIndicator.showWhile(fPluginViewer.getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				contributor.getSynchronizeAction().run();
-			}
-		});
+		BusyIndicator.showWhile(fPluginViewer.getControl().getDisplay(), () -> contributor.getSynchronizeAction().run());
 	}
 
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					handleDelete();
-				}
-			});
+			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), () -> handleDelete());
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
@@ -280,12 +267,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			return true;
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					handleSelectAll();
-				}
-			});
+			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), () -> handleSelectAll());
 			return true;
 		}
 		return false;
@@ -350,12 +332,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		fDeleteAction = new Action() {
 			@Override
 			public void run() {
-				BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						handleDelete();
-					}
-				});
+				BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), () -> handleDelete());
 			}
 		};
 		fDeleteAction.setText(PDEUIMessages.Actions_delete_label);
@@ -365,18 +342,15 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 	@Override
 	public void modelsChanged(final PluginModelDelta delta) {
-		getSection().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (getSection().isDisposed()) {
-					return;
-				}
-				ModelEntry[] added = delta.getAddedEntries();
-				ModelEntry[] removed = delta.getRemovedEntries();
-				ModelEntry[] changed = delta.getChangedEntries();
-				if (hasPluginModels(added) || hasPluginModels(removed) || hasPluginModels(changed))
-					markStale();
+		getSection().getDisplay().asyncExec(() -> {
+			if (getSection().isDisposed()) {
+				return;
 			}
+			ModelEntry[] added = delta.getAddedEntries();
+			ModelEntry[] removed = delta.getRemovedEntries();
+			ModelEntry[] changed = delta.getChangedEntries();
+			if (hasPluginModels(added) || hasPluginModels(removed) || hasPluginModels(changed))
+				markStale();
 		});
 	}
 

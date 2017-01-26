@@ -17,8 +17,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -107,12 +105,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		label.setText(PDEUIMessages.RenameDialog_label);
 
 		text = new Text(container, SWT.SINGLE | SWT.BORDER);
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				textChanged(text.getText());
-			}
-		});
+		text.addModifyListener(e -> textChanged(text.getText()));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		text.setLayoutData(gd);
 		applyDialogFont(container);

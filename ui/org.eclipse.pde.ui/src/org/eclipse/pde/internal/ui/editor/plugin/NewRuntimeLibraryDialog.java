@@ -18,8 +18,6 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -95,12 +93,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		libraryText.setLayoutData(gd);
 		libraryText.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_default);
-		libraryText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateStatus(validator.validate(libraryText.getText()));
-			}
-		});
+		libraryText.addModifyListener(e -> updateStatus(validator.validate(libraryText.getText())));
 		applyDialogFont(container);
 		return container;
 	}

@@ -17,7 +17,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.*;
@@ -39,7 +38,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -325,12 +323,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				fillLibraryContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> fillLibraryContextMenu(manager));
 		fLibraryViewer.getControl().setMenu(menuMgr.createContextMenu(fLibraryViewer.getControl()));
 	}
 
@@ -351,12 +344,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				fillFolderViewerContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> fillFolderViewerContextMenu(manager));
 		fFolderViewer.getControl().setMenu(menuMgr.createContextMenu(fFolderViewer.getControl()));
 	}
 
@@ -511,13 +499,10 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 			IBuildEntry entry = (IBuildEntry) selection.getFirstElement();
 			String oldName = entry.getName().substring(7);
 			RenameDialog dialog = new RenameDialog(fLibraryViewer.getControl().getShell(), true, getLibraryNames(), oldName);
-			dialog.setInputValidator(new IInputValidator() {
-				@Override
-				public String isValid(String newText) {
-					if (newText.indexOf(' ') != -1)
-						return PDEUIMessages.AddLibraryDialog_nospaces;
-					return null;
-				}
+			dialog.setInputValidator(newText -> {
+				if (newText.indexOf(' ') != -1)
+					return PDEUIMessages.AddLibraryDialog_nospaces;
+				return null;
 			});
 			dialog.create();
 			dialog.setTitle(PDEUIMessages.RuntimeInfoSection_rename);
@@ -632,70 +617,67 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		IBaseModel pmodel = getPage().getModel();
 		final IPluginModelBase pluginModelBase = (pmodel instanceof IPluginModelBase) ? (IPluginModelBase) pmodel : null;
 
-		BusyIndicator.showWhile(fLibraryViewer.getTable().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				IBuildModel buildModel = getBuildModel();
-				IBuild build = buildModel.getBuild();
-				AddLibraryDialog dialog = new AddLibraryDialog(getSection().getShell(), libNames, pluginModelBase);
-				dialog.create();
-				dialog.getShell().setText(PDEUIMessages.RuntimeInfoSection_addEntry);
+		BusyIndicator.showWhile(fLibraryViewer.getTable().getDisplay(), () -> {
+			IBuildModel buildModel = getBuildModel();
+			IBuild build = buildModel.getBuild();
+			AddLibraryDialog dialog = new AddLibraryDialog(getSection().getShell(), libNames, pluginModelBase);
+			dialog.create();
+			dialog.getShell().setText(PDEUIMessages.RuntimeInfoSection_addEntry);
 
-				try {
-					if (dialog.open() == Window.OK) {
-						String name = dialog.getNewName();
-						if (!name.endsWith(".jar") //$NON-NLS-1$
-								&& !name.equals(".") //$NON-NLS-1$
-								&& !name.endsWith("/")) //$NON-NLS-1$
-							name += "/"; //$NON-NLS-1$
+			try {
+				if (dialog.open() == Window.OK) {
+					String name = dialog.getNewName();
+					if (!name.endsWith(".jar") //$NON-NLS-1$
+							&& !name.equals(".") //$NON-NLS-1$
+							&& !name.endsWith("/")) //$NON-NLS-1$
+						name += "/"; //$NON-NLS-1$
 
-						String keyName = name;
-						if (!keyName.startsWith(IBuildEntry.JAR_PREFIX))
-							keyName = IBuildEntry.JAR_PREFIX + name;
-						if (name.startsWith(IBuildEntry.JAR_PREFIX))
-							name = name.substring(7);
+					String keyName = name;
+					if (!keyName.startsWith(IBuildEntry.JAR_PREFIX))
+						keyName = IBuildEntry.JAR_PREFIX + name;
+					if (name.startsWith(IBuildEntry.JAR_PREFIX))
+						name = name.substring(7);
 
-						if (!name.endsWith(".")) //$NON-NLS-1$
-							handleLibInBinBuild(true, name);
+					if (!name.endsWith(".")) //$NON-NLS-1$
+						handleLibInBinBuild(true, name);
 
-						// add library to jars compile order
-						IBuildEntry jarOrderEntry = build.getEntry(PROPERTY_JAR_ORDER);
-						int numLib = fLibraryViewer.getTable().getItemCount();
+					// add library to jars compile order
+					IBuildEntry jarOrderEntry = build.getEntry(PROPERTY_JAR_ORDER);
+					int numLib = fLibraryViewer.getTable().getItemCount();
 
-						if (jarOrderEntry == null) {
-							jarOrderEntry = getBuildModel().getFactory().createEntry(PROPERTY_JAR_ORDER);
+					if (jarOrderEntry == null) {
+						jarOrderEntry = getBuildModel().getFactory().createEntry(PROPERTY_JAR_ORDER);
 
-							// add all runtime libraries to compile order
-							for (int i = 0; i < numLib; i++) {
-								String lib = ((IBuildEntry) fLibraryViewer.getElementAt(i)).getName().substring(7);
-								jarOrderEntry.addToken(lib);
-							}
-							jarOrderEntry.addToken(name);
-							build.add(jarOrderEntry);
-						} else if (jarOrderEntry.getTokens().length < numLib) {
-
-							// remove and re-add all runtime libraries to compile order
-							String[] tokens = jarOrderEntry.getTokens();
-							for (String token : tokens)
-								jarOrderEntry.removeToken(token);
-
-							for (int i = 0; i < numLib; i++) {
-								String lib = ((IBuildEntry) fLibraryViewer.getElementAt(i)).getName().substring(7);
-								jarOrderEntry.addToken(lib);
-							}
-							jarOrderEntry.addToken(name);
-						} else {
-							jarOrderEntry.addToken(name);
+						// add all runtime libraries to compile order
+						for (int i1 = 0; i1 < numLib; i1++) {
+							String lib1 = ((IBuildEntry) fLibraryViewer.getElementAt(i1)).getName().substring(7);
+							jarOrderEntry.addToken(lib1);
 						}
-						// end of jars compile order addition
+						jarOrderEntry.addToken(name);
+						build.add(jarOrderEntry);
+					} else if (jarOrderEntry.getTokens().length < numLib) {
 
-						IBuildEntry library = buildModel.getFactory().createEntry(keyName);
-						build.add(library);
+						// remove and re-add all runtime libraries to compile order
+						String[] tokens = jarOrderEntry.getTokens();
+						for (String token : tokens)
+							jarOrderEntry.removeToken(token);
 
+						for (int i2 = 0; i2 < numLib; i2++) {
+							String lib2 = ((IBuildEntry) fLibraryViewer.getElementAt(i2)).getName().substring(7);
+							jarOrderEntry.addToken(lib2);
+						}
+						jarOrderEntry.addToken(name);
+					} else {
+						jarOrderEntry.addToken(name);
 					}
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
+					// end of jars compile order addition
+
+					IBuildEntry library = buildModel.getFactory().createEntry(keyName);
+					build.add(library);
+
 				}
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
 			}
 		});
 	}
@@ -805,19 +787,16 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		dialog.setTitle(title);
 		dialog.setMessage(message);
 
-		dialog.setValidator(new ISelectionStatusValidator() {
-			@Override
-			public IStatus validate(Object[] selection) {
-				String id = PDEPlugin.getPluginId();
-				if (selection == null || selection.length != 1 || !(selection[0] instanceof IFolder))
-					return new Status(IStatus.ERROR, id, IStatus.ERROR, "", null); //$NON-NLS-1$
+		dialog.setValidator(selection -> {
+			String id = PDEPlugin.getPluginId();
+			if (selection == null || selection.length != 1 || !(selection[0] instanceof IFolder))
+				return new Status(IStatus.ERROR, id, IStatus.ERROR, "", null); //$NON-NLS-1$
 
-				String folderPath = ((IFolder) selection[0]).getProjectRelativePath().addTrailingSeparator().toString();
-				if (entry != null && entry.contains(folderPath))
-					return new Status(IStatus.ERROR, id, IStatus.ERROR, PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateFolder, null);
+			String folderPath = ((IFolder) selection[0]).getProjectRelativePath().addTrailingSeparator().toString();
+			if (entry != null && entry.contains(folderPath))
+				return new Status(IStatus.ERROR, id, IStatus.ERROR, PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateFolder, null);
 
-				return new Status(IStatus.OK, id, IStatus.OK, "", null); //$NON-NLS-1$
-			}
+			return new Status(IStatus.OK, id, IStatus.OK, "", null); //$NON-NLS-1$
 		});
 
 		if (dialog.open() == Window.OK)

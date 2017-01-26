@@ -29,7 +29,6 @@ import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -125,14 +124,11 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(PDEUIMessages.ResourceAttributeCellEditor_title);
 		dialog.setMessage(PDEUIMessages.ResourceAttributeCellEditor_message);
-		dialog.setValidator(new ISelectionStatusValidator() {
-			@Override
-			public IStatus validate(Object[] selection) {
-				if (selection != null && selection.length > 0 && (selection[0] instanceof IFile || selection[0] instanceof IContainer))
-					return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+		dialog.setValidator(selection -> {
+			if (selection != null && selection.length > 0 && (selection[0] instanceof IFile || selection[0] instanceof IContainer))
+				return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 
-				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", null); //$NON-NLS-1$
-			}
+			return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", null); //$NON-NLS-1$
 		});
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();

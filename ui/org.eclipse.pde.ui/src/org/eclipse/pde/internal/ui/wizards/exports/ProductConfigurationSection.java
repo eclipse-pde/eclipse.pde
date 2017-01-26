@@ -98,12 +98,9 @@ public class ProductConfigurationSection {
 	}
 
 	protected void hookListeners() {
-		fProductCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateProductFields();
-				fPage.pageChanged();
-			}
+		fProductCombo.addModifyListener(e -> {
+			updateProductFields();
+			fPage.pageChanged();
 		});
 	}
 

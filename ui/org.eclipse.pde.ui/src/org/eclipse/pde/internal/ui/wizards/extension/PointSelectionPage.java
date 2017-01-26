@@ -258,12 +258,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		filterLabel.setLayoutData(gd);
 		fFilterText = new Text(labelContainer, SWT.BORDER);
 		fFilterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fFilterText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fWildCardFilter.setMatchText(fFilterText.getText());
-				fPointListViewer.refresh();
-			}
+		fFilterText.addModifyListener(e -> {
+			fWildCardFilter.setMatchText(fFilterText.getText());
+			fPointListViewer.refresh();
 		});
 		fFilterText.addKeyListener(new KeyListener() {
 			@Override
@@ -293,15 +290,12 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		fPointListViewer.setContentProvider(new PointContentProvider());
 		fPointListViewer.setLabelProvider(new PointLabelProvider());
 		fPointListViewer.addSelectionChangedListener(this);
-		fPointListViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (canFinish()) {
-					fWizard.performFinish();
-					fWizard.getShell().close();
-					fWizard.dispose();
-					fWizard.setContainer(null);
-				}
+		fPointListViewer.addDoubleClickListener(event -> {
+			if (canFinish()) {
+				fWizard.performFinish();
+				fWizard.getShell().close();
+				fWizard.dispose();
+				fWizard.setContainer(null);
 			}
 		});
 		fPointListViewer.addFilter(fWildCardFilter);
@@ -376,12 +370,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		TableItem[] selection = fPointListViewer.getTable().getSelection();
 		if (selection != null && selection.length > 0)
 			fTemplateViewer.setInput(selection[0]);
-		fTemplateViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (canFlipToNextPage()) {
-					advanceToNextPage();
-				}
+		fTemplateViewer.addDoubleClickListener(event -> {
+			if (canFlipToNextPage()) {
+				advanceToNextPage();
 			}
 		});
 
