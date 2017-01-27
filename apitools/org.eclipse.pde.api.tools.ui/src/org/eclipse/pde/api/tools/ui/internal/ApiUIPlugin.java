@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.ui.internal;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -352,8 +351,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		// dispose composite images
-		for (Iterator<Image> iter = fCompositeImages.values().iterator(); iter.hasNext();) {
-			Image image = iter.next();
+		for (Image image : fCompositeImages.values()) {
 			image.dispose();
 		}
 		fCompositeImages.clear();

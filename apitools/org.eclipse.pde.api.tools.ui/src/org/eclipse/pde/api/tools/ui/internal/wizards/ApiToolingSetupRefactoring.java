@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -53,11 +52,11 @@ public class ApiToolingSetupRefactoring extends Refactoring {
 		if (fChanges == null) {
 			return new NullChange();
 		}
-		CompositeChange change = new CompositeChange(WizardMessages.JavadocTagRefactoring_1);
-		for (Iterator<Change> iter = fChanges.iterator(); iter.hasNext();) {
-			change.add(iter.next());
+		CompositeChange compositeChange = new CompositeChange(WizardMessages.JavadocTagRefactoring_1);
+		for (Change change : fChanges) {
+			compositeChange.add(change);
 		}
-		return change;
+		return compositeChange;
 	}
 
 	public void addChange(Change change) {

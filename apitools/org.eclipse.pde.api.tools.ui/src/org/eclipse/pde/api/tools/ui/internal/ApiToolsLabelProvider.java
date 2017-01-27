@@ -261,8 +261,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 			if (font == null) {
 				Font dialogFont = JFaceResources.getDialogFont();
 				FontData[] fontData = dialogFont.getFontData();
-				for (int i = 0; i < fontData.length; i++) {
-					FontData data = fontData[i];
+				for (FontData data : fontData) {
 					data.setStyle(SWT.BOLD);
 				}
 				Display display = ApiUIPlugin.getShell().getDisplay();

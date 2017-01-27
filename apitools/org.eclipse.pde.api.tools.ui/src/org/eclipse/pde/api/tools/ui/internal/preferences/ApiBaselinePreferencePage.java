@@ -14,7 +14,6 @@ package org.eclipse.pde.api.tools.ui.internal.preferences;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
@@ -246,14 +245,14 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	 */
 	protected void doRemove() {
 		IApiBaseline[] states = getCurrentSelection();
-		for (int i = 0; i < states.length; i++) {
-			if (isDefault(states[i])) {
+		for (IApiBaseline state : states) {
+			if (isDefault(state)) {
 				newdefault = null;
 				manager.setDefaultApiBaseline(null);
 				defaultchanged = true;
 				rebuildcount = 0;
 			}
-			removed.add(states[i].getName());
+			removed.add(state.getName());
 		}
 		if (backingcollection.removeAll(Arrays.asList(states))) {
 			dirty = true;
@@ -348,12 +347,12 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 			return;
 		}
 		// remove
-		for (Iterator<String> iter = removed.iterator(); iter.hasNext();) {
-			manager.removeApiBaseline(iter.next());
+		for (String string : removed) {
+			manager.removeApiBaseline(string);
 		}
 		// add the new / changed ones
-		for (Iterator<IApiBaseline> iter = backingcollection.iterator(); iter.hasNext();) {
-			manager.addApiBaseline(iter.next());
+		for (IApiBaseline iApiBaseline : backingcollection) {
+			manager.addApiBaseline(iApiBaseline);
 		}
 		manager.setDefaultApiBaseline(newdefault);
 		if (defaultchanged || defaultcontentchanged) {

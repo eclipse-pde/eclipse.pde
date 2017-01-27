@@ -101,11 +101,11 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 				try {
 					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
 					IProject project = null;
-					for (int i = 0; i < projects.length; i++) {
-						project = projects[i].getProject();
+					for (IJavaProject p : projects) {
+						project = p.getProject();
 						try {
 							if (project.hasNature(ApiPlugin.NATURE_ID) && block.hasProjectSpecificSettings(project)) {
-								set.add(projects[i]);
+								set.add(p);
 							}
 						} catch (CoreException ce) {
 							// do nothing ignore the project

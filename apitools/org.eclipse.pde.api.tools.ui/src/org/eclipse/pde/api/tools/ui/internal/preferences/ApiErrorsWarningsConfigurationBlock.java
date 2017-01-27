@@ -772,8 +772,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			fOldProjectSettings = null;
 		} else {
 			fOldProjectSettings = new IdentityHashMap<Key, String>();
-			for (int i = 0; i < fgAllKeys.length; i++) {
-				fOldProjectSettings.put(fgAllKeys[i], fgAllKeys[i].getStoredValue(fLookupOrder, false, fManager));
+			for (Key key : fgAllKeys) {
+				fOldProjectSettings.put(key, key.getStoredValue(fLookupOrder, false, fManager));
 			}
 		}
 	}
@@ -1194,8 +1194,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			SWTFactory.createVerticalSpacer(group, 1);
 			this.fSystemLibraryControls.add(SWTFactory.createLabel(group, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_no_ees_installed, JFaceResources.getDialogFont(), 1));
 		} else {
-			for (int i = 0; i < stubs.length; i++) {
-				this.fSystemLibraryControls.add(SWTFactory.createLabel(group, stubs[i], JFaceResources.getDialogFont(), 1));
+			for (String stub : stubs) {
+				this.fSystemLibraryControls.add(SWTFactory.createLabel(group, stub, JFaceResources.getDialogFont(), 1));
 			}
 		}
 		if (installMore) {
@@ -1243,8 +1243,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 * @param keys
 	 */
 	void setAllTo(String newValue, Key[] keys) {
-		for (int i = 0, max = keys.length; i < max; i++) {
-			keys[i].setStoredValue(fLookupOrder[0], newValue, fManager);
+		for (Key key : keys) {
+			key.setStoredValue(fLookupOrder[0], newValue, fManager);
 		}
 		updateControls();
 		validateSettings(null);
@@ -1379,9 +1379,9 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 */
 	public void performDefaults() {
 		String defval = null;
-		for (int i = 0; i < fgAllKeys.length; i++) {
-			defval = fgAllKeys[i].getStoredValue(fLookupOrder, true, fManager);
-			fgAllKeys[i].setStoredValue(fLookupOrder[0], defval, fManager);
+		for (Key key : fgAllKeys) {
+			defval = key.getStoredValue(fLookupOrder, true, fManager);
+			key.setStoredValue(fLookupOrder[0], defval, fManager);
 		}
 		updateControls();
 		validateSettings(null);
@@ -1419,8 +1419,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		if (ctrl instanceof Composite) {
 			Composite comp = (Composite) ctrl;
 			Control[] children = comp.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				enableControl(children[i], enabled);
+			for (Control element : children) {
+				enableControl(element, enabled);
 			}
 		}
 
@@ -1495,18 +1495,18 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		boolean disabled = fOldProjectSettings == null;
 		if (enable != disabled && fProject != null) {
 			if (enable) {
-				for (int i = 0; i < fgAllKeys.length; i++) {
-					fgAllKeys[i].setStoredValue(fLookupOrder[0], fOldProjectSettings.get(fgAllKeys[i]), fManager);
+				for (Key key : fgAllKeys) {
+					key.setStoredValue(fLookupOrder[0], fOldProjectSettings.get(key), fManager);
 				}
 				fOldProjectSettings = null;
 				updateControls();
 			} else {
 				fOldProjectSettings = new IdentityHashMap<Key, String>();
 				String old = null;
-				for (int i = 0; i < fgAllKeys.length; i++) {
-					old = fgAllKeys[i].getStoredValue(fLookupOrder, false, fManager);
-					fOldProjectSettings.put(fgAllKeys[i], old);
-					fgAllKeys[i].setStoredValue(fLookupOrder[0], null, fManager);
+				for (Key key : fgAllKeys) {
+					old = key.getStoredValue(fLookupOrder, false, fManager);
+					fOldProjectSettings.put(key, old);
+					key.setStoredValue(fLookupOrder[0], null, fManager);
 				}
 			}
 		}
@@ -1526,8 +1526,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	public boolean hasProjectSpecificSettings(IProject project) {
 		if (project != null) {
 			IScopeContext projectContext = new ProjectScope(project);
-			for (int i = 0; i < fgAllKeys.length; i++) {
-				if (fgAllKeys[i].getStoredValue(projectContext, fManager) != null) {
+			for (Key fgAllKey : fgAllKeys) {
+				if (fgAllKey.getStoredValue(projectContext, fManager) != null) {
 					return true;
 				}
 			}
@@ -1542,8 +1542,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 */
 	private void collectChanges(IScopeContext context, List<Key> changes) {
 		boolean complete = fOldProjectSettings == null && fProject != null;
-		for (int i = 0; i < fgAllKeys.length; i++) {
-			Key key = fgAllKeys[i];
+		for (Key key : fgAllKeys) {
 			String origval = key.getStoredValue(context, null);
 			String newval = key.getStoredValue(context, fManager);
 			if (newval == null) {

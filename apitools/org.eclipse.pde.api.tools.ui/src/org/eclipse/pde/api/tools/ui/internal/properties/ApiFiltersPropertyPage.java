@@ -414,9 +414,9 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	private void updateParents() {
 		Tree tree = fViewer.getTree();
 		TreeItem[] items = tree.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i].getItems().length < 1) {
-				fInputset.remove(items[i].getData());
+		for (TreeItem item : items) {
+			if (item.getItems().length < 1) {
+				fInputset.remove(item.getData());
 			}
 		}
 	}
@@ -497,8 +497,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 				IApiProblemFilter[] apiProblemFilters = fDeleteSet.toArray(new IApiProblemFilter[fDeleteSet.size()]);
 				getFilterStore().removeFilters(apiProblemFilters);
 				// we want to make sure that we rebuild only applicable types
-				for (int i = 0, max = apiProblemFilters.length; i < max; i++) {
-					IApiProblemFilter filter = apiProblemFilters[i];
+				for (IApiProblemFilter filter : apiProblemFilters) {
 					IApiProblem apiProblem = filter.getUnderlyingProblem();
 					if (apiProblem != null) {
 						String resourcePath = apiProblem.getResourcePath();

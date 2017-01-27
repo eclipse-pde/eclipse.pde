@@ -320,9 +320,9 @@ public class ApiUseScanConfigurationBlock {
 	 */
 	public void performDefaults() {
 		String defval = null;
-		for (int i = 0; i < fgAllKeys.length; i++) {
-			defval = fgAllKeys[i].getStoredValue(fLookupOrder, true, fManager);
-			fgAllKeys[i].setStoredValue(fLookupOrder[0], defval, fManager);
+		for (Key key : fgAllKeys) {
+			defval = key.getStoredValue(fLookupOrder, true, fManager);
+			key.setStoredValue(fLookupOrder[0], defval, fManager);
 		}
 		updateCombos();
 	}
@@ -334,9 +334,9 @@ public class ApiUseScanConfigurationBlock {
 	 */
 	private void updateCombos() {
 		if (fCombo != null) {
-			for (int i = 0; i < fCombo.length; i++) {
-				ControlData data = (ControlData) fCombo[i].getData();
-				fCombo[i].select(data.getSelection(data.getKey().getStoredValue(fLookupOrder, false, fManager)));
+			for (Combo element : fCombo) {
+				ControlData data = (ControlData) element.getData();
+				element.select(data.getSelection(data.getKey().getStoredValue(fLookupOrder, false, fManager)));
 			}
 		}
 	}
@@ -381,8 +381,8 @@ public class ApiUseScanConfigurationBlock {
 		Key key = null;
 		String origval = null, newval = null;
 		boolean complete = true;
-		for (int i = 0; i < fgAllKeys.length; i++) {
-			key = fgAllKeys[i];
+		for (Key fgAllKey : fgAllKeys) {
+			key = fgAllKey;
 			origval = key.getStoredValue(context, null);
 			newval = key.getStoredValue(context, fManager);
 			if (newval == null) {
@@ -404,8 +404,8 @@ public class ApiUseScanConfigurationBlock {
 
 	public void setEnabled(boolean enabled) {
 		fMainComp.setEnabled(enabled);
-		for (int i = 0; i < fCombo.length; i++) {
-			fCombo[i].setEnabled(enabled);
+		for (Combo element : fCombo) {
+			element.setEnabled(enabled);
 		}
 
 	}

@@ -224,8 +224,8 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				tableviewer.setAllChecked(false);
 				TableItem[] items = tableviewer.getTable().getItems();
-				for (int i = 0; i < items.length; i++) {
-					checkedset.remove(items[i].getData());
+				for (TableItem item : items) {
+					checkedset.remove(item.getData());
 				}
 				setPageComplete(pageValid());
 			}
@@ -279,9 +279,8 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	private IProject[] getInputProjects() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<IProject> pjs = new ArrayList<IProject>();
-		for (int i = 0; i < projects.length; i++) {
+		for (IProject project : projects) {
 			try {
-				IProject project = projects[i];
 				if (acceptProject(project)) {
 					pjs.add(project);
 				}
@@ -317,9 +316,9 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 							if (selection instanceof IStructuredSelection) {
 								Object[] jps = ((IStructuredSelection) provider.getSelection()).toArray();
 								ArrayList<IProject> pjs = new ArrayList<IProject>();
-								for (int i = 0; i < jps.length; i++) {
-									if (jps[i] instanceof IAdaptable) {
-										IAdaptable adapt = (IAdaptable) jps[i];
+								for (Object jp : jps) {
+									if (jp instanceof IAdaptable) {
+										IAdaptable adapt = (IAdaptable) jp;
 										IProject pj = adapt.getAdapter(IProject.class);
 										try {
 											if (acceptProject(pj)) {
@@ -417,8 +416,8 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				refactoring.resetRefactoring();
 				boolean remove = removecxml.getSelection();
 				CompositeChange pchange = null;
-				for (int i = 0; i < projects.length; i++) {
-					project = (IProject) projects[i];
+				for (Object project2 : projects) {
+					project = (IProject) project2;
 					pchange = new CompositeChange(project.getName());
 					refactoring.addChange(pchange);
 					pchange.add(new ProjectUpdateChange(project));

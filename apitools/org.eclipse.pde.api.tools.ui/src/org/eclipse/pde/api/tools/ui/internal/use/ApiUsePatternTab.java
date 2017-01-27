@@ -166,8 +166,8 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		Table table = new Table(tcomp, SWT.FULL_SELECTION | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		table.setHeaderVisible(true);
 		TableLayout layout = new TableLayout();
-		for (int i = 0; i < columndata.length; i++) {
-			layout.addColumnData(columndata[i]);
+		for (ColumnLayoutData element : columndata) {
+			layout.addColumnData(element);
 		}
 		table.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -197,11 +197,11 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		TableColumn column = null;
-		for (int i = 0; i < columnnames.length; i++) {
+		for (String columnname : columnnames) {
 			column = new TableColumn(table, SWT.NONE);
 			column.setResizable(false);
 			column.setMoveable(false);
-			column.setText(columnnames[i]);
+			column.setText(columnname);
 		}
 		this.viewer.setInput(this.patterns);
 		table.addKeyListener(new KeyAdapter() {

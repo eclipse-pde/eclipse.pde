@@ -67,8 +67,8 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 					IApiComponent component = (IApiComponent) parentElement;
 					String[] ees = component.getExecutionEnvironments();
 					ArrayList<EEEntry> entries = new ArrayList<EEEntry>(ees.length);
-					for (int i = 0; i < ees.length; i++) {
-						entries.add(new EEEntry(ees[i]));
+					for (String ee : ees) {
+						entries.add(new EEEntry(ee));
 					}
 					return entries.toArray();
 				} catch (CoreException e) {
@@ -141,8 +141,8 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 				localmonitor.subTask(WizardMessages.ApiProfileWizardPage_copy_api_components);
 				ArrayList<IApiComponent> comps = new ArrayList<IApiComponent>();
 				IApiComponent comp = null;
-				for (int i = 0; i < components.length; i++) {
-					comp = ApiModelFactory.newApiComponent(workingcopy, components[i].getLocation());
+				for (IApiComponent component : components) {
+					comp = ApiModelFactory.newApiComponent(workingcopy, component.getLocation());
 					if (comp != null) {
 						comps.add(comp);
 					}

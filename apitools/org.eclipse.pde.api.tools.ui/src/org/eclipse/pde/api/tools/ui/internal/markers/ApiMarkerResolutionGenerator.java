@@ -139,9 +139,9 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				}
 				int hashcode = ApiProblemFactory.getProblemHashcode(filterhandle);
 				IApiProblemFilter[] filters = store.getFilters(resource);
-				for (int i = 0; i < filters.length; i++) {
-					if (filters[i].getUnderlyingProblem().hashCode() == hashcode) {
-						return filters[i];
+				for (IApiProblemFilter filter : filters) {
+					if (filter.getUnderlyingProblem().hashCode() == hashcode) {
+						return filter;
 					}
 				}
 			}

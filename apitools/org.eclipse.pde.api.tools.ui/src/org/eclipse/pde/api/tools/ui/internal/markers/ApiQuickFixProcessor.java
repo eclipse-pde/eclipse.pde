@@ -158,13 +158,13 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 		}
 		IFile build = project.getFile("build.properties"); //$NON-NLS-1$
 		if (needsBuildPropertiesChange(build)) {
-			for (int i = 0; i < locations.length; i++) {
-				if (locations[i].getProblemId() == IProblem.UndefinedType) {
-					String[] args = locations[i].getProblemArguments();
+			for (IProblemLocation location : locations) {
+				if (location.getProblemId() == IProblem.UndefinedType) {
+					String[] args = location.getProblemArguments();
 					if (args.length == 1) {
 						// only one argument in the missing annotation problem
-						for (int j = 0; j < args.length; j++) {
-							String name = ApiPlugin.getJavadocTagManager().getQualifiedNameForAnnotation(args[j]);
+						for (String arg : args) {
+							String name = ApiPlugin.getJavadocTagManager().getQualifiedNameForAnnotation(arg);
 							if (name != null) {
 								proposals.add(new UnknownAnnotationQuickFix(unit, name));
 							}
