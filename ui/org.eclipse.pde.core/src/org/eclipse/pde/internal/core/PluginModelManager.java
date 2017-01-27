@@ -941,8 +941,7 @@ public class PluginModelManager implements IModelProviderListener {
 						}
 					}
 					IPluginModelBase[] models = fWorkspaceManager.getPluginModels();
-					for (int i = 0; i < models.length; i++) {
-						IPluginModelBase modelWorkspace = models[i];
+					for (IPluginModelBase modelWorkspace : models) {
 						if (modelWorkspace.getPluginBase().getId() != null) {
 							if (modelWorkspace.getPluginBase().getId().equals(newID)) {
 								addToTable(fEntries, new IPluginModelBase[] { modelWorkspace });
