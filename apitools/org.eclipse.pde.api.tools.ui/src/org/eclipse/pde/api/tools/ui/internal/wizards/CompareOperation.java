@@ -192,8 +192,8 @@ public class CompareOperation extends Job {
 	private static void addElementFor(IPackageFragmentRoot fragmentRoot, IApiComponent apiComponent, ApiScope scope) throws JavaModelException, CoreException {
 		boolean isArchive = fragmentRoot.isArchive();
 		IJavaElement[] packageFragments = fragmentRoot.getChildren();
-		for (int j = 0, max2 = packageFragments.length; j < max2; j++) {
-			IPackageFragment packageFragment = (IPackageFragment) packageFragments[j];
+		for (IJavaElement javaPackageFragment : packageFragments) {
+			IPackageFragment packageFragment = (IPackageFragment) javaPackageFragment;
 			addElementFor(packageFragment, isArchive, apiComponent, scope);
 		}
 	}
@@ -208,13 +208,13 @@ public class CompareOperation extends Job {
 		}
 		if (isArchive) {
 			IClassFile[] classFiles = packageFragment.getClassFiles();
-			for (int i = 0, max = classFiles.length; i < max; i++) {
-				addElementFor(classFiles[i], apiComponent, scope);
+			for (IClassFile classFile : classFiles) {
+				addElementFor(classFile, apiComponent, scope);
 			}
 		} else {
 			ICompilationUnit[] units = packageFragment.getCompilationUnits();
-			for (int i = 0, max = units.length; i < max; i++) {
-				addElementFor(units[i], apiComponent, scope);
+			for (ICompilationUnit unit : units) {
+				addElementFor(unit, apiComponent, scope);
 			}
 		}
 	}
@@ -232,9 +232,9 @@ public class CompareOperation extends Job {
 
 	private static void addElementFor(ICompilationUnit compilationUnit, IApiComponent component, ApiScope scope) throws JavaModelException {
 		IType[] types = compilationUnit.getTypes();
-		for (int i = 0, max = types.length; i < max; i++) {
+		for (IType type : types) {
 			try {
-				IApiTypeRoot typeRoot = component.findTypeRoot(types[i].getFullyQualifiedName());
+				IApiTypeRoot typeRoot = component.findTypeRoot(type.getFullyQualifiedName());
 				if (typeRoot != null) {
 					scope.addElement(typeRoot);
 				}

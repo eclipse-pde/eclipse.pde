@@ -119,9 +119,9 @@ public class RemoveUnsupportedAnnotationOperation extends UIJob {
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, MarkerMessages.RemoveUnsupportedTagOperation_removeing_unsupported_tag, fMarkers.length + 6);
 		HashMap<ICompilationUnit, Boolean> seen = new HashMap<ICompilationUnit, Boolean>();
-		for (int i = 0; i < fMarkers.length; i++) {
+		for (IMarker fMarker : fMarkers) {
 			// retrieve the AST node compilation unit
-			IResource resource = fMarkers[i].getResource();
+			IResource resource = fMarker.getResource();
 			IJavaElement javaElement = JavaCore.create(resource);
 			try {
 				if (javaElement != null && javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
@@ -142,7 +142,7 @@ public class RemoveUnsupportedAnnotationOperation extends UIJob {
 					ASTParser parser = ASTParser.newParser(AST.JLS8);
 					parser.setSource(compilationUnit);
 					Integer charStartAttribute = null;
-					charStartAttribute = (Integer) fMarkers[i].getAttribute(IMarker.CHAR_START);
+					charStartAttribute = (Integer) fMarker.getAttribute(IMarker.CHAR_START);
 					int intValue = charStartAttribute.intValue();
 					parser.setFocalPosition(intValue);
 					final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());

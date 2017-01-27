@@ -50,9 +50,9 @@ class TreeViewerNavigator {
 		TreeItem[] roots = fViewer.getTree().getItems();
 		if (roots.length == 0)
 			return null;
-		for (int i = 0; i < roots.length; i++) {
-			if (hasMatches(roots[i]))
-				return roots[i];
+		for (TreeItem root : roots) {
+			if (hasMatches(root))
+				return root;
 			TreeItem firstChild = getFirstChildWithMatches(roots[0]);
 			if (firstChild != null)
 				return firstChild;

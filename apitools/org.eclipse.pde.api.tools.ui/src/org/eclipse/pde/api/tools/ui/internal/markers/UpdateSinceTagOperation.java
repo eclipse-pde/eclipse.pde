@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -134,8 +133,7 @@ public class UpdateSinceTagOperation {
 						} else {
 							List<TagElement> tags = docnode.tags();
 							boolean found = false;
-							loop: for (Iterator<TagElement> iterator = tags.iterator(); iterator.hasNext();) {
-								TagElement element = iterator.next();
+							loop: for (TagElement element : tags) {
 								String tagName = element.getTagName();
 								if (TagElement.TAG_SINCE.equals(tagName)) {
 									found = true;
@@ -158,8 +156,7 @@ public class UpdateSinceTagOperation {
 						Javadoc docnode = node.getJavadoc();
 						List<TagElement> tags = docnode.tags();
 						TagElement sinceTag = null;
-						for (Iterator<TagElement> iterator = tags.iterator(); iterator.hasNext();) {
-							TagElement tagElement = iterator.next();
+						for (TagElement tagElement : tags) {
 							if (TagElement.TAG_SINCE.equals(tagElement.getTagName())) {
 								sinceTag = tagElement;
 								break;

@@ -406,8 +406,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 */
 	void setGroupEnablement(Group group, boolean enabled) {
 		Control[] children = group.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			children[i].setEnabled(enabled);
+		for (Control element : children) {
+			element.setEnabled(enabled);
 		}
 	}
 
@@ -447,9 +447,9 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		if (service != null) {
 			ITargetHandle[] handles = service.getTargets(null);
 			List<ITargetDefinition> defs = new ArrayList<ITargetDefinition>();
-			for (int i = 0; i < handles.length; i++) {
+			for (ITargetHandle handle : handles) {
 				try {
-					defs.add(handles[i].getTargetDefinition());
+					defs.add(handle.getTargetDefinition());
 				} catch (CoreException e) {
 					// Suppress
 				}
@@ -500,8 +500,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	void updateAvailableBaselines() {
 		HashSet<String> ids = new HashSet<String>();
 		IApiBaseline[] baselines = ApiPlugin.getDefault().getApiBaselineManager().getApiBaselines();
-		for (int i = 0; i < baselines.length; i++) {
-			ids.add(baselines[i].getName());
+		for (IApiBaseline apiBaseline : baselines) {
+			ids.add(apiBaseline.getName());
 		}
 		this.baseline.setItems(ids.toArray(new String[ids.size()]));
 	}

@@ -369,8 +369,8 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		ArrayList<String> checkedLocations = new ArrayList<String>();
 		if (location != null && location.length() > 0) {
 			String[] locations = location.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
-			for (int i = 0; i < locations.length; i++) {
-				String values[] = locations[i].split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
+			for (String locationString : locations) {
+				String values[] = locationString.split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
 				fLocationList.add(values[0]);
 				if (Boolean.valueOf(values[1]).booleanValue()) {
 					checkedLocations.add(values[0]);
@@ -390,8 +390,8 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 */
 	private void applyChanges() {
 		StringBuffer locations = new StringBuffer();
-		for (Iterator<String> iterator = fLocationList.iterator(); iterator.hasNext();) {
-			Object location = iterator.next();
+		for (String string : fLocationList) {
+			Object location = string;
 			locations.append(location);
 			locations.append(UseScanManager.STATE_DELIM);
 			locations.append(fTableViewer.getChecked(location));
@@ -434,8 +434,8 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		ArrayList<String> oldCheckedElements = new ArrayList<String>();
 		if (oldLocations != null && oldLocations.length() > 0) {
 			String[] locations = oldLocations.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
-			for (int i = 0; i < locations.length; i++) {
-				String values[] = locations[i].split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
+			for (String location : locations) {
+				String values[] = location.split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
 				if (Boolean.valueOf(values[1]).booleanValue()) {
 					oldCheckedElements.add(values[0]);
 				}

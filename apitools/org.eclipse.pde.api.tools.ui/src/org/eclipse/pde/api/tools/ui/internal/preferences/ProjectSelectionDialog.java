@@ -65,9 +65,9 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 				HashSet<IJavaProject> set = new HashSet<IJavaProject>();
 				try {
 					IJavaProject[] projects = model.getJavaProjects();
-					for (int i = 0; i < projects.length; i++) {
-						if (projects[i].getProject().hasNature(ApiPlugin.NATURE_ID)) {
-							set.add(projects[i]);
+					for (IJavaProject project : projects) {
+						if (project.getProject().hasNature(ApiPlugin.NATURE_ID)) {
+							set.add(project);
 						}
 					}
 				} catch (JavaModelException jme) {

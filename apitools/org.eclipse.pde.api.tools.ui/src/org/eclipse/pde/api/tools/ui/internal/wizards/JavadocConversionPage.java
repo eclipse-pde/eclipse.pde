@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.ui.internal.wizards;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
@@ -205,8 +204,8 @@ public class JavadocConversionPage extends UserInputWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				tableviewer.setAllChecked(false);
 				TableItem[] items = tableviewer.getTable().getItems();
-				for (int i = 0; i < items.length; i++) {
-					checkedset.remove(items[i].getData());
+				for (TableItem item : items) {
+					checkedset.remove(item.getData());
 				}
 				setPageComplete(pageValid());
 			}
@@ -261,8 +260,8 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		// as a change cannot ever have more than one parent - EVER
 		JavadocConversionRefactoring refactoring = (JavadocConversionRefactoring) getRefactoring();
 		HashSet<IProject> projects = new HashSet<IProject>();
-		for (Iterator<Object> iterator = checkedset.iterator(); iterator.hasNext();) {
-			IProject current = (IProject) iterator.next();
+		for (Object object : checkedset) {
+			IProject current = (IProject) object;
 			projects.add(current);
 		}
 		refactoring.setProjects(projects);
@@ -281,8 +280,8 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		// as a change cannot ever have more than one parent - EVER
 		JavadocConversionRefactoring refactoring = (JavadocConversionRefactoring) getRefactoring();
 		HashSet<IProject> projects = new HashSet<IProject>();
-		for (Iterator<Object> iterator = checkedset.iterator(); iterator.hasNext();) {
-			IProject current = (IProject) iterator.next();
+		for (Object object : checkedset) {
+			IProject current = (IProject) object;
 			projects.add(current);
 		}
 		refactoring.setProjects(projects);
@@ -308,9 +307,9 @@ public class JavadocConversionPage extends UserInputWizardPage {
 							if (selection instanceof IStructuredSelection) {
 								Object[] jps = ((IStructuredSelection) provider.getSelection()).toArray();
 								ArrayList<IProject> pjs = new ArrayList<IProject>();
-								for (int i = 0; i < jps.length; i++) {
-									if (jps[i] instanceof IAdaptable) {
-										IAdaptable adapt = (IAdaptable) jps[i];
+								for (Object jp : jps) {
+									if (jp instanceof IAdaptable) {
+										IAdaptable adapt = (IAdaptable) jp;
 										IProject pj = adapt.getAdapter(IProject.class);
 										if (Util.isApiProject(pj)) {
 											pjs.add(pj);

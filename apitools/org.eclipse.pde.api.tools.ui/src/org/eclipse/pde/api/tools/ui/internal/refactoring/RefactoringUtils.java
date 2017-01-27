@@ -52,8 +52,8 @@ public class RefactoringUtils {
 				IApiProblemFilter[] filters = store.getFilters(resource);
 				if (filters.length != 0) {
 					CompositeChange cchange = new CompositeChange(RefactoringMessages.RefactoringUtils_remove_usused_filters);
-					for (int i = 0; i < filters.length; i++) {
-						cchange.add(new TypeFilterChange(store, filters[i], null, null, FilterChange.DELETE));
+					for (IApiProblemFilter filter : filters) {
+						cchange.add(new TypeFilterChange(store, filter, null, null, FilterChange.DELETE));
 					}
 					return cchange;
 				}
@@ -81,8 +81,8 @@ public class RefactoringUtils {
 				IApiProblemFilter[] filters = collectAllAffectedFilters(store, collectAffectedTypes(fragment));
 				if (filters.length != 0) {
 					CompositeChange cchange = new CompositeChange(RefactoringMessages.RefactoringUtils_remove_usused_filters);
-					for (int i = 0; i < filters.length; i++) {
-						cchange.add(new TypeFilterChange(store, filters[i], null, null, FilterChange.DELETE));
+					for (IApiProblemFilter filter : filters) {
+						cchange.add(new TypeFilterChange(store, filter, null, null, FilterChange.DELETE));
 					}
 					return cchange;
 				}
@@ -104,15 +104,15 @@ public class RefactoringUtils {
 		HashSet<IApiProblemFilter> filters = new HashSet<IApiProblemFilter>();
 		IApiProblemFilter[] fs = null;
 		IResource resource = null;
-		for (int i = 0; i < types.length; i++) {
+		for (IType type : types) {
 			try {
-				resource = types[i].getUnderlyingResource();
+				resource = type.getUnderlyingResource();
 				if (resource == null) {
 					continue;
 				}
 				fs = store.getFilters(resource);
-				for (int j = 0; j < fs.length; j++) {
-					filters.add(fs[j]);
+				for (IApiProblemFilter element : fs) {
+					filters.add(element);
 				}
 			} catch (JavaModelException jme) {
 				// do nothing
@@ -135,8 +135,8 @@ public class RefactoringUtils {
 			if (fragment.containsJavaResources()) {
 				ICompilationUnit[] cunits = fragment.getCompilationUnits();
 				IType type = null;
-				for (int i = 0; i < cunits.length; i++) {
-					type = cunits[i].findPrimaryType();
+				for (ICompilationUnit cunit : cunits) {
+					type = cunit.findPrimaryType();
 					if (type == null) {
 						continue;
 					}

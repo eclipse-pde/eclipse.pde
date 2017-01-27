@@ -131,8 +131,7 @@ public class ApiUseScanJob extends Job {
 					// modify API descriptions
 					IApiComponent[] components = baseline.getApiComponents();
 					ApiDescriptionModifier visitor = new ApiDescriptionModifier(sinternal, sapi);
-					for (int i = 0; i < components.length; i++) {
-						IApiComponent component = components[i];
+					for (IApiComponent component : components) {
 						if (!component.isSystemComponent() && !component.isSourceComponent()) {
 							visitor.setApiDescription(component.getApiDescription());
 							component.getApiDescription().accept(visitor, null);
@@ -157,8 +156,8 @@ public class ApiUseScanJob extends Job {
 					ApiBaselineManager apiManager = ApiBaselineManager.getManager();
 					IApiBaseline[] baselines = apiManager.getApiBaselines();
 					boolean dispose = true;
-					for (int i = 0; i < baselines.length; i++) {
-						if (baseline.equals(baselines[i])) {
+					for (IApiBaseline baseline2 : baselines) {
+						if (baseline.equals(baseline2)) {
 							dispose = false;
 							break;
 						}
@@ -281,8 +280,7 @@ public class ApiUseScanJob extends Job {
 		Pattern pattern2 = getPattern(regex);
 		IApiComponent[] components = baseline.getApiComponents();
 		localmonitor.setWorkRemaining(components.length);
-		for (int i = 0; i < components.length; i++) {
-			IApiComponent component = components[i];
+		for (IApiComponent component : components) {
 			localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_checking_component, component.getSymbolicName()));
 			localmonitor.split(1);
 			if (acceptComponent(component, pattern, true)) {
@@ -436,13 +434,13 @@ public class ApiUseScanJob extends Job {
 			File[] files = file.listFiles();
 			if (files != null) {
 				subMonitor.setWorkRemaining(files.length);
-				for (int i = 0; i < files.length; i++) {
+				for (File file2 : files) {
 					SubMonitor iterationMonitor = subMonitor.split(1);
-					iterationMonitor.subTask(NLS.bind(Messages.ApiUseScanJob_deleteing_file, files[i].getPath()));
-					if (files[i].isDirectory()) {
-						scrubReportLocation(files[i], iterationMonitor);
+					iterationMonitor.subTask(NLS.bind(Messages.ApiUseScanJob_deleteing_file, file2.getPath()));
+					if (file2.isDirectory()) {
+						scrubReportLocation(file2, iterationMonitor);
 					} else {
-						files[i].delete();
+						file2.delete();
 					}
 				}
 			}

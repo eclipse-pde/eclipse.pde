@@ -94,13 +94,13 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 			HashSet<IResource> resources = new HashSet<IResource>(markers.length);
 			IResource resource = null;
 			// collate the filters by IApiComponent
-			for (int i = 0; i < markers.length; i++) {
+			for (IMarker marker : markers) {
 				localmonitor.split(1);
-				filter = ApiMarkerResolutionGenerator.resolveFilter(markers[i]);
+				filter = ApiMarkerResolutionGenerator.resolveFilter(marker);
 				if (filter == null) {
 					continue;
 				}
-				resource = markers[i].getResource();
+				resource = marker.getResource();
 				component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(resource.getProject());
 				if (component instanceof ProjectComponent) {
 					filters = map.get(component);

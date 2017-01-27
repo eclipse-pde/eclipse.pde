@@ -88,8 +88,8 @@ public class CreateApiFilterOperation extends UIJob {
 			IApiProblem problem = null;
 			HashSet<IApiProblemFilter> filters = null;
 			IApiComponent component = null;
-			for (int i = 0; i < fMarkers.length; i++) {
-				marker = fMarkers[i];
+			for (IMarker fMarker : fMarkers) {
+				marker = fMarker;
 				resource = marker.getResource();
 				project = resource.getProject();
 				if (project == null) {
