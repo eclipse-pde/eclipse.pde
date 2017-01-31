@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -258,6 +258,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	private static final Key KEY_API_COMPONENT_REMOVED_REEXPORTED_TYPE = getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_TYPE);
 
 	private static final Key KEY_ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE = getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE);
+	private static final Key KEY_ANNOTATION_ADDED_FIELD = getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_FIELD);
 	private static final Key KEY_ANNOTATION_REMOVED_FIELD = getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_FIELD);
 	private static final Key KEY_ANNOTATION_REMOVED_METHOD = getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_METHOD);
 	private static final Key KEY_ANNOTATION_REMOVED_TYPE_MEMBER = getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_TYPE_MEMBER);
@@ -376,6 +377,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			KEY_API_COMPONENT_REMOVED_API_TYPE, KEY_API_COMPONENT_REMOVED_TYPE,
 			KEY_API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
 			KEY_API_COMPONENT_REMOVED_REEXPORTED_TYPE,
+			KEY_ANNOTATION_ADDED_FIELD,
 			KEY_ANNOTATION_REMOVED_FIELD, KEY_ANNOTATION_REMOVED_METHOD,
 			KEY_ANNOTATION_REMOVED_TYPE_MEMBER,
 			KEY_ANNOTATION_CHANGED_TYPE_CONVERSION,
@@ -471,6 +473,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			KEY_API_COMPONENT_REMOVED_TYPE,
 			KEY_API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
 			KEY_API_COMPONENT_REMOVED_REEXPORTED_TYPE,
+			KEY_ANNOTATION_ADDED_FIELD,
 			KEY_ANNOTATION_REMOVED_FIELD,
 			KEY_ANNOTATION_REMOVED_METHOD,
 			KEY_ANNOTATION_REMOVED_TYPE_MEMBER,
@@ -1030,11 +1033,13 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		initializeComboControls(client, new String[] {
 				PreferenceMessages.ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE,
 				PreferenceMessages.ANNOTATION_CHANGED_TYPE_CONVERSION,
+				PreferenceMessages.ANNOTATION_ADDED_FIELD,
 				PreferenceMessages.ANNOTATION_REMOVED_FIELD,
 				PreferenceMessages.ANNOTATION_REMOVED_METHOD,
 				PreferenceMessages.ANNOTATION_REMOVED_TYPE_MEMBER, }, new Key[] {
 				KEY_ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE,
 				KEY_ANNOTATION_CHANGED_TYPE_CONVERSION,
+				KEY_ANNOTATION_ADDED_FIELD,
 				KEY_ANNOTATION_REMOVED_FIELD, KEY_ANNOTATION_REMOVED_METHOD,
 				KEY_ANNOTATION_REMOVED_TYPE_MEMBER, });
 		client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityFieldElement);

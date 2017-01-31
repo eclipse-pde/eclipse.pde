@@ -271,6 +271,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 			IApiProblemTypes.API_COMPONENT_REMOVED_API_TYPE,
 			IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_TYPE,
 			IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
+			IApiProblemTypes.ANNOTATION_ADDED_FIELD,
 			IApiProblemTypes.ANNOTATION_REMOVED_FIELD,
 			IApiProblemTypes.ANNOTATION_REMOVED_METHOD,
 			IApiProblemTypes.ANNOTATION_REMOVED_TYPE_MEMBER,

@@ -27,6 +27,7 @@ public interface IApiProblemTypes {
 	// Compatibility problems
 	public static final String API_COMPONENT_REMOVED_REEXPORTED_TYPE = Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_TYPE);
 	public static final String API_COMPONENT_REMOVED_REEXPORTED_API_TYPE = Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE);
+	public static final String ANNOTATION_ADDED_FIELD = Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD);
 	public static final String ANNOTATION_REMOVED_FIELD = Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.FIELD);
 	public static final String ANNOTATION_REMOVED_METHOD = Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.METHOD);
 	public static final String ANNOTATION_REMOVED_TYPE_MEMBER = Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_MEMBER);
