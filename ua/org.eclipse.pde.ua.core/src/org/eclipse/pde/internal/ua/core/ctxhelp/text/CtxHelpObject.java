@@ -56,9 +56,9 @@ public abstract class CtxHelpObject extends DocumentObject implements
 		// Add children of this topic
 		IDocumentElementNode[] childNodes = getChildNodes();
 		if (childNodes.length > 0) {
-			for (int i = 0; i < childNodes.length; ++i) {
-				if (childNodes[i] instanceof CtxHelpObject) {
-					list.add((CtxHelpObject) childNodes[i]);
+			for (IDocumentElementNode childNode : childNodes) {
+				if (childNode instanceof CtxHelpObject) {
+					list.add((CtxHelpObject) childNode);
 				}
 			}
 		}

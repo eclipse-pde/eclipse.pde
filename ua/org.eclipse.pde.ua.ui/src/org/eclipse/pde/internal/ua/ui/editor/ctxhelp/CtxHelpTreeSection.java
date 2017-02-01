@@ -775,11 +775,11 @@ public class CtxHelpTreeSection extends TreeSection {
 		if (fDropTargetParent != null) {
 			if (fDropTargetSibling != null) {
 				if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-					for (int i = 0; i < sourceObjects.length; i++) {
-						((CtxHelpObject) sourceObjects[i]).reconnect(
+					for (Object sourceObject : sourceObjects) {
+						((CtxHelpObject) sourceObject).reconnect(
 								fDropTargetParent, fModel);
 						fDropTargetParent.addChild(
-								(CtxHelpObject) sourceObjects[i],
+								(CtxHelpObject) sourceObject,
 								fDropTargetSibling, true);
 					}
 				} else {
@@ -792,11 +792,11 @@ public class CtxHelpTreeSection extends TreeSection {
 					}
 				}
 			} else {
-				for (int i = 0; i < sourceObjects.length; i++) {
-					((CtxHelpObject) sourceObjects[i]).reconnect(
+				for (Object sourceObject : sourceObjects) {
+					((CtxHelpObject) sourceObject).reconnect(
 							fDropTargetParent, fModel);
 					fDropTargetParent
-							.addChild((CtxHelpObject) sourceObjects[i]);
+							.addChild((CtxHelpObject) sourceObject);
 				}
 			}
 		}
@@ -948,9 +948,9 @@ public class CtxHelpTreeSection extends TreeSection {
 	 */
 	private void handleModelInsertType(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof CtxHelpObject) {
-				CtxHelpObject object = (CtxHelpObject) objects[i];
+		for (Object o : objects) {
+			if (o instanceof CtxHelpObject) {
+				CtxHelpObject object = (CtxHelpObject) o;
 				if (object.getType() != ICtxHelpConstants.TYPE_ROOT) {
 					fTree.refresh(object.getParent());
 					// Select the new object in the tree, unless it is a
@@ -972,9 +972,9 @@ public class CtxHelpTreeSection extends TreeSection {
 	 */
 	private void handleModelRemoveType(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof CtxHelpObject) {
-				CtxHelpObject object = (CtxHelpObject) objects[i];
+		for (Object o : objects) {
+			if (o instanceof CtxHelpObject) {
+				CtxHelpObject object = (CtxHelpObject) o;
 				fTree.remove(object);
 				CtxHelpObject nextSelection = fRemoveObjectAction
 						.getNextSelection();

@@ -175,9 +175,9 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 
 	private void createCategory(IPluginExtension extension, String id) throws CoreException {
-		IPluginObject[] elements = extension.getChildren();
-		for (int i = 0; i < elements.length; i++) {
-			IPluginElement element = (IPluginElement) elements[i];
+		IPluginObject[] children = extension.getChildren();
+		for (IPluginObject child : children) {
+			IPluginElement element = (IPluginElement) child;
 			if (element.getName().equalsIgnoreCase("category")) { //$NON-NLS-1$
 				IPluginAttribute att = element.getAttribute("id"); //$NON-NLS-1$
 				if (att != null) {

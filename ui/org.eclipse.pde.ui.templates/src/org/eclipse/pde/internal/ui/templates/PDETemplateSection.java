@@ -46,10 +46,9 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	public URL getTemplateLocation() {
 		try {
 			String[] candidates = getDirectoryCandidates();
-			for (int i = 0; i < candidates.length; i++) {
-				if (bundle.getEntry(candidates[i]) != null) {
-					URL candidate = new URL(getInstallURL(), candidates[i]);
-					return candidate;
+			for (String candidate : candidates) {
+				if (bundle.getEntry(candidate) != null) {
+					return new URL(getInstallURL(), candidate);
 				}
 			}
 		} catch (MalformedURLException e) { // do nothing

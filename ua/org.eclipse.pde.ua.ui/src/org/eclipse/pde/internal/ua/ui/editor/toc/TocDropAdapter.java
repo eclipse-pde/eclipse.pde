@@ -164,8 +164,8 @@ public class TocDropAdapter extends ViewerDropAdapter {
 		if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
 			IBaseModel model = fSection.getPage().getModel();
 			String[] fileNames = (String[]) FileTransfer.getInstance().nativeToJava(event.currentDataType);
-			for (int i = 0; i < fileNames.length; i++) {
-				IPath path = new Path(fileNames[i]);
+			for (String fileName : fileNames) {
+				IPath path = new Path(fileName);
 
 				// Make sure that the file is in the workspace
 				if (ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path) == null) {

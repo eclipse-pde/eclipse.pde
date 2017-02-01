@@ -113,8 +113,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 
 	private void validateContainerPage(TemplateOption source) {
 		TemplateOption[] allPageOptions = getOptions(0);
-		for (int i = 0; i < allPageOptions.length; i++) {
-			TemplateOption nextOption = allPageOptions[i];
+		for (TemplateOption nextOption : allPageOptions) {
 			if (nextOption.isRequired() && nextOption.isEmpty()) {
 				flagMissingRequiredOption(nextOption);
 				return;

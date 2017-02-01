@@ -600,8 +600,8 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 				// find identical debug options and update them (this will include 'this' debug option that
 				// was modified)
 				TracingComponentDebugOption[] identicalOptions = TracingCollections.getInstance().getTracingDebugOptions(prefDebugOption.getKey());
-				for (int identicalOptionsIndex = 0; identicalOptionsIndex < identicalOptions.length; identicalOptionsIndex++) {
-					identicalOptions[identicalOptionsIndex].setOptionPathValue(prefDebugOption.getValue());
+				for (TracingComponentDebugOption identicalOption : identicalOptions) {
+					identicalOption.setOptionPathValue(prefDebugOption.getValue());
 				}
 			}
 		}
@@ -649,13 +649,13 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 			newOptions.putAll(currentOptions);
 			// iterate over the list of added debug options and add them
 			TracingComponentDebugOption[] optionsToAdd = TracingCollections.getInstance().getModifiedDebugOptions().getDebugOptionsToAdd();
-			for (int i = 0; i < optionsToAdd.length; i++) {
-				newOptions.put(optionsToAdd[i].getOptionPath(), optionsToAdd[i].getOptionPathValue());
+			for (TracingComponentDebugOption element : optionsToAdd) {
+				newOptions.put(element.getOptionPath(), element.getOptionPathValue());
 			}
 			// iterate over the list of removed debug options and remove them
 			TracingComponentDebugOption[] optionsToRemove = TracingCollections.getInstance().getModifiedDebugOptions().getDebugOptionsToRemove();
-			for (int i = 0; i < optionsToRemove.length; i++) {
-				newOptions.remove(optionsToRemove[i].getOptionPath());
+			for (TracingComponentDebugOption element : optionsToRemove) {
+				newOptions.remove(element.getOptionPath());
 			}
 			// update the debug options
 			DebugOptionsHandler.getDebugOptions().setOptions(newOptions);
@@ -715,12 +715,12 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		if (node.hasChildren()) {
 			buffer = new StringBuffer();
 			TracingNode[] children = node.getChildren();
-			for (int i = 0; i < children.length; i++) {
+			for (TracingNode element : children) {
 				// add this child node (all child nodes will be of type TracingComponentDebugOption)
-				String debugOptionAsString = TracingUtils.convertToString((TracingComponentDebugOption) children[i]);
+				String debugOptionAsString = TracingUtils.convertToString((TracingComponentDebugOption) element);
 				buffer.append(debugOptionAsString);
 				// add all of this childs nodes
-				StringBuffer result = getAllUniqueDebugOptions(children[i]);
+				StringBuffer result = getAllUniqueDebugOptions(element);
 				if (result != null) {
 					buffer.append(result);
 				}

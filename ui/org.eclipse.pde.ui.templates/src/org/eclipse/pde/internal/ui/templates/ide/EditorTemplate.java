@@ -109,8 +109,7 @@ public class EditorTemplate extends BaseEditorTemplate {
 
 	private void validateContainerPage(TemplateOption source) {
 		TemplateOption[] options = getOptions(0);
-		for (int i = 0; i < options.length; i++) {
-			TemplateOption nextOption = options[i];
+		for (TemplateOption nextOption : options) {
 			if (nextOption.isRequired() && nextOption.isEmpty()) {
 				flagMissingRequiredOption(nextOption);
 				return;

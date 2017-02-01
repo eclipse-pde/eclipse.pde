@@ -33,8 +33,8 @@ public class CtxHelpMarkerManager {
 		try {
 			IMarker[] problems = model.getUnderlyingResource().findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 			if (problems != null) {
-				for (int index = 0; index < problems.length; index++) {
-					problems[index].delete();
+				for (IMarker problem : problems) {
+					problem.delete();
 				}
 			}
 		} catch (CoreException e) {

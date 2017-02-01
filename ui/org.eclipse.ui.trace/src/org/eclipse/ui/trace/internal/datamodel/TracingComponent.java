@@ -215,10 +215,10 @@ public class TracingComponent extends AbstractTracingNode {
 		assert (element != null);
 		final IConfigurationElement[] componentChildren = element.getChildren();
 		final Bundle[] installedBundles = TracingUIActivator.getDefault().getBundle().getBundleContext().getBundles();
-		for (int i = 0; i < componentChildren.length; i++) {
-			if (componentChildren[i].getName().equals(TracingConstants.TRACING_EXTENSION_BUNDLE_ATTRIBUTE)) {
-				String name = componentChildren[i].getAttribute(TracingConstants.TRACING_EXTENSION_BUNDLE_NAME_ATTRIBUTE);
-				boolean consumed = Boolean.valueOf(componentChildren[i].getAttribute(TracingConstants.TRACING_EXTENSION_BUNDLE_CONSUMED_ATTRIBUTE)).booleanValue();
+		for (IConfigurationElement child : componentChildren) {
+			if (child.getName().equals(TracingConstants.TRACING_EXTENSION_BUNDLE_ATTRIBUTE)) {
+				String name = child.getAttribute(TracingConstants.TRACING_EXTENSION_BUNDLE_NAME_ATTRIBUTE);
+				boolean consumed = Boolean.valueOf(child.getAttribute(TracingConstants.TRACING_EXTENSION_BUNDLE_CONSUMED_ATTRIBUTE)).booleanValue();
 				this.addBundle(name, consumed, installedBundles);
 			}
 		}

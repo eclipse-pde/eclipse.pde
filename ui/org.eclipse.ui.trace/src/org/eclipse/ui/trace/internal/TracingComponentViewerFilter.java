@@ -48,11 +48,11 @@ public class TracingComponentViewerFilter extends PatternFilter {
 	 */
 	private void forceVisibleDebugOptions(final TracingComponentDebugOption[] options) {
 
-		for (int optionsIndex = 0; optionsIndex < options.length; optionsIndex++) {
-			if (options[optionsIndex].hasChildren()) {
-				forceVisibleDebugOptions(options[optionsIndex].getChildren());
+		for (TracingComponentDebugOption option : options) {
+			if (option.hasChildren()) {
+				forceVisibleDebugOptions(option.getChildren());
 			}
-			visibleTracingDebugOptions.put(options[optionsIndex], Boolean.TRUE);
+			visibleTracingDebugOptions.put(option, Boolean.TRUE);
 		}
 	}
 

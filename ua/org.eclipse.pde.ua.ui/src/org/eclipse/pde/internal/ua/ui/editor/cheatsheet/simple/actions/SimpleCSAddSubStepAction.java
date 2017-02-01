@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.actions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
@@ -70,11 +71,11 @@ public class SimpleCSAddSubStepAction extends Action {
 		ISimpleCSSubItem subitem = factory.createSimpleCSSubItem(fItem);
 
 		ISimpleCSSubItemObject[] subItems = fItem.getSubItems();
-		ArrayList subItemNames = new ArrayList(subItems.length);
+		List<String> subItemNames = new ArrayList<>(subItems.length);
 
-		for (int i = 0; i < subItems.length; ++i) {
-			if (subItems[i].getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-				subItemNames.add(((ISimpleCSSubItem) subItems[i]).getLabel());
+		for (ISimpleCSSubItemObject subItem : subItems) {
+			if (subItem.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+				subItemNames.add(((ISimpleCSSubItem) subItem).getLabel());
 			}
 		}
 

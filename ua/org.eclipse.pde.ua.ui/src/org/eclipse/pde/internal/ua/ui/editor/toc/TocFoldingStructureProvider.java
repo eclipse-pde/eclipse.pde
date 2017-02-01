@@ -43,8 +43,7 @@ public class TocFoldingStructureProvider extends AbstractFoldingStructureProvide
 	}
 
 	private void addFoldingRegions(Set regions, IDocumentElementNode[] nodes, IDocument document) throws BadLocationException {
-		for (int i = 0; i < nodes.length; i++) {
-			IDocumentElementNode element = nodes[i];
+		for (IDocumentElementNode element : nodes) {
 			int startLine = document.getLineOfOffset(element.getOffset());
 			int endLine = document.getLineOfOffset(element.getOffset() + element.getLength());
 			if (startLine < endLine) {

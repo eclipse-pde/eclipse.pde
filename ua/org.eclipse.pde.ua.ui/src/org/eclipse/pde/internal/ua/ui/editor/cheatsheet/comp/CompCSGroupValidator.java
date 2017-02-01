@@ -58,9 +58,9 @@ public class CompCSGroupValidator {
 		}
 		// Recursively add any sub-groups
 		ICompCSTaskObject[] taskObjects = group.getFieldTaskObjects();
-		for (int i = 0; i < taskObjects.length; i++) {
-			if (taskObjects[i].getType() == ICompCSConstants.TYPE_TASKGROUP) {
-				addGroup((ICompCSTaskGroup) taskObjects[i]);
+		for (ICompCSTaskObject taskObject : taskObjects) {
+			if (taskObject.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+				addGroup((ICompCSTaskGroup) taskObject);
 			}
 		}
 	}
@@ -73,9 +73,9 @@ public class CompCSGroupValidator {
 		}
 		// Recursively remove any sub-groups
 		ICompCSTaskObject[] taskObjects = group.getFieldTaskObjects();
-		for (int i = 0; i < taskObjects.length; i++) {
-			if (taskObjects[i].getType() == ICompCSConstants.TYPE_TASKGROUP) {
-				removeGroup((ICompCSTaskGroup) taskObjects[i]);
+		for (ICompCSTaskObject taskObject : taskObjects) {
+			if (taskObject.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+				removeGroup((ICompCSTaskGroup) taskObject);
 			}
 		}
 	}

@@ -34,8 +34,8 @@ public class HelpEditorFilter extends ViewerFilter {
 		if (element instanceof IContainer) {
 			try {
 				IResource[] resources = ((IContainer) element).members();
-				for (int i = 0; i < resources.length; i++) {
-					if (select(viewer, parent, resources[i])) {
+				for (IResource resource : resources) {
+					if (select(viewer, parent, resource)) {
 						return true;
 					}
 				}

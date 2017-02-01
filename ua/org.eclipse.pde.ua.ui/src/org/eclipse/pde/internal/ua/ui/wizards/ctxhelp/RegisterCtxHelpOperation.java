@@ -130,14 +130,14 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		IPluginExtension[] extensions = modelBase.getExtensions()
 				.getExtensions();
 		IPluginExtension existingExtension = null;
-		for (int i = 0; i < extensions.length; i++) {
-			String point = extensions[i].getPoint();
+		for (IPluginExtension extension : extensions) {
+			String point = extension.getPoint();
 			if (CTX_HELP_EXTENSION_POINT_ID.equals(point)) {
-				if (checkExistingExtensionElement(extensions[i])) {
+				if (checkExistingExtensionElement(extension)) {
 					// Exact match, no need to register anything
 					return;
 				}
-				existingExtension = extensions[i];
+				existingExtension = extension;
 			}
 		}
 
@@ -269,9 +269,9 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 
 	private boolean checkExistingExtensionElement(IPluginExtension extension) {
 		IPluginObject[] pluginObjects = extension.getChildren();
-		for (int j = 0; j < pluginObjects.length; j++) {
-			if (pluginObjects[j] instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObjects[j];
+		for (IPluginObject pluginObject : pluginObjects) {
+			if (pluginObject instanceof IPluginElement) {
+				IPluginElement element = (IPluginElement) pluginObject;
 				if (element.getName().equals(ICtxHelpConstants.ELEMENT_ROOT)) {
 					IPluginAttribute fileAttribute = element
 							.getAttribute(CTX_HELP_ATTR_FILE);

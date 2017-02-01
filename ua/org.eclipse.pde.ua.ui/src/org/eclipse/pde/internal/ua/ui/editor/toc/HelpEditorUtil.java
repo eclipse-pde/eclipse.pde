@@ -39,8 +39,8 @@ public class HelpEditorUtil {
 	private static HashSet pageExtensionSet = new HashSet(pageExtensions.length);
 
 	private static void populateHashSet() {
-		for (int i = 0; i < pageExtensions.length; ++i) {
-			pageExtensionSet.add(pageExtensions[i]);
+		for (String pageExtension : pageExtensions) {
+			pageExtensionSet.add(pageExtension);
 		}
 	}
 

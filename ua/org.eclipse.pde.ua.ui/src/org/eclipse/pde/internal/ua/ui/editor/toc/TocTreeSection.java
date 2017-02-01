@@ -1080,8 +1080,8 @@ public class TocTreeSection extends TreeSection {
 		if (tocObjects == null)
 			return;
 
-		for (int i = 0; i < tocObjects.length; ++i) {
-			if (tocObjects[i] != null) {
+		for (TocObject tocObject : tocObjects) {
+			if (tocObject != null) {
 				if (targetParent != null && targetParent.canBeParent()) {
 					if (tocTarget != null && tocTarget != targetParent) { // Add
 																			// the
@@ -1093,11 +1093,11 @@ public class TocTreeSection extends TreeSection {
 																			// of
 																			// the
 																			// target
-						((TocTopic) targetParent).addChild(tocObjects[i],
+						((TocTopic) targetParent).addChild(tocObject,
 								tocTarget, insertBefore);
 					} else { // Add the object as the last child of the target
 								// parent
-						((TocTopic) targetParent).addChild(tocObjects[i]);
+						((TocTopic) targetParent).addChild(tocObject);
 					}
 				}
 			}

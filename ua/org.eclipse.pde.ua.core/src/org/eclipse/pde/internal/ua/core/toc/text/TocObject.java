@@ -55,9 +55,9 @@ public abstract class TocObject extends DocumentObject implements
 		// Add children of this topic
 		IDocumentElementNode[] childNodes = getChildNodes();
 		if (childNodes.length > 0) {
-			for (int i = 0; i < childNodes.length; ++i) {
-				if (childNodes[i] instanceof TocObject) {
-					list.add((TocObject) childNodes[i]);
+			for (IDocumentElementNode childNode : childNodes) {
+				if (childNode instanceof TocObject) {
+					list.add((TocObject) childNode);
 				}
 			}
 		}

@@ -207,20 +207,20 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		// (2) An existing extension (last one found) containing 0 or more
 		//     TOC elements
 		// (3) No existing extension
-		for (int i = 0; i < extensions.length; i++) {
+		for (IPluginExtension extension : extensions) {
 			// TOC extension match found
-			result.fTocExtension = extensions[i];
+			result.fTocExtension = extension;
 			// Check for children
-			if (extensions[i].getChildCount() == 0) {
+			if (extension.getChildCount() == 0) {
 				// Extension has no children, skip to the next extension
 				continue;
 			}
 
-			IPluginObject[] pluginObjects = extensions[i].getChildren();
+			IPluginObject[] pluginObjects = extension.getChildren();
 			// Process all children
-			for (int j = 0; j < pluginObjects.length; j++) {
-				if (pluginObjects[j] instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement) pluginObjects[j];
+			for (IPluginObject pluginObject : pluginObjects) {
+				if (pluginObject instanceof IPluginElement) {
+					IPluginElement element = (IPluginElement) pluginObject;
 					// Find TOC elements
 					if (element.getName().equals(ITocConstants.ELEMENT_TOC)) {
 						// TOC element
@@ -244,10 +244,10 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		IPluginExtension[] extensions = model.getExtensions().getExtensions();
 
 		ArrayList tocExtensions = new ArrayList();
-		for (int i = 0; i < extensions.length; i++) {
-			String point = extensions[i].getPoint();
+		for (IPluginExtension extension : extensions) {
+			String point = extension.getPoint();
 			if (F_TOC_EXTENSION_POINT_ID.equals(point)) {
-				tocExtensions.add(extensions[i]);
+				tocExtensions.add(extension);
 			}
 		}
 		return (IPluginExtension[]) tocExtensions.toArray(new IPluginExtension[tocExtensions.size()]);

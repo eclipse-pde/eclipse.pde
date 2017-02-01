@@ -599,8 +599,8 @@ class AnnotationVisitor extends ASTVisitor {
 		} else {
 			ITypeBinding[] serviceTypes = typeBinding.getInterfaces();
 			services = new ArrayList<>(serviceTypes.length);
-			for (int i = 0; i < serviceTypes.length; ++i) {
-				services.add(serviceTypes[i].getBinaryName());
+			for (ITypeBinding serviceType : serviceTypes) {
+				services.add(serviceType.getBinaryName());
 			}
 		}
 
@@ -629,9 +629,9 @@ class AnnotationVisitor extends ASTVisitor {
 		if ((value = params.get("property")) instanceof Object[]) { //$NON-NLS-1$
 			Object[] elements = (Object[]) value;
 			ArrayList<String> list = new ArrayList<>(elements.length);
-			for (int i = 0; i < elements.length; ++i) {
-				if (elements[i] instanceof String)
-					list.add((String) elements[i]);
+			for (Object element : elements) {
+				if (element instanceof String)
+					list.add((String) element);
 			}
 
 			properties = list.toArray(new String[list.size()]);
@@ -643,9 +643,9 @@ class AnnotationVisitor extends ASTVisitor {
 		if ((value = params.get("properties")) instanceof Object[]) { //$NON-NLS-1$
 			Object[] elements = (Object[]) value;
 			ArrayList<String> list = new ArrayList<>(elements.length);
-			for (int i = 0; i < elements.length; ++i) {
-				if (elements[i] instanceof String)
-					list.add((String) elements[i]);
+			for (Object element : elements) {
+				if (element instanceof String)
+					list.add((String) element);
 			}
 
 			propertyFiles = list.toArray(new String[list.size()]);

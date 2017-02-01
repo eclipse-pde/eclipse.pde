@@ -348,17 +348,16 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 
 	private void processCategoryElements(IPluginExtension[] extensions) {
 		// Linear search:  Process all cheat sheet extensions found
-		for (int i = 0; i < extensions.length; i++) {
-			if (extensions[i].getChildCount() == 0) {
+		for (IPluginExtension extension : extensions) {
+			if (extension.getChildCount() == 0) {
 				// Extension has no children, skip to the next extension
 				continue;
 			}
-			IPluginExtension extension = extensions[i];
 			IPluginObject[] pluginObjects = extension.getChildren();
 			// Process all children
-			for (int j = 0; j < pluginObjects.length; j++) {
-				if (pluginObjects[j] instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement) pluginObjects[j];
+			for (IPluginObject pluginObject : pluginObjects) {
+				if (pluginObject instanceof IPluginElement) {
+					IPluginElement element = (IPluginElement) pluginObject;
 					if (element.getName().equals(F_CS_ELEMENT_CATEGORY)) {
 						// Category element
 						// Update the category combo
@@ -373,17 +372,16 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		// Query cheat sheet extensions for information required to update
 		// the description text and category combo widgets
 		// Linear search:  Process all cheat sheet extensions found
-		for (int i = 0; i < extensions.length; i++) {
-			if (extensions[i].getChildCount() == 0) {
+		for (IPluginExtension extension : extensions) {
+			if (extension.getChildCount() == 0) {
 				// Extension has no children, skip to the next extension
 				continue;
 			}
-			IPluginExtension extension = extensions[i];
 			IPluginObject[] pluginObjects = extension.getChildren();
 			// Process all children
-			for (int j = 0; j < pluginObjects.length; j++) {
-				if (pluginObjects[j] instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement) pluginObjects[j];
+			for (IPluginObject pluginObject : pluginObjects) {
+				if (pluginObject instanceof IPluginElement) {
+					IPluginElement element = (IPluginElement) pluginObject;
 					if (element.getName().equals(F_CS_ELEMENT_CHEATSHEET)) {
 						// Cheat sheet element
 						processCheatSheetElement(element, fDataCheatSheetID);
@@ -477,10 +475,10 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 		IPluginExtension[] extensions = model.getExtensions().getExtensions();
 
 		ArrayList csExtensions = new ArrayList();
-		for (int i = 0; i < extensions.length; i++) {
-			String point = extensions[i].getPoint();
+		for (IPluginExtension extension : extensions) {
+			String point = extension.getPoint();
 			if (extensionPointID.equals(point)) {
-				csExtensions.add(extensions[i]);
+				csExtensions.add(extension);
 			}
 		}
 		return (IPluginExtension[]) csExtensions.toArray(new IPluginExtension[csExtensions.size()]);

@@ -261,19 +261,19 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// (2) An existing extension (last one found) containing 0 or more
 		//     cheatsheet or category elements
 		// (3) No existing extension
-		for (int i = 0; i < extensions.length; i++) {
+		for (IPluginExtension extension : extensions) {
 			// Cheat sheet extension match found
-			result.fCSExtension = extensions[i];
+			result.fCSExtension = extension;
 			// Check for children
-			if (extensions[i].getChildCount() == 0) {
+			if (extension.getChildCount() == 0) {
 				// Extension has no children, skip to the next extension
 				continue;
 			}
-			IPluginObject[] pluginObjects = extensions[i].getChildren();
+			IPluginObject[] pluginObjects = extension.getChildren();
 			// Process all children
-			for (int j = 0; j < pluginObjects.length; j++) {
-				if (pluginObjects[j] instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement) pluginObjects[j];
+			for (IPluginObject pluginObject : pluginObjects) {
+				if (pluginObject instanceof IPluginElement) {
+					IPluginElement element = (IPluginElement) pluginObject;
 					// Find cheat sheet elements
 					if (element.getName().equals(RegisterCSWizardPage.F_CS_ELEMENT_CHEATSHEET)) {
 						// Cheat sheet element
@@ -298,10 +298,10 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		IPluginExtension[] extensions = model.getExtensions().getExtensions();
 
 		ArrayList csExtensions = new ArrayList();
-		for (int i = 0; i < extensions.length; i++) {
-			String point = extensions[i].getPoint();
+		for (IPluginExtension extension : extensions) {
+			String point = extension.getPoint();
 			if (F_CS_EXTENSION_POINT_ID.equals(point)) {
-				csExtensions.add(extensions[i]);
+				csExtensions.add(extension);
 			}
 		}
 		return (IPluginExtension[]) csExtensions.toArray(new IPluginExtension[csExtensions.size()]);
