@@ -44,22 +44,27 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 		scope = new ProjectScope(project.getProject());
 		scope.getNode(Activator.PLUGIN_ID).addPreferenceChangeListener(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
+		requestClasspathUpdate();
 	}
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
-		if (Activator.PREF_CLASSPATH.equals(event.getKey())) {
-			WorkspaceJob job = new WorkspaceJob(Messages.ProjectClasspathPreferenceChangeListener_jobName) {
-				@Override
-				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-					updateClasspathContainer(project, monitor);
-					return Status.OK_STATUS;
-				};
-			};
-
-			PlatformUI.getWorkbench().getProgressService().showInDialog(null, job);
-			job.schedule();
+		if (Activator.PREF_CLASSPATH.equals(event.getKey()) || Activator.PREF_ENABLED.equals(event.getKey())) {
+			requestClasspathUpdate();
 		}
+	}
+
+	private void requestClasspathUpdate() {
+		WorkspaceJob job = new WorkspaceJob(Messages.ProjectClasspathPreferenceChangeListener_jobName) {
+			@Override
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				updateClasspathContainer(project, monitor);
+				return Status.OK_STATUS;
+			};
+		};
+
+		PlatformUI.getWorkbench().getProgressService().showInDialog(null, job);
+		job.schedule();
 	}
 
 	static void updateClasspathContainer(IJavaProject project, IProgressMonitor monitor) {
@@ -77,7 +82,7 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 					try {
 						initializer.requestClasspathContainerUpdate(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, project, new RequiredPluginsClasspathContainer(model, ClasspathUtilCore.getBuild(model)));
 					} catch (CoreException e) {
-						Activator.getDefault().getLog().log(e.getStatus());
+						Activator.log(e);
 					}
 				}
 			}

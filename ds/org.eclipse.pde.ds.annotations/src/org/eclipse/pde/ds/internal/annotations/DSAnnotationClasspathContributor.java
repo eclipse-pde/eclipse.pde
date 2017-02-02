@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IAccessRule;
@@ -54,18 +55,23 @@ public class DSAnnotationClasspathContributor implements IClasspathContributor {
 			if (model != null) {
 				IResource resource = model.getUnderlyingResource();
 				if (resource != null && !WorkspaceModelManager.isBinaryProject(resource.getProject())) {
-					boolean autoClasspath = Platform.getPreferencesService().getBoolean(Activator.PLUGIN_ID, Activator.PREF_CLASSPATH, true, new IScopeContext[] { new ProjectScope(resource.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
-					if (autoClasspath) {
-						try {
-							URL fileURL = FileLocator.toFileURL(bundle.getEntry("lib/annotations.jar")); //$NON-NLS-1$
-							if ("file".equals(fileURL.getProtocol())) { //$NON-NLS-1$
-								URL srcFileURL = FileLocator.toFileURL(bundle.getEntry("lib/annotationssrc.zip")); //$NON-NLS-1$
-								IPath srcPath = "file".equals(srcFileURL.getProtocol()) ? new Path(srcFileURL.getPath()) : null; //$NON-NLS-1$
-								IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(fileURL.getPath()), srcPath, Path.ROOT, ANNOTATION_ACCESS_RULES, DS_ATTRS, false);
-								return Collections.singletonList(entry);
+					IPreferencesService prefs = Platform.getPreferencesService();
+					IScopeContext[] scope = new IScopeContext[] { new ProjectScope(resource.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE };
+					boolean enabled = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, scope);
+					if (enabled) {
+						boolean autoClasspath = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_CLASSPATH, true, scope);
+						if (autoClasspath) {
+							try {
+								URL fileURL = FileLocator.toFileURL(bundle.getEntry("lib/annotations.jar")); //$NON-NLS-1$
+								if ("file".equals(fileURL.getProtocol())) { //$NON-NLS-1$
+									URL srcFileURL = FileLocator.toFileURL(bundle.getEntry("lib/annotationssrc.zip")); //$NON-NLS-1$
+									IPath srcPath = "file".equals(srcFileURL.getProtocol()) ? new Path(srcFileURL.getPath()) : null; //$NON-NLS-1$
+									IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(fileURL.getPath()), srcPath, Path.ROOT, ANNOTATION_ACCESS_RULES, DS_ATTRS, false);
+									return Collections.singletonList(entry);
+								}
+							} catch (IOException e) {
+								Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error creating classpath entry.", e)); //$NON-NLS-1$
 							}
-						} catch (IOException e) {
-							Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error creating classpath entry.", e)); //$NON-NLS-1$
 						}
 					}
 				}

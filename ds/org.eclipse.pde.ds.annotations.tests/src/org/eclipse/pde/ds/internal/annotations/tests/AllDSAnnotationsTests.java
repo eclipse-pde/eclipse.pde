@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -58,12 +57,8 @@ public class AllDSAnnotationsTests {
 		final Bundle bundle = Activator.getContext().getBundle();
 
 		wsJob = new WorkspaceJob("Test Workspace Setup") {
-			@SuppressWarnings("restriction")
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				// enable DS Annotations in workspace
-				InstanceScope.INSTANCE.getNode(org.eclipse.pde.ds.internal.annotations.Activator.PLUGIN_ID).putBoolean(org.eclipse.pde.ds.internal.annotations.Activator.PREF_ENABLED, true);
-
 				// import test projects
 				Path wsRoot = Paths.get(ws.getRoot().getLocationURI());
 				for (Map.Entry<String, String> entry : projects.entrySet()) {

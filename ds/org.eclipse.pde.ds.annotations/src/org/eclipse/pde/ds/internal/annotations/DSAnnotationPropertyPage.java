@@ -211,9 +211,12 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		pathText = new Text(optionBlockControl, SWT.BORDER | SWT.SINGLE);
 		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		classpathCheckbox = new Button(composite, SWT.CHECK);
-		classpathCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
-		classpathCheckbox.setText(Messages.DSAnnotationPropertyPage_classpathCheckbox_text);
+		Label classpathCheckboxLabel = new Label(optionBlockControl, SWT.LEFT);
+		classpathCheckboxLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		classpathCheckboxLabel.setText(Messages.DSAnnotationPropertyPage_classpathCheckbox_text);
+
+		classpathCheckbox = new Button(optionBlockControl, SWT.CHECK);
+		classpathCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 
 		Label errorLevelLabel = new Label(optionBlockControl, SWT.LEFT);
 		errorLevelLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));

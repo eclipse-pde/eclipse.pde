@@ -53,11 +53,11 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 
 				SubMonitor progress = SubMonitor.convert(monitor, Messages.DSAnnotationPreferenceListener_taskName, managedProjects.size());
 				for (IProject project : managedProjects) {
-					if (Activator.PREF_CLASSPATH.equals(event.getKey())) {
+					if (Activator.PREF_CLASSPATH.equals(event.getKey())
+							|| Activator.PREF_ENABLED.equals(event.getKey()))
 						ProjectClasspathPreferenceChangeListener.updateClasspathContainer(JavaCore.create(project), progress.newChild(1));
-					} else {
-						project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(1));
-					}
+
+					project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(1));
 				}
 
 				return Status.OK_STATUS;
