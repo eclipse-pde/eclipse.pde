@@ -17,7 +17,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
-public class VersionProposal implements ICompletionProposal {
+public class InstallableUnitProposal implements ICompletionProposal {
 
 	private static final String REPLACE_STRING = " (replace)";//$NON-NLS-1$
 	private String completionString;
@@ -25,7 +25,7 @@ public class VersionProposal implements ICompletionProposal {
 	private int length;
 	private boolean replace;
 
-	public VersionProposal(String completionString, int offset, int length, boolean replace) {
+	public InstallableUnitProposal(String completionString, int offset, int length, boolean replace) {
 		this.completionString = completionString;
 		this.offset = offset;
 		this.length = length;

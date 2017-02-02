@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.VersionProposal;
+import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.InstallableUnitProposal;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.LocationNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.RepositoryCache;
@@ -50,7 +50,8 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 
 		UnitNode node = rootNode.getEnclosingUnit(offset);
 
-		if (acKey.equalsIgnoreCase(ITargetConstants.UNIT_ID_ATTR)) {
+		boolean replaceId = false;
+		if (ITargetConstants.UNIT_ID_ATTR.equalsIgnoreCase(acKey)) {
 			if (node != null) {
 				LocationNode location = node.getParent();
 				String repoLocation = location.getRepositoryLocation();
@@ -63,13 +64,14 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 					return getInformativeProposal();
 				}
 				List<UnitNode> units = cache.getUnitsByPrefix(repoLocation, prefix);
-				return convertToProposals(units);
+				replaceId = !("".equals(node.getId()));//$NON-NLS-1$
+				return convertToProposals(units, replaceId);
 			}
 
 		}
 
-		boolean replace = false;
-		if (acKey.equalsIgnoreCase(ITargetConstants.UNIT_VERSION_ATTR)) {
+		boolean replaceVersion = false;
+		if (ITargetConstants.UNIT_VERSION_ATTR.equalsIgnoreCase(acKey)) {
 			if (node != null) {
 				LocationNode location = node.getParent();
 				String repoLocation = location.getRepositoryLocation();
@@ -83,8 +85,8 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 				}
 				List<UnitNode> byPrefix = cache.getUnitsByPrefix(repoLocation, node.getId());
 				List<String> versions = byPrefix.get(0).getAvailableVersions();
-				replace = !("".equals(node.getVersion()));//$NON-NLS-1$
-				return convertToVersionProposals(versions, replace);
+				replaceVersion = !("".equals(node.getVersion()));//$NON-NLS-1$
+				return convertToVersionProposals(versions, replaceVersion);
 			}
 
 		}
@@ -114,18 +116,17 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 				continue;
 			}
 
-			ICompletionProposal proposal = new VersionProposal(version, offset, prefix.length(),
+			ICompletionProposal proposal = new InstallableUnitProposal(version, offset, prefix.length(),
 					replace);
 			result.add(proposal);
 		}
 		return result.toArray(new ICompletionProposal[result.size()]);
 	}
 
-	private ICompletionProposal[] convertToProposals(List<UnitNode> units) {
+	private ICompletionProposal[] convertToProposals(List<UnitNode> units, boolean replace) {
 		List<ICompletionProposal> result = new ArrayList<>();
 		for (UnitNode unit : units) {
-			CompletionProposal proposal = new CompletionProposal(unit.getId(), offset - prefix.length(),
-					prefix.length(), unit.getId().length() + 1);
+			ICompletionProposal proposal = new InstallableUnitProposal(unit.getId(), offset, prefix.length(), replace);
 			result.add(proposal);
 		}
 		return result.toArray(new ICompletionProposal[result.size()]);
