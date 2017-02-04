@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.resources.IFile;
@@ -166,23 +168,13 @@ public class LibraryPluginJarsPage extends WizardPage {
 		browseWorkspace.setText(PDEUIMessages.LibraryPluginJarsPage_add);
 		browseWorkspace.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(browseWorkspace);
-		browseWorkspace.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				chooseWorkspaceFile();
-			}
-		});
+		browseWorkspace.addSelectionListener(widgetSelectedAdapter(e -> chooseWorkspaceFile()));
 
 		Button browseFile = new Button(buttons, SWT.PUSH);
 		browseFile.setText(PDEUIMessages.LibraryPluginJarsPage_addExternal);
 		browseFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(browseFile);
-		browseFile.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				chooseFile();
-			}
-		});
+		browseFile.addSelectionListener(widgetSelectedAdapter(e -> chooseFile()));
 
 		fRemove = new Button(buttons, SWT.PUSH);
 		fRemove.setText(PDEUIMessages.LibraryPluginJarsPage_remove);
@@ -190,12 +182,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		SWTUtil.setButtonDimensionHint(fRemove);
 		fRemove.setEnabled(fJarPaths.size() > 0);
 		setPageComplete(fJarPaths.size() > 0);
-		fRemove.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemove();
-			}
-		});
+		fRemove.addSelectionListener(widgetSelectedAdapter(e -> handleRemove()));
 
 		Dialog.applyDialogFont(control);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.NEW_LIBRARY_PROJECT_JAR_PAGE);

@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.site;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -62,14 +63,11 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fWebButton.setLayoutData(gd);
-		fWebButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fWebLabel.setEnabled(fWebButton.getSelection());
-				fWebText.setEnabled(fWebButton.getSelection());
-				setPageComplete(validatePage());
-			}
-		});
+		fWebButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fWebLabel.setEnabled(fWebButton.getSelection());
+			fWebText.setEnabled(fWebButton.getSelection());
+			setPageComplete(validatePage());
+		}));
 
 		fWebLabel = new Label(webGroup, SWT.NULL);
 		fWebLabel.setText(PDEUIMessages.SiteHTML_webLabel);

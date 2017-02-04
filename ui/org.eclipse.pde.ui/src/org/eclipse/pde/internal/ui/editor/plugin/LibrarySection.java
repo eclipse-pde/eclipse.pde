@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import org.eclipse.core.resources.*;
@@ -36,8 +38,6 @@ import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
@@ -432,12 +432,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 				final Button button = new Button(comp, SWT.CHECK);
 				button.setText(PDEUIMessages.LibrarySection_addDialogButton);
 				button.setSelection(updateClasspath[0]);
-				button.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						updateClasspath[0] = button.getSelection();
-					}
-				});
+				button.addSelectionListener(widgetSelectedAdapter(e -> updateClasspath[0] = button.getSelection()));
 				applyDialogFont(button);
 				return comp;
 			}

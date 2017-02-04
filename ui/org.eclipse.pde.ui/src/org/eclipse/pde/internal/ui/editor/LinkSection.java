@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.pde.internal.ui.parts.ILinkLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -90,12 +90,7 @@ public class LinkSection extends PDESection {
 	private void createMoreButton() {
 		moreButton = getManagedForm().getToolkit().createButton(container, "More...", //$NON-NLS-1$
 				SWT.PUSH);
-		moreButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				BusyIndicator.showWhile(getSection().getDisplay(), () -> getPage().getEditor().setActivePage(morePageId));
-			}
-		});
+		moreButton.addSelectionListener(widgetSelectedAdapter(e -> BusyIndicator.showWhile(getSection().getDisplay(), () -> getPage().getEditor().setActivePage(morePageId))));
 		moreButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 	}
 

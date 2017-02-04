@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,8 +24,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -110,14 +110,11 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		fMatchCombo.add(PDEUIMessages.ManifestEditor_MatchSection_perfect);
 		fMatchCombo.add(PDEUIMessages.ManifestEditor_MatchSection_greater);
 		fMatchCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fMatchCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fBlockChanges) {
-					applyMatch(fMatchCombo.getSelectionIndex());
-				}
+		fMatchCombo.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fBlockChanges) {
+				applyMatch(fMatchCombo.getSelectionIndex());
 			}
-		});
+		}));
 		toolkit.paintBordersFor(container);
 		initialize();
 		update((IPluginReference) null);
@@ -131,19 +128,16 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 
 	private void createReexportButton(FormToolkit toolkit, Composite container) {
 		fReexportButton = toolkit.createButton(container, PDEUIMessages.ManifestEditor_MatchSection_reexport, SWT.CHECK);
-		fReexportButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fBlockChanges && fCurrentImport instanceof IPluginImport) {
-					try {
-						IPluginImport iimport = (IPluginImport) fCurrentImport;
-						iimport.setReexported(fReexportButton.getSelection());
-					} catch (CoreException ex) {
-						PDEPlugin.logException(ex);
-					}
+		fReexportButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fBlockChanges && fCurrentImport instanceof IPluginImport) {
+				try {
+					IPluginImport iimport = (IPluginImport) fCurrentImport;
+					iimport.setReexported(fReexportButton.getSelection());
+				} catch (CoreException ex) {
+					PDEPlugin.logException(ex);
 				}
 			}
-		});
+		}));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fReexportButton.setLayoutData(gd);
@@ -151,21 +145,18 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 
 	private void createOptionalButton(FormToolkit toolkit, Composite container) {
 		fOptionalButton = toolkit.createButton(container, PDEUIMessages.ManifestEditor_MatchSection_optional, SWT.CHECK);
-		fOptionalButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (fBlockChanges)
-					return;
-				if (!fBlockChanges && fCurrentImport instanceof IPluginImport) {
-					try {
-						IPluginImport iimport = (IPluginImport) fCurrentImport;
-						iimport.setOptional(fOptionalButton.getSelection());
-					} catch (CoreException ex) {
-						PDEPlugin.logException(ex);
-					}
+		fOptionalButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (fBlockChanges)
+				return;
+			if (!fBlockChanges && fCurrentImport instanceof IPluginImport) {
+				try {
+					IPluginImport iimport = (IPluginImport) fCurrentImport;
+					iimport.setOptional(fOptionalButton.getSelection());
+				} catch (CoreException ex) {
+					PDEPlugin.logException(ex);
 				}
 			}
-		});
+		}));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fOptionalButton.setLayoutData(gd);

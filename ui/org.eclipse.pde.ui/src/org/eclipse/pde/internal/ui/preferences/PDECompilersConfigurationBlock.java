@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import com.ibm.icu.text.MessageFormat;
 import java.util.*;
 import java.util.List;
@@ -293,25 +295,22 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Default selection listener for combo and check controls
 	 */
-	private SelectionListener selectionlistener = new SelectionAdapter() {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			if (e.widget instanceof Combo) {
-				Combo combo = (Combo) e.widget;
-				ControlData data = (ControlData) combo.getData();
-				data.key.setStoredValue(fLookupOrder[0], Integer.toString(combo.getSelectionIndex()), fManager);
-				fDirty = true;
-				fRebuildcount = 0;
-			} else if (e.widget instanceof Button) {
-				Button button = (Button) e.widget;
-				ControlData data = (ControlData) button.getData();
-				data.key.setStoredValue(fLookupOrder[0], Boolean.toString(button.getSelection()), fManager);
-				fDirty = true;
-				fRebuildcount = 0;
-			}
-			addBuilder((Control) e.widget);
+	private SelectionListener selectionlistener = widgetSelectedAdapter(e -> {
+		if (e.widget instanceof Combo) {
+			Combo combo = (Combo) e.widget;
+			ControlData data = (ControlData) combo.getData();
+			data.key.setStoredValue(fLookupOrder[0], Integer.toString(combo.getSelectionIndex()), fManager);
+			fDirty = true;
+			fRebuildcount = 0;
+		} else if (e.widget instanceof Button) {
+			Button button = (Button) e.widget;
+			ControlData data = (ControlData) button.getData();
+			data.key.setStoredValue(fLookupOrder[0], Boolean.toString(button.getSelection()), fManager);
+			fDirty = true;
+			fRebuildcount = 0;
 		}
-	};
+		addBuilder((Control) e.widget);
+	});
 
 	/**
 	 * Default modify listener for text controls

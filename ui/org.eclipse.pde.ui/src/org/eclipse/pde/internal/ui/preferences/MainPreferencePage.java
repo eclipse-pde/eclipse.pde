@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -24,8 +26,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.BaseBlock;
 import org.eclipse.pde.internal.ui.shared.target.TargetStatus;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -161,15 +161,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fPromptOnRemove = new Button(optionComp, SWT.CHECK);
 		fPromptOnRemove.setText(PDEUIMessages.MainPreferencePage_promtBeforeRemove);
 		fPromptOnRemove.setSelection(!MessageDialogWithToggle.ALWAYS.equals(store.getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET)));
-		fPromptOnRemove.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				PDEPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET, fPromptOnRemove.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS);
-
-			}
-
-		});
+		fPromptOnRemove.addSelectionListener(widgetSelectedAdapter(e -> PDEPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET, fPromptOnRemove.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS)));
 
 		fAddToJavaSearch = new Button(optionComp, SWT.CHECK);
 		fAddToJavaSearch.setText(PDEUIMessages.MainPreferencePage_addToJavaSearch);

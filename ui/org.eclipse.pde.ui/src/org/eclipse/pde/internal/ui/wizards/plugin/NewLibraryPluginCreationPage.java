@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.TreeSet;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -128,12 +130,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fEclipseButton = createButton(group, SWT.RADIO, 1, 30);
 		fEclipseButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);
 		fEclipseButton.setSelection(fData.getOSGiFramework() == null);
-		fEclipseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateRuntimeDependency();
-			}
-		});
+		fEclipseButton.addSelectionListener(widgetSelectedAdapter(e -> updateRuntimeDependency()));
 
 		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
 		fTargetCombo.setItems(new String[] {PDEUIMessages.NewProjectCreationPage_target_version_range_3_5, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
@@ -167,16 +164,12 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fUpdateRefsCheck.setLayoutData(gd);
 		//enable by default
 		fUpdateRefsCheck.setSelection(false);
-		fUpdateRefsCheck.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (getNextPage() instanceof NewLibraryPluginCreationUpdateRefPage) {
-					((NewLibraryPluginCreationUpdateRefPage) getNextPage()).setEnable(fUpdateRefsCheck.getSelection());
-				}
-				getContainer().updateButtons();
+		fUpdateRefsCheck.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (getNextPage() instanceof NewLibraryPluginCreationUpdateRefPage) {
+				((NewLibraryPluginCreationUpdateRefPage) getNextPage()).setEnable(fUpdateRefsCheck.getSelection());
 			}
-
-		});
+			getContainer().updateButtons();
+		}));
 	}
 
 	/**
@@ -202,12 +195,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 		// Set data
 		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size() - 1]));
-		fEEChoice.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				validatePage();
-			}
-		});
+		fEEChoice.addSelectionListener(widgetSelectedAdapter(e -> validatePage()));
 
 		// Set default EE based on strict match to default VM
 		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();

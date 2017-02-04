@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Vector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -28,8 +30,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -93,18 +93,15 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		String label = PDEUIMessages.ManifestEditor_ExportSection_fullExport;
 		fFullExportButton = toolkit.createButton(container, label, SWT.RADIO);
 		fFullExportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fFullExportButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					if (fCurrentLibrary != null)
-						fCurrentLibrary.setExported(fFullExportButton.getSelection());
-					getTablePart().setButtonEnabled(0, !fFullExportButton.getSelection());
-					getTablePart().setButtonEnabled(1, false);
-				} catch (CoreException e1) {
-				}
+		fFullExportButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			try {
+				if (fCurrentLibrary != null)
+					fCurrentLibrary.setExported(fFullExportButton.getSelection());
+				getTablePart().setButtonEnabled(0, !fFullExportButton.getSelection());
+				getTablePart().setButtonEnabled(1, false);
+			} catch (CoreException e1) {
 			}
-		});
+		}));
 
 		label = PDEUIMessages.ManifestEditor_ExportSection_selectedExport;
 		fSelectedExportButton = toolkit.createButton(container, label, SWT.RADIO);

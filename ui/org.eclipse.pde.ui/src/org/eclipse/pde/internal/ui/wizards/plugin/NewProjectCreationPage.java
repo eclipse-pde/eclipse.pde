@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.ui.PreferenceConstants;
@@ -22,7 +24,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -83,17 +84,14 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fJavaButton = createButton(group, SWT.CHECK, 2, 0);
 		fJavaButton.setText(PDEUIMessages.ProjectStructurePage_java);
 		fJavaButton.setSelection(true);
-		fJavaButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean enabled = fJavaButton.getSelection();
-				fSourceLabel.setEnabled(enabled);
-				fSourceText.setEnabled(enabled);
-				fOutputlabel.setEnabled(enabled);
-				fOutputText.setEnabled(enabled);
-				setPageComplete(validatePage());
-			}
-		});
+		fJavaButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean enabled = fJavaButton.getSelection();
+			fSourceLabel.setEnabled(enabled);
+			fSourceText.setEnabled(enabled);
+			fOutputlabel.setEnabled(enabled);
+			fOutputText.setEnabled(enabled);
+			setPageComplete(validatePage());
+		}));
 
 		fSourceLabel = createLabel(group, PDEUIMessages.ProjectStructurePage_source);
 		fSourceText = createText(group);
@@ -126,12 +124,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fEclipseButton = createButton(group, SWT.RADIO, 1, 30);
 		fEclipseButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);
 		fEclipseButton.setSelection(!osgiProject);
-		fEclipseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateRuntimeDependency();
-			}
-		});
+		fEclipseButton.addSelectionListener(widgetSelectedAdapter(e -> updateRuntimeDependency()));
 
 		fEclipseCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
 		fEclipseCombo.setItems(new String[] {PDEUIMessages.NewProjectCreationPage_target_version_range_3_5, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});

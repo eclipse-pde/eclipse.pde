@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Iterator;
 import java.util.Set;
 import org.eclipse.core.resources.IProject;
@@ -23,7 +25,8 @@ import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -307,26 +310,16 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	}
 
 	private void hookListeners() {
-		hookSelectionListener(new Button[] {fMarkInternal, fModifyDependencies}, new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setEnabledStates();
-				doProcessorSetting(e.getSource());
-			}
-		});
-		hookSelectionListener(fTopLevelButtons, new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setPageComplete();
-				doProcessorSetting(e.getSource());
-			}
-		});
-		hookSelectionListener(new Button[] {fRemoveImport, fOptionalImport}, new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				doProcessorSetting(e.getSource());
-			}
-		});
+		hookSelectionListener(new Button[] { fMarkInternal, fModifyDependencies }, widgetSelectedAdapter(e -> {
+			setEnabledStates();
+			doProcessorSetting(e.getSource());
+		}));
+		hookSelectionListener(fTopLevelButtons, widgetSelectedAdapter(e -> {
+			setPageComplete();
+			doProcessorSetting(e.getSource());
+		}));
+		hookSelectionListener(new Button[] { fRemoveImport, fOptionalImport },
+				widgetSelectedAdapter(e -> doProcessorSetting(e.getSource())));
 		hookTextListener(new Text[] {fPackageFilter}, e -> doProcessorSetting(e.getSource()));
 	}
 

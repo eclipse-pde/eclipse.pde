@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -27,8 +29,6 @@ import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -126,12 +126,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
-		text.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				new ShowDescriptionAction(fPluginExtensionPoint, true).run();
-			}
-		});
+		text.addSelectionListener(widgetSelectedAdapter(e -> new ShowDescriptionAction(fPluginExtensionPoint, true).run()));
 
 		fTableViewer = new CheckboxTableViewer(new Table(comp, SWT.CHECK | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION));
 		fTableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));

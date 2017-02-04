@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.window.Window;
@@ -176,27 +178,23 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		fBrowseButton = new Button(patchcontainer, SWT.PUSH);
 		fBrowseButton.setText(PDEUIMessages.BaseFeatureSpecPage_browse);
 		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		fBrowseButton.addSelectionListener(new SelectionAdapter() {
+		fBrowseButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			FeatureSelectionDialog dialog = new FeatureSelectionDialog(getShell(), PDECore.getDefault().getFeatureModelManager().getModels(), false);
+			dialog.create();
+			if (dialog.open() == Window.OK) {
+				Object[] result = dialog.getResult();
+				IFeatureModel selectedModel = (IFeatureModel) result[0];
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FeatureSelectionDialog dialog = new FeatureSelectionDialog(getShell(), PDECore.getDefault().getFeatureModelManager().getModels(), false);
-				dialog.create();
-				if (dialog.open() == Window.OK) {
-					Object[] result = dialog.getResult();
-					IFeatureModel selectedModel = (IFeatureModel) result[0];
+				// block auto validation till last setText
+				fSelfModification = true;
+				fFeatureIdText.setText(selectedModel.getFeature().getId());
+				fFeatureNameText.setText(selectedModel.getFeature().getLabel());
+				fSelfModification = false;
+				fFeatureVersionText.setText(selectedModel.getFeature().getVersion());
 
-					// block auto validation till last setText
-					fSelfModification = true;
-					fFeatureIdText.setText(selectedModel.getFeature().getId());
-					fFeatureNameText.setText(selectedModel.getFeature().getLabel());
-					fSelfModification = false;
-					fFeatureVersionText.setText(selectedModel.getFeature().getVersion());
-
-					fFeatureToPatch = selectedModel;
-				}
+				fFeatureToPatch = selectedModel;
 			}
-		});
+		}));
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
 
 		createCommonInput(group);

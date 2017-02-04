@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Path;
@@ -30,7 +32,6 @@ import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -146,12 +147,7 @@ public class LauncherSection extends PDESection {
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
-		fTabFolder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateTabSelection();
-			}
-		});
+		fTabFolder.addSelectionListener(widgetSelectedAdapter(e -> updateTabSelection()));
 		fTabFolder.setUnselectedImageVisible(false);
 
 		fNotebook = toolkit.createComposite(container);
@@ -239,14 +235,11 @@ public class LauncherSection extends PDESection {
 		td = new TableWrapData();
 		td.colspan = 3;
 		fIcoButton.setLayoutData(td);
-		fIcoButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean selected = fIcoButton.getSelection();
-				getLauncherInfo().setUseWinIcoFile(selected);
-				updateWinEntries(selected);
-			}
-		});
+		fIcoButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean selected = fIcoButton.getSelection();
+			getLauncherInfo().setUseWinIcoFile(selected);
+			updateWinEntries(selected);
+		}));
 		fIcoButton.setEnabled(isEditable());
 
 		final IconEntry ientry = new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH);

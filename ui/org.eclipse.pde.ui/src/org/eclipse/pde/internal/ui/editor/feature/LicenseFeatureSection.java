@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.JFaceResources;
@@ -29,7 +31,6 @@ import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -116,12 +117,7 @@ public class LicenseFeatureSection extends PDESection {
 		fLicenseFeatureIDText.setLayoutData(gd);
 
 		fLicenseButton = toolkit.createButton(licenseFeatureComposite, PDEUIMessages.FeatureEditor_licenseFeatureSection_browse, SWT.PUSH);
-		fLicenseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleSelect();
-			}
-		});
+		fLicenseButton.addSelectionListener(widgetSelectedAdapter(e -> handleSelect()));
 
 		label = toolkit.createLabel(licenseFeatureComposite, PDEUIMessages.FeatureEditor_licenseFeatureSection_featureVersion);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
@@ -189,24 +185,18 @@ public class LicenseFeatureSection extends PDESection {
 		gd.heightHint = 50;
 		styledText.setLayoutData(gd);
 
-		fSharedLicenseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (((Button) e.widget).getSelection()) {
-					stackLayout.topControl = licenseFeatureComposite;
-					sectionsComposite.layout();
-				}
+		fSharedLicenseButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (((Button) e.widget).getSelection()) {
+				stackLayout.topControl = licenseFeatureComposite;
+				sectionsComposite.layout();
 			}
-		});
-		fLocalLicenseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (((Button) e.widget).getSelection()) {
-					stackLayout.topControl = localLicenseComposite;
-					sectionsComposite.layout();
-				}
+		}));
+		fLocalLicenseButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (((Button) e.widget).getSelection()) {
+				stackLayout.topControl = localLicenseComposite;
+				sectionsComposite.layout();
 			}
-		});
+		}));
 
 		section.setClient(page);
 
