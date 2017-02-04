@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -39,12 +39,7 @@ public abstract class QueryControl {
 
 	private Group createGroup(Composite parent) {
 		fRadioButton = fToolkit.createButton(parent, "", SWT.RADIO); //$NON-NLS-1$
-		fRadioButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				enable(fRadioButton.getSelection());
-			}
-		});
+		fRadioButton.addSelectionListener(widgetSelectedAdapter(e -> enable(fRadioButton.getSelection())));
 		fGroup = new Group(parent, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		fGroup.setLayoutData(gd);

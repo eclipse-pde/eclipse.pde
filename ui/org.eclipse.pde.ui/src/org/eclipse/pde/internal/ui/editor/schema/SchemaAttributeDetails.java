@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.osgi.util.NLS;
@@ -25,8 +27,6 @@ import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -186,59 +186,47 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 				}
 			}
 		});
-		fDepTrue.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				fAttribute.setDeprecatedProperty(fDepTrue.getSelection());
-			}
-		});
-		fType.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				String typeString = fType.getSelection();
-				if (!typeString.equals(ISchemaAttribute.TYPES[ISchemaAttribute.BOOL_IND]))
-					typeString = ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND];
+		fDepTrue.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			fAttribute.setDeprecatedProperty(fDepTrue.getSelection());
+		}));
+		fType.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			String typeString = fType.getSelection();
+			if (!typeString.equals(ISchemaAttribute.TYPES[ISchemaAttribute.BOOL_IND]))
+				typeString = ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND];
 
-				fAttribute.setType(new SchemaSimpleType(fAttribute.getSchema(), typeString));
+			fAttribute.setType(new SchemaSimpleType(fAttribute.getSchema(), typeString));
 
-				int kind = fType.getSelectionIndex() - 1; // adjust for "boolean" in combo
-				fAttribute.setKind(kind > 0 ? kind : 0); // kind could be -1
+			int kind = fType.getSelectionIndex() - 1; // adjust for "boolean" in combo
+			fAttribute.setKind(kind > 0 ? kind : 0); // kind could be -1
 
-				ISchemaSimpleType type = fAttribute.getType();
-				if (type instanceof SchemaSimpleType && kind != IMetaAttribute.STRING && ((SchemaSimpleType) type).getRestriction() != null) {
-					((SchemaSimpleType) type).setRestriction(null);
-				}
-				fireSelectionChange();
+			ISchemaSimpleType type = fAttribute.getType();
+			if (type instanceof SchemaSimpleType && kind != IMetaAttribute.STRING && ((SchemaSimpleType) type).getRestriction() != null) {
+				((SchemaSimpleType) type).setRestriction(null);
 			}
-		});
-		fUseDefault.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				int i = fUseDefault.getSelectionIndex();
-				setBlockListeners(true);
-				fUseOther.select(i);
-				setBlockListeners(false);
-				doUseChange(i);
-			}
-		});
-		fUseOther.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				int i = fUseOther.getSelectionIndex();
-				setBlockListeners(true);
-				fUseDefault.select(i);
-				setBlockListeners(false);
-				doUseChange(i);
-			}
-		});
+			fireSelectionChange();
+		}));
+		fUseDefault.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			int i = fUseDefault.getSelectionIndex();
+			setBlockListeners(true);
+			fUseOther.select(i);
+			setBlockListeners(false);
+			doUseChange(i);
+		}));
+		fUseOther.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			int i = fUseOther.getSelectionIndex();
+			setBlockListeners(true);
+			fUseDefault.select(i);
+			setBlockListeners(false);
+			doUseChange(i);
+		}));
 	}
 
 	private void doUseChange(int index) {

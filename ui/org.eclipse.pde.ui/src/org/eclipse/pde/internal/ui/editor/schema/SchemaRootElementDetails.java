@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
@@ -19,8 +21,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -104,27 +104,21 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 
 	@Override
 	public void hookListeners() {
-		fDepTrue.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				boolean deprecated = fDepTrue.getSelection();
-				fElement.setDeprecatedProperty(deprecated);
-				fSuggestion.getLabel().setEnabled(deprecated);
-				fSuggestion.getText().setEditable(deprecated);
-			}
-		});
+		fDepTrue.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			boolean deprecated = fDepTrue.getSelection();
+			fElement.setDeprecatedProperty(deprecated);
+			fSuggestion.getLabel().setEnabled(deprecated);
+			fSuggestion.getText().setEditable(deprecated);
+		}));
 
-		fInternalTrue.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				boolean internal = fInternalTrue.getSelection();
-				fElement.setInternal(internal);
-			}
-		});
+		fInternalTrue.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			boolean internal = fInternalTrue.getSelection();
+			fElement.setInternal(internal);
+		}));
 
 		fSuggestion.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override

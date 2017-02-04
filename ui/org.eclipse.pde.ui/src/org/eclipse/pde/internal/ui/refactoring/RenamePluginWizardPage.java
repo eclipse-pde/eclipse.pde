@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -40,12 +40,7 @@ public class RenamePluginWizardPage extends GeneralRenameIDWizardPage {
 		fRenameProject = new Button(composite, SWT.CHECK);
 		fRenameProject.setText(PDEUIMessages.RenamePluginWizardPage_renameProject);
 		fRenameProject.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, true, false, 2, 1));
-		fRenameProject.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				((RefactoringPluginInfo) fInfo).setRenameProject(fRenameProject.getSelection());
-			}
-		});
+		fRenameProject.addSelectionListener(widgetSelectedAdapter(e -> ((RefactoringPluginInfo) fInfo).setRenameProject(fRenameProject.getSelection())));
 		boolean checked = getRefactoringSettings().getBoolean(RENAME_PROJECT);
 		fRenameProject.setSelection(checked);
 		((RefactoringPluginInfo) fInfo).setRenameProject(checked);

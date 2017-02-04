@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -75,18 +77,15 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 
 		fButtons = new Button[fChoices.length];
 
-		SelectionListener listener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Button b = (Button) e.widget;
-				if (isBlocked())
-					return;
-				if (b.getSelection()) {
-					setValue(b.getData().toString());
-					getSection().validateOptions(RadioChoiceOption.this);
-				}
+		SelectionListener listener = widgetSelectedAdapter(e -> {
+			Button b = (Button) e.widget;
+			if (isBlocked())
+				return;
+			if (b.getSelection()) {
+				setValue(b.getData().toString());
+				getSection().validateOptions(RadioChoiceOption.this);
 			}
-		};
+		});
 
 		for (int i = 0; i < fChoices.length; i++) {
 			fButtons[i] = createRadioButton(radioComp, 1, fChoices[i]);

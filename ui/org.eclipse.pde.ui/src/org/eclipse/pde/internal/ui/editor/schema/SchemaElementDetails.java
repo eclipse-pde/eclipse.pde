@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -18,8 +20,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -120,22 +120,16 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 				}
 			}
 		});
-		fDepTrue.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				fElement.setDeprecatedProperty(fDepTrue.getSelection());
-			}
-		});
-		fTransTrue.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				fElement.setTranslatableProperty(fTransTrue.getSelection());
-			}
-		});
+		fDepTrue.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			fElement.setDeprecatedProperty(fDepTrue.getSelection());
+		}));
+		fTransTrue.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			fElement.setTranslatableProperty(fTransTrue.getSelection());
+		}));
 	}
 
 	@Override

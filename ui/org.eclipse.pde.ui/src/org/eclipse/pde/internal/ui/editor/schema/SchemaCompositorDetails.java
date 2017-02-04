@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
@@ -17,8 +19,6 @@ import org.eclipse.pde.internal.core.schema.SchemaCompositor;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -73,31 +73,22 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 
 	@Override
 	public void hookListeners() {
-		hookMinOccur(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				fCompositor.setMinOccurs(getMinOccur());
-			}
-		});
-		hookMaxOccur(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				fCompositor.setMaxOccurs(getMaxOccur());
-			}
-		});
-		fKind.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				fCompositor.setKind(fKind.getSelectionIndex() + 1);
-				setDecription(NLS.bind(PDEUIMessages.SchemaCompositorDetails_description, fCompositor.getName()));
-			}
-		});
+		hookMinOccur(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			fCompositor.setMinOccurs(getMinOccur());
+		}));
+		hookMaxOccur(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			fCompositor.setMaxOccurs(getMaxOccur());
+		}));
+		fKind.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			fCompositor.setKind(fKind.getSelectionIndex() + 1);
+			setDecription(NLS.bind(PDEUIMessages.SchemaCompositorDetails_description, fCompositor.getName()));
+		}));
 	}
 
 	@Override

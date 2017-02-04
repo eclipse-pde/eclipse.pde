@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -72,22 +72,16 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 
 	@Override
 	public void hookListeners() {
-		hookMinOccur(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				fElement.setMinOccurs(getMinOccur());
-			}
-		});
-		hookMaxOccur(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				fElement.setMaxOccurs(getMaxOccur());
-			}
-		});
+		hookMinOccur(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			fElement.setMinOccurs(getMinOccur());
+		}));
+		hookMaxOccur(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			fElement.setMaxOccurs(getMaxOccur());
+		}));
 		fReferenceLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {

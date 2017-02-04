@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.window.Window;
@@ -198,21 +200,11 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fProductCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProductCombo.setItems(TargetPlatform.getProducts());
 		fProductCombo.add(""); //$NON-NLS-1$
-		fProductCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				getProduct().setProductId(fProductCombo.getSelection());
-			}
-		});
+		fProductCombo.addSelectionListener(widgetSelectedAdapter(e -> getProduct().setProductId(fProductCombo.getSelection())));
 
 		Button button = toolkit.createButton(client, PDEUIMessages.ProductInfoSection_new, SWT.PUSH);
 		button.setEnabled(isEditable());
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleNewDefinition();
-			}
-		});
+		button.addSelectionListener(widgetSelectedAdapter(e -> handleNewDefinition()));
 		fProductCombo.getControl().setEnabled(isEditable());
 	}
 
@@ -240,12 +232,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fAppCombo.getControl().setLayoutData(gd);
 		fAppCombo.setItems(TargetPlatform.getApplications());
 		fAppCombo.add(""); //$NON-NLS-1$
-		fAppCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				getProduct().setApplication(fAppCombo.getSelection());
-			}
-		});
+		fAppCombo.addSelectionListener(widgetSelectedAdapter(e -> getProduct().setApplication(fAppCombo.getSelection())));
 
 		fAppCombo.getControl().setEnabled(isEditable());
 	}
@@ -284,17 +271,14 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		gd.horizontalIndent = 25;
 		fPluginButton.setLayoutData(gd);
 		fPluginButton.setEnabled(isEditable());
-		fPluginButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean selected = fPluginButton.getSelection();
-				IProduct product = getProduct();
-				if (selected == product.useFeatures()) {
-					product.setUseFeatures(!selected);
-					((ProductEditor) getPage().getEditor()).updateConfigurationPage();
-				}
+		fPluginButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean selected = fPluginButton.getSelection();
+			IProduct product = getProduct();
+			if (selected == product.useFeatures()) {
+				product.setUseFeatures(!selected);
+				((ProductEditor) getPage().getEditor()).updateConfigurationPage();
 			}
-		});
+		}));
 
 		fFeatureButton = toolkit.createButton(comp, PDEUIMessages.ProductInfoSection_features, SWT.RADIO);
 		gd = new GridData();

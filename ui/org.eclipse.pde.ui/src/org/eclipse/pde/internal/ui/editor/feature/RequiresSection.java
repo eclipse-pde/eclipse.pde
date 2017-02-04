@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.core.runtime.*;
@@ -38,8 +40,6 @@ import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -112,14 +112,11 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		gd.horizontalSpan = 2;
 		fSyncButton.setLayoutData(gd);
 
-		fSyncButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IEclipsePreferences eclipsePrefs = Platform.getPreferencesService().getRootNode();
-				Preferences prefs = eclipsePrefs.node(Plugin.PLUGIN_PREFERENCE_SCOPE).node(IPDEUIConstants.PLUGIN_ID);
-				prefs.putBoolean(model.getFeature().getLabel(), fSyncButton.getSelection());
-			}
-		});
+		fSyncButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			IEclipsePreferences eclipsePrefs = Platform.getPreferencesService().getRootNode();
+			Preferences prefs = eclipsePrefs.node(Plugin.PLUGIN_PREFERENCE_SCOPE).node(IPDEUIConstants.PLUGIN_ID);
+			prefs.putBoolean(model.getFeature().getLabel(), fSyncButton.getSelection());
+		}));
 
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 

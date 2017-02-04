@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -27,8 +29,6 @@ import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -87,12 +87,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 
 		fProductButton = new Button(fGroup, SWT.RADIO);
 		fProductButton.setText(PDEUIMessages.ProductFileWizadPage_existingProduct);
-		fProductButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fProductCombo.setEnabled(fProductButton.getSelection());
-			}
-		});
+		fProductButton.addSelectionListener(widgetSelectedAdapter(e -> fProductCombo.setEnabled(fProductButton.getSelection())));
 
 		fProductCombo = new Combo(fGroup, SWT.SINGLE | SWT.READ_ONLY);
 		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -100,12 +95,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 
 		fLaunchConfigButton = new Button(fGroup, SWT.RADIO);
 		fLaunchConfigButton.setText(PDEUIMessages.ProductFileWizadPage_existingLaunchConfig);
-		fLaunchConfigButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fLaunchConfigCombo.setEnabled(fLaunchConfigButton.getSelection());
-			}
-		});
+		fLaunchConfigButton.addSelectionListener(widgetSelectedAdapter(e -> fLaunchConfigCombo.setEnabled(fLaunchConfigButton.getSelection())));
 
 		fLaunchConfigCombo = new Combo(fGroup, SWT.SINGLE | SWT.READ_ONLY);
 		fLaunchConfigCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

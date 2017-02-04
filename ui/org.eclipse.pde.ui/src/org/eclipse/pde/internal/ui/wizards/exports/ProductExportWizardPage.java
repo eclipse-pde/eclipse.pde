@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -18,8 +20,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -130,12 +130,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		if (getWizard().getPages().length > 1) {
 			fMultiPlatform = new Button(group, SWT.CHECK);
 			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
-			fMultiPlatform.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					getContainer().updateButtons();
-				}
-			});
+			fMultiPlatform.addSelectionListener(widgetSelectedAdapter(e -> getContainer().updateButtons()));
 		}
 
 		fAllowBinaryCycles = new Button(group, SWT.CHECK);
@@ -170,12 +165,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	}
 
 	protected void hookListeners() {
-		fExportSourceButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fExportSourceCombo.setEnabled(fExportSourceButton.getSelection());
-			}
-		});
+		fExportSourceButton.addSelectionListener(widgetSelectedAdapter(e -> fExportSourceCombo.setEnabled(fExportSourceButton.getSelection())));
 	}
 
 	protected void updateProductFields() {
