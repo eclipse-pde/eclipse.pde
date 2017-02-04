@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -59,20 +59,17 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 			fCombo.add(choice[1], i);
 			fCombo.setEnabled(isEnabled());
 		}
-		fCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (isBlocked())
-					return;
-				if (fCombo.getSelectionIndex() != -1) {
-					String[] choice = fChoices[fCombo.getSelectionIndex()];
-					// Since this is being fired by the combo, suppress updates
-					// back to the control
-					setValue(choice[0], false);
-					getSection().validateOptions(ComboChoiceOption.this);
-				}
+		fCombo.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (isBlocked())
+				return;
+			if (fCombo.getSelectionIndex() != -1) {
+				String[] choice = fChoices[fCombo.getSelectionIndex()];
+				// Since this is being fired by the combo, suppress updates
+				// back to the control
+				setValue(choice[0], false);
+				getSection().validateOptions(ComboChoiceOption.this);
 			}
-		});
+		}));
 
 		if (getChoice() != null)
 			selectChoice(getChoice());

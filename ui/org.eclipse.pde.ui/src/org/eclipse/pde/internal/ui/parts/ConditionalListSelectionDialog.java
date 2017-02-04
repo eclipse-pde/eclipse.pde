@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.FilteredList;
@@ -48,15 +48,12 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 		final Button button = new Button(comp, SWT.CHECK);
 		Assert.isNotNull(fButtonText);
 		button.setText(fButtonText);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (button.getSelection())
-					setListElements(allElements);
-				else
-					setListElements(fElements);
-			}
-		});
+		button.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (button.getSelection())
+				setListElements(allElements);
+			else
+				setListElements(fElements);
+		}));
 		return comp;
 	}
 

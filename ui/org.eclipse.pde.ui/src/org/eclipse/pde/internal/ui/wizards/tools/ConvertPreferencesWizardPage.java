@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -23,7 +25,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -80,12 +81,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		Button browse = new Button(group, SWT.PUSH);
 		browse.setText(PDEUIMessages.ConvertPreferencesWizardPage_source_browse);
 		browse.setLayoutData(new GridData());
-		browse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleBrowsePreferences();
-			}
-		});
+		browse.addSelectionListener(widgetSelectedAdapter(e -> handleBrowsePreferences()));
 		SWTUtil.setButtonDimensionHint(browse);
 
 		File prefs = getPreferencesFile();
@@ -121,12 +117,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		browse = new Button(group, SWT.PUSH);
 		browse.setText(PDEUIMessages.ConvertPreferencesWizardPage_target_browse);
 		browse.setLayoutData(new GridData());
-		browse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleBrowsePluginCustomization();
-			}
-		});
+		browse.addSelectionListener(widgetSelectedAdapter(e -> handleBrowsePluginCustomization()));
 		SWTUtil.setButtonDimensionHint(browse);
 		group = new Group(container, SWT.NONE);
 		group.setText(PDEUIMessages.ConvertPreferencesWizardPage_options);

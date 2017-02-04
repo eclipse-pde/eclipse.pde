@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.properties;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.HashMap;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
@@ -18,8 +20,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.CompilersPreferencePage;
 import org.eclipse.pde.internal.ui.preferences.PDECompilersConfigurationBlock;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
@@ -58,28 +58,22 @@ public class CompilersPropertyPage extends PropertyPage {
 		fProjectSpecific = new Button(tcomp, SWT.CHECK);
 		fProjectSpecific.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, true, false));
 		fProjectSpecific.setText(PDEUIMessages.CompilersPropertyPage_useprojectsettings_label);
-		fProjectSpecific.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean psp = fProjectSpecific.getSelection();
-				fBlock.useProjectSpecificSettings(psp);
-				if (fWorkspaceLink != null) {
-					fWorkspaceLink.setEnabled(!psp);
-				}
+		fProjectSpecific.addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean psp = fProjectSpecific.getSelection();
+			fBlock.useProjectSpecificSettings(psp);
+			if (fWorkspaceLink != null) {
+				fWorkspaceLink.setEnabled(!psp);
 			}
-		});
+		}));
 
 		if (offerLink()) {
 			fWorkspaceLink = new Link(tcomp, SWT.NONE);
 			fWorkspaceLink.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_change);
-			fWorkspaceLink.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					HashMap<String, Boolean> data = new HashMap<>();
-					data.put(CompilersPreferencePage.NO_LINK, Boolean.TRUE);
-					SWTFactory.showPreferencePage(getShell(), "org.eclipse.pde.ui.CompilersPreferencePage", data); //$NON-NLS-1$
-				}
-			});
+			fWorkspaceLink.addSelectionListener(widgetSelectedAdapter(e -> {
+				HashMap<String, Boolean> data = new HashMap<>();
+				data.put(CompilersPreferencePage.NO_LINK, Boolean.TRUE);
+				SWTFactory.showPreferencePage(getShell(), "org.eclipse.pde.ui.CompilersPreferencePage", data); //$NON-NLS-1$
+			}));
 		}
 
 		fBlock = new PDECompilersConfigurationBlock(getProject(), (IWorkbenchPreferenceContainer) getContainer());

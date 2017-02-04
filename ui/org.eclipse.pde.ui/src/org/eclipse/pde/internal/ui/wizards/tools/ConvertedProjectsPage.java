@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 import org.eclipse.core.resources.IProject;
@@ -21,8 +23,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -92,21 +92,15 @@ public class ConvertedProjectsPage extends WizardPage {
 		Composite buttonContainer = SWTFactory.createComposite(container, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 
 		fSelectButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.ConvertedProjectsPage_SelectAll, null);
-		fSelectButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fProjectViewer.setAllChecked(true);
-				updateButtons();
-			}
-		});
+		fSelectButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fProjectViewer.setAllChecked(true);
+			updateButtons();
+		}));
 		fDeselectButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.ConvertedProjectsPage_DeselectAll, null);
-		fDeselectButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fProjectViewer.setAllChecked(false);
-				updateButtons();
-			}
-		});
+		fDeselectButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fProjectViewer.setAllChecked(false);
+			updateButtons();
+		}));
 		updateButtons();
 
 		fApiAnalysisButton = SWTFactory.createCheckButton(container, PDEUIMessages.PluginContentPage_enable_api_analysis, null, false, 2);

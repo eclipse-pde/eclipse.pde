@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.AbstractBundleContainer;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
@@ -153,31 +154,25 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 		gd.horizontalAlignment = SWT.RIGHT;
 
 		Button browseButton = SWTFactory.createPushButton(buttonComp, Messages.AddDirectoryContainerPage_3, null);
-		browseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setFilterPath(fInstallLocation.getText());
-				dialog.setText(Messages.AddDirectoryContainerPage_4);
-				dialog.setMessage(Messages.AddDirectoryContainerPage_5);
-				String result = dialog.open();
-				if (result != null)
-					fInstallLocation.setText(result);
-			}
-		});
+		browseButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			DirectoryDialog dialog = new DirectoryDialog(getShell());
+			dialog.setFilterPath(fInstallLocation.getText());
+			dialog.setText(Messages.AddDirectoryContainerPage_4);
+			dialog.setMessage(Messages.AddDirectoryContainerPage_5);
+			String result = dialog.open();
+			if (result != null)
+				fInstallLocation.setText(result);
+		}));
 
 		Button variablesButton = SWTFactory.createPushButton(buttonComp, Messages.EditDirectoryContainerPage_1, null);
-		variablesButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
-				dialog.open();
-				String variable = dialog.getVariableExpression();
-				if (variable != null) {
-					fInstallLocation.setText(fInstallLocation.getText() + variable);
-				}
+		variablesButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+			dialog.open();
+			String variable = dialog.getVariableExpression();
+			if (variable != null) {
+				fInstallLocation.setText(fInstallLocation.getText() + variable);
 			}
-		});
+		}));
 	}
 
 	/**

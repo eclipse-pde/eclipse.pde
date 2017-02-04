@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import org.eclipse.pde.launching.IPDELauncherConstants;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
@@ -26,8 +28,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.FileNameFilter;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -55,16 +55,13 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fGenerateFileButton.setLayoutData(gd);
-		fGenerateFileButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				enableBrowseSection(!fGenerateFileButton.getSelection());
-				boolean generateConfig = fGenerateFileButton.getSelection();
-				fLocationText.setEditable(!generateConfig);
-				if (generateConfig)
-					fLocationText.setEnabled(true);
-			}
-		});
+		fGenerateFileButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			enableBrowseSection(!fGenerateFileButton.getSelection());
+			boolean generateConfig = fGenerateFileButton.getSelection();
+			fLocationText.setEditable(!generateConfig);
+			if (generateConfig)
+				fLocationText.setEnabled(true);
+		}));
 
 		fUseTemplateButton = new Button(group, SWT.RADIO);
 		fUseTemplateButton.setText(PDEUIMessages.ConfigurationTab_existingConfigIni);

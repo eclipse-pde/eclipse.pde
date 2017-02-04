@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -18,7 +20,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -46,20 +47,17 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		gd.horizontalSpan = 2;
 		fUseDefaultLocationButton.setLayoutData(gd);
 		fUseDefaultLocationButton.setText(PDEUIMessages.ConfigurationTab_useDefaultLoc);
-		fUseDefaultLocationButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean useDefaultArea = fUseDefaultLocationButton.getSelection();
-				if (useDefaultArea)
-					fLocationText.setText(DEFAULT_DIR + fLastKnownConfigName);
-				else
-					fLocationText.setText(fLastEnteredConfigArea);
-				enableBrowseSection(!useDefaultArea);
-				fLocationText.setEditable(!useDefaultArea);
-				if (useDefaultArea)
-					fLocationText.setEnabled(true);
-			}
-		});
+		fUseDefaultLocationButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean useDefaultArea = fUseDefaultLocationButton.getSelection();
+			if (useDefaultArea)
+				fLocationText.setText(DEFAULT_DIR + fLastKnownConfigName);
+			else
+				fLocationText.setText(fLastEnteredConfigArea);
+			enableBrowseSection(!useDefaultArea);
+			fLocationText.setEditable(!useDefaultArea);
+			if (useDefaultArea)
+				fLocationText.setEnabled(true);
+		}));
 
 		createText(group, PDEUIMessages.ConfigurationTab_configLog, 20);
 		fLocationText.addModifyListener(e -> {

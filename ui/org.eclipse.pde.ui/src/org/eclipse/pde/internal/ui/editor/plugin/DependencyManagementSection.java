@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.ByteArrayInputStream;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -48,8 +50,6 @@ import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -196,12 +196,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fRequireBundleButton.setLayoutData(gd);
-		fRequireBundleButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				savePreferences();
-			}
-		});
+		fRequireBundleButton.addSelectionListener(widgetSelectedAdapter(e -> savePreferences()));
 
 		fImportPackageButton = toolkit.createButton(comp, "Import-Package", SWT.RADIO); //$NON-NLS-1$
 		gd = new GridData();

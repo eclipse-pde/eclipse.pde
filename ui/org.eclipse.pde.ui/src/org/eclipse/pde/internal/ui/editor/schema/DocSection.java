@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
@@ -82,12 +84,7 @@ public class DocSection extends PDESection {
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
-		fTabFolder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateTabSelection();
-			}
-		});
+		fTabFolder.addSelectionListener(widgetSelectedAdapter(e -> updateTabSelection()));
 
 		int styles = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL;
 		fSourceViewer = new SourceViewer(container, null, styles);

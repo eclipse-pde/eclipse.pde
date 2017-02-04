@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -36,8 +38,6 @@ import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -357,12 +357,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		// TODO Use a link instead of a button? To be consistent with the install wizard
 		fPropertiesButton = SWTFactory.createPushButton(detailsGroup, Messages.EditIUContainerPage_13, null);
 		((GridData) fPropertiesButton.getLayoutData()).horizontalAlignment = SWT.RIGHT;
-		fPropertiesButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				fPropertyAction.run();
-			}
-		});
+		fPropertiesButton.addSelectionListener(widgetSelectedAdapter(event -> fPropertyAction.run()));
 		fPropertyAction = new PropertyDialogAction(new SameShellProvider(getShell()), fAvailableIUGroup.getStructuredViewer());
 		fPropertiesButton.setEnabled(false);
 	}
@@ -375,52 +370,24 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		Composite checkComp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		checkComp.setLayout(new GridLayout(2, true));
 		fShowCategoriesButton = SWTFactory.createCheckButton(checkComp, Messages.EditIUContainerPage_14, null, true, 1);
-		fShowCategoriesButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateViewContext();
-			}
-		});
+		fShowCategoriesButton.addSelectionListener(widgetSelectedAdapter(e -> updateViewContext()));
 		fShowOldVersionsButton = SWTFactory.createCheckButton(checkComp, Messages.EditIUContainerPage_15, null, true, 1);
-		fShowOldVersionsButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateViewContext();
-			}
-		});
+		fShowOldVersionsButton.addSelectionListener(widgetSelectedAdapter(e -> updateViewContext()));
 
 		Group slicerGroup = SWTFactory.createGroup(parent, Messages.EditIUContainerPage_1, 1, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createWrapLabel(slicerGroup, Messages.EditIUContainerPage_2, 1, 400);
 		fIncludeRequiredButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_3, null, true, 1);
-		fIncludeRequiredButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fAllPlatformsButton.setEnabled(!fIncludeRequiredButton.getSelection());
-				warnIfGlobalSettingChanged();
-			}
-		});
+		fIncludeRequiredButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fAllPlatformsButton.setEnabled(!fIncludeRequiredButton.getSelection());
+			warnIfGlobalSettingChanged();
+		}));
 		fAllPlatformsButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_8, null, false, 1);
-		fAllPlatformsButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				warnIfGlobalSettingChanged();
-			}
-		});
+		fAllPlatformsButton.addSelectionListener(widgetSelectedAdapter(e -> warnIfGlobalSettingChanged()));
 		((GridData) fAllPlatformsButton.getLayoutData()).horizontalIndent = 10;
 		fIncludeSourceButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_16, null, true, 1);
-		fIncludeSourceButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				warnIfGlobalSettingChanged();
-			}
-		});
+		fIncludeSourceButton.addSelectionListener(widgetSelectedAdapter(e -> warnIfGlobalSettingChanged()));
 		fConfigurePhaseButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_IncludeConfigurePhase, null, true, 1);
-		fConfigurePhaseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				warnIfGlobalSettingChanged();
-			}
-		});
+		fConfigurePhaseButton.addSelectionListener(widgetSelectedAdapter(e -> warnIfGlobalSettingChanged()));
 
 	}
 

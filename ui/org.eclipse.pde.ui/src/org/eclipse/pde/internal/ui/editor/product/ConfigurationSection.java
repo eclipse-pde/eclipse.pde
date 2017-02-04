@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -30,8 +32,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -89,14 +89,11 @@ public class ConfigurationSection extends PDESection {
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
-		fTabFolder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (fCustomEntry.isDirty())
-					fCustomEntry.commit();
-				refresh();
-			}
-		});
+		fTabFolder.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (fCustomEntry.isDirty())
+				fCustomEntry.commit();
+			refresh();
+		}));
 		fTabFolder.setUnselectedImageVisible(false);
 
 		fDefault = toolkit.createButton(client, PDEUIMessages.ConfigurationSection_default, SWT.RADIO);
@@ -104,20 +101,17 @@ public class ConfigurationSection extends PDESection {
 		gd.horizontalSpan = 3;
 		fDefault.setLayoutData(gd);
 		fDefault.setEnabled(isEditable());
-		fDefault.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fBlockChanges) {
-					boolean selected = fDefault.getSelection();
-					IConfigurationFileInfo info = getConfigurationFileInfo();
-					String os = getOS(fLastTab);
-					info.setUse(os, selected ? "default" : "custom"); //$NON-NLS-1$ //$NON-NLS-2$
-					info.setPath(os, selected == true ? null : fCustomEntry.getValue());
-					fCustomEntry.setValue(selected == true ? null : fCustomEntry.getValue(), true);
-					fCustomEntry.setEditable(!selected);
-				}
+		fDefault.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fBlockChanges) {
+				boolean selected = fDefault.getSelection();
+				IConfigurationFileInfo info = getConfigurationFileInfo();
+				String os = getOS(fLastTab);
+				info.setUse(os, selected ? "default" : "custom"); //$NON-NLS-1$ //$NON-NLS-2$
+				info.setPath(os, selected == true ? null : fCustomEntry.getValue());
+				fCustomEntry.setValue(selected == true ? null : fCustomEntry.getValue(), true);
+				fCustomEntry.setEditable(!selected);
 			}
-		});
+		}));
 
 		fCustom = toolkit.createButton(client, PDEUIMessages.ConfigurationSection_existing, SWT.RADIO);
 		gd = new GridData();

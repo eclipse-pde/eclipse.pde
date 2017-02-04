@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.commands.common.CommandException;
@@ -130,24 +132,14 @@ public class CommandDetails {
 
 		fSurroundCopyText = fToolkit.createButton(preLabelComp, PDEUIMessages.CommandDetails_includeMarkup, SWT.CHECK);
 		fSurroundCopyText.setToolTipText(PDEUIMessages.CommandDetails_markupTooltip);
-		fSurroundCopyText.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updatePreviewText();
-			}
-		});
+		fSurroundCopyText.addSelectionListener(widgetSelectedAdapter(e -> updatePreviewText()));
 
 		fFilterCombo = new Combo(preLabelComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		CommandCopyFilter[] filters = CommandCopyFilter.getFilters();
 		for (CommandCopyFilter filter : filters)
 			fFilterCombo.add(filter.getLabelText());
 		fFilterCombo.select(CommandCopyFilter.indexOf(CommandCopyFilter.NONE));
-		fFilterCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updatePreviewText();
-			}
-		});
+		fFilterCombo.addSelectionListener(widgetSelectedAdapter(e -> updatePreviewText()));
 		fToolkit.adapt(fFilterCombo, true, true);
 
 		fComPrev = fToolkit.createText(parent, "", SWT.MULTI | SWT.V_SCROLL | SWT.BORDER | SWT.WRAP); //$NON-NLS-1$
