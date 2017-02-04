@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -63,18 +65,15 @@ public class ChoiceOption extends TemplateOption {
 
 		buttons = new Button[choices.length];
 
-		SelectionListener listener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Button b = (Button) e.widget;
-				if (blockListener)
-					return;
-				if (b.getSelection()) {
-					ChoiceOption.super.setValue(b.getData().toString());
-					getSection().validateOptions(ChoiceOption.this);
-				}
+		SelectionListener listener = widgetSelectedAdapter(e -> {
+			Button b = (Button) e.widget;
+			if (blockListener)
+				return;
+			if (b.getSelection()) {
+				ChoiceOption.super.setValue(b.getData().toString());
+				getSection().validateOptions(ChoiceOption.this);
 			}
-		};
+		});
 
 		for (int i = 0; i < choices.length; i++) {
 			String[] choice = choices[i];

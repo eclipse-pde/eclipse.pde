@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -33,7 +35,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -92,12 +93,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			fPluginBrowseButton.setLayoutData(gd);
 			fPluginBrowseButton.setText(PDEUIMessages.BaseExtensionPointMainPage_pluginBrowse);
 			fPluginBrowseButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_pluginId_tooltip);
-			fPluginBrowseButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					handlePluginBrowse();
-				}
-			});
+			fPluginBrowseButton.addSelectionListener(widgetSelectedAdapter(e -> handlePluginBrowse()));
 			SWTUtil.setButtonDimensionHint(fPluginBrowseButton);
 		}
 		label = new Label(container, SWT.NONE);
@@ -129,12 +125,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			fFindLocationButton.setLayoutData(gd);
 			fFindLocationButton.setText(PDEUIMessages.BaseExtensionPointMainPage_findBrowse);
 			fFindLocationButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_tooltip);
-			fFindLocationButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					handleSchemaLocation();
-				}
-			});
+			fFindLocationButton.addSelectionListener(widgetSelectedAdapter(e -> handleSchemaLocation()));
 			SWTUtil.setButtonDimensionHint(fFindLocationButton);
 		}
 		label = new Label(container, SWT.NONE);

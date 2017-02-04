@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
@@ -87,21 +89,18 @@ public abstract class BaseBlock {
 		fLocationText.setLayoutData(gd);
 		fLocationText.addModifyListener(fListener);
 
-		fLocationLink.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					String path = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(getLocation(), false);
-					File f = new File(path);
-					if (f.exists())
-						Program.launch(f.getCanonicalPath());
-					else
-						MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), isFile() ? PDEUIMessages.BaseBlock_fileTitle : PDEUIMessages.BaseBlock_directoryTitle, isFile() ? PDEUIMessages.BaseBlock_fileNotFoundMessage : PDEUIMessages.BaseBlock_directoryNotFoundMessage);
-				} catch (Exception ex) {
-					MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), isFile() ? PDEUIMessages.BaseBlock_fileTitle : PDEUIMessages.BaseBlock_directoryTitle, isFile() ? PDEUIMessages.BaseBlock_fileErrorMessage : PDEUIMessages.BaseBlock_directoryErrorMessage);
-				}
+		fLocationLink.addSelectionListener(widgetSelectedAdapter(e -> {
+			try {
+				String path = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(getLocation(), false);
+				File f = new File(path);
+				if (f.exists())
+					Program.launch(f.getCanonicalPath());
+				else
+					MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), isFile() ? PDEUIMessages.BaseBlock_fileTitle : PDEUIMessages.BaseBlock_directoryTitle, isFile() ? PDEUIMessages.BaseBlock_fileNotFoundMessage : PDEUIMessages.BaseBlock_directoryNotFoundMessage);
+			} catch (Exception ex) {
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), isFile() ? PDEUIMessages.BaseBlock_fileTitle : PDEUIMessages.BaseBlock_directoryTitle, isFile() ? PDEUIMessages.BaseBlock_fileErrorMessage : PDEUIMessages.BaseBlock_directoryErrorMessage);
 			}
-		});
+		}));
 
 	}
 

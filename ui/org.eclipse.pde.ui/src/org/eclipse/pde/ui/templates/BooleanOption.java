@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -91,13 +91,10 @@ public class BooleanOption extends TemplateOption {
 		gd.horizontalSpan = span;
 		button.setLayoutData(gd);
 		button.setSelection(isSelected());
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				BooleanOption.super.setValue(button.getSelection() ? Boolean.TRUE : Boolean.FALSE);
-				getSection().validateOptions(BooleanOption.this);
-			}
-		});
+		button.addSelectionListener(widgetSelectedAdapter(e -> {
+			BooleanOption.super.setValue(button.getSelection() ? Boolean.TRUE : Boolean.FALSE);
+			getSection().validateOptions(BooleanOption.this);
+		}));
 		button.setEnabled(isEnabled());
 	}
 

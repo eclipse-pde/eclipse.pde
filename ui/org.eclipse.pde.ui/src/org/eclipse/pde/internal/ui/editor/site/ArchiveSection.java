@@ -13,6 +13,8 @@
 
 package org.eclipse.pde.internal.ui.editor.site;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
@@ -24,8 +26,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -131,31 +131,18 @@ public class ArchiveSection extends PDESection {
 		container.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		fAddButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_add, SWT.PUSH);
 		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fAddButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				showDialog(null);
-			}
-		});
+		fAddButton.addSelectionListener(widgetSelectedAdapter(e -> showDialog(null)));
 		fAddButton.setEnabled(isEditable());
 		fEditButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_edit, SWT.PUSH);
 		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fEditButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection ssel = (IStructuredSelection) fViewer.getSelection();
-				if (ssel != null && ssel.size() == 1)
-					showDialog((ISiteArchive) ssel.getFirstElement());
-			}
-		});
+		fEditButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			IStructuredSelection ssel = (IStructuredSelection) fViewer.getSelection();
+			if (ssel != null && ssel.size() == 1)
+				showDialog((ISiteArchive) ssel.getFirstElement());
+		}));
 		fRemoveButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_remove, SWT.PUSH);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleDelete();
-			}
-		});
+		fRemoveButton.addSelectionListener(widgetSelectedAdapter(e -> handleDelete()));
 		fRemoveButton.setEnabled(false);
 		fEditButton.setEnabled(false);
 		toolkit.paintBordersFor(container);

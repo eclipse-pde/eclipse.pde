@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import com.ibm.icu.text.MessageFormat;
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +36,6 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.build.BaseBuildAction;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
@@ -187,16 +187,13 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 			GridData data = new GridData();
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			link.setLayoutData(data);
-			link.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					try {
-						Program.launch(fLogLocation.getCanonicalPath());
-					} catch (IOException ex) {
-						PDEPlugin.log(ex);
-					}
+			link.addSelectionListener(widgetSelectedAdapter(e -> {
+				try {
+					Program.launch(fLogLocation.getCanonicalPath());
+				} catch (IOException ex) {
+					PDEPlugin.log(ex);
 				}
-			});
+			}));
 			return link;
 		}
 	}

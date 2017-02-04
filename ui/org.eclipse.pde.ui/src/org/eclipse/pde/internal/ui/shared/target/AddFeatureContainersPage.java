@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +25,6 @@ import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -93,21 +93,15 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 
 		Composite buttonComp = SWTFactory.createComposite(tableComp, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 		fSelectAllButton = SWTFactory.createPushButton(buttonComp, Messages.AddFeatureContainersPage_0, null);
-		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fFeatureTable.setAllChecked(true);
-				checkStateChanged();
-			}
-		});
+		fSelectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fFeatureTable.setAllChecked(true);
+			checkStateChanged();
+		}));
 		fDeselectAllButton = SWTFactory.createPushButton(buttonComp, Messages.AddFeatureContainersPage_1, null);
-		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fFeatureTable.setAllChecked(false);
-				checkStateChanged();
-			}
-		});
+		fDeselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fFeatureTable.setAllChecked(false);
+			checkStateChanged();
+		}));
 
 		fIncludeVersionButton = SWTFactory.createCheckButton(tableComp, Messages.AddFeatureContainerPage_3, null, false, 2);
 	}

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -23,7 +25,7 @@ import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.PDESourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -332,14 +334,11 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		gd = new GridData();
 		gd.horizontalIndent = 10;
 		fUnboundSelect.setLayoutData(gd);
-		fUnboundSelect.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (blockListeners())
-					return;
-				fMaxOccurSpinner.setEnabled(!fUnboundSelect.getSelection() && isEditableElement());
-			}
-		});
+		fUnboundSelect.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (blockListeners())
+				return;
+			fMaxOccurSpinner.setEnabled(!fUnboundSelect.getSelection() && isEditableElement());
+		}));
 
 		return comp;
 	}

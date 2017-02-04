@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.ui.shared.target;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.IStatus;
@@ -22,8 +24,6 @@ import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -152,26 +152,20 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 		Composite buttonComp = SWTFactory.createComposite(treeComp, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 
 		fSelectAllButton = SWTFactory.createPushButton(buttonComp, Messages.ArgumentsFromContainerSelectionDialog_3, null);
-		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fTree.setAllChecked(true);
-				// TODO These buttons don't update as the check state changes
+		fSelectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fTree.setAllChecked(true);
+			// TODO These buttons don't update as the check state changes
 //				fSelectAllButton.setEnabled(true);
 //				fDeselectAllButton.setEnabled(false);
 //				fTree.getTree().getItemCount();
-				updateOKButton();
-			}
-		});
+			updateOKButton();
+		}));
 
 		fDeselectAllButton = SWTFactory.createPushButton(buttonComp, Messages.ArgumentsFromContainerSelectionDialog_4, null);
-		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fTree.setAllChecked(false);
-				updateOKButton();
-			}
-		});
+		fDeselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fTree.setAllChecked(false);
+			updateOKButton();
+		}));
 
 		if (foundArguments) {
 			fTree.setInput(fAllArguments);

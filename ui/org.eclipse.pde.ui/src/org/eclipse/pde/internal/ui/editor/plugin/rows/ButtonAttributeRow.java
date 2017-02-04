@@ -11,13 +11,13 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -42,13 +42,10 @@ public abstract class ButtonAttributeRow extends ReferenceAttributeRow {
 		super.createContents(parent, toolkit, span);
 		if (part.isEditable()) {
 			Button button = toolkit.createButton(parent, PDEUIMessages.ReferenceAttributeRow_browse, SWT.PUSH);
-			button.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!isReferenceModel())
-						browse();
-				}
-			});
+			button.addSelectionListener(widgetSelectedAdapter(e -> {
+				if (!isReferenceModel())
+					browse();
+			}));
 			//button.setEnabled(part.isEditable());
 		}
 	}

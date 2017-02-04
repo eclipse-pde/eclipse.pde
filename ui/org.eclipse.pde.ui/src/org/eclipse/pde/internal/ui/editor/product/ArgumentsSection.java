@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -21,8 +23,6 @@ import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -89,17 +89,14 @@ public class ArgumentsSection extends PDESection {
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
-		fTabFolder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (fProgramArgs.isDirty())
-					fProgramArgs.commit();
-				if (fVMArgs.isDirty())
-					fVMArgs.commit();
-				refresh();
-				fArchCombo.select(fLastArch[fLastTab]);
-			}
-		});
+		fTabFolder.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (fProgramArgs.isDirty())
+				fProgramArgs.commit();
+			if (fVMArgs.isDirty())
+				fVMArgs.commit();
+			refresh();
+			fArchCombo.select(fLastArch[fLastTab]);
+		}));
 		createTabs();
 
 		Composite archParent = toolkit.createComposite(client);

@@ -16,6 +16,8 @@
  */
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -23,8 +25,6 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -61,13 +61,10 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		gd.horizontalSpan = span - 1;
 		gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		combo.getControl().setLayoutData(gd);
-		combo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!blockNotification)
-					markDirty();
-			}
-		});
+		combo.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!blockNotification)
+				markDirty();
+		}));
 		combo.getControl().setEnabled(part.isEditable());
 	}
 

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
@@ -44,7 +46,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -491,61 +494,55 @@ public abstract class AbstractPluginBlock {
 		autoColumnEditor.grabHorizontal = true;
 		autoColumnEditor.minimumWidth = 60;
 
-		tree.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// Clean up any previous editor control
-				Control oldEditor = levelColumnEditor.getEditor();
-				if (oldEditor != null && !oldEditor.isDisposed()) {
-					oldEditor.dispose();
-				}
-
-				oldEditor = autoColumnEditor.getEditor();
-				if (oldEditor != null && !oldEditor.isDisposed()) {
-					oldEditor.dispose();
-				}
-
-				// Identify the selected row
-				final TreeItem item = (TreeItem) e.item;
-				if (item != null && !isEditable(item)) {
-					return;
-				}
-
-				if (item != null && !isFragment(item)) { // only display editing controls if we're not a fragment
-					final Spinner spinner = new Spinner(tree, SWT.BORDER);
-					spinner.setMinimum(0);
-					String level = item.getText(1);
-					int defaultLevel = level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
-					spinner.setSelection(defaultLevel);
-					spinner.addModifyListener(e1 -> {
-						if (item.getChecked()) {
-							int selection = spinner.getSelection();
-							item.setText(1, selection == 0 ? "default" //$NON-NLS-1$
-									: Integer.toString(selection));
-							levelColumnCache.put(item.getData(), item.getText(1));
-							fTab.updateLaunchConfigurationDialog();
-						}
-					});
-					levelColumnEditor.setEditor(spinner, item, 1);
-
-					final CCombo combo = new CCombo(tree, SWT.BORDER | SWT.READ_ONLY);
-					combo.setItems(new String[] {"default", Boolean.toString(true), Boolean.toString(false)}); //$NON-NLS-1$
-					combo.setText(item.getText(2));
-					combo.pack();
-					combo.addSelectionListener(new SelectionAdapter() {
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							if (item.getChecked()) {
-								item.setText(2, combo.getText());
-								autoColumnCache.put(item.getData(), item.getText(2));
-								fTab.updateLaunchConfigurationDialog();
-							}
-						}
-					});
-					autoColumnEditor.setEditor(combo, item, 2);
-				}
+		tree.addSelectionListener(widgetSelectedAdapter(e -> {
+			// Clean up any previous editor control
+			Control oldEditor = levelColumnEditor.getEditor();
+			if (oldEditor != null && !oldEditor.isDisposed()) {
+				oldEditor.dispose();
 			}
-		});
+
+			oldEditor = autoColumnEditor.getEditor();
+			if (oldEditor != null && !oldEditor.isDisposed()) {
+				oldEditor.dispose();
+			}
+
+			// Identify the selected row
+			final TreeItem item = (TreeItem) e.item;
+			if (item != null && !isEditable(item)) {
+				return;
+			}
+
+			if (item != null && !isFragment(item)) { // only display editing controls if we're not a fragment
+				final Spinner spinner = new Spinner(tree, SWT.BORDER);
+				spinner.setMinimum(0);
+				String level = item.getText(1);
+				int defaultLevel = level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
+				spinner.setSelection(defaultLevel);
+				spinner.addModifyListener(e1 -> {
+					if (item.getChecked()) {
+						int selection = spinner.getSelection();
+						item.setText(1, selection == 0 ? "default" //$NON-NLS-1$
+								: Integer.toString(selection));
+						levelColumnCache.put(item.getData(), item.getText(1));
+						fTab.updateLaunchConfigurationDialog();
+					}
+				});
+				levelColumnEditor.setEditor(spinner, item, 1);
+
+				final CCombo combo = new CCombo(tree, SWT.BORDER | SWT.READ_ONLY);
+				combo.setItems(new String[] {"default", Boolean.toString(true), Boolean.toString(false)}); //$NON-NLS-1$
+				combo.setText(item.getText(2));
+				combo.pack();
+				combo.addSelectionListener(widgetSelectedAdapter(event -> {
+					if (item.getChecked()) {
+						item.setText(2, combo.getText());
+						autoColumnCache.put(item.getData(), item.getText(2));
+						fTab.updateLaunchConfigurationDialog();
+					}
+				}));
+				autoColumnEditor.setEditor(combo, item, 2);
+			}
+		}));
 	}
 
 	private boolean isEditable(TreeItem item) {

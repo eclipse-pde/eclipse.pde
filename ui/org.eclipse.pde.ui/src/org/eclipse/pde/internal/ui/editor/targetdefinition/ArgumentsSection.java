@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import org.eclipse.pde.core.target.ITargetDefinition;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -22,8 +24,6 @@ import org.eclipse.pde.internal.ui.shared.target.ArgumentsFromContainerSelection
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -104,17 +104,14 @@ public class ArgumentsSection extends SectionPart {
 		});
 		Button variables = toolkit.createButton(programComp, PDEUIMessages.ArgumentsSection_variableButtonTitle, SWT.NONE);
 		variables.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		variables.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getSection().getShell());
-				dialog.open();
-				String variable = dialog.getVariableExpression();
-				if (variable != null) {
-					fProgramArguments.getText().insert(variable);
-				}
+		variables.addSelectionListener(widgetSelectedAdapter(e -> {
+			StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getSection().getShell());
+			dialog.open();
+			String variable = dialog.getVariableExpression();
+			if (variable != null) {
+				fProgramArguments.getText().insert(variable);
 			}
-		});
+		}));
 		CTabItem programTab = new CTabItem(fTabFolder, SWT.NULL);
 		programTab.setText(PDEUIMessages.ArgumentsSection_programTabLabel);
 		programTab.setImage(fImage);
@@ -144,36 +141,30 @@ public class ArgumentsSection extends SectionPart {
 		buttons.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		Button vmArgs = toolkit.createButton(buttons, PDEUIMessages.ArgumentsSection_argumentsButtonTitle, SWT.NONE);
 		vmArgs.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		vmArgs.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ArgumentsFromContainerSelectionDialog dialog = new ArgumentsFromContainerSelectionDialog(getSection().getShell(), getTarget());
-				if (dialog.open() == Window.OK) {
-					String[] args = dialog.getSelectedArguments();
-					if (args != null && args.length > 0) {
-						StringBuffer resultBuffer = new StringBuffer();
-						for (String arg : args) {
-							resultBuffer.append(arg + " "); //$NON-NLS-1$
-						}
-						fVMArguments.getText().insert(resultBuffer.toString());
+		vmArgs.addSelectionListener(widgetSelectedAdapter(e -> {
+			ArgumentsFromContainerSelectionDialog dialog = new ArgumentsFromContainerSelectionDialog(getSection().getShell(), getTarget());
+			if (dialog.open() == Window.OK) {
+				String[] args = dialog.getSelectedArguments();
+				if (args != null && args.length > 0) {
+					StringBuffer resultBuffer = new StringBuffer();
+					for (String arg : args) {
+						resultBuffer.append(arg + " "); //$NON-NLS-1$
 					}
+					fVMArguments.getText().insert(resultBuffer.toString());
 				}
 			}
-		});
+		}));
 
 		variables = toolkit.createButton(buttons, PDEUIMessages.ArgumentsSection_variableButtonTitle, SWT.NONE);
 		variables.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		variables.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getSection().getShell());
-				dialog.open();
-				String variable = dialog.getVariableExpression();
-				if (variable != null) {
-					fVMArguments.getText().insert(variable);
-				}
+		variables.addSelectionListener(widgetSelectedAdapter(e -> {
+			StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getSection().getShell());
+			dialog.open();
+			String variable = dialog.getVariableExpression();
+			if (variable != null) {
+				fVMArguments.getText().insert(variable);
 			}
-		});
+		}));
 		CTabItem vmTab = new CTabItem(fTabFolder, SWT.NULL);
 		vmTab.setText(PDEUIMessages.ArgumentsSection_vmTabLabel);
 		vmTab.setImage(fImage);

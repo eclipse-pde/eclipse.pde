@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
@@ -18,8 +20,6 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
@@ -62,15 +62,12 @@ public class BuildPage extends PDEFormPage {
 		Label label = toolkit.createLabel(form.getBody(), null);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		fCustomButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean isCustom = fCustomButton.getSelection();
-				IBuildEntry customEntry = getCustomBuildEntry();
-				setCustomEntryValue(customEntry, isCustom);
-				handleCustomCheckState(isCustom);
-			}
-		});
+		fCustomButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean isCustom = fCustomButton.getSelection();
+			IBuildEntry customEntry = getCustomBuildEntry();
+			setCustomEntryValue(customEntry, isCustom);
+			handleCustomCheckState(isCustom);
+		}));
 
 		fRuntimeSection = new RuntimeInfoSection(this, form.getBody());
 
