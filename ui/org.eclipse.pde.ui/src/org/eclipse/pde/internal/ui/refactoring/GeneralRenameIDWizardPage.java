@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
@@ -68,12 +70,7 @@ public abstract class GeneralRenameIDWizardPage extends UserInputWizardPage {
 		fUpdateReferences = new Button(composite, SWT.CHECK);
 		fUpdateReferences.setText(PDEUIMessages.RenamePluginWizardPage_updateReferences);
 		fUpdateReferences.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, true, false, 2, 1));
-		fUpdateReferences.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fInfo.setUpdateReferences(fUpdateReferences.getSelection());
-			}
-		});
+		fUpdateReferences.addSelectionListener(widgetSelectedAdapter(e -> fInfo.setUpdateReferences(fUpdateReferences.getSelection())));
 		fUpdateReferences.setSelection(true);
 	}
 

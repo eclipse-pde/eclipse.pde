@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import com.ibm.icu.text.MessageFormat;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -31,8 +33,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -102,12 +102,7 @@ public class JRESection extends PDESection {
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
-		fTabFolder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				refresh();
-			}
-		});
+		fTabFolder.addSelectionListener(widgetSelectedAdapter(e -> refresh()));
 		fTabFolder.setUnselectedImageVisible(false);
 
 		FormText text = toolkit.createFormText(client, false);
@@ -140,12 +135,7 @@ public class JRESection extends PDESection {
 		GridData buttonLayout = new GridData(GridData.FILL_HORIZONTAL);
 		buttonLayout.horizontalSpan = 2;
 		fEEButton.setLayoutData(buttonLayout);
-		fEEButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				getJVMLocations().setIncludeJREWithProduct(getOS(fLastTab), fEEButton.getSelection());
-			}
-		});
+		fEEButton.addSelectionListener(widgetSelectedAdapter(e -> getJVMLocations().setIncludeJREWithProduct(getOS(fLastTab), fEEButton.getSelection())));
 		fEEButton.setEnabled(isEditable());
 
 		createTabs();

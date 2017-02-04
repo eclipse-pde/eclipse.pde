@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -24,8 +26,6 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -148,30 +148,15 @@ public class ImplicitDependenciesSection extends SectionPart {
 	private void createButtons(FormToolkit toolkit, Composite parent) {
 		fAdd = toolkit.createButton(parent, PDEUIMessages.ImplicitDependenicesSection_Add, SWT.PUSH);
 		fAdd.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-		fAdd.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAdd();
-			}
-		});
+		fAdd.addSelectionListener(widgetSelectedAdapter(e -> handleAdd()));
 		SWTFactory.setButtonDimensionHint(fAdd);
 		fRemove = toolkit.createButton(parent, PDEUIMessages.ImplicitDependenicesSection_Remove, SWT.PUSH);
 		fRemove.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-		fRemove.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemove();
-			}
-		});
+		fRemove.addSelectionListener(widgetSelectedAdapter(e -> handleRemove()));
 		SWTFactory.setButtonDimensionHint(fRemove);
 		fRemoveAll = toolkit.createButton(parent, PDEUIMessages.ImplicitDependenicesSection_RemoveAll, SWT.PUSH);
 		fRemoveAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-		fRemoveAll.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemoveAll();
-			}
-		});
+		fRemoveAll.addSelectionListener(widgetSelectedAdapter(e -> handleRemoveAll()));
 		SWTFactory.setButtonDimensionHint(fRemoveAll);
 		Composite countComp = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();

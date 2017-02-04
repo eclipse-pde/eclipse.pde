@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.TreeSet;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
@@ -37,8 +39,6 @@ import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.internal.ui.wizards.product.ProductIntroWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.IFormColors;
@@ -92,23 +92,13 @@ public class IntroSection extends PDESection {
 		if (fAvailableIntroIds != null)
 			fIntroCombo.setItems(fAvailableIntroIds);
 		fIntroCombo.add(""); //$NON-NLS-1$
-		fIntroCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleSelection();
-			}
-		});
+		fIntroCombo.addSelectionListener(widgetSelectedAdapter(e -> handleSelection()));
 
 		if (canCreateNew) {
 			Button button = toolkit.createButton(client, PDEUIMessages.IntroSection_new, SWT.PUSH);
 			button.setEnabled(isEditable());
 			button.setLayoutData(new GridData(GridData.FILL));
-			button.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					handleNewIntro();
-				}
-			});
+			button.addSelectionListener(widgetSelectedAdapter(e -> handleNewIntro()));
 		}
 
 		fIntroCombo.getControl().setEnabled(isEditable());

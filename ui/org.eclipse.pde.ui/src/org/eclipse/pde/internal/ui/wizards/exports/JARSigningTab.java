@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.equinox.security.storage.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -61,13 +63,10 @@ public class JARSigningTab {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fButton.setLayoutData(gd);
-		fButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateGroup(fButton.getSelection());
-				fPage.pageChanged();
-			}
-		});
+		fButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateGroup(fButton.getSelection());
+			fPage.pageChanged();
+		}));
 
 		fKeystoreLabel = createLabel(comp, PDEUIMessages.AdvancedPluginExportPage_keystore);
 		fKeystoreText = createText(comp, 1);
@@ -76,20 +75,17 @@ public class JARSigningTab {
 		fBrowseButton.setText(PDEUIMessages.ExportWizard_browse);
 		fBrowseButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
-		fBrowseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog(fPage.getShell(), SWT.OPEN);
-				String path = fKeystoreText.getText();
-				if (path.trim().length() == 0)
-					path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
-				dialog.setFileName(path);
-				String res = dialog.open();
-				if (res != null) {
-					fKeystoreText.setText(res);
-				}
+		fBrowseButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			FileDialog dialog = new FileDialog(fPage.getShell(), SWT.OPEN);
+			String path = fKeystoreText.getText();
+			if (path.trim().length() == 0)
+				path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
+			dialog.setFileName(path);
+			String res = dialog.open();
+			if (res != null) {
+				fKeystoreText.setText(res);
 			}
-		});
+		}));
 
 		fKeypassLabel = createLabel(comp, PDEUIMessages.JARSigningTab_keypass);
 		fKeypassText = createText(comp, 2);

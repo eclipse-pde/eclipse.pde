@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -47,13 +48,10 @@ public class JNLPTab {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fButton.setLayoutData(gd);
-		fButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateGroup(fButton.getSelection());
-				fPage.pageChanged();
-			}
-		});
+		fButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateGroup(fButton.getSelection());
+			fPage.pageChanged();
+		}));
 
 		fURLLabel = createLabel(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_siteURL);
 		fURLText = createText(jnlpGroup);

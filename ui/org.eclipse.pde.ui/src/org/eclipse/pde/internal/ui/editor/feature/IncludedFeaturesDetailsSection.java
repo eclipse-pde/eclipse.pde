@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -21,8 +23,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -113,17 +113,14 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 		TableWrapData gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = 2;
 		fOptionalButton.setLayoutData(gd);
-		fOptionalButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fBlockNotification) {
-					try {
-						fInput.setOptional(fOptionalButton.getSelection());
-					} catch (CoreException ce) {
-					}
+		fOptionalButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fBlockNotification) {
+				try {
+					fInput.setOptional(fOptionalButton.getSelection());
+				} catch (CoreException ce) {
 				}
 			}
-		});
+		}));
 		Label fSearchLocationDescLabel = toolkit.createLabel(container, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_searchLocation, SWT.WRAP);
 		gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = 2;
@@ -135,18 +132,15 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 		gd.colspan = 2;
 		gd.indent = 5;
 		fSearchRootButton.setLayoutData(gd);
-		fSearchRootButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fBlockNotification) {
-					try {
-						if (fSearchRootButton.getSelection())
-							fInput.setSearchLocation(IFeatureChild.ROOT);
-					} catch (CoreException ce) {
-					}
+		fSearchRootButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fBlockNotification) {
+				try {
+					if (fSearchRootButton.getSelection())
+						fInput.setSearchLocation(IFeatureChild.ROOT);
+				} catch (CoreException ce) {
 				}
 			}
-		});
+		}));
 
 		fSearchSelfButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_self, SWT.RADIO);
 		fSearchSelfButton.setSelection(true);
@@ -154,18 +148,15 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 		gd.colspan = 2;
 		gd.indent = 5;
 		fSearchSelfButton.setLayoutData(gd);
-		fSearchSelfButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fBlockNotification) {
-					try {
-						if (fSearchSelfButton.getSelection())
-							fInput.setSearchLocation(IFeatureChild.SELF);
-					} catch (CoreException ce) {
-					}
+		fSearchSelfButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fBlockNotification) {
+				try {
+					if (fSearchSelfButton.getSelection())
+						fInput.setSearchLocation(IFeatureChild.SELF);
+				} catch (CoreException ce) {
 				}
 			}
-		});
+		}));
 
 		fSearchBothButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_both, SWT.RADIO);
 		fSearchBothButton.setSelection(true);
@@ -173,18 +164,15 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 		gd.colspan = 2;
 		gd.indent = 5;
 		fSearchBothButton.setLayoutData(gd);
-		fSearchBothButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fBlockNotification) {
-					try {
-						if (fSearchBothButton.getSelection())
-							fInput.setSearchLocation(IFeatureChild.BOTH);
-					} catch (CoreException ce) {
-					}
+		fSearchBothButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fBlockNotification) {
+				try {
+					if (fSearchBothButton.getSelection())
+						fInput.setSearchLocation(IFeatureChild.BOTH);
+				} catch (CoreException ce) {
 				}
 			}
-		});
+		}));
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);

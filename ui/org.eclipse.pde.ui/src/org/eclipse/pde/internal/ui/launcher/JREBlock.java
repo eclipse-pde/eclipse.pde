@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import org.eclipse.core.runtime.*;
@@ -94,19 +96,16 @@ public class JREBlock {
 
 		fEePrefButton = new Button(parent, SWT.PUSH);
 		fEePrefButton.setText(PDEUIMessages.BasicLauncherTab_environments);
-		fEePrefButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String currentEE = parseEESelection(fEeCombo.getText());
-				if (SWTFactory.showPreferencePage(fTab.getControl().getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", null) == Window.OK) { //$NON-NLS-1$
-					// The launch dialog may have been closed while the preference page was open
-					if (!fTab.getControl().isDisposed()) {
-						setEECombo();
-						setEEComboSelection(currentEE);
-					}
+		fEePrefButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			String currentEE = parseEESelection(fEeCombo.getText());
+			if (SWTFactory.showPreferencePage(fTab.getControl().getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", null) == Window.OK) { //$NON-NLS-1$
+				// The launch dialog may have been closed while the preference page was open
+				if (!fTab.getControl().isDisposed()) {
+					setEECombo();
+					setEEComboSelection(currentEE);
 				}
 			}
-		});
+		}));
 		fEePrefButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		SWTUtil.setButtonDimensionHint(fEePrefButton);
 
@@ -119,26 +118,23 @@ public class JREBlock {
 
 		fJrePrefButton = new Button(parent, SWT.PUSH);
 		fJrePrefButton.setText(PDEUIMessages.BasicLauncherTab_installedJREs);
-		fJrePrefButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String currentVM = fJreCombo.getText();
-				String currentEE = parseEESelection(fEeCombo.getText());
-				boolean useDefault = VMUtil.getDefaultVMInstallName().equals(currentVM);
-				if (SWTFactory.showPreferencePage(fTab.getControl().getShell(), "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", null) == Window.OK) { //$NON-NLS-1$
-					// The launch dialog may have been closed while the preference page was open
-					if (!fTab.getControl().isDisposed()) {
-						setJRECombo();
-						if (useDefault || fJreCombo.indexOf(currentVM) == -1)
-							fJreCombo.setText(VMUtil.getDefaultVMInstallName());
-						else
-							fJreCombo.setText(currentVM);
-						setEECombo();
-						setEEComboSelection(currentEE);
-					}
+		fJrePrefButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			String currentVM = fJreCombo.getText();
+			String currentEE = parseEESelection(fEeCombo.getText());
+			boolean useDefault = VMUtil.getDefaultVMInstallName().equals(currentVM);
+			if (SWTFactory.showPreferencePage(fTab.getControl().getShell(), "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", null) == Window.OK) { //$NON-NLS-1$
+				// The launch dialog may have been closed while the preference page was open
+				if (!fTab.getControl().isDisposed()) {
+					setJRECombo();
+					if (useDefault || fJreCombo.indexOf(currentVM) == -1)
+						fJreCombo.setText(VMUtil.getDefaultVMInstallName());
+					else
+						fJreCombo.setText(currentVM);
+					setEECombo();
+					setEEComboSelection(currentEE);
 				}
 			}
-		});
+		}));
 		fJrePrefButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		SWTUtil.setButtonDimensionHint(fJrePrefButton);
 	}

@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import org.eclipse.pde.core.target.ITargetDefinition;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.TreeSet;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -23,7 +25,6 @@ import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -89,28 +90,22 @@ public class JRESection extends SectionPart {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fDefaultJREButton.setLayoutData(gd);
-		fDefaultJREButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateWidgets();
-				if (!fBlockChanges) {
-					getTarget().setJREContainer(null);
-					markDirty();
-				}
+		fDefaultJREButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateWidgets();
+			if (!fBlockChanges) {
+				getTarget().setJREContainer(null);
+				markDirty();
 			}
-		});
+		}));
 
 		fNamedJREButton = toolkit.createButton(client, PDEUIMessages.JRESection_JREName, SWT.RADIO);
-		fNamedJREButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateWidgets();
-				if (!fBlockChanges) {
-					getTarget().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getSelection())));
-					markDirty();
-				}
+		fNamedJREButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateWidgets();
+			if (!fBlockChanges) {
+				getTarget().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getSelection())));
+				markDirty();
 			}
-		});
+		}));
 
 		fNamedJREsCombo = new ComboPart();
 		fNamedJREsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
@@ -126,26 +121,18 @@ public class JRESection extends SectionPart {
 		});
 
 		fConfigureJREButton = toolkit.createButton(client, PDEUIMessages.JRESection_jrePreference, SWT.PUSH);
-		fConfigureJREButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				openPreferencePage(JRE_PREF_PAGE_ID);
-			}
-		});
+		fConfigureJREButton.addSelectionListener(widgetSelectedAdapter(e -> openPreferencePage(JRE_PREF_PAGE_ID)));
 		fConfigureJREButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTFactory.setButtonDimensionHint(fConfigureJREButton);
 
 		fExecEnvButton = toolkit.createButton(client, PDEUIMessages.JRESection_ExecutionEnv, SWT.RADIO);
-		fExecEnvButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateWidgets();
-				if (!fBlockChanges) {
-					getTarget().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getSelection())));
-					markDirty();
-				}
+		fExecEnvButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateWidgets();
+			if (!fBlockChanges) {
+				getTarget().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getSelection())));
+				markDirty();
 			}
-		});
+		}));
 
 		fExecEnvsCombo = new ComboPart();
 		fExecEnvsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
@@ -160,12 +147,7 @@ public class JRESection extends SectionPart {
 		});
 
 		Button configureEEButton = toolkit.createButton(client, PDEUIMessages.JRESection_eePreference, SWT.PUSH);
-		configureEEButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				openPreferencePage(EE_PREF_PAGE_ID);
-			}
-		});
+		configureEEButton.addSelectionListener(widgetSelectedAdapter(e -> openPreferencePage(EE_PREF_PAGE_ID)));
 		configureEEButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTFactory.setButtonDimensionHint(configureEEButton);
 

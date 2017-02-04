@@ -12,6 +12,8 @@
 
 package org.eclipse.pde.internal.ui.nls;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -287,45 +289,25 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		fAddButton = new Button(container, SWT.PUSH);
 		fAddButton.setText(PDEUIMessages.ImportWizard_DetailedPage_add);
 		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fAddButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAdd();
-			}
-		});
+		fAddButton.addSelectionListener(widgetSelectedAdapter(e -> handleAdd()));
 		SWTUtil.setButtonDimensionHint(fAddButton);
 
 		fAddAllButton = new Button(container, SWT.PUSH);
 		fAddAllButton.setText(PDEUIMessages.ImportWizard_DetailedPage_addAll);
 		fAddAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fAddAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAddAll();
-			}
-		});
+		fAddAllButton.addSelectionListener(widgetSelectedAdapter(e -> handleAddAll()));
 		SWTUtil.setButtonDimensionHint(fAddAllButton);
 
 		fRemoveButton = new Button(container, SWT.PUSH);
 		fRemoveButton.setText(PDEUIMessages.ImportWizard_DetailedPage_remove);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemove();
-			}
-		});
+		fRemoveButton.addSelectionListener(widgetSelectedAdapter(e -> handleRemove()));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 
 		fRemoveAllButton = new Button(container, SWT.PUSH);
 		fRemoveAllButton.setText(PDEUIMessages.ImportWizard_DetailedPage_removeAll);
 		fRemoveAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemoveAll();
-			}
-		});
+		fRemoveAllButton.addSelectionListener(widgetSelectedAdapter(e -> handleRemoveAll()));
 		SWTUtil.setButtonDimensionHint(fRemoveAllButton);
 
 		fCountLabel = new Label(container, SWT.NONE);

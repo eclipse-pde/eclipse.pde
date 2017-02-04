@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -20,8 +22,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
@@ -139,12 +139,7 @@ public class GeneralInfoSection extends PDESection {
 		data.horizontalSpan = 2;
 		fLaunchersButton.setLayoutData(data);
 		fLaunchersButton.setEnabled(isEditable());
-		fLaunchersButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				getProduct().setIncludeLaunchers(fLaunchersButton.getSelection());
-			}
-		});
+		fLaunchersButton.addSelectionListener(widgetSelectedAdapter(e -> getProduct().setIncludeLaunchers(fLaunchersButton.getSelection())));
 	}
 
 	@Override

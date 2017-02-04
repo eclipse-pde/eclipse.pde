@@ -13,6 +13,8 @@
 
 package org.eclipse.pde.internal.ui.views.imagebrowser;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -137,29 +139,26 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				new String[] { PDEUIMessages.ImageBrowserView_FilterIcons,
 						PDEUIMessages.ImageBrowserView_FilterDisabled, PDEUIMessages.ImageBrowserView_FilterWizards,
 						PDEUIMessages.ImageBrowserView_FilterAllImages });
-		typeCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				mFilters.clear();
-				mFilters.add(textPatternFilter);
-				Combo source = (Combo) e.getSource();
-				switch (source.getSelectionIndex()) {
-					case 0 :
-						mFilters.add(enabledIcons);
-						break;
-					case 1 :
-						mFilters.add(disabledIcons);
-						break;
-					case 2 :
-						mFilters.add(wizard);
-						break;
-					case 3 :
-					default :
-				}
-				page = 0; // reset to 1st page
-				scanImages();
+		typeCombo.addSelectionListener(widgetSelectedAdapter(e -> {
+			mFilters.clear();
+			mFilters.add(textPatternFilter);
+			Combo source = (Combo) e.getSource();
+			switch (source.getSelectionIndex()) {
+				case 0 :
+					mFilters.add(enabledIcons);
+					break;
+				case 1 :
+					mFilters.add(disabledIcons);
+					break;
+				case 2 :
+					mFilters.add(wizard);
+					break;
+				case 3 :
+				default :
 			}
-		});
+			page = 0; // reset to 1st page
+			scanImages();
+		}));
 
 		// max images
 		Composite maxComp = SWTFactory.createComposite(topComp, 2, 1, SWT.NONE, 0, 0);

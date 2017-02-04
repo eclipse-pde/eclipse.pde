@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.JFaceResources;
@@ -104,12 +106,7 @@ public class InfoSection extends PDESection {
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
-		fTabFolder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateTabSelection();
-			}
-		});
+		fTabFolder.addSelectionListener(widgetSelectedAdapter(e -> updateTabSelection()));
 
 		fNotebook = toolkit.createComposite(container);
 		gd = new GridData(GridData.FILL_BOTH);

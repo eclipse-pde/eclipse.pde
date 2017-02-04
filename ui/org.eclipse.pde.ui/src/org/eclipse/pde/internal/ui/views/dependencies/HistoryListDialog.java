@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
+import static org.eclipse.swt.events.SelectionListener.widgetDefaultSelectedAdapter;
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -115,17 +118,14 @@ public class HistoryListDialog extends StatusDialog {
 		fRemoveButton.setText(PDEUIMessages.HistoryListDialog_remove_button);
 		fRemoveButton.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
-		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ISelection selection = fHistoryViewer.getSelection();
-				if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-					Object removalCandidate = ((IStructuredSelection) selection).getFirstElement();
-					fHistoryList.remove(removalCandidate);
-					fHistoryViewer.remove(removalCandidate);
-				}
+		fRemoveButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			ISelection selection = fHistoryViewer.getSelection();
+			if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
+				Object removalCandidate = ((IStructuredSelection) selection).getFirstElement();
+				fHistoryList.remove(removalCandidate);
+				fHistoryViewer.remove(removalCandidate);
 			}
-		});
+		}));
 	}
 
 	private Control createTableArea(Composite parent) {
@@ -135,14 +135,11 @@ public class HistoryListDialog extends StatusDialog {
 		gd.heightHint = 200;
 		table.setLayoutData(gd);
 
-		table.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				if (fHistoryStatus.isOK()) {
-					okPressed();
-				}
+		table.addSelectionListener(widgetDefaultSelectedAdapter(e -> {
+			if (fHistoryStatus.isOK()) {
+				okPressed();
 			}
-		});
+		}));
 
 		fHistoryViewer = new TableViewer(table);
 		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(false);
