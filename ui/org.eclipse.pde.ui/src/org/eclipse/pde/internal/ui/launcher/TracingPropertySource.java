@@ -11,12 +11,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
@@ -144,13 +145,10 @@ public class TracingPropertySource {
 		@Override
 		public void initialize() {
 			update();
-			checkbox.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					int value = checkbox.getSelection() ? 1 : 0;
-					valueModified(Integer.valueOf(value));
-				}
-			});
+			checkbox.addSelectionListener(widgetSelectedAdapter(e -> {
+				int value = checkbox.getSelection() ? 1 : 0;
+				valueModified(Integer.valueOf(value));
+			}));
 		}
 	}
 

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import com.ibm.icu.text.MessageFormat;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -41,8 +43,6 @@ import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -395,12 +395,7 @@ public class TargetContentsGroup {
 			fGroupComboPart.getControl().setLayoutData(gd);
 			fGroupComboPart.setItems(new String[] {Messages.TargetContentsGroup_1, Messages.TargetContentsGroup_2, Messages.TargetContentsGroup_3});
 			fGroupComboPart.setVisibleItemCount(30);
-			fGroupComboPart.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					handleGroupChange();
-				}
-			});
+			fGroupComboPart.addSelectionListener(widgetSelectedAdapter(e -> handleGroupChange()));
 			fGroupComboPart.select(0);
 
 		} else {
@@ -451,176 +446,144 @@ public class TargetContentsGroup {
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalIndent = 10;
 			fGroupCombo.setLayoutData(gd);
-			fGroupCombo.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					handleGroupChange();
-				}
-			});
+			fGroupCombo.addSelectionListener(widgetSelectedAdapter(e -> handleGroupChange()));
 			fGroupCombo.select(0);
 		}
 
-		fSelectButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fTree.getSelection().isEmpty()) {
-					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
-					for (Object selectedObject : selected) {
-						fTree.setChecked(selectedObject, true);
-					}
-					saveIncludedBundleState();
-					contentChanged();
-					updateButtons();
-					fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
-				}
-			}
-		});
-
-		fDeselectButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fTree.getSelection().isEmpty()) {
-					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
-					for (Object selectedObject : selected) {
-						fTree.setChecked(selectedObject, false);
-					}
-					saveIncludedBundleState();
-					contentChanged();
-					updateButtons();
-					fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
-				}
-			}
-		});
-
-		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fTree.setAllChecked(true);
-				saveIncludedBundleState();
-				contentChanged();
-				updateButtons();
-				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
-			}
-		});
-
-		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fTree.setAllChecked(false);
-				saveIncludedBundleState();
-				contentChanged();
-				updateButtons();
-				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
-			}
-		});
-
-		fSelectRequiredButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Object[] allChecked = fTree.getCheckedLeafElements();
-				Collection<Object> required = new ArrayList<>();
-				if (fFeaureModeButton.getSelection()) {
-					required.addAll(getRequiredFeatures(fTargetDefinition.getAllFeatures(), allChecked));
-				} else {
-					required.addAll(getRequiredPlugins(fAllBundles, allChecked));
-				}
-				for (Object requiredObject : required) {
-					fTree.setChecked(requiredObject, true);
+		fSelectButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fTree.getSelection().isEmpty()) {
+				Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
+				for (Object selectedObject : selected) {
+					fTree.setChecked(selectedObject, true);
 				}
 				saveIncludedBundleState();
 				contentChanged();
 				updateButtons();
 				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
-		});
+		}));
 
-		fPluginModeButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// Moving from feature based filtering to plug-in based, need to update storage
-				fTargetDefinition.setUIMode(TargetDefinition.MODE_PLUGIN);
-				contentChanged();
-				fTargetDefinition.setIncluded(null);
-
-				fGroupLabel.setEnabled(true);
-				if (fGroupCombo != null) {
-					fGroupCombo.setEnabled(true);
-				} else {
-					fGroupComboPart.getControl().setEnabled(true);
+		fDeselectButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fTree.getSelection().isEmpty()) {
+				Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
+				for (Object selectedObject : selected) {
+					fTree.setChecked(selectedObject, false);
 				}
-
-				fTree.getControl().setRedraw(false);
-				fTree.refresh(false);
-				fTree.expandAll();
-				updateCheckState();
+				saveIncludedBundleState();
+				contentChanged();
 				updateButtons();
-				fTree.getControl().setRedraw(true);
+				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
-		});
+		}));
+
+		fSelectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fTree.setAllChecked(true);
+			saveIncludedBundleState();
+			contentChanged();
+			updateButtons();
+			fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
+		}));
+
+		fDeselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fTree.setAllChecked(false);
+			saveIncludedBundleState();
+			contentChanged();
+			updateButtons();
+			fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
+		}));
+
+		fSelectRequiredButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			Object[] allChecked = fTree.getCheckedLeafElements();
+			Collection<Object> required = new ArrayList<>();
+			if (fFeaureModeButton.getSelection()) {
+				required.addAll(getRequiredFeatures(fTargetDefinition.getAllFeatures(), allChecked));
+			} else {
+				required.addAll(getRequiredPlugins(fAllBundles, allChecked));
+			}
+			for (Object requiredObject : required) {
+				fTree.setChecked(requiredObject, true);
+			}
+			saveIncludedBundleState();
+			contentChanged();
+			updateButtons();
+			fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
+		}));
+
+		fPluginModeButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			// Moving from feature based filtering to plug-in based, need to update storage
+			fTargetDefinition.setUIMode(TargetDefinition.MODE_PLUGIN);
+			contentChanged();
+			fTargetDefinition.setIncluded(null);
+
+			fGroupLabel.setEnabled(true);
+			if (fGroupCombo != null) {
+				fGroupCombo.setEnabled(true);
+			} else {
+				fGroupComboPart.getControl().setEnabled(true);
+			}
+
+			fTree.getControl().setRedraw(false);
+			fTree.refresh(false);
+			fTree.expandAll();
+			updateCheckState();
+			updateButtons();
+			fTree.getControl().setRedraw(true);
+		}));
 		fPluginModeButton.setSelection(true);
 		GridData gd = new GridData();
 		gd.horizontalIndent = 10;
 		fPluginModeButton.setLayoutData(gd);
 
-		fFeaureModeButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// Moving from plug-in based filtering to feature based, need to update storage
-				fTargetDefinition.setUIMode(TargetDefinition.MODE_FEATURE);
-				contentChanged();
-				fTargetDefinition.setIncluded(null);
+		fFeaureModeButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			// Moving from plug-in based filtering to feature based, need to update storage
+			fTargetDefinition.setUIMode(TargetDefinition.MODE_FEATURE);
+			contentChanged();
+			fTargetDefinition.setIncluded(null);
 
-				fGroupLabel.setEnabled(false);
-				if (fGroupCombo != null) {
-					fGroupCombo.setEnabled(false);
-				} else {
-					fGroupComboPart.getControl().setEnabled(false);
-				}
-
-				fTree.getControl().setRedraw(false);
-				fTree.refresh(false);
-				fTree.expandAll();
-				updateCheckState();
-				updateButtons();
-				fTree.getControl().setRedraw(true);
+			fGroupLabel.setEnabled(false);
+			if (fGroupCombo != null) {
+				fGroupCombo.setEnabled(false);
+			} else {
+				fGroupComboPart.getControl().setEnabled(false);
 			}
-		});
+
+			fTree.getControl().setRedraw(false);
+			fTree.refresh(false);
+			fTree.expandAll();
+			updateCheckState();
+			updateButtons();
+			fTree.getControl().setRedraw(true);
+		}));
 		fFeaureModeButton.setSelection(false);
 		gd = new GridData();
 		gd.horizontalIndent = 10;
 		fFeaureModeButton.setLayoutData(gd);
 
-		fShowPluginsButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fShowPluginsButton.getSelection()) {
-					fTree.addFilter(fPluginFilter);
-				} else {
-					fTree.removeFilter(fPluginFilter);
-					fTree.expandAll();
-					updateCheckState();
-				}
-				updateButtons();
+		fShowPluginsButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fShowPluginsButton.getSelection()) {
+				fTree.addFilter(fPluginFilter);
+			} else {
+				fTree.removeFilter(fPluginFilter);
+				fTree.expandAll();
+				updateCheckState();
 			}
-		});
+			updateButtons();
+		}));
 		fShowPluginsButton.setSelection(true);
 		gd = new GridData();
 		gd.horizontalIndent = 10;
 		fShowPluginsButton.setLayoutData(gd);
 
-		fShowSourceButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!fShowSourceButton.getSelection()) {
-					fTree.addFilter(fSourceFilter);
-				} else {
-					fTree.removeFilter(fSourceFilter);
-					fTree.expandAll();
-					updateCheckState();
-				}
-				updateButtons();
+		fShowSourceButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fShowSourceButton.getSelection()) {
+				fTree.addFilter(fSourceFilter);
+			} else {
+				fTree.removeFilter(fSourceFilter);
+				fTree.expandAll();
+				updateCheckState();
 			}
-		});
+			updateButtons();
+		}));
 		fShowSourceButton.setSelection(true);
 		gd = new GridData();
 		gd.horizontalIndent = 10;

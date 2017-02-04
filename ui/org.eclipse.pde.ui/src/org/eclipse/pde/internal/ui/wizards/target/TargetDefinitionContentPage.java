@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -431,34 +433,25 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		SWTFactory.createWrapLabel(group, PDEUIMessages.JRESection_description, 2);
 
 		fDefaultJREButton = SWTFactory.createRadioButton(group, PDEUIMessages.JRESection_defaultJRE, 2);
-		fDefaultJREButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateJREWidgets();
-				getTargetDefinition().setJREContainer(JavaRuntime.newDefaultJREContainerPath());
-			}
-		});
+		fDefaultJREButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateJREWidgets();
+			getTargetDefinition().setJREContainer(JavaRuntime.newDefaultJREContainerPath());
+		}));
 
 		fNamedJREButton = SWTFactory.createRadioButton(group, PDEUIMessages.JRESection_JREName);
-		fNamedJREButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateJREWidgets();
-				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getText())));
-			}
-		});
+		fNamedJREButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateJREWidgets();
+			getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getText())));
+		}));
 
 		fNamedJREsCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, VMUtil.getVMInstallNames());
 		fNamedJREsCombo.addModifyListener(e -> getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getText()))));
 
 		fExecEnvButton = SWTFactory.createRadioButton(group, PDEUIMessages.JRESection_ExecutionEnv);
-		fExecEnvButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateJREWidgets();
-				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getText())));
-			}
-		});
+		fExecEnvButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateJREWidgets();
+			getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getText())));
+		}));
 
 		fExecEnvsCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
 		fExecEnvsCombo.addModifyListener(e -> getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getText()))));
@@ -524,22 +517,19 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * @return	<code>SelectionListener</code> for the Add VM Arguments button
 	 */
 	private SelectionListener getVMArgsListener(final Text textControl) {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ArgumentsFromContainerSelectionDialog dialog = new ArgumentsFromContainerSelectionDialog(getShell(), getTargetDefinition());
-				if (dialog.open() == Window.OK) {
-					String[] args = dialog.getSelectedArguments();
-					if (args != null && args.length > 0) {
-						StringBuffer resultBuffer = new StringBuffer();
-						for (String arg : args) {
-							resultBuffer.append(arg + " "); //$NON-NLS-1$
-						}
-						fVMArgs.insert(resultBuffer.toString());
+		return widgetSelectedAdapter(e -> {
+			ArgumentsFromContainerSelectionDialog dialog = new ArgumentsFromContainerSelectionDialog(getShell(), getTargetDefinition());
+			if (dialog.open() == Window.OK) {
+				String[] args = dialog.getSelectedArguments();
+				if (args != null && args.length > 0) {
+					StringBuffer resultBuffer = new StringBuffer();
+					for (String arg : args) {
+						resultBuffer.append(arg + " "); //$NON-NLS-1$
 					}
+					fVMArgs.insert(resultBuffer.toString());
 				}
 			}
-		};
+		});
 	}
 
 	/**
@@ -551,17 +541,14 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * @return	<code>SelectionListener</code> for the Variables button
 	 */
 	private SelectionListener getVariablesListener(final Text textControl) {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
-				dialog.open();
-				String variable = dialog.getVariableExpression();
-				if (variable != null) {
-					textControl.insert(variable);
-				}
+		return widgetSelectedAdapter(e -> {
+			StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+			dialog.open();
+			String variable = dialog.getVariableExpression();
+			if (variable != null) {
+				textControl.insert(variable);
 			}
-		};
+		});
 	}
 
 	private Control createImplicitTabContents(Composite parent) {
@@ -627,28 +614,13 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		Composite buttonContainer = SWTFactory.createComposite(container, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 
 		fAddButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.SourceBlock_add, null);
-		fAddButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAdd();
-			}
-		});
+		fAddButton.addSelectionListener(widgetSelectedAdapter(e -> handleAdd()));
 
 		fRemoveButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.SourceBlock_remove, null);
-		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemove();
-			}
-		});
+		fRemoveButton.addSelectionListener(widgetSelectedAdapter(e -> handleRemove()));
 
 		fRemoveAllButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.TargetImplicitPluginsTab_removeAll3, null);
-		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemoveAll();
-			}
-		});
+		fRemoveAllButton.addSelectionListener(widgetSelectedAdapter(e -> handleRemoveAll()));
 
 		updateImpButtons();
 	}

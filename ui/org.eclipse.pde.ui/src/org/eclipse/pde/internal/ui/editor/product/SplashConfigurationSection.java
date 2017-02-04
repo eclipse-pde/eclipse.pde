@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.fieldassist.*;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -84,12 +86,7 @@ public class SplashConfigurationSection extends PDESection {
 
 	private void createUIListenersFieldTemplateCombo() {
 		// Selection listener
-		fFieldTemplateCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleTemplateComboWidgetSelected();
-			}
-		});
+		fFieldTemplateCombo.addSelectionListener(widgetSelectedAdapter(e -> handleTemplateComboWidgetSelected()));
 		// Focus listener
 		fFieldTemplateCombo.getControl().addFocusListener(new FocusAdapter() {
 			@Override
@@ -219,14 +216,11 @@ public class SplashConfigurationSection extends PDESection {
 
 	private void createProgressBarConfig(Composite parent) {
 		fAddBarButton = createButton(parent, fToolkit, PDEUIMessages.SplashSection_progressBar);
-		fAddBarButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean enable = fAddBarButton.getSelection();
-				getSplashInfo().addProgressBar(enable, false);
-				updateFieldEnablement();
-			}
-		});
+		fAddBarButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean enable = fAddBarButton.getSelection();
+			getSplashInfo().addProgressBar(enable, false);
+			updateFieldEnablement();
+		}));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalIndent = 5;
 		data.horizontalSpan = F_NUM_COLUMNS;
@@ -260,14 +254,11 @@ public class SplashConfigurationSection extends PDESection {
 
 	private void createProgressMessageConfig(Composite parent) {
 		fAddMessageButton = createButton(parent, fToolkit, PDEUIMessages.SplashSection_progressMessage);
-		fAddMessageButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean enable = fAddMessageButton.getSelection();
-				getSplashInfo().addProgressMessage(enable, false);
-				updateFieldEnablement();
-			}
-		});
+		fAddMessageButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean enable = fAddMessageButton.getSelection();
+			getSplashInfo().addProgressMessage(enable, false);
+			updateFieldEnablement();
+		}));
 		fAddMessageButton.setEnabled(false);
 
 		Color foreground = fToolkit.getColors().getColor(IFormColors.TITLE);

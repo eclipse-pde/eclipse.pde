@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import org.eclipse.pde.core.target.ITargetDefinition;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import java.io.IOException;
 import org.eclipse.jface.dialogs.Dialog;
@@ -20,7 +22,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -90,22 +91,19 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 
 		fBrowseButton = new Button(parent, SWT.PUSH);
 		fBrowseButton.setText(PDEUIMessages.ExportTargetBrowse);
-		fBrowseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setText(PDEUIMessages.ExportTargetSelectDestination);
-				dialog.setMessage(PDEUIMessages.ExportTargetSpecifyDestination);
-				String dir = fDestinationCombo.getText();
-				dialog.setFilterPath(dir);
-				dir = dialog.open();
-				if (dir == null || dir.equals("")) { //$NON-NLS-1$
-					return;
-				}
-				fDestinationCombo.setText(dir);
-				controlChanged();
+		fBrowseButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			DirectoryDialog dialog = new DirectoryDialog(getShell());
+			dialog.setText(PDEUIMessages.ExportTargetSelectDestination);
+			dialog.setMessage(PDEUIMessages.ExportTargetSpecifyDestination);
+			String dir = fDestinationCombo.getText();
+			dialog.setFilterPath(dir);
+			dir = dialog.open();
+			if (dir == null || dir.equals("")) { //$NON-NLS-1$
+				return;
 			}
-		});
+			fDestinationCombo.setText(dir);
+			controlChanged();
+		}));
 
 		fClearDestinationButton = new Button(parent, SWT.CHECK);
 		fClearDestinationButton.setText(PDEUIMessages.ExportTargetClearDestination);

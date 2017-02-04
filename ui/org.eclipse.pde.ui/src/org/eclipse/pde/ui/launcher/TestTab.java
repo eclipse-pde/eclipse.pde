@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -20,8 +22,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
@@ -61,12 +61,7 @@ public class TestTab extends AbstractLaunchConfigurationTab {
 
 	private void createRunInUIThreadGroup(Composite comp) {
 		runInUIThread = new Button(comp, SWT.CHECK);
-		runInUIThread.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		runInUIThread.addSelectionListener(widgetSelectedAdapter(e -> updateLaunchConfigurationDialog()));
 		runInUIThread.setText(PDEUIMessages.PDEJUnitLaunchConfigurationTab_Run_Tests_In_UI_Thread);
 		GridDataFactory.fillDefaults().span(2, 0).grab(true, false).applyTo(runInUIThread);
 	}

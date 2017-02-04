@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.IStatus;
@@ -410,12 +412,7 @@ public class UpdatesSection extends TableSection {
 		fEnabledColumnEditor.grabHorizontal = true;
 		fEnabledColumnEditor.minimumWidth = 50;
 
-		table.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				showControls();
-			}
-		});
+		table.addSelectionListener(widgetSelectedAdapter(e -> showControls()));
 	}
 
 	private void showControls() {
@@ -437,13 +434,10 @@ public class UpdatesSection extends TableSection {
 			combo.setItems(new String[] {Boolean.toString(true), Boolean.toString(false)});
 			combo.setText(item.getText(1));
 			combo.pack();
-			combo.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					item.setText(1, combo.getText());
-					repo.setEnabled(Boolean.valueOf(combo.getText()).booleanValue());
-				}
-			});
+			combo.addSelectionListener(widgetSelectedAdapter(e -> {
+				item.setText(1, combo.getText());
+				repo.setEnabled(Boolean.valueOf(combo.getText()).booleanValue());
+			}));
 			fEnabledColumnEditor.setEditor(combo, item, 1);
 		}
 	}

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
@@ -33,8 +35,6 @@ import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.TracingTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -71,19 +71,16 @@ public class TracingBlock {
 		fTracingCheck = new Button(parent, SWT.CHECK);
 		fTracingCheck.setText(PDEUIMessages.TracingLauncherTab_tracing);
 		fTracingCheck.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fTracingCheck.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				masterCheckChanged(true);
-				fTab.updateLaunchConfigurationDialog();
-				if (fTracingCheck.getSelection()) {
-					IStructuredSelection selection = (IStructuredSelection) fPluginViewer.getSelection();
-					if (!selection.isEmpty()) {
-						pluginSelected((IPluginModelBase) selection.getFirstElement(), fPluginViewer.getChecked(selection.getFirstElement()));
-					}
+		fTracingCheck.addSelectionListener(widgetSelectedAdapter(e -> {
+			masterCheckChanged(true);
+			fTab.updateLaunchConfigurationDialog();
+			if (fTracingCheck.getSelection()) {
+				IStructuredSelection selection = (IStructuredSelection) fPluginViewer.getSelection();
+				if (!selection.isEmpty()) {
+					pluginSelected((IPluginModelBase) selection.getFirstElement(), fPluginViewer.getChecked(selection.getFirstElement()));
 				}
 			}
-		});
+		}));
 
 		createSashSection(parent);
 		createButtonSection(parent);
@@ -151,27 +148,21 @@ public class TracingBlock {
 		fSelectAllButton.setText(PDEUIMessages.TracingLauncherTab_selectAll);
 		fSelectAllButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fSelectAllButton);
-		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fPluginViewer.setAllChecked(true);
-				pluginSelected(getSelectedModel(), true);
-				fTab.updateLaunchConfigurationDialog();
-			}
-		});
+		fSelectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fPluginViewer.setAllChecked(true);
+			pluginSelected(getSelectedModel(), true);
+			fTab.updateLaunchConfigurationDialog();
+		}));
 
 		fDeselectAllButton = new Button(container, SWT.PUSH);
 		fDeselectAllButton.setText(PDEUIMessages.TracinglauncherTab_deselectAll);
 		fDeselectAllButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fDeselectAllButton);
-		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fPluginViewer.setAllChecked(false);
-				pluginSelected(getSelectedModel(), false);
-				fTab.updateLaunchConfigurationDialog();
-			}
-		});
+		fDeselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fPluginViewer.setAllChecked(false);
+			pluginSelected(getSelectedModel(), false);
+			fTab.updateLaunchConfigurationDialog();
+		}));
 	}
 
 	protected int createPropertySheet(Composite parent) {

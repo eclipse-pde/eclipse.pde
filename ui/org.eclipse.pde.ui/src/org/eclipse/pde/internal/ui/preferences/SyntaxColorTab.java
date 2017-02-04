@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
@@ -21,8 +23,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -173,39 +173,30 @@ public abstract class SyntaxColorTab {
 		Button colorButton = fColorSelector.getButton();
 		colorButton.setLayoutData(new GridData(GridData.BEGINNING));
 
-		colorButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ColorElement item = getColorElement(fElementViewer);
-				item.setColorValue(fColorSelector.getColorValue());
-			}
-		});
+		colorButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			ColorElement item = getColorElement(fElementViewer);
+			item.setColorValue(fColorSelector.getColorValue());
+		}));
 
 		fBoldButton = new Button(colorComposite, SWT.CHECK);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fBoldButton.setLayoutData(gd);
 		fBoldButton.setText(PDEUIMessages.SyntaxColorTab_bold);
-		fBoldButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ColorElement item = getColorElement(fElementViewer);
-				item.setBold(fBoldButton.getSelection());
-			}
-		});
+		fBoldButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			ColorElement item = getColorElement(fElementViewer);
+			item.setBold(fBoldButton.getSelection());
+		}));
 
 		fItalicButton = new Button(colorComposite, SWT.CHECK);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fItalicButton.setLayoutData(gd);
 		fItalicButton.setText(PDEUIMessages.SyntaxColorTab_italic);
-		fItalicButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ColorElement item = getColorElement(fElementViewer);
-				item.setItalic(fItalicButton.getSelection());
-			}
-		});
+		fItalicButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			ColorElement item = getColorElement(fElementViewer);
+			item.setItalic(fItalicButton.getSelection());
+		}));
 
 		fElementViewer.addSelectionChangedListener(event -> {
 			ColorElement item = getColorElement(fElementViewer);

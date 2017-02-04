@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -18,8 +20,6 @@ import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.ConfigurationTab;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
@@ -50,12 +50,7 @@ public class SoftwareInstallBlock {
 	public void createControl(Composite parent) {
 		Group group = SWTFactory.createGroup(parent, PDEUIMessages.ProfileBlock_0, 1, 1, GridData.FILL_HORIZONTAL);
 		fGenerateProfileButton = SWTFactory.createCheckButton(group, PDEUIMessages.ProfileBlock_1, null, false, 1);
-		fGenerateProfileButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fTab.updateLaunchConfigurationDialog();
-			}
-		});
+		fGenerateProfileButton.addSelectionListener(widgetSelectedAdapter(e -> fTab.updateLaunchConfigurationDialog()));
 	}
 
 	/**

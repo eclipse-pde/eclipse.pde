@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -235,63 +237,35 @@ public class TargetLocationsGroup {
 	 * Sets up the buttons, the button fields must already be created before calling this method
 	 */
 	private void initializeButtons() {
-		fAddButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAdd();
-			}
-		});
+		fAddButton.addSelectionListener(widgetSelectedAdapter(e -> handleAdd()));
 		fAddButton.setLayoutData(new GridData());
 		SWTFactory.setButtonDimensionHint(fAddButton);
 
-		fEditButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleEdit();
-			}
-		});
+		fEditButton.addSelectionListener(widgetSelectedAdapter(e -> handleEdit()));
 		fEditButton.setLayoutData(new GridData());
 		fEditButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fEditButton);
 
-		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemove();
-			}
-		});
+		fRemoveButton.addSelectionListener(widgetSelectedAdapter(e -> handleRemove()));
 		fRemoveButton.setLayoutData(new GridData());
 		fRemoveButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fRemoveButton);
 
-		fUpdateButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleUpdate();
-			}
-		});
+		fUpdateButton.addSelectionListener(widgetSelectedAdapter(e -> handleUpdate()));
 		fUpdateButton.setLayoutData(new GridData());
 		fUpdateButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fUpdateButton);
 
-		fReloadButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleReload();
-			}
-		});
+		fReloadButton.addSelectionListener(widgetSelectedAdapter(e -> handleReload()));
 		fReloadButton.setLayoutData(new GridData());
 		fReloadButton.setEnabled(true);
 		SWTFactory.setButtonDimensionHint(fReloadButton);
 
-		fShowContentButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				((TargetLocationContentProvider) fTreeViewer.getContentProvider()).setShowLocationContent(fShowContentButton.getSelection());
-				fTreeViewer.refresh();
-				fTreeViewer.expandAll();
-			}
-		});
+		fShowContentButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			((TargetLocationContentProvider) fTreeViewer.getContentProvider()).setShowLocationContent(fShowContentButton.getSelection());
+			fTreeViewer.refresh();
+			fTreeViewer.expandAll();
+		}));
 		fShowContentButton.setLayoutData(new GridData());
 		SWTFactory.setButtonDimensionHint(fShowContentButton);
 	}

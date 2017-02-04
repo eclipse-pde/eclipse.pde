@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.*;
@@ -479,46 +481,21 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		Composite buttonComposite = SWTFactory.createComposite(tableComposite, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
 
 		fReloadButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_16, null);
-		fReloadButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleReload();
-			}
-		});
+		fReloadButton.addSelectionListener(widgetSelectedAdapter(e -> handleReload()));
 
 		SWTFactory.createVerticalSpacer(buttonComposite, 1);
 
 		fAddButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_3, null);
-		fAddButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAdd();
-			}
-		});
+		fAddButton.addSelectionListener(widgetSelectedAdapter(e -> handleAdd()));
 
 		fEditButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_5, null);
-		fEditButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleEdit();
-			}
-		});
+		fEditButton.addSelectionListener(widgetSelectedAdapter(e -> handleEdit()));
 
 		fRemoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_7, null);
-		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemove();
-			}
-		});
+		fRemoveButton.addSelectionListener(widgetSelectedAdapter(e -> handleRemove()));
 
 		fMoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_13, null);
-		fMoveButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleMove();
-			}
-		});
+		fMoveButton.addSelectionListener(widgetSelectedAdapter(e -> handleMove()));
 
 		updateButtons();
 

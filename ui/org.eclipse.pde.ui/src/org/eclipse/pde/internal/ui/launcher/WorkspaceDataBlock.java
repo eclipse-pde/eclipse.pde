@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -20,8 +22,6 @@ import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -75,34 +75,21 @@ public class WorkspaceDataBlock extends BaseBlock {
 		fClearWorkspaceCheck = new Button(buttons, SWT.CHECK);
 		fClearWorkspaceCheck.setText(PDEUIMessages.WorkspaceDataBlock_clear);
 		fClearWorkspaceCheck.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		fClearWorkspaceCheck.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
-				fClearWorkspaceRadio.setEnabled(fClearWorkspaceCheck.getSelection());
-				fClearWorkspaceLogRadio.setEnabled(fClearWorkspaceCheck.getSelection());
-				fTab.updateLaunchConfigurationDialog();
-			}
-		});
+		fClearWorkspaceCheck.addSelectionListener(widgetSelectedAdapter(e -> {
+			fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
+			fClearWorkspaceRadio.setEnabled(fClearWorkspaceCheck.getSelection());
+			fClearWorkspaceLogRadio.setEnabled(fClearWorkspaceCheck.getSelection());
+			fTab.updateLaunchConfigurationDialog();
+		}));
 
 		fClearWorkspaceRadio = new Button(buttons, SWT.RADIO);
 		fClearWorkspaceRadio.setText(PDEUIMessages.WorkspaceDataBlock_clearWorkspace);
 		fClearWorkspaceRadio.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		fClearWorkspaceRadio.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fTab.updateLaunchConfigurationDialog();
-			}
-		});
+		fClearWorkspaceRadio.addSelectionListener(widgetSelectedAdapter(e -> fTab.updateLaunchConfigurationDialog()));
 		fClearWorkspaceLogRadio = new Button(buttons, SWT.RADIO);
 		fClearWorkspaceLogRadio.setText(PDEUIMessages.WorkspaceDataBlock_clearLog);
 		fClearWorkspaceLogRadio.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fClearWorkspaceLogRadio.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fTab.updateLaunchConfigurationDialog();
-			}
-		});
+		fClearWorkspaceLogRadio.addSelectionListener(widgetSelectedAdapter(e -> fTab.updateLaunchConfigurationDialog()));
 
 		createButtons(buttons, new String[] {PDEUIMessages.BaseBlock_workspace, PDEUIMessages.BaseBlock_filesystem, PDEUIMessages.BaseBlock_variables});
 
@@ -121,12 +108,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 		final Link configureDefaults = new Link(buttons2, SWT.NONE);
 		configureDefaults.setLayoutData(new GridData(SWT.END, SWT.FILL, true, false));
 		configureDefaults.setText("<A>" + PDEUIMessages.WorkspaceDataBlock_configureDefaults + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
-		configureDefaults.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				PreferencesUtil.createPreferenceDialogOn(configureDefaults.getShell(), MainPreferencePage.ID, new String[] {MainPreferencePage.ID}, null).open();
-			}
-		});
+		configureDefaults.addSelectionListener(widgetSelectedAdapter(e -> PreferencesUtil.createPreferenceDialogOn(configureDefaults.getShell(), MainPreferencePage.ID, new String[] {MainPreferencePage.ID}, null).open()));
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config, boolean isJUnit) {

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardNode;
@@ -22,8 +24,6 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -101,18 +101,15 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = span;
 		fUseTemplate.setLayoutData(gd);
-		fUseTemplate.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				wizardSelectionViewer.getControl().setEnabled(fUseTemplate.getSelection());
-				if (!fUseTemplate.getSelection())
-					setDescription(""); //$NON-NLS-1$
-				else
-					setDescription(PDEUIMessages.WizardListSelectionPage_desc);
-				setDescriptionEnabled(fUseTemplate.getSelection());
-				getContainer().updateButtons();
-			}
-		});
+		fUseTemplate.addSelectionListener(widgetSelectedAdapter(e -> {
+			wizardSelectionViewer.getControl().setEnabled(fUseTemplate.getSelection());
+			if (!fUseTemplate.getSelection())
+				setDescription(""); //$NON-NLS-1$
+			else
+				setDescription(PDEUIMessages.WizardListSelectionPage_desc);
+			setDescriptionEnabled(fUseTemplate.getSelection());
+			getContainer().updateButtons();
+		}));
 		fUseTemplate.setSelection(true);
 	}
 
