@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -30,8 +32,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -114,12 +114,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		Composite optionsComp = SWTFactory.createComposite(container, 1, 2, GridData.FILL_HORIZONTAL, 5, 0);
 		createComputationsOption(optionsComp);
 
-		fAddFragmentsButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				pageChanged();
-			}
-		});
+		fAddFragmentsButton.addSelectionListener(widgetSelectedAdapter(e -> pageChanged()));
 
 		initialize();
 		setControl(container);
@@ -139,23 +134,17 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		Button selectAll = new Button(buttonComp, SWT.PUSH);
 		selectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		selectAll.setText(PDEUIMessages.WizardCheckboxTablePart_selectAll);
-		selectAll.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fTablePart.handleSelectAll(true);
-				pageChanged();
-			}
-		});
+		selectAll.addSelectionListener(widgetSelectedAdapter(e -> {
+			fTablePart.handleSelectAll(true);
+			pageChanged();
+		}));
 		Button deselectAll = new Button(buttonComp, SWT.PUSH);
 		deselectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		deselectAll.setText(PDEUIMessages.WizardCheckboxTablePart_deselectAll);
-		deselectAll.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fTablePart.handleSelectAll(false);
-				pageChanged();
-			}
-		});
+		deselectAll.addSelectionListener(widgetSelectedAdapter(e -> {
+			fTablePart.handleSelectAll(false);
+			pageChanged();
+		}));
 
 	}
 

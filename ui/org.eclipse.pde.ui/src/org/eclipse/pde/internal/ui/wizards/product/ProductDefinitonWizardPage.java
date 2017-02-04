@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.wizards.product;
 
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Platform;
@@ -116,12 +118,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		Button button = new Button(group, SWT.PUSH);
 		button.setText(PDEUIMessages.ProductDefinitonWizardPage_browse);
 		SWTUtil.setButtonDimensionHint(button);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleBrowse();
-			}
-		});
+		button.addSelectionListener(widgetSelectedAdapter(e -> handleBrowse()));
 
 		label = new Label(group, SWT.NONE);
 		label.setText(PDEUIMessages.ProductDefinitonWizardPage_productId);

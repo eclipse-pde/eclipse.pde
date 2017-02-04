@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Util;
@@ -436,12 +438,7 @@ public class PluginConfigurationSection extends TableSection {
 		fAutoColumnEditor.grabHorizontal = true;
 		fAutoColumnEditor.minimumWidth = 50;
 
-		table.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				showControls();
-			}
-		});
+		table.addSelectionListener(widgetSelectedAdapter(e -> showControls()));
 
 	}
 
@@ -479,13 +476,10 @@ public class PluginConfigurationSection extends TableSection {
 			combo.setItems(new String[] {Boolean.toString(true), Boolean.toString(false)});
 			combo.setText(item.getText(2));
 			combo.pack();
-			combo.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					item.setText(2, combo.getText());
-					ppc.setAutoStart(Boolean.valueOf(combo.getText()).booleanValue());
-				}
-			});
+			combo.addSelectionListener(widgetSelectedAdapter(e -> {
+				item.setText(2, combo.getText());
+				ppc.setAutoStart(Boolean.valueOf(combo.getText()).booleanValue());
+			}));
 			fAutoColumnEditor.setEditor(combo, item, 2);
 		}
 	}

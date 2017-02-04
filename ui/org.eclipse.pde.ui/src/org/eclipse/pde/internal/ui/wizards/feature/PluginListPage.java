@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import com.ibm.icu.text.Collator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.TreeSet;
@@ -28,8 +30,6 @@ import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -105,14 +105,11 @@ public class PluginListPage extends BasePluginListPage {
 			fInitLaunchConfigButton = new Button(container, SWT.RADIO);
 			fInitLaunchConfigButton.setText(PDEUIMessages.PluginListPage_initializeFromLaunch);
 			fInitLaunchConfigButton.setSelection(initLaunch);
-			fInitLaunchConfigButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					boolean initLaunchConfigs = fInitLaunchConfigButton.getSelection();
-					fLaunchConfigsCombo.setEnabled(initLaunchConfigs);
-					treePart.setEnabled(!initLaunchConfigs);
-				}
-			});
+			fInitLaunchConfigButton.addSelectionListener(widgetSelectedAdapter(e -> {
+				boolean initLaunchConfigs = fInitLaunchConfigButton.getSelection();
+				fLaunchConfigsCombo.setEnabled(initLaunchConfigs);
+				treePart.setEnabled(!initLaunchConfigs);
+			}));
 
 			fLaunchConfigsCombo = new Combo(container, SWT.READ_ONLY);
 			fLaunchConfigsCombo.setItems(launchConfigs);

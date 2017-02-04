@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -18,7 +20,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -137,31 +138,18 @@ public class ProductDestinationGroup extends AbstractExportTab {
 	}
 
 	protected void hookListeners() {
-		fArchiveFileButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				toggleDestinationGroup(!fArchiveFileButton.getSelection());
-				fPage.pageChanged();
-			}
-		});
+		fArchiveFileButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			toggleDestinationGroup(!fArchiveFileButton.getSelection());
+			fPage.pageChanged();
+		}));
 
-		fBrowseFile.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				chooseFile(fArchiveCombo, new String[] {"*" + ZIP_EXTENSION, "*" + WAR_EXTENSION}); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		});
+		fBrowseFile.addSelectionListener(widgetSelectedAdapter(e -> chooseFile(fArchiveCombo, new String[] {"*" + ZIP_EXTENSION, "*" + WAR_EXTENSION})));
 
 		fArchiveCombo.addModifyListener(e -> fPage.pageChanged());
 
 		fDirectoryCombo.addModifyListener(e -> fPage.pageChanged());
 
-		fBrowseDirectory.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				chooseDestination();
-			}
-		});
+		fBrowseDirectory.addSelectionListener(widgetSelectedAdapter(e -> chooseDestination()));
 	}
 
 	@Override

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -224,12 +226,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		TabItem secondTab = new TabItem(tabFolder, SWT.NULL);
 		secondTab.setText(PDEUIMessages.PointSelectionPage_tab2);
 		secondTab.setControl(createWizardsPage(tabFolder));
-		tabFolder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateTabSelection(tabFolder.getSelectionIndex());
-			}
-		});
+		tabFolder.addSelectionListener(widgetSelectedAdapter(e -> updateTabSelection(tabFolder.getSelectionIndex())));
 		// top level group
 		Composite outerContainer = new Composite(tabFolder, SWT.NONE);
 		firstTab.setControl(outerContainer);
@@ -279,12 +276,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fFilterCheck.setLayoutData(gd);
 		fFilterCheck.setSelection(true);
-		fFilterCheck.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fPointListViewer.refresh();
-			}
-		});
+		fFilterCheck.addSelectionListener(widgetSelectedAdapter(e -> fPointListViewer.refresh()));
 
 		fPointListViewer = new TableViewer(pointContainer, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		fPointListViewer.setContentProvider(new PointContentProvider());
@@ -314,13 +306,10 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 
 		fDescLink = new Link(templateComposite, SWT.NONE);
 		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, "")); //$NON-NLS-1$
-		fDescLink.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (fCurrentPoint != null)
-					new ShowDescriptionAction(fCurrentPoint, true).run();
-			}
-		});
+		fDescLink.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (fCurrentPoint != null)
+				new ShowDescriptionAction(fCurrentPoint, true).run();
+		}));
 		fDescLink.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Control c = null;

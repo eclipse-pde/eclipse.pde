@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -35,7 +37,6 @@ import org.eclipse.pde.internal.ui.util.SourcePluginFilter;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -195,17 +196,14 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		else
 			fFilterOldVersionButton.setSelection(true);
 
-		fFilterOldVersionButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (fFilterOldVersionButton.getSelection()) {
-					fAvailableListViewer.addFilter(fVersionFilter);
-				} else {
-					fAvailableListViewer.removeFilter(fVersionFilter);
-				}
-				updateCount();
+		fFilterOldVersionButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (fFilterOldVersionButton.getSelection()) {
+				fAvailableListViewer.addFilter(fVersionFilter);
+			} else {
+				fAvailableListViewer.removeFilter(fVersionFilter);
 			}
-		});
+			updateCount();
+		}));
 	}
 
 	private void addFilters() {
@@ -294,90 +292,49 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Button button = new Button(container, SWT.PUSH);
 		button.setText(PDEUIMessages.ImportWizard_DetailedPage_existing);
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleExistingProjects();
-			}
-		});
+		button.addSelectionListener(widgetSelectedAdapter(e -> handleExistingProjects()));
 		SWTUtil.setButtonDimensionHint(button);
 
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEUIMessages.ImportWizard_DetailedPage_existingUnshared);
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleExistingUnshared();
-			}
-		});
+		button.addSelectionListener(widgetSelectedAdapter(e -> handleExistingUnshared()));
 		SWTUtil.setButtonDimensionHint(button);
 
 		fAddButton = new Button(container, SWT.PUSH);
 		fAddButton.setText(PDEUIMessages.ImportWizard_DetailedPage_add);
 		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fAddButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAdd();
-			}
-		});
+		fAddButton.addSelectionListener(widgetSelectedAdapter(e -> handleAdd()));
 		SWTUtil.setButtonDimensionHint(fAddButton);
 
 		fAddAllButton = new Button(container, SWT.PUSH);
 		fAddAllButton.setText(PDEUIMessages.ImportWizard_DetailedPage_addAll);
 		fAddAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fAddAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAddAll();
-			}
-		});
+		fAddAllButton.addSelectionListener(widgetSelectedAdapter(e -> handleAddAll()));
 		SWTUtil.setButtonDimensionHint(fAddAllButton);
 
 		fRemoveButton = new Button(container, SWT.PUSH);
 		fRemoveButton.setText(PDEUIMessages.ImportWizard_DetailedPage_remove);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemove();
-			}
-		});
+		fRemoveButton.addSelectionListener(widgetSelectedAdapter(e -> handleRemove()));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 
 		fRemoveAllButton = new Button(container, SWT.PUSH);
 		fRemoveAllButton.setText(PDEUIMessages.ImportWizard_DetailedPage_removeAll);
 		fRemoveAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleRemoveAll();
-			}
-		});
+		fRemoveAllButton.addSelectionListener(widgetSelectedAdapter(e -> handleRemoveAll()));
 		SWTUtil.setButtonDimensionHint(fRemoveAllButton);
 
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEUIMessages.ImportWizard_DetailedPage_swap);
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleSwap();
-			}
-		});
+		button.addSelectionListener(widgetSelectedAdapter(e -> handleSwap()));
 		SWTUtil.setButtonDimensionHint(button);
 
 		fAddRequiredButton = new Button(container, SWT.PUSH);
 		fAddRequiredButton.setText(PDEUIMessages.ImportWizard_DetailedPage_addRequired);
 		fAddRequiredButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fAddRequiredButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAddRequiredPlugins();
-			}
-
-		});
+		fAddRequiredButton.addSelectionListener(widgetSelectedAdapter(e -> handleAddRequiredPlugins()));
 		SWTUtil.setButtonDimensionHint(fAddRequiredButton);
 
 		fCountLabel = new Label(container, SWT.NONE);

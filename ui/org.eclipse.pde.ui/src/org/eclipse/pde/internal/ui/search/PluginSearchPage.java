@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -25,7 +27,6 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -222,31 +223,25 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 	}
 
 	private void hookListeners() {
-		searchForButtons[1].addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean selected = searchForButtons[1].getSelection();
-				if (selected) {
-					limitToButtons[0].setSelection(true);
-					limitToButtons[1].setSelection(false);
-					limitToButtons[2].setSelection(false);
-				}
-				limitToButtons[1].setEnabled(!selected);
-				limitToButtons[2].setEnabled(!selected);
+		searchForButtons[1].addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean selected = searchForButtons[1].getSelection();
+			if (selected) {
+				limitToButtons[0].setSelection(true);
+				limitToButtons[1].setSelection(false);
+				limitToButtons[2].setSelection(false);
 			}
-		});
+			limitToButtons[1].setEnabled(!selected);
+			limitToButtons[2].setEnabled(!selected);
+		}));
 
-		patternCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int index = previousQueries.size() - patternCombo.getSelectionIndex() - 1;
-				if (previousQueries.size() > index) {
-					QueryData data = previousQueries.get(index);
-					resetPage(data);
-				}
-				container.setPerformActionEnabled(patternCombo.getText().length() > 0);
+		patternCombo.addSelectionListener(widgetSelectedAdapter(e -> {
+			int index = previousQueries.size() - patternCombo.getSelectionIndex() - 1;
+			if (previousQueries.size() > index) {
+				QueryData data = previousQueries.get(index);
+				resetPage(data);
 			}
-		});
+			container.setPerformActionEnabled(patternCombo.getText().length() > 0);
+		}));
 
 		patternCombo.addModifyListener(e -> container.setPerformActionEnabled(patternCombo.getText().trim().length() > 0));
 	}

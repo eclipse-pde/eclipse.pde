@@ -14,6 +14,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -36,8 +38,6 @@ import org.eclipse.pde.internal.ui.editor.contentassist.TypeFieldAssistDisposer;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
@@ -99,19 +99,16 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		td.colspan = 3;
 		fLazyStart.setLayoutData(td);
 		fLazyStart.setEnabled(isEditable());
-		fLazyStart.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				LazyStartHeader[] headers = getLazyStartHeaders();
-				// must block the refresh otherwise we have problems with multiple activation headers.
-				fBlockListener = true;
-				for (LazyStartHeader header : headers)
-					header.setLazyStart(fLazyStart.getSelection());
-				if (headers.length == 0)
-					getBundle().setHeader(getLazyStartHeaderName(), getLazyStateHeaderValue(fLazyStart.getSelection()));
-				fBlockListener = false;
-			}
-		});
+		fLazyStart.addSelectionListener(widgetSelectedAdapter(e -> {
+			LazyStartHeader[] headers = getLazyStartHeaders();
+			// must block the refresh otherwise we have problems with multiple activation headers.
+			fBlockListener = true;
+			for (LazyStartHeader header : headers)
+				header.setLazyStart(fLazyStart.getSelection());
+			if (headers.length == 0)
+				getBundle().setHeader(getLazyStartHeaderName(), getLazyStateHeaderValue(fLazyStart.getSelection()));
+			fBlockListener = false;
+		}));
 	}
 
 	private void createClassEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {

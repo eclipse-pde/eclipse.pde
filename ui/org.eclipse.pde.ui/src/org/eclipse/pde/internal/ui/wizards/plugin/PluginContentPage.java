@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Locale;
 import java.util.TreeSet;
 import org.eclipse.core.runtime.IStatus;
@@ -150,12 +152,7 @@ public class PluginContentPage extends ContentPage {
 
 		// Set data
 		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size() - 1]));
-		fEEChoice.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				validatePage();
-			}
-		});
+		fEEChoice.addSelectionListener(widgetSelectedAdapter(e -> validatePage()));
 
 		// Set default EE based on strict match to default VM
 		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
@@ -190,15 +187,12 @@ public class PluginContentPage extends ContentPage {
 
 		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null,
 				generateActivator, 2);
-		fGenerateActivator.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fClassLabel.setEnabled(fGenerateActivator.getSelection());
-				fClassText.setEnabled(fGenerateActivator.getSelection());
-				updateData();
-				validatePage();
-			}
-		});
+		fGenerateActivator.addSelectionListener(widgetSelectedAdapter(e -> {
+			fClassLabel.setEnabled(fGenerateActivator.getSelection());
+			fClassText.setEnabled(fGenerateActivator.getSelection());
+			updateData();
+			validatePage();
+		}));
 
 		fClassLabel = new Label(classGroup, SWT.NONE);
 		fClassLabel.setText(PDEUIMessages.ContentPage_classname);
@@ -208,23 +202,17 @@ public class PluginContentPage extends ContentPage {
 		fClassText = createText(classGroup, classListener);
 
 		fUIPlugin = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_uicontribution, null, (settings != null) ? !settings.getBoolean(S_UI_PLUGIN) : true, 2);
-		fUIPlugin.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateData();
-				validatePage();
-			}
-		});
+		fUIPlugin.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateData();
+			validatePage();
+		}));
 
 		fApiAnalysisButton = SWTFactory.createCheckButton(classGroup, PDEUIMessages.PluginContentPage_enable_api_analysis, null, false, 2);
 		fApiAnalysisButton.setSelection((settings != null) ? settings.getBoolean(S_API_ANALYSIS) : false);
-		fApiAnalysisButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateData();
-				validatePage();
-			}
-		});
+		fApiAnalysisButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateData();
+			validatePage();
+		}));
 	}
 
 	@Override
@@ -272,13 +260,10 @@ public class PluginContentPage extends ContentPage {
 		gd = new GridData();
 		gd.widthHint = SWTFactory.getButtonWidthHint(fYesButton, 50);
 		fYesButton.setLayoutData(gd);
-		fYesButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateData();
-				getContainer().updateButtons();
-			}
-		});
+		fYesButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateData();
+			getContainer().updateButtons();
+		}));
 
 		fNoButton = new Button(comp, SWT.RADIO);
 		fNoButton.setText(PDEUIMessages.PluginContentPage_no);

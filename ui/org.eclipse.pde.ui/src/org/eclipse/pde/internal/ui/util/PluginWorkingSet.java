@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import org.eclipse.core.runtime.IAdaptable;
@@ -22,7 +24,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -185,26 +186,20 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
 		selectAllButton.setText(PDEUIMessages.PluginWorkingSet_selectAll_label);
 		selectAllButton.setToolTipText(PDEUIMessages.PluginWorkingSet_selectAll_toolTip);
-		selectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				fTree.getCheckboxTreeViewer().setCheckedElements(fTableContentProvider.getElements(fTree.getCheckboxTreeViewer().getInput()));
-				validatePage();
-			}
-		});
+		selectAllButton.addSelectionListener(widgetSelectedAdapter(selectionEvent -> {
+			fTree.getCheckboxTreeViewer().setCheckedElements(fTableContentProvider.getElements(fTree.getCheckboxTreeViewer().getInput()));
+			validatePage();
+		}));
 		selectAllButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(selectAllButton);
 
 		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
 		deselectAllButton.setText(PDEUIMessages.PluginWorkingSet_deselectAll_label);
 		deselectAllButton.setToolTipText(PDEUIMessages.PluginWorkingSet_deselectAll_toolTip);
-		deselectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				fTree.getCheckboxTreeViewer().setCheckedElements(new Object[0]);
-				validatePage();
-			}
-		});
+		deselectAllButton.addSelectionListener(widgetSelectedAdapter(selectionEvent -> {
+			fTree.getCheckboxTreeViewer().setCheckedElements(new Object[0]);
+			validatePage();
+		}));
 		deselectAllButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(deselectAllButton);
 		setPageComplete(false);

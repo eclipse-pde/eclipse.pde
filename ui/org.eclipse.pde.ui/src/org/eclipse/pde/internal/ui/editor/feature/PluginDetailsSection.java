@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -21,8 +23,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -139,17 +139,14 @@ public class PluginDetailsSection extends PDESection implements IPartSelectionLi
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		fUnpackButton.setLayoutData(gd);
-		fUnpackButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					if (!fBlockNotification)
-						fInput.setUnpack(fUnpackButton.getSelection());
-				} catch (CoreException ex) {
-					PDEPlugin.logException(ex);
-				}
+		fUnpackButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			try {
+				if (!fBlockNotification)
+					fInput.setUnpack(fUnpackButton.getSelection());
+			} catch (CoreException ex) {
+				PDEPlugin.logException(ex);
 			}
-		});
+		}));
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);

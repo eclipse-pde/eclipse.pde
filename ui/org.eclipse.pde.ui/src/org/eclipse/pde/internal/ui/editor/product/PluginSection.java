@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.IFile;
@@ -43,8 +45,6 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewFragmentProjectWizard;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -185,19 +185,15 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 				}
 			}
 			// create listener to save value when the checkbox is changed
-			fIncludeOptionalButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					IEditorInput input = getPage().getEditorInput();
-					if (input instanceof IFileEditorInput) {
-						IFile file = ((IFileEditorInput) input).getFile();
-						try {
-							file.setPersistentProperty(OPTIONAL_PROPERTY, fIncludeOptionalButton.getSelection() ? "true" : null); //$NON-NLS-1$
-						} catch (CoreException e1) {
-						}
+			fIncludeOptionalButton.addSelectionListener(widgetSelectedAdapter(e -> {
+				if (input instanceof IFileEditorInput) {
+					IFile file = ((IFileEditorInput) input).getFile();
+					try {
+						file.setPersistentProperty(OPTIONAL_PROPERTY, fIncludeOptionalButton.getSelection() ? "true" : null); //$NON-NLS-1$
+					} catch (CoreException e1) {
 					}
 				}
-			});
+			}));
 		}
 	}
 

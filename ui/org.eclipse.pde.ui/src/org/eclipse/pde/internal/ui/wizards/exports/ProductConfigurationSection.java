@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -18,7 +20,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -56,12 +57,7 @@ public class ProductConfigurationSection {
 		Button browse = new Button(group, SWT.PUSH);
 		browse.setText(PDEUIMessages.ProductExportWizardPage_browse);
 		browse.setLayoutData(new GridData());
-		browse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleBrowse();
-			}
-		});
+		browse.addSelectionListener(widgetSelectedAdapter(e -> handleBrowse()));
 		SWTUtil.setButtonDimensionHint(browse);
 
 		label = new Label(group, SWT.NONE);
