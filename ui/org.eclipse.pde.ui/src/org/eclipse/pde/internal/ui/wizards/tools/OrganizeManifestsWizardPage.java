@@ -363,7 +363,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 			fProcessor.setUnusedKeys(fRemovedUnusedKeys.getSelection());
 	}
 
-	private void hookSelectionListener(Button[] buttons, SelectionAdapter adapter) {
+	private void hookSelectionListener(Button[] buttons, SelectionListener adapter) {
 		for (Button button : buttons) {
 			button.addSelectionListener(adapter);
 		}

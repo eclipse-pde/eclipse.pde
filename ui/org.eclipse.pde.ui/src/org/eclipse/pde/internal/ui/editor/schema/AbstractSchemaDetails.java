@@ -374,7 +374,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 			fMaxOccurSpinner.setSelection(max);
 	}
 
-	protected void hookMinOccur(SelectionAdapter adapter) {
+	protected void hookMinOccur(SelectionListener adapter) {
 		fMinOccurSpinner.addSelectionListener(adapter);
 		fMinOccurSpinner.addModifyListener(e -> {
 			if (blockListeners())
@@ -385,7 +385,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		});
 	}
 
-	protected void hookMaxOccur(SelectionAdapter adapter) {
+	protected void hookMaxOccur(SelectionListener adapter) {
 		fUnboundSelect.addSelectionListener(adapter);
 		fMaxOccurSpinner.addSelectionListener(adapter);
 		fMaxOccurSpinner.addModifyListener(e -> {
