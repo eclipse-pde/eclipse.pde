@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -17,8 +19,6 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
@@ -53,12 +53,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 		getTreeViewer().expandToLevel(2);
 		fNewFolderButton = new Button(result, SWT.PUSH);
 		fNewFolderButton.setText(PDEUIMessages.BuildEditor_SourceFolderSelectionDialog_button);
-		fNewFolderButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				newFolderButtonPressed();
-			}
-		});
+		fNewFolderButton.addSelectionListener(widgetSelectedAdapter(event -> newFolderButtonPressed()));
 		fNewFolderButton.setFont(parent.getFont());
 		fNewFolderButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fNewFolderButton);

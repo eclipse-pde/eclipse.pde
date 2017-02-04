@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import java.net.URI;
 import org.eclipse.core.resources.*;
@@ -28,8 +30,6 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -97,14 +97,11 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 
 	@Override
 	protected void addAdditionalOptions(Composite comp) {
-		fJarButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fExportMetadata.setEnabled(fJarButton.getSelection());
-				fCategoryButton.setEnabled(fExportMetadata.getSelection() && fJarButton.getSelection());
-				updateCategoryGeneration();
-			}
-		});
+		fJarButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fExportMetadata.setEnabled(fJarButton.getSelection());
+			fCategoryButton.setEnabled(fExportMetadata.getSelection() && fJarButton.getSelection());
+			updateCategoryGeneration();
+		}));
 		fExportMetadata = SWTFactory.createCheckButton(comp, PDEUIMessages.ExportWizard_includesMetadata, null, false, 1);
 		GridData data = (GridData) fExportMetadata.getLayoutData();
 		data.horizontalIndent = 20;
@@ -219,34 +216,16 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 	protected void hookListeners() {
 		super.hookListeners();
 		if (fMultiPlatform != null) {
-			fMultiPlatform.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					fPage.pageChanged();
-				}
-			});
+			fMultiPlatform.addSelectionListener(widgetSelectedAdapter(e -> fPage.pageChanged()));
 		}
 
-		fExportMetadata.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fCategoryButton.setEnabled(fExportMetadata.getSelection() && fJarButton.getSelection());
-				updateCategoryGeneration();
-			}
-		});
-		fCategoryButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateCategoryGeneration();
-			}
-		});
+		fExportMetadata.addSelectionListener(widgetSelectedAdapter(e -> {
+			fCategoryButton.setEnabled(fExportMetadata.getSelection() && fJarButton.getSelection());
+			updateCategoryGeneration();
+		}));
+		fCategoryButton.addSelectionListener(widgetSelectedAdapter(e -> updateCategoryGeneration()));
 
-		fCategoryBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				openFile(fCategoryCombo);
-			}
-		});
+		fCategoryBrowse.addSelectionListener(widgetSelectedAdapter(e -> openFile(fCategoryCombo)));
 	}
 
 	protected void updateCategoryGeneration() {

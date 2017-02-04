@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -155,23 +157,17 @@ public class FeatureImportWizardPage extends WizardPage {
 		buttonComp.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 
 		fSelectAllButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.WizardCheckboxTablePart_selectAll, null);
-		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fFeatureViewer.setAllChecked(true);
-				updateCounter();
-				dialogChanged();
-			}
-		});
+		fSelectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fFeatureViewer.setAllChecked(true);
+			updateCounter();
+			dialogChanged();
+		}));
 		fDeselectAllButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.WizardCheckboxTablePart_deselectAll, null);
-		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fFeatureViewer.setAllChecked(false);
-				updateCounter();
-				dialogChanged();
-			}
-		});
+		fDeselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fFeatureViewer.setAllChecked(false);
+			updateCounter();
+			dialogChanged();
+		}));
 
 		fBinaryButton = SWTFactory.createCheckButton(composite, PDEUIMessages.FeatureImportWizard_FirstPage_binaryImport, null, true, 1);
 
@@ -186,14 +182,11 @@ public class FeatureImportWizardPage extends WizardPage {
 	}
 
 	private void hookListeners() {
-		fRuntimeLocationButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setOtherEnabled(!fRuntimeLocationButton.getSelection());
-				setLocation(fRuntimeLocationButton.getSelection() ? TargetPlatform.getLocation() : fCurrDropLocation);
-				handleReload();
-			}
-		});
+		fRuntimeLocationButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			setOtherEnabled(!fRuntimeLocationButton.getSelection());
+			setLocation(fRuntimeLocationButton.getSelection() ? TargetPlatform.getLocation() : fCurrDropLocation);
+			handleReload();
+		}));
 
 		fDropLocation.addModifyListener(new ModifyListener() {
 			@Override
@@ -211,16 +204,13 @@ public class FeatureImportWizardPage extends WizardPage {
 			}
 		});
 
-		fBrowseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IPath chosen = chooseDropLocation();
-				if (chosen != null) {
-					setLocation(chosen.toOSString());
-					handleReload();
-				}
+		fBrowseButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			IPath chosen = chooseDropLocation();
+			if (chosen != null) {
+				setLocation(chosen.toOSString());
+				handleReload();
 			}
-		});
+		}));
 	}
 
 	/**

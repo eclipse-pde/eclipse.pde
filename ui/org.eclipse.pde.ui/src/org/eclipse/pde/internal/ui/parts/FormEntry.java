@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -84,13 +86,10 @@ public class FormEntry {
 		addListeners();
 		if (browseText != null) {
 			fBrowse = toolkit.createButton(parent, browseText, SWT.PUSH);
-			fBrowse.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (fListener != null)
-						fListener.browseButtonSelected(FormEntry.this);
-				}
-			});
+			fBrowse.addSelectionListener(widgetSelectedAdapter(e -> {
+				if (fListener != null)
+					fListener.browseButtonSelected(FormEntry.this);
+			}));
 		}
 		fillIntoGrid(parent, indent, tcolspan);
 		// Set the default text width hint and let clients modify accordingly

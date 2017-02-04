@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Properties;
 import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.IFile;
@@ -267,23 +269,17 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		fSelectAll = new Button(buttonComposite, SWT.PUSH);
 		fSelectAll.setText(PDEUIMessages.ExternalizeStringsWizardPage_selectAllButton);
 		fSelectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fSelectAll.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fInputViewer.setCheckedElements(fModelChangeTable.getAllModelChanges().toArray());
-				setPageComplete(hasCheckedElements());
-			}
-		});
+		fSelectAll.addSelectionListener(widgetSelectedAdapter(e -> {
+			fInputViewer.setCheckedElements(fModelChangeTable.getAllModelChanges().toArray());
+			setPageComplete(hasCheckedElements());
+		}));
 		fDeselectAll = new Button(buttonComposite, SWT.PUSH);
 		fDeselectAll.setText(PDEUIMessages.ExternalizeStringsWizardPage_deselectAllButton);
 		fDeselectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fDeselectAll.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fInputViewer.setCheckedElements(new Object[0]);
-				setPageComplete(hasCheckedElements());
-			}
-		});
+		fDeselectAll.addSelectionListener(widgetSelectedAdapter(e -> {
+			fInputViewer.setCheckedElements(new Object[0]);
+			setPageComplete(hasCheckedElements());
+		}));
 
 		Composite infoComposite = new Composite(fileComposite, SWT.NONE);
 		layout = new GridLayout();

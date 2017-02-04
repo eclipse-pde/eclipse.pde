@@ -10,6 +10,8 @@
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import org.eclipse.core.runtime.*;
@@ -26,8 +28,6 @@ import org.eclipse.pde.internal.core.target.Messages;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -131,14 +131,10 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		fShowLatestVersionOnlyButton = new Button(composite, SWT.CHECK);
 		fShowLatestVersionOnlyButton.setSelection(true);
 		fShowLatestVersionOnlyButton.setText(PDEUIMessages.FilteredIUSelectionDialog_showLatestVersionOnly);
-		fShowLatestVersionOnlyButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fShowLatestVersionOnly = fShowLatestVersionOnlyButton.getSelection();
-				applyFilter();
-			}
-		});
+		fShowLatestVersionOnlyButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fShowLatestVersionOnly = fShowLatestVersionOnlyButton.getSelection();
+			applyFilter();
+		}));
 		return composite;
 	}
 

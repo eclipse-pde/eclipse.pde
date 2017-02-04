@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import org.eclipse.pde.core.target.ITargetLocation;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,6 @@ import org.eclipse.pde.internal.core.target.ProfileBundleContainer;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
@@ -98,13 +99,10 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		fUseDefaultConfig.setLayoutData(gd);
 		fUseDefaultConfig.setFont(parent.getFont());
 		fUseDefaultConfig.setText(Messages.AddProfileContainerPage_2);
-		fUseDefaultConfig.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateConfigEnablement();
-				containerChanged(0);
-			}
-		});
+		fUseDefaultConfig.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateConfigEnablement();
+			containerChanged(0);
+		}));
 
 		fConfigLabel = SWTFactory.createLabel(configComp, Messages.AddProfileContainerPage_3, 1);
 		((GridData) fConfigLabel.getLayoutData()).horizontalIndent = 15;
@@ -128,31 +126,25 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		gd.horizontalAlignment = SWT.RIGHT;
 
 		fConfigBrowse = SWTFactory.createPushButton(buttonComp, Messages.AddProfileContainerPage_4, null);
-		fConfigBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setFilterPath(fConfigLocation.getText());
-				dialog.setText(Messages.AddProfileContainerPage_5);
-				dialog.setMessage(Messages.AddProfileContainerPage_6);
-				String result = dialog.open();
-				if (result != null)
-					fConfigLocation.setText(result);
-			}
-		});
+		fConfigBrowse.addSelectionListener(widgetSelectedAdapter(e -> {
+			DirectoryDialog dialog = new DirectoryDialog(getShell());
+			dialog.setFilterPath(fConfigLocation.getText());
+			dialog.setText(Messages.AddProfileContainerPage_5);
+			dialog.setMessage(Messages.AddProfileContainerPage_6);
+			String result = dialog.open();
+			if (result != null)
+				fConfigLocation.setText(result);
+		}));
 
 		fConfigVariables = SWTFactory.createPushButton(buttonComp, Messages.EditProfileContainerPage_1, null);
-		fConfigVariables.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
-				dialog.open();
-				String variable = dialog.getVariableExpression();
-				if (variable != null) {
-					fConfigLocation.setText(fConfigLocation.getText() + variable);
-				}
+		fConfigVariables.addSelectionListener(widgetSelectedAdapter(e -> {
+			StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+			dialog.open();
+			String variable = dialog.getVariableExpression();
+			if (variable != null) {
+				fConfigLocation.setText(fConfigLocation.getText() + variable);
 			}
-		});
+		}));
 
 	}
 

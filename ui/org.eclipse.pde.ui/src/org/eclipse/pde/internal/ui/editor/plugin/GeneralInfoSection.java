@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.core.*;
@@ -27,8 +29,6 @@ import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.widgets.*;
@@ -373,14 +373,11 @@ public abstract class GeneralInfoSection extends PDESection {
 		td.colspan = 3;
 		fSingleton.setLayoutData(td);
 		fSingleton.setEnabled(isEditable());
-		fSingleton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IManifestHeader header = getSingletonHeader();
-				if (header instanceof BundleSymbolicNameHeader)
-					((BundleSymbolicNameHeader) header).setSingleton(fSingleton.getSelection());
-			}
-		});
+		fSingleton.addSelectionListener(widgetSelectedAdapter(e -> {
+			IManifestHeader header = getSingletonHeader();
+			if (header instanceof BundleSymbolicNameHeader)
+				((BundleSymbolicNameHeader) header).setSingleton(fSingleton.getSelection());
+		}));
 	}
 
 }

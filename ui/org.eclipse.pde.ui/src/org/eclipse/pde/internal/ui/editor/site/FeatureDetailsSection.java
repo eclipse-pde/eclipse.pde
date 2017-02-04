@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -23,8 +25,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -153,16 +153,13 @@ public class FeatureDetailsSection extends PDESection implements IPartSelectionL
 
 	private void createPatchButton(FormToolkit toolkit, Composite container) {
 		fPatchCheckBox = toolkit.createButton(container, PDEUIMessages.FeatureDetailsSection_patch, SWT.CHECK);
-		fPatchCheckBox.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					applyIsPatch(fPatchCheckBox.getSelection());
-				} catch (CoreException ce) {
-					PDEPlugin.logException(ce);
-				}
+		fPatchCheckBox.addSelectionListener(widgetSelectedAdapter(e -> {
+			try {
+				applyIsPatch(fPatchCheckBox.getSelection());
+			} catch (CoreException ce) {
+				PDEPlugin.logException(ce);
 			}
-		});
+		}));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fPatchCheckBox.setLayoutData(gd);

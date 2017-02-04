@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
@@ -123,46 +124,25 @@ public class ExportDestinationTab extends AbstractExportTab {
 	}
 
 	protected void hookListeners() {
-		fArchiveFileButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateExportType();
-				fPage.pageChanged();
-			}
-		});
-		fBrowseFile.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				chooseFile(fArchiveCombo, new String[] {"*" + ZIP_EXTENSION}); //$NON-NLS-1$
-			}
-		});
+		fArchiveFileButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateExportType();
+			fPage.pageChanged();
+		}));
+		fBrowseFile.addSelectionListener(widgetSelectedAdapter(e -> chooseFile(fArchiveCombo, new String[] {"*" + ZIP_EXTENSION})));
 		fArchiveCombo.addModifyListener(e -> fPage.pageChanged());
 
 		fDirectoryCombo.addModifyListener(e -> fPage.pageChanged());
 
-		fBrowseDirectory.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				chooseDestination(fDirectoryCombo);
-			}
-		});
+		fBrowseDirectory.addSelectionListener(widgetSelectedAdapter(e -> chooseDestination(fDirectoryCombo)));
 
-		fInstallButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateExportType();
-				if (fInstallCombo.getText().trim().length() == 0 && fInstallCombo.getItemCount() > 0) {
-					fInstallCombo.select(0);
-				}
+		fInstallButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateExportType();
+			if (fInstallCombo.getText().trim().length() == 0 && fInstallCombo.getItemCount() > 0) {
+				fInstallCombo.select(0);
 			}
-		});
+		}));
 		fInstallCombo.addModifyListener(e -> fPage.pageChanged());
-		fBrowseInstall.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				chooseDestination(fInstallCombo);
-			}
-		});
+		fBrowseInstall.addSelectionListener(widgetSelectedAdapter(e -> chooseDestination(fInstallCombo)));
 	}
 
 	private void chooseDestination(Combo combo) {

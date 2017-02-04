@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.TreeSet;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -201,12 +203,7 @@ public class FragmentContentPage extends ContentPage {
 
 		// Set data
 		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size() - 1]));
-		fEEChoice.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				validatePage();
-			}
-		});
+		fEEChoice.addSelectionListener(widgetSelectedAdapter(e -> validatePage()));
 
 		// Set default EE based on strict match to default VM
 		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
@@ -239,49 +236,46 @@ public class FragmentContentPage extends ContentPage {
 		Button browse = new Button(parent, SWT.PUSH);
 		browse.setText(PDEUIMessages.ContentPage_browse);
 		browse.setLayoutData(new GridData());
-		browse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// If the PDE models are not initialized, initialize with option to cancel
-				if (!PDECore.getDefault().areModelsInitialized()) {
-					try {
-						getContainer().run(true, true, new IRunnableWithProgress() {
-							@Override
-							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
-								PDECore.getDefault().getModelManager().targetReloaded(monitor);
-								if (monitor.isCanceled()) {
-									throw new InterruptedException();
-								}
+		browse.addSelectionListener(widgetSelectedAdapter(e -> {
+			// If the PDE models are not initialized, initialize with option to cancel
+			if (!PDECore.getDefault().areModelsInitialized()) {
+				try {
+					getContainer().run(true, true, new IRunnableWithProgress() {
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
+							PDECore.getDefault().getModelManager().targetReloaded(monitor);
+							if (monitor.isCanceled()) {
+								throw new InterruptedException();
 							}
-						});
-					} catch (InvocationTargetException ex) {
-					} catch (InterruptedException ex) {
-						// Model initialization cancelled, target platform will be empty
+						}
+					});
+				} catch (InvocationTargetException ex) {
+				} catch (InterruptedException ex) {
+					// Model initialization cancelled, target platform will be empty
+				}
+			}
+
+			BusyIndicator.showWhile(pluginText.getDisplay(), new Runnable() {
+				@Override
+				public void run() {
+					PluginSelectionDialog dialog = new PluginSelectionDialog(pluginText.getShell(), false, false);
+					dialog.create();
+					if (dialog.open() == Window.OK) {
+						IPluginModel model = (IPluginModel) dialog.getFirstResult();
+						IPlugin plugin = model.getPlugin();
+						String version = computeInitialPluginVersion(plugin.getVersion());
+						if (validateRange) {
+							fVersionPart.setVersion(version);
+							fVersionPart.preloadFields();
+						} else {
+							fPluginVersion.setText(version);
+						}
+						pluginText.setText(plugin.getId());
 					}
 				}
-
-				BusyIndicator.showWhile(pluginText.getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						PluginSelectionDialog dialog = new PluginSelectionDialog(pluginText.getShell(), false, false);
-						dialog.create();
-						if (dialog.open() == Window.OK) {
-							IPluginModel model = (IPluginModel) dialog.getFirstResult();
-							IPlugin plugin = model.getPlugin();
-							String version = computeInitialPluginVersion(plugin.getVersion());
-							if (validateRange) {
-								fVersionPart.setVersion(version);
-								fVersionPart.preloadFields();
-							} else {
-								fPluginVersion.setText(version);
-							}
-							pluginText.setText(plugin.getId());
-						}
-					}
-				});
-			}
-		});
+			});
+		}));
 		SWTUtil.setButtonDimensionHint(browse);
 		return pluginText;
 	}

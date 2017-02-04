@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 public class FeatureDestinationTab extends ExportDestinationTab {
 
@@ -22,13 +21,10 @@ public class FeatureDestinationTab extends ExportDestinationTab {
 	@Override
 	protected void hookListeners() {
 		super.hookListeners();
-		fDirectoryButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				((FeatureExportWizardPage) fPage).adjustJNLPTabVisibility();
-				fPage.pageChanged();
-			}
-		});
+		fDirectoryButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			((FeatureExportWizardPage) fPage).adjustJNLPTabVisibility();
+			fPage.pageChanged();
+		}));
 	}
 
 }

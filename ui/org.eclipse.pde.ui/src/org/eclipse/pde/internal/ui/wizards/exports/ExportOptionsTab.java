@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
@@ -18,7 +20,6 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -87,11 +88,6 @@ public class ExportOptionsTab extends AbstractExportTab {
 	protected void addJAROption(Composite comp) {
 		fJarButton = new Button(comp, SWT.CHECK);
 		fJarButton.setText(getJarButtonText());
-		fJarButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
 	}
 
 	protected void addAllowBinaryCyclesSection(Composite comp) {
@@ -209,50 +205,24 @@ public class ExportOptionsTab extends AbstractExportTab {
 	}
 
 	protected void hookListeners() {
-		fIncludeSourceButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fIncludeSourceCombo.setEnabled(fIncludeSourceButton.getSelection());
-			}
-		});
+		fIncludeSourceButton.addSelectionListener(widgetSelectedAdapter(e -> fIncludeSourceCombo.setEnabled(fIncludeSourceButton.getSelection())));
 
-		fJarButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				((BaseExportWizardPage) fPage).adjustAdvancedTabsVisibility();
-			}
-		});
-		fSaveAsAntButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
-				fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
-				fPage.pageChanged();
-			}
-		});
+		fJarButton.addSelectionListener(widgetSelectedAdapter(e -> ((BaseExportWizardPage) fPage).adjustAdvancedTabsVisibility()));
+		fSaveAsAntButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
+			fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
+			fPage.pageChanged();
+		}));
 
-		fBrowseAnt.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				chooseFile(fAntCombo, new String[] {"*.xml"}); //$NON-NLS-1$
-			}
-		});
+		fBrowseAnt.addSelectionListener(widgetSelectedAdapter(e -> chooseFile(fAntCombo, new String[] {"*.xml"})));
 
-		fAntCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fPage.pageChanged();
-			}
-		});
+		fAntCombo.addSelectionListener(widgetSelectedAdapter(e -> fPage.pageChanged()));
 
 		fAntCombo.addModifyListener(e -> fPage.pageChanged());
-		fQualifierButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fQualifierText.setEnabled(fQualifierButton.getSelection());
-				fPage.pageChanged();
-			}
-		});
+		fQualifierButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fQualifierText.setEnabled(fQualifierButton.getSelection());
+			fPage.pageChanged();
+		}));
 	}
 
 	protected String validate() {

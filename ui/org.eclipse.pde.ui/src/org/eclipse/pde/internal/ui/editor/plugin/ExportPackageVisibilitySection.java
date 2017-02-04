@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jface.action.Action;
@@ -31,7 +33,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -96,19 +97,16 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		fVisibleButton = toolkit.createButton(comp, PDEUIMessages.ExportPackageVisibilitySection_unconditional, SWT.RADIO);
 
 		fInternalButton = toolkit.createButton(comp, PDEUIMessages.ExportPackageVisibilitySection_hideAll, SWT.RADIO);
-		fInternalButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
-				if (!fBlockChanges) {
-					for (ExportPackageObject selectedObject : fSelectedObjects) {
-						selectedObject.setInternal(fInternalButton.getSelection());
-					}
-					getTablePart().setButtonEnabled(ADD_INDEX, fInternalButton.getSelection());
-					getTablePart().setButtonEnabled(REMOVE_INDEX, fInternalButton.getSelection());
-					fFriendViewer.refresh();
+		fInternalButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (!fBlockChanges) {
+				for (ExportPackageObject selectedObject : fSelectedObjects) {
+					selectedObject.setInternal(fInternalButton.getSelection());
 				}
+				getTablePart().setButtonEnabled(ADD_INDEX, fInternalButton.getSelection());
+				getTablePart().setButtonEnabled(REMOVE_INDEX, fInternalButton.getSelection());
+				fFriendViewer.refresh();
 			}
-		});
+		}));
 
 		Composite container = toolkit.createComposite(comp);
 		GridLayout layout = new GridLayout();

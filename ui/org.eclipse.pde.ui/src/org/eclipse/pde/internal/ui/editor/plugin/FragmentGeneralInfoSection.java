@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -31,8 +33,7 @@ import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
@@ -190,16 +191,13 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			}
 		};
 
-		SelectionAdapter comboListener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				try {
-					((IFragment) getPluginBase()).setPluginVersion(getVersion());
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
+		SelectionListener comboListener = widgetSelectedAdapter(event -> {
+			try {
+				((IFragment) getPluginBase()).setPluginVersion(getVersion());
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
 			}
-		};
+		});
 		fPluginMinVersionBound = new ComboPart();
 		fPluginMinVersionBound.createControl(client, toolkit, SWT.READ_ONLY);
 		fPluginMinVersionBound.getControl().setLayoutData(new TableWrapData(TableWrapData.FILL));
@@ -275,17 +273,14 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		String[] items = new String[] {"", //$NON-NLS-1$
 				PDEUIMessages.ManifestEditor_MatchSection_equivalent, PDEUIMessages.ManifestEditor_MatchSection_compatible, PDEUIMessages.ManifestEditor_MatchSection_perfect, PDEUIMessages.ManifestEditor_MatchSection_greater};
 		fMatchCombo.setItems(items);
-		fMatchCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				int match = fMatchCombo.getSelectionIndex();
-				try {
-					((IFragment) getPluginBase()).setRule(match);
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
+		fMatchCombo.addSelectionListener(widgetSelectedAdapter(event -> {
+			int match = fMatchCombo.getSelectionIndex();
+			try {
+				((IFragment) getPluginBase()).setRule(match);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
 			}
-		});
+		}));
 		fMatchCombo.getControl().setEnabled(isEditable());
 	}
 
