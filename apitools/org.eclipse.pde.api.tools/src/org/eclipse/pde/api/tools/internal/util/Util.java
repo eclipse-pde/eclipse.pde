@@ -775,6 +775,7 @@ public final class Util {
 			case IDelta.METHOD:
 				return "METHOD"; //$NON-NLS-1$
 			case IDelta.DEFAULT_METHOD:
+			case IDelta.SUPER_INTERFACE_DEFAULT_METHOD:
 				return "DEFAULT_METHOD"; //$NON-NLS-1$
 			case IDelta.METHOD_MOVED_UP:
 				return "METHOD_MOVED_UP"; //$NON-NLS-1$
@@ -1163,6 +1164,7 @@ public final class Util {
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
 							case IDelta.METHOD:
 							case IDelta.DEFAULT_METHOD:
+							case IDelta.SUPER_INTERFACE_DEFAULT_METHOD:
 							case IDelta.CONSTRUCTOR:
 								return getMethod(type, key);
 							case IDelta.TYPE_MEMBER:
@@ -2332,6 +2334,7 @@ public final class Util {
 				return arguments[0];
 			case IDelta.METHOD:
 			case IDelta.DEFAULT_METHOD:
+			case IDelta.SUPER_INTERFACE_DEFAULT_METHOD:
 			case IDelta.CONSTRUCTOR:
 			case IDelta.ENUM_CONSTANT:
 			case IDelta.METHOD_WITH_DEFAULT_VALUE:

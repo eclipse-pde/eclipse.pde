@@ -576,6 +576,7 @@ public class DeltaProcessor {
 						return RestrictionModifiers.isImplementRestriction(delta.getPreviousRestrictions()) || RestrictionModifiers.isImplementRestriction(delta.getCurrentRestrictions());
 					case IDelta.METHOD:
 					case IDelta.DEFAULT_METHOD:
+					case IDelta.SUPER_INTERFACE_DEFAULT_METHOD:
 					case IDelta.SUPER_INTERFACE_WITH_METHODS:
 						boolean isStatic = Flags.isStatic(delta.getNewModifiers());
 						if (isStatic == true) {

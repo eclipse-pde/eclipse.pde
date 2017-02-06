@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -782,7 +782,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DEFAULT_METHOD, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.SUPER_INTERFACE_DEFAULT_METHOD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 		child = allLeavesDeltas[2];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -289,19 +289,32 @@ public class ClassFileComparator {
 							// we should check if every method defined in the
 							// new interface exists in the old hierarchy
 							// could be methods moved up in the hierarchy
-							methodLoop: for (int j = 0; j < length; j++) {
+							boolean isSuperInterfaceWithMethodDeltaAdded = false;
+							for (int j = 0; j < length; j++) {
 								IApiMethod method = methods[j];
 								IApiMethod method3 = this.type1.getMethod(method.getName(), method.getSignature());
 								if (method3 == null) {
+									String key = this.type1.getName();
 									boolean isDefaultMethod = false;
 									if (this.type2.getMethod(method.getName(), method.getSignature()) != null) {
 										isDefaultMethod = this.type2.getMethod(method.getName(), method.getSignature()).isDefaultMethod();
+										if(isDefaultMethod) {
+											key = getKeyForMethod(this.type2.getMethod(method.getName(), method.getSignature()), this.type2);
+										}
 									}
-									this.addDelta(getElementType(this.type1), IDelta.ADDED, isDefaultMethod ? IDelta.DEFAULT_METHOD : IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), new String[] {
-											Util.getDescriptorName(type1),
-											type.getName(),
-											getMethodDisplayName(method, type) });
-									break methodLoop;
+									if (!isDefaultMethod && isSuperInterfaceWithMethodDeltaAdded == false) {
+										this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, key, new String[] {
+												Util.getDescriptorName(type1),
+												type.getName(),
+												getMethodDisplayName(method, type) });
+										isSuperInterfaceWithMethodDeltaAdded = true;
+									}
+									if (isDefaultMethod) {
+										this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.SUPER_INTERFACE_DEFAULT_METHOD, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, key, new String[] {
+												Util.getDescriptorName(type1),
+												type.getName(),
+												getMethodDisplayName(method, type) });
+									}
 								}
 							}
 						}
@@ -360,11 +373,15 @@ public class ClassFileComparator {
 										}
 									}
 									if (!found) {
+										String key = this.type1.getName();
 										boolean isDefaultMethod = false;
 										if(this.type2.getMethod(method.getName(), method.getSignature())!=null) {
 											isDefaultMethod = this.type2.getMethod(method.getName(), method.getSignature()).isDefaultMethod();
+											if (isDefaultMethod) {
+												key = getKeyForMethod(this.type2.getMethod(method.getName(), method.getSignature()), this.type2);
+											}
 										}
-										this.addDelta(getElementType(this.type1), IDelta.ADDED, isDefaultMethod ? IDelta.DEFAULT_METHOD : IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), new String[] {
+										this.addDelta(getElementType(this.type1), IDelta.ADDED, isDefaultMethod ? IDelta.DEFAULT_METHOD : IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, key, new String[] {
 												Util.getDescriptorName(type1),
 												type.getName(),
 												getMethodDisplayName(method, type) });
