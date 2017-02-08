@@ -104,41 +104,72 @@ public class JARSigningTab {
 	}
 
 	protected void initialize(IDialogSettings settings) {
-		ISecurePreferences preferences = getPreferences(settings.getName());
-		if (preferences == null) {
-			// only in case it is not possible to create secured storage in
-			// default location -> in that case default values are used
-			return;
-		}
+		boolean signJars = getBoolean(settings, S_SIGN_JARS);
 
+		// if jar signing is already enabled - load information from secured
+		// storage (also creates it)
+		if (signJars) {
+			initializeJarSigningInputFields(settings);
+		} else {
+			// if jar signing is not yet enabled, defer loading information to
+			// first time it is enabled
+			fButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					initializeJarSigningInputFields(settings);
+
+					// after first initialization and loading of information
+					// repeated initialization (on selection) would overwrite
+					// user entered changes -> remove listener
+					fButton.removeSelectionListener(this);
+				}
+			});
+		}
+		fButton.setSelection(signJars);
+		updateGroup(fButton.getSelection());
+	}
+
+	/**
+	 * Initializes input fields in JarSigning tab with settings from secured
+	 * storage. Has side effect of creating default secure storage (if not yet
+	 * existing).
+	 */
+	protected void initializeJarSigningInputFields(IDialogSettings settings) {
 		String keystore = ""; //$NON-NLS-1$
 		String keypass = ""; //$NON-NLS-1$
 		String alias = ""; //$NON-NLS-1$
 		String password = ""; //$NON-NLS-1$
-		boolean signJars = false;
+
+		// only in case signing is requested, use and possible
+		// create an secure preferences store
+		ISecurePreferences preferences = getPreferences(settings.getName());
+		if (preferences == null) {
+			// only in case it is not possible to create secured
+			// storage in
+			// default location -> in that case default values
+			// are used
+			return;
+		}
+
 		if (preferences.keys().length <= 0) {
-			// nothing stored in secured preferences, check settings for values
-			// from before bug387565 fix
+			// nothing stored in secured preferences, check
+			// settings for values from before bug387565 fix
 			keystore = getString(settings, S_KEYSTORE);
 			keypass = getString(settings, S_KEYPASS);
 			alias = getString(settings, S_ALIAS);
 			password = getString(settings, S_PASSWORD);
-			signJars = getBoolean(settings, S_SIGN_JARS);
 		} else {
 			// from secured preferences after bug387565 fix
 			keystore = getString(preferences, S_KEYSTORE);
 			keypass = getString(preferences, S_KEYPASS);
 			alias = getString(preferences, S_ALIAS);
 			password = getString(preferences, S_PASSWORD);
-			signJars = getBoolean(preferences, S_SIGN_JARS);
 		}
 
 		fKeystoreText.setText(keystore);
 		fKeypassText.setText(keypass);
 		fAliasText.setText(alias);
 		fPasswordText.setText(password);
-		fButton.setSelection(signJars);
-		updateGroup(fButton.getSelection());
 	}
 
 	private String getString(IDialogSettings settings, String key) {
@@ -155,14 +186,6 @@ public class JARSigningTab {
 			return settings.get(key, ""); //$NON-NLS-1$
 		} catch (StorageException e) {
 			return ""; //$NON-NLS-1$
-		}
-	}
-
-	private boolean getBoolean(ISecurePreferences settings, String key) {
-		try {
-			return settings.getBoolean(key, false);
-		} catch (StorageException e) {
-			return false;
 		}
 	}
 
@@ -216,35 +239,39 @@ public class JARSigningTab {
 	}
 
 	protected void saveSettings(IDialogSettings settings) {
-		ISecurePreferences preferences = getPreferences(settings.getName());
-		if (preferences == null) {
-			// only in case it is not possible to create secured storage in
-			// default location -> in that case do not persist settings
-			return;
-		}
+		boolean signJars = fButton.getSelection();
+		settings.put(S_SIGN_JARS, signJars);
 
-		try{
-			preferences.putBoolean(S_SIGN_JARS, fButton.getSelection(), true);
-			preferences.put(S_KEYSTORE, fKeystoreText.getText().trim(), true);
-			preferences.put(S_ALIAS, fAliasText.getText().trim(), true);
-			preferences.put(S_PASSWORD, fPasswordText.getText().trim(), true);
-			preferences.put(S_KEYPASS, fKeypassText.getText().trim(), true);
+		if (signJars) {
+			// only in case signing is requested, use and possible create an
+			// secure preferences store
+			ISecurePreferences preferences = getPreferences(settings.getName());
+			if (preferences == null) {
+				// only in case it is not possible to create secured storage in
+				// default location -> in that case do not persist settings
+				return;
+			}
 
-			// bug387565 - for keys which are starting with this bugfix to be
-			// stored
-			// in secured storage, replace value in settings with empty string
-			// to avoid keeping sensitive info in plain text
-			String[] obsoleted = new String[] { S_KEYSTORE, S_ALIAS, S_PASSWORD, S_KEYPASS };
-			for (String key : obsoleted) {
-				if (settings.get(key) != null) {
-					settings.put(key, ""); //$NON-NLS-1$
+			try {
+				preferences.put(S_KEYSTORE, fKeystoreText.getText().trim(), true);
+				preferences.put(S_ALIAS, fAliasText.getText().trim(), true);
+				preferences.put(S_PASSWORD, fPasswordText.getText().trim(), true);
+				preferences.put(S_KEYPASS, fKeypassText.getText().trim(), true);
+
+				// bug387565 - for keys which are starting with this bugfix to
+				// be stored in secured storage, replace value in settings with
+				// empty string to avoid keeping sensitive info in plain text
+				String[] obsoleted = new String[] { S_KEYSTORE, S_ALIAS, S_PASSWORD, S_KEYPASS };
+				for (String key : obsoleted) {
+					if (settings.get(key) != null) {
+						settings.put(key, ""); //$NON-NLS-1$
+					}
 				}
 			}
+			catch (StorageException e) {
+				PDEPlugin.log("Failed to store JarSigning settings in secured preferences store"); //$NON-NLS-1$
+			}
 		}
-		catch (StorageException e) {
-			PDEPlugin.log("Failed to store JarSigning settings in secured preferences store"); //$NON-NLS-1$
-		}
-
 	}
 
 	protected String[] getSigningInfo() {
