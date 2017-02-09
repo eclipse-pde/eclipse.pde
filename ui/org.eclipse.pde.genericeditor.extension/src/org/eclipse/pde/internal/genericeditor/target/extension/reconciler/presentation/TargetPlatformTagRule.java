@@ -50,7 +50,10 @@ public class TargetPlatformTagRule extends WordRule {
 				}
 				scanner.unread();
 				return super.evaluate(scanner);
+			} else if (c == '>') { // handle special '<>' case
+				return tagToken;
 			}
+
 			scanner.unread();
 		}
 		if (c == '>') {
