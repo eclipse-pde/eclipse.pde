@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.launching.ExecutionArguments;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
@@ -31,6 +30,7 @@ import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 
 public class LaunchArgumentsHelper {
 
@@ -171,17 +171,25 @@ public class LaunchArgumentsHelper {
 		Map<String, Object> map = new HashMap<>(2);
 		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, (String) null);
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
+		// Add jdi.jar for macos when java version is less than 1.7
 		if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
 			ModelEntry entry = PluginRegistry.findEntry("org.eclipse.jdt.debug"); //$NON-NLS-1$
 			if (entry != null) {
-				IPluginModelBase[] models = entry.getExternalModels();
-				for (IPluginModelBase model : models) {
-					File file = new File(model.getInstallLocation());
-					if (!file.isFile())
-						file = new File(file, "jdi.jar"); //$NON-NLS-1$
-					if (file.exists()) {
-						map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
-						break;
+				IVMInstall vmInstall = VMHelper.getVMInstall(config);
+				if (vmInstall instanceof AbstractVMInstall) {
+					String javaVersion = ((AbstractVMInstall) vmInstall).getJavaVersion();
+					Version osgiVersion = new Version(javaVersion);
+					if (osgiVersion.getMajor() == 1 && osgiVersion.getMinor() < 7) {
+						IPluginModelBase[] models = entry.getExternalModels();
+						for (IPluginModelBase model : models) {
+							File file = new File(model.getInstallLocation());
+							if (!file.isFile())
+								file = new File(file, "jdi.jar"); //$NON-NLS-1$
+							if (file.exists()) {
+								map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
+								break;
+							}
+						}
 					}
 				}
 			}
