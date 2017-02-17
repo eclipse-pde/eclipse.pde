@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.ui.text.java.ClasspathFixProcessor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -35,9 +36,16 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 
 		@Override
 		public void addResolutionModification(IProject project, ExportPackageDescription desc) {
+			addResolutionModification(project, desc, null, ""); //$NON-NLS-1$
+		}
+
+		@Override
+		public void addResolutionModification(IProject project, ExportPackageDescription desc, CompilationUnit cu,
+				String qualifiedTypeToImport) {
 			if (desc.getSupplier() == null)
 				return;
-			Object proposal = JavaResolutionFactory.createRequireBundleProposal(project, desc, JavaResolutionFactory.TYPE_CLASSPATH_FIX, 16);
+			Object proposal = JavaResolutionFactory.createRequireBundleProposal(project, desc,
+					JavaResolutionFactory.TYPE_CLASSPATH_FIX, 16, cu, qualifiedTypeToImport);
 			if (proposal != null)
 				fList.add(proposal);
 		}
@@ -48,6 +56,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 		public ClasspathFixProposal[] getProposals() {
 			return fList.toArray(new ClasspathFixProposal[fList.size()]);
 		}
+
 
 	}
 

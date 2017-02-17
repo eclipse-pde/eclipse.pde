@@ -214,7 +214,8 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				if (!WorkspaceModelManager.isPluginProject(project))
 					return;
 
-				IRunnableWithProgress findOperation = new FindClassResolutionsOperation(project, className, collector);
+				IRunnableWithProgress findOperation = new FindClassResolutionsOperation(project, cu, className,
+						collector);
 				try {
 					findOperation.run(new NullProgressMonitor());
 				} catch (InvocationTargetException e) {
@@ -237,12 +238,19 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 
 			@Override
 			public void addResolutionModification(IProject project, ExportPackageDescription desc) {
+				addResolutionModification(project, desc, null, ""); //$NON-NLS-1$
+			}
+
+			@Override
+			public void addResolutionModification(IProject project, ExportPackageDescription desc, CompilationUnit cu,
+					String qualifiedTypeToImport) {
 				// guard against multiple import package resolutions for the same package
 				if (addedImportPackageResolutions.contains(desc.getName())) {
 					return;
 				}
 
-				Object proposal = JavaResolutionFactory.createImportPackageProposal(project, desc, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 17);
+				Object proposal = JavaResolutionFactory.createImportPackageProposal(project, desc,
+						JavaResolutionFactory.TYPE_JAVA_COMPLETION, 17, cu, qualifiedTypeToImport);
 				if (proposal != null) {
 					addedImportPackageResolutions.add(desc.getName());
 					result.add(proposal);
@@ -261,7 +269,14 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 
 			@Override
 			public Object addRequireBundleModification(IProject project, ExportPackageDescription desc, int relevance) {
-				Object proposal = super.addRequireBundleModification(project, desc, relevance);
+				return addRequireBundleModification(project, desc, relevance, null, ""); //$NON-NLS-1$
+			}
+
+			@Override
+			public Object addRequireBundleModification(IProject project, ExportPackageDescription desc, int relevance,
+					CompilationUnit cu, String qualifiedTypeToImport) {
+				Object proposal = super.addRequireBundleModification(project, desc, relevance, cu,
+						qualifiedTypeToImport);
 				if (proposal != null) {
 					result.add(proposal);
 				}

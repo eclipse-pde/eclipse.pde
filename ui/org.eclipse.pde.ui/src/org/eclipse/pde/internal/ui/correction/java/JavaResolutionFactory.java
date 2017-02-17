@@ -14,13 +14,14 @@ import com.ibm.icu.text.MessageFormat;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.rewrite.ImportRewrite;
 import org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.*;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
@@ -36,6 +37,7 @@ import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
 
 /**
@@ -61,10 +63,19 @@ public class JavaResolutionFactory {
 
 		private Object fChangeObject;
 		private IProject fProject;
+		private CompilationUnit fCompilationUnit;
+		private String fQualifiedTypeToImport;
 
 		private AbstractManifestChange(IProject project, Object obj) {
 			fProject = project;
 			fChangeObject = obj;
+		}
+
+		public AbstractManifestChange(IProject project, Object changeObj, CompilationUnit cu,
+				String qualifiedTypeToImport) {
+			this(project, changeObj);
+			fCompilationUnit = cu;
+			fQualifiedTypeToImport = qualifiedTypeToImport;
 		}
 
 		protected Object getChangeObject() {
@@ -73,6 +84,14 @@ public class JavaResolutionFactory {
 
 		protected IProject getProject() {
 			return fProject;
+		}
+
+		protected CompilationUnit getCompilationUnit() {
+			return fCompilationUnit;
+		}
+
+		protected String getQualifiedTypeToImport() {
+			return fQualifiedTypeToImport;
 		}
 
 		/*
@@ -90,6 +109,34 @@ public class JavaResolutionFactory {
 		 */
 		protected boolean isUndo() {
 			return false;
+		}
+
+		protected void insertImport(CompilationUnit compilationUnit, String qualifiedTypeToImport, IProgressMonitor pm)
+				throws CoreException {
+			if (compilationUnit == null || qualifiedTypeToImport == null) {
+				return;
+			}
+			ImportRewrite rewrite = ImportRewrite.create(compilationUnit, true);
+			if (rewrite == null) {
+				return;
+			}
+			if (!isUndo()) {
+				rewrite.addImport(qualifiedTypeToImport);
+			} else {
+				rewrite.removeImport(qualifiedTypeToImport);
+			}
+			TextEdit rewriteImports = rewrite.rewriteImports(pm);
+			ICompilationUnit iCompilationUnit = (ICompilationUnit) compilationUnit.getJavaElement()
+					.getAdapter(IOpenable.class);
+			performTextEdit(rewriteImports, (IFile) iCompilationUnit.getResource(), pm);
+		}
+
+		private void performTextEdit(TextEdit textEdit, IFile file, IProgressMonitor pm)
+				throws CoreException {
+			TextFileChange textFileChange = new TextFileChange("Add import for " + fQualifiedTypeToImport, file); //$NON-NLS-1$
+			textFileChange.setSaveMode(TextFileChange.KEEP_SAVE_STATE);
+			textFileChange.setEdit(textEdit);
+			textFileChange.perform(pm);
 		}
 
 		@Override
@@ -112,8 +159,9 @@ public class JavaResolutionFactory {
 	 */
 	private static class RequireBundleManifestChange extends AbstractManifestChange {
 
-		private RequireBundleManifestChange(IProject project, ExportPackageDescription desc) {
-			super(project, desc);
+		private RequireBundleManifestChange(IProject project, ExportPackageDescription desc, CompilationUnit cu,
+				String qualifiedTypeToImport) {
+			super(project, desc, cu, qualifiedTypeToImport);
 		}
 
 		@Override
@@ -131,15 +179,21 @@ public class JavaResolutionFactory {
 						base.getPluginBase().add(impt);
 					} else {
 						IPluginImport[] imports = base.getPluginBase().getImports();
-						for (IPluginImport pluginImport : imports)
-							if (pluginImport.getId().equals(pluginId))
+						for (IPluginImport pluginImport : imports) {
+							if (pluginImport.getId().equals(pluginId)) {
 								base.getPluginBase().remove(pluginImport);
+							}
+						}
 					}
+
 				}
 			}, new NullProgressMonitor());
 
+			insertImport(getCompilationUnit(), getQualifiedTypeToImport(), pm);
+
 			if (!isUndo())
-				return new RequireBundleManifestChange(getProject(), (ExportPackageDescription) getChangeObject()) {
+				return new RequireBundleManifestChange(getProject(), (ExportPackageDescription) getChangeObject(),
+						getCompilationUnit(), getQualifiedTypeToImport()) {
 					@Override
 					public boolean isUndo() {
 						return true;
@@ -147,6 +201,7 @@ public class JavaResolutionFactory {
 				};
 			return null;
 		}
+
 
 		@Override
 		public Image getImage() {
@@ -187,6 +242,11 @@ public class JavaResolutionFactory {
 			super(project, desc);
 		}
 
+		private ImportPackageManifestChange(IProject project, ExportPackageDescription desc, CompilationUnit cu,
+				String qualifiedTypeToImport) {
+			super(project, desc, cu, qualifiedTypeToImport);
+		}
+
 		@Override
 		public Change perform(IProgressMonitor pm) throws CoreException {
 			PDEModelUtility.modifyModel(new ModelModification(getProject()) {
@@ -213,6 +273,8 @@ public class JavaResolutionFactory {
 					}
 				}
 			}, new NullProgressMonitor());
+
+			insertImport(getCompilationUnit(), getQualifiedTypeToImport(), pm);
 
 			if (!isUndo())
 				return new ImportPackageManifestChange(getProject(), (ExportPackageDescription) getChangeObject()) {
@@ -306,34 +368,66 @@ public class JavaResolutionFactory {
 	}
 
 	/**
-	 * Creates and returns a proposal which create a Require-Bundle entry in the MANIFEST.MF (or corresponding plugin.xml) for the supplier
-	 * of desc.  The object will be of the type specified by the type argument.
-	 * @param project the project to be updated
-	 * @param desc an ExportPackageDescription from the bundle that is to be added as a Require-Bundle dependency
-	 * @param type the type of the proposal to be returned
-	 * @param relevance the relevance of the new proposal
+	 * Creates and returns a proposal which create a Require-Bundle entry in the
+	 * MANIFEST.MF (or corresponding plugin.xml) for the supplier of desc. The
+	 * object will be of the type specified by the type argument.
+	 *
+	 * @param project
+	 *            the project to be updated
+	 * @param desc
+	 *            an ExportPackageDescription from the bundle that is to be
+	 *            added as a Require-Bundle dependency
+	 * @param type
+	 *            the type of the proposal to be returned
+	 * @param relevance
+	 *            the relevance of the new proposal
+	 * @param qualifiedTypeToImport
+	 *            the qualified type name of the type that requires this
+	 *            proposal. If this argument and cu are supplied the proposal
+	 *            will add an import statement for this type to the source file
+	 *            in which the proposal was invoked.
+	 * @param cu
+	 *            the AST root of the java source file in which this fix was
+	 *            invoked
 	 * @see JavaResolutionFactory#TYPE_JAVA_COMPLETION
 	 * @see JavaResolutionFactory#TYPE_CLASSPATH_FIX
 	 */
-	public static final Object createRequireBundleProposal(IProject project, ExportPackageDescription desc, int type, int relevance) {
+	public static final Object createRequireBundleProposal(IProject project, ExportPackageDescription desc, int type,
+			int relevance, CompilationUnit cu, String qualifiedTypeToImport) {
 		if (desc.getSupplier() == null)
 			return null;
-		AbstractManifestChange change = new RequireBundleManifestChange(project, desc);
+		AbstractManifestChange change = new RequireBundleManifestChange(project, desc, cu, qualifiedTypeToImport);
 		return createWrapper(change, type, relevance);
 	}
 
 	/**
-	 * Creates and returns a proposal which create an Import-Package entry in the MANIFEST.MF for the package represented by
-	 * desc.  The object will be of the type specified by the type argument.
-	 * @param project the project to be updated
-	 * @param desc an ExportPackageDescription which represents the package to be added
-	 * @param type the type of the proposal to be returned
-	 * @param relevance the relevance of the new proposal
+	 * Creates and returns a proposal which create an Import-Package entry in
+	 * the MANIFEST.MF for the package represented by desc. The object will be
+	 * of the type specified by the type argument.
+	 *
+	 * @param project
+	 *            the project to be updated
+	 * @param desc
+	 *            an ExportPackageDescription which represents the package to be
+	 *            added
+	 * @param type
+	 *            the type of the proposal to be returned
+	 * @param relevance
+	 *            the relevance of the new proposal
+	 * @param qualifiedTypeToImport
+	 *            the qualified type name of the type that requires this
+	 *            proposal. If this argument and cu are supplied the proposal
+	 *            will add an import statement for this type to the source file
+	 *            in which the proposal was invoked.
+	 * @param cu
+	 *            the AST root of the java source file in which this fix was
+	 *            invoked
 	 * @see JavaResolutionFactory#TYPE_JAVA_COMPLETION
 	 * @see JavaResolutionFactory#TYPE_CLASSPATH_FIX
 	 */
-	public static final Object createImportPackageProposal(IProject project, ExportPackageDescription desc, int type, int relevance) {
-		AbstractManifestChange change = new ImportPackageManifestChange(project, desc);
+	public static final Object createImportPackageProposal(IProject project, ExportPackageDescription desc, int type,
+			int relevance, CompilationUnit cu, String qualifiedTypeToImport) {
+		AbstractManifestChange change = new ImportPackageManifestChange(project, desc, cu, qualifiedTypeToImport);
 		return createWrapper(change, type, relevance);
 	}
 
