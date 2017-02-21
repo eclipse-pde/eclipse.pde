@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -564,6 +565,11 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				continue;
 			}
 
+			if (canSkipFile(cu)) {
+				markAsAbandoned(cu);
+				continue;
+			}
+
 			Map<ICompilationUnit, BuildContext> map = filesByProject.get(cu.getJavaProject());
 			if (map == null) {
 				map = new HashMap<>();
@@ -579,6 +585,50 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				debug.trace(String.format("Processing compilation units in project %s.", entry.getKey().getElementName())); //$NON-NLS-1$
 
 			processAnnotations(entry.getKey(), entry.getValue());
+		}
+	}
+
+	public boolean canSkipFile(ICompilationUnit cu) {
+		IType primaryType = cu.findPrimaryType();
+		if (primaryType == null)
+			return false;
+
+		try {
+			return !containsComponent(primaryType);
+		} catch (JavaModelException e) {
+			return false;
+		}
+	}
+
+	private boolean containsComponent(IType type) throws JavaModelException {
+
+		IAnnotation annotationWithImport = type.getAnnotation("Component"); //$NON-NLS-1$
+		IAnnotation fullyQualifiedAnnotation = type.getAnnotation(COMPONENT_ANNOTATION);
+
+		boolean hasComponentAnnotation = annotationWithImport.exists() || fullyQualifiedAnnotation.exists();
+		if (hasComponentAnnotation)
+			return true;
+
+		for (IJavaElement child : type.getChildren()) {
+			if ((child instanceof IType) && containsComponent((IType) child)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void markAsAbandoned(ICompilationUnit cu) {
+		ProjectContext projectContext = processingContext.get(cu.getJavaProject());
+
+		String cuKey = AnnotationProcessor.getCompilationUnitKey(cu);
+		projectContext.getUnprocessed().remove(cuKey);
+
+		ProjectState state = projectContext.getState();
+
+		Collection<String> oldDSKeys = state.updateMappings(cuKey, new HashMap<>());
+		if (oldDSKeys != null) {
+			projectContext.getAbandoned().addAll(oldDSKeys);
 		}
 	}
 

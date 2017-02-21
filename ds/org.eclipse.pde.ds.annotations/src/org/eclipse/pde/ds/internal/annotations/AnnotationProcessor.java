@@ -130,15 +130,18 @@ public class AnnotationProcessor extends ASTRequestor {
 		this.fileMap = fileMap;
 	}
 
+	static String getCompilationUnitKey(ICompilationUnit source) {
+		IJavaElement parent = source.getParent();
+		if (parent == null)
+			return source.getElementName();
+		else
+			return String.format("%s/%s", parent.getElementName().replace('.', '/'), source.getElementName()); //$NON-NLS-1$
+	}
+
 	@Override
 	public void acceptAST(ICompilationUnit source, CompilationUnit ast) {
 		// determine CU key
-		String cuKey;
-		IJavaElement parent = source.getParent();
-		if (parent == null)
-			cuKey = source.getElementName();
-		else
-			cuKey = String.format("%s/%s", parent.getElementName().replace('.',  '/'), source.getElementName()); //$NON-NLS-1$
+		String cuKey = getCompilationUnitKey(source);
 
 		context.getUnprocessed().remove(cuKey);
 
