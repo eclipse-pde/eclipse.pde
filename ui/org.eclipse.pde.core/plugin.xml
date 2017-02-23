@@ -5,7 +5,7 @@
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
      http://www.eclipse.org/legal/epl-v10.html
-    
+
      Contributors:
          IBM Corporation - initial API and implementation
  -->
@@ -68,7 +68,7 @@
                id="org.eclipse.pde.core.rcpWithSource"
                name="%target.name.0">
             <description>
-               %target.description.0         
+               %target.description.0
             </description>
          </target>
          <target
@@ -79,7 +79,7 @@
                %target.description.1
             </description>
          </target>
-      </extension>     
+      </extension>
 
 <!-- ================================================================================= -->
 <!-- Natures                                                                           -->
@@ -114,7 +114,7 @@
          </run>
       </runtime>
    </extension>
-   
+
 <!-- ================================================================================= -->
 <!-- Builders                                                                          -->
 <!-- ================================================================================= -->
@@ -158,7 +158,7 @@
          </run>
       </builder>
    </extension>
-      
+
 <!-- ================================================================================= -->
 <!-- Markers                                                                           -->
 <!-- ================================================================================= -->
@@ -172,7 +172,7 @@
       <attribute name="categoryId"/>
       <persistent value="true"/>
    </extension>
-   
+
 <!-- ================================================================================= -->
 <!-- Ant-related extensions                                                            -->
 <!-- ================================================================================= -->
@@ -199,7 +199,7 @@
             name="pde.provisionTargetDefinition">
       </antTask>
    </extension>
-   
+
    <extension
          point="org.eclipse.ant.core.extraClasspathEntries">
       <extraClasspathEntry
@@ -229,100 +229,100 @@
             name="target.arch"
             resolver="org.eclipse.pde.internal.core.variables.TargetOSArchVariableResolver"/>
    </extension>
-   
-      
+
+
 <!-- ================================================================================= -->
 <!-- Content Types                                                                     -->
 <!-- ================================================================================= -->
-   <extension 
-   		 point="org.eclipse.core.contenttype.contentTypes">
-      <content-type 
-      		id="org.eclipse.pde.pluginManifest" 
-      		name="%pluginManifestName" 
-    		base-type="org.eclipse.core.runtime.xml"
-   			priority="high"				
-    		file-names="plugin.xml">
-    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
-    		<parameter name="element" value="plugin"/>
-		</describer>
-	  </content-type>
-   	  <content-type 
-   	  		id="org.eclipse.pde.fragmentManifest" 
-   	  		name="%fragmentManifestName" 
-       		base-type="org.eclipse.core.runtime.xml"
-    		priority="high"				
-    		file-names="fragment.xml">
-    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
-    		<parameter name="element" value="fragment"/>
-		</describer>
-	  </content-type>
-   	  <content-type 
-   	  		id="org.eclipse.pde.featureManifest" 
-   	  		name="%featureManifestName" 
-       		base-type="org.eclipse.core.runtime.xml"
-    		priority="high"				
-    		file-names="feature.xml">
-    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
-    		<parameter name="element" value="feature"/>
-		</describer>
-	  </content-type>
-   	  <content-type 
-   	  		id="org.eclipse.pde.siteManifest" 
-   	  		name="%siteManifestName" 
-       		base-type="org.eclipse.core.runtime.xml"
-    		priority="high"				
-    		file-names="site.xml">
-    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
-    		<parameter name="element" value="site"/>
-		</describer>
-	  </content-type>
-   	  <content-type 
-   	  		id="org.eclipse.pde.productFile" 
-   	  		name="%productConfiguration" 
-       		base-type="org.eclipse.core.runtime.xml"
-    		priority="high"				
-    		file-extensions="product">
-    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
-    		<parameter name="element" value="product"/>
-		</describer>
-	  </content-type>
-   	  <content-type 
-   	  		id="org.eclipse.pde.targetFile" 
-   	  		name="%target.profile.content" 
-       		base-type="org.eclipse.core.runtime.xml"
-    		priority="high"				
-    		file-extensions="target">
-    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
-    		<parameter name="element" value="target"/>
-		</describer>
-	  </content-type>
-   	  <content-type 
-   	  		id="org.eclipse.pde.schema" 
-   	  		name="%schemaFile" 
-       		base-type="org.eclipse.core.runtime.xml"
-    		priority="high"				
-    		file-extensions="exsd">
-    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
-    		<parameter name="element" value="schema"/>
-		</describer>
-	  </content-type>
-	  <content-type 
-	  		id="org.eclipse.pde.pluginProperties" 
-	  		name="%pluginPropertiesName" 
-    		base-type="org.eclipse.jdt.core.javaProperties"
-    		priority="high"				
-    		file-names="plugin.properties"/>
-      <content-type 
-		    id="org.eclipse.pde.buildProperties" 
-		    name="%buildPropertiesName" 
-		    base-type="org.eclipse.jdt.core.javaProperties"
-		    priority="high"
-		    file-names="build.properties"/>
-      <content-type 
-		    id="org.eclipse.pde.bundleManifest" 
-		    name="%bundleManifest" 
-		    base-type="org.eclipse.jdt.core.JARManifest"
-		    priority="high"
+   <extension
+            point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            id="org.eclipse.pde.pluginManifest"
+            name="%pluginManifestName"
+            base-type="org.eclipse.core.runtime.xml"
+            priority="high"
+            file-names="plugin.xml">
+        <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+            <parameter name="element" value="plugin"/>
+        </describer>
+      </content-type>
+      <content-type
+            id="org.eclipse.pde.fragmentManifest"
+            name="%fragmentManifestName"
+            base-type="org.eclipse.core.runtime.xml"
+            priority="high"
+            file-names="fragment.xml">
+        <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+            <parameter name="element" value="fragment"/>
+        </describer>
+      </content-type>
+         <content-type
+            id="org.eclipse.pde.featureManifest"
+            name="%featureManifestName"
+            base-type="org.eclipse.core.runtime.xml"
+            priority="high"
+            file-names="feature.xml">
+        <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+            <parameter name="element" value="feature"/>
+        </describer>
+      </content-type>
+         <content-type
+            id="org.eclipse.pde.siteManifest"
+            name="%siteManifestName"
+            base-type="org.eclipse.core.runtime.xml"
+            priority="high"
+            file-names="site.xml">
+        <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+            <parameter name="element" value="site"/>
+        </describer>
+      </content-type>
+         <content-type
+            id="org.eclipse.pde.productFile"
+            name="%productConfiguration"
+            base-type="org.eclipse.core.runtime.xml"
+            priority="high"
+            file-extensions="product">
+        <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+            <parameter name="element" value="product"/>
+        </describer>
+      </content-type>
+         <content-type
+            id="org.eclipse.pde.targetFile"
+            name="%target.profile.content"
+            base-type="org.eclipse.core.runtime.xml"
+            priority="high"
+            file-extensions="target">
+        <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+            <parameter name="element" value="target"/>
+        </describer>
+      </content-type>
+         <content-type
+            id="org.eclipse.pde.schema"
+            name="%schemaFile"
+            base-type="org.eclipse.core.runtime.xml"
+            priority="high"
+            file-extensions="exsd">
+        <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+            <parameter name="element" value="schema"/>
+        </describer>
+      </content-type>
+      <content-type
+            id="org.eclipse.pde.pluginProperties"
+            name="%pluginPropertiesName"
+            base-type="org.eclipse.jdt.core.javaProperties"
+            priority="high"
+            file-names="plugin.properties"/>
+      <content-type
+            id="org.eclipse.pde.buildProperties"
+            name="%buildPropertiesName"
+            base-type="org.eclipse.jdt.core.javaProperties"
+            priority="high"
+            file-names="build.properties"/>
+      <content-type
+            id="org.eclipse.pde.bundleManifest"
+            name="%bundleManifest"
+            base-type="org.eclipse.jdt.core.JARManifest"
+            priority="high"
             describer="org.eclipse.pde.internal.core.content.BundleManifestDescriber"/>
       <file-association
             content-type="org.eclipse.jdt.core.javaProperties"
