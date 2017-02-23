@@ -328,6 +328,10 @@
             content-type="org.eclipse.jdt.core.javaProperties"
             file-names=".options">
       </file-association>
+      <file-association
+            content-type="org.eclipse.jdt.core.javaProperties"
+            file-names="p2.inf">
+      </file-association>
       <content-type
             base-type="org.eclipse.core.runtime.xml"
             id="org.eclipse.pde.categoryManifest"
