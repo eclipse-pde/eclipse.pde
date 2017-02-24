@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,12 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.ui.JavaElementLabels;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
 import com.ibm.icu.text.MessageFormat;
@@ -52,6 +55,23 @@ public class FilterProblemWithCommentResolution extends FilterProblemResolution 
 						resolveCategoryName() );
 			}
 		}
+	}
+
+	@Override
+	public String getDescription() {
+		try {
+			String value = (String) fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS);
+			String[] args = new String[0];
+			if (value != null) {
+				args = value.split("#"); //$NON-NLS-1$
+			}
+			int id = fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0);
+			return MessageFormat.format(MarkerMessages.FilterProblemWithCommentResolution_create_commented_filter_desc,
+					ApiProblemFactory.getLocalizedMessage(ApiProblemFactory.getProblemMessageId(id), args),
+					resolveCategoryName());
+		} catch (CoreException e) {
+		}
+		return null;
 	}
 
 	@Override

@@ -28,6 +28,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Marker resolution for explaining a specific API tool error as quickfix
  * resolution
@@ -56,7 +58,8 @@ public class ProblemExplainIncompatibilityResolution extends WorkbenchMarkerReso
 				args = value.split("#"); //$NON-NLS-1$
 			}
 			int id = fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0);
-			return ApiProblemFactory.getLocalizedMessage(ApiProblemFactory.getProblemMessageId(id), args);
+			return MessageFormat.format(MarkerMessages.ExplainProblemResolution_explain_incompatibility_desc,
+					ApiProblemFactory.getLocalizedMessage(ApiProblemFactory.getProblemMessageId(id), args));
 		} catch (CoreException e) {
 		}
 		return null;

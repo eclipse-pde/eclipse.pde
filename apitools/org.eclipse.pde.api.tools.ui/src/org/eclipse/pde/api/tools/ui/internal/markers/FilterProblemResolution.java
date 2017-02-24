@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,10 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 				args = value.split("#"); //$NON-NLS-1$
 			}
 			int id = fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0);
-			return ApiProblemFactory.getLocalizedMessage(ApiProblemFactory.getProblemMessageId(id), args);
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0_desc,
+					ApiProblemFactory.getLocalizedMessage(ApiProblemFactory.getProblemMessageId(id), args),
+					resolveCategoryName());
+
 		} catch (CoreException e) {
 		}
 		return null;

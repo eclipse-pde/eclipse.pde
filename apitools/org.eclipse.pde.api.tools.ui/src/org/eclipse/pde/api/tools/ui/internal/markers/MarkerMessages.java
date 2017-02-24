@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class MarkerMessages extends NLS {
 	public static String DuplicateAnnotationResolution_remove_duplicate_annotation;
 	public static String DuplicateTagResolution_remove_dupe_tag_resolution_label;
 	public static String FilterProblemResolution_0;
+	public static String FilterProblemResolution_0_desc;
 	public static String FilterProblemResolution_compatible;
 	public static String FilterProblemResolution_create_filters_for_problems;
 	public static String FilterProblemResolution_default_profile;
@@ -34,8 +35,10 @@ public class MarkerMessages extends NLS {
 	public static String FilterProblemResolution_version_number;
 	public static String FilterProblemResolution_api_component;
 	public static String FilterProblemWithCommentResolution_create_commented_filter;
+	public static String FilterProblemWithCommentResolution_create_commented_filter_desc;
 	public static String FilterProblemWithCommentResolution_create_commented_filters;
 	public static String ExplainProblemResolution_explain_incompatibility;
+	public static String ExplainProblemResolution_explain_incompatibility_desc;
 	public static String InstallEEDescriptionProblemResolution_0;
 	public static String InstallEEDescriptionProblemResolution_1;
 	public static String MissingEEDescriptionProblemResolution_0;
