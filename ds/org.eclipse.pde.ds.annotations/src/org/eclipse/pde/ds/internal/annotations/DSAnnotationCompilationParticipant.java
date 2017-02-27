@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2017 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -44,6 +46,7 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -84,6 +87,10 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 	static final String COMPONENT_ANNOTATION = "org.osgi.service.component.annotations.Component"; //$NON-NLS-1$
 
 	static final String ANNOTATIONS_PACKAGE = COMPONENT_ANNOTATION.substring(0, COMPONENT_ANNOTATION.lastIndexOf('.'));
+
+	private static final IPath COMPONENT_ANNOTATION_PATH = new Path(COMPONENT_ANNOTATION.replace('.',  '/'));
+
+	private static final Pattern ACCESS_RULE_PATTERN = Pattern.compile("(\\*\\*)|\\*|\\?"); //$NON-NLS-1$
 
 	private static final QualifiedName PROP_STATE = new QualifiedName(Activator.PLUGIN_ID, "state"); //$NON-NLS-1$
 
@@ -153,7 +160,15 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			result = NEEDS_FULL_BUILD;
 		}
 
-		String errorLevelStr = prefs.getString(Activator.PLUGIN_ID, Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.toString(), new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
+		String specVersionStr = prefs.getString(Activator.PLUGIN_ID, Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name(),  new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
+		DSAnnotationVersion specVersion = getEnumValue(specVersionStr, DSAnnotationVersion.class, DSAnnotationVersion.V1_3);
+
+		if (specVersion != state.getSpecVersion()) {
+			state.setSpecVersion(specVersion);
+			result = NEEDS_FULL_BUILD;
+		}
+
+		String errorLevelStr = prefs.getString(Activator.PLUGIN_ID, Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.name(), new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
 		ValidationErrorLevel errorLevel = getEnumValue(errorLevelStr, ValidationErrorLevel.class, ValidationErrorLevel.error);
 
 		if (errorLevel != state.getErrorLevel()) {
@@ -303,18 +318,38 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 					for (int i = roots.length - 1; i >= 0; --i) {
 						IPackageFragmentRoot root = roots[i];
 						IPackageFragment fragment = root.getPackageFragment(ANNOTATIONS_PACKAGE);
-						if (fragment.exists()) {
-							IClasspathEntry entry = root.getResolvedClasspathEntry();
-							IClasspathAttribute[] attrs = entry.getExtraAttributes();
-							for (IClasspathAttribute attr : attrs) {
-								if (Activator.CP_ATTRIBUTE.equals(attr.getName()) && Boolean.parseBoolean(attr.getValue())) {
-									markerNeeded = true;
-									break;
-								}
+						if (!fragment.exists()) {
+							continue;
+						}
+
+						IClasspathEntry entry = root.getResolvedClasspathEntry();
+						boolean packageAccessible = true;
+						IAccessRule[] accessRules = entry.getAccessRules();
+						for (IAccessRule accessRule : accessRules) {
+							if (!matches(COMPONENT_ANNOTATION_PATH, accessRule.getPattern())) {
+								continue;
+							}
+
+							if (accessRule.getKind() == IAccessRule.K_NON_ACCESSIBLE) {
+								packageAccessible = false;
 							}
 
 							break;
 						}
+
+						if (!packageAccessible) {
+							continue;
+						}
+
+						IClasspathAttribute[] attrs = entry.getExtraAttributes();
+						for (IClasspathAttribute attr : attrs) {
+							if (Activator.CP_ATTRIBUTE.equals(attr.getName()) && Boolean.parseBoolean(attr.getValue())) {
+								markerNeeded = true;
+								break;
+							}
+						}
+
+						break;
 					}
 
 					if (markerNeeded) {
@@ -348,8 +383,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			for (String dsKey : abandoned) {
 				IPath path = Path.fromPortableString(dsKey);
 
-				if (debug.isDebugging())
+				if (debug.isDebugging()) {
 					debug.trace(String.format("Deleting %s", path)); //$NON-NLS-1$
+				}
 
 				IFile file = PDEProject.getBundleRelativeFile(project.getProject(), path);
 				if (file.exists()) {
@@ -361,15 +397,39 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				}
 			}
 
-			if (!deleteStatuses.isEmpty())
+			if (!deleteStatuses.isEmpty()) {
 				Activator.log(new MultiStatus(Activator.PLUGIN_ID, 0, deleteStatuses.toArray(new IStatus[deleteStatuses.size()]), "Error deleting generated files.", null)); //$NON-NLS-1$
+			}
 
-			if (!retained.isEmpty() || !abandoned.isEmpty())
+			if (!retained.isEmpty() || !abandoned.isEmpty()) {
 				updateProject(project.getProject(), retained, abandoned);
+			}
 		}
 
-		if (debug.isDebugging())
+		if (debug.isDebugging()) {
 			debug.trace(String.format("Build finished for project: %s", project.getElementName())); //$NON-NLS-1$
+		}
+	}
+
+	private boolean matches(IPath path, IPath pattern) {
+		if (pattern.hasTrailingSeparator()) {
+			pattern = pattern.append("**"); //$NON-NLS-1$
+		}
+
+		StringBuffer buf = new StringBuffer();
+		// TODO escape additional regex chars?
+		Matcher m = ACCESS_RULE_PATTERN.matcher(pattern.toString().replace(".", "\\.")); //$NON-NLS-1$  //$NON-NLS-2$
+		while (m.find()) {
+			if ("**".equals(m.group())) { //$NON-NLS-1$
+				m.appendReplacement(buf, ".*"); //$NON-NLS-1$
+			} else if ("?".equals(m.group())) { //$NON-NLS-1$
+				m.appendReplacement(buf, "[^/]"); //$NON-NLS-1$
+			} else {
+				m.appendReplacement(buf, "[^/]*"); //$NON-NLS-1$
+			}
+		}
+
+		return Pattern.matches(m.appendTail(buf).toString(), path.toString());
 	}
 
 	private void saveState(IProject project, ProjectState state) throws IOException {
@@ -377,8 +437,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 		if (debug.isDebugging()) {
 			debug.trace(String.format("Saving state for project: %s", project.getName())); //$NON-NLS-1$
-			for (String cuKey : state.getCompilationUnits())
+			for (String cuKey : state.getCompilationUnits()) {
 				debug.trace(String.format("%s -> %s", cuKey, state.getModelFiles(cuKey))); //$NON-NLS-1$
+			}
 		}
 
 		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(stateFile));
@@ -393,8 +454,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		PDEModelUtility.modifyModel(new ModelModification(project) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (model instanceof IBundlePluginModelBase)
+				if (model instanceof IBundlePluginModelBase) {
 					updateManifest((IBundlePluginModelBase) model, retained, abandoned, project);
+				}
 			}
 		}, null);
 
@@ -402,14 +464,14 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		PDEModelUtility.modifyModel(new ModelModification(PDEProject.getBuildProperties(project)) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (model instanceof IBuildModel)
+				if (model instanceof IBuildModel) {
 					updateBuildProperties((IBuildModel) model, retained, abandoned);
+				}
 			}
 		}, null);
 	}
 
-	private void updateManifest(IBundlePluginModelBase model, Collection<String> retained, Collection<String> abandoned,
-			IProject project) {
+	private void updateManifest(IBundlePluginModelBase model, Collection<String> retained, Collection<String> abandoned, IProject project) {
 		IBundleModel bundleModel = model.getBundleModel();
 		LinkedHashSet<IPath> entries = new LinkedHashSet<>();
 		collectManifestEntries(bundleModel, entries);
@@ -422,25 +484,29 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 		for (String dsKey : retained) {
 			IPath path = Path.fromPortableString(dsKey);
-			if (!isManifestEntryIncluded(entries, path))
+			if (!isManifestEntryIncluded(entries, path)) {
 				changed |= entries.add(path);
+			}
 		}
 
-		if (!changed)
+		if (!changed) {
 			return;
+		}
 
 		StringBuilder buf = new StringBuilder();
 		for (IPath entry : entries) {
-			if (buf.length() > 0)
+			if (buf.length() > 0) {
 				buf.append(",\n "); //$NON-NLS-1$
+			}
 
 			buf.append(entry.toString());
 		}
 
 		String value = buf.toString();
 
-		if (debug.isDebugging())
+		if (debug.isDebugging()) {
 			debug.trace(String.format("Setting manifest header in %s to %s: %s", model.getUnderlyingResource().getFullPath(), DS_MANIFEST_KEY, value)); //$NON-NLS-1$
+		}
 
 		// note: contrary to javadoc, setting header value to null does *not* remove it; setting it to empty string does
 		bundleModel.getBundle().setHeader(DS_MANIFEST_KEY, value);
@@ -449,9 +515,10 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				Activator.PREF_GENERATE_BAPL, true,
 				new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE });
 		if (generateBAPL) {
-			if (debug.isDebugging())
+			if (debug.isDebugging()) {
 				debug.trace(String.format("Setting manifest header in %s to %s: %s", //$NON-NLS-1$
 						model.getUnderlyingResource().getFullPath(), AP_MANIFEST_KEY, "lazy")); //$NON-NLS-1$
+			}
 
 			bundleModel.getBundle().setHeader(AP_MANIFEST_KEY, "lazy"); //$NON-NLS-1$
 		}
@@ -459,20 +526,23 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 	private void collectManifestEntries(IBundleModel bundleModel, Collection<IPath> entries) {
 		String header = bundleModel.getBundle().getHeader(DS_MANIFEST_KEY);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		String[] elements = header.split("\\s*,\\s*"); //$NON-NLS-1$
 		for (String element : elements) {
-			if (element.length() != 0)
+			if (element.length() != 0) {
 				entries.add(new Path(element));
+			}
 		}
 	}
 
 	private boolean isManifestEntryIncluded(Collection<IPath> entries, IPath path) {
 		for (IPath entry : entries) {
-			if (entry.equals(path))
+			if (entry.equals(path)) {
 				return true;
+			}
 
 			if (entry.removeLastSegments(1).equals(path.removeLastSegments(1))) {
 				// check if wildcard match (last path segment)
@@ -483,8 +553,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 					continue;
 				}
 
-				if (filter.matches(Collections.singletonMap("filename", path.lastSegment()))) //$NON-NLS-1$
+				if (filter.matches(Collections.singletonMap("filename", path.lastSegment()))) { //$NON-NLS-1$
 					return true;
+				}
 			}
 		}
 
@@ -501,8 +572,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		if (includes != null) {
 			for (String dsKey : abandoned) {
 				String path = Path.fromPortableString(dsKey).toString();
-				if (includes.contains(path))
+				if (includes.contains(path)) {
 					includes.removeToken(path);
+				}
 			}
 		}
 
@@ -518,29 +590,34 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 			for (String dsKey : retained) {
 				IPath path = Path.fromPortableString(dsKey);
-				if (!isBuildEntryIncluded(entries, path))
+				if (!isBuildEntryIncluded(entries, path)) {
 					includes.addToken(path.toString());
+				}
 			}
 		}
 	}
 
 	private void collectBuildEntries(IBuildEntry includes, Collection<IPath> entries) {
-		if (includes == null)
+		if (includes == null) {
 			return;
+		}
 
 		for (String include : includes.getTokens()) {
-			if ((include = include.trim()).length() != 0)
+			if ((include = include.trim()).length() != 0) {
 				entries.add(new Path(include));
+			}
 		}
 	}
 
 	private boolean isBuildEntryIncluded(Collection<IPath> entries, IPath path) {
 		for (IPath entry : entries) {
-			if (entry.equals(path))
+			if (entry.equals(path)) {
 				return true;
+			}
 
-			if (entry.hasTrailingSeparator() && entry.isPrefixOf(path))
+			if (entry.hasTrailingSeparator() && entry.isPrefixOf(path)) {
 				return true;
+			}
 
 			// TODO support full Ant path patterns
 		}
@@ -553,14 +630,16 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		// we need to process CUs in context of a project; separate them by project
 		HashMap<IJavaProject, Map<ICompilationUnit, BuildContext>> filesByProject = new HashMap<>();
 		for (BuildContext file : files) {
-			if (debug.isDebugging())
+			if (debug.isDebugging()) {
 				debug.trace(String.format("Creating compilation unit from file %s.", file.getFile().getFullPath())); //$NON-NLS-1$
+			}
 
 			ICompilationUnit cu = JavaCore.createCompilationUnitFrom(file.getFile());
 			if (cu == null) {
-				if (debug.isDebugging())
+				if (debug.isDebugging()) {
 					// TODO should we log instead? Don't want to spam the error log though
 					debug.trace(String.format("Unable to create compilation unit from file %s.", file.getFile().getFullPath())); //$NON-NLS-1$
+				}
 
 				continue;
 			}
@@ -581,8 +660,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 		// process all CUs in each project
 		for (Map.Entry<IJavaProject, Map<ICompilationUnit, BuildContext>> entry : filesByProject.entrySet()) {
-			if (debug.isDebugging())
+			if (debug.isDebugging()) {
 				debug.trace(String.format("Processing compilation units in project %s.", entry.getKey().getElementName())); //$NON-NLS-1$
+			}
 
 			processAnnotations(entry.getKey(), entry.getValue());
 		}
@@ -590,8 +670,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 	public boolean canSkipFile(ICompilationUnit cu) {
 		IType primaryType = cu.findPrimaryType();
-		if (primaryType == null)
+		if (primaryType == null) {
 			return false;
+		}
 
 		try {
 			return !containsComponent(primaryType);
@@ -606,8 +687,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		IAnnotation fullyQualifiedAnnotation = type.getAnnotation(COMPONENT_ANNOTATION);
 
 		boolean hasComponentAnnotation = annotationWithImport.exists() || fullyQualifiedAnnotation.exists();
-		if (hasComponentAnnotation)
+		if (hasComponentAnnotation) {
 			return true;
+		}
 
 		for (IJavaElement child : type.getChildren()) {
 			if ((child instanceof IType) && containsComponent((IType) child)) {
@@ -651,8 +733,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 	public static boolean isManaged(IProject project) {
 		try {
-			if (project.getSessionProperty(PROP_STATE) != null)
+			if (project.getSessionProperty(PROP_STATE) != null) {
 				return true;
+			}
 
 			File stateFile = getStateFile(project);
 			return stateFile.canRead();

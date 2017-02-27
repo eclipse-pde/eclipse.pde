@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2017 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,8 +37,9 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 	@Override
 	public void preferenceChange(final PreferenceChangeEvent event) {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
-		if (!ws.isAutoBuilding() && !Activator.PREF_CLASSPATH.equals(event.getKey()))
+		if (!ws.isAutoBuilding() && !Activator.PREF_CLASSPATH.equals(event.getKey()) && !Activator.PREF_SPEC_VERSION.equals(event.getKey())) {
 			return;
+		}
 
 		WorkspaceJob job = new WorkspaceJob(Messages.DSAnnotationPreferenceListener_jobName) {
 			@Override
@@ -47,15 +48,18 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 				ArrayList<IProject> managedProjects = new ArrayList<>(projects.length);
 
 				for (IProject project : projects) {
-					if (project.isOpen() && DSAnnotationCompilationParticipant.isManaged(project))
+					if (project.isOpen() && DSAnnotationCompilationParticipant.isManaged(project)) {
 						managedProjects.add(project);
+					}
 				}
 
 				SubMonitor progress = SubMonitor.convert(monitor, Messages.DSAnnotationPreferenceListener_taskName, managedProjects.size());
 				for (IProject project : managedProjects) {
 					if (Activator.PREF_CLASSPATH.equals(event.getKey())
-							|| Activator.PREF_ENABLED.equals(event.getKey()))
+							|| Activator.PREF_SPEC_VERSION.equals(event.getKey())
+							|| Activator.PREF_ENABLED.equals(event.getKey())) {
 						ProjectClasspathPreferenceChangeListener.updateClasspathContainer(JavaCore.create(project), progress.newChild(1));
+					}
 
 					project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(1));
 				}

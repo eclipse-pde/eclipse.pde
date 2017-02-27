@@ -65,9 +65,9 @@ public class DefaultComponentTest extends AnnotationProcessorTest {
 		IDSReference reference = references[0];
 		assertEquals(Executor.class.getName(), reference.getReferenceInterface());
 		assertEquals(Executor.class.getSimpleName(), reference.getReferenceName());
-		assertEquals(IDSConstants.VALUE_REFERENCE_POLICY_STATIC, reference.getReferencePolicy());
+		assertNull(reference.getReferencePolicy());
 		assertNull(reference.getXMLAttributeValue("policy-option"));
-		assertEquals(IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE, reference.getReferenceCardinality());
+		assertNull(reference.getReferenceCardinality());
 		assertEquals("setExecutor", reference.getReferenceBind());
 		assertEquals("unsetExecutor", reference.getReferenceUnbind());
 		assertNull(reference.getReferenceTarget());

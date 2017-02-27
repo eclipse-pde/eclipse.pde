@@ -55,6 +55,36 @@ public class DSEnums {
 		REFERENCE_POLICY_OPTION = Collections.unmodifiableMap(m);
 	}
 
+	private static final Map<String, String> SERVICE_SCOPE;
+
+	static {
+		HashMap<String, String> m = new HashMap<>(4);
+		m.put("SINGLETON", "singleton"); //$NON-NLS-1$ //$NON-NLS-2$
+		m.put("BUNDLE", "bundle"); //$NON-NLS-1$ //$NON-NLS-2$
+		m.put("PROTOTYPE", "prototype"); //$NON-NLS-1$ //$NON-NLS-2$
+		m.put("DEFAULT", "<<default>>"); //$NON-NLS-1$ //$NON-NLS-2$
+		SERVICE_SCOPE = Collections.unmodifiableMap(m);
+	}
+
+	private static final Map<String, String> REFERENCE_SCOPE;
+
+	static {
+		HashMap<String, String> m = new HashMap<>(3);
+		m.put("BUNDLE", "bundle"); //$NON-NLS-1$ //$NON-NLS-2$
+		m.put("PROTOTYPE", "prototype"); //$NON-NLS-1$ //$NON-NLS-2$
+		m.put("PROTOTYPE_REQUIRED", "prototype_required"); //$NON-NLS-1$ //$NON-NLS-2$
+		REFERENCE_SCOPE = Collections.unmodifiableMap(m);
+	}
+
+	private static final Map<String, String> FIELD_OPTION;
+
+	static {
+		HashMap<String, String> m = new HashMap<>(2);
+		m.put("UPDATE", "update"); //$NON-NLS-1$ //$NON-NLS-2$
+		m.put("REPLACE", "replace"); //$NON-NLS-1$ //$NON-NLS-2$
+		FIELD_OPTION = Collections.unmodifiableMap(m);
+	}
+
 	private DSEnums() {
 		super();
 	}
@@ -73,5 +103,17 @@ public class DSEnums {
 
 	public static String getReferencePolicyOption(String literal) {
 		return REFERENCE_POLICY_OPTION.get(literal);
+	}
+
+	public static String getServiceScope(String literal) {
+		return SERVICE_SCOPE.get(literal);
+	}
+
+	public static String getReferenceScope(String literal) {
+		return REFERENCE_SCOPE.get(literal);
+	}
+
+	public static String getFieldOption(String literal) {
+		return FIELD_OPTION.get(literal);
 	}
 }

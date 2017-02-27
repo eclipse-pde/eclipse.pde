@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2017 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,8 @@ public class Activator extends AbstractUIPlugin {
 	public static final String PREF_ENABLED = "enabled"; //$NON-NLS-1$
 
 	public static final String PREF_PATH = "path"; //$NON-NLS-1$
+
+	public static final String PREF_SPEC_VERSION = "dsVersion"; //$NON-NLS-1$
 
 	public static final String PREF_VALIDATION_ERROR_LEVEL = "validationErrorLevel"; //$NON-NLS-1$
 
@@ -89,16 +91,18 @@ public class Activator extends AbstractUIPlugin {
 
 	void listenForClasspathPreferenceChanges(IJavaProject project) {
 		synchronized (projectPrefListeners) {
-			if (!projectPrefListeners.containsKey(project))
+			if (!projectPrefListeners.containsKey(project)) {
 				projectPrefListeners.put(project, new ProjectClasspathPreferenceChangeListener(project));
+			}
 		}
 	}
 
 	void disposeProjectClasspathPreferenceChangeListener(IJavaProject project) {
 		synchronized (projectPrefListeners) {
 			ProjectClasspathPreferenceChangeListener listener = projectPrefListeners.remove(project);
-			if (listener != null)
+			if (listener != null) {
 				listener.dispose();
+			}
 		}
 	}
 }

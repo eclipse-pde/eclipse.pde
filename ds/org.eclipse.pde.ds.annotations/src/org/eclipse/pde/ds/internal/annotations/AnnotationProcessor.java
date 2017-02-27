@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2017 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -65,6 +66,7 @@ import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IAnnotationBinding;
 import org.eclipse.jdt.core.dom.IMemberValuePairBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -76,6 +78,7 @@ import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.DocumentRewriteSessionType;
@@ -227,6 +230,8 @@ class AnnotationVisitor extends ASTVisitor {
 
 	private static final String COMPONENT_CONTEXT = "org.osgi.service.component.ComponentContext"; //$NON-NLS-1$
 
+	private static final String COMPONENT_SERVICE_OBJECTS = "org.osgi.service.component.ComponentServiceObjects"; //$NON-NLS-1$
+
 	private static final String COMPONENT_ANNOTATION = DSAnnotationCompilationParticipant.COMPONENT_ANNOTATION;
 
 	private static final String ACTIVATE_ANNOTATION = "org.osgi.service.component.annotations.Activate"; //$NON-NLS-1$
@@ -239,17 +244,29 @@ class AnnotationVisitor extends ASTVisitor {
 
 	private static final Pattern PID_PATTERN = Pattern.compile("[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*"); //$NON-NLS-1$
 
-	private static final String NAMESPACE_1_1 = IDSConstants.NAMESPACE;
-
-	private static final String NAMESPACE_1_2 = "http://www.osgi.org/xmlns/scr/v1.2.0"; //$NON-NLS-1$
-
 	private static final String ATTRIBUTE_COMPONENT_CONFIGURATION_PID = "configuration-pid"; //$NON-NLS-1$
+
+	private static final String ATTRIBUTE_COMPONENT_REFERENCE = "reference"; //$NON-NLS-1$
+
+	private static final String ATTRIBUTE_SERVICE_SCOPE = "scope"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE_REFERENCE_POLICY_OPTION = "policy-option"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE_REFERENCE_UPDATED = "updated"; //$NON-NLS-1$
 
-	private static final String VALUE_REFERENCE_POLICY_OPTION_RELUCTANT = "reluctant"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_REFERENCE_SCOPE = "scope"; //$NON-NLS-1$
+
+	private static final String ATTRIBUTE_REFERENCE_FIELD = "field"; //$NON-NLS-1$
+
+	private static final String ATTRIBUTE_REFERENCE_FIELD_OPTION = "field-option"; //$NON-NLS-1$
+
+	private static final String ATTRIBUTE_REFERENCE_FIELD_COLLECTION_TYPE = "field-collection-type"; //$NON-NLS-1$
+
+	private static final String VALUE_SERVICE_SCOPE_DEFAULT = DSEnums.getServiceScope("DEFAULT"); //$NON-NLS-1$
+
+	private static final String VALUE_REFERENCE_FIELD_OPTION_REPLACE = DSEnums.getFieldOption("REPLACE"); //$NON-NLS-1$
+
+	private static final String VALUE_REFERENCE_FIELD_OPTION_UPDATE = DSEnums.getFieldOption("UPDATE"); //$NON-NLS-1$
 
 	private static final Set<String> PROPERTY_TYPES = Collections.unmodifiableSet(
 			new HashSet<>(
@@ -265,6 +282,29 @@ class AnnotationVisitor extends ASTVisitor {
 							IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN,
 							IDSConstants.VALUE_PROPERTY_TYPE_SHORT)));
 
+	private static final Map<String, String> PRIMITIVE_TYPE_MAP;
+
+	static {
+		HashMap<String, String> map = new HashMap<>(16);
+		map.put(Long.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_LONG);
+		map.put(Double.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE);
+		map.put(Float.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_FLOAT);
+		map.put(Integer.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_INTEGER);
+		map.put(Byte.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BYTE);
+		map.put(Character.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_CHAR);
+		map.put(Boolean.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN);
+		map.put(Short.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_SHORT);
+		map.put(Long.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_LONG);
+		map.put(Double.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE);
+		map.put(Float.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_FLOAT);
+		map.put(Integer.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_INTEGER);
+		map.put(Byte.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BYTE);
+		map.put(Character.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_CHAR);
+		map.put(Boolean.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN);
+		map.put(Short.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_SHORT);
+		PRIMITIVE_TYPE_MAP = Collections.unmodifiableMap(map);
+	}
+
 	private static final Comparator<IDSReference> REF_NAME_COMPARATOR = new Comparator<IDSReference>() {
 
 		@Override
@@ -279,6 +319,8 @@ class AnnotationVisitor extends ASTVisitor {
 
 	private final ProjectState state;
 
+	private final DSAnnotationVersion specVersion;
+
 	private final ValidationErrorLevel errorLevel;
 
 	private final ValidationErrorLevel missingUnbindMethodLevel;
@@ -290,6 +332,7 @@ class AnnotationVisitor extends ASTVisitor {
 	public AnnotationVisitor(AnnotationProcessor processor, ProjectState state, Map<String, String> dsKeys, Set<DSAnnotationProblem> problems) {
 		this.processor = processor;
 		this.state = state;
+		this.specVersion = state.getSpecVersion();
 		this.errorLevel = state.getErrorLevel();
 		this.missingUnbindMethodLevel = state.getMissingUnbindMethodLevel();
 		this.dsKeys = dsKeys;
@@ -300,12 +343,14 @@ class AnnotationVisitor extends ASTVisitor {
 	public boolean visit(TypeDeclaration type) {
 		if (!Modifier.isPublic(type.getModifiers())) {
 			// non-public types cannot be (or have nested) components
-			if (errorLevel.isIgnore())
+			if (errorLevel.isIgnore()) {
 				return false;
+			}
 
 			Annotation annotation = findComponentAnnotation(type);
-			if (annotation != null)
+			if (annotation != null) {
 				reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_notPublic, type.getName().getIdentifier()), type.getName().getIdentifier());
+			}
 
 			return true;
 		}
@@ -322,27 +367,30 @@ class AnnotationVisitor extends ASTVisitor {
 					|| (noDefaultConstructor = !hasDefaultConstructor(type))) {
 				// interfaces, abstract types, non-static/non-public nested types, or types with no default constructor cannot be components
 				if (errorLevel != ValidationErrorLevel.ignore) {
-					if (isInterface)
+					if (isInterface) {
 						reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_interface, type.getName().getIdentifier()), type.getName().getIdentifier());
-					else if (isAbstract)
+					} else if (isAbstract) {
 						reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_abstract, type.getName().getIdentifier()), type.getName().getIdentifier());
-					else if (isNested)
+					} else if (isNested) {
 						reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_notTopLevel, type.getName().getIdentifier()), type.getName().getIdentifier());
-					else if (noDefaultConstructor)
+					} else if (noDefaultConstructor) {
 						reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_noDefaultConstructor, type.getName().getIdentifier()), type.getName().getIdentifier());
-					else
+					} else {
 						reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentImplementationClass, type.getName().getIdentifier()), type.getName().getIdentifier());
+					}
 				}
 			} else {
 				ITypeBinding typeBinding = type.resolveBinding();
 				if (typeBinding == null) {
-					if (debug.isDebugging())
+					if (debug.isDebugging()) {
 						debug.trace(String.format("Unable to resolve binding for type: %s", type)); //$NON-NLS-1$
+					}
 				} else {
 					IAnnotationBinding annotationBinding = annotation.resolveAnnotationBinding();
 					if (annotationBinding == null) {
-						if (debug.isDebugging())
+						if (debug.isDebugging()) {
 							debug.trace(String.format("Unable to resolve binding for annotation: %s", annotation)); //$NON-NLS-1$
+						}
 					} else {
 						try {
 							processComponent(type, typeBinding, annotation, annotationBinding, problems);
@@ -360,8 +408,9 @@ class AnnotationVisitor extends ASTVisitor {
 	@Override
 	public boolean visit(EnumDeclaration node) {
 		Annotation annotation = findComponentAnnotation(node);
-		if (annotation != null)
+		if (annotation != null) {
 			reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_enumeration, node.getName().getIdentifier()), node.getName().getIdentifier());
+		}
 
 		return false;
 	}
@@ -369,28 +418,32 @@ class AnnotationVisitor extends ASTVisitor {
 	@Override
 	public boolean visit(AnnotationTypeDeclaration node) {
 		Annotation annotation = findComponentAnnotation(node);
-		if (annotation != null)
+		if (annotation != null) {
 			reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_annotation, node.getName().getIdentifier()), node.getName().getIdentifier());
+		}
 
 		return true;
 	}
 
 	private Annotation findComponentAnnotation(AbstractTypeDeclaration type) {
 		for (Object item : type.modifiers()) {
-			if (!(item instanceof Annotation))
+			if (!(item instanceof Annotation)) {
 				continue;
+			}
 
 			Annotation annotation = (Annotation) item;
 			IAnnotationBinding annotationBinding = annotation.resolveAnnotationBinding();
 			if (annotationBinding == null) {
-				if (debug.isDebugging())
+				if (debug.isDebugging()) {
 					debug.trace(String.format("Unable to resolve binding for annotation: %s", annotation)); //$NON-NLS-1$
+				}
 
 				continue;
 			}
 
-			if (COMPONENT_ANNOTATION.equals(annotationBinding.getAnnotationType().getQualifiedName()))
+			if (COMPONENT_ANNOTATION.equals(annotationBinding.getAnnotationType().getQualifiedName())) {
 				return annotation;
+			}
 		}
 
 		return null;
@@ -401,8 +454,9 @@ class AnnotationVisitor extends ASTVisitor {
 			ASTNode parent = type.getParent();
 			if (parent != null && (parent.getNodeType() == ASTNode.TYPE_DECLARATION || parent.getNodeType() == ASTNode.ANNOTATION_TYPE_DECLARATION)) {
 				AbstractTypeDeclaration parentType = (AbstractTypeDeclaration) parent;
-				if (Modifier.isPublic(parentType.getModifiers()))
+				if (Modifier.isPublic(parentType.getModifiers())) {
 					return parentType.isPackageMemberTypeDeclaration() || isNestedPublicStatic(parentType);
+				}
 			}
 		}
 
@@ -414,8 +468,9 @@ class AnnotationVisitor extends ASTVisitor {
 		for (MethodDeclaration method : type.getMethods()) {
 			if (method.isConstructor()) {
 				hasConstructor = true;
-				if (Modifier.isPublic(method.getModifiers()) && method.parameters().isEmpty())
+				if (Modifier.isPublic(method.getModifiers()) && method.parameters().isEmpty()) {
 					return true;
+				}
 			}
 		}
 
@@ -466,8 +521,9 @@ class AnnotationVisitor extends ASTVisitor {
 		ITextFileBufferManager bufferManager = FileBuffers.getTextFileBufferManager();
 		bufferManager.connect(filePath, LocationKind.IFILE, null);
 		ITextFileBuffer buffer = bufferManager.getTextFileBuffer(filePath, LocationKind.IFILE);
-		if (buffer.isDirty())
+		if (buffer.isDirty()) {
 			buffer.commit(null, true);
+		}
 
 		IDocument document = buffer.getDocument();
 
@@ -492,8 +548,9 @@ class AnnotationVisitor extends ASTVisitor {
 
 			@Override
 			public TextEdit[] getTextOperations() {
-				if (!changed)
+				if (!changed) {
 					return new TextEdit[0];
+				}
 
 				String text = dsModel.getContents();
 				ReplaceEdit edit = new ReplaceEdit(0, document.getLength(), text);
@@ -511,8 +568,9 @@ class AnnotationVisitor extends ASTVisitor {
 
 			TextEdit[] edits = dsModel.getLastTextChangeListener().getTextOperations();
 			if (edits.length > 0) {
-				if (debug.isDebugging())
+				if (debug.isDebugging()) {
 					debug.trace(String.format("Saving model: %s", file.getFullPath())); //$NON-NLS-1$
+				}
 
 				final MultiTextEdit edit = new MultiTextEdit();
 				edit.addChildren(edits);
@@ -541,8 +599,9 @@ class AnnotationVisitor extends ASTVisitor {
 							debug.trace("Interrupted while waiting for edits to complete on display thread.", e); //$NON-NLS-1$
 					}
 
-					if (ex[0] != null)
+					if (ex[0] != null) {
 						throw ex[0];
+					}
 				} else {
 					performEdit(document, edit);
 				}
@@ -589,8 +648,9 @@ class AnnotationVisitor extends ASTVisitor {
 					if (serviceDuplicates.containsKey(serviceName)) {
 						reportProblem(annotation, "service", i, problems, Messages.AnnotationProcessor_duplicateServiceDeclaration, serviceName); //$NON-NLS-1$
 						Integer pos = serviceDuplicates.put(serviceName, null);
-						if (pos != null)
+						if (pos != null) {
 							reportProblem(annotation, "service", pos.intValue(), problems, Messages.AnnotationProcessor_duplicateServiceDeclaration, serviceName); //$NON-NLS-1$
+						}
 					} else {
 						serviceDuplicates.put(serviceName, i);
 					}
@@ -633,8 +693,9 @@ class AnnotationVisitor extends ASTVisitor {
 			Object[] elements = (Object[]) value;
 			ArrayList<String> list = new ArrayList<>(elements.length);
 			for (Object element : elements) {
-				if (element instanceof String)
+				if (element instanceof String) {
 					list.add((String) element);
+				}
 			}
 
 			properties = list.toArray(new String[list.size()]);
@@ -647,8 +708,9 @@ class AnnotationVisitor extends ASTVisitor {
 			Object[] elements = (Object[]) value;
 			ArrayList<String> list = new ArrayList<>(elements.length);
 			for (Object element : elements) {
-				if (element instanceof String)
+				if (element instanceof String) {
 					list.add((String) element);
+				}
 			}
 
 			propertyFiles = list.toArray(new String[list.size()]);
@@ -666,7 +728,39 @@ class AnnotationVisitor extends ASTVisitor {
 		String configPid = null;
 		if ((value = params.get("configurationPid")) instanceof String) { //$NON-NLS-1$
 			configPid = (String) value;
-			validateComponentConfigPID(annotation, configPid, problems);
+			validateComponentConfigPID(annotation, configPid, -1, problems);
+		} else if (specVersion == DSAnnotationVersion.V1_3 && value instanceof Object[]) {
+			// TODO validate duplicate PIDs!
+			LinkedHashSet<String> configPids = new LinkedHashSet<>(1);
+			int i = 0;
+			for (Object configPidElem : ((Object[]) value)) {
+				String configPidStr = String.valueOf(configPidElem);
+				if ("$".equals(configPidStr)) { //$NON-NLS-1$
+					configPids.add(name);
+				} else {
+					configPids.add(configPidStr);
+					validateComponentConfigPID(annotation, configPidStr, i, problems);
+				}
+
+				i++;
+			}
+
+			StringBuilder configPidBuf = new StringBuilder();
+			for (String configPidElem : configPids) {
+				if (configPidBuf.length() > 0) {
+					configPidBuf.append(' ');
+				}
+
+				configPidBuf.append(configPidElem);
+			}
+
+			configPid = configPidBuf.toString();
+		}
+
+		String serviceScope = null;
+		if (specVersion == DSAnnotationVersion.V1_3 && (value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
+			IVariableBinding serviceScopeBinding = (IVariableBinding) value;
+			serviceScope = DSEnums.getServiceScope(serviceScopeBinding.getName());
 		}
 
 		IDSComponent component = model.getDSComponent();
@@ -701,10 +795,379 @@ class AnnotationVisitor extends ASTVisitor {
 			component.setConfigurationPolicy(configPolicy);
 		}
 
+		DSAnnotationVersion requiredVersion = DSAnnotationVersion.V1_1;
+
+		if (configPid == null) {
+			removeAttribute(component, ATTRIBUTE_COMPONENT_CONFIGURATION_PID, null);
+		} else {
+			component.setXMLAttribute(ATTRIBUTE_COMPONENT_CONFIGURATION_PID, configPid);
+			requiredVersion = DSAnnotationVersion.V1_2;
+		}
+
 		IDSDocumentFactory dsFactory = model.getFactory();
 
+		IDSService service = component.getService();
+		if (services.isEmpty()) {
+			if (service != null) {
+				component.removeService(service);
+			}
+		} else {
+			if (service == null) {
+				service = dsFactory.createService();
+
+				// insert service element after last property or properties element
+				int firstPos = Math.max(0, indexOfLastPropertyOrProperties(component));
+				component.addChildNode(service, firstPos, true);
+			}
+
+			if (serviceScope == null || serviceScope.equals(VALUE_SERVICE_SCOPE_DEFAULT)) {
+				removeAttribute(service, "scope", null); //$NON-NLS-1$
+			} else {
+				service.setXMLAttribute(ATTRIBUTE_SERVICE_SCOPE, serviceScope);
+				requiredVersion = DSAnnotationVersion.V1_3;
+			}
+
+			IDSProvide[] provides = service.getProvidedServices();
+			HashMap<String, IDSProvide> provideMap = new HashMap<>(provides.length);
+			for (IDSProvide provide : provides) {
+				provideMap.put(provide.getInterface(), provide);
+			}
+
+			ArrayList<IDSProvide> provideList = new ArrayList<>(services.size());
+			for (String serviceName : services) {
+				IDSProvide provide = provideMap.remove(serviceName);
+				if (provide == null) {
+					provide = dsFactory.createProvide();
+					provide.setInterface(serviceName);
+				}
+
+				provideList.add(provide);
+			}
+
+			int firstPos = provides.length == 0 ? -1 : service.indexOf(provides[0]);
+			removeChildren(service, (provideMap.values()));
+
+			addOrMoveChildren(service, provideList, firstPos);
+
+			if (serviceFactory == null) {
+				removeAttribute(service, IDSConstants.ATTRIBUTE_SERVICE_FACTORY, IDSConstants.VALUE_FALSE);
+			} else {
+				service.setServiceFactory(serviceFactory.booleanValue());
+			}
+		}
+
+		ArrayList<IDSReference> references = new ArrayList<>();
+		HashMap<String, Annotation> referenceNames = new HashMap<>();
+		IDSReference[] refElements = component.getReferences();
+
+		HashMap<String, IDSReference> refMap = new HashMap<>(refElements.length);
+		for (IDSReference refElement : refElements) {
+			String referenceName = refElement.getReferenceName();
+			if (referenceName == null) {
+				referenceName = refElement.getXMLAttributeValue(ATTRIBUTE_REFERENCE_FIELD);
+				if (referenceName == null) {
+					referenceName = refElement.getReferenceBind();
+					if (referenceName == null) {
+						referenceName = refElement.getReferenceInterface();
+					}
+				}
+			}
+
+			refMap.put(referenceName, refElement);
+		}
+
+		if (annotation.isNormalAnnotation() && specVersion == DSAnnotationVersion.V1_3) {
+			for (Object annotationValue : ((NormalAnnotation) annotation).values()) {
+				MemberValuePair annotationMemberValuePair = (MemberValuePair) annotationValue;
+				if (!ATTRIBUTE_COMPONENT_REFERENCE.equals(annotationMemberValuePair.getName().getIdentifier())) {
+					continue;
+				}
+
+				ArrayList<Annotation> annotations = new ArrayList<>();
+
+				Expression memberValue = annotationMemberValuePair.getValue();
+				if (memberValue instanceof Annotation) {
+					annotations.add((Annotation) memberValue);
+				} else if (memberValue instanceof ArrayInitializer) {
+					for (Object memberValueElement : ((ArrayInitializer) memberValue).expressions()) {
+						if (memberValueElement instanceof Annotation) {
+							annotations.add((Annotation) memberValueElement);
+						}
+					}
+				}
+
+				for (Annotation referenceAnnotation : annotations) {
+					IAnnotationBinding referenceAnnotationBinding = referenceAnnotation.resolveAnnotationBinding();
+					if (referenceAnnotationBinding == null) {
+						if (debug.isDebugging()) {
+							debug.trace(String.format("Unable to resolve binding for annotation: %s", referenceAnnotation)); //$NON-NLS-1$
+						}
+
+						continue;
+					}
+
+					String annotationName = referenceAnnotationBinding.getAnnotationType().getQualifiedName();
+					if (!REFERENCE_ANNOTATION.equals(annotationName)) {
+						continue;
+					}
+
+					HashMap<String, Object> annotationParams = new HashMap<>();
+					for (IMemberValuePairBinding pair : referenceAnnotationBinding.getDeclaredMemberValuePairs()) {
+						annotationParams.put(pair.getName(), pair.getValue());
+					}
+
+					String referenceName = (String) annotationParams.get(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
+
+					IDSReference reference = refMap.remove(referenceName);
+					if (reference == null) {
+						reference = createReference(dsFactory);
+					}
+
+					references.add(reference);
+
+					processReference(reference, referenceAnnotation, referenceAnnotationBinding, annotationParams, referenceNames, problems);
+					requiredVersion = DSAnnotationVersion.V1_3;
+				}
+			}
+		}
+
+		if (specVersion == DSAnnotationVersion.V1_3) {
+			for (FieldDeclaration field : type.getFields()) {
+				for (Object modifier : field.modifiers()) {
+					if (!(modifier instanceof Annotation)) {
+						continue;
+					}
+
+					Annotation fieldAnnotation = (Annotation) modifier;
+					IAnnotationBinding fieldAnnotationBinding = fieldAnnotation.resolveAnnotationBinding();
+					if (fieldAnnotationBinding == null) {
+						if (debug.isDebugging()) {
+							debug.trace(String.format("Unable to resolve binding for annotation: %s", fieldAnnotation)); //$NON-NLS-1$
+						}
+
+						continue;
+					}
+
+					String annotationName = fieldAnnotationBinding.getAnnotationType().getQualifiedName();
+					if (!REFERENCE_ANNOTATION.equals(annotationName)) {
+						continue;
+					}
+
+					HashMap<String, Object> annotationParams = null;
+					// TODO do we really care about all fragments??
+					for (Object fragmentElement : field.fragments()) {
+						VariableDeclarationFragment fragment = (VariableDeclarationFragment) fragmentElement;
+						IVariableBinding fieldBinding = fragment.resolveBinding();
+						if (fieldBinding == null) {
+							if (debug.isDebugging()) {
+								debug.trace(String.format("Unable to resolve binding for field: %s", fragment)); //$NON-NLS-1$
+							}
+
+							continue;
+						}
+
+						if (annotationParams == null) {
+							annotationParams = new HashMap<>();
+							for (IMemberValuePairBinding pair : fieldAnnotationBinding.getDeclaredMemberValuePairs()) {
+								annotationParams.put(pair.getName(), pair.getValue());
+							}
+						}
+
+						String referenceName = (String) annotationParams.get("name"); //$NON-NLS-1$
+						if (referenceName == null) {
+							referenceName = fieldBinding.getName();
+						}
+
+						IDSReference reference = refMap.remove(referenceName);
+						if (reference == null) {
+							reference = createReference(dsFactory);
+						}
+
+						references.add(reference);
+
+						processReference(reference, field, fieldBinding, fieldAnnotation, fieldAnnotationBinding, annotationParams, referenceNames, problems);
+						requiredVersion = DSAnnotationVersion.V1_3;
+					}
+				}
+			}
+		}
+
+		String activate = null;
+		boolean lookedForActivateMethod = false;
+		IMethodBinding activateMethod = null;
+		Annotation activateAnnotation = null;
+		String deactivate = null;
+		boolean lookedForDeactivateMethod = false;
+		IMethodBinding deactivateMethod = null;
+		Annotation deactivateAnnotation = null;
+		String modified = null;
+		IMethodBinding modifiedMethod = null;
+		Annotation modifiedAnnotation = null;
+
+		for (MethodDeclaration method : type.getMethods()) {
+			for (Object modifier : method.modifiers()) {
+				if (!(modifier instanceof Annotation)) {
+					continue;
+				}
+
+				Annotation methodAnnotation = (Annotation) modifier;
+				IAnnotationBinding methodAnnotationBinding = methodAnnotation.resolveAnnotationBinding();
+				if (methodAnnotationBinding == null) {
+					if (debug.isDebugging()) {
+						debug.trace(String.format("Unable to resolve binding for annotation: %s", methodAnnotation)); //$NON-NLS-1$
+					}
+
+					continue;
+				}
+
+				String annotationName = methodAnnotationBinding.getAnnotationType().getQualifiedName();
+
+				if (ACTIVATE_ANNOTATION.equals(annotationName)) {
+					if (activate == null) {
+						activate = method.getName().getIdentifier();
+						if (specVersion == DSAnnotationVersion.V1_3) {
+							activateMethod = method.resolveBinding();
+						}
+
+						activateAnnotation = methodAnnotation;
+						validateLifeCycleMethod(methodAnnotation, "activate", method, problems); //$NON-NLS-1$
+					} else if (!errorLevel.isIgnore()) {
+						reportProblem(methodAnnotation, null, problems, Messages.AnnotationProcessor_duplicateActivateMethod, method.getName().getIdentifier());
+						if (activateAnnotation != null) {
+							reportProblem(activateAnnotation, null, problems, Messages.AnnotationProcessor_duplicateActivateMethod, activate);
+							activateAnnotation = null;
+						}
+					}
+
+					continue;
+				}
+
+				if (DEACTIVATE_ANNOTATION.equals(annotationName)) {
+					if (deactivate == null) {
+						deactivate = method.getName().getIdentifier();
+						if (specVersion == DSAnnotationVersion.V1_3) {
+							deactivateMethod = method.resolveBinding();
+						}
+
+						deactivateAnnotation = methodAnnotation;
+						validateLifeCycleMethod(methodAnnotation, "deactivate", method, problems); //$NON-NLS-1$
+					} else if (!errorLevel.isIgnore()) {
+						reportProblem(methodAnnotation, null, problems, Messages.AnnotationProcessor_duplicateDeactivateMethod, method.getName().getIdentifier());
+						if (deactivateAnnotation != null) {
+							reportProblem(deactivateAnnotation, null, problems, Messages.AnnotationProcessor_duplicateDeactivateMethod, deactivate);
+							deactivateAnnotation = null;
+						}
+					}
+
+					continue;
+				}
+
+				if (MODIFIED_ANNOTATION.equals(annotationName)) {
+					if (modified == null) {
+						modified = method.getName().getIdentifier();
+						if (specVersion == DSAnnotationVersion.V1_3) {
+							modifiedMethod = method.resolveBinding();
+						}
+
+						modifiedAnnotation = methodAnnotation;
+						validateLifeCycleMethod(methodAnnotation, "modified", method, problems); //$NON-NLS-1$
+					} else if (!errorLevel.isIgnore()) {
+						reportProblem(methodAnnotation, null, problems, Messages.AnnotationProcessor_duplicateModifiedMethod, method.getName().getIdentifier());
+						if (modifiedAnnotation != null) {
+							reportProblem(modifiedAnnotation, null, problems, Messages.AnnotationProcessor_duplicateModifiedMethod, modified);
+							modifiedAnnotation = null;
+						}
+					}
+
+					continue;
+				}
+
+				if (REFERENCE_ANNOTATION.equals(annotationName)) {
+					IMethodBinding methodBinding = method.resolveBinding();
+					if (methodBinding == null) {
+						if (debug.isDebugging()) {
+							debug.trace(String.format("Unable to resolve binding for method: %s", method)); //$NON-NLS-1$
+						}
+					} else {
+						HashMap<String, Object> annotationParams = new HashMap<>();
+						for (IMemberValuePairBinding pair : methodAnnotationBinding.getDeclaredMemberValuePairs()) {
+							annotationParams.put(pair.getName(), pair.getValue());
+						}
+
+						String referenceName = getReferenceName(methodBinding.getName(), annotationParams);
+
+						IDSReference reference = refMap.remove(referenceName);
+						if (reference == null) {
+							reference = createReference(dsFactory);
+						}
+
+						references.add(reference);
+
+						requiredVersion = requiredVersion.max(processReference(reference, method, methodBinding, methodAnnotation, methodAnnotationBinding, annotationParams, referenceNames, problems));
+					}
+
+					continue;
+				}
+			}
+		}
+
+		if (activate == null) {
+			// only remove activate="activate" if method not found
+			if (!"activate".equals(component.getActivateMethod()) //$NON-NLS-1$
+					|| ((lookedForActivateMethod = true)
+							&& (activateMethod = findLifeCycleMethod(typeBinding, "activate")) == null)) { //$NON-NLS-1$
+				removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_ACTIVATE, null);
+			}
+		} else {
+			component.setActivateMethod(activate);
+		}
+
+		if (deactivate == null) {
+			// only remove deactivate="deactivate" if method not found
+			if (!"deactivate".equals(component.getDeactivateMethod()) //$NON-NLS-1$
+					|| ((lookedForDeactivateMethod = true)
+							&& (deactivateMethod = findLifeCycleMethod(typeBinding, "deactivate")) == null)) { //$NON-NLS-1$
+				removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_DEACTIVATE, null);
+			}
+		} else {
+			component.setDeactivateMethod(deactivate);
+		}
+
+		if (modified == null) {
+			removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_MODIFIED, null);
+		} else {
+			component.setModifiedeMethod(modified);
+		}
+
+		ArrayList<IDSProperty> propList = new ArrayList<>();
+
+		if (specVersion == DSAnnotationVersion.V1_3) {
+			// collect component property types from activate, modified, and deactivate methods
+			if (activateMethod == null && !lookedForActivateMethod) {
+				activateMethod = findLifeCycleMethod(typeBinding, "activate"); //$NON-NLS-1$
+			}
+
+			if (deactivateMethod == null && !lookedForDeactivateMethod) {
+				deactivateMethod = findLifeCycleMethod(typeBinding, "deactivate"); //$NON-NLS-1$
+			}
+
+			HashSet<ITypeBinding> cptClosure = new HashSet<>();
+
+			if (activateMethod != null) {
+				collectProperties(activateMethod, dsFactory, propList, cptClosure);
+			}
+
+			if (modifiedMethod != null) {
+				collectProperties(modifiedMethod, dsFactory, propList, cptClosure);
+			}
+
+			if (deactivateMethod != null) {
+				collectProperties(deactivateMethod, dsFactory, propList, cptClosure);
+			}
+		}
+
 		IDSProperty[] propElements = component.getPropertyElements();
-		if (properties.length == 0) {
+		if (propList.isEmpty() && properties.length == 0) {
 			removeChildren(component, Arrays.asList(propElements));
 		} else {
 			// build up new property elements
@@ -730,10 +1193,11 @@ class AnnotationVisitor extends ASTVisitor {
 					property = dsFactory.createProperty();
 					map.put(propertyName, property);
 					property.setPropertyName(propertyName);
-					if (propertyType == null)
+					if (propertyType == null) {
 						removeAttribute(property, IDSConstants.ATTRIBUTE_PROPERTY_TYPE, null);	 // just remove the attribute completely so we can detect changes when reconciling
-					else
+					} else {
 						property.setPropertyType(propertyType);
+					}
 
 					property.setPropertyValue(propertyValue);
 					validateComponentProperty(annotation, propertyName, propertyType, propertyValue, i, problems);
@@ -749,35 +1213,50 @@ class AnnotationVisitor extends ASTVisitor {
 					if (!errorLevel.isIgnore()) {
 						String expected = property.getPropertyType() == null || property.getPropertyType().length() == 0 || IDSConstants.VALUE_PROPERTY_TYPE_STRING.equals(property.getPropertyType()) ? Messages.AnnotationProcessor_stringOrEmpty : property.getPropertyType();
 						String actual = propertyType == null || IDSConstants.VALUE_PROPERTY_TYPE_STRING.equals(propertyType) ? Messages.AnnotationProcessor_stringOrEmpty : propertyType;
-						if (!actual.equals(expected))
+						if (!actual.equals(expected)) {
 							reportProblem(annotation, "property", i, problems, NLS.bind(Messages.AnnotationProcessor_inconsistentComponentPropertyType, actual, expected), actual); //$NON-NLS-1$
-						else
+						} else {
 							validateComponentProperty(annotation, propertyName, propertyType, propertyValue, i, problems);
+						}
 					}
 
-					if (propertyValue != null)
+					if (propertyValue != null) {
 						property.setPropertyElemBody(content + "\n" + pair[1]); //$NON-NLS-1$
+					}
 				}
 			}
 
 			// reconcile against existing property elements
-			HashMap<String, IDSProperty> propMap = new HashMap<>(propElements.length);
+			HashMap<String, List<IDSProperty>> propMap = new HashMap<>(propElements.length);
 			for (IDSProperty propElement : propElements) {
-				propMap.put(propElement.getPropertyName(), propElement);
+				List<IDSProperty> duplicates = propMap.get(propElement.getPropertyName());
+				if (duplicates == null) {
+					duplicates = new LinkedList<>();
+					propMap.put(propElement.getPropertyName(), duplicates);
+				}
+
+				duplicates.add(propElement);
 			}
 
-			ArrayList<IDSProperty> propList = new ArrayList<>(map.values());
+			propList.addAll(map.values());
 			for (ListIterator<IDSProperty> i = propList.listIterator(); i.hasNext();) {
 				IDSProperty newProperty = i.next();
-				IDSProperty property = propMap.remove(newProperty.getPropertyName());
-				if (property == null)
+				List<IDSProperty> propertyElemList = propMap.get(newProperty.getPropertyName());
+				if (propertyElemList == null) {
 					continue;
+				}
+
+				IDSProperty property = propertyElemList.remove(0);
+				if (propertyElemList.isEmpty()) {
+					propMap.remove(newProperty.getPropertyName());
+				}
 
 				i.set(property);
 
 				String newPropertyType = newProperty.getPropertyType();
-				if (newPropertyType != null || !IDSConstants.VALUE_PROPERTY_TYPE_STRING.equals(property.getPropertyType()))
+				if (newPropertyType != null || !IDSConstants.VALUE_PROPERTY_TYPE_STRING.equals(property.getPropertyType())) {
 					property.setPropertyType(newPropertyType);
+				}
 
 				String newContent = newProperty.getPropertyElemBody();
 				if (newContent == null) {
@@ -801,7 +1280,13 @@ class AnnotationVisitor extends ASTVisitor {
 			int firstPos = propElements.length == 0
 					? 0	// insert first property element as first child of component
 							: component.indexOf(propElements[0]);
-			removeChildren(component, propMap.values());
+
+			ArrayList<IDSProperty> leftovers = new ArrayList<>();
+			for (List<IDSProperty> propertyElementList : propMap.values()) {
+				leftovers.addAll(propertyElementList);
+			}
+
+			removeChildren(component, leftovers);
 
 			addOrMoveChildren(component, propList, firstPos);
 		}
@@ -841,174 +1326,6 @@ class AnnotationVisitor extends ASTVisitor {
 			addOrMoveChildren(component, propFileList, firstPos);
 		}
 
-		IDSService service = component.getService();
-		if (services.isEmpty()) {
-			if (service != null)
-				component.removeService(service);
-		} else {
-			if (service == null) {
-				service = dsFactory.createService();
-
-				// insert service element after last property or properties element
-				int firstPos = Math.max(0, indexOfLastPropertyOrProperties(component));
-				component.addChildNode(service, firstPos, true);
-			}
-
-			IDSProvide[] provides = service.getProvidedServices();
-			HashMap<String, IDSProvide> provideMap = new HashMap<>(provides.length);
-			for (IDSProvide provide : provides) {
-				provideMap.put(provide.getInterface(), provide);
-			}
-
-			ArrayList<IDSProvide> provideList = new ArrayList<>(services.size());
-			for (String serviceName : services) {
-				IDSProvide provide = provideMap.remove(serviceName);
-				if (provide == null) {
-					provide = dsFactory.createProvide();
-					provide.setInterface(serviceName);
-				}
-
-				provideList.add(provide);
-			}
-
-			int firstPos = provides.length == 0 ? -1 : service.indexOf(provides[0]);
-			removeChildren(service, (provideMap.values()));
-
-			addOrMoveChildren(service, provideList, firstPos);
-
-			if (serviceFactory == null) {
-				removeAttribute(service, IDSConstants.ATTRIBUTE_SERVICE_FACTORY, IDSConstants.VALUE_FALSE);
-			} else {
-				service.setServiceFactory(serviceFactory.booleanValue());
-			}
-		}
-
-		boolean requiresV12 = false;
-		String activate = null;
-		Annotation activateAnnotation = null;
-		String deactivate = null;
-		Annotation deactivateAnnotation = null;
-		String modified = null;
-		Annotation modifiedAnnotation = null;
-
-		ArrayList<IDSReference> references = new ArrayList<>();
-		HashMap<String, Annotation> referenceNames = new HashMap<>();
-		IDSReference[] refElements = component.getReferences();
-
-		HashMap<String, IDSReference> refMap = new HashMap<>(refElements.length);
-		for (IDSReference refElement : refElements) {
-			refMap.put(refElement.getReferenceBind(), refElement);
-		}
-
-		for (MethodDeclaration method : type.getMethods()) {
-			for (Object modifier : method.modifiers()) {
-				if (!(modifier instanceof Annotation))
-					continue;
-
-				Annotation methodAnnotation = (Annotation) modifier;
-				IAnnotationBinding methodAnnotationBinding = methodAnnotation.resolveAnnotationBinding();
-				if (methodAnnotationBinding == null) {
-					if (debug.isDebugging())
-						debug.trace(String.format("Unable to resolve binding for annotation: %s", methodAnnotation)); //$NON-NLS-1$
-
-					continue;
-				}
-
-				String annotationName = methodAnnotationBinding.getAnnotationType().getQualifiedName();
-
-				if (ACTIVATE_ANNOTATION.equals(annotationName)) {
-					if (activate == null) {
-						activate = method.getName().getIdentifier();
-						activateAnnotation = methodAnnotation;
-						validateLifeCycleMethod(methodAnnotation, "activate", method, problems); //$NON-NLS-1$
-					} else if (!errorLevel.isIgnore()) {
-						reportProblem(methodAnnotation, null, problems, Messages.AnnotationProcessor_duplicateActivateMethod, method.getName().getIdentifier());
-						if (activateAnnotation != null) {
-							reportProblem(activateAnnotation, null, problems, Messages.AnnotationProcessor_duplicateActivateMethod, activate);
-							activateAnnotation = null;
-						}
-					}
-
-					continue;
-				}
-
-				if (DEACTIVATE_ANNOTATION.equals(annotationName)) {
-					if (deactivate == null) {
-						deactivate = method.getName().getIdentifier();
-						deactivateAnnotation = methodAnnotation;
-						validateLifeCycleMethod(methodAnnotation, "deactivate", method, problems); //$NON-NLS-1$
-					} else if (!errorLevel.isIgnore()) {
-						reportProblem(methodAnnotation, null, problems, Messages.AnnotationProcessor_duplicateDeactivateMethod, method.getName().getIdentifier());
-						if (deactivateAnnotation != null) {
-							reportProblem(deactivateAnnotation, null, problems, Messages.AnnotationProcessor_duplicateDeactivateMethod, deactivate);
-							deactivateAnnotation = null;
-						}
-					}
-
-					continue;
-				}
-
-				if (MODIFIED_ANNOTATION.equals(annotationName)) {
-					if (modified == null) {
-						modified = method.getName().getIdentifier();
-						modifiedAnnotation = methodAnnotation;
-						validateLifeCycleMethod(methodAnnotation, "modified", method, problems); //$NON-NLS-1$
-					} else if (!errorLevel.isIgnore()) {
-						reportProblem(methodAnnotation, null, problems, Messages.AnnotationProcessor_duplicateModifiedMethod, method.getName().getIdentifier());
-						if (modifiedAnnotation != null) {
-							reportProblem(modifiedAnnotation, null, problems, Messages.AnnotationProcessor_duplicateModifiedMethod, modified);
-							modifiedAnnotation = null;
-						}
-					}
-
-					continue;
-				}
-
-				if (REFERENCE_ANNOTATION.equals(annotationName)) {
-					IMethodBinding methodBinding = method.resolveBinding();
-					if (methodBinding == null) {
-						if (debug.isDebugging())
-							debug.trace(String.format("Unable to resolve binding for method: %s", method)); //$NON-NLS-1$
-					} else {
-						requiresV12 |= processReference(method, methodBinding, methodAnnotation, methodAnnotationBinding, refMap, dsFactory, references, referenceNames, problems);
-					}
-
-					continue;
-				}
-			}
-		}
-
-		if (activate == null) {
-			// only remove activate="activate" if method not found
-			if (!"activate".equals(component.getActivateMethod()) //$NON-NLS-1$
-					|| !hasLifeCycleMethod(typeBinding, "activate")) //$NON-NLS-1$
-				removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_ACTIVATE, null); //$NON-NLS-1$
-		} else {
-			component.setActivateMethod(activate);
-		}
-
-		if (deactivate == null) {
-			// only remove deactivate="deactivate" if method not found
-			if (!"deactivate".equals(component.getDeactivateMethod()) //$NON-NLS-1$
-					|| !hasLifeCycleMethod(typeBinding, "deactivate")) //$NON-NLS-1$
-				removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_DEACTIVATE, null); //$NON-NLS-1$
-		} else {
-			component.setDeactivateMethod(deactivate);
-		}
-
-		if (modified == null) {
-			removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_MODIFIED, null);
-		} else {
-			component.setModifiedeMethod(modified);
-		}
-
-		if (configPid == null) {
-			removeAttribute(component, ATTRIBUTE_COMPONENT_CONFIGURATION_PID, null);
-		} else {
-			component.setXMLAttribute(ATTRIBUTE_COMPONENT_CONFIGURATION_PID, configPid);
-			requiresV12 = true;
-		}
-
 		if (references.isEmpty()) {
 			removeChildren(component, Arrays.asList(refElements));
 		} else {
@@ -1041,15 +1358,21 @@ class AnnotationVisitor extends ASTVisitor {
 
 		impl.setClassName(implClass);
 
-		String xmlns = NAMESPACE_1_1;
+		String xmlns = requiredVersion.getNamespace();
 		if ((value = params.get("xmlns")) instanceof String) { //$NON-NLS-1$
 			xmlns = (String) value;
-			validateComponentXMLNS(annotation, xmlns, requiresV12, problems);
-		} else if (requiresV12) {
-			xmlns = NAMESPACE_1_2;
+			validateComponentXMLNS(annotation, xmlns, requiredVersion, problems);
 		}
 
 		component.setNamespace(xmlns);
+	}
+
+	private IDSReference createReference(IDSDocumentFactory dsFactory) {
+		IDSReference reference = dsFactory.createReference();
+		// reset unnecessary defaults set by PDE
+		removeAttribute(reference, IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY, null);
+		removeAttribute(reference, IDSConstants.ATTRIBUTE_REFERENCE_POLICY, null);
+		return reference;
 	}
 
 	private void removeChildren(IDSObject parent, Collection<? extends IDocumentElementNode> children) {
@@ -1063,8 +1386,9 @@ class AnnotationVisitor extends ASTVisitor {
 		if (attrNode != null) {
 			// only remove if value is not default
 			String value = attrNode.getAttributeValue();
-			if (value != null && value.equals(defaultValue))
+			if (value != null && value.equals(defaultValue)) {
 				return;
+			}
 
 			obj.removeDocumentAttribute(attrNode);
 			if (obj.isInTheModel() && obj.isEditable()) {
@@ -1114,12 +1438,14 @@ class AnnotationVisitor extends ASTVisitor {
 
 		// workaround for PDE's busted DocumentObject.clone() method
 		int currentIndex = obj.indexOf(node);
-		if (currentIndex == -1)
+		if (currentIndex == -1) {
 			return;
+		}
 
 		int newIndex = newRelativeIndex + currentIndex;
-		if (newIndex < 0 || newIndex >= obj.getChildCount())
+		if (newIndex < 0 || newIndex >= obj.getChildCount()) {
 			return;
+		}
 
 		obj.removeChildNode(node, fireEvent);
 		IDocumentElementNode clone = clone(obj, node);
@@ -1162,13 +1488,15 @@ class AnnotationVisitor extends ASTVisitor {
 		int pos = -1;
 		IDSProperty[] propElements = component.getPropertyElements();
 		IDSProperties[] propFileElements = component.getPropertiesElements();
-		if (propElements.length > 0)
+		if (propElements.length > 0) {
 			pos = component.indexOf(propElements[propElements.length - 1]) + 1;
+		}
 
 		if (propFileElements.length > 0) {
 			int lastPos = component.indexOf(propFileElements[propFileElements.length - 1]) + 1;
-			if (lastPos > pos)
+			if (lastPos > pos) {
 				pos = lastPos;
+			}
 		}
 
 		return pos;
@@ -1181,11 +1509,13 @@ class AnnotationVisitor extends ASTVisitor {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String trimmed = line.trim();
-				if (trimmed.length() == 0)
+				if (trimmed.length() == 0) {
 					continue;
+				}
 
-				if (buf.length() > 0)
+				if (buf.length() > 0) {
 					buf.append('\n');
+				}
 
 				buf.append(trimmed);
 			}
@@ -1203,45 +1533,157 @@ class AnnotationVisitor extends ASTVisitor {
 		return buf.toString();
 	}
 
+	private void collectProperties(IMethodBinding method, IDSDocumentFactory factory, Collection<IDSProperty> properties, Collection<ITypeBinding> visited) {
+		for (ITypeBinding paramTypeBinding : method.getParameterTypes()) {
+			if (!paramTypeBinding.isAnnotation() || !visited.add(paramTypeBinding)) {
+				continue;
+			}
+
+			for (IMethodBinding methodBinding : paramTypeBinding.getDeclaredMethods()) {
+				if (!methodBinding.isAnnotationMember()) {
+					continue;
+				}
+
+				Object value = methodBinding.getDefaultValue();
+				if (value == null || (value instanceof Object[] && ((Object[]) value).length == 0)) {
+					continue;
+				}
+
+				ITypeBinding returnType = methodBinding.getReturnType();
+				if (returnType.isArray() ? returnType.getElementType().isAnnotation() : returnType.isAnnotation()) {
+					// TODO per spec we should report error, but we may have no annotation to report it on!
+					continue;
+				}
+
+				IDSProperty property = factory.createProperty();
+				property.setPropertyName(createPropertyName(methodBinding.getName()));
+				property.setPropertyType(getPropertyType(returnType));
+
+				if (returnType.isArray()) {
+					StringBuilder body = new StringBuilder();
+					for (Object item : ((Object[]) value)) {
+						String itemValue = getPropertyValue(item);
+						if (itemValue == null || (itemValue = itemValue.trim()).isEmpty()) {
+							continue;
+						}
+
+						if (body.length() > 0) {
+							body.append('\n');
+						}
+
+						body.append(itemValue);
+					}
+
+					property.setPropertyElemBody(body.toString());
+				} else {
+					property.setPropertyValue(getPropertyValue(value));
+				}
+
+				properties.add(property);
+			}
+		}
+	}
+
+	private String createPropertyName(String name) {
+		StringBuilder buf = new StringBuilder(name.length());
+		char[] chars = name.toCharArray();
+		for (int i = 0, n = chars.length; i < n; ++i) {
+			if (chars[i] == '$') {
+				if (i == n - 1 || chars[i + 1] != '$') {
+					continue;
+				}
+
+				i++;
+			} else if (chars[i] == '_') {
+				if (i == n - 1 || chars[i + 1] != '_') {
+					chars[i] = '.';
+				} else {
+					i++;
+				}
+			}
+
+			buf.append(chars[i]);
+		}
+
+		return buf.toString();
+	}
+
+	private String getPropertyType(ITypeBinding type) {
+		if (type.isArray()) {
+			return getPropertyType(type.getElementType());
+		}
+
+		if (type.isPrimitive()) {
+			String name = type.getQualifiedName();
+			String result = PRIMITIVE_TYPE_MAP.get(name);
+			if (result != null) {
+				return result;
+			}
+		}
+
+		return IDSConstants.VALUE_PROPERTY_TYPE_STRING;
+	}
+
+	private String getPropertyValue(Object value) {
+		// enum
+		if (value instanceof IVariableBinding) {
+			return ((IVariableBinding) value).getName();
+		}
+
+		// class
+		if (value instanceof ITypeBinding) {
+			return ((ITypeBinding) value).getQualifiedName();
+		}
+
+		// everything else
+		return String.valueOf(value);
+	}
+
 	private void validateComponentName(Annotation annotation, String name, Collection<DSAnnotationProblem> problems) {
-		if (!errorLevel.isIgnore() && !PID_PATTERN.matcher(name).matches())
+		if (!errorLevel.isIgnore() && !PID_PATTERN.matcher(name).matches()) {
 			reportProblem(annotation, "name", problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentName, name), name); //$NON-NLS-1$
+		}
 	}
 
 	private void validateComponentService(Annotation annotation, ITypeBinding componentType, ITypeBinding serviceType, int index, Collection<DSAnnotationProblem> problems) {
-		if (!errorLevel.isIgnore() && !componentType.isAssignmentCompatible(serviceType))
+		if (!errorLevel.isIgnore() && !componentType.isAssignmentCompatible(serviceType)) {
 			reportProblem(annotation, "service", problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentService, serviceType.getName()), serviceType.getName()); //$NON-NLS-1$
+		}
 	}
 
 	private void validateComponentFactory(Annotation annotation, String factory, Collection<DSAnnotationProblem> problems) {
-		if (!errorLevel.isIgnore() && !PID_PATTERN.matcher(factory).matches())
+		if (!errorLevel.isIgnore() && !PID_PATTERN.matcher(factory).matches()) {
 			reportProblem(annotation, "factory", problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentFactoryName, factory), factory); //$NON-NLS-1$
+		}
 	}
 
 	private void validateComponentProperty(Annotation annotation, String name, String type, String value, int index, Collection<DSAnnotationProblem> problems) {
-		if (errorLevel.isIgnore())
+		if (errorLevel.isIgnore()) {
 			return;
+		}
 
 		if (PROPERTY_TYPES.contains(type)) {
-			if (name == null || name.trim().length() == 0)
+			if (name == null || name.trim().length() == 0) {
 				reportProblem(annotation, "property", index, problems, Messages.AnnotationProcessor_invalidComponentProperty_nameRequired, name); //$NON-NLS-1$
+			}
 
 			if (value == null) {
 				reportProblem(annotation, "property", index, problems, Messages.AnnotationProcessor_invalidComponentProperty_valueRequired, name); //$NON-NLS-1$
 			} else {
 				try {
-					if (IDSConstants.VALUE_PROPERTY_TYPE_LONG.equals(type))
+					if (IDSConstants.VALUE_PROPERTY_TYPE_LONG.equals(type)) {
 						Long.valueOf(value);
-					else if (IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE.equals(type))
+					} else if (IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE.equals(type)) {
 						Double.valueOf(value);
-					else if (IDSConstants.VALUE_PROPERTY_TYPE_FLOAT.equals(type))
+					} else if (IDSConstants.VALUE_PROPERTY_TYPE_FLOAT.equals(type)) {
 						Float.valueOf(value);
-					else if (IDSConstants.VALUE_PROPERTY_TYPE_INTEGER.equals(type) || IDSConstants.VALUE_PROPERTY_TYPE_CHAR.equals(type))
+					} else if (IDSConstants.VALUE_PROPERTY_TYPE_INTEGER.equals(type) || IDSConstants.VALUE_PROPERTY_TYPE_CHAR.equals(type)) {
 						Integer.valueOf(value);
-					else if (IDSConstants.VALUE_PROPERTY_TYPE_BYTE.equals(type))
+					} else if (IDSConstants.VALUE_PROPERTY_TYPE_BYTE.equals(type)) {
 						Byte.valueOf(value);
-					else if (IDSConstants.VALUE_PROPERTY_TYPE_SHORT.equals(type))
+					} else if (IDSConstants.VALUE_PROPERTY_TYPE_SHORT.equals(type)) {
 						Short.valueOf(value);
+					}
 				} catch (NumberFormatException e) {
 					reportProblem(annotation, "property", index, problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentPropertyValue, type, value), String.valueOf(value)); //$NON-NLS-1$
 				}
@@ -1252,146 +1694,188 @@ class AnnotationVisitor extends ASTVisitor {
 	}
 
 	private void validateComponentPropertyFiles(Annotation annotation, IProject project, String[] files, Collection<DSAnnotationProblem> problems) {
-		if (errorLevel.isIgnore())
+		if (errorLevel.isIgnore()) {
 			return;
+		}
 
 		for (int i = 0; i < files.length; ++i) {
 			String file = files[i];
 			IFile wsFile = PDEProject.getBundleRelativeFile(project, new Path(file));
-			if (!wsFile.exists())
+			if (!wsFile.exists()) {
 				reportProblem(annotation, "properties", i, problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentPropertyFile, file), file); //$NON-NLS-1$
+			}
 		}
 	}
 
-	private void validateComponentXMLNS(Annotation annotation, String xmlns, boolean requiresV12, Collection<DSAnnotationProblem> problems) {
-		if (!errorLevel.isIgnore() && (requiresV12 || !NAMESPACE_1_1.equals(xmlns)) && !NAMESPACE_1_2.equals(xmlns))
+	private void validateComponentXMLNS(Annotation annotation, String xmlns, DSAnnotationVersion requiredVersion, Collection<DSAnnotationProblem> problems) {
+		if (errorLevel.isIgnore()) {
+			return;
+		}
+
+		DSAnnotationVersion specifiedVersion = DSAnnotationVersion.fromNamespace(xmlns);
+		if (requiredVersion.compareTo(specifiedVersion) > 0) {
 			reportProblem(annotation, "xmlns", problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentDescriptorNamespace, xmlns), xmlns); //$NON-NLS-1$
+		}
 	}
 
-	private void validateComponentConfigPID(Annotation annotation, String configPid, Collection<DSAnnotationProblem> problems) {
-		if (!errorLevel.isIgnore() && !PID_PATTERN.matcher(configPid).matches())
-			reportProblem(annotation, "configurationPid", problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentConfigurationPid, configPid), configPid); //$NON-NLS-1$
+	private void validateComponentConfigPID(Annotation annotation, String configPid, int index, Collection<DSAnnotationProblem> problems) {
+		if (!errorLevel.isIgnore() && !PID_PATTERN.matcher(configPid).matches()) {
+			reportProblem(annotation, "configurationPid", index, problems, NLS.bind(Messages.AnnotationProcessor_invalidComponentConfigurationPid, configPid), configPid); //$NON-NLS-1$
+		}
 	}
 
 	private void validateLifeCycleMethod(Annotation annotation, String methodName, MethodDeclaration method, Collection<DSAnnotationProblem> problems) {
-		if (errorLevel.isIgnore())
+		if (errorLevel.isIgnore()) {
 			return;
+		}
 
 		IMethodBinding methodBinding = method.resolveBinding();
 		if (methodBinding == null) {
-			if (debug.isDebugging())
+			if (debug.isDebugging()) {
 				debug.trace(String.format("Unable to resolve binding for method: %s", method)); //$NON-NLS-1$
+			}
 
 			return;
 		}
 
+		if (Modifier.isStatic(methodBinding.getModifiers())) {
+			reportProblem(annotation, methodName, problems, Messages.AnnotationProcessor_invalidLifecycleMethod_static);
+		}
+
 		String returnTypeName = methodBinding.getReturnType().getName();
-		if (!Void.TYPE.getName().equals(returnTypeName))
+		if (!Void.TYPE.getName().equals(returnTypeName)) {
 			reportProblem(annotation, methodName, problems, NLS.bind(Messages.AnnotationProcessor_invalidLifeCycleMethodReturnType, methodName, returnTypeName), returnTypeName);
+		}
 
 		ITypeBinding[] paramTypeBindings = methodBinding.getParameterTypes();
 
-		if (paramTypeBindings.length == 0)
+		if (paramTypeBindings.length == 0) {
 			// no-arg method
 			return;
+		}
 
-		// every argument must be either Map, ComponentContext, or BundleContext
+		// every argument must be either Map, Annotation (component property type), ComponentContext, or BundleContext
 		boolean hasMap = false;
 		boolean hasCompCtx = false;
 		boolean hasBundleCtx = false;
 		boolean hasInt = false;
+		HashSet<ITypeBinding> annotationParams = new HashSet<>(1);
+
 		for (ITypeBinding paramTypeBinding : paramTypeBindings) {
-			String paramTypeName = paramTypeBinding.getErasure().getQualifiedName();
+			ITypeBinding paramTypeErasure = paramTypeBinding.getErasure();
+			String paramTypeName = paramTypeErasure.isMember() ? paramTypeErasure.getBinaryName() : paramTypeErasure.getQualifiedName();
 			boolean isDuplicate = false;
 
-			if (Map.class.getName().equals(paramTypeName)) {
-				if (hasMap)
+			if (paramTypeBinding.isAnnotation() && specVersion == DSAnnotationVersion.V1_3) {
+				if (!annotationParams.add(paramTypeBinding)) {
 					isDuplicate = true;
-				else
+				}
+			} else if (Map.class.getName().equals(paramTypeName)) {
+				if (hasMap) {
+					isDuplicate = true;
+				} else {
 					hasMap = true;
+				}
 			} else if (COMPONENT_CONTEXT.equals(paramTypeName)) {
-				if (hasCompCtx)
+				if (hasCompCtx) {
 					isDuplicate = true;
-				else
+				} else {
 					hasCompCtx = true;
+				}
 			} else if (BundleContext.class.getName().equals(paramTypeName)) {
-				if (hasBundleCtx)
+				if (hasBundleCtx) {
 					isDuplicate = true;
-				else
+				} else {
 					hasBundleCtx = true;
+				}
 			} else if ("deactivate".equals(methodName) //$NON-NLS-1$
 					&& (Integer.class.getName().equals(paramTypeName) || Integer.TYPE.getName().equals(paramTypeName))) {
-				if (hasInt)
+				if (hasInt) {
 					isDuplicate = true;
-				else
+				} else {
 					hasInt = true;
+				}
 			} else {
 				reportProblem(annotation, methodName, problems, NLS.bind(Messages.AnnotationProcessor_invalidLifeCycleMethodParameterType, methodName, paramTypeName), paramTypeName);
 			}
 
-			if (isDuplicate)
+			if (isDuplicate) {
 				reportProblem(annotation, methodName, problems, NLS.bind(Messages.AnnotationProcessor_duplicateLifeCycleMethodParameterType, methodName, paramTypeName), paramTypeName);
+			}
 		}
 	}
 
-	private boolean hasLifeCycleMethod(ITypeBinding componentClass, String methodName) {
+	private IMethodBinding findLifeCycleMethod(ITypeBinding componentClass, String methodName) {
 		for (IMethodBinding methodBinding : componentClass.getDeclaredMethods()) {
 			if (methodName.equals(methodBinding.getName())
 					&& Void.TYPE.getName().equals(methodBinding.getReturnType().getName())) {
 				ITypeBinding[] paramTypeBindings = methodBinding.getParameterTypes();
 
-				// every argument must be either Map, ComponentContext, or BundleContext
+				// every argument must be either Map, Annotation (component property type), ComponentContext, or BundleContext
 				boolean hasMap = false;
 				boolean hasCompCtx = false;
 				boolean hasBundleCtx = false;
 				boolean hasInt = false;
 				boolean isInvalid = false;
+				HashSet<ITypeBinding> annotationParams = new HashSet<>(1);
 				for (ITypeBinding paramTypeBinding : paramTypeBindings) {
-					String paramTypeName = paramTypeBinding.getErasure().getQualifiedName();
+					if (paramTypeBinding.isAnnotation()) {
+						if (specVersion == DSAnnotationVersion.V1_3 && annotationParams.add(paramTypeBinding)) {
+							// component property type (multiple arguments allowed)
+							continue;
+						}
+
+						isInvalid = true;
+						break;
+					}
+
+					ITypeBinding paramTypeErasure = paramTypeBinding.getErasure();
+					String paramTypeName = paramTypeErasure.isMember() ? paramTypeErasure.getBinaryName() : paramTypeErasure.getQualifiedName();
 
 					if (Map.class.getName().equals(paramTypeName)) {
-						if (hasMap)
+						if (hasMap) {
 							isInvalid = true;
-						else
+						} else {
 							hasMap = true;
+						}
 					} else if (COMPONENT_CONTEXT.equals(paramTypeName)) {
-						if (hasCompCtx)
+						if (hasCompCtx) {
 							isInvalid = true;
-						else
+						} else {
 							hasCompCtx = true;
+						}
 					} else if (BundleContext.class.getName().equals(paramTypeName)) {
-						if (hasBundleCtx)
+						if (hasBundleCtx) {
 							isInvalid = true;
-						else
+						} else {
 							hasBundleCtx = true;
+						}
 					} else if ("deactivate".equals(methodName) //$NON-NLS-1$
 							&& (Integer.class.getName().equals(paramTypeName) || Integer.TYPE.getName().equals(paramTypeName))) {
-						if (hasInt)
+						if (hasInt) {
 							isInvalid = true;
-						else
+						} else {
 							hasInt = true;
+						}
 					} else {
 						isInvalid = true;
 					}
 
-					if (isInvalid)
+					if (isInvalid) {
 						break;
+					}
 				}
 
-				if (!isInvalid)
-					return true;
+				if (!isInvalid) {
+					return methodBinding;
+				}
 			}
 		}
 
-		return false;
+		return null;
 	}
 
-	private boolean processReference(MethodDeclaration method, IMethodBinding methodBinding, Annotation annotation, IAnnotationBinding annotationBinding, Map<String, IDSReference> refMap, IDSDocumentFactory factory, Collection<IDSReference> collector, Map<String, Annotation> names, Collection<DSAnnotationProblem> problems) {
-		HashMap<String, Object> params = new HashMap<>();
-		for (IMemberValuePairBinding pair : annotationBinding.getDeclaredMemberValuePairs()) {
-			params.put(pair.getName(), pair.getValue());
-		}
-
+	private DSAnnotationVersion processReference(IDSReference reference, MethodDeclaration method, IMethodBinding methodBinding, Annotation annotation, IAnnotationBinding annotationBinding, Map<String, Object> params, Map<String, Annotation> names, Collection<DSAnnotationProblem> problems) {
 		ITypeBinding[] argTypes = methodBinding.getParameterTypes();
 
 		ITypeBinding serviceType;
@@ -1399,19 +1883,23 @@ class AnnotationVisitor extends ASTVisitor {
 		if ((value = params.get("service")) instanceof ITypeBinding) { //$NON-NLS-1$
 			serviceType = (ITypeBinding) value;
 			if (!errorLevel.isIgnore() && argTypes.length > 0) {
+				String erasure = argTypes[0].getErasure().getBinaryName();
 				ITypeBinding[] typeArgs;
-				if (!(ServiceReference.class.getName().equals(argTypes[0].getErasure().getQualifiedName())
+				if (!((ServiceReference.class.getName().equals(erasure) || (specVersion == DSAnnotationVersion.V1_3 && COMPONENT_SERVICE_OBJECTS.equals(erasure)))
 						&& ((typeArgs = argTypes[0].getTypeArguments()).length == 0 || serviceType.isAssignmentCompatible(typeArgs[0])))
-						&& !serviceType.isAssignmentCompatible(argTypes[0]))
-					reportProblem(annotation, "service", problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceService, argTypes[0].getName(), serviceType.getName()), serviceType.getName()); //$NON-NLS-1$
+						&& !serviceType.isAssignmentCompatible(argTypes[0])) {
+					reportProblem(annotation, "service", problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceService, argTypes[0].getName(), serviceType.getName()), argTypes[0].getName(), serviceType.getName()); //$NON-NLS-1$
+				}
 			}
 		} else if (argTypes.length > 0) {
-			if (ServiceReference.class.getName().equals(argTypes[0].getErasure().getQualifiedName())) {
+			String erasure = argTypes[0].getErasure().getBinaryName();
+			if (ServiceReference.class.getName().equals(erasure) || (specVersion == DSAnnotationVersion.V1_3 && COMPONENT_SERVICE_OBJECTS.equals(erasure))) {
 				ITypeBinding[] typeArgs = argTypes[0].getTypeArguments();
-				if (typeArgs.length > 0)
+				if (typeArgs.length > 0) {
 					serviceType = typeArgs[0];
-				else
+				} else {
 					serviceType = null;
+				}
 			} else {
 				serviceType = argTypes[0].isPrimitive() ? getObjectType(method.getAST(), argTypes[0]) : argTypes[0];
 			}
@@ -1430,25 +1918,15 @@ class AnnotationVisitor extends ASTVisitor {
 		String service = serviceType == null ? null : serviceType.getBinaryName();
 
 		String methodName = methodBinding.getName();
-		String name;
-		if ((value = params.get("name")) instanceof String) { //$NON-NLS-1$
-			name = (String) value;
-		} else if (methodName.startsWith("bind")) { //$NON-NLS-1$
-			name = methodName.substring("bind".length()); //$NON-NLS-1$
-		} else if (methodName.startsWith("set")) { //$NON-NLS-1$
-			name = methodName.substring("set".length()); //$NON-NLS-1$
-		} else if (methodName.startsWith("add")) { //$NON-NLS-1$
-			name = methodName.substring("add".length()); //$NON-NLS-1$
-		} else {
-			name = methodName;
-		}
+		String name = getReferenceName(methodName, params);
 
 		if (!errorLevel.isIgnore()) {
 			if (names.containsKey(name)) {
 				reportProblem(annotation, "name", problems, NLS.bind(Messages.AnnotationProcessor_duplicateReferenceName, name), name); //$NON-NLS-1$
 				Annotation duplicate = names.put(name, null);
-				if (duplicate != null)
+				if (duplicate != null) {
 					reportProblem(duplicate, "name", problems, NLS.bind(Messages.AnnotationProcessor_duplicateReferenceName, name), name); //$NON-NLS-1$
+				}
 			} else {
 				names.put(name, annotation);
 			}
@@ -1481,8 +1959,9 @@ class AnnotationVisitor extends ASTVisitor {
 				unbind = unbindValue;
 				if (!errorLevel.isIgnore()) {
 					IMethodBinding unbindMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, unbind, true);
-					if (unbindMethod == null)
+					if (unbindMethod == null) {
 						reportProblem(annotation, "unbind", problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceUnbind, unbind), unbind); //$NON-NLS-1$
+					}
 				}
 			}
 		} else {
@@ -1511,7 +1990,7 @@ class AnnotationVisitor extends ASTVisitor {
 		}
 
 		String updated;
-		if ((value = params.get(ATTRIBUTE_REFERENCE_UPDATED)) instanceof String) {
+		if ((value = params.get("updated")) instanceof String) { //$NON-NLS-1$
 			String updatedValue = (String) value;
 			if ("-".equals(updatedValue)) { //$NON-NLS-1$
 				updated = null;
@@ -1519,8 +1998,9 @@ class AnnotationVisitor extends ASTVisitor {
 				updated = updatedValue;
 				if (!errorLevel.isIgnore()) {
 					IMethodBinding updatedMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, updated, true);
-					if (updatedMethod == null)
-						reportProblem(annotation, ATTRIBUTE_REFERENCE_UPDATED, problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceUpdated, updated), updated);
+					if (updatedMethod == null) {
+						reportProblem(annotation, "updated", problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceUpdated, updated), updated); //$NON-NLS-1$
+					}
 				}
 			}
 		} else {
@@ -1536,21 +2016,85 @@ class AnnotationVisitor extends ASTVisitor {
 			}
 
 			IMethodBinding updatedMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, updatedCandidate, false);
-			if (updatedMethod == null)
+			if (updatedMethod == null) {
 				updated = null;
-			else
+			} else {
 				updated = updatedMethod.getName();
+			}
 		}
 
-		IDSReference reference = refMap.remove(methodName);
-		if (reference == null) {
-			reference = factory.createReference();
+		String referenceScope = null;
+		if (specVersion == DSAnnotationVersion.V1_3) {
+			if ((value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
+				IVariableBinding referenceScopeBinding = (IVariableBinding) value;
+				referenceScope = DSEnums.getReferenceScope(referenceScopeBinding.getName());
+			}
+
+			if (!errorLevel.isIgnore()) {
+				String bind;
+				if ((value = params.get("bind")) instanceof String) { //$NON-NLS-1$
+					bind = (String) value;
+					reportProblem(annotation, "bind", problems, Messages.AnnotationProcessor_invalidReference_bindMethodNameMismatch, bind); //$NON-NLS-1$
+				}
+
+				if (params.get("field") instanceof String) { //$NON-NLS-1$
+					reportProblem(annotation, "field", true, problems, NLS.bind(Messages.AnnotationProcessor_parameterNotApplicable, "field")); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+
+				if (params.get("fieldOption") instanceof String) { //$NON-NLS-1$
+					reportProblem(annotation, "fieldOption", true, problems,  NLS.bind(Messages.AnnotationProcessor_parameterNotApplicable, "fieldOption")); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
 		}
 
-		collector.add(reference);
+		updateAttributes(reference, name, service, cardinality, policy, target, policyOption, referenceScope, methodName, updated, unbind, null, null, null);
 
-		reference.setReferenceBind(methodName);
+		DSAnnotationVersion requiredVersion;
+		if (reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_SCOPE) != null) {
+			requiredVersion = DSAnnotationVersion.V1_3;
+		} else if (reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_POLICY_OPTION) != null
+				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_UPDATED) != null) {
+			requiredVersion = DSAnnotationVersion.V1_2;
+		} else {
+			requiredVersion = DSAnnotationVersion.V1_1;
+		}
 
+		return requiredVersion;
+	}
+
+	private String getReferenceName(String methodName, Map<String, Object> params) {
+		Object value;
+		String name;
+		if ((value = params.get("name")) instanceof String) { //$NON-NLS-1$
+			name = (String) value;
+		} else if (methodName.startsWith("bind")) { //$NON-NLS-1$
+			name = methodName.substring("bind".length()); //$NON-NLS-1$
+		} else if (methodName.startsWith("set")) { //$NON-NLS-1$
+			name = methodName.substring("set".length()); //$NON-NLS-1$
+		} else if (methodName.startsWith("add")) { //$NON-NLS-1$
+			name = methodName.substring("add".length()); //$NON-NLS-1$
+		} else {
+			name = methodName;
+		}
+
+		return name;
+	}
+
+	private void updateAttributes(
+			IDSReference reference,
+			String name,
+			String service,
+			String cardinality,
+			String policy,
+			String target,
+			String policyOption,
+			String scope,
+			String bind,
+			String updated,
+			String unbind,
+			String field,
+			String fieldOption,
+			String fieldCollectionType) {
 		if (name == null) {
 			removeAttribute(reference, IDSConstants.ATTRIBUTE_REFERENCE_NAME, null);
 		} else {
@@ -1581,16 +2125,22 @@ class AnnotationVisitor extends ASTVisitor {
 			reference.setReferenceTarget(target);
 		}
 
-		if (unbind == null) {
-			removeAttribute(reference, IDSConstants.ATTRIBUTE_REFERENCE_UNBIND, null);
-		} else {
-			reference.setReferenceUnbind(unbind);
-		}
-
 		if (policyOption == null) {
-			removeAttribute(reference, ATTRIBUTE_REFERENCE_POLICY_OPTION, VALUE_REFERENCE_POLICY_OPTION_RELUCTANT);
+			removeAttribute(reference, ATTRIBUTE_REFERENCE_POLICY_OPTION, null);
 		} else {
 			reference.setXMLAttribute(ATTRIBUTE_REFERENCE_POLICY_OPTION, policyOption);
+		}
+
+		if (scope == null) {
+			removeAttribute(reference, ATTRIBUTE_REFERENCE_SCOPE, null);
+		} else {
+			reference.setXMLAttribute(ATTRIBUTE_REFERENCE_SCOPE, scope);
+		}
+
+		if (bind == null) {
+			removeAttribute(reference, IDSConstants.ATTRIBUTE_REFERENCE_BIND, null);
+		} else {
+			reference.setReferenceBind(bind);
 		}
 
 		if (updated == null) {
@@ -1599,56 +2149,478 @@ class AnnotationVisitor extends ASTVisitor {
 			reference.setXMLAttribute(ATTRIBUTE_REFERENCE_UPDATED, updated);
 		}
 
-		return reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_POLICY_OPTION) != null
-				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_UPDATED) != null;
+		if (unbind == null) {
+			removeAttribute(reference, IDSConstants.ATTRIBUTE_REFERENCE_UNBIND, null);
+		} else {
+			reference.setReferenceUnbind(unbind);
+		}
+
+		if (field == null) {
+			removeAttribute(reference, ATTRIBUTE_REFERENCE_FIELD, null);
+		} else {
+			reference.setXMLAttribute(ATTRIBUTE_REFERENCE_FIELD, field);
+		}
+
+		if (fieldOption == null) {
+			removeAttribute(reference, ATTRIBUTE_REFERENCE_FIELD_OPTION, null);
+		} else {
+			reference.setXMLAttribute(ATTRIBUTE_REFERENCE_FIELD_OPTION, fieldOption);
+		}
+
+		if (fieldCollectionType == null) {
+			removeAttribute(reference, ATTRIBUTE_REFERENCE_FIELD_COLLECTION_TYPE, null);
+		} else {
+			reference.setXMLAttribute(ATTRIBUTE_REFERENCE_FIELD_COLLECTION_TYPE, fieldCollectionType);
+		}
+	}
+
+	private void processReference(IDSReference reference, FieldDeclaration field, IVariableBinding fieldBinding, Annotation annotation, IAnnotationBinding annotationBinding, Map<String, Object> params, Map<String, Annotation> names, Collection<DSAnnotationProblem> problems) {
+		String cardinality = null;
+		Object value;
+		if ((value = params.get("cardinality")) instanceof IVariableBinding) { //$NON-NLS-1$
+			IVariableBinding cardinalityBinding = (IVariableBinding) value;
+			cardinality = DSEnums.getReferenceCardinality(cardinalityBinding.getName());
+		}
+
+		ITypeBinding fieldType = fieldBinding.getType();
+
+		FieldCollectionTypeDescriptor collectionType = null;
+		if (cardinality == null) {
+			collectionType = determineCollectionType(field.getAST(), fieldType);
+			if (collectionType.getElementType() == null) {
+				cardinality = IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE;
+			} else {
+				cardinality = IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N;
+			}
+		} else {
+			if (!errorLevel.isIgnore()
+					&& (IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N.equals(cardinality)
+							|| IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N.equals(cardinality))) {
+				collectionType = determineCollectionType(field.getAST(), fieldType);
+				if (collectionType.getElementType() == null) {
+					reportProblem(annotation, "cardinality", problems, Messages.AnnotationProcessor_invalidReference_fieldTypeCardinalityMismatch, cardinality); //$NON-NLS-1$
+				}
+			}
+		}
+
+		ITypeBinding serviceType;
+		if ((value = params.get("service")) instanceof ITypeBinding) { //$NON-NLS-1$
+			serviceType = (ITypeBinding) value;
+			if (!errorLevel.isIgnore()) {
+				ITypeBinding targetType = fieldType;
+				if (IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N.equals(cardinality)
+						|| IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N.equals(cardinality)) {
+					if (collectionType == null) {
+						collectionType = determineCollectionType(field.getAST(), fieldType);
+					}
+
+					targetType = collectionType.getElementType();
+				}
+
+				if (targetType != null) {
+					String erasure = targetType.getErasure().getBinaryName();
+					ITypeBinding[] typeArgs;
+					if (!((ServiceReference.class.getName().equals(erasure) || COMPONENT_SERVICE_OBJECTS.equals(erasure))
+							&& ((typeArgs = targetType.getTypeArguments()).length == 0 || serviceType.isAssignmentCompatible(typeArgs[0])))
+							&& !Map.class.getName().equals(erasure)
+							&& !(Map.Entry.class.getName().equals(erasure)
+									&& ((typeArgs = targetType.getTypeArguments()).length < 2 || (Map.class.getName().equals(typeArgs[0].getErasure().getBinaryName()) && serviceType.isAssignmentCompatible(typeArgs[1]))))
+							&& !serviceType.isAssignmentCompatible(targetType)) {
+						reportProblem(annotation, "service", problems, NLS.bind(Messages.AnnotationProcessor_invalidReferenceService, targetType.getName(), serviceType.getName()), targetType.getName(), serviceType.getName()); //$NON-NLS-1$
+					}
+				}
+			}
+		} else {
+			ITypeBinding targetType = fieldType;
+			if (IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N.equals(cardinality)
+					|| IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N.equals(cardinality)) {
+				if (collectionType == null) {
+					collectionType = determineCollectionType(field.getAST(), targetType);
+				}
+
+				targetType = collectionType.getElementType();
+			}
+
+			serviceType = targetType == null ? null : getFieldServiceType(field.getAST(), targetType);
+		}
+
+		if (serviceType == null) {
+			reportProblem(annotation, null, problems, Messages.AnnotationProcessor_invalidReference_fieldUnknownServiceType);
+
+			serviceType = field.getAST().resolveWellKnownType(Object.class.getName());
+		}
+
+		validateReferenceField(annotation, fieldBinding, problems);
+
+		String service = serviceType == null ? null : serviceType.getBinaryName();
+
+		String fieldCollectionType = null;
+		if (IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N.equals(cardinality)
+				|| IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N.equals(cardinality)) {
+			if (collectionType == null) {
+				collectionType = determineCollectionType(field.getAST(), fieldType);
+			}
+
+			if (collectionType.getElementType() != null) {
+				String erasure = collectionType.getElementType().getErasure().getBinaryName();
+				if (ServiceReference.class.getName().equals(erasure)) {
+					fieldCollectionType = "reference"; //$NON-NLS-1$
+				} else if (COMPONENT_SERVICE_OBJECTS.equals(erasure)) {
+					fieldCollectionType = "serviceobjects"; //$NON-NLS-1$
+				} else if (Map.class.getName().equals(erasure)) {
+					fieldCollectionType = "properties"; //$NON-NLS-1$
+				} else if (Map.Entry.class.equals(erasure)) {
+					fieldCollectionType = "tuple"; //$NON-NLS-1$
+				}
+			}
+		}
+
+		String fieldName = fieldBinding.getName();
+		String name;
+		if ((value = params.get("name")) instanceof String) { //$NON-NLS-1$
+			name = (String) value;
+		} else {
+			name = fieldName;
+		}
+
+		if (!errorLevel.isIgnore()) {
+			if (names.containsKey(name)) {
+				reportProblem(annotation, "name", problems, NLS.bind(Messages.AnnotationProcessor_duplicateReferenceName, name), name); //$NON-NLS-1$
+				Annotation duplicate = names.put(name, null);
+				if (duplicate != null) {
+					reportProblem(duplicate, "name", problems, NLS.bind(Messages.AnnotationProcessor_duplicateReferenceName, name), name); //$NON-NLS-1$
+				}
+			} else {
+				names.put(name, annotation);
+			}
+		}
+
+		if (!errorLevel.isIgnore()) {
+			String fieldVal;
+			if ((value = params.get("field")) instanceof String) { //$NON-NLS-1$
+				fieldVal = (String) value;
+				reportProblem(annotation, "field", problems, Messages.AnnotationProcessor_invalidReference_fieldNameMismatch, fieldVal); //$NON-NLS-1$
+			}
+		}
+
+		String policy = null;
+		if ((value = params.get("policy")) instanceof IVariableBinding) { //$NON-NLS-1$
+			IVariableBinding policyBinding = (IVariableBinding) value;
+			policy = DSEnums.getReferencePolicy(policyBinding.getName());
+		} else if (Modifier.isVolatile(field.getModifiers())) {
+			policy = IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC;
+		}
+
+		String target = null;
+		if ((value = params.get("target")) instanceof String) { //$NON-NLS-1$
+			target = (String) value;
+			validateReferenceTarget(annotation, target, problems);
+		}
+
+		if (!errorLevel.isIgnore()) {
+			if (params.get("bind") instanceof String) { //$NON-NLS-1$
+				reportProblem(annotation, "bind", true, problems,  NLS.bind(Messages.AnnotationProcessor_parameterNotApplicable, "bind")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		if (!errorLevel.isIgnore()) {
+			if (params.get("unbind") instanceof String) { //$NON-NLS-1$
+				reportProblem(annotation, "unbind", true, problems, NLS.bind(Messages.AnnotationProcessor_parameterNotApplicable, "unbind")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		String policyOption = null;
+		if ((value = params.get("policyOption")) instanceof IVariableBinding) { //$NON-NLS-1$
+			IVariableBinding policyOptionBinding = (IVariableBinding) value;
+			policyOption = DSEnums.getReferencePolicyOption(policyOptionBinding.getName());
+		}
+
+		if (!errorLevel.isIgnore()) {
+			if (params.get("updated") instanceof String) { //$NON-NLS-1$
+				reportProblem(annotation, "updated", true, problems,  NLS.bind(Messages.AnnotationProcessor_parameterNotApplicable, "updated")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		String referenceScope = null;
+		if ((value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
+			IVariableBinding referenceScopeBinding = (IVariableBinding) value;
+			referenceScope = DSEnums.getReferenceScope(referenceScopeBinding.getName());
+		}
+
+		String fieldOption = null;
+		if ((value = params.get("fieldOption")) instanceof IVariableBinding) { //$NON-NLS-1$
+			IVariableBinding fieldOptionBinding = (IVariableBinding) value;
+			fieldOption = DSEnums.getFieldOption(fieldOptionBinding.getName());
+			if (!errorLevel.isIgnore()) {
+				if (VALUE_REFERENCE_FIELD_OPTION_REPLACE.equals(fieldOption)) {
+					if (Modifier.isFinal(field.getModifiers())) {
+						reportProblem(annotation, "fieldOption", problems, Messages.AnnotationProcessor_invalidReference_fieldFinal_fieldOption, fieldOption); //$NON-NLS-1$
+					}
+				} else if (VALUE_REFERENCE_FIELD_OPTION_UPDATE.equals(fieldOption)) {
+					if (!(IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC.equals(policy)
+							&& (IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N.equals(cardinality)
+									|| IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N.equals(cardinality)))) {
+						reportProblem(annotation, "fieldOption", problems, Messages.AnnotationProcessor_invalidReference_fieldPolicyCardinality_fieldOption, fieldOption); //$NON-NLS-1$
+					}
+				}
+			}
+		} else {
+			if (IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC.equals(policy)
+					&& (IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N.equals(cardinality)
+							|| IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N.equals(cardinality))
+					&& Modifier.isFinal(field.getModifiers())) {
+				fieldOption = VALUE_REFERENCE_FIELD_OPTION_UPDATE;
+			}
+		}
+
+		if (!errorLevel.isIgnore()) {
+			if (collectionType != null && collectionType.getElementType() != null && !collectionType.isExact()) {
+				if (!IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC.equals(policy)) {
+					reportProblem(annotation, policy == null ? null : "policy", problems, Messages.AnnotationProcessor_invalidReference_fieldCardinalityPolicyCollectionType); //$NON-NLS-1$
+				}
+
+				if (!VALUE_REFERENCE_FIELD_OPTION_UPDATE.equals(fieldOption)) {
+					reportProblem(annotation, fieldOption == null ? null : "fieldOption", problems, Messages.AnnotationProcessor_invalidReference_fieldCollection_fieldOption); //$NON-NLS-1$
+				}
+
+				// TODO validate that field is initialized in constructor!
+			}
+		}
+
+		updateAttributes(reference, name, service, cardinality, policy, target, policyOption, referenceScope, null, null, null, fieldName, fieldOption, fieldCollectionType);
+	}
+
+	private FieldCollectionTypeDescriptor determineCollectionType(AST ast, ITypeBinding type) {
+		HashSet<ITypeBinding> visited = new HashSet<>();
+		LinkedList<ITypeBinding> types = new LinkedList<>();
+		boolean exact = true;
+		do {
+			if (!visited.add(type)) {
+				continue;
+			}
+
+			String erasure = type.getErasure().getBinaryName();
+			if (Collection.class.getName().equals(erasure) || List.class.getName().equals(erasure)) {
+				ITypeBinding[] typeArgs = type.getTypeArguments();
+				if (typeArgs.length > 0) {
+					return new FieldCollectionTypeDescriptor(typeArgs[0], exact);
+				}
+
+				return new FieldCollectionTypeDescriptor(ast.resolveWellKnownType(Object.class.getName()), exact);
+			}
+
+			exact = false;
+
+			ITypeBinding superType = type.getSuperclass();
+			if (superType != null && !superType.isEqualTo(ast.resolveWellKnownType(Object.class.getName()))) {
+				types.add(superType);
+			}
+
+			types.addAll(Arrays.asList(type.getInterfaces()));
+		} while ((type = types.poll()) != null);
+
+		return new FieldCollectionTypeDescriptor(null, false);
+	}
+
+	private ITypeBinding getFieldServiceType(AST ast, ITypeBinding type) {
+		ITypeBinding serviceType;
+		String erasure = type.getErasure().getBinaryName();
+		if (ServiceReference.class.getName().equals(erasure) || COMPONENT_SERVICE_OBJECTS.equals(erasure)) {
+			ITypeBinding[] typeArgs = type.getTypeArguments();
+			if (typeArgs.length > 0) {
+				serviceType = typeArgs[0];
+			} else {
+				serviceType = null;
+			}
+		} else if (Map.Entry.class.getName().equals(erasure)) {
+			ITypeBinding[] typeArgs = type.getTypeArguments();
+			if (typeArgs.length >= 2 && Map.class.getName().equals(typeArgs[0].getErasure().getBinaryName())) {
+				serviceType = typeArgs[1];
+			} else {
+				serviceType = null;
+			}
+		} else if (Map.class.getName().equals(erasure)) {
+			serviceType = null;
+		} else {
+			serviceType = type.isPrimitive() ? getObjectType(ast, type) : type;
+		}
+
+		return serviceType;
 	}
 
 	private ITypeBinding getObjectType(AST ast, ITypeBinding primitive) {
-		if (Boolean.TYPE.getName().equals(primitive.getName()))
+		if (Boolean.TYPE.getName().equals(primitive.getName())) {
 			return ast.resolveWellKnownType(Boolean.class.getName());
+		}
 
-		if (Byte.TYPE.getName().equals(primitive.getName()))
+		if (Byte.TYPE.getName().equals(primitive.getName())) {
 			return ast.resolveWellKnownType(Byte.class.getName());
+		}
 
-		if (Character.TYPE.getName().equals(primitive.getName()))
+		if (Character.TYPE.getName().equals(primitive.getName())) {
 			return ast.resolveWellKnownType(Character.class.getName());
+		}
 
-		if (Double.TYPE.getName().equals(primitive.getName()))
+		if (Double.TYPE.getName().equals(primitive.getName())) {
 			return ast.resolveWellKnownType(Double.class.getName());
+		}
 
-		if (Float.TYPE.getName().equals(primitive.getName()))
+		if (Float.TYPE.getName().equals(primitive.getName())) {
 			return ast.resolveWellKnownType(Float.class.getName());
+		}
 
-		if (Integer.TYPE.getName().equals(primitive.getName()))
+		if (Integer.TYPE.getName().equals(primitive.getName())) {
 			return ast.resolveWellKnownType(Integer.class.getName());
+		}
 
-		if (Long.TYPE.getName().equals(primitive.getName()))
+		if (Long.TYPE.getName().equals(primitive.getName())) {
 			return ast.resolveWellKnownType(Long.class.getName());
+		}
 
-		if (Short.TYPE.getName().equals(primitive.getName()))
+		if (Short.TYPE.getName().equals(primitive.getName())) {
 			return ast.resolveWellKnownType(Short.class.getName());
+		}
 
 		return null;
 	}
 
-	private void validateReferenceBindMethod(Annotation annotation, ITypeBinding serviceType, IMethodBinding methodBinding, Collection<DSAnnotationProblem> problems) {
-		if (errorLevel.isIgnore())
+	private void validateReferenceField(Annotation annotation, IVariableBinding fieldBinding, Collection<DSAnnotationProblem> problems) {
+		if (errorLevel.isIgnore()) {
 			return;
+		}
+
+		if (Modifier.isStatic(fieldBinding.getModifiers())) {
+			reportProblem(annotation, null, problems, Messages.AnnotationProcessor_invalidReference_staticField);
+		}
+	}
+	private void processReference(IDSReference reference, Annotation annotation, IAnnotationBinding annotationBinding, Map<String, Object> params, Map<String, Annotation> names, Collection<DSAnnotationProblem> problems) {
+		ITypeBinding serviceType = null;
+		Object value;
+		if ((value = params.get("service")) instanceof ITypeBinding) { //$NON-NLS-1$
+			serviceType = (ITypeBinding) value;
+		} else {
+			if (!errorLevel.isIgnore()) {
+				reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidReference_missingRequiredParam, "service")); //$NON-NLS-1$
+			}
+		}
+
+		String service = serviceType == null ? null : serviceType.getBinaryName();
+
+		String name = null;
+		if ((value = params.get("name")) instanceof String) { //$NON-NLS-1$
+			name = (String) value;
+			if (!errorLevel.isIgnore()) {
+				if (names.containsKey(name)) {
+					reportProblem(annotation, "name", problems, NLS.bind(Messages.AnnotationProcessor_duplicateReferenceName, name), name); //$NON-NLS-1$
+					Annotation duplicate = names.put(name, null);
+					if (duplicate != null) {
+						reportProblem(duplicate, "name", problems, NLS.bind(Messages.AnnotationProcessor_duplicateReferenceName, name), name); //$NON-NLS-1$
+					}
+				} else {
+					names.put(name, annotation);
+				}
+			}
+		} else {
+			if (!errorLevel.isIgnore()) {
+				reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidReference_missingRequiredParam, "name")); //$NON-NLS-1$
+			}
+		}
+
+		String cardinality = null;
+		if ((value = params.get("cardinality")) instanceof IVariableBinding) { //$NON-NLS-1$
+			IVariableBinding cardinalityBinding = (IVariableBinding) value;
+			cardinality = DSEnums.getReferenceCardinality(cardinalityBinding.getName());
+		}
+
+		String policy = null;
+		if ((value = params.get("policy")) instanceof IVariableBinding) { //$NON-NLS-1$
+			IVariableBinding policyBinding = (IVariableBinding) value;
+			policy = DSEnums.getReferencePolicy(policyBinding.getName());
+		}
+
+		String target = null;
+		if ((value = params.get("target")) instanceof String) { //$NON-NLS-1$
+			target = (String) value;
+			validateReferenceTarget(annotation, target, problems);
+		}
+
+		if (!errorLevel.isIgnore()) {
+			if (params.get("bind") instanceof String) { //$NON-NLS-1$
+				reportProblem(annotation, "bind", true, problems,  NLS.bind(Messages.AnnotationProcessor_parameterNotApplicable, "bind")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		if (!errorLevel.isIgnore()) {
+			if (params.get("unbind") instanceof String) { //$NON-NLS-1$
+				reportProblem(annotation, "unbind", true, problems,  NLS.bind(Messages.AnnotationProcessor_parameterNotApplicable, "unbind")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		String policyOption = null;
+		if ((value = params.get("policyOption")) instanceof IVariableBinding) { //$NON-NLS-1$
+			IVariableBinding policyOptionBinding = (IVariableBinding) value;
+			policyOption = DSEnums.getReferencePolicyOption(policyOptionBinding.getName());
+		}
+
+		if (!errorLevel.isIgnore()) {
+			if (params.get("updated") instanceof String) { //$NON-NLS-1$
+				reportProblem(annotation, "updated", true, problems,  NLS.bind(Messages.AnnotationProcessor_parameterNotApplicable, "updated")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		String referenceScope = null;
+		if ((value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
+			IVariableBinding referenceScopeBinding = (IVariableBinding) value;
+			referenceScope = DSEnums.getReferenceScope(referenceScopeBinding.getName());
+		}
+
+		if (!errorLevel.isIgnore()) {
+			if (params.get("field") instanceof IVariableBinding) { //$NON-NLS-1$
+				reportProblem(annotation, "field", true, problems,  NLS.bind(Messages.AnnotationProcessor_parameterNotApplicable, "field")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		if (!errorLevel.isIgnore()) {
+			if (params.get("fieldOption") instanceof IVariableBinding) { //$NON-NLS-1$
+				reportProblem(annotation, "fieldOption", true, problems,  NLS.bind(Messages.AnnotationProcessor_parameterNotApplicable, "fieldOption")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		updateAttributes(reference, name, service, cardinality, policy, target, policyOption, referenceScope, null, null, null, null, null, null);
+	}
+
+	private void validateReferenceBindMethod(Annotation annotation, ITypeBinding serviceType, IMethodBinding methodBinding, Collection<DSAnnotationProblem> problems) {
+		if (errorLevel.isIgnore()) {
+			return;
+		}
+
+		if (Modifier.isStatic(methodBinding.getModifiers())) {
+			reportProblem(annotation, null, problems, Messages.AnnotationProcessor_invalidReference_staticBindMethod);
+		}
 
 		String returnTypeName = methodBinding.getReturnType().getName();
-		if (!Void.TYPE.getName().equals(returnTypeName))
+		if (!Void.TYPE.getName().equals(returnTypeName)) {
 			reportProblem(annotation, null, problems, NLS.bind(Messages.AnnotationProcessor_invalidBindMethodReturnType, returnTypeName), returnTypeName);
+		}
 
 		ITypeBinding[] paramTypeBindings = methodBinding.getParameterTypes();
-		if (!(paramTypeBindings.length == 1 && (ServiceReference.class.getName().equals(paramTypeBindings[0].getErasure().getQualifiedName()) || serviceType == null || serviceType.isAssignmentCompatible(paramTypeBindings[0])))
-				&& !(paramTypeBindings.length == 2 && (serviceType == null || serviceType.isAssignmentCompatible(paramTypeBindings[0])) && Map.class.getName().equals(paramTypeBindings[1].getErasure().getQualifiedName()))) {
+		String erasure;
+		if (!(paramTypeBindings.length == 1
+				&& (ServiceReference.class.getName().equals(erasure = paramTypeBindings[0].getErasure().getBinaryName())
+						|| (specVersion == DSAnnotationVersion.V1_3 && COMPONENT_SERVICE_OBJECTS.equals(erasure))
+						|| serviceType == null
+						|| serviceType.isAssignmentCompatible(paramTypeBindings[0])))
+				&& !(paramTypeBindings.length == 2
+				&& (serviceType == null || serviceType.isAssignmentCompatible(paramTypeBindings[0]))
+				&& Map.class.getName().equals(paramTypeBindings[1].getErasure().getBinaryName()))) {
 			String[] params = new String[paramTypeBindings.length];
 			StringBuilder buf = new StringBuilder(64);
 			buf.append('(');
 			for (int i = 0; i < params.length; ++i) {
 				params[i] = paramTypeBindings[i].getName();
-				if (buf.length() > 1)
+				if (buf.length() > 1) {
 					buf.append(", "); //$NON-NLS-1$
+				}
 
 				buf.append(params[i]);
 			}
@@ -1659,16 +2631,18 @@ class AnnotationVisitor extends ASTVisitor {
 	}
 
 	private void validateReferenceTarget(Annotation annotation, String target, Collection<DSAnnotationProblem> problems) {
-		if (errorLevel.isIgnore())
+		if (errorLevel.isIgnore()) {
 			return;
+		}
 
 		try {
 			FrameworkUtil.createFilter(target);
 		} catch (InvalidSyntaxException e) {
 			String msg = e.getMessage();
 			String suffix = ": " + e.getFilter(); //$NON-NLS-1$
-			if (msg.endsWith(suffix))
+			if (msg.endsWith(suffix)) {
 				msg = msg.substring(0, msg.length() - suffix.length());
+			}
 
 			reportProblem(annotation, "target", problems, msg, target); //$NON-NLS-1$
 		}
@@ -1687,6 +2661,7 @@ class AnnotationVisitor extends ASTVisitor {
 		do {
 			for (IMethodBinding declaredMethod : testedClass.getDeclaredMethods()) {
 				if (name.equals(declaredMethod.getName())
+						&& !Modifier.isStatic(declaredMethod.getModifiers())
 						&& Void.TYPE.getName().equals(declaredMethod.getReturnType().getName())
 						&& (testedClass == componentClass
 						|| Modifier.isPublic(declaredMethod.getModifiers())
@@ -1695,28 +2670,34 @@ class AnnotationVisitor extends ASTVisitor {
 								&& testedClass.getPackage().isEqualTo(componentClass.getPackage())))) {
 					ITypeBinding[] paramTypes = declaredMethod.getParameterTypes();
 					if (paramTypes.length == 1) {
-						if (ServiceReference.class.getName().equals(paramTypes[0].getErasure().getQualifiedName()))
+						String erasure = paramTypes[0].getErasure().getBinaryName();
+						if (ServiceReference.class.getName().equals(erasure)) {
 							// we have the winner
 							return declaredMethod;
+						}
 
-						if (priority < 3 && serviceType != null && serviceType.isEqualTo(paramTypes[0]))
+						if (specVersion == DSAnnotationVersion.V1_3 && priority < 4 && COMPONENT_SERVICE_OBJECTS.equals(erasure)) {
+							priority = 4;
+						} else if (priority < 3 && serviceType != null && serviceType.isEqualTo(paramTypes[0])) {
 							priority = 3;
-						else if (priority < 2 && serviceType != null && serviceType.isAssignmentCompatible(paramTypes[0]))
+						} else if (priority < 2 && serviceType != null && serviceType.isAssignmentCompatible(paramTypes[0])) {
 							priority = 2;
-						else
+						} else {
 							continue;
+						}
 
 						// we have a (better) candidate
 						candidate = declaredMethod;
 					} else if (paramTypes.length == 2) {
 						if (priority < 1
 								&& serviceType != null && serviceType.isEqualTo(paramTypes[0])
-								&& Map.class.getName().equals(paramTypes[1].getErasure().getQualifiedName()))
+								&& Map.class.getName().equals(paramTypes[1].getErasure().getBinaryName())) {
 							priority = 1;
-						else if (candidate != null
+						} else if (candidate != null
 								|| !(serviceType != null && serviceType.isAssignmentCompatible(paramTypes[0]))
-								|| !Map.class.getName().equals(paramTypes[1].getErasure().getQualifiedName()))
+								|| !Map.class.getName().equals(paramTypes[1].getErasure().getBinaryName())) {
 							continue;
+						}
 
 						// we have a candidate
 						candidate = declaredMethod;
@@ -1732,6 +2713,10 @@ class AnnotationVisitor extends ASTVisitor {
 		reportProblem(annotation, member, -1, problems, message, args);
 	}
 
+	private void reportProblem(Annotation annotation, String member, boolean fullPair, Collection<DSAnnotationProblem> problems, String message, String... args) {
+		reportProblem(annotation, member, -1, fullPair, errorLevel, problems, message, args);
+	}
+
 	private void reportProblem(Annotation annotation, String member, ValidationErrorLevel errorLevel, Collection<DSAnnotationProblem> problems, String message, String... args) {
 		reportProblem(annotation, member, -1, errorLevel, problems, message, args);
 	}
@@ -1741,33 +2726,38 @@ class AnnotationVisitor extends ASTVisitor {
 	}
 
 	private void reportProblem(Annotation annotation, String member, int valueIndex, ValidationErrorLevel errorLevel, Collection<DSAnnotationProblem> problems, String message, String... args) {
-		if (errorLevel.isIgnore())
-			return;
+		reportProblem(annotation, member, valueIndex, false, errorLevel, problems, message, args);
+	}
 
-		Expression memberValue = annotation;
+	private void reportProblem(Annotation annotation, String member, int valueIndex, boolean fullPair, ValidationErrorLevel errorLevel, Collection<DSAnnotationProblem> problems, String message, String... args) {
+		if (errorLevel.isIgnore()) {
+			return;
+		}
+
+		ASTNode element = annotation;
 		if (annotation.isNormalAnnotation() && member != null) {
 			NormalAnnotation na = (NormalAnnotation) annotation;
 			for (Object value : na.values()) {
 				MemberValuePair pair = (MemberValuePair) value;
 				if (member.equals(pair.getName().getIdentifier())) {
-					memberValue = pair.getValue();
+					element = fullPair ? pair : pair.getValue();
 					break;
 				}
 			}
 		} else if (annotation.isSingleMemberAnnotation()) {
 			SingleMemberAnnotation sma = (SingleMemberAnnotation) annotation;
-			memberValue = sma.getValue();
+			element = sma.getValue();
 		}
 
-		int start = memberValue.getStartPosition();
-		int length = memberValue.getLength();
+		int start = element.getStartPosition();
+		int length = element.getLength();
 
-		if (valueIndex >= 0 && memberValue instanceof ArrayInitializer) {
-			ArrayInitializer ai = (ArrayInitializer) memberValue;
+		if (valueIndex >= 0 && element instanceof ArrayInitializer) {
+			ArrayInitializer ai = (ArrayInitializer) element;
 			if (valueIndex < ai.expressions().size()) {
-				Expression element = (Expression) ai.expressions().get(valueIndex);
-				start = element.getStartPosition();
-				length = element.getLength();
+				Expression expression = (Expression) ai.expressions().get(valueIndex);
+				start = expression.getStartPosition();
+				length = expression.getLength();
 			}
 		}
 

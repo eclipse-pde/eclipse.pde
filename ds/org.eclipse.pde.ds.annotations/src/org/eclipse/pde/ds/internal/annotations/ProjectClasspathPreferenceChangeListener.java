@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Ecliptical Software Inc. and others.
+ * Copyright (c) 2015, 2017 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,9 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
-		if (Activator.PREF_CLASSPATH.equals(event.getKey()) || Activator.PREF_ENABLED.equals(event.getKey())) {
+		if (Activator.PREF_CLASSPATH.equals(event.getKey())
+				|| Activator.PREF_SPEC_VERSION.equals(event.getKey())
+				|| Activator.PREF_ENABLED.equals(event.getKey())) {
 			requestClasspathUpdate();
 		}
 	}
@@ -72,8 +74,9 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 			monitor.beginTask(project.getElementName(), 1);
 
 		try {
-			if (monitor != null && monitor.isCanceled())
+			if (monitor != null && monitor.isCanceled()) {
 				throw new OperationCanceledException();
+			}
 
 			ClasspathContainerInitializer initializer = JavaCore.getClasspathContainerInitializer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH.segment(0));
 			if (initializer != null && initializer.canUpdateClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, project)) {
@@ -87,11 +90,13 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 				}
 			}
 
-			if (monitor != null)
+			if (monitor != null) {
 				monitor.worked(1);
+			}
 		} finally {
-			if (monitor != null)
+			if (monitor != null) {
 				monitor.done();
+			}
 		}
 	}
 

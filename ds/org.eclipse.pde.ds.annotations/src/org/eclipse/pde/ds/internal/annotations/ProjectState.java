@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2017 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,8 @@ public class ProjectState implements Serializable, Cloneable {
 	private /*final*/ Map<String, Collection<String>> mappings = new HashMap<>();
 
 	private String path;
+
+	private DSAnnotationVersion specVersion;
 
 	private ValidationErrorLevel errorLevel;
 
@@ -80,16 +82,18 @@ public class ProjectState implements Serializable, Cloneable {
 		}
 
 		Collection<String> cuTypes = types.remove(cuKey);
-		if (cuTypes == null)
+		if (cuTypes == null) {
 			return null;
+		}
 
 		Collection<String> oldDSKeys = null;
 		if (files != null) {
 			oldDSKeys = new HashSet<>(cuTypes.size());
 			for (String type : cuTypes) {
 				String dsKey = files.remove(type);
-				if (dsKey != null)
+				if (dsKey != null) {
 					oldDSKeys.add(dsKey);
+				}
 			}
 		}
 
@@ -104,14 +108,16 @@ public class ProjectState implements Serializable, Cloneable {
 		}
 
 		Collection<String> cuTypes = types.get(cuKey);
-		if (cuTypes == null || files == null)
+		if (cuTypes == null || files == null) {
 			return null;
+		}
 
 		HashSet<String> cuFiles = new HashSet<>(cuTypes.size());
 		for (String type : cuTypes) {
 			String dsKey = files.get(type);
-			if (dsKey != null)
+			if (dsKey != null) {
 				cuFiles.add(dsKey);
+			}
 		}
 
 		return Collections.unmodifiableCollection(cuFiles);
@@ -143,8 +149,16 @@ public class ProjectState implements Serializable, Cloneable {
 		this.path = path;
 	}
 
+	public DSAnnotationVersion getSpecVersion() {
+		return specVersion == null ? DSAnnotationVersion.V1_3 : specVersion;
+	}
+
+	public void setSpecVersion(DSAnnotationVersion specVersion) {
+		this.specVersion = specVersion;
+	}
+
 	public ValidationErrorLevel getErrorLevel() {
-		return errorLevel == null ?  ValidationErrorLevel.error : errorLevel;
+		return errorLevel == null ? ValidationErrorLevel.error : errorLevel;
 	}
 
 	public void setErrorLevel(ValidationErrorLevel errorLevel) {
@@ -160,15 +174,17 @@ public class ProjectState implements Serializable, Cloneable {
 	}
 
 	private Map<String, Collection<String>> getTypes() {
-		if (types == null)
+		if (types == null) {
 			types = new HashMap<>();
+		}
 
 		return types;
 	}
 
 	private Map<String, String> getFiles() {
-		if (files == null)
+		if (files == null) {
 			files = new HashMap<>();
+		}
 
 		return files;
 	}
@@ -183,13 +199,15 @@ public class ProjectState implements Serializable, Cloneable {
 		}
 
 		clone.mappings = new HashMap<>(mappings.size());
-		for (Map.Entry<String, Collection<String>> entry : mappings.entrySet())
+		for (Map.Entry<String, Collection<String>> entry : mappings.entrySet()) {
 			clone.mappings.put(entry.getKey(), new HashSet<>(entry.getValue()));
+		}
 
 		if (types != null) {
 			clone.types = new HashMap<>(types.size());
-			for (Map.Entry<String, Collection<String>> entry : types.entrySet())
+			for (Map.Entry<String, Collection<String>> entry : types.entrySet()) {
 				clone.types.put(entry.getKey(), new HashSet<>(entry.getValue()));
+			}
 		}
 
 		if (files != null) {
@@ -201,15 +219,18 @@ public class ProjectState implements Serializable, Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
+		}
 
-		if (obj == null || !getClass().equals(obj.getClass()))
+		if (obj == null || !getClass().equals(obj.getClass())) {
 			return false;
+		}
 
 		ProjectState o = (ProjectState) obj;
 		return formatVersion == o.formatVersion
 				&& (path == null ? o.path == null : path.equals(o.path))
+				&& specVersion == o.specVersion
 				&& errorLevel == o.errorLevel
 				&& missingUnbindMethodLevel == o.missingUnbindMethodLevel
 				&& mappings.equals(o.mappings)
@@ -224,6 +245,7 @@ public class ProjectState implements Serializable, Cloneable {
 		buf.append(mappings).append(";types="); //$NON-NLS-1$
 		buf.append(types).append(";files="); //$NON-NLS-1$
 		buf.append(files).append(";errorLevel="); //$NON-NLS-1$
+		buf.append(specVersion).append(";specVersion="); //$NON-NLS-1$
 		buf.append(errorLevel).append(";missingUnbindMethodLevel="); //$NON-NLS-1$
 		buf.append(missingUnbindMethodLevel).append(";formatVersion="); //$NON-NLS-1$
 		buf.append(formatVersion).append(']');

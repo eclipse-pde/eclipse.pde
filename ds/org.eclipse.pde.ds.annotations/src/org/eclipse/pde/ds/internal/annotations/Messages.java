@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2017 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,9 +70,33 @@ public class Messages extends NLS {
 
 	public static String AnnotationProcessor_invalidComponentService;
 
+	public static String AnnotationProcessor_invalidLifecycleMethod_static;
+
 	public static String AnnotationProcessor_invalidLifeCycleMethodParameterType;
 
 	public static String AnnotationProcessor_invalidLifeCycleMethodReturnType;
+
+	public static String AnnotationProcessor_invalidReference_bindMethodNameMismatch;
+
+	public static String AnnotationProcessor_invalidReference_fieldCardinalityPolicyCollectionType;
+
+	public static String AnnotationProcessor_invalidReference_fieldCollection_fieldOption;
+
+	public static String AnnotationProcessor_invalidReference_fieldFinal_fieldOption;
+
+	public static String AnnotationProcessor_invalidReference_fieldNameMismatch;
+
+	public static String AnnotationProcessor_invalidReference_fieldPolicyCardinality_fieldOption;
+
+	public static String AnnotationProcessor_invalidReference_fieldTypeCardinalityMismatch;
+
+	public static String AnnotationProcessor_invalidReference_fieldUnknownServiceType;
+
+	public static String AnnotationProcessor_invalidReference_missingRequiredParam;
+
+	public static String AnnotationProcessor_invalidReference_staticBindMethod;
+
+	public static String AnnotationProcessor_invalidReference_staticField;
 
 	public static String AnnotationProcessor_invalidReferenceService;
 
@@ -83,6 +107,8 @@ public class Messages extends NLS {
 	public static String AnnotationProcessor_invalidReferenceUpdated;
 
 	public static String AnnotationProcessor_noImplicitReferenceUnbind;
+
+	public static String AnnotationProcessor_parameterNotApplicable;
 
 	public static String AnnotationProcessor_stringOrEmpty;
 
@@ -141,6 +167,8 @@ public class Messages extends NLS {
 	public static String DSAnnotationPropertyPage_workspaceLink_text;
 
 	public static String DSAnnotationPropertyPage_enableBAPLGenerationLabel_text;
+
+	public static String DSAnnotationPropertyPage_specVersionLabel_text;
 
 	public static String ProjectClasspathPreferenceChangeListener_jobName;
 

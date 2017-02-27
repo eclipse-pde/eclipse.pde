@@ -78,6 +78,18 @@
             </parameter>
          </describer>
       </content-type>
+      <content-type
+            base-type="org.eclipse.pde.ds.core.content-type"
+            id="org.eclipse.pde.ds.annotations.content-type-v13"
+            name="%content-type-v13.name">
+         <describer
+               class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2">
+            <parameter
+                  name="element"
+                  value="{http://www.osgi.org/xmlns/scr/v1.3.0}component">
+            </parameter>
+         </describer>
+      </content-type>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">

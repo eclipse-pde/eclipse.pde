@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Ecliptical Software Inc. and others.
+ * Copyright (c) 2016, 2017 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IEclipsePreferences defaults = DefaultScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		defaults.putBoolean(Activator.PREF_ENABLED, false);
 		defaults.put(Activator.PREF_PATH, Activator.DEFAULT_PATH);
+		defaults.put(Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name());
 		defaults.putBoolean(Activator.PREF_CLASSPATH, true);
-		defaults.put(Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.toString());
-		defaults.put(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, ValidationErrorLevel.error.toString());
+		defaults.put(Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.name());
+		defaults.put(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, ValidationErrorLevel.error.name());
 	}
 }

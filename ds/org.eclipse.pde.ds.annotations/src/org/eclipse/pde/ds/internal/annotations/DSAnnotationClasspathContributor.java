@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Ecliptical Software Inc. and others.
+ * Copyright (c) 2015, 2017 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,10 +61,24 @@ public class DSAnnotationClasspathContributor implements IClasspathContributor {
 					if (enabled) {
 						boolean autoClasspath = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_CLASSPATH, true, scope);
 						if (autoClasspath) {
+							DSAnnotationVersion specVersion;
 							try {
-								URL fileURL = FileLocator.toFileURL(bundle.getEntry("lib/annotations.jar")); //$NON-NLS-1$
+								specVersion = DSAnnotationVersion.valueOf(prefs.getString(Activator.PLUGIN_ID, Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name(), scope));
+							} catch (IllegalArgumentException e) {
+								specVersion = DSAnnotationVersion.V1_3;
+							}
+
+							String jarDir;
+							if (specVersion == DSAnnotationVersion.V1_3) {
+								jarDir = "lib"; //$NON-NLS-1$
+							} else {
+								jarDir = "lib1_2"; //$NON-NLS-1$
+							}
+
+							try {
+								URL fileURL = FileLocator.toFileURL(bundle.getEntry(jarDir + "/annotations.jar")); //$NON-NLS-1$
 								if ("file".equals(fileURL.getProtocol())) { //$NON-NLS-1$
-									URL srcFileURL = FileLocator.toFileURL(bundle.getEntry("lib/annotationssrc.zip")); //$NON-NLS-1$
+									URL srcFileURL = FileLocator.toFileURL(bundle.getEntry(jarDir + "/annotationssrc.zip")); //$NON-NLS-1$
 									IPath srcPath = "file".equals(srcFileURL.getProtocol()) ? new Path(srcFileURL.getPath()) : null; //$NON-NLS-1$
 									IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(fileURL.getPath()), srcPath, Path.ROOT, ANNOTATION_ACCESS_RULES, DS_ATTRS, false);
 									return Collections.singletonList(entry);

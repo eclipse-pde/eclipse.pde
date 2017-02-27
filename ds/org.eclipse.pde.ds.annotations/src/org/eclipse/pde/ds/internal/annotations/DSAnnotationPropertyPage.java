@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2017 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,8 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 	private Text pathText;
 
 	private Button classpathCheckbox;
+
+	private Combo specVersionCombo;
 
 	private Combo errorLevelCombo;
 
@@ -172,9 +174,9 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		refreshWidgets();
 
 		Dialog.applyDialogFont(composite);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDSAnnotationHelpContextIds.DS_ANNOTATION_PAGE);
-		
+
 		return composite;
 	}
 
@@ -218,6 +220,16 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		classpathCheckbox = new Button(optionBlockControl, SWT.CHECK);
 		classpathCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 
+		Label specVersionLabel = new Label(optionBlockControl, SWT.LEFT);
+		specVersionLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		specVersionLabel.setText(Messages.DSAnnotationPropertyPage_specVersionLabel_text);
+
+		specVersionCombo = new Combo(optionBlockControl, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		specVersionCombo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
+		specVersionCombo.add("1.3"); //$NON-NLS-1$
+		specVersionCombo.add("1.2"); //$NON-NLS-1$
+		specVersionCombo.select(0);
+
 		Label errorLevelLabel = new Label(optionBlockControl, SWT.LEFT);
 		errorLevelLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		errorLevelLabel.setText(Messages.DSAnnotationPropertyPage_errorLevelLabel_text);
@@ -257,7 +269,8 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		boolean enableValue = prefs.getBoolean(Activator.PREF_ENABLED, false);
 		String pathValue = prefs.get(Activator.PREF_PATH, Activator.DEFAULT_PATH);
 		boolean classpathValue = prefs.getBoolean(Activator.PREF_CLASSPATH, true);
-		String errorLevel = prefs.get(Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.toString());
+		String specVersion = prefs.get(Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name());
+		String errorLevel = prefs.get(Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.name());
 		String missingUnbindMethodLevel = prefs.get(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, errorLevel);
 		boolean generateBAPL = prefs.getBoolean(Activator.PREF_GENERATE_BAPL, true);
 
@@ -268,6 +281,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 			enableValue = prefs.getBoolean(Activator.PREF_ENABLED, enableValue);
 			pathValue = prefs.get(Activator.PREF_PATH, pathValue);
 			classpathValue = prefs.getBoolean(Activator.PREF_CLASSPATH, classpathValue);
+			specVersion = prefs.get(Activator.PREF_SPEC_VERSION, specVersion);
 			errorLevel = prefs.get(Activator.PREF_VALIDATION_ERROR_LEVEL, errorLevel);
 			missingUnbindMethodLevel = prefs.get(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, missingUnbindMethodLevel);
 			generateBAPL = prefs.getBoolean(Activator.PREF_GENERATE_BAPL, generateBAPL);
@@ -277,6 +291,15 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		enableOptions(enableValue && configBlockEnableState == null);
 		pathText.setText(pathValue);
 		classpathCheckbox.setSelection(classpathValue);
+
+		DSAnnotationVersion specVersionEnum;
+		try {
+			specVersionEnum = DSAnnotationVersion.valueOf(specVersion);
+		} catch (IllegalArgumentException e) {
+			specVersionEnum = DSAnnotationVersion.V1_3;
+		}
+
+		specVersionCombo.select(DSAnnotationVersion.V1_3.ordinal() - specVersionEnum.ordinal());
 		errorLevelCombo.select(getEnumIndex(errorLevel, ValidationErrorLevel.values(), 0));
 		missingUnbindMethodCombo.select(getEnumIndex(missingUnbindMethodLevel, ValidationErrorLevel.values(), 0));
 		enableBAPLGeneration.setSelection(generateBAPL);
@@ -286,8 +309,9 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 	private <E extends Enum<E>> int getEnumIndex(String property, E[] values, int defaultIndex) {
 		for (int i = 1; i < values.length; ++i) {
-			if (property.equals(String.valueOf(values[i])))
+			if (property.equals(values[i].name())) {
 				return i;
+			}
 		}
 
 		return defaultIndex;
@@ -331,25 +355,29 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 				optionBlockEnableState = null;
 			}
 		} else {
-			if (optionBlockEnableState == null)
+			if (optionBlockEnableState == null) {
 				optionBlockEnableState = ControlEnableState.disable(optionBlockControl);
+			}
 		}
 	}
 
 	private void updateLinkVisibility() {
-		if (workspaceLink == null || workspaceLink.isDisposed())
+		if (workspaceLink == null || workspaceLink.isDisposed()) {
 			return;
+		}
 
 		workspaceLink.setEnabled(!useProjectSettings());
 	}
 
 	private IProject getProject() {
 		IAdaptable element = getElement();
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 
-		if (element instanceof IProject)
+		if (element instanceof IProject) {
 			return (IProject) element;
+		}
 
 		return element.getAdapter(IProject.class);
 	}
@@ -408,12 +436,16 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 			prefs.put(Activator.PREF_PATH, new Path(path).toString());
 			prefs.putBoolean(Activator.PREF_CLASSPATH, classpathCheckbox.getSelection());
 
+			DSAnnotationVersion[] versions = DSAnnotationVersion.values();
+			int specVersionIndex = Math.max(Math.min(specVersionCombo.getSelectionIndex(), DSAnnotationVersion.V1_3.ordinal()), 0);
+			prefs.put(Activator.PREF_SPEC_VERSION, versions[DSAnnotationVersion.V1_3.ordinal() - specVersionIndex].name());
+
 			ValidationErrorLevel[] levels = ValidationErrorLevel.values();
 			int errorLevelIndex = errorLevelCombo.getSelectionIndex();
-			prefs.put(Activator.PREF_VALIDATION_ERROR_LEVEL, levels[Math.max(Math.min(errorLevelIndex, levels.length - 1), 0)].toString());
+			prefs.put(Activator.PREF_VALIDATION_ERROR_LEVEL, levels[Math.max(Math.min(errorLevelIndex, levels.length - 1), 0)].name());
 
 			errorLevelIndex = missingUnbindMethodCombo.getSelectionIndex();
-			prefs.put(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, levels[Math.max(Math.min(errorLevelIndex, levels.length - 1), 0)].toString());
+			prefs.put(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, levels[Math.max(Math.min(errorLevelIndex, levels.length - 1), 0)].name());
 
 			prefs.putBoolean(Activator.PREF_GENERATE_BAPL, enableBAPLGeneration.getSelection());
 		}
