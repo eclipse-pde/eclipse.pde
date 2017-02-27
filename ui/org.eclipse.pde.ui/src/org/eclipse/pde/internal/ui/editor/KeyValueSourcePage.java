@@ -31,7 +31,7 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 				if ((e1 instanceof IDocumentKey) && (e2 instanceof IDocumentKey)) {
 					IDocumentKey key1 = (IDocumentKey) e1;
 					IDocumentKey key2 = (IDocumentKey) e2;
-					return key1.getOffset() < key2.getOffset() ? -1 : 1;
+					return Integer.compare(key1.getOffset(), key2.getOffset());
 				}
 				// Bundle manifest header elements
 				// Do not sort by default

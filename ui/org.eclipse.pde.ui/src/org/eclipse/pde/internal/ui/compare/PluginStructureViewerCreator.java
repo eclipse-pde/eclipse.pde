@@ -40,7 +40,7 @@ public class PluginStructureViewerCreator implements IViewerCreator {
 						if (e1Element instanceof DocumentRangeNode && e2Element instanceof DocumentRangeNode) {
 							float e1off = getRelativeOffset(((DocumentRangeNode) e1Element));
 							float e2off = getRelativeOffset(((DocumentRangeNode) e2Element));
-							return e1off - e2off < 0 ? -1 : 1;
+							return Float.compare(e1off, e2off);
 						}
 						return 0;
 					}
