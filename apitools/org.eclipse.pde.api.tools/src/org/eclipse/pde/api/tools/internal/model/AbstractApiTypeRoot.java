@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
+
+import java.util.Collections;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -50,7 +53,16 @@ public abstract class AbstractApiTypeRoot extends ApiElement implements IApiType
 			if (type == null) {
 				return null;
 			}
-			cache.cacheElementInfo(type);
+			Set<IApiComponent> apiComponentMultiple = Collections.emptySet();
+			if (comp != null) {
+				IApiBaseline baseline = comp.getBaseline();
+				apiComponentMultiple = baseline.getAllApiComponents(comp.getSymbolicName());
+			}
+			// cache only if 1 version is there - else optimising would cause
+			// issues if both the versions have the same type.
+			if (apiComponentMultiple.isEmpty()) {
+				cache.cacheElementInfo(type);
+			}
 		}
 		return type;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -738,6 +739,20 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				String id = currentModel.getBundleDescription().getSymbolicName();
 				// Compatibility checks
 				IApiComponent apiComponent = wbaseline.getApiComponent(id);
+				Set<IApiComponent> apiComponentMultiple = wbaseline.getAllApiComponents(id);
+				if (!apiComponentMultiple.isEmpty()) {
+					// add the exact match
+					for (Iterator<IApiComponent> iterator = apiComponentMultiple.iterator(); iterator.hasNext();) {
+						IApiComponent iApiComponent = iterator.next();
+						Version workspaceBaselineVersion = new Version(iApiComponent.getVersion());// removes
+																									// qualifier
+						Version currentProjectVersion = currentModel.getBundleDescription().getVersion();
+						if (new Version(currentProjectVersion.getMajor(), currentProjectVersion.getMinor(), currentProjectVersion.getMicro()).compareTo(workspaceBaselineVersion) == 0) {
+							apiComponent = iApiComponent;
+							break;
+						}
+					}
+				}
 				if (apiComponent != null) {
 					getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, new BuildContext(), localMonitor.split(1));
 					localMonitor.split(1);

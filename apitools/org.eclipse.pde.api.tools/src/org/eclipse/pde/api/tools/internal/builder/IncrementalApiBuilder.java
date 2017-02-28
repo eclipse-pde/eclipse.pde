@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@ package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -44,6 +46,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.osgi.framework.Version;
 
 /**
  * Used to incrementally build changed Java types
@@ -277,6 +280,20 @@ public class IncrementalApiBuilder {
 			if (currentModel != null) {
 				String id = currentModel.getBundleDescription().getSymbolicName();
 				IApiComponent comp = wbaseline.getApiComponent(id);
+				Set<IApiComponent> apiComponentMultiple = wbaseline.getAllApiComponents(id);
+				if (!apiComponentMultiple.isEmpty()) {
+					// add the exact match
+					for (Iterator<IApiComponent> iterator = apiComponentMultiple.iterator(); iterator.hasNext();) {
+						IApiComponent iApiComponent = iterator.next();
+						Version workspaceBaselineVersion = new Version(iApiComponent.getVersion());// removes
+																									// qualifier
+						Version currentProjectVersion = currentModel.getBundleDescription().getVersion();
+						if (new Version(currentProjectVersion.getMajor(), currentProjectVersion.getMinor(), currentProjectVersion.getMicro()).compareTo(workspaceBaselineVersion) == 0) {
+							comp = iApiComponent;
+							break;
+						}
+					}
+				}
 				if (comp == null) {
 					return;
 				}

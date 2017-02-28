@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -53,6 +54,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.w3c.dom.Document;
@@ -374,14 +376,27 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		Element celement = null;
 		IApiComponent[] components = baseline.getApiComponents();
 		for (IApiComponent component : components) {
-			IApiComponent comp = component;
-			if (!comp.isSystemComponent()) {
-				celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
-				celement.setAttribute(IApiXmlConstants.ATTR_ID, comp.getSymbolicName());
-				celement.setAttribute(IApiXmlConstants.ATTR_VERSION, comp.getVersion());
-				celement.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(comp.getLocation()).toPortableString());
-				root.appendChild(celement);
+			Set<IApiComponent> allComponentSet = new HashSet<>();
+			// if the baseline has multiple versions, persist all versions
+			Set<IApiComponent> multipleComponents = baseline.getAllApiComponents(component.getSymbolicName());
+			if (multipleComponents.isEmpty()) {
+				// no multiple version - add the current component
+				allComponentSet.add(component);
+			} else {
+				allComponentSet.addAll(multipleComponents);
 			}
+			for (Iterator<IApiComponent> iterator = allComponentSet.iterator(); iterator.hasNext();) {
+				IApiComponent iApiComponent = iterator.next();
+				if (!iApiComponent.isSystemComponent()) {
+					celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
+					celement.setAttribute(IApiXmlConstants.ATTR_ID, iApiComponent.getSymbolicName());
+					celement.setAttribute(IApiXmlConstants.ATTR_VERSION, iApiComponent.getVersion());
+					celement.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(iApiComponent.getLocation()).toPortableString());
+					root.appendChild(celement);
+				}
+			}
+			// clear the temporary hashset
+			allComponentSet.clear();
 		}
 		return Util.serializeDocument(document);
 	}
@@ -632,19 +647,22 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			Set<String> ids = DependencyManager.getSelfandDependencies(PluginRegistry.getWorkspaceModels(), null);
 			List<IApiComponent> componentsList = new ArrayList<>(ids.size());
 			IApiComponent apiComponent = null;
-			IPluginModelBase model = null;
+			ModelEntry modelEntry = null;
 			for (String id : ids) {
-				model = PluginRegistry.findModel(id);
-				if (model == null) {
+				modelEntry = PluginRegistry.findEntry(id);
+				IPluginModelBase[] workspaceModels = modelEntry.getWorkspaceModels();
+				if (workspaceModels.length == 0) {
 					continue;
 				}
-				try {
-					apiComponent = ApiModelFactory.newApiComponent(baseline, model);
-					if (apiComponent != null) {
-						componentsList.add(apiComponent);
+				for (IPluginModelBase iPluginModelBase : workspaceModels) {
+					try {
+						apiComponent = ApiModelFactory.newApiComponent(baseline, iPluginModelBase);
+						if (apiComponent != null) {
+							componentsList.add(apiComponent);
+						}
+					} catch (CoreException e) {
+						ApiPlugin.log(e);
 					}
-				} catch (CoreException e) {
-					ApiPlugin.log(e);
 				}
 			}
 			baseline.addApiComponents(componentsList.toArray(new IApiComponent[componentsList.size()]));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -227,20 +227,13 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (baseline != null) {
 				IApiComponent reference = baseline.getApiComponent(component.getSymbolicName());
 				if (reference != null) {
-					Version baselineVersion = new Version(reference.getVersion());
-					Version compVer = new Version(component.getVersion());
-					// If the baseline's component's major version doesn't match
-					// the component version get all the versions of that
-					// component in baseline and select the best match.
-					if (baselineVersion.getMajor() != compVer.getMajor()) {
-						Set<IApiComponent> baselineAllComponents = baseline.getAllApiComponents(component.getSymbolicName());
-						if (!baselineAllComponents.isEmpty()) {
-							for (IApiComponent baselineComp : baselineAllComponents) {
-								if (new Version(baselineComp.getVersion()).getMajor() == compVer.getMajor()) {
-									reference = baselineComp;
-									break;
-								}
-							}
+					// if there are more than 1 versions in the baseline, select
+					// the best match
+					Set<IApiComponent> baselineAllComponents = baseline.getAllApiComponents(component.getSymbolicName());
+					if (!baselineAllComponents.isEmpty()) {
+						IApiComponent bestMatchReference = getBestMatchFromMultipleComponents(baselineAllComponents, component);
+						if (bestMatchReference != null) {
+							reference = bestMatchReference;
 						}
 					}
 				}
@@ -306,6 +299,21 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 
+
+	private IApiComponent getBestMatchFromMultipleComponents(Set<IApiComponent> baselineAllComponents, IApiComponent component) {
+		// baseline already sorted from higher to lower version. see
+		// ApiBaseline::fAllComponentsById
+		IApiComponent bestMatchReference = null;
+		Version compVer = new Version(component.getVersion());
+		for (IApiComponent baselineComp : baselineAllComponents) {
+			Version verBaseline = new Version(baselineComp.getVersion());
+			if (compVer.compareTo(verBaseline) >= 0) {
+				bestMatchReference = baselineComp;
+				break;
+			}
+		}
+		return bestMatchReference;
+	}
 
 	/**
 	 * Sets whether to continue analyzing a component even if it has resolution
