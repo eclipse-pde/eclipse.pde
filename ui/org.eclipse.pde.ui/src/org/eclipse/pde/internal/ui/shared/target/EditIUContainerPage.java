@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.ui.ProvUI;
 import org.eclipse.equinox.internal.p2.ui.ProvUIMessages;
 import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
-import org.eclipse.equinox.internal.p2.ui.dialogs.*;
+import org.eclipse.equinox.internal.p2.ui.dialogs.AvailableIUGroup;
+import org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup;
 import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
@@ -28,7 +29,7 @@ import org.eclipse.equinox.p2.ui.Policy;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
@@ -217,7 +218,10 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 					}
 
 					Thread.sleep(REFRESH_INTERVAL);
-
+					// cancel is pressed before next refresh
+					if (parent.isDisposed()) {
+						break;
+					}
 					parent.getDisplay().syncExec(() -> {
 						final TreeItem[] children = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
 						final String pendingLabel = ProgressMessages.PendingUpdateAdapter_PendingLabel;
