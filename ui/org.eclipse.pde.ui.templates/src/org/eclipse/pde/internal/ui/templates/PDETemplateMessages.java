@@ -26,6 +26,9 @@ public class PDETemplateMessages extends NLS {
 	public static String ExtensibleEditorTemplate_title;
 	public static String ExtensibleEditorTemplate_desc;
 	public static String ExtensibleEditorTemplate_reconcilerClass;
+	public static String ExtensibleEditorTemplate_hoverClass;
+	public static String ExtensibleEditorTemplate_completionClass;
+	public static String ExtensibleEditorTemplate_targetFileExtension;
 
 
 	public static String EditorNewWizard_wtitle;

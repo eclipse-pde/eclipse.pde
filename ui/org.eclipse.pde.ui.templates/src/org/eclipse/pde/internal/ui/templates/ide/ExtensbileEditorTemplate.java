@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
@@ -22,7 +24,9 @@ import org.eclipse.pde.ui.templates.PluginReference;
 
 public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 
-	public static final String PRESENTATION_RECONCILER_CLASS_NAME = "presentationClass"; //$NON-NLS-1$
+	private static final String FILE_EXTENSION = "fileExtension"; //$NON-NLS-1$
+	private String javaClassPrefix;
+	private String contentTypeName;
 
 	public ExtensbileEditorTemplate() {
 		setPageCount(1);
@@ -51,10 +55,10 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 	}
 
 	private void createOptions() {
-		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.EditorTemplate_packageName, (String) null, 0);
-		addOption(PRESENTATION_RECONCILER_CLASS_NAME, PDETemplateMessages.ExtensibleEditorTemplate_reconcilerClass,
-				"TargetPlatformPresentationReconciler", //$NON-NLS-1$
+		addOption(FILE_EXTENSION, PDETemplateMessages.ExtensibleEditorTemplate_targetFileExtension,
+				"project", //$NON-NLS-1$
 				0);
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.EditorTemplate_packageName, (String) null, 0);
 	}
 
 	@Override
@@ -81,6 +85,10 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
+		String extensionId = toJavaIdentifier(getStringOption(FILE_EXTENSION));
+		this.javaClassPrefix = Character.toUpperCase(extensionId.charAt(0)) + extensionId.substring(1);
+		this.contentTypeName = getStringOption(KEY_PACKAGE_NAME) + '.' + extensionId;
+		addOption("javaClassPrefix", "/!\\ Shouldn't be presented in UI /!\\", javaClassPrefix, -1); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -89,25 +97,91 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 	}
 
 	@Override
-	protected void updateModel(IProgressMonitor monitor) throws CoreException {
-		IPluginBase plugin = model.getPluginBase();
-		IPluginExtension extension = createExtension("org.eclipse.ui.genericeditor.presentationReconcilers", true); //$NON-NLS-1$
-		IPluginModelFactory factory = model.getPluginFactory();
-		IPluginElement extensionElement = factory.createElement(extension);
-		extensionElement.setName("presentationReconciler"); //$NON-NLS-1$
-		extensionElement.setAttribute("class", //$NON-NLS-1$
-				getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(PRESENTATION_RECONCILER_CLASS_NAME)); //$NON-NLS-1$
-		extensionElement.setAttribute("contentType", "org.eclipse.pde.targetFile"); //$NON-NLS-1$//$NON-NLS-2$
-		extension.add(extensionElement);
-		plugin.add(extension);
+	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+		super.execute(project, model, monitor);
 	}
 
 	@Override
-	protected String getFormattedPackageName(String id) {
-		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
-			return packageName + ".reconciler.presentation"; //$NON-NLS-1$
-		return ".reconciler.presentation"; //$NON-NLS-1$
+	protected void updateModel(IProgressMonitor monitor) throws CoreException {
+		IPluginBase plugin = model.getPluginBase();
+		IPluginModelFactory factory = model.getPluginFactory();
+		{
+			IPluginExtension contentTypeExtension = createExtension("org.eclipse.core.contenttype.contentTypes", true); //$NON-NLS-1$
+			IPluginElement contentTypeExtensionElement = factory.createElement(contentTypeExtension);
+			contentTypeExtensionElement.setName("content-type"); //$NON-NLS-1$
+			contentTypeExtensionElement.setAttribute("id", contentTypeName); //$NON-NLS-1$
+			contentTypeExtensionElement.setAttribute("base-type", //$NON-NLS-1$
+					IContentTypeManager.CT_TEXT);
+			contentTypeExtensionElement.setAttribute("file-extension", getStringOption(FILE_EXTENSION)); //$NON-NLS-1$
+			contentTypeExtension.add(contentTypeExtensionElement);
+			plugin.add(contentTypeExtension);
+		}
+		{
+			IPluginExtension editorsExtension = createExtension("org.eclipse.ui.editors", true); //$NON-NLS-1$
+			IPluginElement editorContentTypeBindingElement = factory.createElement(editorsExtension);
+			editorContentTypeBindingElement.setName("editorContentTypeBinding"); //$NON-NLS-1$
+			editorContentTypeBindingElement.setAttribute("contentypeId", contentTypeName); //$NON-NLS-1$
+			editorContentTypeBindingElement.setAttribute("editorId", "org.eclipse.ui.genericeditor.GenericEditor"); //$NON-NLS-1$ //$NON-NLS-2$
+			editorsExtension.add(editorContentTypeBindingElement);
+			plugin.add(editorsExtension);
+		}
+		{
+			IPluginExtension presentationExtension = createExtension("org.eclipse.ui.genericeditor.presentationReconcilers", true); //$NON-NLS-1$
+			IPluginElement presentationExtensionElement = factory.createElement(presentationExtension);
+			presentationExtensionElement.setName("presentationReconciler"); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("class", //$NON-NLS-1$
+					getStringOption(KEY_PACKAGE_NAME) + '.' + javaClassPrefix + "PresentationReconcilier"); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("contentType", contentTypeName); //$NON-NLS-1$
+			presentationExtension.add(presentationExtensionElement);
+			plugin.add(presentationExtension);
+		}
+		{
+			IPluginExtension presentationExtension = createExtension("org.eclipse.ui.genericeditor.hoverProviders", //$NON-NLS-1$
+					true);
+			IPluginElement presentationExtensionElement = factory.createElement(presentationExtension);
+			presentationExtensionElement.setName("hoverProvider"); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("class", //$NON-NLS-1$
+					getStringOption(KEY_PACKAGE_NAME) + '.' + javaClassPrefix + "HoverProvider"); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("contentType", contentTypeName); //$NON-NLS-1$
+			presentationExtension.add(presentationExtensionElement);
+			plugin.add(presentationExtension);
+		}
+		{
+			IPluginExtension presentationExtension = createExtension("org.eclipse.ui.genericeditor.completionProviders", //$NON-NLS-1$
+					true);
+			IPluginElement presentationExtensionElement = factory.createElement(presentationExtension);
+			presentationExtensionElement.setName("completionProvider"); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("class", //$NON-NLS-1$
+					getStringOption(KEY_PACKAGE_NAME) + '.' + javaClassPrefix + "ContentAssistProcessor"); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("contentType", contentTypeName); //$NON-NLS-1$
+			presentationExtension.add(presentationExtensionElement);
+			plugin.add(presentationExtension);
+		}
+		{
+			IPluginExtension documentSetupExtension = createExtension("org.eclipse.core.filebuffers.documentSetup", //$NON-NLS-1$
+					true);
+			IPluginElement presentationExtensionElement = factory.createElement(documentSetupExtension);
+			presentationExtensionElement.setName("completionProvider"); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("class", //$NON-NLS-1$
+					getStringOption(KEY_PACKAGE_NAME) + ".ValidatorDocumentSetupParticipant"); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("contentTypeId", contentTypeName); //$NON-NLS-1$
+			documentSetupExtension.add(presentationExtensionElement);
+			plugin.add(documentSetupExtension);
+		}
+	}
+
+	private String toJavaIdentifier(String str) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < str.length(); i++) {
+			if (Character.isJavaIdentifierStart(str.charAt(0))
+					|| (i > 0 && Character.isJavaIdentifierPart(str.charAt(i)))) {
+				sb.append(str.charAt(i));
+			} else {
+				sb.append('_');
+				sb.append((int) str.charAt(i));
+			}
+		}
+		return sb.toString();
 	}
 
 }
