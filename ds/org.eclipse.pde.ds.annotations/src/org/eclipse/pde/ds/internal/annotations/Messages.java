@@ -30,9 +30,9 @@ public class Messages extends NLS {
 
 	public static String AnnotationProcessor_inconsistentComponentPropertyType;
 
-	public static String AnnotationProcessor_invalidBindMethodParameters;
+	public static String AnnotationProcessor_invalidReference_invalidBindMethodParameters;
 
-	public static String AnnotationProcessor_invalidBindMethodReturnType;
+	public static String AnnotationProcessor_invalidReference_invalidBindMethodReturnType;
 
 	public static String AnnotationProcessor_invalidCompImplClass_abstract;
 
@@ -78,6 +78,10 @@ public class Messages extends NLS {
 
 	public static String AnnotationProcessor_invalidReference_bindMethodNameMismatch;
 
+	public static String AnnotationProcessor_invalidReference_bindMethodNoArgs;
+
+	public static String AnnotationProcessor_invalidReference_bindMethodNotFound;
+
 	public static String AnnotationProcessor_invalidReference_fieldCardinalityPolicyCollectionType;
 
 	public static String AnnotationProcessor_invalidReference_fieldCollection_fieldOption;
@@ -86,11 +90,21 @@ public class Messages extends NLS {
 
 	public static String AnnotationProcessor_invalidReference_fieldNameMismatch;
 
+	public static String AnnotationProcessor_invalidReference_fieldNotFound;
+
+	public static String AnnotationProcessor_invalidReference_fieldOptionNotApplicable;
+
 	public static String AnnotationProcessor_invalidReference_fieldPolicyCardinality_fieldOption;
 
 	public static String AnnotationProcessor_invalidReference_fieldTypeCardinalityMismatch;
 
 	public static String AnnotationProcessor_invalidReference_fieldUnknownServiceType;
+
+	public static String AnnotationProcessor_invalidReference_incompatibleFieldType;
+
+	public static String AnnotationProcessor_invalidReference_incompatibleServiceType;
+
+	public static String AnnotationProcessor_invalidReference_invalidBindMethodArg;
 
 	public static String AnnotationProcessor_invalidReference_missingRequiredParam;
 
@@ -98,17 +112,15 @@ public class Messages extends NLS {
 
 	public static String AnnotationProcessor_invalidReference_staticField;
 
-	public static String AnnotationProcessor_invalidReferenceService;
+	public static String AnnotationProcessor_invalidReference_serviceType;
 
-	public static String AnnotationProcessor_invalidReferenceServiceUnknown;
+	public static String AnnotationProcessor_invalidReference_serviceUnknown;
 
-	public static String AnnotationProcessor_invalidReferenceUnbind;
+	public static String AnnotationProcessor_invalidReference_unbindMethod;
 
-	public static String AnnotationProcessor_invalidReferenceUpdated;
+	public static String AnnotationProcessor_invalidReference_updatedMethod;
 
-	public static String AnnotationProcessor_noImplicitReferenceUnbind;
-
-	public static String AnnotationProcessor_parameterNotApplicable;
+	public static String AnnotationProcessor_invalidReference_noImplicitUnbind;
 
 	public static String AnnotationProcessor_stringOrEmpty;
 
