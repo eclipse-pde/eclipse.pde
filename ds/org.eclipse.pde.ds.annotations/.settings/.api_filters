@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.pde.ds.annotations" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="DS Annotations was upgraded to 1.3 (bug 510775)" id="926941240">
+            <message_arguments>
+                <message_argument value="1.1.0"/>
+                <message_argument value="1.0.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/ds/internal/annotations/AnnotationProcessor.java" type="org.eclipse.pde.ds.internal.annotations.AnnotationVisitor">
         <filter id="572522506">
             <message_arguments>
