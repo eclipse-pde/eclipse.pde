@@ -652,6 +652,18 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				modelEntry = PluginRegistry.findEntry(id);
 				IPluginModelBase[] workspaceModels = modelEntry.getWorkspaceModels();
 				if (workspaceModels.length == 0) {
+					// external model - reexported case
+					IPluginModelBase externalModel = PluginRegistry.findModel(id);
+					if (externalModel != null) {
+						try {
+							apiComponent = ApiModelFactory.newApiComponent(baseline, externalModel);
+							if (apiComponent != null) {
+								componentsList.add(apiComponent);
+							}
+						} catch (CoreException e) {
+							ApiPlugin.log(e);
+						}
+					}
 					continue;
 				}
 				for (IPluginModelBase iPluginModelBase : workspaceModels) {
