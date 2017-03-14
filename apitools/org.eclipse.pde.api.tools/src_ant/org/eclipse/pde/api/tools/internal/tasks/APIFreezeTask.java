@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -211,6 +211,27 @@ public class APIFreezeTask extends CommonUtilsTask {
 				System.out.println("Report generation : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
+			// create a xml file with 0 delta and a comment
+			BufferedWriter writer = null;
+			try {
+				writer = new BufferedWriter(new FileWriter(outputFile));
+				writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"); //$NON-NLS-1$
+				writer.newLine();
+				writer.write("<deltas/>"); //$NON-NLS-1$
+				writer.newLine();
+				writer.write("<!-- API freeze task complete.  No problems to report -->"); //$NON-NLS-1$
+				writer.flush();
+			} catch (IOException e) {
+				ApiPlugin.log(e);
+			} finally {
+				try {
+					if (writer != null) {
+						writer.close();
+					}
+				} catch (IOException e) {
+					// ignore
+				}
+			}
 			if (this.debug) {
 				System.out.println("API freeze task complete.  No problems to report : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
