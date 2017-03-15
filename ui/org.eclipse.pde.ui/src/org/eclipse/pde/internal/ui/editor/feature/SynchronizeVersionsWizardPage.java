@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,14 +21,14 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -48,6 +48,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	private Button fUsePluginsAtBuildButton;
 	private Button fUseComponentButton;
 	private Button fUsePluginsButton;
+	private boolean fIsForceVersionEnabled;
 
 	private static final String PREFIX = PDEPlugin.getPluginId() + ".synchronizeVersions."; //$NON-NLS-1$
 	private static final String PROP_SYNCHRO_MODE = PREFIX + "mode"; //$NON-NLS-1$
@@ -57,6 +58,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 		setTitle(PDEUIMessages.VersionSyncWizard_title);
 		setDescription(PDEUIMessages.VersionSyncWizard_desc);
 		this.fFeatureEditor = featureEditor;
+		this.fIsForceVersionEnabled = isForceVersionEnabled();
 	}
 
 	@Override
@@ -82,10 +84,12 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fUsePluginsButton.setLayoutData(gd);
 
-		fUseComponentButton = new Button(group, SWT.RADIO);
-		fUseComponentButton.setText(PDEUIMessages.VersionSyncWizard_useComponent);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fUseComponentButton.setLayoutData(gd);
+		if (fIsForceVersionEnabled) {
+			fUseComponentButton = new Button(group, SWT.RADIO);
+			fUseComponentButton.setText(PDEUIMessages.VersionSyncWizard_useComponent);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			fUseComponentButton.setLayoutData(gd);
+		}
 
 		setControl(container);
 		Dialog.applyDialogFont(container);
@@ -133,7 +137,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	/**
 	 * Forces a version into plugin/fragment .xml
 	 */
-	private void forceVersion(final String targetVersion, IPluginModelBase modelBase, IProgressMonitor monitor) {
+	private void forceVersion(final String targetVersion, IModel modelBase, IProgressMonitor monitor) {
 		IFile file = (IFile) modelBase.getUnderlyingResource();
 		if (file == null)
 			return;
@@ -164,7 +168,11 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 			int mode = settings.getInt(PROP_SYNCHRO_MODE);
 			switch (mode) {
 				case USE_FEATURE :
-					fUseComponentButton.setSelection(true);
+				if (fIsForceVersionEnabled) {
+						fUseComponentButton.setSelection(true);
+					} else {
+						fUsePluginsAtBuildButton.setSelection(true);
+					}
 					break;
 				case USE_PLUGINS :
 					fUsePluginsButton.setSelection(true);
@@ -180,17 +188,38 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	private void runOperation(int mode, IProgressMonitor monitor) throws CoreException, BadLocationException {
 		WorkspaceFeatureModel model = (WorkspaceFeatureModel) fFeatureEditor.getAggregateModel();
 		IFeature feature = model.getFeature();
-		IFeaturePlugin[] plugins = feature.getPlugins();
-		int size = plugins.length;
-		monitor.beginTask(PDEUIMessages.VersionSyncWizard_synchronizing, size);
-		for (IFeaturePlugin plugin : plugins)
-			synchronizeVersion(mode, feature.getVersion(), plugin, monitor);
+		if (fIsForceVersionEnabled) {
+			IFeaturePlugin[] plugins = feature.getPlugins();
+			int size = plugins.length;
+			monitor.beginTask(PDEUIMessages.VersionSyncWizard_synchronizing, size);
+			for (IFeaturePlugin plugin : plugins) {
+				synchronizeVersion(mode, feature.getVersion(), plugin, monitor);
+			}
+		} else {
+			IFeatureChild[] features = feature.getIncludedFeatures();
+			int size = features.length;
+			monitor.beginTask(PDEUIMessages.VersionSyncWizard_synchronizing, size);
+			for (IFeatureChild feat : features) {
+				synchronizeVersion(mode, feature.getVersion(), feat, monitor);
+			}
+		}
+	}
+
+	private boolean isForceVersionEnabled() {
+		Object selectedPage = fFeatureEditor.getSelectedPage();
+		if (selectedPage instanceof FeatureIncludesPage) {
+			// We must differentiate between features and plugins pages
+			// because we can't currently write current feature version into
+			// included features (see org.eclipse.pde.internal.core.text.XMLEditingModel)
+			return false;
+		}
+		return true;
 	}
 
 	private int saveSettings() {
 		IDialogSettings settings = getDialogSettings();
 		int mode = USE_PLUGINS_AT_BUILD;
-		if (fUseComponentButton.getSelection())
+		if (fIsForceVersionEnabled && fUseComponentButton.getSelection())
 			mode = USE_FEATURE;
 		else if (fUsePluginsButton.getSelection())
 			mode = USE_PLUGINS;
@@ -230,4 +259,27 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 		}
 		monitor.worked(1);
 	}
+
+	private void synchronizeVersion(int mode, String featureVersion, IFeatureChild ref, IProgressMonitor monitor)
+			throws CoreException {
+		String id = ref.getId();
+
+		if (mode == USE_PLUGINS_AT_BUILD) {
+			if (!ICoreConstants.DEFAULT_VERSION.equals(ref.getVersion()))
+				ref.setVersion(ICoreConstants.DEFAULT_VERSION);
+		} else if (mode == USE_PLUGINS) {
+			FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
+			IFeatureModel modelBase = fmm.findFeatureModel(id);
+			if (modelBase == null)
+				return;
+			String baseVersion = modelBase.getFeature().getVersion();
+			if (!ref.getVersion().equals(baseVersion)) {
+				ref.setVersion(baseVersion);
+			}
+		} else /* mode == USE_FEATURE */ {
+			// not supported yet
+		}
+		monitor.worked(1);
+	}
+
 }

@@ -49,8 +49,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 	private static final int NEW = 0;
 	private static final int REMOVE = 1;
-	private static final int UP = 2;
-	private static final int DOWN = 3;
+	private static final int SYNC = 2;
+	private static final int UP = 3;
+	private static final int DOWN = 4;
 
 	private TableViewer fIncludesViewer;
 
@@ -73,7 +74,10 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	}
 
 	public IncludedFeaturesSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_IncludedFeatures_new, PDEUIMessages.FeatureEditor_IncludedFeatures_remove, PDEUIMessages.FeatureEditor_IncludedFeatures_up, PDEUIMessages.FeatureEditor_IncludedFeatures_down});
+		super(page, parent, Section.DESCRIPTION, new String[] { PDEUIMessages.FeatureEditor_IncludedFeatures_new,
+				PDEUIMessages.FeatureEditor_IncludedFeatures_remove,
+				PDEUIMessages.FeatureEditor_SpecSection_synchronize, PDEUIMessages.FeatureEditor_IncludedFeatures_up,
+				PDEUIMessages.FeatureEditor_IncludedFeatures_down });
 		getSection().setText(PDEUIMessages.FeatureEditor_IncludedFeatures_title);
 		getSection().setDescription(PDEUIMessages.FeatureEditor_IncludedFeatures_desc);
 		getTablePart().setEditable(false);
@@ -140,6 +144,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 			case REMOVE :
 				handleDelete();
 				break;
+			case SYNC:
+				handleSynchronize();
+				break;
 			case UP :
 				handleUp();
 				break;
@@ -147,6 +154,13 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 				handleDown();
 				break;
 		}
+	}
+
+	private void handleSynchronize() {
+		final FeatureEditorContributor contributor = (FeatureEditorContributor) getPage().getPDEEditor()
+				.getContributor();
+		BusyIndicator.showWhile(fIncludesViewer.getControl().getDisplay(),
+				() -> contributor.getSynchronizeAction().run());
 	}
 
 	@Override
