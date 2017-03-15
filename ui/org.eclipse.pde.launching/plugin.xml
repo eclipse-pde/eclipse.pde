@@ -23,6 +23,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
+            allowPrototypes="true"
             delegate="org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration"
             delegateDescription="%PDELaunchDelegate.description"
             delegateName="%PDELaunchDelegate.name"

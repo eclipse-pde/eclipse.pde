@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
@@ -74,6 +75,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 *
 	 */
 	public PluginsTab() {
+		super();
 		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
 		fBlock = new BlockAdapter(new PluginBlock(this), new FeatureBlock(this));
 		fListener = new Listener();
@@ -220,5 +222,31 @@ public class PluginsTab extends AbstractLauncherTab {
 	@Override
 	public String getId() {
 		return IPDELauncherConstants.TAB_PLUGINS_ID;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.USE_DEFAULT, PDEUIMessages.PluginsTab_AttributeLabel_UseDefault);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.INCLUDE_OPTIONAL, PDEUIMessages.PluginsTab_AttributeLabel_IncludeOptional);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.AUTOMATIC_ADD, PDEUIMessages.PluginsTab_AttributeLabel_AutomaticAdd);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.USE_CUSTOM_FEATURES, PDEUIMessages.PluginsTab_AttributeLabel_UseCustomFeatures);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.DEFAULT_AUTO_START, PDEUIMessages.PluginsTab_AttributeLabel_DefaultAutoStart);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.DEFAULT_START_LEVEL, PDEUIMessages.PluginsTab_AttributeLabel_DefaultStartLevel);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, PDEUIMessages.PluginsTab_AttributeLabel_DeselectedWorkspacePlugins);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.WORKSPACE_BUNDLES, PDEUIMessages.PluginsTab_AttributeLabel_WorkspaceBundles);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.TARGET_BUNDLES, PDEUIMessages.PluginsTab_AttributeLabel_TargetBundles);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, PDEUIMessages.PluginsTab_AttributeLabel_SelectedWorkspacePlugins);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, PDEUIMessages.PluginsTab_AttributeLabel_SelectedTargetPlugins);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, PDEUIMessages.PluginsTab_AttributeLabel_FeaturePluginResolution);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, PDEUIMessages.PluginsTab_AttributeLabel_FeatureDefaultLocation);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.AUTOMATIC_VALIDATE, PDEUIMessages.PluginsTab_AttributeLabel_AutomaticValidate);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.SHOW_SELECTED_ONLY, PDEUIMessages.PluginsTab_AttributeLabel_OnlyShowSelected);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.SELECTED_FEATURES, PDEUIMessages.PluginsTab_AttributeLabel_SelectedFeatures);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.ADDITIONAL_PLUGINS, PDEUIMessages.PluginsTab_AttributeLabel_AdditionalPlugins);
 	}
 }

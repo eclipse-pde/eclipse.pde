@@ -11,6 +11,7 @@
  *     Brian de Alwis (MTI) - bug 429420
  *     Fabian Miehe - Bug 440420
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -298,6 +299,24 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsTab_launchWith;
 
 	public static String PluginsTab_selectedPlugins;
+
+	public static String PluginsTab_AttributeLabel_UseDefault;
+	public static String PluginsTab_AttributeLabel_IncludeOptional;
+	public static String PluginsTab_AttributeLabel_AutomaticAdd;
+	public static String PluginsTab_AttributeLabel_UseCustomFeatures;
+	public static String PluginsTab_AttributeLabel_DefaultAutoStart;
+	public static String PluginsTab_AttributeLabel_DefaultStartLevel;
+	public static String PluginsTab_AttributeLabel_DeselectedWorkspacePlugins;
+	public static String PluginsTab_AttributeLabel_WorkspaceBundles;
+	public static String PluginsTab_AttributeLabel_TargetBundles;
+	public static String PluginsTab_AttributeLabel_SelectedWorkspacePlugins;
+	public static String PluginsTab_AttributeLabel_SelectedTargetPlugins;
+	public static String PluginsTab_AttributeLabel_FeaturePluginResolution;
+	public static String PluginsTab_AttributeLabel_FeatureDefaultLocation;
+	public static String PluginsTab_AttributeLabel_AutomaticValidate;
+	public static String PluginsTab_AttributeLabel_OnlyShowSelected;
+	public static String PluginsTab_AttributeLabel_SelectedFeatures;
+	public static String PluginsTab_AttributeLabel_AdditionalPlugins;
 
 	public static String PluginsTabToolBar_auto_validate;
 
@@ -959,6 +978,19 @@ public class PDEUIMessages extends NLS {
 
 	// Launchers #######################################
 	public static String MainTab_name;
+	public static String MainTab_AttributeLabel_LauncherPDEVersion;
+	public static String MainTab_AttributeLabel_AppendArgs;
+	public static String MainTab_AttributeLabel_WorkspaceLocation;
+	public static String MainTab_AttributeLabel_ClearWorkspace;
+	public static String MainTab_AttributeLabel_ClearLogOnly;
+	public static String MainTab_AttributeLabel_ClearAskForConfirmation;
+	public static String MainTab_AttributeLabel_UseProduct;
+	public static String MainTab_AttributeLabel_Product;
+	public static String MainTab_AttributeLabel_Application;
+	public static String MainTab_AttributeLabel_JavaExecutable;
+	public static String MainTab_AttributeLabel_JREContainerPath;
+	public static String MainTab_AttributeLabel_SourcePathProvider;
+	public static String MainTab_AttributeLabel_BootstrapEntries;
 	public static String WorkspaceDataBlock_workspace;
 	public static String WorkspaceDataBlock_location;
 	public static String WorkspaceDataBlock_clear;
@@ -1019,6 +1051,11 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedFeatureExportPage_jreVersion;
 	public static String AdvancedPluginExportPage_qualifier;
 
+	public static String TracingTab_AttributeLabel_Tracing;
+	public static String TracingTab_AttributeLabel_TracingOptions;
+	public static String TracingTab_AttributeLabel_TracingChecked;
+	public static String TracingTab_AttributeLabel_TracingNone;
+
 	public static String TracingBlock_restore_default;
 	public static String TracingBlock_restore_default_selected;
 
@@ -1047,6 +1084,12 @@ public class PDEUIMessages extends NLS {
 	public static String ConfigurationTab_fileSelection;
 	public static String ConfigurationSection_selection;
 	public static String ConfigurationTab_fileDialogMessage;
+	public static String ConfigurationTab_AttributeLabel_UseDefaultConfigArea;
+	public static String ConfigurationTab_AttributeLabel_ConfigLocation;
+	public static String ConfigurationTab_AttributeLabel_ConfigClearArea;
+	public static String ConfigurationTab_AttributeLabel_ConfigGenerateDefault;
+	public static String ConfigurationTab_AttributeLabel_ConfigTemplateLocation;
+	public static String ConfigurationTab_AttributeLabel_GenerateProfile;
 
 	public static String WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace;
 	public static String WorkbenchLauncherConfigurationDelegate_clearButtonLabel;

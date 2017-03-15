@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
@@ -16,6 +17,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -33,7 +35,8 @@ import org.eclipse.ui.PlatformUI;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ConfigurationTab extends AbstractLauncherTab implements IPDELauncherConstants {
+public class ConfigurationTab extends AbstractLauncherTab
+		implements IPDELauncherConstants, org.eclipse.pde.ui.launcher.IPDELauncherConstants {
 
 	private ConfigurationAreaBlock fConfigurationArea;
 	private ConfigurationTemplateBlock fTemplateArea;
@@ -56,6 +59,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	 * @param isJUnitConfig  a flag to indicate if the tab is to be used with a Plug-in JUnit launch configuration.
 	 */
 	public ConfigurationTab(boolean isJUnitConfig) {
+		super();
 		fImage = PDEPluginImages.DESC_SETTINGS_OBJ.createImage();
 		fConfigurationArea = new ConfigurationAreaBlock(this);
 		fTemplateArea = new ConfigurationTemplateBlock(this);
@@ -141,5 +145,20 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	@Override
 	public String getId() {
 		return org.eclipse.pde.launching.IPDELauncherConstants.TAB_CONFIGURATION_ID;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, PDEUIMessages.ConfigurationTab_AttributeLabel_UseDefaultConfigArea);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.CONFIG_LOCATION, PDEUIMessages.ConfigurationTab_AttributeLabel_ConfigLocation);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.CONFIG_CLEAR_AREA, PDEUIMessages.ConfigurationTab_AttributeLabel_ConfigClearArea);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, PDEUIMessages.ConfigurationTab_AttributeLabel_ConfigGenerateDefault);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, PDEUIMessages.ConfigurationTab_AttributeLabel_ConfigTemplateLocation);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.GENERATE_PROFILE, PDEUIMessages.ConfigurationTab_AttributeLabel_GenerateProfile);
 	}
 }

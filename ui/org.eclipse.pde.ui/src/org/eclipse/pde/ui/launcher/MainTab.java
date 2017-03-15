@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 171767
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.*;
@@ -35,7 +39,8 @@ import org.eclipse.ui.PlatformUI;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class MainTab extends AbstractLauncherTab implements IPDELauncherConstants {
+public class MainTab extends AbstractLauncherTab
+		implements IPDELauncherConstants, org.eclipse.pde.ui.launcher.IPDELauncherConstants {
 
 	protected WorkspaceDataBlock fDataBlock;
 	protected ProgramBlock fProgramBlock;
@@ -47,6 +52,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * Contructor to create a new main tab
 	 */
 	public MainTab() {
+		super();
 		createWorkspaceDataBlock();
 		createProgramBlock();
 		createJREBlock();
@@ -187,4 +193,25 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		return org.eclipse.pde.launching.IPDELauncherConstants.TAB_MAIN_ID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(IPDEConstants.LAUNCHER_PDE_VERSION, PDEUIMessages.MainTab_AttributeLabel_LauncherPDEVersion);
+		getAttributesLabelsForPrototype().put(IPDEConstants.APPEND_ARGS_EXPLICITLY, PDEUIMessages.MainTab_AttributeLabel_AppendArgs);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.LOCATION, PDEUIMessages.MainTab_AttributeLabel_WorkspaceLocation);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.DOCLEAR, PDEUIMessages.MainTab_AttributeLabel_ClearWorkspace);
+		getAttributesLabelsForPrototype().put(IPDEConstants.DOCLEARLOG, PDEUIMessages.MainTab_AttributeLabel_ClearLogOnly);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.ASKCLEAR, PDEUIMessages.MainTab_AttributeLabel_ClearAskForConfirmation);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.USE_PRODUCT, PDEUIMessages.MainTab_AttributeLabel_UseProduct);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.PRODUCT, PDEUIMessages.MainTab_AttributeLabel_Product);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.APPLICATION, PDEUIMessages.MainTab_AttributeLabel_Application);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, PDEUIMessages.MainTab_AttributeLabel_JavaExecutable);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, PDEUIMessages.MainTab_AttributeLabel_JREContainerPath);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDEUIMessages.MainTab_AttributeLabel_SourcePathProvider);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.BOOTSTRAP_ENTRIES, PDEUIMessages.MainTab_AttributeLabel_BootstrapEntries);
+	}
 }
