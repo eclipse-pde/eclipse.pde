@@ -56,7 +56,7 @@ public class TestReporter implements IApiSearchReporter {
 				this.test.reportFailure("Expecting [" + this.notsearched.size() + "] but reported [" + elements.length + "] references"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			for (int i = 0; i < elements.length; i++) {
-				if (!this.notsearched.remove(elements[i])) {
+				if (!this.notsearched.remove(elements[i].getName())) {
 					this.test.reportFailure("Not searched element [" + elements[i] + "] was not expected"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}

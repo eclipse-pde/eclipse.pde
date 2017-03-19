@@ -24,6 +24,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
+import org.junit.Assert;
 
 /**
  * Tests aspects of a {@link ApiProblem} and {@link ApiProblemFactory}
@@ -139,7 +140,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	public void testNotEqualDifferentObjects() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertNotNull("there should have been a new problem created", problem); //$NON-NLS-1$
-		assertTrue("the two problems should not be equal", !problem.equals(new String("API Problem"))); //$NON-NLS-1$ //$NON-NLS-2$
+		Assert.assertNotEquals("the two problems should not be equal", problem, new String("API Problem")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

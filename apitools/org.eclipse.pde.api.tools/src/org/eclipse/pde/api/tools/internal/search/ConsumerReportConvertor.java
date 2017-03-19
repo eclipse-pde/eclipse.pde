@@ -198,7 +198,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 				IReferenceTypeDescriptor desc = getEnclosingDescriptor(referencedMember);
 				if (desc != null) {
 					this.keys.remove(desc);
-					this.currentProducer.types.remove(this.currenttype);
+					this.currentProducer.types.remove(desc);
 				}
 			}
 		}

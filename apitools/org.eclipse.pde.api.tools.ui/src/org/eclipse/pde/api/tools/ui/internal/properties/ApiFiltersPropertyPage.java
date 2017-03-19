@@ -337,7 +337,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 			for (int i = 0; i < comments.size(); i++) {
 				ApiProblemFilter filter = (ApiProblemFilter) comments.get(i);
 				CommentChange change = new CommentChange(filter, filter.getComment());
-				int idx = fEditSet.indexOf(filter);
+				int idx = fEditSet.indexOf(change);
 				if (idx < 0) {
 					fEditSet.add(change);
 				}

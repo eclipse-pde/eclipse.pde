@@ -850,7 +850,7 @@ public class PluginModelManager implements IModelProviderListener {
 			// on the target platform preference page, re-add its bundle description
 			// to the state
 			BundleDescription desc = model.getBundleDescription();
-			if (desc.getContainingState().equals(fState))
+			if (desc.getContainingState().equals(fState.fState))
 				fState.addBundleDescription(desc);
 		}
 	}

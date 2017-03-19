@@ -352,6 +352,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 	protected void addExtraClasspathEntries(HashSet<BundleDescription> added, ArrayList<IClasspathEntry> entries, String[] tokens) {
+		Set<String> addedIds = new HashSet<>(added.size());
+		added.forEach(bundle -> addedIds.add(bundle.getSymbolicName()));
+
 		for (String token : tokens) {
 			IPath path = Path.fromPortableString(token);
 			if (!path.isAbsolute()) {
@@ -377,8 +380,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				int count = path.getDevice() == null ? 4 : 3;
 				if (path.segmentCount() >= count) {
 					String pluginID = path.segment(count - 2);
-					if (added.contains(pluginID))
+					if (addedIds.contains(pluginID)) {
 						continue;
+					}
 					IPluginModelBase model = PluginRegistry.findModel(pluginID);
 					if (model != null && model.isEnabled()) {
 						path = path.setDevice(null);

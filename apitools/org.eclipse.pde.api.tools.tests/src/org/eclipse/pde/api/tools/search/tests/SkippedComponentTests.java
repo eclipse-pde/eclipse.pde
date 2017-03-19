@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
+import org.junit.Assert;
 
 
 /**
@@ -49,8 +50,8 @@ public class SkippedComponentTests extends SearchTest {
 			SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
 			SkippedComponent scomp2 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
 			assertEquals("The components should be equal", scomp1, scomp2); //$NON-NLS-1$
-			assertTrue("The components should not be equal", !scomp1.equals(tcomp)); //$NON-NLS-1$
-			assertTrue("The components should not be equal", !scomp2.equals(tcomp)); //$NON-NLS-1$
+			Assert.assertNotEquals("The components should not be equal", scomp1, tcomp); //$NON-NLS-1$
+			Assert.assertNotEquals("The components should not be equal", scomp2, tcomp); //$NON-NLS-1$
 		}
 		catch(Exception e) {
 			fail(e.getMessage());

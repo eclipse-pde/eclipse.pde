@@ -11,8 +11,7 @@
 package org.eclipse.pde.launching;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -200,7 +199,11 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		String[] vmArgs = new ExecutionArguments(LaunchArgumentsHelper.getUserVMArguments(configuration), "").getVMArgumentsArray(); //$NON-NLS-1$
 		// For p2 target, add "-Declipse.p2.data.area=@config.dir/p2" unless already specified by user
 		Map<IPluginModelBase, String> bundleMap = BundleLauncherHelper.getMergedBundleMap(configuration, false);
-		if (bundleMap.containsKey("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$
+
+		Set<String> pluginIds = new HashSet<>(bundleMap.size());
+		bundleMap.keySet().forEach(bundle -> pluginIds.add(bundle.getPluginBase().getId()));
+
+		if (pluginIds.contains("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$
 			for (String arg : vmArgs) {
 				if (arg.startsWith("-Declipse.p2.data.area=")) { //$NON-NLS-1$
 					return vmArgs;

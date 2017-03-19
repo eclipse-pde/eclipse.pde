@@ -32,7 +32,7 @@ public class Product extends ProductObject implements IProduct {
 	private TreeMap<String, IProductObject> fPlugins = new TreeMap<>();
 	private TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<>();
 	private TreeMap<String, IProductObject> fConfigurationProperties = new TreeMap<>();
-	private List<IProductObject> fFeatures = new ArrayList<>();
+	private List<IProductFeature> fFeatures = new ArrayList<>();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
 	private boolean fUseFeatures;
@@ -204,9 +204,9 @@ public class Product extends ProductObject implements IProduct {
 		if (fFeatures.size() > 0) {
 			writer.println();
 			writer.println(indent + "   <features>"); //$NON-NLS-1$
-			iter = fFeatures.iterator();
-			while (iter.hasNext()) {
-				IProductFeature feature = (IProductFeature) iter.next();
+			Iterator<IProductFeature> fIter = fFeatures.iterator();
+			while (fIter.hasNext()) {
+				IProductFeature feature = fIter.next();
 				feature.write(indent + "      ", writer); //$NON-NLS-1$
 			}
 			writer.println(indent + "   </features>"); //$NON-NLS-1$
@@ -640,17 +640,21 @@ public class Product extends ProductObject implements IProduct {
 	@Override
 	public void addFeatures(IProductFeature[] features) {
 		boolean modified = false;
+		Set<String> knownIds = new HashSet<>(fFeatures.size());
+		fFeatures.forEach(feat -> knownIds.add(feat.getId()));
+
 		for (int i = 0; i < features.length; i++) {
 			if (features[i] == null)
 				continue;
 			String id = features[i].getId();
-			if (fFeatures.contains((id))) {
+			if (knownIds.contains(id)) {
 				features[i] = null;
 				continue;
 			}
 
 			features[i].setModel(getModel());
 			fFeatures.add(features[i]);
+			knownIds.add(id);
 			modified = true;
 		}
 
