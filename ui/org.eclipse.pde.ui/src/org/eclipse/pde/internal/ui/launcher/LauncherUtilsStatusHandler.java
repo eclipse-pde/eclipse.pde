@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 eXXcellent solutions gmbh, EclipseSource Corporation,
+ * Copyright (c) 2009, 2017 eXXcellent solutions gmbh, EclipseSource Corporation,
  * IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -170,7 +170,8 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 	private static void generateErrorDialog(final String title, final String message, final ILaunchConfiguration launchConfig, final String mode) {
 		getDisplay().syncExec(() -> {
 			Shell parentShell = getActiveShell();
-			MessageDialog dialog = new MessageDialog(parentShell, title, null, message, MessageDialog.ERROR, new String[] {PDEUIMessages.LauncherUtils_edit, IDialogConstants.OK_LABEL}, 1);
+			MessageDialog dialog = new MessageDialog(parentShell, title, null, message, MessageDialog.ERROR, 1,
+					PDEUIMessages.LauncherUtils_edit, PDEUIMessages.LauncherUtils_cancelLaunch);
 			int res = dialog.open();
 			if (res == 0) {
 				IStructuredSelection selection = new StructuredSelection(launchConfig);

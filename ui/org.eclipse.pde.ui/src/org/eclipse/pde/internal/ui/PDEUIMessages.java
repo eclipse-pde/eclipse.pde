@@ -48,7 +48,7 @@ public class PDEUIMessages extends NLS {
 	public static String ContentSection_0;
 
 	public static String ContentSection_1;
-	
+
 	public static String ContentSection_2;
 
 	public static String DefaultJUnitWorkspaceBlock_name;
@@ -248,6 +248,8 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherUtils_clearLogFile;
 
 	public static String LauncherUtils_edit;
+
+	public static String LauncherUtils_cancelLaunch;
 
 	public static String LauncherUtils_generateConfigIni;
 
