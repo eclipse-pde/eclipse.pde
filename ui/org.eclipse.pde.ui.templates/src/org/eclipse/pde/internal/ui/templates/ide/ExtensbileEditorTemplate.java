@@ -35,12 +35,14 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		IPluginReference[] dep = new IPluginReference[4];
+		IPluginReference[] dep = new IPluginReference[7];
 		dep[0] = new PluginReference("org.eclipse.core.runtime"); //$NON-NLS-1$
 		dep[1] = new PluginReference("org.eclipse.ui"); //$NON-NLS-1$
 		dep[2] = new PluginReference("org.eclipse.jface.text"); //$NON-NLS-1$
 		dep[3] = new PluginReference("org.eclipse.ui.editors"); //$NON-NLS-1$
-		dep[3] = new PluginReference("org.eclipse.ui.genericeditor"); //$NON-NLS-1$
+		dep[4] = new PluginReference("org.eclipse.ui.genericeditor"); //$NON-NLS-1$
+		dep[5] = new PluginReference("org.eclipse.core.filebuffers"); //$NON-NLS-1$
+		dep[6] = new PluginReference("org.eclipse.core.resources"); //$NON-NLS-1$
 
 		return dep;
 	}
@@ -110,9 +112,10 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 			IPluginElement contentTypeExtensionElement = factory.createElement(contentTypeExtension);
 			contentTypeExtensionElement.setName("content-type"); //$NON-NLS-1$
 			contentTypeExtensionElement.setAttribute("id", contentTypeName); //$NON-NLS-1$
+			contentTypeExtensionElement.setAttribute("name", contentTypeName); //$NON-NLS-1$
 			contentTypeExtensionElement.setAttribute("base-type", //$NON-NLS-1$
 					IContentTypeManager.CT_TEXT);
-			contentTypeExtensionElement.setAttribute("file-extension", getStringOption(FILE_EXTENSION)); //$NON-NLS-1$
+			contentTypeExtensionElement.setAttribute("file-extensions", getStringOption(FILE_EXTENSION)); //$NON-NLS-1$
 			contentTypeExtension.add(contentTypeExtensionElement);
 			plugin.add(contentTypeExtension);
 		}
@@ -120,7 +123,7 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 			IPluginExtension editorsExtension = createExtension("org.eclipse.ui.editors", true); //$NON-NLS-1$
 			IPluginElement editorContentTypeBindingElement = factory.createElement(editorsExtension);
 			editorContentTypeBindingElement.setName("editorContentTypeBinding"); //$NON-NLS-1$
-			editorContentTypeBindingElement.setAttribute("contentypeId", contentTypeName); //$NON-NLS-1$
+			editorContentTypeBindingElement.setAttribute("contentTypeId", contentTypeName); //$NON-NLS-1$
 			editorContentTypeBindingElement.setAttribute("editorId", "org.eclipse.ui.genericeditor.GenericEditor"); //$NON-NLS-1$ //$NON-NLS-2$
 			editorsExtension.add(editorContentTypeBindingElement);
 			plugin.add(editorsExtension);
@@ -130,7 +133,7 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 			IPluginElement presentationExtensionElement = factory.createElement(presentationExtension);
 			presentationExtensionElement.setName("presentationReconciler"); //$NON-NLS-1$
 			presentationExtensionElement.setAttribute("class", //$NON-NLS-1$
-					getStringOption(KEY_PACKAGE_NAME) + '.' + javaClassPrefix + "PresentationReconcilier"); //$NON-NLS-1$
+					getStringOption(KEY_PACKAGE_NAME) + '.' + javaClassPrefix + "Reconciler"); //$NON-NLS-1$
 			presentationExtensionElement.setAttribute("contentType", contentTypeName); //$NON-NLS-1$
 			presentationExtension.add(presentationExtensionElement);
 			plugin.add(presentationExtension);
@@ -147,10 +150,11 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 			plugin.add(presentationExtension);
 		}
 		{
-			IPluginExtension presentationExtension = createExtension("org.eclipse.ui.genericeditor.completionProviders", //$NON-NLS-1$
+			IPluginExtension presentationExtension = createExtension(
+					"org.eclipse.ui.genericeditor.contentAssistProcessors", //$NON-NLS-1$
 					true);
 			IPluginElement presentationExtensionElement = factory.createElement(presentationExtension);
-			presentationExtensionElement.setName("completionProvider"); //$NON-NLS-1$
+			presentationExtensionElement.setName("contentAssistProcessor"); //$NON-NLS-1$
 			presentationExtensionElement.setAttribute("class", //$NON-NLS-1$
 					getStringOption(KEY_PACKAGE_NAME) + '.' + javaClassPrefix + "ContentAssistProcessor"); //$NON-NLS-1$
 			presentationExtensionElement.setAttribute("contentType", contentTypeName); //$NON-NLS-1$
@@ -161,10 +165,11 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 			IPluginExtension documentSetupExtension = createExtension("org.eclipse.core.filebuffers.documentSetup", //$NON-NLS-1$
 					true);
 			IPluginElement presentationExtensionElement = factory.createElement(documentSetupExtension);
-			presentationExtensionElement.setName("completionProvider"); //$NON-NLS-1$
+			presentationExtensionElement.setName("participant"); //$NON-NLS-1$
 			presentationExtensionElement.setAttribute("class", //$NON-NLS-1$
 					getStringOption(KEY_PACKAGE_NAME) + ".ValidatorDocumentSetupParticipant"); //$NON-NLS-1$
 			presentationExtensionElement.setAttribute("contentTypeId", contentTypeName); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("extensions", getStringOption(FILE_EXTENSION)); //$NON-NLS-1$
 			documentSetupExtension.add(presentationExtensionElement);
 			plugin.add(documentSetupExtension);
 		}

@@ -13,12 +13,12 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 
-public class $javaClassPrefix$PresentationReconciler extends PresentationReconciler {
+public class $javaClassPrefix$Reconciler extends PresentationReconciler {
 
     private final TextAttribute tagAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(0,0, 255)));
     private final TextAttribute headerAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(128,128,128)));
 
-    public BlueTagsPresentationReconciler() {
+    public $javaClassPrefix$Reconciler() {
     	// TODO this is logic for .project file to color tags in blue. Replace with your language logic!
         RuleBasedScanner scanner= new RuleBasedScanner();
         IRule[] rules = new IRule[2];
