@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -1001,7 +1000,7 @@ public class AnnotationVisitor extends ASTVisitor {
 			component.setModifiedeMethod(modified);
 		}
 
-		ArrayList<IDSProperty> propList = new ArrayList<>();
+		LinkedHashMap<String, IDSProperty> newPropMap = new LinkedHashMap<>();
 
 		if (specVersion == DSAnnotationVersion.V1_3) {
 			// collect component property types from activate, modified, and deactivate methods
@@ -1016,15 +1015,15 @@ public class AnnotationVisitor extends ASTVisitor {
 			HashSet<ITypeBinding> cptClosure = new HashSet<>();
 
 			if (activateMethod != null) {
-				collectProperties(activateMethod, dsFactory, propList, cptClosure);
+				collectProperties(activateMethod, dsFactory, newPropMap, cptClosure);
 			}
 
 			if (modifiedMethod != null) {
-				collectProperties(modifiedMethod, dsFactory, propList, cptClosure);
+				collectProperties(modifiedMethod, dsFactory, newPropMap, cptClosure);
 			}
 
 			if (deactivateMethod != null) {
-				collectProperties(deactivateMethod, dsFactory, propList, cptClosure);
+				collectProperties(deactivateMethod, dsFactory, newPropMap, cptClosure);
 			}
 
 			if (!cptClosure.isEmpty()) {
@@ -1033,7 +1032,7 @@ public class AnnotationVisitor extends ASTVisitor {
 		}
 
 		IDSProperty[] propElements = component.getPropertyElements();
-		if (propList.isEmpty() && properties.length == 0) {
+		if (newPropMap.isEmpty() && properties.length == 0) {
 			removeChildren(component, Arrays.asList(propElements));
 		} else {
 			// build up new property elements
@@ -1093,28 +1092,20 @@ public class AnnotationVisitor extends ASTVisitor {
 			}
 
 			// reconcile against existing property elements
-			HashMap<String, List<IDSProperty>> propMap = new HashMap<>(propElements.length);
+			HashMap<String, IDSProperty> propMap = new HashMap<>(propElements.length);
 			for (IDSProperty propElement : propElements) {
-				List<IDSProperty> duplicates = propMap.get(propElement.getPropertyName());
-				if (duplicates == null) {
-					duplicates = new LinkedList<>();
-					propMap.put(propElement.getPropertyName(), duplicates);
-				}
-
-				duplicates.add(propElement);
+				propMap.put(propElement.getPropertyName(), propElement);
 			}
 
-			propList.addAll(map.values());
+			newPropMap.keySet().removeAll(map.keySet()); // force re-insert (append)
+			newPropMap.putAll(map);
+
+			ArrayList<IDSProperty> propList = new ArrayList<>(newPropMap.values());
 			for (ListIterator<IDSProperty> i = propList.listIterator(); i.hasNext();) {
 				IDSProperty newProperty = i.next();
-				List<IDSProperty> propertyElemList = propMap.get(newProperty.getPropertyName());
-				if (propertyElemList == null) {
+				IDSProperty property = propMap.remove(newProperty.getPropertyName());
+				if (property == null) {
 					continue;
-				}
-
-				IDSProperty property = propertyElemList.remove(0);
-				if (propertyElemList.isEmpty()) {
-					propMap.remove(newProperty.getPropertyName());
 				}
 
 				i.set(property);
@@ -1147,12 +1138,7 @@ public class AnnotationVisitor extends ASTVisitor {
 					? 0	// insert first property element as first child of component
 							: component.indexOf(propElements[0]);
 
-			ArrayList<IDSProperty> leftovers = new ArrayList<>();
-			for (List<IDSProperty> propertyElementList : propMap.values()) {
-				leftovers.addAll(propertyElementList);
-			}
-
-			removeChildren(component, leftovers);
+			removeChildren(component, propMap.values());
 
 			addOrMoveChildren(component, propList, firstPos);
 		}
@@ -1399,7 +1385,7 @@ public class AnnotationVisitor extends ASTVisitor {
 		return buf.toString();
 	}
 
-	private void collectProperties(IMethodBinding method, IDSDocumentFactory factory, Collection<IDSProperty> properties, Collection<ITypeBinding> visited) {
+	private void collectProperties(IMethodBinding method, IDSDocumentFactory factory, Map<String, IDSProperty> properties, Collection<ITypeBinding> visited) {
 		for (ITypeBinding paramTypeBinding : method.getParameterTypes()) {
 			if (!paramTypeBinding.isAnnotation() || !visited.add(paramTypeBinding)) {
 				continue;
@@ -1445,7 +1431,8 @@ public class AnnotationVisitor extends ASTVisitor {
 					property.setPropertyValue(getPropertyValue(value));
 				}
 
-				properties.add(property);
+				properties.remove(property.getName()); // force re-insert (append)
+				properties.put(property.getName(), property);
 			}
 		}
 	}
