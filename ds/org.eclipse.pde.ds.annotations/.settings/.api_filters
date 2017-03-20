@@ -8,7 +8,7 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/pde/ds/internal/annotations/AnnotationProcessor.java" type="org.eclipse.pde.ds.internal.annotations.AnnotationVisitor">
+    <resource path="src/org/eclipse/pde/ds/internal/annotations/AnnotationVisitor.java" type="org.eclipse.pde.ds.internal.annotations.AnnotationVisitor">
         <filter id="572522506">
             <message_arguments>
                 <message_argument value="ModelChangedEvent"/>
