@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 
@@ -100,4 +102,23 @@ public class DSProperty extends DSObject implements IDSProperty {
 		return true;
 	}
 
+	@Override
+	protected boolean isDefined(IDocumentAttributeNode attribute) {
+		// bug 513867 - consider attribute "value" defined (even if empty) whenever there's no body content
+		if (ATTRIBUTE_PROPERTY_VALUE.equals(attribute.getAttributeName())) {
+			return getTextNode() == null;
+		}
+
+		return super.isDefined(attribute);
+	}
+
+	@Override
+	protected boolean isDefined(IDocumentTextNode node) {
+		// bug 513867 - consider body content defined (even if empty) whenever there's no "value" attribute
+		if (node == getTextNode() && getDocumentAttribute(ATTRIBUTE_PROPERTY_VALUE) == null) {
+			return true;
+		}
+
+		return super.isDefined(node);
+	}
 }

@@ -1093,7 +1093,7 @@ public class AnnotationVisitor extends ASTVisitor {
 					if (content == null) {
 						content = property.getPropertyValue();
 						property.setPropertyElemBody(content);
-						property.setPropertyValue(null);
+						removeAttribute(property, IDSConstants.ATTRIBUTE_PROPERTY_VALUE, null);
 					}
 
 					if (!errorLevel.isIgnore()) {
@@ -1421,7 +1421,7 @@ public class AnnotationVisitor extends ASTVisitor {
 				}
 
 				Object value = methodBinding.getDefaultValue();
-				if (value == null || (value instanceof Object[] && ((Object[]) value).length == 0)) {
+				if (value == null) {
 					continue;
 				}
 
@@ -1450,6 +1450,7 @@ public class AnnotationVisitor extends ASTVisitor {
 						body.append(itemValue);
 					}
 
+					removeAttribute(property, IDSConstants.ATTRIBUTE_PROPERTY_VALUE, null);
 					property.setPropertyElemBody(body.toString());
 				} else {
 					property.setPropertyValue(getPropertyValue(value));
