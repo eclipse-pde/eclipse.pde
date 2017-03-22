@@ -52,8 +52,9 @@ public class ManagedProjectTest extends CompilationParticipantTest {
 		assertNotNull("Missing Service-Component header!", serviceComponentHeader);
 		String[] entries = serviceComponentHeader.split("\\s*,\\s*");
 		List<String> entryList = Arrays.asList(entries);
-		assertEquals(2, entryList.size());
+		assertEquals(3, entryList.size());
 		assertTrue("Missing Service-Component entry for DefaultComponent!", entryList.contains("OSGI-INF/ds.annotations.test1.DefaultComponent.xml"));
+		assertTrue("Missing Service-Component entry for FullComponentV1_2!", entryList.contains("OSGI-INF/test.fullComponent-v1_2.xml"));
 		assertTrue("Missing Service-Component entry for FullComponent!", entryList.contains("OSGI-INF/test.fullComponent.xml"));
 	}
 }

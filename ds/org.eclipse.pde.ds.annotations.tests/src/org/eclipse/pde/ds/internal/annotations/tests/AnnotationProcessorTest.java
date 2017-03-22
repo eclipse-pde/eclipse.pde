@@ -34,7 +34,7 @@ public abstract class AnnotationProcessorTest extends TestBase {
 		assumeTrue("Test project does not exist!", testProject.exists());
 
 		IFile dsFile = testProject.getFile(new Path(getComponentDescriptorPath()));
-		assertTrue("Missing default component descriptor!", dsFile.exists());
+		assertTrue("Missing component descriptor!", dsFile.exists());
 
 		ByteArrayOutputStream buf = new ByteArrayOutputStream();
 		InputStream src = dsFile.getContents();

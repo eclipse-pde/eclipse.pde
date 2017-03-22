@@ -1,10 +1,7 @@
 package ds.annotations.test1;
 
 import java.util.AbstractMap;
-import java.util.Comparator;
-import java.util.EventListener;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,15 +15,14 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
-import org.osgi.service.component.annotations.ServiceScope;
 
 @Component(
-		configurationPid = { "test.configurationPid", "$" },
+		configurationPid = "test.configurationPid-v1_2",
 		configurationPolicy = ConfigurationPolicy.REQUIRE,
 		enabled = false,
 		factory = "test.componentFactory",
 		immediate = true,
-		name = "test.fullComponent",
+		name = "test.fullComponent-v1_2",
 		properties = {
 				"/fullComponent1.properties",
 				"/fullComponent2.properties",
@@ -47,28 +43,10 @@ import org.osgi.service.component.annotations.ServiceScope;
 				"explicitStringArrayProperty:String=explicitStringArrayValue2",
 				"explicitStringArrayProperty:String=explicitStringArrayValue3",
 		},
-		reference = @Reference(
-				name = "comparator", 
-				service = Comparator.class, 
-				cardinality = ReferenceCardinality.OPTIONAL, 
-				policy = ReferencePolicy.DYNAMIC,
-				field = "comparator"),
 		service = Map.class,
-		scope = ServiceScope.SINGLETON)
-public class FullComponent extends AbstractMap<String, Object> {
-	
-	@interface Config {
-		
-		String stringProperty() default "stringValue";
-		
-		String nonDefaultProperty();
-	}
+		servicefactory = true)
+public class FullComponentV1_2 extends AbstractMap<String, Object> {
 
-	private volatile Comparator<String> comparator;
-	
-	@Reference
-	private volatile List<EventListener> listeners;
-	
 	private volatile Set<Map.Entry<String, Object>> entrySet = new HashSet<>();
 
 	@Override
@@ -78,9 +56,10 @@ public class FullComponent extends AbstractMap<String, Object> {
 		super.putAll(m);
 	}
 
+	@Override
 	@Deactivate
-	public void clear(Config config) {
-		clear();
+	public void clear() {
+		super.clear();
 	}
 
 	@Override
@@ -93,7 +72,7 @@ public class FullComponent extends AbstractMap<String, Object> {
 			name = "Entries",
 			policy = ReferencePolicy.DYNAMIC,
 			policyOption = ReferencePolicyOption.GREEDY,
-			target = "(!(component.name=test.fullComponent))",
+			target = "(!(component.name=test.fullComponent-v1_2))",
 			updated = "updateEntrySet",
 			unbind = "unassignEntrySet")
 	public void assignEntrySet(Set<Map.Entry<String, Object>> entrySet) {

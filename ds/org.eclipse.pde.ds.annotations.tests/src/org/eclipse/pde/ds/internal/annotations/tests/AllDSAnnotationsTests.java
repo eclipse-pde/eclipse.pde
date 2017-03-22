@@ -35,6 +35,7 @@ import org.osgi.framework.Bundle;
 	UnmanagedProjectTest.class,
 	ErrorProjectTest.class,
 	DefaultComponentTest.class,
+	FullComponentTestV1_2.class,
 	FullComponentTest.class,
 })
 public class AllDSAnnotationsTests {

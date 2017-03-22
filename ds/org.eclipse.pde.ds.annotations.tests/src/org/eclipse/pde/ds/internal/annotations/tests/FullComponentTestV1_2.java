@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.ds.core.IDSService;
 import org.junit.Test;
 
 @SuppressWarnings("restriction")
-public class FullComponentTest extends AnnotationProcessorTest {
+public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 
 	@Override
 	protected String getTestProjectName() {
@@ -32,7 +32,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 
 	@Override
 	protected String getComponentDescriptorPath() {
-		return "OSGI-INF/test.fullComponent.xml";
+		return "OSGI-INF/test.fullComponent-v1_2.xml";
 	}
 
 	@Test
@@ -43,17 +43,17 @@ public class FullComponentTest extends AnnotationProcessorTest {
 
 	@Test
 	public void componentNamespace() throws Exception {
-		assertEquals("http://www.osgi.org/xmlns/scr/v1.3.0", dsModel.getDSComponent().getXMLAttributeValue("xmlns:" + dsModel.getDSComponent().getNamespacePrefix()));
+		assertEquals("http://www.osgi.org/xmlns/scr/v1.2.0", dsModel.getDSComponent().getXMLAttributeValue("xmlns:" + dsModel.getDSComponent().getNamespacePrefix()));
 	}
 
 	@Test
 	public void componentName() throws Exception {
-		assertEquals("test.fullComponent", dsModel.getDSComponent().getName());
+		assertEquals("test.fullComponent-v1_2", dsModel.getDSComponent().getName());
 	}
 
 	@Test
 	public void componentConfigurationPid() throws Exception {
-		assertEquals("test.configurationPid test.fullComponent", dsModel.getDSComponent().getXMLAttributeValue("configuration-pid"));
+		assertEquals("test.configurationPid-v1_2", dsModel.getDSComponent().getXMLAttributeValue("configuration-pid"));
 	}
 
 	@Test
@@ -95,14 +95,14 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentImplementationClass() throws Exception {
 		IDSImplementation impl = dsModel.getDSComponent().getImplementation();
 		assertNotNull(impl);
-		assertEquals("ds.annotations.test1.FullComponent", impl.getClassName());
+		assertEquals("ds.annotations.test1.FullComponentV1_2", impl.getClassName());
 	}
 
 	@Test
 	public void componentServiceProviderInterface() throws Exception {
 		IDSService service = dsModel.getDSComponent().getService();
 		assertNotNull(service);
-		assertEquals("singleton", service.getXMLAttributeValue("scope"));
+		assertTrue(service.getServiceFactory());
 		IDSProvide[] provides = service.getProvidedServices();
 		assertNotNull(provides);
 		assertEquals(1, provides.length);
@@ -113,26 +113,14 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentProperties() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assertNotNull(properties);
-		assertEquals(12, properties.length);
-	}
-
-	@Test
-	public void componentPropertyString() throws Exception {
-		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 0;
-		assumeTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("stringProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("stringValue", properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("String", properties[PROPERTY_INDEX].getPropertyType());
-		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
+		assertEquals(11, properties.length);
 	}
 
 	@Test
 	public void componentPropertyImplicitString() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 1;
+		final int PROPERTY_INDEX = 0;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("implicitStringProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("implicitStringValue", properties[PROPERTY_INDEX].getPropertyValue());
@@ -144,7 +132,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentPropertyExplicitString() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 2;
+		final int PROPERTY_INDEX = 1;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("explicitStringProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("explicitStringValue", properties[PROPERTY_INDEX].getPropertyValue());
@@ -156,7 +144,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentPropertyInteger() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 3;
+		final int PROPERTY_INDEX = 2;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("integerProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("1", properties[PROPERTY_INDEX].getPropertyValue());
@@ -168,7 +156,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentPropertyLong() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 4;
+		final int PROPERTY_INDEX = 3;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("longProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("2", properties[PROPERTY_INDEX].getPropertyValue());
@@ -180,7 +168,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentPropertyShort() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 5;
+		final int PROPERTY_INDEX = 4;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("shortProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("3", properties[PROPERTY_INDEX].getPropertyValue());
@@ -192,7 +180,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentPropertyByte() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 6;
+		final int PROPERTY_INDEX = 5;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("byteProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("4", properties[PROPERTY_INDEX].getPropertyValue());
@@ -204,7 +192,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentPropertyCharacter() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 7;
+		final int PROPERTY_INDEX = 6;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("characterProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("5", properties[PROPERTY_INDEX].getPropertyValue());
@@ -216,7 +204,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentPropertyFloat() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 8;
+		final int PROPERTY_INDEX = 7;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("floatProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("6.7", properties[PROPERTY_INDEX].getPropertyValue());
@@ -228,7 +216,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentPropertyDouble() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 9;
+		final int PROPERTY_INDEX = 8;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("doubleProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("8.9", properties[PROPERTY_INDEX].getPropertyValue());
@@ -240,7 +228,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentPropertyImplicitStringArray() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 10;
+		final int PROPERTY_INDEX = 9;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("implicitStringArrayProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertNull(properties[PROPERTY_INDEX].getPropertyValue());
@@ -252,7 +240,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentPropertyExplicitStringArray() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
 		assumeNotNull((Object) properties);
-		final int PROPERTY_INDEX = 11;
+		final int PROPERTY_INDEX = 10;
 		assumeTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("explicitStringArrayProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertNull(properties[PROPERTY_INDEX].getPropertyValue());
@@ -273,7 +261,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 	public void componentReference1() throws Exception {
 		IDSReference[] references = dsModel.getDSComponent().getReferences();
 		assertNotNull(references);
-		assertEquals(4, references.length);
+		assertEquals(2, references.length);
 		IDSReference reference = references[0];
 		assertEquals(Set.class.getName(), reference.getReferenceInterface());
 		assertEquals("Entries", reference.getReferenceName());
@@ -282,16 +270,15 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertEquals(IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE, reference.getReferenceCardinality());
 		assertEquals("assignEntrySet", reference.getReferenceBind());
 		assertEquals("unassignEntrySet", reference.getReferenceUnbind());
-		assertEquals("(!(component.name=test.fullComponent))", reference.getReferenceTarget());
+		assertEquals("(!(component.name=test.fullComponent-v1_2))", reference.getReferenceTarget());
 		assertEquals("updateEntrySet", reference.getXMLAttributeValue("updated"));
-		assertNull(reference.getXMLAttributeValue("field"));
 	}
 
 	@Test
 	public void componentReference2() throws Exception {
 		IDSReference[] references = dsModel.getDSComponent().getReferences();
 		assertNotNull(references);
-		assertEquals(4, references.length);
+		assertEquals(2, references.length);
 		IDSReference reference = references[1];
 		assertEquals("java.util.Map$Entry", reference.getReferenceInterface());
 		assertEquals("Entry", reference.getReferenceName());
@@ -302,42 +289,5 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertEquals("removeEntry", reference.getReferenceUnbind());
 		assertNull(reference.getReferenceTarget());
 		assertNull(reference.getXMLAttributeValue("updated"));
-		assertNull(reference.getXMLAttributeValue("field"));
-	}
-
-	@Test
-	public void componentReference3() throws Exception {
-		IDSReference[] references = dsModel.getDSComponent().getReferences();
-		assertNotNull(references);
-		assertEquals(4, references.length);
-		IDSReference reference = references[2];
-		assertEquals("java.util.Comparator", reference.getReferenceInterface());
-		assertEquals("comparator", reference.getReferenceName());
-		assertEquals(IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC, reference.getReferencePolicy());
-		assertNull(reference.getXMLAttributeValue("policy-option"));
-		assertEquals(IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE, reference.getReferenceCardinality());
-		assertEquals("comparator", reference.getXMLAttributeValue("field"));
-		assertNull(reference.getReferenceTarget());
-		assertNull(reference.getReferenceBind());
-		assertNull(reference.getXMLAttributeValue("updated"));
-		assertNull(reference.getReferenceUnbind());
-	}
-
-	@Test
-	public void componentReference4() throws Exception {
-		IDSReference[] references = dsModel.getDSComponent().getReferences();
-		assertNotNull(references);
-		assertEquals(4, references.length);
-		IDSReference reference = references[3];
-		assertEquals("java.util.EventListener", reference.getReferenceInterface());
-		assertEquals("listeners", reference.getReferenceName());
-		assertEquals(IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC, reference.getReferencePolicy());
-		assertNull(reference.getXMLAttributeValue("policy-option"));
-		assertEquals(IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N, reference.getReferenceCardinality());
-		assertEquals("listeners", reference.getXMLAttributeValue("field"));
-		assertNull(reference.getReferenceTarget());
-		assertNull(reference.getReferenceBind());
-		assertNull(reference.getXMLAttributeValue("updated"));
-		assertNull(reference.getReferenceUnbind());
 	}
 }
