@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.ds.internal.annotations.DSAnnotationCompilationParticipant;
@@ -56,5 +58,11 @@ public class ManagedProjectTest extends CompilationParticipantTest {
 		assertTrue("Missing Service-Component entry for DefaultComponent!", entryList.contains("OSGI-INF/ds.annotations.test1.DefaultComponent.xml"));
 		assertTrue("Missing Service-Component entry for FullComponentV1_2!", entryList.contains("OSGI-INF/test.fullComponent-v1_2.xml"));
 		assertTrue("Missing Service-Component entry for FullComponent!", entryList.contains("OSGI-INF/test.fullComponent.xml"));
+	}
+
+	@Test
+	public void noErrorsOrWarnings() throws Exception {
+		IMarker[] markers = testProject.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		assertEquals(0, markers.length);
 	}
 }

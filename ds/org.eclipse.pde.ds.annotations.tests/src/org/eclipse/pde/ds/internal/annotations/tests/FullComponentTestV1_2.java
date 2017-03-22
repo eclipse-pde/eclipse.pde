@@ -11,8 +11,6 @@ import static org.junit.Assume.assumeTrue;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
@@ -33,12 +31,6 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Override
 	protected String getComponentDescriptorPath() {
 		return "OSGI-INF/test.fullComponent-v1_2.xml";
-	}
-
-	@Test
-	public void noErrorsOrWarnings() throws Exception {
-		IMarker[] markers = testProject.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-		assertEquals(0, markers.length);
 	}
 
 	@Test

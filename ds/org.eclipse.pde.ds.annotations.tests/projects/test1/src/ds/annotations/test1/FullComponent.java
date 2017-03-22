@@ -61,6 +61,8 @@ public class FullComponent extends AbstractMap<String, Object> {
 		
 		String stringProperty() default "stringValue";
 		
+		int integerProperty() default -1;
+		
 		String nonDefaultProperty();
 	}
 
