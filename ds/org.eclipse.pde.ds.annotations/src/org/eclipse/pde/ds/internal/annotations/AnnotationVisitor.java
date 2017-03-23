@@ -113,6 +113,8 @@ public class AnnotationVisitor extends ASTVisitor {
 
 	private static final String REFERENCE_ANNOTATION = "org.osgi.service.component.annotations.Reference"; //$NON-NLS-1$
 
+	private static final String DESIGNATE_ANNOTATION = "org.osgi.service.metatype.annotations.Designate"; //$NON-NLS-1$
+
 	private static final Pattern PID_PATTERN = Pattern.compile("[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*"); //$NON-NLS-1$
 
 	private static final String ATTRIBUTE_COMPONENT_CONFIGURATION_PID = "configuration-pid"; //$NON-NLS-1$
@@ -575,6 +577,26 @@ public class AnnotationVisitor extends ASTVisitor {
 		if ((value = params.get("configurationPolicy")) instanceof IVariableBinding) { //$NON-NLS-1$
 			IVariableBinding configPolicyBinding = (IVariableBinding) value;
 			configPolicy = DSEnums.getConfigurationPolicy(configPolicyBinding.getName());
+		} else if (specVersion == DSAnnotationVersion.V1_3) {
+			for (IAnnotationBinding typeAnnotation : typeBinding.getAnnotations()) {
+				if (!DESIGNATE_ANNOTATION.equals(typeAnnotation.getAnnotationType().getQualifiedName())) {
+					continue;
+				}
+
+				for (IMemberValuePairBinding memberValuePair : typeAnnotation.getDeclaredMemberValuePairs()) {
+					if (!"factory".equals(memberValuePair.getName())) { //$NON-NLS-1$
+						continue;
+					}
+
+					if (Boolean.TRUE.equals(memberValuePair.getValue())) {
+						configPolicy = IDSConstants.VALUE_CONFIGURATION_POLICY_REQUIRE;
+					}
+
+					break;
+				}
+
+				break;
+			}
 		}
 
 		DSAnnotationVersion requiredVersion = DSAnnotationVersion.V1_1;
