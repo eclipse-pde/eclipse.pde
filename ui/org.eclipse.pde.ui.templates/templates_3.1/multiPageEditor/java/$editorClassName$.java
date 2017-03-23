@@ -3,6 +3,7 @@ package $packageName$;
 
 import java.io.StringWriter;
 import java.text.Collator;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.StringTokenizer;
@@ -223,7 +224,7 @@ public class $editorClassName$ extends MultiPageEditorPart implements IResourceC
 
 		StringTokenizer tokenizer =
 			new StringTokenizer(editorText, " \t\n\r\f!@#\u0024%^&*()-_=+`~[]{};:'\",.<>/?|\\");
-		ArrayList editorWords = new ArrayList();
+		List<String> editorWords = new ArrayList<>();
 		while (tokenizer.hasMoreTokens()) {
 			editorWords.add(tokenizer.nextToken());
 		}

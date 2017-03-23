@@ -1,6 +1,7 @@
 package $packageName$;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -17,11 +18,11 @@ import org.eclipse.ui.part.ViewPart;
 public class NavigationView extends ViewPart {
 	public static final String ID = "$pluginId$.navigationView";
 	private TreeViewer viewer;
-	 
+
 	class TreeObject {
 		private String name;
 		private TreeParent parent;
-		
+
 		public TreeObject(String name) {
 			this.name = name;
 		}
@@ -38,12 +39,12 @@ public class NavigationView extends ViewPart {
 			return getName();
 		}
 	}
-	
+
 	class TreeParent extends TreeObject {
-		private ArrayList children;
+		private List<TreeObject> children;
 		public TreeParent(String name) {
 			super(name);
-			children = new ArrayList();
+			children = new ArrayList<>();
 		}
 		public void addChild(TreeObject child) {
 			children.add(child);
@@ -62,20 +63,20 @@ public class NavigationView extends ViewPart {
 	}
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
-		
+
 		@Override
-        public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
-        
-        @Override
+
+		@Override
 		public void dispose() {
 		}
-        
+
 		@Override
 		public Object[] getElements(Object parent) {
 			return getChildren(parent);
 		}
-		
+
 		@Override
 		public Object getParent(Object child) {
 			if (child instanceof TreeObject) {
@@ -83,7 +84,7 @@ public class NavigationView extends ViewPart {
 			}
 			return null;
 		}
-        
+
 		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof TreeParent) {
@@ -91,55 +92,55 @@ public class NavigationView extends ViewPart {
 			}
 			return new Object[0];
 		}
-		
+
 		@Override
-        public boolean hasChildren(Object parent) {
+		public boolean hasChildren(Object parent) {
 			if (parent instanceof TreeParent)
 				return ((TreeParent)parent).hasChildren();
 			return false;
 		}
 	}
-	
+
 	class ViewLabelProvider extends LabelProvider {
 
 		@Override
 		public String getText(Object obj) {
 			return obj.toString();
 		}
-		
+
 		@Override
 		public Image getImage(Object obj) {
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
 			if (obj instanceof TreeParent)
-			   imageKey = ISharedImages.IMG_OBJ_FOLDER;
+				imageKey = ISharedImages.IMG_OBJ_FOLDER;
 			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
 		}
 	}
 
-    /**
-     * We will set up a dummy model to initialize tree heararchy. In real
-     * code, you will connect to a real model and expose its hierarchy.
-     */
-    private TreeObject createDummyModel() {
-        TreeObject to1 = new TreeObject("Inbox");
-        TreeObject to2 = new TreeObject("Drafts");
-        TreeObject to3 = new TreeObject("Sent");
-        TreeParent p1 = new TreeParent("me@this.com");
-        p1.addChild(to1);
-        p1.addChild(to2);
-        p1.addChild(to3);
+	/**
+	 * We will set up a dummy model to initialize tree heararchy. In real
+	 * code, you will connect to a real model and expose its hierarchy.
+	 */
+	private TreeObject createDummyModel() {
+		TreeObject to1 = new TreeObject("Inbox");
+		TreeObject to2 = new TreeObject("Drafts");
+		TreeObject to3 = new TreeObject("Sent");
+		TreeParent p1 = new TreeParent("me@this.com");
+		p1.addChild(to1);
+		p1.addChild(to2);
+		p1.addChild(to3);
 
-        TreeObject to4 = new TreeObject("Inbox");
-        TreeParent p2 = new TreeParent("other@aol.com");
-        p2.addChild(to4);
+		TreeObject to4 = new TreeObject("Inbox");
+		TreeParent p2 = new TreeParent("other@aol.com");
+		p2.addChild(to4);
 
-        TreeParent root = new TreeParent("");
-        root.addChild(p1);
-        root.addChild(p2);
-        return root;
-    }
+		TreeParent root = new TreeParent("");
+		root.addChild(p1);
+		root.addChild(p2);
+		return root;
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setContentProvider(new ViewContentProvider());
@@ -147,7 +148,7 @@ public class NavigationView extends ViewPart {
 		viewer.setInput(createDummyModel());
 	}
 
-    @Override
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}

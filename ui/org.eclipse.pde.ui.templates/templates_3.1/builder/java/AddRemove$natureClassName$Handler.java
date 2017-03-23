@@ -12,10 +12,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class AddRemove$natureClassName$Handler extends AbstractHandler {
 
-	private ISelection selection;
-
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// TODO Auto-generated method stub
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		//
 		if (selection instanceof IStructuredSelection) {
@@ -26,8 +23,7 @@ public class AddRemove$natureClassName$Handler extends AbstractHandler {
 				if (element instanceof IProject) {
 					project = (IProject) element;
 				} else if (element instanceof IAdaptable) {
-					project = (IProject) ((IAdaptable) element)
-							.getAdapter(IProject.class);
+					project = ((IAdaptable) element).getAdapter(IProject.class);
 				}
 				if (project != null) {
 					try {
@@ -73,5 +69,4 @@ public class AddRemove$natureClassName$Handler extends AbstractHandler {
 		description.setNatureIds(newNatures);
 		project.setDescription(description, null);
 	}
-
 }
