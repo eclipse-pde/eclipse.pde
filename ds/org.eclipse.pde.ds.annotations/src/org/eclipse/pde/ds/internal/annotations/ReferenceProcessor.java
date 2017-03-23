@@ -58,15 +58,18 @@ public class ReferenceProcessor {
 
 	private final DSAnnotationVersion specVersion;
 
+	private final DSAnnotationVersion requiredVersion;
+
 	private final ValidationErrorLevel errorLevel;
 
 	private final ValidationErrorLevel missingUnbindMethodLevel;
 
 	private final ProblemReporter problemReporter;
 
-	public ReferenceProcessor(AnnotationVisitor visitor, DSAnnotationVersion specVersion, ValidationErrorLevel errorLevel, ValidationErrorLevel missingUnbindMethodLevel, ProblemReporter problemReporter) {
+	public ReferenceProcessor(AnnotationVisitor visitor, DSAnnotationVersion specVersion, DSAnnotationVersion requiredVersion, ValidationErrorLevel errorLevel, ValidationErrorLevel missingUnbindMethodLevel, ProblemReporter problemReporter) {
 		this.visitor = visitor;
 		this.specVersion = specVersion;
+		this.requiredVersion = requiredVersion;
 		this.errorLevel = errorLevel;
 		this.missingUnbindMethodLevel = missingUnbindMethodLevel;
 		this.problemReporter = problemReporter;
@@ -170,6 +173,7 @@ public class ReferenceProcessor {
 		}
 
 		String unbind;
+		IMethodBinding unbindMethod = null;
 		if ((value = params.get("unbind")) instanceof String) { //$NON-NLS-1$
 			String unbindValue = (String) value;
 			if ("-".equals(unbindValue)) { //$NON-NLS-1$
@@ -177,7 +181,7 @@ public class ReferenceProcessor {
 			} else {
 				unbind = unbindValue;
 				if (!errorLevel.isIgnore()) {
-					IMethodBinding unbindMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, unbind, true);
+					unbindMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, unbind, true);
 					if (unbindMethod == null) {
 						problemReporter.reportProblem(annotation, "unbind", NLS.bind(Messages.AnnotationProcessor_invalidReference_unbindMethod, unbind), unbind); //$NON-NLS-1$
 					}
@@ -191,7 +195,7 @@ public class ReferenceProcessor {
 				unbindCandidate = "un" + methodName; //$NON-NLS-1$
 			}
 
-			IMethodBinding unbindMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, unbindCandidate, false);
+			unbindMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, unbindCandidate, false);
 			if (unbindMethod == null) {
 				unbind = null;
 				if (IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC.equals(policy)) {
@@ -209,6 +213,7 @@ public class ReferenceProcessor {
 		}
 
 		String updated;
+		IMethodBinding updatedMethod = null;
 		if ((value = params.get("updated")) instanceof String) { //$NON-NLS-1$
 			String updatedValue = (String) value;
 			if ("-".equals(updatedValue)) { //$NON-NLS-1$
@@ -216,25 +221,15 @@ public class ReferenceProcessor {
 			} else {
 				updated = updatedValue;
 				if (!errorLevel.isIgnore()) {
-					IMethodBinding updatedMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, updated, true);
+					updatedMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, updated, true);
 					if (updatedMethod == null) {
 						problemReporter.reportProblem(annotation, "updated", NLS.bind(Messages.AnnotationProcessor_invalidReference_updatedMethod, updated), updated); //$NON-NLS-1$
 					}
 				}
 			}
 		} else {
-			String updatedCandidate;
-			if (methodName.startsWith("bind")) { //$NON-NLS-1$
-				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName.substring("bind".length()); //$NON-NLS-1$
-			} else if (methodName.startsWith("set")) { //$NON-NLS-1$
-				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName.substring("set".length()); //$NON-NLS-1$
-			} else if (methodName.startsWith("add")) { //$NON-NLS-1$
-				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName.substring("add".length()); //$NON-NLS-1$
-			} else {
-				updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + methodName;
-			}
-
-			IMethodBinding updatedMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, updatedCandidate, false);
+			String updatedCandidate = ATTRIBUTE_REFERENCE_UPDATED + getReferenceName(methodName);
+			updatedMethod = findReferenceMethod(methodBinding.getDeclaringClass(), serviceType, updatedCandidate, false);
 			if (updatedMethod == null) {
 				updated = null;
 			} else {
@@ -267,20 +262,7 @@ public class ReferenceProcessor {
 		updateAttributes(reference, name, service, cardinality, policy, target, policyOption, referenceScope);
 		updateMethodAttributes(reference, methodName, updated, unbind);
 
-		DSAnnotationVersion requiredVersion;
-		if (reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_SCOPE) != null
-				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_FIELD) != null
-				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_FIELD_OPTION) != null
-				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_FIELD_COLLECTION_TYPE) != null) {
-			requiredVersion = DSAnnotationVersion.V1_3;
-		} else if (reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_POLICY_OPTION) != null
-				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_UPDATED) != null) {
-			requiredVersion = DSAnnotationVersion.V1_2;
-		} else {
-			requiredVersion = DSAnnotationVersion.V1_1;
-		}
-
-		return requiredVersion;
+		return determineRequiredVersion(reference, methodBinding.getDeclaringClass(), serviceType, new MethodParams(methodName, methodBinding, updated, updatedMethod, unbind, unbindMethod));
 	}
 
 	private boolean isValidArgumentForService(ITypeBinding argType, ITypeBinding serviceType) {
@@ -806,13 +788,14 @@ public class ReferenceProcessor {
 		return fieldCollectionType;
 	}
 
-	private void processReferenceMethodParams(IDSReference reference, ITypeBinding typeBinding, Annotation annotation, Map<String, ?> params, ITypeBinding serviceType) {
+	private MethodParams processReferenceMethodParams(IDSReference reference, ITypeBinding typeBinding, Annotation annotation, Map<String, ?> params, ITypeBinding serviceType) {
 		String bind = null;
+		IMethodBinding bindMethod = null;
 		Object value;
 		if ((value = params.get("bind")) instanceof String) { //$NON-NLS-1$
 			bind = (String) value;
 			if (!errorLevel.isIgnore()) {
-				IMethodBinding bindMethod = findReferenceMethod(typeBinding, serviceType, bind, true);
+				bindMethod = findReferenceMethod(typeBinding, serviceType, bind, true);
 				if (bindMethod == null) {
 					problemReporter.reportProblem(annotation, "bind", NLS.bind(Messages.AnnotationProcessor_invalidReference_bindMethodNotFound, bind), bind); //$NON-NLS-1$
 				}
@@ -820,10 +803,11 @@ public class ReferenceProcessor {
 		}
 
 		String unbind = null;
+		IMethodBinding unbindMethod = null;
 		if ((value = params.get("unbind")) instanceof String) { //$NON-NLS-1$
 			unbind = (String) value;
 			if (!errorLevel.isIgnore()) {
-				IMethodBinding unbindMethod = findReferenceMethod(typeBinding, serviceType, unbind, true);
+				unbindMethod = findReferenceMethod(typeBinding, serviceType, unbind, true);
 				if (unbindMethod == null) {
 					problemReporter.reportProblem(annotation, "unbind", NLS.bind(Messages.AnnotationProcessor_invalidReference_unbindMethod, unbind), unbind); //$NON-NLS-1$
 				}
@@ -831,10 +815,11 @@ public class ReferenceProcessor {
 		}
 
 		String updated = null;
+		IMethodBinding updatedMethod = null;
 		if ((value = params.get("updated")) instanceof String) { //$NON-NLS-1$
 			updated = (String) value;
 			if (!errorLevel.isIgnore()) {
-				IMethodBinding updatedMethod = findReferenceMethod(typeBinding, serviceType, updated, true);
+				updatedMethod = findReferenceMethod(typeBinding, serviceType, updated, true);
 				if (updatedMethod == null) {
 					problemReporter.reportProblem(annotation, "updated", NLS.bind(Messages.AnnotationProcessor_invalidReference_updatedMethod, updated), updated); //$NON-NLS-1$
 				}
@@ -842,6 +827,8 @@ public class ReferenceProcessor {
 		}
 
 		updateMethodAttributes(reference, bind, updated, unbind);
+
+		return new MethodParams(bind, bindMethod, updated, updatedMethod, unbind, unbindMethod);
 	}
 
 	private void validateReferenceField(Annotation annotation, IVariableBinding fieldBinding) {
@@ -854,7 +841,7 @@ public class ReferenceProcessor {
 		}
 	}
 
-	public void processReference(IDSReference reference, ITypeBinding typeBinding, Annotation annotation, IAnnotationBinding annotationBinding, Map<String, Object> params, Map<String, Annotation> names) {
+	public DSAnnotationVersion processReference(IDSReference reference, ITypeBinding typeBinding, Annotation annotation, IAnnotationBinding annotationBinding, Map<String, Object> params, Map<String, Annotation> names) {
 		ITypeBinding serviceType;
 		Object value;
 		if ((value = params.get("service")) instanceof ITypeBinding) { //$NON-NLS-1$
@@ -910,10 +897,12 @@ public class ReferenceProcessor {
 			referenceScope = DSEnums.getReferenceScope(referenceScopeBinding.getName());
 		}
 
-		processReferenceMethodParams(reference, typeBinding, annotation, params, serviceType);
+		MethodParams methodParams = processReferenceMethodParams(reference, typeBinding, annotation, params, serviceType);
 		processReferenceFieldParams(reference, typeBinding, annotation, params, serviceType, cardinality, policy);
 
 		updateAttributes(reference, name, service, cardinality, policy, target, policyOption, referenceScope);
+
+		return determineRequiredVersion(reference, typeBinding, serviceType, methodParams);
 	}
 
 	private void validateReferenceBindMethod(Annotation annotation, ITypeBinding serviceType, IMethodBinding methodBinding) {
@@ -930,43 +919,37 @@ public class ReferenceProcessor {
 			problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidReference_invalidBindMethodReturnType, returnTypeName), returnTypeName);
 		}
 
-		ITypeBinding[] paramTypeBindings = methodBinding.getParameterTypes();
+		ITypeBinding[] argTypes = methodBinding.getParameterTypes();
 		if (specVersion == DSAnnotationVersion.V1_3) {
-			if (paramTypeBindings.length == 0) {
+			if (argTypes.length == 0) {
 				problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidReference_bindMethodNoArgs, serviceType == null ? Messages.AnnotationProcessor_unknownServiceTypeLabel : serviceType.getName()));
 			} else if (serviceType != null) {
-				for (ITypeBinding paramTypeBinding : paramTypeBindings) {
-					String erasure = paramTypeBinding.getErasure().getBinaryName();
+				for (ITypeBinding argType : argTypes) {
+					String erasure = argType.getErasure().getBinaryName();
 					if (!ServiceReference.class.getName().equals(erasure)
 							&& !COMPONENT_SERVICE_OBJECTS.equals(erasure)
-							&& !(serviceType == null || serviceType.isAssignmentCompatible(paramTypeBinding))
+							&& !(serviceType == null || serviceType.isAssignmentCompatible(argType))
 							&& !Map.class.getName().equals(erasure)) {
-						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidReference_invalidBindMethodArg, paramTypeBinding.getName(), serviceType == null ? Messages.AnnotationProcessor_unknownServiceTypeLabel : serviceType.getName()), paramTypeBinding.getName());
+						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidReference_invalidBindMethodArg, argType.getName(), serviceType == null ? Messages.AnnotationProcessor_unknownServiceTypeLabel : serviceType.getName()), argType.getName());
 					}
 				}
 			}
 		} else {
-			if (!(paramTypeBindings.length == 1
-					&& (ServiceReference.class.getName().equals(paramTypeBindings[0].getErasure().getBinaryName())
-							|| serviceType == null
-							|| serviceType.isAssignmentCompatible(paramTypeBindings[0])))
-					&& !(paramTypeBindings.length == 2
-					&& (serviceType == null || serviceType.isAssignmentCompatible(paramTypeBindings[0]))
-					&& Map.class.getName().equals(paramTypeBindings[1].getErasure().getBinaryName()))) {
-				String[] params = new String[paramTypeBindings.length];
+			if (!isLegacySignature(methodBinding, serviceType)) {
+				String[] args = new String[argTypes.length];
 				StringBuilder buf = new StringBuilder(64);
 				buf.append('(');
-				for (int i = 0; i < params.length; ++i) {
-					params[i] = paramTypeBindings[i].getName();
+				for (int i = 0; i < args.length; ++i) {
+					args[i] = argTypes[i].getName();
 					if (buf.length() > 1) {
 						buf.append(", "); //$NON-NLS-1$
 					}
 
-					buf.append(params[i]);
+					buf.append(args[i]);
 				}
 
 				buf.append(')');
-				problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidReference_invalidBindMethodParameters, buf, serviceType == null ? Messages.AnnotationProcessor_unknownServiceTypeLabel : serviceType.getName()), params);
+				problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidReference_invalidBindMethodParameters, buf, serviceType == null ? Messages.AnnotationProcessor_unknownServiceTypeLabel : serviceType.getName()), args);
 			}
 		}
 	}
@@ -1092,5 +1075,133 @@ public class ReferenceProcessor {
 		} while ((testedClass = testedClass.getSuperclass()) != null);
 
 		return null;
+	}
+
+	private DSAnnotationVersion determineRequiredVersion(
+			IDSReference reference,
+			ITypeBinding implType,
+			ITypeBinding serviceType,
+			MethodParams methodParams) {
+		if (requiredVersion == DSAnnotationVersion.V1_3) {
+			return DSAnnotationVersion.V1_3;
+		}
+
+		DSAnnotationVersion requiredVersion;
+		if (specVersion == DSAnnotationVersion.V1_3 &&
+				(reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_SCOPE) != null
+				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_FIELD) != null
+				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_FIELD_OPTION) != null
+				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_FIELD_COLLECTION_TYPE) != null)) {
+			requiredVersion = DSAnnotationVersion.V1_3;
+		} else if (reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_POLICY_OPTION) != null
+				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_UPDATED) != null) {
+			requiredVersion = DSAnnotationVersion.V1_2;
+		} else {
+			requiredVersion = DSAnnotationVersion.V1_1;
+		}
+
+		if (specVersion == DSAnnotationVersion.V1_3 && requiredVersion != DSAnnotationVersion.V1_3) {
+			// check if any one of the event methods *don't* have legacy-compatible signature
+			String bind = methodParams.getBind();
+			IMethodBinding bindMethod = methodParams.getBindMethod();
+			String updated = methodParams.getUpdated();
+			IMethodBinding updatedMethod = methodParams.getUpdatedMethod();
+			String unbind = methodParams.getUnbind();
+			IMethodBinding unbindMethod = methodParams.getUnbindMethod();
+
+			if (bind != null) {
+				if (bindMethod == null) {
+					bindMethod = findReferenceMethod(implType, serviceType, bind, true);
+				}
+
+				if (bindMethod != null && !isLegacySignature(bindMethod, serviceType)) {
+					requiredVersion = DSAnnotationVersion.V1_3;
+				}
+			}
+
+			if (requiredVersion != DSAnnotationVersion.V1_3 && unbind != null) {
+				if (unbindMethod == null) {
+					unbindMethod = findReferenceMethod(implType, serviceType, unbind, true);
+				}
+
+				if (unbindMethod != null && !isLegacySignature(bindMethod, serviceType)) {
+					requiredVersion = DSAnnotationVersion.V1_3;
+				}
+			}
+
+			if (requiredVersion != DSAnnotationVersion.V1_3 && updated != null) {
+				if (updatedMethod == null) {
+					updatedMethod = findReferenceMethod(implType, serviceType, updated, true);
+				}
+
+				if (updatedMethod != null && !isLegacySignature(updatedMethod, serviceType)) {
+					requiredVersion = DSAnnotationVersion.V1_3;
+				}
+			}
+		}
+
+		return requiredVersion;
+	}
+
+	private boolean isLegacySignature(IMethodBinding methodBinding, ITypeBinding serviceType) {
+		ITypeBinding[] argTypes = methodBinding.getParameterTypes();
+		return argTypes.length == 1
+				&& (ServiceReference.class.getName().equals(argTypes[0].getErasure().getBinaryName())
+						|| serviceType == null
+						|| serviceType.isAssignmentCompatible(argTypes[0]))
+				|| (argTypes.length == 2
+				&& (serviceType == null || serviceType.isAssignmentCompatible(argTypes[0]))
+				&& Map.class.getName().equals(argTypes[1].getErasure().getBinaryName()));
+	}
+
+	private static class MethodParams {
+
+		private final String bind;
+
+		private final IMethodBinding bindMethod;
+
+		private final String updated;
+
+		private final IMethodBinding updatedMethod;
+
+		private final String unbind;
+
+		private final IMethodBinding unbindMethod;
+
+		public MethodParams(String bind, IMethodBinding bindMethod, String updated, IMethodBinding updatedMethod,
+				String unbind, IMethodBinding unbindMethod) {
+			super();
+			this.bind = bind;
+			this.bindMethod = bindMethod;
+			this.updated = updated;
+			this.updatedMethod = updatedMethod;
+			this.unbind = unbind;
+			this.unbindMethod = unbindMethod;
+		}
+
+		public String getBind() {
+			return bind;
+		}
+
+		public IMethodBinding getBindMethod() {
+			return bindMethod;
+		}
+
+		public String getUpdated() {
+			return updated;
+		}
+
+		public IMethodBinding getUpdatedMethod() {
+			return updatedMethod;
+		}
+
+		public String getUnbind() {
+			return unbind;
+		}
+
+		public IMethodBinding getUnbindMethod() {
+			return unbindMethod;
+		}
+
 	}
 }

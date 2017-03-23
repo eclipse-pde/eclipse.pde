@@ -783,9 +783,8 @@ public class AnnotationVisitor extends ASTVisitor {
 
 					references.add(reference);
 
-					ReferenceProcessor referenceProcessor = new ReferenceProcessor(this, specVersion, errorLevel, state.getMissingUnbindMethodLevel(), problemReporter);
-					referenceProcessor.processReference(reference, typeBinding, referenceAnnotation, referenceAnnotationBinding, annotationParams, referenceNames);
-					requiredVersion = DSAnnotationVersion.V1_3;
+					ReferenceProcessor referenceProcessor = new ReferenceProcessor(this, specVersion, requiredVersion, errorLevel, state.getMissingUnbindMethodLevel(), problemReporter);
+					requiredVersion = requiredVersion.max(referenceProcessor.processReference(reference, typeBinding, referenceAnnotation, referenceAnnotationBinding, annotationParams, referenceNames));
 				}
 			}
 		}
@@ -844,7 +843,7 @@ public class AnnotationVisitor extends ASTVisitor {
 
 						references.add(reference);
 
-						ReferenceProcessor referenceProcessor = new ReferenceProcessor(this, specVersion, errorLevel, state.getMissingUnbindMethodLevel(), problemReporter);
+						ReferenceProcessor referenceProcessor = new ReferenceProcessor(this, specVersion, requiredVersion, errorLevel, state.getMissingUnbindMethodLevel(), problemReporter);
 						referenceProcessor.processReference(reference, field, fieldBinding, fieldAnnotation, fieldAnnotationBinding, annotationParams, referenceNames);
 						requiredVersion = DSAnnotationVersion.V1_3;
 					}
@@ -954,7 +953,7 @@ public class AnnotationVisitor extends ASTVisitor {
 							annotationParams.put(pair.getName(), pair.getValue());
 						}
 
-						ReferenceProcessor referenceProcessor = new ReferenceProcessor(this, specVersion, errorLevel, state.getMissingUnbindMethodLevel(), problemReporter);
+						ReferenceProcessor referenceProcessor = new ReferenceProcessor(this, specVersion, requiredVersion, errorLevel, state.getMissingUnbindMethodLevel(), problemReporter);
 						String referenceName = referenceProcessor.getReferenceName(methodBinding.getName(), annotationParams);
 
 						IDSReference reference = refMap.remove(referenceName);
@@ -1326,11 +1325,13 @@ public class AnnotationVisitor extends ASTVisitor {
 			// Reconnect
 			clone.reconnect(obj, obj.getSharedModel());
 		} catch (IOException e) {
-			if (debug.isDebugging())
+			if (debug.isDebugging()) {
 				debug.trace("Error cloning element.", e); //$NON-NLS-1$
+			}
 		} catch (ClassNotFoundException e) {
-			if (debug.isDebugging())
+			if (debug.isDebugging()) {
 				debug.trace("Error cloning element.", e); //$NON-NLS-1$
+			}
 		}
 
 		return clone;
@@ -1372,8 +1373,9 @@ public class AnnotationVisitor extends ASTVisitor {
 				buf.append(trimmed);
 			}
 		} catch (IOException e) {
-			if (debug.isDebugging())
+			if (debug.isDebugging()) {
 				debug.trace("Error reading property element body.", e); //$NON-NLS-1$
+			}
 		} finally {
 			try {
 				reader.close();
