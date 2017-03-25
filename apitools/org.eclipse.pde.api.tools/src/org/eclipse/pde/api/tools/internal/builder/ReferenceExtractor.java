@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1469,6 +1469,9 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * @throws CoreException
 	 */
 	static IApiType getDefaultDefined(IApiType type, String name, String signature, boolean isOverride) throws CoreException {
+		if (type != null && type.getName().startsWith("java.")) { //$NON-NLS-1$
+			return null;
+		}
 		if (type != null) {
 			if (!isOverride) {
 				IApiMethod method = type.getMethod(name, signature);
@@ -1478,8 +1481,6 @@ public class ReferenceExtractor extends ClassVisitor {
 					}
 				}
 			}
-			// TODO We should skip checking super class if it is
-			// java.lang.Object (or system library class)
 			IApiType superclass = getDefaultDefined(type.getSuperclass(), name, signature, false);
 			if (superclass != null) {
 				return superclass;
