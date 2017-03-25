@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public final class ApiModelCache {
 		}
 	}
 
-	static final int DEFAULT_CACHE_SIZE = 1000;
+	static final int DEFAULT_CACHE_SIZE = 1500;
 	static final int DEFAULT_OVERFLOW = (int) (DEFAULT_CACHE_SIZE * 0.1f);
 	static ApiModelCache fInstance = null;
 
@@ -112,7 +112,7 @@ public final class ApiModelCache {
 		switch (element.getType()) {
 			case IApiElement.TYPE: {
 				if (fRootCache == null) {
-					fRootCache = new Cache(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
+					fRootCache = new Cache(DEFAULT_CACHE_SIZE / 10, DEFAULT_OVERFLOW / 10);
 				}
 				IApiComponent comp = element.getApiComponent();
 				if (comp != null) {
@@ -123,7 +123,7 @@ public final class ApiModelCache {
 					}
 					Cache compcache = (Cache) fRootCache.get(baseline.getName());
 					if (compcache == null) {
-						compcache = new Cache(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
+						compcache = new Cache(DEFAULT_CACHE_SIZE / 2, DEFAULT_OVERFLOW / 2);
 						fRootCache.put(baseline.getName(), compcache);
 					}
 					Cache typecache = (Cache) compcache.get(id);
