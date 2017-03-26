@@ -377,8 +377,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				int count = path.getDevice() == null ? 4 : 3;
 				if (path.segmentCount() >= count) {
 					String pluginID = path.segment(count - 2);
-					if (added.contains(pluginID))
-						continue;
 					IPluginModelBase model = PluginRegistry.findModel(pluginID);
 					if (model != null && model.isEnabled()) {
 						path = path.setDevice(null);
