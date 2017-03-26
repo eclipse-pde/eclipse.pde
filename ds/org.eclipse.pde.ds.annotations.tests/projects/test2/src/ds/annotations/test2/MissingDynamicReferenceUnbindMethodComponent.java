@@ -8,7 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component
-public class ErrorComponent {
+public class MissingDynamicReferenceUnbindMethodComponent {
 
 	@Reference
 	void setStaticReference(Executor executor) {

@@ -126,6 +126,22 @@ public class Messages extends NLS {
 
 	public static String AnnotationProcessor_unknownServiceTypeLabel;
 
+	public static String AnnotationVisitor_invalidComponentConfigurationPid_duplicate;
+
+	public static String AnnotationVisitor_invalidFactoryComponent_immediate;
+
+	public static String AnnotationVisitor_invalidDelayedComponent_noServices;
+
+	public static String AnnotationVisitor_invalidScope_factoryImmediate;
+
+	public static String AnnotationVisitor_invalidScope_noServices;
+
+	public static String AnnotationVisitor_invalidServiceFactory_factoryImmediate;
+
+	public static String AnnotationVisitor_invalidServiceFactory_ignored;
+
+	public static String AnnotationVisitor_invalidServiceFactory_noServices;
+
 	public static String BuildPathMarkerResolutionGenerator_additionalBundleResolution_description;
 
 	public static String BuildPathMarkerResolutionGenerator_additionalBundleResolution_label;

@@ -25,7 +25,7 @@ import org.osgi.service.component.annotations.ServiceScope;
 		configurationPolicy = ConfigurationPolicy.REQUIRE,
 		enabled = false,
 		factory = "test.componentFactory",
-		immediate = true,
+		immediate = false,
 		name = "test.fullComponent",
 		properties = {
 				"/fullComponent1.properties",

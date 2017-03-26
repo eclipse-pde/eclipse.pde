@@ -21,7 +21,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 		configurationPolicy = ConfigurationPolicy.REQUIRE,
 		enabled = false,
 		factory = "test.componentFactory",
-		immediate = true,
+		immediate = false,
 		name = "test.fullComponent-v1_2",
 		properties = {
 				"/fullComponent1.properties",
@@ -44,7 +44,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 				"explicitStringArrayProperty:String=explicitStringArrayValue3",
 		},
 		service = Map.class,
-		servicefactory = true)
+		servicefactory = false)
 public class FullComponentV1_2 extends AbstractMap<String, Object> {
 
 	private volatile Set<Map.Entry<String, Object>> entrySet = new HashSet<>();

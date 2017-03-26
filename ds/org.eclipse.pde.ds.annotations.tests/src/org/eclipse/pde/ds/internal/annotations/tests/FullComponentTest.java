@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 
@@ -60,7 +59,7 @@ public class FullComponentTest extends AnnotationProcessorTest {
 
 	@Test
 	public void componentImmediate() throws Exception {
-		assertTrue(dsModel.getDSComponent().getImmediate());
+		assertFalse(dsModel.getDSComponent().getImmediate());
 	}
 
 	@Test

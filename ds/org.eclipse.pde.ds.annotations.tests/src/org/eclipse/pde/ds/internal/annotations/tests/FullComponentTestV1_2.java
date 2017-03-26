@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 
@@ -60,7 +59,7 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 
 	@Test
 	public void componentImmediate() throws Exception {
-		assertTrue(dsModel.getDSComponent().getImmediate());
+		assertFalse(dsModel.getDSComponent().getImmediate());
 	}
 
 	@Test
@@ -94,7 +93,7 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	public void componentServiceProviderInterface() throws Exception {
 		IDSService service = dsModel.getDSComponent().getService();
 		assertNotNull(service);
-		assertTrue(service.getServiceFactory());
+		assertFalse(service.getServiceFactory());
 		IDSProvide[] provides = service.getProvidedServices();
 		assertNotNull(provides);
 		assertEquals(1, provides.length);

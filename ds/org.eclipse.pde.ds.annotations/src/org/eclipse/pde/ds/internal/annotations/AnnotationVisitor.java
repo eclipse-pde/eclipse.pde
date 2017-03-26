@@ -125,6 +125,10 @@ public class AnnotationVisitor extends ASTVisitor {
 
 	private static final String VALUE_SERVICE_SCOPE_DEFAULT = DSEnums.getServiceScope("DEFAULT"); //$NON-NLS-1$
 
+	private static final String VALUE_SERVICE_SCOPE_SINGLETON = DSEnums.getServiceScope("SINGLETON"); //$NON-NLS-1$
+
+	private static final String VALUE_SERVICE_SCOPE_BUNDLE = DSEnums.getServiceScope("BUNDLE"); //$NON-NLS-1$
+
 	private static final Set<String> PROPERTY_TYPES = Collections.unmodifiableSet(
 			new HashSet<>(
 					Arrays.asList(
@@ -220,7 +224,7 @@ public class AnnotationVisitor extends ASTVisitor {
 					|| (isNested = (!type.isPackageMemberTypeDeclaration() && !isNestedPublicStatic(type)))
 					|| (noDefaultConstructor = !hasDefaultConstructor(type))) {
 				// interfaces, abstract types, non-static/non-public nested types, or types with no default constructor cannot be components
-				if (errorLevel != ValidationErrorLevel.ignore) {
+				if (!errorLevel.isIgnore()) {
 					if (isInterface) {
 						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_interface, type.getName().getIdentifier()), type.getName().getIdentifier());
 					} else if (isAbstract) {
@@ -498,19 +502,20 @@ public class AnnotationVisitor extends ASTVisitor {
 			for (int i = 0; i < elements.length; ++i) {
 				ITypeBinding serviceType = (ITypeBinding) elements[i];
 				String serviceName = serviceType.getBinaryName();
-				if (!errorLevel.isIgnore()) {
-					if (serviceDuplicates.containsKey(serviceName)) {
+				if (services.add(serviceName)) {
+					if (serviceDuplicates != null) {
+						serviceDuplicates.put(serviceName, i);
+					}
+				} else {
+					if (serviceDuplicates != null) {
 						problemReporter.reportProblem(annotation, "service", i, Messages.AnnotationProcessor_duplicateServiceDeclaration, serviceName); //$NON-NLS-1$
 						Integer pos = serviceDuplicates.put(serviceName, null);
 						if (pos != null) {
 							problemReporter.reportProblem(annotation, "service", pos.intValue(), Messages.AnnotationProcessor_duplicateServiceDeclaration, serviceName); //$NON-NLS-1$
 						}
-					} else {
-						serviceDuplicates.put(serviceName, i);
 					}
 				}
 
-				services.add(serviceName);
 				validateComponentService(annotation, typeBinding, serviceType, i);
 			}
 		} else {
@@ -530,6 +535,9 @@ public class AnnotationVisitor extends ASTVisitor {
 		Boolean serviceFactory = null;
 		if ((value = params.get("servicefactory")) instanceof Boolean) { //$NON-NLS-1$
 			serviceFactory = (Boolean) value;
+			if (!errorLevel.isIgnore() && Boolean.TRUE.equals(serviceFactory) && services.isEmpty()) {
+				problemReporter.reportProblem(annotation, "servicefactory", Messages.AnnotationVisitor_invalidServiceFactory_noServices); //$NON-NLS-1$
+			}
 		}
 
 		Boolean enabled = null;
@@ -540,6 +548,15 @@ public class AnnotationVisitor extends ASTVisitor {
 		Boolean immediate = null;
 		if ((value = params.get("immediate")) instanceof Boolean) { //$NON-NLS-1$
 			immediate = (Boolean) value;
+			if (!errorLevel.isIgnore()) {
+				if (factory != null && Boolean.TRUE.equals(immediate)) {
+					problemReporter.reportProblem(annotation, "immediate", Messages.AnnotationVisitor_invalidFactoryComponent_immediate); //$NON-NLS-1$
+				}
+
+				if (services.isEmpty() && Boolean.FALSE.equals(immediate)) {
+					problemReporter.reportProblem(annotation, "immediate", Messages.AnnotationVisitor_invalidDelayedComponent_noServices); //$NON-NLS-1$
+				}
+			}
 		}
 
 		String[] properties;
@@ -607,39 +624,77 @@ public class AnnotationVisitor extends ASTVisitor {
 			validateComponentConfigPID(annotation, configPid, -1);
 			requiredVersion = DSAnnotationVersion.V1_2;
 		} else if (specVersion == DSAnnotationVersion.V1_3 && value instanceof Object[]) {
-			// TODO validate empty array and duplicate PIDs!
-			LinkedHashSet<String> configPids = new LinkedHashSet<>(1);
-			int i = 0;
-			for (Object configPidElem : ((Object[]) value)) {
-				String configPidStr = String.valueOf(configPidElem);
-				if ("$".equals(configPidStr)) { //$NON-NLS-1$
-					configPids.add(name);
-				} else {
-					configPids.add(configPidStr);
-					validateComponentConfigPID(annotation, configPidStr, i);
+			Object[] configPidElems = (Object[]) value;
+			if (configPidElems.length > 0) {
+				LinkedHashSet<String> configPids = new LinkedHashSet<>(configPidElems.length);
+				HashMap<String, Integer> pidDuplicates = errorLevel.isIgnore() ? null : new HashMap<>(configPidElems.length);
+				int i = 0;
+				for (Object configPidElem : configPidElems) {
+					String configPidStr = String.valueOf(configPidElem);
+					if ("$".equals(configPidStr)) { //$NON-NLS-1$
+						configPidStr = name;
+					} else {
+						validateComponentConfigPID(annotation, configPidStr, i);
+					}
+
+					if (configPids.add(configPidStr)) {
+						if (pidDuplicates != null) {
+							pidDuplicates.put(configPidStr, i);
+						}
+					} else {
+						if (pidDuplicates != null) {
+							problemReporter.reportProblem(annotation, "configurationPid", i, Messages.AnnotationVisitor_invalidComponentConfigurationPid_duplicate); //$NON-NLS-1$
+							Integer pos = pidDuplicates.put(configPidStr, null);
+							if (pos != null) {
+								problemReporter.reportProblem(annotation, "configurationPid", pos.intValue(), Messages.AnnotationVisitor_invalidComponentConfigurationPid_duplicate); //$NON-NLS-1$
+							}
+						}
+					}
+
+					i++;
 				}
 
-				i++;
-			}
+				requiredVersion = i > 1 ?  DSAnnotationVersion.V1_3 : DSAnnotationVersion.V1_2;
 
-			requiredVersion = i > 1 ?  DSAnnotationVersion.V1_3 : DSAnnotationVersion.V1_2;
+				StringBuilder configPidBuf = new StringBuilder();
+				for (String configPidElem : configPids) {
+					if (configPidBuf.length() > 0) {
+						configPidBuf.append(' ');
+					}
 
-			StringBuilder configPidBuf = new StringBuilder();
-			for (String configPidElem : configPids) {
-				if (configPidBuf.length() > 0) {
-					configPidBuf.append(' ');
+					configPidBuf.append(configPidElem);
 				}
 
-				configPidBuf.append(configPidElem);
+				configPid = configPidBuf.toString();
 			}
-
-			configPid = configPidBuf.toString();
 		}
 
 		String serviceScope = null;
 		if (specVersion == DSAnnotationVersion.V1_3 && (value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
 			IVariableBinding serviceScopeBinding = (IVariableBinding) value;
 			serviceScope = DSEnums.getServiceScope(serviceScopeBinding.getName());
+			if (!errorLevel.isIgnore()) {
+				if (services.isEmpty()) {
+					problemReporter.reportProblem(annotation, "scope", Messages.AnnotationVisitor_invalidScope_noServices); //$NON-NLS-1$
+				} else if ((factory != null || Boolean.TRUE.equals(immediate)) && !serviceScope.equals(VALUE_SERVICE_SCOPE_SINGLETON)) {
+					problemReporter.reportProblem(annotation, "scope", Messages.AnnotationVisitor_invalidScope_factoryImmediate); //$NON-NLS-1$
+				}
+			}
+		}
+
+		if (specVersion == DSAnnotationVersion.V1_3 && serviceFactory != null && serviceScope != null && !serviceScope.equals(VALUE_SERVICE_SCOPE_DEFAULT)) {
+			// ignore servicefactory if scope specified and not <<DEFAULT>>
+			if (!errorLevel.isIgnore() && !serviceFactory.equals(VALUE_SERVICE_SCOPE_BUNDLE.equals(serviceScope))) {
+				problemReporter.reportProblem(annotation, "servicefactory", -1, true, errorLevel, Messages.AnnotationVisitor_invalidServiceFactory_ignored); //$NON-NLS-1$
+			}
+
+			serviceFactory = null;
+		}
+
+		if (!errorLevel.isIgnore() && serviceFactory != null && !serviceFactory.equals(Boolean.FALSE) && !services.isEmpty()) {
+			if (factory != null || Boolean.TRUE.equals(immediate)) {
+				problemReporter.reportProblem(annotation, "servicefactory", Messages.AnnotationVisitor_invalidServiceFactory_factoryImmediate); //$NON-NLS-1$
+			}
 		}
 
 		IDSComponent component = model.getDSComponent();
