@@ -37,6 +37,8 @@ import org.osgi.framework.Bundle;
 	DefaultComponentTest.class,
 	FullComponentTestV1_2.class,
 	FullComponentTest.class,
+	ExtendedReferenceMethodComponentTest.class,
+	ExtendedLifeCycleMethodComponentTest.class,
 })
 public class AllDSAnnotationsTests {
 
