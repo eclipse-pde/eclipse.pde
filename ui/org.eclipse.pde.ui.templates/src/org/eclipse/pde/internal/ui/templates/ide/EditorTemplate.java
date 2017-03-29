@@ -129,7 +129,7 @@ public class EditorTemplate extends BaseEditorTemplate {
 		editorElement.setAttribute("id", //$NON-NLS-1$
 				getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(EDITOR_CLASS_NAME)); //$NON-NLS-1$
 		editorElement.setAttribute("name", getStringOption(EDITOR_NAME)); //$NON-NLS-1$
-		editorElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		editorElement.setAttribute("icon", "icons/sample.png"); //$NON-NLS-1$ //$NON-NLS-2$
 		editorElement.setAttribute("extensions", getStringOption(EXTENSIONS)); //$NON-NLS-1$
 
 		editorElement.setAttribute("class", //$NON-NLS-1$

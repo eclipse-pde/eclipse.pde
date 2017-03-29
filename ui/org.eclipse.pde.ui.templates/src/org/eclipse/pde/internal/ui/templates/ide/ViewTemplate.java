@@ -132,7 +132,7 @@ public class ViewTemplate extends PDETemplateSection {
 		viewElement.setName("view"); //$NON-NLS-1$
 		viewElement.setAttribute("id", fullClassName); //$NON-NLS-1$
 		viewElement.setAttribute("name", getStringOption("viewName")); //$NON-NLS-1$ //$NON-NLS-2$
-		viewElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		viewElement.setAttribute("icon", "icons/sample.png"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		viewElement.setAttribute("class", fullClassName); //$NON-NLS-1$
 		viewElement.setAttribute("category", cid); //$NON-NLS-1$

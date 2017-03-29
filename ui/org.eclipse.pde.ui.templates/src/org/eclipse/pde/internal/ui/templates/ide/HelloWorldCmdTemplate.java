@@ -168,7 +168,7 @@ public class HelloWorldCmdTemplate extends PDETemplateSection {
 		toolbarCommand.setName("command"); //$NON-NLS-1$
 		toolbarCommand.setAttribute("id", plugin.getId() + ".toolbars.sampleCommand"); //$NON-NLS-1$ //$NON-NLS-2$
 		toolbarCommand.setAttribute("commandId", commandId); //$NON-NLS-1$
-		toolbarCommand.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		toolbarCommand.setAttribute("icon", "icons/sample.png"); //$NON-NLS-1$ //$NON-NLS-2$
 		toolbarCommand.setAttribute("tooltip", //$NON-NLS-1$
 				PDETemplateMessages.HelloWorldCmdTemplate_sampleAction_tooltip);
 		toolbar.add(toolbarCommand);

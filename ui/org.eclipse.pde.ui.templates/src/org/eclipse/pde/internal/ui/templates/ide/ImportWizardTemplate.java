@@ -136,7 +136,7 @@ public class ImportWizardTemplate extends PDETemplateSection {
 		wizardElement.setAttribute("name", getStringOption(WIZARD_IMPORT_NAME)); //$NON-NLS-1$
 		wizardElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(WIZARD_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
 		wizardElement.setAttribute("category", getStringOption(KEY_PACKAGE_NAME) + ".sampleCategory"); //$NON-NLS-1$ //$NON-NLS-2$
-		wizardElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		wizardElement.setAttribute("icon", "icons/sample.png"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement descriptionElement = factory.createElement(extension);
 		descriptionElement.setName("description"); //$NON-NLS-1$

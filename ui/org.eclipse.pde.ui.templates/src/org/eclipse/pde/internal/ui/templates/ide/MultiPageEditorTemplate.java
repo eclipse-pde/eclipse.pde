@@ -136,7 +136,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		editorElement.setName("editor"); //$NON-NLS-1$
 		editorElement.setAttribute("id", editorClassName); //$NON-NLS-1$
 		editorElement.setAttribute("name", getStringOption("editorName")); //$NON-NLS-1$ //$NON-NLS-2$
-		editorElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		editorElement.setAttribute("icon", "icons/sample.png"); //$NON-NLS-1$ //$NON-NLS-2$
 		editorElement.setAttribute("extensions", getStringOption("extensions")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		editorElement.setAttribute("class", editorClassName); //$NON-NLS-1$

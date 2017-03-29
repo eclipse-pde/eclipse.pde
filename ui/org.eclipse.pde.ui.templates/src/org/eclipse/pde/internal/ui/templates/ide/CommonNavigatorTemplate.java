@@ -139,7 +139,7 @@ public class CommonNavigatorTemplate extends PDETemplateSection {
 		viewElement.setName("view"); //$NON-NLS-1$
 		viewElement.setAttribute("id", viewId); //$NON-NLS-1$
 		viewElement.setAttribute("name", getStringOption(KEY_VIEW_NAME)); //$NON-NLS-1$
-		viewElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		viewElement.setAttribute("icon", "icons/sample.png"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		viewElement.setAttribute("class", "org.eclipse.ui.navigator.CommonNavigator"); //$NON-NLS-1$  //$NON-NLS-2$
 		viewExtension.add(viewElement);

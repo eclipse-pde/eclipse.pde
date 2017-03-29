@@ -117,7 +117,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 		viewElement.setName("wizard"); //$NON-NLS-1$
 		viewElement.setAttribute("id", fullClassName); //$NON-NLS-1$
 		viewElement.setAttribute("name", getStringOption("wizardName")); //$NON-NLS-1$ //$NON-NLS-2$
-		viewElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		viewElement.setAttribute("icon", "icons/sample.png"); //$NON-NLS-1$ //$NON-NLS-2$
 		viewElement.setAttribute("class", fullClassName); //$NON-NLS-1$
 		viewElement.setAttribute("category", cid); //$NON-NLS-1$
 		extension.add(viewElement);
