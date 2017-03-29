@@ -85,6 +85,7 @@
     <module>ui/org.eclipse.pde.junit.runtime</module>
     <module>ui/org.eclipse.pde.launching</module>
     <module>ui/org.eclipse.pde.runtime</module>
+    <module>ui/org.eclipse.pde.tools.layout.spy</module>
     <module>ui/org.eclipse.pde.ui</module>
     <module>ui/org.eclipse.pde.ui.templates</module>
     <module>ui/org.eclipse.pde.ui.tests</module>
