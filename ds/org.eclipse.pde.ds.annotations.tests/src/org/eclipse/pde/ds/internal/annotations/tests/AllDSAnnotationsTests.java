@@ -1,5 +1,6 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -69,6 +70,10 @@ public class AllDSAnnotationsTests {
 					try {
 						Path projectLocation = Files.createDirectories(wsRoot.resolve(project.getName()));
 						copyResources(bundle, entry.getValue(), projectLocation);
+						File projectFile = projectLocation.resolve("test.project").toFile();
+						if (projectFile.isFile()) {
+							projectFile.renameTo(projectLocation.resolve(".project").toFile());
+						}
 					} catch (IOException e) {
 						throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error copying test project content.", e));
 					}
