@@ -9,12 +9,10 @@
  *     Stefan Xenos (Google) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.pde.tools.layout.spy.internal.handler;
+package org.eclipse.pde.internal.runtime.spy.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.pde.tools.layout.spy.internal.dialogs.LayoutSpyDialog;
+import org.eclipse.core.commands.*;
+import org.eclipse.pde.internal.runtime.spy.dialogs.LayoutSpyDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
