@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -1601,6 +1602,25 @@ public final class Util {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns if the given {@link IApiComponent} has java package/s
+	 * {@link IApiComponent}
+	 *
+	 * @param apiComponent the given component
+	 * @return true if the given {@link IApiComponent} has java package/s, false
+	 *         otherwise
+	 */
+	public static boolean hasJavaPackages(IApiComponent apiComponent) {
+		try {
+			String[] packageNames = apiComponent.getPackageNames();
+			return packageNames.length > 0;
+
+		} catch (CoreException e) {
+
+		}
+		return true;
 	}
 
 	/**
