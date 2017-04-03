@@ -1682,6 +1682,7 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsView_unableToOpen;
 	public static String PluginWorkingSet_setName;
 	public static String PluginStatusDialog_label;
+	public static String PluginStatusDialog_continueButtonLabel;
 	public static String PluginSection_removeAll;
 	public static String PluginsView_disabled;
 	public static String PluginContentPage_no;
