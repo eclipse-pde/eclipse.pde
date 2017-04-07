@@ -245,6 +245,20 @@ public class APIFreezeReportConversionTask extends Task {
 						buffer.append('.');
 						buffer.append(this.key);
 						break;
+					case IDelta.INCREASE_ACCESS:
+						indexOf = this.key.indexOf('(');
+						if (indexOf == -1) {
+							// increase access for non-methods (fields etc)
+							buffer.append('#');
+							buffer.append(this.key);
+						} else {
+							index = indexOf;
+							selector = key.substring(0, index);
+							descriptor = key.substring(index, key.length());
+							buffer.append('#');
+							buffer.append(Signature.toString(descriptor, selector, null, false, true));
+						}
+						break;
 					case IDelta.DEPRECATION:
 						switch (this.elementType) {
 							case IDelta.ANNOTATION_ELEMENT_TYPE:
