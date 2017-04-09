@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -278,6 +278,8 @@ public class Messages extends NLS {
 								return 35;
 							case IDelta.ENUM_CONSTANT:
 								return 36;
+							case IDelta.FIELD:
+								return 59;
 							case IDelta.METHOD:
 								return 37;
 							case IDelta.DEPRECATION:

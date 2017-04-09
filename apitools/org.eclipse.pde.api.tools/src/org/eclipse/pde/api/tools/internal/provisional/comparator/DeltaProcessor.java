@@ -385,6 +385,7 @@ public class DeltaProcessor {
 			case IDelta.ADDED:
 				switch (delta.getFlags()) {
 					case IDelta.FIELD:
+						return true;
 					case IDelta.METHOD:
 						return !Util.isVisible(delta.getNewModifiers());
 					default:
