@@ -1646,7 +1646,7 @@ public class AnnotationVisitor extends ASTVisitor {
 		}
 
 		DSAnnotationVersion specifiedVersion = DSAnnotationVersion.fromNamespace(xmlns);
-		if (requiredVersion.compareTo(specifiedVersion) > 0) {
+		if (specifiedVersion == null || requiredVersion.compareTo(specifiedVersion) > 0) {
 			problemReporter.reportProblem(annotation, "xmlns", NLS.bind(Messages.AnnotationProcessor_invalidComponentDescriptorNamespace, xmlns), xmlns); //$NON-NLS-1$
 		}
 	}
