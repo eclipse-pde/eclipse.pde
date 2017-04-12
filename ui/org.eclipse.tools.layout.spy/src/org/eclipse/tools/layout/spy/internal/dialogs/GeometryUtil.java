@@ -9,7 +9,7 @@
  *     Stefan Xenos (Google) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.pde.internal.runtime.spy.dialogs;
+package org.eclipse.tools.layout.spy.internal.dialogs;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Rectangle;

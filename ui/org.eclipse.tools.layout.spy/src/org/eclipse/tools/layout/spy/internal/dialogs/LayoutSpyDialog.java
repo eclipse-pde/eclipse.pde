@@ -9,29 +9,58 @@
  *     Stefan Xenos (Google) - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 499226
  *******************************************************************************/
-package org.eclipse.pde.internal.runtime.spy.dialogs;
+package org.eclipse.tools.layout.spy.internal.dialogs;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+
 import org.eclipse.core.databinding.observable.list.ComputedList;
 import org.eclipse.core.databinding.observable.sideeffect.ISideEffectFactory;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.jface.databinding.swt.*;
-import org.eclipse.jface.databinding.viewers.*;
-import org.eclipse.jface.layout.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.WidgetSideEffects;
+import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.layout.LayoutConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Scrollable;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Implementation of the "layout spy" dialog, a diagnostic tool for fixing bugs
@@ -93,7 +122,12 @@ public class LayoutSpyDialog {
 		resources = new LocalResourceManager(JFaceResources.getResources(), shell);
 		parentRectangleColor = resources.createColor(SELECTED_PARENT_OVERLAY_COLOR);
 		childRectangleColor = resources.createColor(SELECTED_CHILD_OVERLAY_COLOR);
-		upImage = resources.createImage(PDERuntimePluginImages.UP_NAV);
+		Bundle bundle = FrameworkUtil.getBundle(LayoutSpyDialog.class);
+		final URL fullPathString = FileLocator.find(bundle, new Path("icons/up_nav.png"), null);
+
+		ImageDescriptor imageDesc = ImageDescriptor.createFromURL(fullPathString);
+
+		upImage = resources.createImage(imageDesc);
 
 		Composite infoRegion = new Composite(shell, SWT.NONE);
 		{
