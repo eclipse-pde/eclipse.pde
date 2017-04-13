@@ -64,9 +64,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 						new FilterProblemWithCommentResolution(marker) };
 			}
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID: {
-			int id = ApiProblemFactory.getProblemId(marker);
-			if (id > -1 && id == ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
-					IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD)) {
+			if (hasExplainProblemResolution(marker)) {
 				return new IMarkerResolution[] { new ProblemExplainIncompatibilityResolution(marker),
 						new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker) };
 			}
@@ -153,5 +151,19 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	@Override
 	public boolean hasResolutions(IMarker marker) {
 		return Util.isApiProblemMarker(marker);
+	}
+
+	public boolean hasExplainProblemResolution(IMarker marker) {
+		int id = ApiProblemFactory.getProblemId(marker);
+		if (id > -1) {
+			if( id == ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD)
+			 || id == ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD)
+					|| id == ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
+							IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.DEFAULT_METHOD)) {
+			return true;
+			}
+		}
+		return false;
+
 	}
 }

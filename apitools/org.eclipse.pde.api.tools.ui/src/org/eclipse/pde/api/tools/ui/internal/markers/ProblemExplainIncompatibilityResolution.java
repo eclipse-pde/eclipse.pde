@@ -22,7 +22,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
-import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
@@ -77,16 +76,15 @@ public class ProblemExplainIncompatibilityResolution extends WorkbenchMarkerReso
 
 	@Override
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
-		// based on the incompatibility, different context id can be given for help
-		// and hence this is extendible to different API compatibility problems ( can be
-		// easily retrieved from marker)
-		// Currently since only 1 is supported, context id is directly passed.
+		// Since only 1 page is made as of now , so for all explain
+		// incompatibilities we can show the same page. However in future if the
+		// pages are split, from marker we can get the type of incompatibility
+		// and show different page URL.
 		UIJob job = new UIJob("") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				// PlatformUI.getWorkbench().getHelpSystem().displayHelp();
 				PlatformUI.getWorkbench().getHelpSystem()
-						.displayHelp(IApiToolsHelpContextIds.APITOOLS_ERROR_EXPLAIN_INCOMPATIBILITY_FIELD_ADDITION_TO_CLASS);
+						.displayHelpResource("/org.eclipse.pde.doc.user/reference/api-tooling/api_evolution.htm"); //$NON-NLS-1$
 
 				return Status.OK_STATUS;
 			}
