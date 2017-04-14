@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,8 @@ import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.TracingTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -49,6 +51,8 @@ public class TracingBlock {
 	private Properties fMasterOptions = new Properties();
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
+	private Button fRestoreSelectedDefaultButton;
+	private Button fRestoreDefaultButton;
 	private Hashtable<IPluginModelBase, TracingPropertySource> fPropertySources = new Hashtable<>();
 	private FormToolkit fToolkit;
 	private ScrolledPageBook fPageBook;
@@ -83,7 +87,6 @@ public class TracingBlock {
 		}));
 
 		createSashSection(parent);
-		createButtonSection(parent);
 	}
 
 	private void createSashSection(Composite container) {
@@ -96,6 +99,7 @@ public class TracingBlock {
 	private void createPluginViewer(Composite sashForm) {
 		Composite composite = new Composite(sashForm, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
 		layout.marginWidth = layout.marginHeight = 1;
 		composite.setLayout(layout);
 
@@ -104,6 +108,7 @@ public class TracingBlock {
 		fPluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fPluginViewer.setComparator(new ListUtil.PluginComparator());
 		fPluginViewer.addSelectionChangedListener(e -> {
+			fRestoreSelectedDefaultButton.setEnabled(true);
 			CheckboxTableViewer tableViewer = (CheckboxTableViewer) e.getSource();
 			boolean selected = tableViewer.getChecked(getSelectedModel());
 			pluginSelected(getSelectedModel(), selected);
@@ -127,6 +132,7 @@ public class TracingBlock {
 		gd.widthHint = 125;
 		gd.heightHint = 100;
 		fPluginViewer.getTable().setLayoutData(gd);
+		createButtonSection(composite);
 	}
 
 	private void createPropertySheetClient(Composite sashForm) {
@@ -145,7 +151,7 @@ public class TracingBlock {
 		container.setLayout(layout);
 
 		fSelectAllButton = new Button(container, SWT.PUSH);
-		fSelectAllButton.setText(PDEUIMessages.TracingLauncherTab_selectAll);
+		fSelectAllButton.setText(PDEUIMessages.TracingLauncherTab_enableAll);
 		fSelectAllButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fSelectAllButton);
 		fSelectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
@@ -155,7 +161,7 @@ public class TracingBlock {
 		}));
 
 		fDeselectAllButton = new Button(container, SWT.PUSH);
-		fDeselectAllButton.setText(PDEUIMessages.TracinglauncherTab_deselectAll);
+		fDeselectAllButton.setText(PDEUIMessages.TracinglauncherTab_disableAll);
 		fDeselectAllButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fDeselectAllButton);
 		fDeselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
@@ -163,6 +169,74 @@ public class TracingBlock {
 			pluginSelected(getSelectedModel(), false);
 			fTab.updateLaunchConfigurationDialog();
 		}));
+	}
+
+	private void createRestoreButtonSection(Composite parent) {
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		container.setLayout(layout);
+
+		fRestoreSelectedDefaultButton = new Button(container, SWT.PUSH);
+		fRestoreSelectedDefaultButton.setText(PDEUIMessages.TracingBlock_restore_default_selected);
+		fRestoreSelectedDefaultButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		SWTUtil.setButtonDimensionHint(fRestoreSelectedDefaultButton);
+		fRestoreSelectedDefaultButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ISelection selec = fPluginViewer.getSelection();
+				if (selec instanceof StructuredSelection) {
+					if (((StructuredSelection) selec).getFirstElement() instanceof IPluginModelBase) {
+						IPluginModelBase model = (IPluginModelBase) ((StructuredSelection) selec).getFirstElement();
+						String modelName = model.getBundleDescription().getSymbolicName();
+						if (modelName != null) {
+							Properties properties = PDECore.getDefault().getTracingOptionsManager()
+									.getTracingTemplateCopy();
+							for (String key : properties.stringPropertyNames()) {
+								if (key.startsWith(modelName + '/')) {
+									fMasterOptions.remove(key);
+									fMasterOptions.put(key, properties.getProperty(key));
+									TracingPropertySource source = getPropertySource(model);
+									source.setChanged(true);
+								}
+							}
+							pluginSelected(model, fPluginViewer.getChecked(model));
+						}
+					}
+				}
+			}
+		});
+
+		fRestoreDefaultButton = new Button(container, SWT.PUSH);
+		fRestoreDefaultButton.setText(PDEUIMessages.TracingBlock_restore_default);
+		fRestoreDefaultButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		SWTUtil.setButtonDimensionHint(fRestoreDefaultButton);
+		fRestoreDefaultButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				disposePropertySources();
+				fMasterOptions.clear();
+				fMasterOptions.putAll(PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy());
+				Object elements[] = fPluginViewer.getCheckedElements();
+				for (int i = 0; i < elements.length; i++) {
+					if (elements[i] instanceof IPluginModelBase) {
+						IPluginModelBase model = (IPluginModelBase) (elements[i]);
+						TracingPropertySource source = getPropertySource(model);
+						PageBookKey key = new PageBookKey(model, true);
+						Composite parent = fPageBook.createPage(key);
+						source.createContents(parent, true);
+						source.setChanged(false);
+					}
+				}
+				ISelection selec = fPluginViewer.getSelection();
+				if (selec instanceof StructuredSelection) {
+					if (((StructuredSelection) selec).getFirstElement() instanceof IPluginModelBase) {
+						IPluginModelBase model = (IPluginModelBase) ((StructuredSelection) selec).getFirstElement();
+						pluginSelected(model, fPluginViewer.getChecked(model));
+					}
+				}
+			}
+		});
 	}
 
 	protected int createPropertySheet(Composite parent) {
@@ -179,6 +253,8 @@ public class TracingBlock {
 
 		fPageBook = new ScrolledPageBook(container, style | SWT.V_SCROLL | SWT.H_SCROLL);
 		fToolkit.adapt(fPageBook, false, false);
+
+		createRestoreButtonSection(parent);
 
 		if (style == SWT.NULL) {
 			fPageBook.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
@@ -308,9 +384,10 @@ public class TracingBlock {
 			fPageBook.showEmptyPage();
 		} else {
 			PageBookKey key = new PageBookKey(model, checked);
-			if (!fPageBook.hasPage(key)) {
+			if (!fPageBook.hasPage(key) || source.isChanged()) {
 				Composite parent = fPageBook.createPage(key);
 				source.createContents(parent, checked);
+				source.setChanged(false);
 			}
 			fPageBook.showPage(key);
 		}
@@ -372,6 +449,7 @@ public class TracingBlock {
 			Hashtable<?, ?> defaults = PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
 			source = new TracingPropertySource(model, fMasterOptions, defaults, this);
 			fPropertySources.put(model, source);
+			source.setChanged(true);
 		}
 		return source;
 	}
@@ -388,6 +466,11 @@ public class TracingBlock {
 		}
 		fSelectAllButton.setEnabled(enabled);
 		fDeselectAllButton.setEnabled(enabled);
+		fRestoreDefaultButton.setEnabled(enabled);
+		fRestoreSelectedDefaultButton.setEnabled(!fPluginViewer.getSelection().isEmpty());
+		if (enabled == false) {
+			fRestoreSelectedDefaultButton.setEnabled(false);
+		}
 	}
 
 	private void disposePropertySources() {

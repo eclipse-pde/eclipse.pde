@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2016 IBM Corporation and others.
+ * Copyright (c) 2014, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1009,10 +1009,13 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedFeatureExportPage_jreVersion;
 	public static String AdvancedPluginExportPage_qualifier;
 
+	public static String TracingBlock_restore_default;
+	public static String TracingBlock_restore_default_selected;
+
 	public static String TracingLauncherTab_name;
 	public static String TracingLauncherTab_tracing;
-	public static String TracingLauncherTab_selectAll;
-	public static String TracinglauncherTab_deselectAll;
+	public static String TracingLauncherTab_enableAll;
+	public static String TracinglauncherTab_disableAll;
 
 	public static String ConfigurationTab_name;
 	public static String ConfigurationTab_clearArea;

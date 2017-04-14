@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,10 @@ public class TracingPropertySource {
 	private static final String[] fBooleanChoices = {"false", "true"}; //$NON-NLS-1$ //$NON-NLS-2$
 	private Properties fMasterOptions;
 	private boolean fModified;
+	
+	// the flag fChanged is used to determine whether the model's content page
+	// should be recreated
+	private boolean fChanged;
 	private TracingBlock fBlock;
 
 	private abstract class PropertyEditor {
@@ -62,6 +66,7 @@ public class TracingPropertySource {
 		protected void valueModified(Object value) {
 			fValues.put(getKey(), value);
 			fModified = true;
+			fChanged = true;
 			fBlock.getTab().scheduleUpdateJob();
 		}
 
@@ -149,6 +154,8 @@ public class TracingPropertySource {
 				int value = checkbox.getSelection() ? 1 : 0;
 				valueModified(Integer.valueOf(value));
 			}));
+			int value = checkbox.getSelection() ? 1 : 0;
+			valueModified(Integer.valueOf(value));
 		}
 	}
 
@@ -183,6 +190,7 @@ public class TracingPropertySource {
 		public void initialize() {
 			update();
 			text.addModifyListener(e -> valueModified(text.getText()));
+			valueModified(text.getText());
 		}
 	}
 
@@ -281,5 +289,13 @@ public class TracingPropertySource {
 
 	public boolean isModified() {
 		return fModified;
+	}
+
+	public boolean isChanged() {
+		return fChanged;
+	}
+
+	public void setChanged(boolean isChanged) {
+		fChanged = isChanged;
 	}
 }
