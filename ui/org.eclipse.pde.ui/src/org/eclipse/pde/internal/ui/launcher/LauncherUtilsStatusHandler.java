@@ -161,7 +161,10 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 		final int[] result = new int[1];
 		getDisplay().syncExec(() -> {
 			String title = PDEUIMessages.LauncherUtils_title;
-			MessageDialog dialog = new MessageDialog(getActiveShell(), title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
+			MessageDialog dialog = new MessageDialog(getActiveShell(), title, null, message, MessageDialog.QUESTION, 0,
+					PDEUIMessages.WorkbenchLauncherConfigurationDelegate_clearButtonLabel,
+					PDEUIMessages.WorkbenchLauncherConfigurationDelegate_dontClearButtonLabel,
+					IDialogConstants.CANCEL_LABEL);
 			result[0] = dialog.open();
 		});
 		return Integer.valueOf(result[0]);

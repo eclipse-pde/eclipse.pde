@@ -1039,6 +1039,8 @@ public class PDEUIMessages extends NLS {
 	public static String ConfigurationTab_fileDialogMessage;
 
 	public static String WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace;
+	public static String WorkbenchLauncherConfigurationDelegate_clearButtonLabel;
+	public static String WorkbenchLauncherConfigurationDelegate_dontClearButtonLabel;
 
 	public static String Launcher_error_title;
 	public static String LauncherSection_desc;
