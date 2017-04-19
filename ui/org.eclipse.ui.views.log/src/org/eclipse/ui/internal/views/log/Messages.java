@@ -48,6 +48,7 @@ public class Messages extends NLS {
 	public static String LogView_severity_ok;
 	public static String LogView_confirmDelete_title;
 	public static String LogView_confirmDelete_message;
+	public static String LogView_confirmDelete_deleteButton;
 	public static String LogView_confirmOverwrite_message;
 	public static String LogView_operation_importing;
 	public static String LogView_operation_reloading;

@@ -768,11 +768,16 @@ public class LogView extends ViewPart implements ILogListener {
 			reloadLog();
 	}
 
+
 	private void doDeleteLog() {
 		String title = Messages.LogView_confirmDelete_title;
 		String message = Messages.LogView_confirmDelete_message;
-		if (!MessageDialog.openConfirm(fTree.getShell(), title, message))
+		int open = MessageDialog.open(MessageDialog.CONFIRM, fTree.getShell(), title, message, SWT.SHEET,
+				Messages.LogView_confirmDelete_deleteButton, IDialogConstants.CANCEL_LABEL);
+
+		if (open != Window.OK) {
 			return;
+		}
 		if (fInputFile.delete() || elements.size() > 0) {
 			handleClear();
 		}
