@@ -532,6 +532,11 @@ public class LayoutSpyDialog {
 			builder.append(child.getClass().getName());
 			builder.append("\n\n"); //$NON-NLS-1$
 
+			Object data = child.getData();
+			if (data != null) {
+				builder.append("getData() == " + data + "\n\n"); //$NON-NLS-1$//$NON-NLS-2$
+			}
+
 			int widthHintFromLayoutData = UNKNOWN;
 			int heightHintFromLayoutData = UNKNOWN;
 			Object layoutData = child.getLayoutData();
@@ -556,10 +561,10 @@ public class LayoutSpyDialog {
 					}
 				}
 			} else if (layoutData instanceof FormData) {
-				FormData data = (FormData) layoutData;
+				FormData formData = (FormData) layoutData;
 
-				widthHintFromLayoutData = data.width;
-				heightHintFromLayoutData = data.height;
+				widthHintFromLayoutData = formData.width;
+				heightHintFromLayoutData = formData.height;
 			} else {
 				describeObject(builder, "data", layoutData); //$NON-NLS-1$
 			}
