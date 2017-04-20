@@ -36,8 +36,10 @@ public class PreferenceMessages extends NLS {
 	public static String ApiProfilesPreferencePage_2;
 	public static String ApiProfilesPreferencePage_3;
 	public static String ApiProfilesPreferencePage_4;
-	public static String ApiProfilesPreferencePage_6;
-	public static String ApiProfilesPreferencePage_7;
+	public static String ApiProfilesPreferencePage_QuestionDialog_Title;
+	public static String ApiProfilesPreferencePage_QuestionDialog_Text;
+	public static String ApiProfilesPreferencePage_QuestionDialog_buildButtonLabel;
+	public static String ApiProfilesPreferencePage_QuestionDialog_dontBuildButtonLabel;
 	public static String ApiToolingNotificationsBlock_0;
 	public static String ApiToolingNotificationsBlock_1;
 	public static String ApiToolingNotificationsBlock_2;

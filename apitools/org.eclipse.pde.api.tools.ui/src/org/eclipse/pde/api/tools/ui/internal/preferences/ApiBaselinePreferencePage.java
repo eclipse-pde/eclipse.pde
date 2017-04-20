@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
@@ -361,7 +362,12 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 				IProject[] projects = Util.getApiProjects();
 				// do not even ask if there are no projects to build
 				if (projects != null) {
-					if (MessageDialog.openQuestion(getShell(), PreferenceMessages.ApiProfilesPreferencePage_6, PreferenceMessages.ApiProfilesPreferencePage_7)) {
+					int open = MessageDialog.open(MessageDialog.QUESTION, getShell(),
+							PreferenceMessages.ApiProfilesPreferencePage_QuestionDialog_Title,
+							PreferenceMessages.ApiProfilesPreferencePage_QuestionDialog_Text, SWT.NONE,
+							PreferenceMessages.ApiProfilesPreferencePage_QuestionDialog_buildButtonLabel,
+							PreferenceMessages.ApiProfilesPreferencePage_QuestionDialog_dontBuildButtonLabel);
+					if (open == Window.OK) {
 						Util.getBuildJob(projects).schedule();
 					}
 				}
