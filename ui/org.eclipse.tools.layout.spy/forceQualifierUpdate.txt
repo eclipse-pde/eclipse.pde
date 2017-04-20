@@ -1,0 +1,1 @@
+Bug 503393 - Move SWT layout spy to separate plug-in to remove PDE dependency for RCP apps 
