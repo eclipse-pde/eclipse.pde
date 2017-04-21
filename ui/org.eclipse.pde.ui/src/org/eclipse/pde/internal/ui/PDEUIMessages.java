@@ -31,6 +31,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AbstractTargetPage_setTarget;
 
+	public static String AbstractTargetPage_reloadTarget;
+
 	public static String AddActivationHeaderResolution_label;
 
 	public static String AddLibraryDialog_nospaces;

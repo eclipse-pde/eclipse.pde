@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.shared.target.*;
@@ -56,6 +56,7 @@ public class TargetEditor extends FormEditor {
 	private InputHandler fInputHandler = new InputHandler();
 	private TargetChangedListener fTargetChangedListener;
 	private boolean fDirty;
+	private ImageHyperlink hyperlink = null;
 
 	@Override
 	protected FormToolkit createToolkit(Display display) {
@@ -206,14 +207,44 @@ public class TargetEditor extends FormEditor {
 		ControlContribution setAsTarget = new ControlContribution("Set") { //$NON-NLS-1$
 			@Override
 			protected Control createControl(Composite parent) {
-				final ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE | SWT.NO_FOCUS);
-				hyperlink.setText(PDEUIMessages.AbstractTargetPage_setTarget);
+				PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+				String mementoPref = null;
+				String memento = null;
+				String hyperLinkText = PDEUIMessages.AbstractTargetPage_setTarget;
+				mementoPref = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+				try {
+					memento = getTarget().getHandle().getMemento();
+				} catch (CoreException e) {
+				}
+				if (mementoPref != null && memento != null) {
+					if (memento.equals(mementoPref)) {
+						hyperLinkText = PDEUIMessages.AbstractTargetPage_reloadTarget;
+					}
+				}
+
+				hyperlink = new ImageHyperlink(parent, SWT.NONE | SWT.NO_FOCUS);
+
+				hyperlink.setText(hyperLinkText);
 				hyperlink.setUnderlined(true);
 				hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
 				hyperlink.addHyperlinkListener(new IHyperlinkListener() {
 					@Override
 					public void linkActivated(HyperlinkEvent e) {
+						IEditorPart editorPart = TargetEditor.this;
+						IWorkbenchPage page = editorPart.getSite().getPage();
+						if (TargetEditor.this.isDirty())
+							page.saveEditor(editorPart, true);
 						LoadTargetDefinitionJob.load(getTarget());
+						hyperlink.setText(PDEUIMessages.AbstractTargetPage_reloadTarget);
+						// update other target editors ( if any)
+						for (Object value : WorkspaceFileTargetHandle.mapFileTarget.values()) {
+							if (value instanceof TargetEditor) {
+								TargetEditor tarEditor = (TargetEditor) value;
+								if (!tarEditor.equals(TargetEditor.this)) {
+									tarEditor.updateHyperlinkText(PDEUIMessages.AbstractTargetPage_setTarget);
+								}
+							}
+						}
 					}
 
 					@Override
@@ -357,6 +388,9 @@ public class TargetEditor extends FormEditor {
 				if (fInput instanceof IFileEditorInput) {
 					ITargetHandle fileHandle = service.getTarget(((IFileEditorInput) fInput).getFile());
 					fTarget = fileHandle.getTargetDefinition();
+					if (fileHandle instanceof WorkspaceFileTargetHandle) {
+						((WorkspaceFileTargetHandle) fileHandle).setWorkspaceEditor(TargetEditor.this);
+					}
 				} else if (fInput instanceof IURIEditorInput) {
 					ITargetHandle externalTarget = service.getTarget(((IURIEditorInput) fInput).getURI());
 					fTarget = externalTarget.getTargetDefinition();
@@ -503,6 +537,12 @@ public class TargetEditor extends FormEditor {
 				resolveJob.schedule();
 			}
 		}
+	}
+
+	public void updateHyperlinkText(String s) {
+		if (hyperlink != null && hyperlink.isDisposed())
+			return;
+		hyperlink.setText(s);
 	}
 
 }
