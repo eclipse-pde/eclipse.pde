@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Rapicorp Corporation and others.
+ * Copyright (c) 2014, 2017 Rapicorp Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,11 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -97,10 +97,22 @@ public class ConvertPreferencesWizard extends Wizard {
 					try {
 						BufferedReader in = new BufferedReader(new FileReader(sourceFilePath));
 						// Build properties from the EPF file, ignoring any scope strings.
-						Properties properties = new Properties();
+						LinkedHashMap<String, String> properties = new LinkedHashMap<>();
+						HashMap<String, String> mapKeyCommentPreference = new HashMap<>();
 						try {
+							String comment = null;
 							String line1;
 							while ((line1 = in.readLine()) != null) {
+								if (line1.startsWith("#")) {//$NON-NLS-1$
+									comment = (comment == null) ? line1 : comment.concat(line1);
+									comment = comment.concat(System.lineSeparator());
+									continue;
+								}
+								if (line1.equals("")) {//$NON-NLS-1$
+									comment = (comment != null) ? comment.concat(System.lineSeparator())
+											: "".concat(System.lineSeparator());//$NON-NLS-1$
+									continue;
+								}
 								// ignore any lines that don't start with a separator
 								if (line1.length() > 0 && line1.charAt(0) == IPath.SEPARATOR) {
 									// find next separator so that we are skipping a scope such as /instance/ or /configuration/
@@ -111,6 +123,8 @@ public class ConvertPreferencesWizard extends Wizard {
 											String key1 = line1.substring(index1 + 1, keyIndex).trim();
 											String value1 = line1.substring(keyIndex + 1).trim();
 											properties.put(key1, value1);
+											mapKeyCommentPreference.put(key1, comment);
+											comment = null;
 										}
 									}
 								}
@@ -138,20 +152,50 @@ public class ConvertPreferencesWizard extends Wizard {
 							if (!fOverwrite) {
 								BufferedReader existingFile = new BufferedReader(new InputStreamReader(customizationFile.getContents()));
 								try {
-									String line2;
-									while ((line2 = existingFile.readLine()) != null) {
-										int index2 = line2.indexOf('=');
-										if (index2 > 1) {
-											String key2 = line2.substring(0, index2).trim();
+									String line;
+									String comment = null;
+									while ((line = existingFile.readLine()) != null) {
+										if (line.startsWith("#")) {//$NON-NLS-1$
+											comment = (comment == null) ? line : comment.concat(line);
+											comment = comment.concat(System.lineSeparator());
+											continue;
+										}
+										if (line.equals("")) {//$NON-NLS-1$
+											comment = (comment != null) ? comment.concat(System.lineSeparator())
+													: "".concat(System.lineSeparator());//$NON-NLS-1$
+											continue;
+										}
+										int index = line.indexOf('=');
+										if (index > 1) {
+											String key = line.substring(0, index).trim();
 											// If this key is not in the new preferences, then we want to preserve it.
 											// If it is in the preferences, we'll be picking up the new value.
-											if (!properties.containsKey(key2)) {
-												out.append(line2);
+											if (!properties.containsKey(key)) {
+												if (comment != null)
+													out.append(comment);
+												out.append(line);
 												out.append('\n');
+												comment = null;
+											}
+											else {
+												// put current comment
+												if (comment != null)
+													out.append(comment);
+												// put comment from epf file
+												String comment2 = null;
+												comment2 = mapKeyCommentPreference.get(key);
+												if (comment2 != null)
+													out.append(comment2);
+												// get the value from epf file
+												Object value = properties.get(key);
+												out.append(key + "=" + value); //$NON-NLS-1$
+												out.append('\n');
+												properties.remove(key);
+												comment = null;
 											}
 										} else {
 											PDEPlugin.log(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_skippedInvalidLine, fPreferencesFilePath));
-											PDEPlugin.log("    " + line2); //$NON-NLS-1$
+											PDEPlugin.log("    " + line); //$NON-NLS-1$
 										}
 									}
 								} finally {
@@ -159,11 +203,15 @@ public class ConvertPreferencesWizard extends Wizard {
 								}
 							}
 							monitor.worked(20);
-							Enumeration<Object> keys = properties.keys();
-							while (keys.hasMoreElements()) {
-								Object key3 = keys.nextElement();
-								Object value2 = properties.get(key3);
-								out.append(key3 + "=" + value2); //$NON-NLS-1$
+							Iterator<String> it = properties.keySet().iterator();
+							while (it.hasNext()) {
+								Object key = it.next();
+								String comment = null;
+								comment = mapKeyCommentPreference.get(key);
+								if (comment != null)
+									out.append(comment);
+								Object value = properties.get(key);
+								out.append(key + "=" + value); //$NON-NLS-1$
 								out.append('\n');
 							}
 							// now write the (possibly merged) values from the string builder to the file
