@@ -27,7 +27,6 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -81,7 +80,7 @@ public class BuildPathMarkerResolutionGenerator implements IMarkerResolutionGene
 		resolutions[0] = new BuildPathMarkerResolution(
 				Messages.BuildPathMarkerResolutionGenerator_additionalBundleResolution_label,
 				NLS.bind(Messages.BuildPathMarkerResolutionGenerator_additionalBundleResolution_description, libBundle),
-				PDEPlugin.getDefault().getLabelProvider().getImage(PluginRegistry.findModel(libBundle))) {
+				PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ)) {
 			@Override
 			protected ModelModification createModification(IMarker marker) {
 				IProject project = (IProject) marker.getResource();
