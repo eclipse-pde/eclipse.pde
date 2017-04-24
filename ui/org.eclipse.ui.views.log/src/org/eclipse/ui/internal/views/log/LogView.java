@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1358,8 +1358,6 @@ public class LogView extends ViewPart implements ILogListener {
 	private void makeHoverShell() {
 		// parent it off the workbench window's shell so it will be valid regardless of whether the view is a detached window or not
 		fTextShell = new Shell(getSite().getWorkbenchWindow().getShell(), SWT.NO_FOCUS | SWT.ON_TOP | SWT.TOOL);
-		Display display = fTextShell.getDisplay();
-		fTextShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		GridLayout layout = new GridLayout(1, false);
 		int border = ((fTree.getShell().getStyle() & SWT.NO_TRIM) == 0) ? 0 : 1;
 		layout.marginHeight = border;
@@ -1377,10 +1375,6 @@ public class LogView extends ViewPart implements ILogListener {
 		gd.widthHint = 100;
 		gd.grabExcessHorizontalSpace = true;
 		fTextLabel.setLayoutData(gd);
-		Color c = fTree.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-		fTextLabel.setBackground(c);
-		c = fTree.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-		fTextLabel.setForeground(c);
 		fTextLabel.setEditable(false);
 		fTextShell.addDisposeListener(new DisposeListener() {
 			@Override
