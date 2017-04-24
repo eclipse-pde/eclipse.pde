@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 	/**
 	 * The collection of direct children of this entry
 	 */
-	private List children = new ArrayList();
+	private List<AbstractEntry> children = new ArrayList<>();
 	protected Object parent;
 
 	/**
@@ -103,7 +103,7 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 	 *
 	 * @param list the list of children to remove
 	 */
-	public void removeChildren(List list) {
+	public void removeChildren(List<AbstractEntry> list) {
 		children.removeAll(list);
 	}
 

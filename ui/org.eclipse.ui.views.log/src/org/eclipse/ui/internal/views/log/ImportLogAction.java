@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,7 +150,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 	 * @return list of all actions from LogFilesManager
 	 */
 	private ImportConfigurationLogAction[] getLogActions() {
-		List result = new ArrayList();
+		List<ImportConfigurationLogAction> result = new ArrayList<>();
 		Map sources = LogFilesManager.getLogSources();
 
 		for (Iterator j = sources.keySet().iterator(); j.hasNext();) {
@@ -159,7 +159,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 			result.add(new ImportConfigurationLogAction(name, location));
 		}
 
-		return (ImportConfigurationLogAction[]) result.toArray(new ImportConfigurationLogAction[result.size()]);
+		return result.toArray(new ImportConfigurationLogAction[result.size()]);
 	}
 
 	/**

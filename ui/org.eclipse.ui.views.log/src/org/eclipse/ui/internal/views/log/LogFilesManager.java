@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class LogFilesManager {
 
-	private static List logFileProviders = new ArrayList();
+	private static List<ILogFileProvider> logFileProviders = new ArrayList<>();
 
 	/**
 	 * Adds log file provider.
@@ -43,7 +43,7 @@ public class LogFilesManager {
 	 * Returns the list of logs.
 	 */
 	static Map getLogSources() {
-		ILogFileProvider[] providers = (ILogFileProvider[]) logFileProviders.toArray(new ILogFileProvider[logFileProviders.size()]);
+		ILogFileProvider[] providers = logFileProviders.toArray(new ILogFileProvider[logFileProviders.size()]);
 		Map result = new HashMap(providers.length);
 
 		for (ILogFileProvider provider : providers) {

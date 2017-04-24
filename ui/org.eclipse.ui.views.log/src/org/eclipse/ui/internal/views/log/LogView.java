@@ -23,6 +23,7 @@ import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -97,11 +98,11 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final int GROUP_BY_SESSION = 1;
 	public static final int GROUP_BY_PLUGIN = 2;
 
-	private List elements;
-	private Map groups;
+	private List<AbstractEntry> elements;
+	private Map<Object, Group> groups;
 	private LogSession currentSession;
 
-	private List batchedEntries;
+	private List<LogEntry> batchedEntries;
 	private boolean batchEntries;
 
 	private Clipboard fClipboard;
@@ -166,9 +167,9 @@ public class LogView extends ViewPart implements ILogListener {
 	 * Constructor
 	 */
 	public LogView() {
-		elements = new ArrayList();
-		groups = new HashMap();
-		batchedEntries = new ArrayList();
+		elements = new ArrayList<>();
+		groups = new HashMap<>();
+		batchedEntries = new ArrayList<>();
 		fInputFile = Platform.getLogFileLocation().toFile();
 	}
 
@@ -283,31 +284,28 @@ public class LogView extends ViewPart implements ILogListener {
 		fPropertiesAction = createPropertiesAction();
 
 		MenuManager popupMenuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-		IMenuListener listener = new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				manager.add(fCopyAction);
-				manager.add(new Separator(LOG_ENTRY_GROUP));
-				clearAction.setEnabled(!(elements.size() == 0 && groups.size() == 0));
-				manager.add(clearAction);
-				manager.add(fDeleteLogAction);
-				manager.add(fOpenLogAction);
-				manager.add(fReadLogAction);
-				manager.add(new Separator());
-				manager.add(fExportLogAction);
-				manager.add(createImportLogAction());
-				manager.add(new Separator());
-				manager.add(fExportLogEntryAction);
-				manager.add(new Separator());
+		IMenuListener listener = manager -> {
+			manager.add(fCopyAction);
+			manager.add(new Separator(LOG_ENTRY_GROUP));
+			clearAction.setEnabled(!(elements.size() == 0 && groups.size() == 0));
+			manager.add(clearAction);
+			manager.add(fDeleteLogAction);
+			manager.add(fOpenLogAction);
+			manager.add(fReadLogAction);
+			manager.add(new Separator());
+			manager.add(fExportLogAction);
+			manager.add(createImportLogAction());
+			manager.add(new Separator());
+			manager.add(fExportLogEntryAction);
+			manager.add(new Separator());
 
-				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
-				TreeItem[] selection = fTree.getSelection();
-				if ((selection.length > 0) && (selection[0].getData() instanceof LogEntry)) {
-					manager.add(fPropertiesAction);
-				}
-
-				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+			((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
+			TreeItem[] selection = fTree.getSelection();
+			if ((selection.length > 0) && (selection[0].getData() instanceof LogEntry)) {
+				manager.add(fPropertiesAction);
 			}
+
+			manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		};
 		popupMenuManager.addMenuListener(listener);
 		popupMenuManager.setRemoveAllWhenShown(true);
@@ -553,20 +551,14 @@ public class LogView extends ViewPart implements ILogListener {
 		fFilteredTree.getViewer().setContentProvider(new LogViewContentProvider(this));
 		fFilteredTree.getViewer().setLabelProvider(fLabelProvider = new LogViewLabelProvider(this));
 		fLabelProvider.connect(this);
-		fFilteredTree.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent e) {
-				handleSelectionChanged(e.getSelection());
-				if (fPropertiesAction.isEnabled())
-					((EventDetailsDialogAction) fPropertiesAction).resetSelection();
-			}
+		fFilteredTree.getViewer().addSelectionChangedListener(e -> {
+			handleSelectionChanged(e.getSelection());
+			if (fPropertiesAction.isEnabled())
+				((EventDetailsDialogAction) fPropertiesAction).resetSelection();
 		});
-		fFilteredTree.getViewer().addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
-				fPropertiesAction.run();
-			}
+		fFilteredTree.getViewer().addDoubleClickListener(event -> {
+			((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
+			fPropertiesAction.run();
 		});
 		fFilteredTree.getViewer().setInput(this);
 		addMouseListeners();
@@ -701,12 +693,9 @@ public class LogView extends ViewPart implements ILogListener {
 	protected void setLogFile(File path) {
 		fInputFile = path;
 		fDirectory = fInputFile.getParent();
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				monitor.beginTask(Messages.LogView_operation_importing, IProgressMonitor.UNKNOWN);
-				readLogFile();
-			}
+		IRunnableWithProgress op = monitor -> {
+			monitor.beginTask(Messages.LogView_operation_importing, IProgressMonitor.UNKNOWN);
+			readLogFile();
 		};
 		ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
 		try {
@@ -739,12 +728,13 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 
 			BufferedReader in = null;
-			BufferedWriter out = null;
-			try {
-				out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8")); //$NON-NLS-1$
-				if (exportWholeLog)
-					in = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile), "UTF-8")); //$NON-NLS-1$
-				else {
+			try (BufferedWriter out = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8));) {
+				// $NON-NLS-1$
+				if (exportWholeLog) {
+					in = new BufferedReader(
+							new InputStreamReader(new FileInputStream(fInputFile), StandardCharsets.UTF_8));
+				} else {
 					String selectedEntryAsString = selectionToString(fFilteredTree.getViewer().getSelection());
 					in = new BufferedReader(new StringReader(selectedEntryAsString));
 				}
@@ -755,12 +745,6 @@ public class LogView extends ViewPart implements ILogListener {
 				try {
 					if (in != null)
 						in.close();
-				} catch (IOException e) {
-					// do nothing
-				}
-				try {
-					if (out != null)
-						out.close();
 				} catch (IOException e) {
 					// do nothing
 				}
@@ -798,21 +782,18 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	public AbstractEntry[] getElements() {
-		return (AbstractEntry[]) elements.toArray(new AbstractEntry[elements.size()]);
+		return elements.toArray(new AbstractEntry[elements.size()]);
 	}
 
 	protected void handleClear() {
-		BusyIndicator.showWhile(fTree.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				elements.clear();
-				groups.clear();
-				if (currentSession != null) {
-					currentSession.removeAllChildren();
-				}
-				asyncRefresh(false);
-				resetDialogButtons();
+		BusyIndicator.showWhile(fTree.getDisplay(), () -> {
+			elements.clear();
+			groups.clear();
+			if (currentSession != null) {
+				currentSession.removeAllChildren();
 			}
+			asyncRefresh(false);
+			resetDialogButtons();
 		});
 	}
 
@@ -820,12 +801,9 @@ public class LogView extends ViewPart implements ILogListener {
 	 * Reloads the log
 	 */
 	protected void reloadLog() {
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				monitor.beginTask(Messages.LogView_operation_reloading, IProgressMonitor.UNKNOWN);
-				readLogFile();
-			}
+		IRunnableWithProgress op = monitor -> {
+			monitor.beginTask(Messages.LogView_operation_reloading, IProgressMonitor.UNKNOWN);
+			readLogFile();
 		};
 		ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
 		try {
@@ -847,7 +825,7 @@ public class LogView extends ViewPart implements ILogListener {
 		elements.clear();
 		groups.clear();
 
-		List result = new ArrayList();
+		List<LogEntry> result = new ArrayList<>();
 		LogSession lastLogSession = LogReader.parseLogFile(this.fInputFile, getLogMaxTailSize(), result, this.fMemento);
 		if (lastLogSession != null && (lastLogSession.getDate() == null || isEclipseStartTime(lastLogSession.getDate()))) {
 			currentSession = lastLogSession;
@@ -858,12 +836,7 @@ public class LogView extends ViewPart implements ILogListener {
 		group(result);
 		limitEntriesCount();
 
-		getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				setContentDescription(getTitleSummary());
-			}
-		});
+		getSite().getShell().getDisplay().asyncExec(() -> setContentDescription(getTitleSummary()));
 
 	}
 
@@ -905,12 +878,12 @@ public class LogView extends ViewPart implements ILogListener {
 	 * Add new entries to correct groups in the view.
 	 * @param entries new entries to show up in groups in the view.
 	 */
-	private void group(List entries) {
+	private void group(List<LogEntry> entries) {
 		if (fMemento.getInteger(P_GROUP_BY).intValue() == GROUP_BY_NONE) {
 			elements.addAll(entries);
 		} else {
-			for (Iterator i = entries.iterator(); i.hasNext();) {
-				LogEntry entry = (LogEntry) i.next();
+			for (Iterator<LogEntry> i = entries.iterator(); i.hasNext();) {
+				LogEntry entry = i.next();
 				Group group = getGroup(entry);
 				group.addChild(entry);
 			}
@@ -932,34 +905,31 @@ public class LogView extends ViewPart implements ILogListener {
 		if (entriesCount <= limit) {
 			return;
 		}
-		Comparator dateComparator = new Comparator() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				Date l1 = ((LogEntry) o1).getDate();
-				Date l2 = ((LogEntry) o2).getDate();
-				if ((l1 != null) && (l2 != null)) {
-					return l1.before(l2) ? -1 : 1;
-				} else if ((l1 == null) && (l2 == null)) {
-					return 0;
-				} else
-					return (l1 == null) ? -1 : 1;
-			}
+		Comparator<LogEntry> dateComparator = (o1, o2) -> {
+			Date l1 = o1.getDate();
+			Date l2 = o2.getDate();
+			if ((l1 != null) && (l2 != null)) {
+				return l1.before(l2) ? -1 : 1;
+			} else if ((l1 == null) && (l2 == null)) {
+				return 0;
+			} else
+				return (l1 == null) ? -1 : 1;
 		};
 
 		if (fMemento.getInteger(P_GROUP_BY).intValue() == GROUP_BY_NONE) {
 			elements.subList(0, elements.size() - limit).clear();
 		} else {
 			List copy = new ArrayList(entriesCount);
-			for (Iterator i = elements.iterator(); i.hasNext();) {
-				AbstractEntry group = (AbstractEntry) i.next();
+			for (Iterator<AbstractEntry> i = elements.iterator(); i.hasNext();) {
+				AbstractEntry group = i.next();
 				copy.addAll(Arrays.asList(group.getChildren(group)));
 			}
 
 			Collections.sort(copy, dateComparator);
 			List toRemove = copy.subList(0, copy.size() - limit);
 
-			for (Iterator i = elements.iterator(); i.hasNext();) {
-				AbstractEntry group = (AbstractEntry) i.next();
+			for (Iterator<AbstractEntry> i = elements.iterator(); i.hasNext();) {
+				AbstractEntry group = i.next();
 				group.removeChildren(toRemove);
 			}
 		}
@@ -971,8 +941,8 @@ public class LogView extends ViewPart implements ILogListener {
 			return elements.size();
 		}
 		int size = 0;
-		for (Iterator i = elements.iterator(); i.hasNext();) {
-			AbstractEntry group = (AbstractEntry) i.next();
+		for (Iterator<AbstractEntry> i = elements.iterator(); i.hasNext();) {
+			AbstractEntry group = i.next();
 			size += group.size();
 		}
 		return size;
@@ -1009,7 +979,7 @@ public class LogView extends ViewPart implements ILogListener {
 			return null;
 		}
 
-		Group group = (Group) groups.get(elementGroupId);
+		Group group = groups.get(elementGroupId);
 		if (group == null) {
 			if (groupBy == GROUP_BY_SESSION) {
 				group = entry.getSession();
@@ -1062,7 +1032,7 @@ public class LogView extends ViewPart implements ILogListener {
 			protected IStatus run(IProgressMonitor monitor) {
 				for (int i = 0; i < batchedEntries.size(); i++) {
 					if (!monitor.isCanceled()) {
-						LogEntry entry = (LogEntry) batchedEntries.get(i);
+						LogEntry entry = batchedEntries.get(i);
 						pushEntry(entry);
 						batchedEntries.remove(i);
 					}
@@ -1102,24 +1072,22 @@ public class LogView extends ViewPart implements ILogListener {
 		Display display = fTree.getDisplay();
 		final ViewPart view = this;
 		if (display != null) {
-			display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!fTree.isDisposed()) {
-						TreeViewer viewer = fFilteredTree.getViewer();
-						viewer.refresh();
-						viewer.expandToLevel(2);
-						fDeleteLogAction.setEnabled(fInputFile.exists() && fInputFile.equals(Platform.getLogFileLocation().toFile()));
-						fOpenLogAction.setEnabled(fInputFile.exists());
-						fExportLogAction.setEnabled(fInputFile.exists());
-						fExportLogEntryAction.setEnabled(!viewer.getSelection().isEmpty());
-						if (activate && fActivateViewAction.isChecked()) {
-							IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-							if (window != null) {
-								IWorkbenchPage page = window.getActivePage();
-								if (page != null) {
-									page.bringToTop(view);
-								}
+			display.asyncExec(() -> {
+				if (!fTree.isDisposed()) {
+					TreeViewer viewer = fFilteredTree.getViewer();
+					viewer.refresh();
+					viewer.expandToLevel(2);
+					fDeleteLogAction.setEnabled(
+							fInputFile.exists() && fInputFile.equals(Platform.getLogFileLocation().toFile()));
+					fOpenLogAction.setEnabled(fInputFile.exists());
+					fExportLogAction.setEnabled(fInputFile.exists());
+					fExportLogEntryAction.setEnabled(!viewer.getSelection().isEmpty());
+					if (activate && fActivateViewAction.isChecked()) {
+						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						if (window != null) {
+							IWorkbenchPage page = window.getActivePage();
+							if (page != null) {
+								page.bringToTop(view);
 							}
 						}
 					}
@@ -1179,21 +1147,17 @@ public class LogView extends ViewPart implements ILogListener {
 	 * @return textual log entry representation or null if selection doesn't contain log entry
 	 */
 	private static String selectionToString(ISelection selection) {
-		StringWriter writer = new StringWriter();
-		PrintWriter pwriter = new PrintWriter(writer);
-		if (selection.isEmpty())
-			return null;
-		AbstractEntry entry = (AbstractEntry) ((IStructuredSelection) selection).getFirstElement();
-		entry.write(pwriter);
-		pwriter.flush();
-		String textVersion = writer.toString();
-		pwriter.close();
-		try {
-			writer.close();
+		String textVersion = null;
+		try (StringWriter writer = new StringWriter(); PrintWriter pwriter = new PrintWriter(writer)) {
+			if (selection.isEmpty())
+				return null;
+			AbstractEntry entry = (AbstractEntry) ((IStructuredSelection) selection).getFirstElement();
+			entry.write(pwriter);
+			pwriter.flush();
+			textVersion = writer.toString();
 		} catch (IOException e) {
 			// empty
 		}
-
 		return textVersion;
 	}
 
@@ -1294,21 +1258,18 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private void addMouseListeners() {
-		Listener tableListener = new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				switch (e.type) {
-					case SWT.MouseExit :
-					case SWT.MouseMove :
-						onMouseMove(e);
-						break;
-					case SWT.MouseHover :
-						onMouseHover(e);
-						break;
-					case SWT.MouseDown :
-						onMouseDown(e);
-						break;
-				}
+		Listener tableListener = e -> {
+			switch (e.type) {
+			case SWT.MouseExit:
+			case SWT.MouseMove:
+				onMouseMove(e);
+				break;
+			case SWT.MouseHover:
+				onMouseHover(e);
+				break;
+			case SWT.MouseDown:
+				onMouseDown(e);
+				break;
 			}
 		};
 		int[] tableEvents = new int[] {SWT.MouseDown, SWT.MouseMove, SWT.MouseHover, SWT.MouseExit};
@@ -1376,12 +1337,7 @@ public class LogView extends ViewPart implements ILogListener {
 		gd.grabExcessHorizontalSpace = true;
 		fTextLabel.setLayoutData(gd);
 		fTextLabel.setEditable(false);
-		fTextShell.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				onTextShellDispose(e);
-			}
-		});
+		fTextShell.addDisposeListener(e -> onTextShellDispose(e));
 	}
 
 	void onTextShellDispose(DisposeEvent e) {
@@ -1469,52 +1425,43 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private void setComparator(byte sortType) {
 		if (sortType == DATE) {
-			fComparator = new Comparator() {
-				@Override
-				public int compare(Object e1, Object e2) {
-					long date1 = 0;
-					long date2 = 0;
-					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
-						date1 = ((LogEntry) e1).getDate().getTime();
-						date2 = ((LogEntry) e2).getDate().getTime();
-					} else if ((e1 instanceof LogSession) && (e2 instanceof LogSession)) {
-						date1 = ((LogSession) e1).getDate() == null ? 0 : ((LogSession) e1).getDate().getTime();
-						date2 = ((LogSession) e2).getDate() == null ? 0 : ((LogSession) e2).getDate().getTime();
-					}
-					if (date1 == date2) {
-						int result = elements.indexOf(e2) - elements.indexOf(e1);
-						if (DATE_ORDER == DESCENDING)
-							result *= DESCENDING;
-						return result;
-					}
-					if (DATE_ORDER == DESCENDING)
-						return date1 > date2 ? DESCENDING : ASCENDING;
-					return date1 < date2 ? DESCENDING : ASCENDING;
+			fComparator = (e1, e2) -> {
+				long date1 = 0;
+				long date2 = 0;
+				if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
+					date1 = ((LogEntry) e1).getDate().getTime();
+					date2 = ((LogEntry) e2).getDate().getTime();
+				} else if ((e1 instanceof LogSession) && (e2 instanceof LogSession)) {
+					date1 = ((LogSession) e1).getDate() == null ? 0 : ((LogSession) e1).getDate().getTime();
+					date2 = ((LogSession) e2).getDate() == null ? 0 : ((LogSession) e2).getDate().getTime();
 				}
+				if (date1 == date2) {
+					int result = elements.indexOf(e2) - elements.indexOf(e1);
+					if (DATE_ORDER == DESCENDING)
+						result *= DESCENDING;
+					return result;
+				}
+				if (DATE_ORDER == DESCENDING)
+					return date1 > date2 ? DESCENDING : ASCENDING;
+				return date1 < date2 ? DESCENDING : ASCENDING;
 			};
 		} else if (sortType == PLUGIN) {
-			fComparator = new Comparator() {
-				@Override
-				public int compare(Object e1, Object e2) {
-					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
-						LogEntry entry1 = (LogEntry) e1;
-						LogEntry entry2 = (LogEntry) e2;
-						return getDefaultComparator().compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
-					}
-					return 0;
+			fComparator = (e1, e2) -> {
+				if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
+					LogEntry entry1 = (LogEntry) e1;
+					LogEntry entry2 = (LogEntry) e2;
+					return getDefaultComparator().compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
 				}
+				return 0;
 			};
 		} else {
-			fComparator = new Comparator() {
-				@Override
-				public int compare(Object e1, Object e2) {
-					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
-						LogEntry entry1 = (LogEntry) e1;
-						LogEntry entry2 = (LogEntry) e2;
-						return getDefaultComparator().compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
-					}
-					return 0;
+			fComparator = (e1, e2) -> {
+				if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
+					LogEntry entry1 = (LogEntry) e1;
+					LogEntry entry2 = (LogEntry) e2;
+					return getDefaultComparator().compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
 				}
+				return 0;
 			};
 		}
 	}
@@ -1736,12 +1683,9 @@ public class LogView extends ViewPart implements ILogListener {
 				}
 				if (failed) {
 					final OpenLogDialog openDialog = new OpenLogDialog(shell, fInputFile);
-					Display.getDefault().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							openDialog.create();
-							openDialog.open();
-						}
+					Display.getDefault().asyncExec(() -> {
+						openDialog.create();
+						openDialog.open();
 					});
 				}
 				return Status.OK_STATUS;
