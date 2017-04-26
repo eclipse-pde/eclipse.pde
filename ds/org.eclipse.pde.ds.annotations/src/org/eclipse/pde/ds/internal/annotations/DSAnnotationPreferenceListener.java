@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 public class DSAnnotationPreferenceListener implements IPreferenceChangeListener {
@@ -37,7 +38,9 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 	@Override
 	public void preferenceChange(final PreferenceChangeEvent event) {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
-		if (!ws.isAutoBuilding() && !Activator.PREF_CLASSPATH.equals(event.getKey()) && !Activator.PREF_SPEC_VERSION.equals(event.getKey())) {
+		final boolean autoBuilding = ws.isAutoBuilding();
+		final boolean requiresClasspathUpdate = ProjectClasspathPreferenceChangeListener.requiresClasspathUpdate(event);
+		if (!autoBuilding && !requiresClasspathUpdate) {
 			return;
 		}
 
@@ -53,22 +56,31 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 					}
 				}
 
-				SubMonitor progress = SubMonitor.convert(monitor, Messages.DSAnnotationPreferenceListener_taskName, managedProjects.size());
+				SubMonitor progress = SubMonitor.convert(monitor, Messages.DSAnnotationPreferenceListener_taskName,
+						managedProjects.size() * 2);
 				for (IProject project : managedProjects) {
-					if (Activator.PREF_CLASSPATH.equals(event.getKey())
-							|| Activator.PREF_SPEC_VERSION.equals(event.getKey())
-							|| Activator.PREF_ENABLED.equals(event.getKey())) {
+					if (requiresClasspathUpdate) {
 						ProjectClasspathPreferenceChangeListener.updateClasspathContainer(JavaCore.create(project), progress.newChild(1));
+					} else {
+						progress.worked(1);
 					}
 
-					project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(1));
+					if (autoBuilding) {
+						project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(1));
+					} else {
+						progress.worked(1);
+					}
 				}
 
 				return Status.OK_STATUS;
 			};
 		};
 
-		PlatformUI.getWorkbench().getProgressService().showInDialog(null, job);
+		Display display = Display.getCurrent();
+		if (display != null) {
+			PlatformUI.getWorkbench().getProgressService().showInDialog(display.getActiveShell(), job);
+		}
+
 		job.schedule();
 	}
 

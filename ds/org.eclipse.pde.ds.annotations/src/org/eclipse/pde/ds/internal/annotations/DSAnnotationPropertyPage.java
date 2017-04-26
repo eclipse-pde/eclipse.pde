@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -455,6 +456,11 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		} catch (BackingStoreException e) {
 			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to save preferences.", e)); //$NON-NLS-1$
 			return false;
+		}
+
+		IProject project = getProject();
+		if (project != null) {
+			Activator.getDefault().listenForClasspathPreferenceChanges(JavaCore.create(project));
 		}
 
 		return true;

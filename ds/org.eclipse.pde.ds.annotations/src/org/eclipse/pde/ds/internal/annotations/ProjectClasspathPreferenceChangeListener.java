@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,7 +30,8 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
-import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 @SuppressWarnings("restriction")
 public class ProjectClasspathPreferenceChangeListener implements IPreferenceChangeListener, IResourceChangeListener {
@@ -48,24 +50,31 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
-		if (Activator.PREF_CLASSPATH.equals(event.getKey())
-				|| Activator.PREF_SPEC_VERSION.equals(event.getKey())
-				|| Activator.PREF_ENABLED.equals(event.getKey())) {
+		if (requiresClasspathUpdate(event)) {
 			requestClasspathUpdate();
 		}
 	}
 
 	private void requestClasspathUpdate() {
-		WorkbenchJob job = new WorkbenchJob(Messages.ProjectClasspathPreferenceChangeListener_jobName) {
+		WorkspaceJob job = new WorkspaceJob(Messages.ProjectClasspathPreferenceChangeListener_jobName) {
 			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				updateClasspathContainer(project, monitor);
 				return Status.OK_STATUS;
 			};
 		};
 
-		job.setSystem(true);
+		Display display = Display.getCurrent();
+		if (display != null) {
+			PlatformUI.getWorkbench().getProgressService().showInDialog(display.getActiveShell(), job);
+		}
+
 		job.schedule();
+	}
+
+	static boolean requiresClasspathUpdate(PreferenceChangeEvent event) {
+		return Activator.PREF_CLASSPATH.equals(event.getKey()) || Activator.PREF_SPEC_VERSION.equals(event.getKey())
+				|| Activator.PREF_ENABLED.equals(event.getKey());
 	}
 
 	static void updateClasspathContainer(IJavaProject project, IProgressMonitor monitor) {
