@@ -14,7 +14,6 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -30,7 +29,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 @SuppressWarnings("restriction")
 public class ProjectClasspathPreferenceChangeListener implements IPreferenceChangeListener, IResourceChangeListener {
@@ -57,15 +56,15 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 	}
 
 	private void requestClasspathUpdate() {
-		WorkspaceJob job = new WorkspaceJob(Messages.ProjectClasspathPreferenceChangeListener_jobName) {
+		WorkbenchJob job = new WorkbenchJob(Messages.ProjectClasspathPreferenceChangeListener_jobName) {
 			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				updateClasspathContainer(project, monitor);
 				return Status.OK_STATUS;
 			};
 		};
 
-		PlatformUI.getWorkbench().getProgressService().showInDialog(null, job);
+		job.setSystem(true);
 		job.schedule();
 	}
 
