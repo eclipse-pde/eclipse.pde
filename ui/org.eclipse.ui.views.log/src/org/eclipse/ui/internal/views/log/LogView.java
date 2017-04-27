@@ -772,7 +772,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private void doDeleteLog() {
 		String title = Messages.LogView_confirmDelete_title;
 		String message = Messages.LogView_confirmDelete_message;
-		int open = MessageDialog.open(MessageDialog.CONFIRM, fTree.getShell(), title, message, SWT.SHEET,
+		int open = MessageDialog.open(MessageDialog.CONFIRM, fTree.getShell(), title, message, SWT.NONE,
 				Messages.LogView_confirmDelete_deleteButton, IDialogConstants.CANCEL_LABEL);
 
 		if (open != Window.OK) {
