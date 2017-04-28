@@ -348,7 +348,7 @@ public final class Painter extends Object {
 		buffer.append("  parent=");  //$NON-NLS-1$
 		Control parent = control.getParent();
 		buffer.append(parent);
-		
+
 		if (parent != null) {
 			buffer.append(Painter.getHashCodeText(parent));
 		}
@@ -406,17 +406,20 @@ public final class Painter extends Object {
 		buffer.append(control.getStyle());
 	}
 
-	
+
 	public static void decorate(Control control) {
 		Painter.decorate(control, true);
 	}
-	
+
 	public static void decorate(Control control, boolean toolTip) {
 		Painter.decorate(control, 0, toolTip);
 	}
 
 	public static void decorate(Control control, int extraCompositeMargin, boolean toolTip) {
-		if (control == null) throw new IllegalArgumentException("The argument 'control' must not be null");  //$NON-NLS-1$
+		if (control == null)
+		 {
+			throw new IllegalArgumentException("The argument 'control' must not be null");  //$NON-NLS-1$
+		}
 		if (!LayoutIssuesDebugFilter.IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER.equals(control.getData())) {
 			StringBuffer buffer = new StringBuffer(Painter.BUFFER_SIZE);
 			Painter.decorate(buffer, control, extraCompositeMargin, 0, 0, toolTip);
@@ -536,10 +539,16 @@ public final class Painter extends Object {
 
 	private static void padComposite(Composite composite, int extraCompositeMargin) {
 		Layout compositeLayout = composite.getLayout();
-		if (compositeLayout == null) return;  // Early return.
+		if (compositeLayout == null)
+		 {
+			return;  // Early return.
+		}
 
-		if (extraCompositeMargin < 0) return; // Early return.
-		
+		if (extraCompositeMargin < 0)
+		 {
+			return; // Early return.
+		}
+
 		if (compositeLayout instanceof GridLayout) {
 			GridLayout layout = (GridLayout) compositeLayout;
 			layout.marginWidth += extraCompositeMargin;

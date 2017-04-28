@@ -13,6 +13,7 @@ package org.eclipse.tools.layout.spy.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
+
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.databinding.swt.WidgetSideEffects;
@@ -22,8 +23,17 @@ import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Creates an overlay that allows the user to select any SWT control by moving

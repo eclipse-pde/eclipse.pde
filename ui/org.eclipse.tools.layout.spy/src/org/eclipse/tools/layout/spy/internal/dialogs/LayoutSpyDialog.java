@@ -43,7 +43,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -168,8 +167,8 @@ public class LayoutSpyDialog {
 		showColoringButton.addSelectionListener(widgetSelectedAdapter(e-> {
 			LayoutIssuesDebugFilter.activate(showColoringButton.getSelection(), true, 0);
 		}));
-		
-		
+
+
 		Composite buttonBar = new Composite(shell, SWT.NONE);
 		{
 			selectWidgetButton = new Button(buttonBar, SWT.PUSH);
@@ -214,11 +213,11 @@ public class LayoutSpyDialog {
 		sideEffectFactory.create(this::computeChildInfo, diagnostics::setText);
 		sideEffectFactory.create(this::updateOverlay);
 
-		
+
 		// ignore controls to the layout spy from coloring
 		shell.setData(LayoutIssuesDebugFilter.IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER);
 		setChildremColoring(shell);
-				
+
 		openComposite(parentShell);
 	}
 
@@ -232,7 +231,7 @@ public class LayoutSpyDialog {
 		}
 	}
 
-	
+
 	/**
 	 * Opens the dialog box, revealing it to the user.
 	 */

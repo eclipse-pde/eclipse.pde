@@ -32,13 +32,13 @@ public class LayoutIssuesDebugFilter implements Listener {
 			Display.getDefault().removeFilter(SWT.Resize, filter);
 			Display.getDefault().removeFilter(SWT.Show, filter);
 		}
-		
+
 		if (!activateColoring) {
 			return;
 		} else {
 
 			// called with activate == true
-			
+
 			if (filter == null) {
 				filter = new LayoutIssuesDebugFilter(showTooltips, extraCompositeMargin);
 			}
