@@ -17,4 +17,5 @@ Import-Package: org.eclipse.core.runtime;version="3.5.0",
  org.eclipse.osgi.util
 Bundle-Vendor: %provider-name
 Export-Package: org.eclipse.tools.layout.spy.internal.dialogs;x-internal:=true,
+ org.eclipse.tools.layout.spy.internal.displayfilter;x-internal:=true,
  org.eclipse.tools.layout.spy.internal.handlers;x-internal:=true

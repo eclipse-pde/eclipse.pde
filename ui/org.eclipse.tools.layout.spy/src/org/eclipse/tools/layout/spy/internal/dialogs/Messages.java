@@ -20,6 +20,7 @@ public class Messages extends NLS {
 	public static String LayoutSpyDialog_button_open_parent;
 	public static String LayoutSpyDialog_button_select_control;
 	public static String LayoutSpyDialog_button_show_overlay;
+	public static String LayoutSpyDialog_button_show_coloring;
 	public static String LayoutSpyDialog_label_children;
 	public static String LayoutSpyDialog_label_layout;
 	public static String LayoutSpyDialog_label_no_parent_control_selected;

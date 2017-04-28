@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.tools.layout.spy.internal.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -41,6 +43,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -59,6 +62,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.tools.layout.spy.internal.displayfilter.LayoutIssuesDebugFilter;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -159,6 +163,13 @@ public class LayoutSpyDialog {
 		Button showOverlayButton = new Button(shell, SWT.CHECK);
 		showOverlayButton.setText(Messages.LayoutSpyDialog_button_show_overlay);
 
+		Button showColoringButton = new Button(shell, SWT.CHECK);
+		showColoringButton.setText(Messages.LayoutSpyDialog_button_show_coloring);
+		showColoringButton.addSelectionListener(widgetSelectedAdapter(e-> {
+			LayoutIssuesDebugFilter.activate(showColoringButton.getSelection(), true, 0);
+		}));
+		
+		
 		Composite buttonBar = new Composite(shell, SWT.NONE);
 		{
 			selectWidgetButton = new Button(buttonBar, SWT.PUSH);
@@ -203,9 +214,25 @@ public class LayoutSpyDialog {
 		sideEffectFactory.create(this::computeChildInfo, diagnostics::setText);
 		sideEffectFactory.create(this::updateOverlay);
 
+		
+		// ignore controls to the layout spy from coloring
+		shell.setData(LayoutIssuesDebugFilter.IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER);
+		setChildremColoring(shell);
+				
 		openComposite(parentShell);
 	}
 
+	private void setChildremColoring(Control control) {
+		control.setData(LayoutIssuesDebugFilter.IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER);
+		if (control instanceof Composite) {
+			Composite c = (Composite) control;
+			for (Control child : c.getChildren()) {
+				setChildremColoring(child);
+			}
+		}
+	}
+
+	
 	/**
 	 * Opens the dialog box, revealing it to the user.
 	 */
