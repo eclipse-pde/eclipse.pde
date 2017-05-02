@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Target platform service implementation.
@@ -64,9 +65,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 			fList = list;
 		}
 
-		/**
-		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
-		 */
 		@Override
 		public boolean visit(IResourceProxy proxy) {
 			if (proxy.getType() == IResource.FILE) {
@@ -297,35 +295,57 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * a new definition is created.
 	 */
 	private void initDefaultTargetPlatformDefinition() {
-		String memento = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
-		if (memento == null || memento.equals("")) { //$NON-NLS-1$
+		PDEPreferencesManager preferenceManager = PDECore.getDefault().getPreferencesManager();
+		String memento = preferenceManager.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+
+		// check if preference entry is valid
+		if (memento != null && !memento.equals("")) { //$NON-NLS-1$
+			ITargetHandle handle;
 			try {
-				if (PDECore.DEBUG_MODEL) {
-					System.out.println("No target platform memento, add default target."); //$NON-NLS-1$
+				handle = getTarget(memento);
+				if (!handle.exists()) {
+					// preferences points to invalid target definition remove preference entry
+					preferenceManager.setValueOrRemove(ICoreConstants.WORKSPACE_TARGET_HANDLE,
+							preferenceManager.getDefaultString(ICoreConstants.WORKSPACE_TARGET_HANDLE));
+					preferenceManager.flush();
+				} else {
+					return;
 				}
-
-				// Add default target
-				ITargetDefinition defaultTarget = newDefaultTarget();
-				defaultTarget.setName(Messages.TargetPlatformService_7);
-				saveTargetDefinition(defaultTarget);
-
-				// Add target from preferences
-				TargetDefinition preferencesTarget = (TargetDefinition) newTargetFromPreferences();
-				if (preferencesTarget != null) {
-					if (PDECore.DEBUG_MODEL) {
-						System.out.println("Old target preferences found, loading them into active target."); //$NON-NLS-1$
-					}
-					preferencesTarget.setName(PDECoreMessages.PluginModelManager_0);
-					saveTargetDefinition(preferencesTarget);
-				}
-
-				// Set active platform
-				PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-				ITargetHandle active = preferencesTarget != null ? preferencesTarget.getHandle() : defaultTarget.getHandle();
-				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, active.getMemento());
 			} catch (CoreException e) {
 				PDECore.log(e);
+			} catch (BackingStoreException e) {
+				PDECore.log(e);
 			}
+
+		}
+
+		try {
+			if (PDECore.DEBUG_MODEL) {
+				System.out.println("No target platform memento, add default target."); //$NON-NLS-1$
+			}
+
+			// Add default target
+			ITargetDefinition defaultTarget = newDefaultTarget();
+			defaultTarget.setName(Messages.TargetPlatformService_7);
+			saveTargetDefinition(defaultTarget);
+
+			// Add target from preferences
+			TargetDefinition preferencesTarget = (TargetDefinition) newTargetFromPreferences();
+			if (preferencesTarget != null) {
+				if (PDECore.DEBUG_MODEL) {
+					System.out.println("Old target preferences found, loading them into active target."); //$NON-NLS-1$
+				}
+				preferencesTarget.setName(PDECoreMessages.PluginModelManager_0);
+				saveTargetDefinition(preferencesTarget);
+			}
+
+			// Set active platform
+			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+			ITargetHandle active = preferencesTarget != null ? preferencesTarget.getHandle()
+					: defaultTarget.getHandle();
+			preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, active.getMemento());
+		} catch (CoreException e) {
+			PDECore.log(e);
 		}
 	}
 
