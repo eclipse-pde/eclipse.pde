@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,6 +144,22 @@ public class CompilersPropertyPage extends PropertyPage {
 			if (fWorkspaceLink != null) {
 				fWorkspaceLink.setVisible(!Boolean.TRUE.equals(fPageData.get(CompilersPreferencePage.NO_LINK)));
 			}
+
+			if (getProject() != null) {
+				Boolean useProjectOptions = (Boolean) fPageData
+						.get(CompilersPreferencePage.USE_PROJECT_SPECIFIC_OPTIONS);
+
+				if (useProjectOptions != null) {
+					fBlock.useProjectSpecificSettings(useProjectOptions.booleanValue());
+					fProjectSpecific.setSelection(useProjectOptions.booleanValue());
+				}
+			}
+			Object key = fPageData.get(CompilersPreferencePage.DATA_SELECT_OPTION_KEY);
+			Object qualifier = fPageData.get(CompilersPreferencePage.DATA_SELECT_OPTION_QUALIFIER);
+			if (key instanceof String && qualifier instanceof String) {
+				fBlock.selectOption((String) key, (String) qualifier);
+			}
+
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -30,6 +31,20 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
+		IMarkerResolution[] res = getNonConfigSevResolutions(marker);
+		String str = marker.getAttribute(PDEMarkerFactory.compilerKey, ""); //$NON-NLS-1$
+		if (str.length() > 0) {
+			ArrayList<IMarkerResolution> list = new ArrayList<>(Arrays.asList(res));
+			list.add(new ConfigureProblemSeverityForPDECompilerResolution(marker, AbstractPDEMarkerResolution.CONFIGURE_TYPE,
+					str));
+			return list.toArray(new IMarkerResolution[] {});
+
+		}
+
+		return res;
+	}
+
+	public IMarkerResolution[] getNonConfigSevResolutions(IMarker marker) {
 		int problemID = getProblemId(marker);
 		switch (problemID) {
 			case PDEMarkerFactory.M_DEPRECATED_AUTOSTART :

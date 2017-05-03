@@ -36,7 +36,14 @@ public class PDEMarkerFactory {
 	 */
 	public static final String CAT_ID = "categoryId"; //$NON-NLS-1$
 
+	/**
+	 * Marker attribute storing compiler key
+	 */
+	public static final String compilerKey = "compilerKey"; //$NON-NLS-1$
+
 	public static final int NO_RESOLUTION = -1;
+
+	// public static final int CONFIG_SEV = 0;
 
 	// manifest source fixes
 	public static final int M_DEPRECATED_AUTOSTART = 0x1001; // other problem
@@ -65,6 +72,7 @@ public class PDEMarkerFactory {
 	public static final int M_NO_LINE_TERMINATION = 0x1024; // fatal problem
 	public static final int M_R4_SYNTAX_IN_R3_BUNDLE = 0x1025; // other problem
 	public static final int M_SERVICECOMPONENT_MISSING_LAZY = 0x1026; // other problem
+	public static final int M_ONLY_CONFIG_SEV = 0x1027; // other problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;

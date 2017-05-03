@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,9 @@ package org.eclipse.pde.internal.ui.editor.text;
 
 import java.util.*;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
+import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter;
 import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.text.quickassist.*;
 import org.eclipse.jface.text.source.Annotation;
@@ -49,6 +50,9 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			fMarker = marker;
 		}
 
+		public IMarkerResolution getResolution() {
+			return fResolution;
+		}
 		@Override
 		public void apply(IDocument document) {
 			fResolution.run(fMarker);
@@ -61,8 +65,9 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 		@Override
 		public String getAdditionalProposalInfo() {
-			if (fResolution instanceof IMarkerResolution2)
+			if (fResolution instanceof IMarkerResolution2) {
 				return ((IMarkerResolution2) fResolution).getDescription();
+			}
 			return null;
 		}
 
@@ -213,8 +218,8 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			Iterator<?> it = amodel.getAnnotationIterator();
 			TreeSet<ICompletionProposal> proposalSet = new TreeSet<>((o1, o2) -> {
 				if (o1 instanceof ICompletionProposal && o2 instanceof ICompletionProposal) {
-					ICompletionProposal proposal1 = (ICompletionProposal) o1;
-					ICompletionProposal proposal2 = (ICompletionProposal) o2;
+					ICompletionProposal proposal1 = o1;
+					ICompletionProposal proposal2 = o2;
 					return proposal1.getDisplayString().compareToIgnoreCase(proposal2.getDisplayString());
 				}
 				return 0;
@@ -261,7 +266,23 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 				}
 			}
 
-			return proposalSet.toArray(new ICompletionProposal[proposalSet.size()]);
+			ArrayList<ICompletionProposal> arrayListCompProNegativeRelevance = new ArrayList<>();
+			for (ICompletionProposal prop : proposalSet) {
+				if (prop instanceof PDECompletionProposal) {
+					IMarkerResolution res = ((PDECompletionProposal) prop).getResolution();
+					if (res instanceof IJavaCompletionProposal) {
+						int rel = ((IJavaCompletionProposal) res).getRelevance();
+						if (rel < 0) {
+							arrayListCompProNegativeRelevance.add(prop);
+						}
+					}
+				}
+			}
+			proposalSet.removeAll(arrayListCompProNegativeRelevance);
+			ArrayList<ICompletionProposal> finalProposal = new ArrayList<>();
+			finalProposal.addAll(proposalSet);
+			finalProposal.addAll(arrayListCompProNegativeRelevance);
+			return finalProposal.toArray(new ICompletionProposal[] {});
 		}
 	}
 
@@ -273,7 +294,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		setInformationControlCreator(new AbstractReusableInformationControlCreator() {
 			@Override
 			public IInformationControl doCreateInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, (IInformationPresenter) null);
+				return new DefaultInformationControl(parent, new HTMLTextPresenter(true));
 			}
 		});
 	}

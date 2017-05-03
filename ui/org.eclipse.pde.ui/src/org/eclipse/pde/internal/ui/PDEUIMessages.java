@@ -2464,6 +2464,20 @@ public class PDEUIMessages extends NLS {
 
 	public static String OptionalRequireBundleResolution_label;
 
+	public static String ConfigureProblemSeverityForPDECompiler_0;
+
+	public static String ConfigureProblemSeverityForPDECompiler_1;
+
+	public static String ConfigureProblemSeverityForPDECompiler_2;
+
+	public static String ConfigureProblemSeverityForPDECompiler_3;
+
+	public static String ConfigureProblemSeverityForPDECompiler_4;
+
+	public static String ConfigureProblemSeverityForPDECompiler_5;
+
+	public static String ConfigureProblemSeverityForPDECompiler_6;
+
 	public static String ConfigureTargetPlatformResolution_label;
 	public static String ConfigureTargetPlatformResolution_description;
 

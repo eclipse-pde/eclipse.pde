@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -273,6 +273,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PROFILE_EXC = create(PATH_OBJ, "profile_exc.png"); //$NON-NLS-1$
 
+	public static final ImageDescriptor DESC_CON_SEV = create(PATH_LCL, "configure_problem_severity.png"); //$NON-NLS-1$
 	/**
 	 * WIZ
 	 */

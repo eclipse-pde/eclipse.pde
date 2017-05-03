@@ -50,6 +50,8 @@ public interface IApiToolsConstants {
 	 * Key for a compare api image
 	 */
 	public static final String IMG_ELCL_COMPARE_APIS = "IMG_ELCL_COMPARE_APIS"; //$NON-NLS-1$
+
+	public static final String IMG_ELCL_CONFIG_SEV = "IMG_ELCL_CONFIG_SEV"; //$NON-NLS-1$
 	/**
 	 * Key for a compare api disabled image
 	 */

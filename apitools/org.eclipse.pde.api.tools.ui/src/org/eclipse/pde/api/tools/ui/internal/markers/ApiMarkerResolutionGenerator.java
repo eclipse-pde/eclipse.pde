@@ -59,16 +59,17 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 					return new IMarkerResolution[] {
 							installEEResolution, eeResolution };
 				}
-				return new IMarkerResolution[] {
+			return new IMarkerResolution[] { new ConfigureProblemSeverityForAPIToolsResolution(marker),
 						new FilterProblemResolution(marker),
 						new FilterProblemWithCommentResolution(marker) };
 			}
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID: {
 			if (hasExplainProblemResolution(marker)) {
 				return new IMarkerResolution[] { new ProblemExplainIncompatibilityResolution(marker),
-						new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker) };
+						new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker),
+						new ConfigureProblemSeverityForAPIToolsResolution(marker) };
 			}
-				return new IMarkerResolution[] {
+			return new IMarkerResolution[] { new ConfigureProblemSeverityForAPIToolsResolution(marker),
 						new FilterProblemResolution(marker),
 						new FilterProblemWithCommentResolution(marker) };
 			}
@@ -77,24 +78,28 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			}
 			case IApiMarkerConstants.SINCE_TAG_MARKER_ID: {
 				return new IMarkerResolution[] {
+					new ConfigureProblemSeverityForAPIToolsResolution(marker),
 						new SinceTagResolution(marker),
 						new FilterProblemResolution(marker),
 						new FilterProblemWithCommentResolution(marker) };
 			}
 			case IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID: {
-				return new IMarkerResolution[] {
+			return new IMarkerResolution[] {
+					new ConfigureProblemSeverityForAPIToolsResolution(marker),
 						new VersionNumberingResolution(marker),
 						new FilterProblemResolution(marker),
 						new FilterProblemWithCommentResolution(marker) };
 			}
 			case IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID: {
-				return new IMarkerResolution[] { new UnsupportedTagResolution(marker) };
+			return new IMarkerResolution[] { new VersionNumberingResolution(marker),
+					new UnsupportedTagResolution(marker) };
 			}
 			case IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID: {
 				return new IMarkerResolution[] { new DuplicateTagResolution(marker) };
 			}
 			case IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID: {
-				return new IMarkerResolution[] { new UnsupportedAnnotationResolution(marker) };
+			return new IMarkerResolution[] { new VersionNumberingResolution(marker),
+					new UnsupportedAnnotationResolution(marker) };
 			}
 			case IApiMarkerConstants.DUPLICATE_ANNOTATION_MARKER_ID: {
 				return new IMarkerResolution[] { new DuplicateAnnotationResolution(marker) };
@@ -106,6 +111,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				IApiProblemFilter filter = resolveFilter(marker);
 				if (filter != null) {
 					return new IMarkerResolution[] {
+					     	new ConfigureProblemSeverityForAPIToolsResolution(marker),
 							new RemoveFilterProblemResolution(filter, marker),
 							new OpenPropertyPageResolution(MarkerMessages.ApiMarkerResolutionGenerator_api_problem_filters, IApiToolsConstants.ID_FILTERS_PROP_PAGE, marker.getResource().getProject()) };
 				} else {

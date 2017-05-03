@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
-
-import org.eclipse.jdt.core.IJavaProject;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
@@ -35,6 +33,16 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class CompilersPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+	public static final String DATA_SELECT_OPTION_KEY = "select_option_key"; //$NON-NLS-1$
+	public static final String DATA_SELECT_OPTION_QUALIFIER = "select_option_qualifier"; //$NON-NLS-1$
+	public static final String PDE_COMPILER_PREFERENCE_ID = "org.eclipse.pde.ui.CompilersPreferencePage";//$NON-NLS-1$
+	public static final String PDE_COMPILER_PROPERTY_ID = "org.eclipse.pde.internal.ui.properties.compilersPropertyPage";//$NON-NLS-1$
+
+	/**
+	 * Key for a Boolean value defining if 'use project specific settings' should be
+	 * enabled or not.
+	 */
+	public static final String USE_PROJECT_SPECIFIC_OPTIONS = "use_project_specific_key"; //$NON-NLS-1$
 	public static final String NO_LINK = "PropertyAndPreferencePage.nolink"; //$NON-NLS-1$
 
 	private PDECompilersConfigurationBlock fBlock = null;
@@ -151,6 +159,13 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 			if (link != null && fPageData.containsKey(NO_LINK)) {
 				link.setVisible(!Boolean.TRUE.equals(((Map<?, ?>) data).get(NO_LINK)));
 			}
+
+			Object key = fPageData.get(CompilersPreferencePage.DATA_SELECT_OPTION_KEY);
+			Object qualifier = fPageData.get(CompilersPreferencePage.DATA_SELECT_OPTION_QUALIFIER);
+			if (key instanceof String && qualifier instanceof String) {
+				fBlock.selectOption((String) key, (String) qualifier);
+			}
+
 		}
 	}
 }

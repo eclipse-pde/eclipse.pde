@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -303,6 +303,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_OPEN_PAGE, ELCL + "open_page.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_HELP_PAGE, ELCL + "help.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS, ELCL + "compare_apis.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_CONFIG_SEV, ELCL + "configure_problem_severity.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS_DISABLED, DLCL + "compare_apis.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_EXPORT, ELCL + "export.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_NEXT_NAV, ELCL + "next_nav.gif"); //$NON-NLS-1$

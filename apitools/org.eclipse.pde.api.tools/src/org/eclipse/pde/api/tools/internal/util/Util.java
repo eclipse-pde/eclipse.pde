@@ -110,6 +110,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.FilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.builder.BuildState;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -123,6 +124,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
@@ -2663,4 +2666,195 @@ public final class Util {
 		}
 		return buffer.toString();
 	}
+
+	public static String getSinceVersionTagPrefererenceKey(int id) {
+		int problemCategory = ApiProblemFactory.getProblemCategory(id);
+		int problemKind = ApiProblemFactory.getProblemKind(id);
+		switch (problemCategory) {
+		case IApiProblem.CATEGORY_SINCETAGS: {
+				switch (problemKind) {
+					case IApiProblem.SINCE_TAG_INVALID:
+						return IApiProblemTypes.INVALID_SINCE_TAG_VERSION;
+					case IApiProblem.SINCE_TAG_MALFORMED:
+						return IApiProblemTypes.MALFORMED_SINCE_TAG;
+					case IApiProblem.SINCE_TAG_MISSING:
+						return IApiProblemTypes.MISSING_SINCE_TAG;
+					default:
+						break;
+				}
+			}
+				break;
+			case IApiProblem.CATEGORY_VERSION: {
+				switch (problemKind) {
+					case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE:
+						return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE;
+
+					case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API:
+						return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE;
+
+					case IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED:
+						return IApiProblemTypes.CHANGED_EXECUTION_ENV;
+
+					default:
+						return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION;
+
+				}
+			}
+			default:
+				break;
+
+
+		}
+
+		return null;
+	}
+
+	public static String getUsagePrefererenceKey(int id) {
+		int problemKind = ApiProblemFactory.getProblemKind(id);
+		int problemFlag = ApiProblemFactory.getProblemFlags(id);
+
+		switch (problemKind) {
+			case IApiProblem.ILLEGAL_IMPLEMENT:
+				return IApiProblemTypes.ILLEGAL_IMPLEMENT;
+
+			case IApiProblem.ILLEGAL_EXTEND:
+				return IApiProblemTypes.ILLEGAL_EXTEND;
+			case IApiProblem.ILLEGAL_INSTANTIATE:
+				return IApiProblemTypes.ILLEGAL_INSTANTIATE;
+			case IApiProblem.ILLEGAL_OVERRIDE:
+				return IApiProblemTypes.ILLEGAL_OVERRIDE;
+			case IApiProblem.ILLEGAL_REFERENCE:
+				return IApiProblemTypes.ILLEGAL_REFERENCE;
+
+				case IApiProblem.API_LEAK: {
+				switch (problemFlag) {
+					case IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE:
+					case IApiProblem.LEAK_EXTENDS:
+						return IApiProblemTypes.LEAK_EXTEND;
+						case IApiProblem.LEAK_IMPLEMENTS:
+						return IApiProblemTypes.LEAK_IMPLEMENT;
+						case IApiProblem.LEAK_FIELD:
+						return IApiProblemTypes.LEAK_FIELD_DECL;
+						case IApiProblem.LEAK_RETURN_TYPE:
+						return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
+						case IApiProblem.LEAK_METHOD_PARAMETER:
+						return IApiProblemTypes.LEAK_METHOD_PARAM;
+
+						default:
+							break;
+					}
+					break;
+				}
+			case IApiProblem.UNSUPPORTED_TAG_USE:
+				return IApiProblemTypes.INVALID_JAVADOC_TAG;
+
+			case IApiProblem.UNSUPPORTED_ANNOTATION_USE:
+				return IApiProblemTypes.INVALID_ANNOTATION;
+
+			case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES:
+				return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
+
+			case IApiProblem.MISSING_EE_DESCRIPTIONS:
+				return IApiProblemTypes.MISSING_EE_DESCRIPTIONS;
+
+			// this is usage??
+			case IApiProblem.UNUSED_PROBLEM_FILTERS:
+				return IApiProblemTypes.UNUSED_PROBLEM_FILTERS;
+
+
+				default:
+					break;
+			}
+		return null;
+
+		}
+
+	public static String getComponentResolutionKey(int id) {
+		int problemKind = ApiProblemFactory.getProblemKind(id);
+
+
+		switch (problemKind) {
+			case IApiProblem.API_COMPONENT_RESOLUTION:
+				return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
+			case IApiProblem.UNUSED_PROBLEM_FILTERS:
+				return IApiProblemTypes.UNUSED_PROBLEM_FILTERS;
+			default:
+				break;
+				}
+		return null;
+	}
+
+	public static String getAPIUseScanKey(int id) {
+
+		int problemKind = ApiProblemFactory.getProblemKind(id);
+
+		switch (problemKind) {
+			case IApiProblem.API_USE_SCAN_TYPE_PROBLEM:
+				return IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY;
+			case IApiProblem.API_USE_SCAN_METHOD_PROBLEM:
+				return IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY;
+			case IApiProblem.API_USE_SCAN_FIELD_PROBLEM:
+				return IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY;
+			default:
+				break;
+		}
+		return null;
+
+	}
+
+	public static String getAPIToolPreferenceKey(int id) {
+		String key = null;
+		int category = ApiProblemFactory.getProblemCategory(id);
+
+		if (category == IApiProblem.CATEGORY_USAGE) {
+			key = Util.getUsagePrefererenceKey(id);
+
+		}
+		if (category == IApiProblem.CATEGORY_COMPATIBILITY) {
+
+			key = Util.getDeltaPrefererenceKey(ApiProblemFactory.getProblemElementKind(id), ApiProblemFactory.getProblemKind(id), ApiProblemFactory.getProblemFlags(id));
+		}
+		if (category == IApiProblem.CATEGORY_SINCETAGS || category == IApiProblem.CATEGORY_VERSION) {
+			key = Util.getSinceVersionTagPrefererenceKey(id);
+
+		}
+		if (category == IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION) {
+			key = Util.getComponentResolutionKey(id);
+
+		}
+		if (category == IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM) {
+			key = Util.getAPIUseScanKey(id);
+
+		}
+		return key;
+	}
+
+	public static int getAPIToolPreferenceTab(int id) {
+		int category = ApiProblemFactory.getProblemCategory(id);
+		int tab = -1;
+		if (category == IApiProblem.CATEGORY_USAGE) {
+			tab = 0;
+			int problemKind = ApiProblemFactory.getProblemKind(id);
+			switch (problemKind) {
+				case IApiProblem.UNUSED_PROBLEM_FILTERS:
+					return 3;
+				default:
+					break;
+			}
+		}
+		if (category == IApiProblem.CATEGORY_COMPATIBILITY) {
+			tab = 1;
+		}
+		if (category == IApiProblem.CATEGORY_SINCETAGS || category == IApiProblem.CATEGORY_VERSION) {
+			tab = 2;
+		}
+		if (category == IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION) {
+			tab = 3;
+		}
+		if (category == IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM) {
+			tab = 4;
+		}
+		return tab;
+	}
+
 }

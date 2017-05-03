@@ -27,6 +27,8 @@ public class MarkerMessages extends NLS {
 	public static String DuplicateTagResolution_remove_dupe_tag_resolution_label;
 	public static String FilterProblemResolution_0;
 	public static String FilterProblemResolution_0_desc;
+	public static String ConfigureProblemSeverity_desc;
+	public static String ConfigureProblemSeverity_label;
 	public static String FilterProblemResolution_compatible;
 	public static String FilterProblemResolution_create_filters_for_problems;
 	public static String FilterProblemResolution_default_profile;
@@ -49,6 +51,12 @@ public class MarkerMessages extends NLS {
 	public static String OpenPropertyPageResolution_opens_the_property_page;
 	public static String OpenPropertyPageResolution_page_id_cannot_be_null;
 	public static String OpenPropertyPageResolution_the_page_name_cannot_be_null;
+	public static String OptionalMessageDialog_0;
+	public static String PDEConfigureProblemSeverityAction_0;
+	public static String PDEConfigureProblemSeverityAction_1;
+	public static String PDEConfigureProblemSeverityAction_2;
+	public static String PDEConfigureProblemSeverityAction_3;
+	public static String PDEConfigureProblemSeverityAction_4;
 	public static String RemoveFilterProblemResolution_remove_unused_filter;
 	public static String RemoveFilterProblemResolution_remove_unused_filters;
 	public static String RemoveFilterProblemResolution_removes_selected_problem_filter;

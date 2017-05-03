@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	public static final int CREATE_TYPE = 1;
 	public static final int RENAME_TYPE = 2;
 	public static final int REMOVE_TYPE = 3;
+	public static final int CONFIGURE_TYPE = 4;
 
 	protected int fType;
 	/**

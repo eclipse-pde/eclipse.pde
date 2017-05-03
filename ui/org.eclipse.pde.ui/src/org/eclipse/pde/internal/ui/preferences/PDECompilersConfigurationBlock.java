@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,8 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -93,7 +94,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Provides management for changed/stored values for a given preference key
 	 */
-	protected static class Key {
+	public static class Key {
 
 		private String qualifier;
 		private String key;
@@ -172,6 +173,14 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		@Override
 		public String toString() {
 			return qualifier + '/' + this.key;
+		}
+
+		public Object getName() {
+			return key;
+		}
+
+		public Object getQualifier() {
+			return qualifier;
 		}
 	}
 
@@ -257,6 +266,11 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private Composite fMainComp = null;
 
 	/**
+	 * The tab folder for the various tabs
+	 */
+	private TabFolder fTabFolder = null;
+
+	/**
 	 * Stored old fProject specific settings.
 	 */
 	private IdentityHashMap<Key, String> fOldProjectSettings = null;
@@ -292,6 +306,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 */
 	private Composite fParent = null;
 
+	public static Key[] getAllKeys() {
+		return fgAllKeys;
+	}
 	/**
 	 * Default selection listener for combo and check controls
 	 */
@@ -456,16 +473,15 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	public Control createControl(Composite parent) {
 		fParent = parent;
 		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
-		TabFolder folder = null;
 		if (fProject == null) {
 			SWTFactory.createVerticalSpacer(parent, 1);
-			folder = new TabFolder(fMainComp, SWT.NONE);
+			fTabFolder = new TabFolder(fMainComp, SWT.NONE);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.heightHint = 375;
-			folder.setLayoutData(gd);
+			fTabFolder.setLayoutData(gd);
 		}
 
-		Composite main = (folder == null ? fMainComp : folder);
+		Composite main = (fTabFolder == null ? fMainComp : fTabFolder);
 		//plugins page
 		createPage(CompilerFlags.PLUGIN_FLAGS, main, PDEUIMessages.CompilersConfigurationBlock_plugins, PDEUIMessages.CompilersConfigurationBlock_label);
 
@@ -927,5 +943,78 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
 		buildJob.setUser(true);
 		buildJob.schedule();
+	}
+
+	public void selectOption(String key, String qualifier) {
+		Key[] allKeys = fgAllKeys;
+		for (int i = 0; i < allKeys.length; i++) {
+			Key curr = allKeys[i];
+			if (curr.getName().equals(key) && curr.getQualifier().equals(qualifier)) {
+				selectOption(curr);
+			}
+		}
+
+	}
+
+	protected ExpandableComposite getParentExpandableComposite(Control control) {
+		Control parent = control.getParent();
+		while (!(parent instanceof ExpandableComposite) && parent != null) {
+			parent = parent.getParent();
+		}
+		if (parent instanceof ExpandableComposite) {
+			return (ExpandableComposite) parent;
+		}
+		return null;
+	}
+	private void selectOption(Key key) {
+		int tabId = findTab(key);
+		if (tabId == -1)
+			return;
+		if (fTabFolder != null)
+			fTabFolder.setSelection(tabId);
+		HashSet<Control> controls = fControlMap.get(new Integer(tabId));// 0 is tab
+		Control curr = null;
+		boolean found = false;
+		for (Control con : controls) {
+			curr = con;
+			ControlData data = (ControlData) con.getData();
+			if (key.equals(data.getKey())) {
+				found = true;
+				break;
+			}
+
+		}
+		if (found) {
+			ExpandableComposite expandable = getParentExpandableComposite(curr);
+			if (expandable != null) {
+				HashSet<Control> controls2 = fControlMap.get(new Integer(tabId));
+				//collapse other expandable composites
+				for (Control con : controls2) {
+					ExpandableComposite expandableOthers = getParentExpandableComposite(con);
+					if (expandableOthers != null)
+						expandableOthers.setExpanded(false);
+
+				}
+				expandable.setExpanded(true);
+			}
+			curr.setFocus();
+		}
+	}
+
+	private int findTab(Key key) {
+		int tabId = -1;
+		for (int i = 0; i < 3; i++) {
+			HashSet<Control> controls = fControlMap.get(new Integer(i));
+			if (controls == null)
+				continue;
+			for (Control con : controls) {
+				ControlData data = (ControlData) con.getData();
+				if (key.equals(data.getKey())) {
+					tabId = i;
+					break;
+				}
+			}
+		}
+		return tabId;
 	}
 }

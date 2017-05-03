@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECoreMessages;
@@ -176,7 +178,8 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 								if (tagName.endsWith("/")) { //$NON-NLS-1$
 									tagName = getTagName(tagName.substring(0, tagName.length() - 1));
 									if (forbiddenEndTag(tagName)) {
-										report(NLS.bind(PDECoreMessages.Builders_Schema_forbiddenEndTag, tagName), lineNumber, flag, PDEMarkerFactory.CAT_OTHER);
+										IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Schema_forbiddenEndTag, tagName), lineNumber, flag, PDEMarkerFactory.CAT_OTHER);
+										addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.S_OPEN_TAGS);
 										errorReported = true;
 									}
 								} else if (tagName.startsWith("/")) { //$NON-NLS-1$
@@ -196,7 +199,8 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 										}
 									}
 									if (stack.isEmpty() && !found) {
-										report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingStartTag, tagName), lineNumber, flag, PDEMarkerFactory.CAT_OTHER);
+										IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingStartTag, tagName), lineNumber, flag, PDEMarkerFactory.CAT_OTHER);
+										addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.S_OPEN_TAGS);
 										errorReported = true;
 									}
 								} else {
@@ -214,8 +218,10 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 				if (!errorReported) {
 					if (!stack.isEmpty()) {
 						StackEntry entry = stack.pop();
-						if (!optionalEndTag(entry.tag))
-							report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingEndTag, entry.tag), entry.line, flag, PDEMarkerFactory.CAT_OTHER);
+						if (!optionalEndTag(entry.tag)) {
+							IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingEndTag, entry.tag), entry.line, flag, PDEMarkerFactory.CAT_OTHER);
+							addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.S_OPEN_TAGS);
+						}
 					}
 					stack.clear();
 				}
@@ -223,6 +229,13 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		}
 	}
 
+	private void addMarkerAttribute(IMarker marker, String attr, String value) {
+		if (marker != null)
+			try {
+				marker.setAttribute(attr, value);
+			} catch (CoreException e) {
+			}
+	}
 	private String getTagName(String text) {
 		StringTokenizer tokenizer = new StringTokenizer(text);
 		return tokenizer.nextToken();

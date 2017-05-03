@@ -133,7 +133,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Provides management for changed/stored values for a given preference key
 	 */
-	protected static class Key {
+	public static class Key {
 
 		private String qualifier;
 		private String key;
@@ -147,6 +147,14 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		public Key(String qualifier, String key) {
 			this.qualifier = qualifier;
 			this.key = key;
+		}
+
+		public String getQualifier() {
+			return qualifier;
+		}
+
+		public String getName() {
+			return key;
 		}
 
 		/**
@@ -1597,4 +1605,60 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			fTabFolder.setSelection(tabID);
 		}
 	}
+
+	public void selectOption(String key, String qualifier) {
+		Key[] allKeys = getAllKeys();
+		for (int i = 0; i < allKeys.length; i++) {
+			Key curr = allKeys[i];
+			if (curr.getName().equals(key) && curr.getQualifier().equals(qualifier)) {
+				selectOption(curr);
+			}
+		}
+
+	}
+
+	protected ExpandableComposite getParentExpandableComposite(Control control) {
+		Control parent = control.getParent();
+		while (!(parent instanceof ExpandableComposite) && parent != null) {
+			parent = parent.getParent();
+		}
+		if (parent instanceof ExpandableComposite) {
+			return (ExpandableComposite) parent;
+		}
+		return null;
+	}
+	public void selectOption(Key key) {
+		Control control = findControl(key);
+		if (control != null) {
+			if (!fExpComps.isEmpty()) {
+				ExpandableComposite expandable = getParentExpandableComposite(control);
+				if (expandable != null) {
+					for (int i = 0; i < fExpComps.size(); i++) {
+						ExpandableComposite curr = fExpComps.get(i);
+						curr.setExpanded(curr == expandable);
+					}
+				}
+			}
+			control.setFocus();
+		}
+	}
+
+	protected Combo getComboBox(Key key) {
+		for (int i = fCombos.size() - 1; i >= 0; i--) {
+			Combo curr = fCombos.get(i);
+			ControlData data = (ControlData) curr.getData();
+			if (key.equals(data.getKey())) {
+				return curr;
+			}
+		}
+		return null;
+	}
+	protected Control findControl(Key key) {
+		Combo comboBox= getComboBox(key);
+		if (comboBox != null) {
+			return comboBox;
+		}
+		return null;
+	}
+
 }

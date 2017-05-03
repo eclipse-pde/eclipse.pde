@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ package org.eclipse.pde.internal.core.builders;
 import java.util.Arrays;
 import java.util.HashSet;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
@@ -385,7 +387,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model == null || !model.isEnabled() || (isFragment && !model.isFragmentModel()) || (!isFragment && model.isFragmentModel())) {
-				report(NLS.bind(PDECoreMessages.Builders_Feature_reference, id), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
+				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Feature_reference, id), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
+				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
 			}
 		}
 	}
@@ -395,7 +398,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(attr.getValue());
 			if (models.length == 0) {
-				report(NLS.bind(PDECoreMessages.Builders_Feature_freference, attr.getValue()), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
+				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Feature_freference, attr.getValue()), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
+				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_FEATURES);
 			}
 		}
 	}
@@ -428,14 +432,16 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 				String unpackValue = "true".equals(unpack) ? "jar" : "dir"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (value != null && !value.equalsIgnoreCase(unpackValue)) {
 					String message = NLS.bind(PDECoreMessages.Builders_Feature_mismatchUnpackBundleShape, (new String[] {"unpack=" + unpack, parent.getAttribute("id"), "Eclipse-BundleShape: " + value})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
+					IMarker marker = report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
+					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
 				}
 			}
 		}
 
 		if ("true".equals(unpack) && !CoreUtility.guessUnpack(pModel.getBundleDescription())) {//$NON-NLS-1$
 			String message = NLS.bind(PDECoreMessages.Builders_Feature_missingUnpackFalse, (new String[] {parent.getAttribute("id"), "unpack=\"false\""})); //$NON-NLS-1$ //$NON-NLS-2$
-			report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
+			IMarker marker = report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
+			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
 		}
 	}
 
@@ -464,4 +470,12 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		}
 		report(NLS.bind(PDECoreMessages.Builders_Feature_mismatchPluginVersion, new String[] {version, id}), getLine(plugin, attr.getName()), CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
 	}
+	private void addMarkerAttribute(IMarker marker, String attr, String value) {
+		if (marker != null)
+			try {
+				marker.setAttribute(attr, value);
+			} catch (CoreException e) {
+			}
+	}
+
 }
