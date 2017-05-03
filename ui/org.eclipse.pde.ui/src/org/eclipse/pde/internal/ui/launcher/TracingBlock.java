@@ -464,9 +464,13 @@ public class TracingBlock {
 		if (enabled) {
 			fPluginViewer.setInput(getTraceableModels());
 		}
-		fSelectAllButton.setEnabled(enabled);
-		fDeselectAllButton.setEnabled(enabled);
-		fRestoreDefaultButton.setEnabled(enabled);
+
+		int count = 0;
+		if(fPluginViewer!=null)
+			count = fPluginViewer.getTable().getItemCount();
+		fSelectAllButton.setEnabled(enabled && count > 0);
+		fDeselectAllButton.setEnabled(enabled && count > 0);
+		fRestoreDefaultButton.setEnabled(enabled && count > 0);
 		fRestoreSelectedDefaultButton.setEnabled(!fPluginViewer.getSelection().isEmpty());
 		if (enabled == false) {
 			fRestoreSelectedDefaultButton.setEnabled(false);
