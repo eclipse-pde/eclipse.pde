@@ -43,7 +43,8 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.target.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -961,7 +962,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 			LoadTargetDefinitionJob.load(toLoad, listener);
 
-			if (toLoad.getHandle() instanceof WorkspaceFileTargetHandle) {
+			if ((toLoad != null) && (toLoad.getHandle() instanceof WorkspaceFileTargetHandle)) {
 				WorkspaceFileTargetHandle wrkHandle = (WorkspaceFileTargetHandle) toLoad.getHandle();
 				Object object = wrkHandle.getWorkspaceEditor();
 				if (object instanceof TargetEditor) {
