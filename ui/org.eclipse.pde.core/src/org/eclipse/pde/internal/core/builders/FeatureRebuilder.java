@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.builders;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.internal.core.*;
@@ -23,7 +24,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
  */
 public class FeatureRebuilder implements IFeatureModelListener, IPluginModelListener, IResourceChangeListener {
 
-	private boolean fTouchFeatures;
+	private volatile boolean fTouchFeatures;
 
 	public void start() {
 		PDECore.getDefault().getFeatureModelManager().addFeatureModelListener(this);
@@ -32,6 +33,7 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 	}
 
 	public void stop() {
+		Job.getJobManager().cancel(FeatureRebuilder.class);
 		PDECore.getDefault().getFeatureModelManager().removeFeatureModelListener(this);
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		JavaCore.removePreProcessingResourceChangedListener(this);
@@ -72,17 +74,45 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 		IFeatureModel[] workspaceFeatures = manager.getWorkspaceModels();
 		if (workspaceFeatures.length > 0) {
 			IProgressMonitor monitor = new NullProgressMonitor();
-			SubMonitor subMonitor = SubMonitor.convert(monitor, workspaceFeatures.length);
-			for (IFeatureModel feature : workspaceFeatures) {
-				SubMonitor iterationMonitor = subMonitor.split(1);
-				try {
-					IResource resource = feature.getUnderlyingResource();
-					if (resource != null) {
-						resource.touch(iterationMonitor);
+			if (ResourcesPlugin.getWorkspace().isTreeLocked()) {
+				WorkspaceJob job = new WorkspaceJob("Touching Features") { //$NON-NLS-1$
+					@Override
+					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+						SubMonitor subMonitor = SubMonitor.convert(monitor, workspaceFeatures.length);
+						touch(workspaceFeatures, subMonitor);
+						return Status.OK_STATUS;
 					}
-				} catch (CoreException e) {
-					PDECore.log(e);
+
+					@Override
+					public boolean belongsTo(Object family) {
+						return FeatureRebuilder.class == family;
+					}
+				};
+				job.setUser(false);
+				job.setSystem(true);
+				job.schedule();
+			} else {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, workspaceFeatures.length);
+				touch(workspaceFeatures, subMonitor);
+			}
+		} else {
+			fTouchFeatures = false;
+		}
+	}
+
+	private void touch(IFeatureModel[] workspaceFeatures, SubMonitor subMonitor) {
+		for (IFeatureModel feature : workspaceFeatures) {
+			if (subMonitor.isCanceled()) {
+				return;
+			}
+			SubMonitor iterationMonitor = subMonitor.split(1);
+			try {
+				IResource resource = feature.getUnderlyingResource();
+				if (resource != null) {
+					resource.touch(iterationMonitor);
 				}
+			} catch (CoreException e) {
+				PDECore.log(e);
 			}
 		}
 		fTouchFeatures = false;
