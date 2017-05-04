@@ -10,7 +10,9 @@
  *****************************************/
 package org.eclipse.pde.internal.build.properties;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +50,12 @@ public class PDEProperties implements IAntPropertyValueProvider {
 				if (foundEntry == null) {
 					BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.WARNING_PLUGIN_ALTERED, NLS.bind(Messages.exception_missing_pdebuild_folder, antPropertyName), null));
 				} else {
-					result = FileLocator.toFileURL(foundEntry).getPath();
+					try {
+						result = new File(FileLocator.toFileURL(foundEntry).toURI()).getAbsolutePath();
+					} catch (URISyntaxException e) {
+						BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, e.getMessage(), e));
+						return null;
+					}
 					cache.put(searchedEntry, result);
 				}
 			}
