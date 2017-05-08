@@ -337,7 +337,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	private boolean removeInvalidTargetMementoInPreference(PDEPreferencesManager preferenceManager, String memento) {
 		// check if preference entry points to valid target
-		if (memento != null && !memento.equals("")) { //$NON-NLS-1$
+		if (memento != null && !memento.equals("")  && !memento.equals(ICoreConstants.NO_TARGET)) { //$NON-NLS-1$
 			ITargetHandle handle;
 			try {
 				handle = getTarget(memento);
