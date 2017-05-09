@@ -65,7 +65,12 @@ public abstract class AbstractRepository extends Job {
 	protected abstract boolean populateCache(IProgressMonitor monitor);
 
 	protected ImageData createImageData(final IFile file) throws CoreException {
-		return new ImageData(new BufferedInputStream(file.getContents()));
+		try (InputStream s = new BufferedInputStream(file.getContents())) {
+			return new ImageData(s);
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
+					"Failed to close stream on: " + file.getLocation(), e)); //$NON-NLS-1$
+		}
 	}
 
 	protected boolean isImage(final File resource) {
@@ -89,16 +94,12 @@ public abstract class AbstractRepository extends Job {
 	}
 
 	protected void searchJarFile(final File jarFile, final IProgressMonitor monitor) {
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(jarFile);
+		try (ZipFile zipFile = new ZipFile(jarFile)) {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while ((entries.hasMoreElements()) && (!monitor.isCanceled())) {
 				ZipEntry entry = entries.nextElement();
 				if (isImageName(entry.getName())) {
-					InputStream inputStream = null;
-					try {
-						inputStream = zipFile.getInputStream(entry);
+					try (InputStream inputStream = zipFile.getInputStream(entry)) {
 						ImageData imageData = new ImageData(inputStream);
 						addImageElement(new ImageElement(imageData, jarFile.getName(), entry.getName()));
 					} catch (IOException e) {
@@ -106,13 +107,6 @@ public abstract class AbstractRepository extends Job {
 					} catch (SWTException e) {
 						// invalid image format
 						PDEPlugin.log(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.AbstractRepository_ErrorLoadingImageFromJar, jarFile.getAbsolutePath(), entry.getName()), e));
-					} finally {
-						if (inputStream != null) {
-							try {
-								inputStream.close();
-							} catch (Exception e) {
-							}
-						}
 					}
 				}
 			}
@@ -120,13 +114,6 @@ public abstract class AbstractRepository extends Job {
 			PDEPlugin.log(e);
 		} catch (IOException e) {
 			PDEPlugin.log(e);
-		} finally {
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 
@@ -172,9 +159,9 @@ public abstract class AbstractRepository extends Job {
 
 	protected String getPluginName(final InputStream manifest) throws IOException {
 		Properties properties = new Properties();
-		BufferedInputStream stream = new BufferedInputStream(manifest);
-		properties.load(stream);
-		stream.close();
+		try (BufferedInputStream stream = new BufferedInputStream(manifest)) {
+			properties.load(stream);
+		}
 		String property = properties.getProperty("Bundle-SymbolicName"); //$NON-NLS-1$
 		if (property.contains(";")) //$NON-NLS-1$
 			return property.substring(0, property.indexOf(';')).trim();
