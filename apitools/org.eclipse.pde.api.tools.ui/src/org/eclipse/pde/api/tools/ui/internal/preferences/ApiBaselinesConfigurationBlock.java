@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -327,7 +328,11 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 						IProject[] apiProjects = Util.getApiProjects();
 						if (apiProjects != null) {
 							// do not even ask if there are no projects to build
-							if (MessageDialog.openQuestion(fParent.getShell(), PreferenceMessages.ApiErrorsWarningsConfigurationBlock_2, message)) {
+							int userInput = MessageDialog.open(MessageDialog.QUESTION, fParent.getShell(),
+									PreferenceMessages.ApiErrorsWarningsConfigurationBlock_2, message, SWT.NONE,
+									PreferenceMessages.ApiProfilesPreferencePage_QuestionDialog_buildButtonLabel,
+									PreferenceMessages.ApiProfilesPreferencePage_QuestionDialog_dontBuildButtonLabel);
+							if (Window.OK == userInput) {
 								Util.getBuildJob(apiProjects).schedule();
 							}
 						}

@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -1367,7 +1368,11 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 							message = MessageFormat.format(PreferenceMessages.ApiErrorsWarningsConfigurationBlock_1, fProject.getName());
 						}
 						if (projects != null) {
-							if (MessageDialog.openQuestion(fParent.getShell(), PreferenceMessages.ApiErrorsWarningsConfigurationBlock_2, message)) {
+							int userInput = MessageDialog.open(MessageDialog.QUESTION, fParent.getShell(),
+									PreferenceMessages.ApiErrorsWarningsConfigurationBlock_2, message, SWT.NONE,
+									PreferenceMessages.ApiProfilesPreferencePage_QuestionDialog_buildButtonLabel,
+									PreferenceMessages.ApiProfilesPreferencePage_QuestionDialog_dontBuildButtonLabel);
+							if (Window.OK == userInput) {
 								Util.getBuildJob(projects).schedule();
 							}
 						}
