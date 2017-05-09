@@ -56,8 +56,7 @@ public class TargetEditor extends FormEditor {
 	private InputHandler fInputHandler = new InputHandler();
 	private TargetChangedListener fTargetChangedListener;
 	private boolean fDirty;
-	private ImageHyperlink hyperlink = null;
-
+	private ArrayList<ImageHyperlink> arrayHyperLink = new ArrayList<>();
 	@Override
 	protected FormToolkit createToolkit(Display display) {
 		return new FormToolkit(PDEPlugin.getDefault().getFormColors(display));
@@ -221,10 +220,13 @@ public class TargetEditor extends FormEditor {
 						hyperLinkText = PDEUIMessages.AbstractTargetPage_reloadTarget;
 					}
 				}
-
-				hyperlink = new ImageHyperlink(parent, SWT.NONE | SWT.NO_FOCUS);
-
+				ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE | SWT.NO_FOCUS);
 				hyperlink.setText(hyperLinkText);
+				if (arrayHyperLink.size() > 0) {
+					// if hyperlink exist, update text from it.
+					hyperlink.setText(arrayHyperLink.get(0).getText());
+				}
+				arrayHyperLink.add(hyperlink);
 				hyperlink.setUnderlined(true);
 				hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
 				hyperlink.addHyperlinkListener(new IHyperlinkListener() {
@@ -236,6 +238,11 @@ public class TargetEditor extends FormEditor {
 							page.saveEditor(editorPart, true);
 						LoadTargetDefinitionJob.load(getTarget());
 						hyperlink.setText(PDEUIMessages.AbstractTargetPage_reloadTarget);
+						for (Hyperlink link : arrayHyperLink) {
+							if (link != null && link.isDisposed())
+								continue;
+							link.setText(PDEUIMessages.AbstractTargetPage_reloadTarget);
+						}
 						// update other target editors ( if any)
 						for (Object value : WorkspaceFileTargetHandle.mapFileTarget.values()) {
 							if (value instanceof TargetEditor) {
@@ -540,9 +547,11 @@ public class TargetEditor extends FormEditor {
 	}
 
 	public void updateHyperlinkText(String s) {
-		if (hyperlink != null && hyperlink.isDisposed())
-			return;
-		hyperlink.setText(s);
+		for (Hyperlink hyperlink : arrayHyperLink) {
+			if (hyperlink != null && hyperlink.isDisposed())
+				continue;
+			hyperlink.setText(s);
+		}
 	}
 
 }
