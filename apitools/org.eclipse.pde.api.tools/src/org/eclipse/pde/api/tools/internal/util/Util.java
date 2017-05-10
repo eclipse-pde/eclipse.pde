@@ -2731,13 +2731,14 @@ public final class Util {
 					case IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE:
 					case IApiProblem.LEAK_EXTENDS:
 						return IApiProblemTypes.LEAK_EXTEND;
-						case IApiProblem.LEAK_IMPLEMENTS:
+					case IApiProblem.LEAK_IMPLEMENTS:
 						return IApiProblemTypes.LEAK_IMPLEMENT;
-						case IApiProblem.LEAK_FIELD:
+					case IApiProblem.LEAK_FIELD:
 						return IApiProblemTypes.LEAK_FIELD_DECL;
-						case IApiProblem.LEAK_RETURN_TYPE:
+					case IApiProblem.LEAK_RETURN_TYPE:
 						return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
-						case IApiProblem.LEAK_METHOD_PARAMETER:
+					case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER:
+					case IApiProblem.LEAK_METHOD_PARAMETER:
 						return IApiProblemTypes.LEAK_METHOD_PARAM;
 
 						default:
