@@ -162,6 +162,9 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage {
 			if (link != null) {
 				link.setVisible(!Boolean.TRUE.equals(fPageData.get(ApiErrorsWarningsPreferencePage.NO_LINK)));
 			}
+			if (block == null) {
+				return;
+			}
 			if (getProject() != null) {
 				Boolean useProjectOptions = (Boolean) fPageData
 						.get(ApiErrorsWarningsPreferencePage.USE_PROJECT_SPECIFIC_OPTIONS);

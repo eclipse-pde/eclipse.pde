@@ -145,6 +145,8 @@ public class CompilersPropertyPage extends PropertyPage {
 				fWorkspaceLink.setVisible(!Boolean.TRUE.equals(fPageData.get(CompilersPreferencePage.NO_LINK)));
 			}
 
+			if (fBlock == null)
+				return;
 			if (getProject() != null) {
 				Boolean useProjectOptions = (Boolean) fPageData
 						.get(CompilersPreferencePage.USE_PROJECT_SPECIFIC_OPTIONS);

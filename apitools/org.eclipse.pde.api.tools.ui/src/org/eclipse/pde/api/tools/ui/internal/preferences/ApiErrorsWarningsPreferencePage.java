@@ -196,6 +196,9 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 					}
 				}
 			}
+			if (block == null) {
+				return;
+			}
 			Integer tab = (Integer) fPageData.get(ApiErrorsWarningsPreferencePage.INITIAL_TAB);
 			block.selectTab(tab.intValue());
 			Object key = fPageData.get(ApiErrorsWarningsPreferencePage.DATA_SELECT_OPTION_KEY);
