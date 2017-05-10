@@ -57,7 +57,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				int id = ApiProblemFactory.getProblemId(marker);
 				if (id > -1 && ApiProblemFactory.getProblemKind(id) == IApiProblem.MISSING_EE_DESCRIPTIONS) {
 					return new IMarkerResolution[] {
-							installEEResolution, eeResolution };
+						installEEResolution, eeResolution, new ConfigureProblemSeverityForAPIToolsResolution(marker) };
 				}
 			return new IMarkerResolution[] { new ConfigureProblemSeverityForAPIToolsResolution(marker),
 						new FilterProblemResolution(marker),
@@ -99,7 +99,8 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			}
 			case IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID: {
 			return new IMarkerResolution[] { new VersionNumberingResolution(marker),
-					new UnsupportedAnnotationResolution(marker) };
+					new UnsupportedAnnotationResolution(marker),
+					new ConfigureProblemSeverityForAPIToolsResolution(marker) };
 			}
 			case IApiMarkerConstants.DUPLICATE_ANNOTATION_MARKER_ID: {
 				return new IMarkerResolution[] { new DuplicateAnnotationResolution(marker) };
