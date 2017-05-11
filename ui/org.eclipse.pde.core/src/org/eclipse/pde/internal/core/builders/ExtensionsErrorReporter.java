@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -432,11 +432,13 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			return;
 		String value = attr.getValue();
 		if (!value.startsWith("%")) { //$NON-NLS-1$
-			report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, attr.getName()), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNTRANSLATED_NODE, element, attr.getName(), PDEMarkerFactory.CAT_NLS);
+			IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, attr.getName()), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNTRANSLATED_NODE, element, attr.getName(), PDEMarkerFactory.CAT_NLS);
+			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NOT_EXTERNALIZED);
 		} else if (fModel instanceof AbstractNLModel) {
 			NLResourceHelper helper = ((AbstractNLModel) fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1), PDEManager.getBundleLocalization(fModel).concat(".properties")), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_NLS); //$NON-NLS-1$
+				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1), PDEManager.getBundleLocalization(fModel).concat(".properties")), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_NLS); //$NON-NLS-1$
+				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NOT_EXTERNALIZED);
 			}
 		}
 	}
@@ -548,7 +550,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (severity != CompilerFlags.IGNORE && javaProject.isOpen()) {
 			onClasspath = PDEJavaHelper.isOnClasspath(value, javaProject);
 			if (!onClasspath) {
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_class, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNKNOWN_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_FATAL);
+				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_class, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNKNOWN_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_FATAL);
+				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNKNOWN_CLASS);
 			}
 		}
 
@@ -562,7 +565,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				return;
 			// only check if we're discouraged if there is something on the classpath
 			if (onClasspath && PDEJavaHelper.isDiscouraged(value, javaProject, desc)) {
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_discouragedClass, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.M_DISCOURAGED_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_OTHER);
+				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_discouragedClass, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.M_DISCOURAGED_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_OTHER);
+				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DISCOURAGED_CLASS);
 			}
 		}
 	}
@@ -624,7 +628,16 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				message = NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_rootElementSuggestion, point, suggestion);
 			else
 				message = NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_rootElement, point);
-			report(message, getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
+			IMarker marker = report(message, getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
+			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DEPRECATED);
 		}
+	}
+
+	private void addMarkerAttribute(IMarker marker, String attr, String value) {
+		if (marker != null)
+			try {
+				marker.setAttribute(attr, value);
+			} catch (CoreException e) {
+			}
 	}
 }

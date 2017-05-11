@@ -1320,7 +1320,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		} catch (CoreException e) {
 		}
-		report(PDECoreMessages.BundleErrorReporter_localization_properties_file_not_exist, header.getLineNumber() + 1, CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE), PDEMarkerFactory.CAT_OTHER);
+		IMarker marker = report(PDECoreMessages.BundleErrorReporter_localization_properties_file_not_exist, header.getLineNumber() + 1, CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE), PDEMarkerFactory.CAT_OTHER);
+		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNKNOWN_RESOURCE);
 	}
 
 	private void validateFragmentHost(IHeader requireBundleHeader, ManifestElement element) {

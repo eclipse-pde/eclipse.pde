@@ -140,14 +140,16 @@ public class XMLErrorReporter extends DefaultHandler {
 		}
 	}
 
-	public void report(String message, int line, int severity, int fixId, Element element, String attrName, String category) {
+	public IMarker report(String message, int line, int severity, int fixId, Element element, String attrName,
+			String category) {
 		IMarker marker = report(message, line, severity, fixId, category);
 		if (marker == null)
-			return;
+			return null;
 		try {
 			marker.setAttribute(PDEMarkerFactory.MPK_LOCATION_PATH, generateLocationPath(element, attrName));
 		} catch (CoreException e) {
 		}
+		return marker;
 	}
 
 	private String generateLocationPath(Node node, String attrName) {
