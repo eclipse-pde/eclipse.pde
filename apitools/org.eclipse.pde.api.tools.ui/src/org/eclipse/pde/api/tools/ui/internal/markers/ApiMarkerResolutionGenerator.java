@@ -43,7 +43,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	 */
 	private final IMarkerResolution[] NO_RESOLUTIONS = new IMarkerResolution[0];
 
-	private MissingEEDescriptionProblemResolution eeResolution = new MissingEEDescriptionProblemResolution();
+
 	private InstallEEDescriptionProblemResolution installEEResolution = new InstallEEDescriptionProblemResolution();
 	private DefaultApiProfileResolution profileResolution = new DefaultApiProfileResolution();
 
@@ -57,7 +57,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				int id = ApiProblemFactory.getProblemId(marker);
 				if (id > -1 && ApiProblemFactory.getProblemKind(id) == IApiProblem.MISSING_EE_DESCRIPTIONS) {
 					return new IMarkerResolution[] {
-						installEEResolution, eeResolution, new ConfigureProblemSeverityForAPIToolsResolution(marker) };
+						installEEResolution, new ConfigureProblemSeverityForAPIToolsResolution(marker) };
 				}
 			return new IMarkerResolution[] { new ConfigureProblemSeverityForAPIToolsResolution(marker),
 						new FilterProblemResolution(marker),
@@ -106,7 +106,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				return new IMarkerResolution[] { new DuplicateAnnotationResolution(marker) };
 			}
 			 case IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID: {
-				return new IMarkerResolution[] { new UpdateProjectSettingResolution(marker) };
+			return new IMarkerResolution[] { new ConfigureProblemSeverityForAPIToolsResolution(marker) };
 			}
 			case IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID: {
 				IApiProblemFilter filter = resolveFilter(marker);
