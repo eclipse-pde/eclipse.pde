@@ -11,9 +11,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.internal.core.*;
@@ -90,6 +92,7 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 				};
 				job.setUser(false);
 				job.setSystem(true);
+				job.setRule(getTouchRule(workspaceFeatures));
 				job.schedule();
 			} else {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, workspaceFeatures.length);
@@ -100,6 +103,21 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 		}
 	}
 
+	/**
+	 * @return a rule for modifying the features or null if no valid resources
+	 *         were found
+	 */
+	private ISchedulingRule getTouchRule(IFeatureModel[] workspaceFeatures) {
+		List<IResource> nestedRules = new ArrayList<>(workspaceFeatures.length);
+		for (int i = 0; i < workspaceFeatures.length; i++) {
+			nestedRules.add(workspaceFeatures[i].getUnderlyingResource());
+		}
+		if (nestedRules.size() == 1) {
+			return nestedRules.get(0);
+		}
+		return MultiRule.combine(nestedRules.toArray(new IResource[nestedRules.size()]));
+	}
+
 	private void touch(IFeatureModel[] workspaceFeatures, SubMonitor subMonitor) {
 		for (IFeatureModel feature : workspaceFeatures) {
 			if (subMonitor.isCanceled()) {
@@ -108,7 +126,7 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 			SubMonitor iterationMonitor = subMonitor.split(1);
 			try {
 				IResource resource = feature.getUnderlyingResource();
-				if (resource != null) {
+				if (resource != null && resource.isAccessible()) {
 					resource.touch(iterationMonitor);
 				}
 			} catch (CoreException e) {
