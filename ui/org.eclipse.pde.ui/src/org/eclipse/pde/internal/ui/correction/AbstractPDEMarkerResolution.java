@@ -14,6 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.graphics.Image;
@@ -26,6 +27,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	public static final int REMOVE_TYPE = 3;
 	public static final int CONFIGURE_TYPE = 4;
 
+	protected Image image = null;
 	protected int fType;
 	/**
 	 * This variable will only be available after run() is called.
@@ -39,7 +41,23 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 
 	@Override
 	public Image getImage() {
-		return null;
+		if (image == null) {
+			switch (this.getType()) {
+			case AbstractPDEMarkerResolution.CREATE_TYPE:
+				image = PDEPluginImages.DESC_ADD_ATT.createImage();
+				break;
+			case AbstractPDEMarkerResolution.REMOVE_TYPE:
+				image = PDEPluginImages.DESC_DELETE.createImage();
+				break;
+			case AbstractPDEMarkerResolution.RENAME_TYPE:
+				image = PDEPluginImages.DESC_REFRESH.createImage();
+				break;
+			case AbstractPDEMarkerResolution.CONFIGURE_TYPE:
+				image = PDEPluginImages.DESC_CON_SEV.createImage();
+				break;
+			}
+		}
+		return image;
 	}
 
 	public int getType() {
@@ -61,6 +79,15 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 			}
 		};
 		PDEModelUtility.modifyModel(modification, null);
+
+	}
+
+
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		if (image != null)
+			image.dispose();
 	}
 
 	protected abstract void createChange(IBaseModel model);

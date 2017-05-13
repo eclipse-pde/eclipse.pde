@@ -29,13 +29,11 @@ import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.preferences.CompilersPreferencePage;
 import org.eclipse.pde.internal.ui.preferences.PDECompilersConfigurationBlock;
 import org.eclipse.pde.internal.ui.preferences.PDECompilersConfigurationBlock.Key;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -53,11 +51,6 @@ public class ConfigureProblemSeverityForPDECompilerResolution extends AbstractMa
 		id = key;
 	}
 
-
-	@Override
-	public Image getImage() {
-		return PDEPluginImages.DESC_CON_SEV.createImage();
-	}
 
 	@Override
 	public String getDescription() {
