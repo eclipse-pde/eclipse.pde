@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -327,6 +327,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				IMarker marker = project.createMarker(PDEMarkerFactory.MARKER_ID);
 				marker.setAttribute(IMarker.SEVERITY, CompilerFlags.ERROR == severity ? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING);
 				marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_buildDoesNotExist);
+				marker.setAttribute(PDEMarkerFactory.compilerKey, CompilerFlags.P_BUILD);
 			} catch (CoreException e) {
 			}
 		}

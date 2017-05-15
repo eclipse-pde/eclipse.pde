@@ -282,15 +282,17 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (singletonAttr != null) {
 				if (isCheckDeprecated()) {
 					String message = PDECoreMessages.BundleErrorReporter_deprecated_attribute_singleton;
-					report(message, getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE + "="), //$NON-NLS-1$
+					IMarker marker = report(message, getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE + "="), //$NON-NLS-1$
 							CompilerFlags.P_DEPRECATED, PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET, PDEMarkerFactory.CAT_OTHER);
+					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DEPRECATED);
 				}
 			}
 		} else if (singletonDir != null) {
 			if (isCheckDeprecated()) {
 				String message = PDECoreMessages.BundleErrorReporter_unsupportedSingletonDirective;
-				report(message, getLine(header, Constants.SINGLETON_DIRECTIVE + ":="), //$NON-NLS-1$
+				IMarker marker = report(message, getLine(header, Constants.SINGLETON_DIRECTIVE + ":="), //$NON-NLS-1$
 						CompilerFlags.P_DEPRECATED, PDEMarkerFactory.M_SINGLETON_DIR_NOT_SUPPORTED, PDEMarkerFactory.CAT_OTHER);
+				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DEPRECATED);
 
 			}
 		}
@@ -372,7 +374,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				}
 
 				if (!resolved) {
-					report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedHost, name), getLine(header, name), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.CAT_FATAL);
+					IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedHost, name), getLine(header, name), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.CAT_FATAL);
+					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
 					return;
 				}
 			}
@@ -380,7 +383,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		IPluginModelBase model = PluginRegistry.findModel(name);
 		if (model == null || model instanceof IFragmentModel || !model.isEnabled()) {
-			report(NLS.bind(PDECoreMessages.BundleErrorReporter_HostNotExistPDE, name), getLine(header, name), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.CAT_FATAL);
+			IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_HostNotExistPDE, name), getLine(header, name), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.CAT_FATAL);
+			addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
 		}
 	}
 
@@ -1305,7 +1309,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		IResource res = PDEProject.getBundleRoot(fProject).findMember(location);
 		if (res == null || !(res instanceof IContainer)) {
-			report(PDECoreMessages.BundleErrorReporter_localization_folder_not_exist, header.getLineNumber() + 1, CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE), PDEMarkerFactory.CAT_OTHER);
+			IMarker marker = report(PDECoreMessages.BundleErrorReporter_localization_folder_not_exist, header.getLineNumber() + 1, CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE), PDEMarkerFactory.CAT_OTHER);
+			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNKNOWN_RESOURCE);
 			return;
 		}
 		IContainer folder = (IContainer) res;

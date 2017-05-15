@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
@@ -469,13 +468,6 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			}
 		}
 		report(NLS.bind(PDECoreMessages.Builders_Feature_mismatchPluginVersion, new String[] {version, id}), getLine(plugin, attr.getName()), CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
-	}
-	private void addMarkerAttribute(IMarker marker, String attr, String value) {
-		if (marker != null)
-			try {
-				marker.setAttribute(attr, value);
-			} catch (CoreException e) {
-			}
 	}
 
 }
