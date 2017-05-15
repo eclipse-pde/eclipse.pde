@@ -175,7 +175,9 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage {
 				}
 			}
 			Integer tab = (Integer) fPageData.get(ApiErrorsWarningsPreferencePage.INITIAL_TAB);
-			block.selectTab(tab.intValue());
+			if (tab != null) {
+				block.selectTab(tab.intValue());
+			}
 			Object key = fPageData.get(ApiErrorsWarningsPreferencePage.DATA_SELECT_OPTION_KEY);
 
 			Object qualifier = fPageData.get(ApiErrorsWarningsPreferencePage.DATA_SELECT_OPTION_QUALIFIER);
