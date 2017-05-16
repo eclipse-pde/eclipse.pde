@@ -25,7 +25,9 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.preference.IPreferencePageContainer;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -52,7 +54,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbenchPreferencePage {
 
-	private static final int OPTIONS_INDENT = 20;
+	private static final int OPTIONS_INDENT = LayoutConstants.getIndent();
 
 	private Link workspaceLink;
 
@@ -115,6 +117,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 			projectCheckbox = new Button(composite, SWT.CHECK);
 			projectCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, true, false));
 			projectCheckbox.setText(Messages.DSAnnotationPropertyPage_projectCheckbox_text);
+			projectCheckbox.setFont(JFaceResources.getDialogFont());
 			projectCheckbox.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -190,8 +193,9 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		composite.setFont(parent.getFont());
 
 		enableCheckbox = new Button(composite, SWT.CHECK);
-		enableCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, true, false));
+		enableCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		enableCheckbox.setText(Messages.DSAnnotationPropertyPage_enableCheckbox_text);
+		enableCheckbox.setFont(JFaceResources.getDialogFont());
 		enableCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -207,58 +211,69 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		optionBlockControl.setLayout(layout);
 		optionBlockControl.setFont(composite.getFont());
 
-		Label pathLabel = new Label(optionBlockControl, SWT.LEFT);
+		Composite pathComposite = new Composite(optionBlockControl, SWT.NONE);
+		pathComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		layout = new GridLayout(2, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		pathComposite.setLayout(layout);
+		pathComposite.setFont(optionBlockControl.getFont());
+
+		Label pathLabel = new Label(pathComposite, SWT.LEFT);
 		pathLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		pathLabel.setText(Messages.DSAnnotationPropertyPage_pathLabel_text);
+		pathLabel.setFont(JFaceResources.getDialogFont());
 
-		pathText = new Text(optionBlockControl, SWT.BORDER | SWT.SINGLE);
+		pathText = new Text(pathComposite, SWT.BORDER | SWT.SINGLE);
 		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		Label classpathCheckboxLabel = new Label(optionBlockControl, SWT.LEFT);
-		classpathCheckboxLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		classpathCheckboxLabel.setText(Messages.DSAnnotationPropertyPage_classpathCheckbox_text);
-
 		classpathCheckbox = new Button(optionBlockControl, SWT.CHECK);
-		classpathCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+		classpathCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		classpathCheckbox.setText(Messages.DSAnnotationPropertyPage_classpathCheckbox_text);
+		classpathCheckbox.setFont(JFaceResources.getDialogFont());
 
 		Label specVersionLabel = new Label(optionBlockControl, SWT.LEFT);
-		specVersionLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		specVersionLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		specVersionLabel.setText(Messages.DSAnnotationPropertyPage_specVersionLabel_text);
+		specVersionLabel.setFont(JFaceResources.getDialogFont());
 
 		specVersionCombo = new Combo(optionBlockControl, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		specVersionCombo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
+		specVersionCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		specVersionCombo.setFont(JFaceResources.getDialogFont());
 		specVersionCombo.add("1.3"); //$NON-NLS-1$
 		specVersionCombo.add("1.2"); //$NON-NLS-1$
 		specVersionCombo.select(0);
 
 		Label errorLevelLabel = new Label(optionBlockControl, SWT.LEFT);
-		errorLevelLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		errorLevelLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		errorLevelLabel.setText(Messages.DSAnnotationPropertyPage_errorLevelLabel_text);
+		errorLevelLabel.setFont(JFaceResources.getDialogFont());
 
 		errorLevelCombo = new Combo(optionBlockControl, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		errorLevelCombo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
+		errorLevelCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		errorLevelCombo.setFont(JFaceResources.getDialogFont());
 		errorLevelCombo.add(Messages.DSAnnotationPropertyPage_errorLevelError);
 		errorLevelCombo.add(Messages.DSAnnotationPropertyPage_errorLevelWarning);
 		errorLevelCombo.add(Messages.DSAnnotationPropertyPage_errorLevelIgnore);
 		errorLevelCombo.select(0);
 
 		Label missingUnbindMethodLabel = new Label(optionBlockControl, SWT.LEFT);
-		missingUnbindMethodLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		missingUnbindMethodLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		missingUnbindMethodLabel.setText(Messages.DSAnnotationPropertyPage_missingUnbindMethodLevelLabel_text);
+		missingUnbindMethodLabel.setFont(JFaceResources.getDialogFont());
 
 		missingUnbindMethodCombo = new Combo(optionBlockControl, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		missingUnbindMethodCombo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
+		missingUnbindMethodCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		missingUnbindMethodCombo.setFont(JFaceResources.getDialogFont());
 		missingUnbindMethodCombo.add(Messages.DSAnnotationPropertyPage_errorLevelError);
 		missingUnbindMethodCombo.add(Messages.DSAnnotationPropertyPage_errorLevelWarning);
 		missingUnbindMethodCombo.add(Messages.DSAnnotationPropertyPage_errorLevelIgnore);
 		missingUnbindMethodCombo.select(0);
 
-		Label enableBAPLGenerationLabel = new Label(optionBlockControl, SWT.LEFT);
-		enableBAPLGenerationLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		enableBAPLGenerationLabel.setText(Messages.DSAnnotationPropertyPage_enableBAPLGenerationLabel_text);
-
 		enableBAPLGeneration = new Button(optionBlockControl, SWT.CHECK);
-		enableBAPLGeneration.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+		enableBAPLGeneration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		enableBAPLGeneration.setText(Messages.DSAnnotationPropertyPage_enableBAPLGenerationLabel_text);
+		enableBAPLGeneration.setFont(JFaceResources.getDialogFont());
 
 		Dialog.applyDialogFont(composite);
 		return composite;
