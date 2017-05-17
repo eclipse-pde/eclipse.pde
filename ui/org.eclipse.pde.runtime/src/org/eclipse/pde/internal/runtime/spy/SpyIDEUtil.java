@@ -31,9 +31,6 @@ import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 
-/**
- * @since 3.4
- */
 public class SpyIDEUtil {
 	public static void openClass(String pluginId, String clazz) {
 		IPluginModelBase model = PluginRegistry.findModel(pluginId);

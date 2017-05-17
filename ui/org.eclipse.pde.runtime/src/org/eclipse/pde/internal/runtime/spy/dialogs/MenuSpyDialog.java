@@ -24,9 +24,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-/**
- * @since 3.5
- */
 public class MenuSpyDialog extends PopupDialog {
 
 	private Event event;
@@ -58,9 +55,6 @@ public class MenuSpyDialog extends PopupDialog {
 		this.toolkit = new SpyFormToolkit(this);
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);

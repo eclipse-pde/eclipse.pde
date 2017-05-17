@@ -34,9 +34,6 @@ import org.eclipse.ui.forms.widgets.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-/**
- * @since 3.4
- */
 public class SpyFormToolkit extends FormToolkit {
 
 	private static final String CLASS_PROTOCOL_PREFIX = "class://"; //$NON-NLS-1$
