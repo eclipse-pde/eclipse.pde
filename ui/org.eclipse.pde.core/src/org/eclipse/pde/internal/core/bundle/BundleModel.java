@@ -133,11 +133,12 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 	@Override
 	public String toString() {
 		if (fBundle != null) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(fBundle.getHeader(Constants.BUNDLE_SYMBOLICNAME));
 			buf.append(" ("); //$NON-NLS-1$
 			buf.append(fBundle.getHeader(Constants.BUNDLE_VERSION));
 			buf.append(')');
+			return buf.toString();
 		}
 		return "Unknown bundle model"; //$NON-NLS-1$
 	}
