@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -28,8 +30,12 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
+import org.eclipse.pde.api.tools.ui.internal.preferences.ApiBaselinePreferencePage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
@@ -124,18 +130,32 @@ public class ConfigureProblemSeverityForAPIToolsResolution extends WorkbenchMark
 		UIJob job = new UIJob("") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
+				// Configure problem severity for missing baseline
+				// This doesn't have project specific option
+				if (fBackingMarker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID,
+						-1) == IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) {
+					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+					Map<String, Object> data = new HashMap<>();
+					data.put(ApiBaselinePreferencePage.DATA_SELECT_OPTION_KEY,
+							ApiBaselinePreferencePage.MISSING_BASELINE_OPTION);
+					PreferencesUtil
+							.createPreferenceDialogOn(shell, IApiToolsConstants.ID_BASELINES_PREF_PAGE, null, data)
+							.open();
+
+					return Status.OK_STATUS;
+				}
+				// Configure problem severity for API Error/Warning( Usage Error, API compatibility error, API
+				// version error, since tag error, analysis option etc )
 				IJavaProject project = JavaCore.create(fBackingMarker.getResource().getProject());
 				int id = ApiProblemFactory.getProblemId(fBackingMarker);
 				int tab = -1;
 				String key = null;
 				key = Util.getAPIToolPreferenceKey(id);
 				tab = Util.getAPIToolPreferenceTab(id);
-
 				PDEConfigureProblemSeverityAction problemSeverityAction = new PDEConfigureProblemSeverityAction(
 						project, key ,
 						tab);
 				problemSeverityAction.run();
-
 				return Status.OK_STATUS;
 			}
 
