@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.pde.api.tools.ui.internal.preferences;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
@@ -67,6 +68,8 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+	public static final String DATA_SELECT_OPTION_KEY = "select_option_key"; //$NON-NLS-1$
+	public static final String MISSING_BASELINE_OPTION = "MISSING_BASELINE_OPTION"; //$NON-NLS-1$
 	public static final String ID = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$
 
 	/**
@@ -398,4 +401,18 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		this.block.performDefaults();
 		applyChanges();
 	}
+	@Override
+	public void applyData(Object data) {
+		if (data instanceof Map) {
+			Map<?, ?> pageData = (Map<?, ?>) data;
+			Object key = pageData.get(ApiErrorsWarningsPreferencePage.DATA_SELECT_OPTION_KEY);
+			if (key instanceof String) {
+				String option = (String) key;
+				if (option.equals(ApiBaselinePreferencePage.MISSING_BASELINE_OPTION)) {
+					block.selectOption();
+				}
+			}
+		}
+	}
+
 }
