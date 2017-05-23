@@ -67,7 +67,11 @@ public class ConvertPreferencesWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		this.fPluginCustomizeFilePath = page.getPluginCustomizeFile().getFullPath().toString();
-		this.fPreferencesFilePath = page.getPreferencesFile().getAbsolutePath();
+		File preferencesFile = page.getPreferencesFile();
+		if (preferencesFile == null) {
+			return false;
+		}
+		this.fPreferencesFilePath = preferencesFile.getAbsolutePath();
 		this.fOverwrite = page.getOverwrite();
 		try {
 			getContainer().run(false, false, getGenerateOperation());

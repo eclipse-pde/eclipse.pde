@@ -216,7 +216,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 			error = PDEUIMessages.ConvertPreferencesWizard_errorNoFileSpecified;
 			fPreferenceCombo.setFocus();
 		} else {
-			if (!file.exists()) {
+			if (!file.isFile()) {
 				error = NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFileNotFound, file.getAbsolutePath());
 				fPreferenceCombo.setFocus();
 			}
