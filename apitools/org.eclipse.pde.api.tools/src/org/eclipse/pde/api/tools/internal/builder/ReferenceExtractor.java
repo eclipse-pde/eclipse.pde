@@ -1469,9 +1469,6 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * @throws CoreException
 	 */
 	static IApiType getDefaultDefined(IApiType type, String name, String signature, boolean isOverride) throws CoreException {
-		if (type != null && type.getName().startsWith("java.")) { //$NON-NLS-1$
-			return null;
-		}
 		if (type != null) {
 			if (!isOverride) {
 				IApiMethod method = type.getMethod(name, signature);
