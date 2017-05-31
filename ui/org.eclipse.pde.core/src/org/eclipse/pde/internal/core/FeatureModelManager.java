@@ -80,12 +80,7 @@ public class FeatureModelManager {
 		fActiveModels = new FeatureTable();
 		fInactiveModels = new FeatureTable();
 
-		fProviderListener = new IModelProviderListener() {
-			@Override
-			public void modelsChanged(IModelProviderEvent e) {
-				handleModelsChanged(e);
-			}
-		};
+		fProviderListener = e -> handleModelsChanged(e);
 		fWorkspaceManager.addModelProviderListener(fProviderListener);
 
 		IFeatureModel[] models = fWorkspaceManager.getFeatureModels();

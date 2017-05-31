@@ -550,20 +550,17 @@ public class TargetDefinition implements ITargetDefinition {
 				// select newest
 				if (list.size() > 1) {
 					// sort the list
-					Collections.sort(list, new Comparator<Object>() {
-						@Override
-						public int compare(Object o1, Object o2) {
-							BundleInfo b1 = ((TargetBundle) o1).getBundleInfo();
-							BundleInfo b2 = ((TargetBundle) o2).getBundleInfo();
-							try {
-								Version v1 = Version.create(b1.getVersion());
-								Version v2 = Version.create(b2.getVersion());
-								return v1.compareTo(v2);
-							} catch (IllegalArgumentException e) {
-								// If one of the bundles has a bad version
-								PDECore.log(e);
-								return b1.getVersion().compareTo(b2.getVersion());
-							}
+					Collections.sort(list, (o1, o2) -> {
+						BundleInfo b1 = ((TargetBundle) o1).getBundleInfo();
+						BundleInfo b2 = ((TargetBundle) o2).getBundleInfo();
+						try {
+							Version v1 = Version.create(b1.getVersion());
+							Version v2 = Version.create(b2.getVersion());
+							return v1.compareTo(v2);
+						} catch (IllegalArgumentException e) {
+							// If one of the bundles has a bad version
+							PDECore.log(e);
+							return b1.getVersion().compareTo(b2.getVersion());
 						}
 					});
 				}

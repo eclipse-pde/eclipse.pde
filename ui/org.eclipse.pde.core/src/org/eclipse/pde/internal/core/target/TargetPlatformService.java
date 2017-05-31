@@ -179,12 +179,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		List<ITargetHandle> handles = new ArrayList<>(10);
 		final File directory = containerPath.toFile();
 		if (directory.isDirectory()) {
-			FilenameFilter filter = new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return dir.equals(directory) && name.endsWith(ICoreConstants.TARGET_FILE_EXTENSION);
-				}
-			};
+			FilenameFilter filter = (dir, name) -> dir.equals(directory) && name.endsWith(ICoreConstants.TARGET_FILE_EXTENSION);
 			File[] files = directory.listFiles(filter);
 			for (File file : files) {
 				try {

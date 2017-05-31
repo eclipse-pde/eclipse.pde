@@ -703,18 +703,15 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @return The element order to use
 	 */
 	private int[] getPredictableOrder(String[] ids, Version[] versions) {
-		Comparator<Integer> idVersionCmp = new Comparator<Integer>() {
-			@Override
-			public int compare(Integer i1, Integer i2) {
-				String id1 = ids[i1], id2 = ids[i2];
-				Version ver1 = versions[i1], ver2 = versions[i2];
+		Comparator<Integer> idVersionCmp = (i1, i2) -> {
+			String id1 = ids[i1], id2 = ids[i2];
+			Version ver1 = versions[i1], ver2 = versions[i2];
 
-				int c = id1.compareTo(id2);
-				if (c == 0) {
-					return ver1.compareTo(ver2);
-				}
-				return c;
+			int c = id1.compareTo(id2);
+			if (c == 0) {
+				return ver1.compareTo(ver2);
 			}
+			return c;
 		};
 
 		return IntStream.range(0, ids.length).boxed().sorted(idVersionCmp).mapToInt(i -> i).toArray();
