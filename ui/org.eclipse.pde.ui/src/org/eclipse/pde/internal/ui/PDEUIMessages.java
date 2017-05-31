@@ -145,6 +145,8 @@ public class PDEUIMessages extends NLS {
 	public static String PDECompilersConfigurationBlock_settings_changed_all;
 	public static String PDECompilersConfigurationBlock_usage;
 	public static String PDECompilersConfigurationBlock_build;
+	public static String PDECompilersConfigurationBlock_buildButtonLabel;
+	public static String PDECompilersConfigurationBlock_dontBuildButtonLabel;
 
 	public static String PDEWizardNewFileCreationPage_errorMsgStartsWithDot;
 
