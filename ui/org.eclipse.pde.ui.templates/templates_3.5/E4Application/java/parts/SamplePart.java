@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
-import org.eclipse.e4.ui.model.application.ui.MDirtyable;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -24,7 +24,7 @@ public class SamplePart {
 	private TableViewer tableViewer;
 
 	@Inject
-	private MDirtyable dirty;
+	private MPart part;
 
 	@PostConstruct
 	public void createComposite(Composite parent) {
@@ -35,7 +35,7 @@ public class SamplePart {
 		txtInput.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				dirty.setDirty(true);
+				part.setDirty(true);
 			}
 		});
 		txtInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -54,7 +54,7 @@ public class SamplePart {
 
 	@Persist
 	public void save() {
-		dirty.setDirty(false);
+		part.setDirty(false);
 	}
 	
 	private List<String> createInitialDataModel() {
