@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,11 +77,15 @@ public class CreateApiFilterOperation extends UIJob {
 			HashSet<IProject> projects = new HashSet<IProject>();
 			if (fAddingComment) {
 				InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), MarkerMessages.CreateApiFilterOperation_add_filter_comment, MarkerMessages.CreateApiFilterOperation_filter_comment, null, null);
-				if (dialog.open() == IDialogConstants.OK_ID) {
+				int okCancel = dialog.open();
+				if (okCancel == IDialogConstants.OK_ID) {
 					comment = dialog.getValue();
 					if (comment != null && comment.length() < 1) {
 						comment = null;
 					}
+				}
+				if (okCancel == IDialogConstants.CANCEL_ID) {
+					return Status.CANCEL_STATUS;
 				}
 			}
 			IMarker marker = null;
