@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,14 @@
 package org.eclipse.pde.internal.build.site;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.Utils;
-import org.eclipse.update.configurator.ConfiguratorUtils;
-import org.eclipse.update.configurator.IPlatformConfiguration;
 
 public class PluginPathFinder {
-	private static final String URL_PROPERTY = "org.eclipse.update.resolution_url"; //$NON-NLS-1$
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String DROPINS = "dropins"; //$NON-NLS-1$
 	private static final String LINK = ".link"; //$NON-NLS-1$
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
@@ -158,65 +153,9 @@ public class PluginPathFinder {
 			}
 		}
 
-		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
-		if (file.exists()) {
-			try {
-				String value = new Path(platformHome).toFile().toURL().toExternalForm();
-				System.setProperty(URL_PROPERTY, value);
-				try {
-					IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
-					return getConfiguredSitesPaths(platformHome, config, features);
-				} finally {
-					System.setProperty(URL_PROPERTY, EMPTY_STRING);
-				}
-			} catch (MalformedURLException e) {
-				//ignore
-			} catch (IOException e) {
-				//ignore
-			}
-		}
-
 		List<File> list = scanLocations(getSites(platformHome, features));
 		list.addAll(getDropins(platformHome, features));
 		return Utils.asFile(list);
-	}
-
-	private static File[] getConfiguredSitesPaths(String platformHome, IPlatformConfiguration configuration, boolean features) {
-		List<File> installPlugins = scanLocations(new File[] {new File(platformHome, features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION)});
-		List<File> extensionPlugins = getExtensionPlugins(configuration, features);
-		List<File> dropinsPlugins = getDropins(platformHome, features);
-
-		Set<File> all = new LinkedHashSet<File>();
-		all.addAll(installPlugins);
-		all.addAll(extensionPlugins);
-		all.addAll(dropinsPlugins);
-
-		return all.toArray(new File[all.size()]);
-	}
-
-	/**
-	 * 
-	 * @param config
-	 * @param features true for features false for plugins
-	 * @return List of Files for features or plugins on the site
-	 */
-	private static List<File> getExtensionPlugins(IPlatformConfiguration config, boolean features) {
-		ArrayList<File> extensionPlugins = new ArrayList<File>();
-		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
-		for (int i = 0; i < sites.length; i++) {
-			URL url = sites[i].getURL();
-			if ("file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
-				String[] entries;
-				if (features)
-					entries = sites[i].getFeatures();
-				else
-					entries = sites[i].getPlugins();
-				for (int j = 0; j < entries.length; j++) {
-					extensionPlugins.add(new File(url.getFile(), entries[j]));
-				}
-			}
-		}
-		return extensionPlugins;
 	}
 
 	/**
