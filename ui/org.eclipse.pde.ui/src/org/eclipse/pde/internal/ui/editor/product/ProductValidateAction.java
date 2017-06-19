@@ -15,15 +15,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.launching.launcher.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.SWT;
 
 public class ProductValidateAction extends Action {
 
@@ -59,7 +59,9 @@ public class ProductValidateAction extends Action {
 			LaunchValidationOperation operation = new ProductValidationOperation(models);
 			LaunchPluginValidator.runValidationOperation(operation, new NullProgressMonitor());
 			if (!operation.hasErrors()) {
-				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
+				MessageDialog.open(SWT.ICON_INFORMATION, PDEPlugin.getActiveWorkbenchShell(),
+						PDEUIMessages.PluginStatusDialog_pluginValidation,
+						PDEUIMessages.AbstractLauncherToolbar_noProblems, 0, IDialogConstants.CLOSE_LABEL);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
