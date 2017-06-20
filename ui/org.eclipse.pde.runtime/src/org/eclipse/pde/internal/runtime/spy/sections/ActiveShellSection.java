@@ -42,7 +42,7 @@ public class ActiveShellSection implements ISpySection {
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<form>"); //$NON-NLS-1$
 
 		buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeShell_desc, new Class[] {clazz}));

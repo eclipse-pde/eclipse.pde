@@ -49,7 +49,7 @@ public class ActiveSelectionSection implements ISpySection {
 
 			// time to analyze the selection
 			Class clazz = selection.getClass();
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("<form>"); //$NON-NLS-1$
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeSelection_desc, new Class[] {clazz}));
 

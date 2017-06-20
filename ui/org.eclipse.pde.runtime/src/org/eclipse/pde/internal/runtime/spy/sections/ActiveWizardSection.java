@@ -51,7 +51,7 @@ public class ActiveWizardSection implements ISpySection {
 			td.grabHorizontal = true;
 			section.setLayoutData(td);
 
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("<form>"); //$NON-NLS-1$
 			section.setText(NLS.bind(PDERuntimeMessages.SpyDialog_activeWizard_title, wizard.getWindowTitle()));
 

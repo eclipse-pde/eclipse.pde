@@ -43,7 +43,7 @@ public class ActiveHelpSection implements ISpySection {
 		if (object == null)
 			return;
 
-		StringBuffer helpBuffer = new StringBuffer();
+		StringBuilder helpBuffer = new StringBuilder();
 		// process help
 		// TODO we need to make this cleaner... help processing is complicated atm
 		if (object instanceof PreferenceDialog) {
@@ -73,7 +73,7 @@ public class ActiveHelpSection implements ISpySection {
 			Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CONTEXTID_OBJ);
 			text.setImage("contextid", image); //$NON-NLS-1$
 
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("<form>"); //$NON-NLS-1$
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(PDERuntimeMessages.SpyDialog_activeHelpSection_desc);
@@ -86,11 +86,11 @@ public class ActiveHelpSection implements ISpySection {
 
 	}
 
-	private void processHelp(Widget widget, StringBuffer buffer) {
+	private void processHelp(Widget widget, StringBuilder buffer) {
 		buffer.append(toolkit.createHelpIdentifierSection(widget));
 	}
 
-	private void processChildren(Control control, StringBuffer buffer) {
+	private void processChildren(Control control, StringBuilder buffer) {
 		processHelp(control, buffer);
 		if (control instanceof Composite) {
 			Composite composite = (Composite) control;
@@ -110,7 +110,7 @@ public class ActiveHelpSection implements ISpySection {
 		if (window == null)
 			return null;
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		Shell shell = null;
 		Control control = null;

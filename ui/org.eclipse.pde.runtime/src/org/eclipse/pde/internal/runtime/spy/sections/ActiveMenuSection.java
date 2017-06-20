@@ -47,7 +47,7 @@ public class ActiveMenuSection implements ISpySection {
 			td.grabHorizontal = true;
 			section.setLayoutData(td);
 
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("<form>"); //$NON-NLS-1$
 			if (object instanceof IContributionItem) {
 				IContributionItem item = (IContributionItem) object;
@@ -66,7 +66,7 @@ public class ActiveMenuSection implements ISpySection {
 		}
 	}
 
-	private void createLocationURI(SpyFormToolkit toolkit, Object object, FormText text, StringBuffer buffer, String id) {
+	private void createLocationURI(SpyFormToolkit toolkit, Object object, FormText text, StringBuilder buffer, String id) {
 		IContributionManager parent = ((ContributionItem) object).getParent();
 		if (parent instanceof IMenuManager) {
 			String parentId = ((IMenuManager) parent).getId();
@@ -92,7 +92,7 @@ public class ActiveMenuSection implements ISpySection {
 	}
 
 	// FIXME this is a bit hackish but works... need to redo
-	private void scan(IContributionItem item, StringBuffer buffer, SpyFormToolkit toolkit, FormText text) {
+	private void scan(IContributionItem item, StringBuilder buffer, SpyFormToolkit toolkit, FormText text) {
 		// check for action set information
 		if (item instanceof IActionSetContributionItem) {
 			IActionSetContributionItem actionItem = (IActionSetContributionItem) item;
@@ -111,7 +111,7 @@ public class ActiveMenuSection implements ISpySection {
 		}
 	}
 
-	private void createActionContributionItemText(Object object, StringBuffer buffer, SpyFormToolkit toolkit, FormText text) {
+	private void createActionContributionItemText(Object object, StringBuilder buffer, SpyFormToolkit toolkit, FormText text) {
 		ActionContributionItem actionItem = (ActionContributionItem) object;
 		IAction action = actionItem.getAction();
 
@@ -135,7 +135,7 @@ public class ActiveMenuSection implements ISpySection {
 
 	}
 
-	private void createActionContributionItemText(Object object, StringBuffer buffer, SpyFormToolkit toolkit, FormText text, Class clazz, PluginAction pluginAction) {
+	private void createActionContributionItemText(Object object, StringBuilder buffer, SpyFormToolkit toolkit, FormText text, Class clazz, PluginAction pluginAction) {
 		try {
 			RetargetAction retargetAction = null;
 			IActionDelegate delegate = null;

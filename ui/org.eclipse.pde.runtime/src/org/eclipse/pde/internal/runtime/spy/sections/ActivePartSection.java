@@ -57,7 +57,7 @@ public class ActivePartSection implements ISpySection {
 
 		//toolkit.createImageAction(section, part.getTitleImage());
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<form>"); //$NON-NLS-1$
 
 		// time to analyze the active part

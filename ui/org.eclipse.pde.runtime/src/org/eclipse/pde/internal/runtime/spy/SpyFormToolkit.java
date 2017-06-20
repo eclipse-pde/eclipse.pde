@@ -156,7 +156,7 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	public String createInterfaceSection(FormText text, String title, Class[] clazzes) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (clazzes.length > 0) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
@@ -173,7 +173,7 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	public String createClassSection(FormText text, String title, Class[] clazzes) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (clazzes.length > 0) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
@@ -190,7 +190,7 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	public String createIdentifierSection(FormText text, String title, String[] ids) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (ids.length > 0) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
@@ -217,7 +217,7 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	private String createHelpIdentifierSection(Object help) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (help != null) {
 			buffer.append("<li bindent=\"20\" style=\"image\" value=\"contextid\">"); //$NON-NLS-1$
 			buffer.append(help);
@@ -226,7 +226,7 @@ public class SpyFormToolkit extends FormToolkit {
 		return buffer.toString();
 	}
 
-	private void createClassReference(StringBuffer buffer, Class clazz) {
+	private void createClassReference(StringBuilder buffer, Class clazz) {
 		Bundle bundle = PDERuntimePlugin.HAS_IDE_BUNDLES ? FrameworkUtil.getBundle(clazz) : null;
 		if (bundle != null) {
 			bundleClassByName.put(clazz.getName(), bundle);
@@ -239,7 +239,7 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	// TODO refactor me, I'm ugly
-	public void generatePluginDetailsText(Bundle bundle, String objectId, String objectType, StringBuffer buffer, FormText text) {
+	public void generatePluginDetailsText(Bundle bundle, String objectId, String objectType, StringBuilder buffer, FormText text) {
 		if (bundle != null) {
 			String version = (bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
 

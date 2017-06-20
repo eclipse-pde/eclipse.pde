@@ -59,7 +59,7 @@ public class ActiveDialogPageSection implements ISpySection {
 				td.grabHorizontal = true;
 				section.setLayoutData(td);
 
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append("<form>"); //$NON-NLS-1$
 
 				buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeDialogPageSection_desc, new Class[] {clazz}));

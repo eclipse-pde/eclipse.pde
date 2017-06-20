@@ -102,7 +102,7 @@ public class ServiceRegistration extends ModelObject implements Comparable {
 			CharSequence charSequence = (CharSequence) value;
 			return charSequence.toString();
 		} else if (value instanceof Object[]) {
-			StringBuffer buff = new StringBuffer();
+			StringBuilder buff = new StringBuilder();
 			appendString(buff, value);
 
 			return buff.toString();
@@ -111,7 +111,7 @@ public class ServiceRegistration extends ModelObject implements Comparable {
 		}
 	}
 
-	public static void appendString(StringBuffer buff, Object value) {
+	public static void appendString(StringBuilder buff, Object value) {
 		if (value == null) {
 			// ignore
 		} else if (value instanceof Object[]) {
