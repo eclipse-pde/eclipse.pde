@@ -310,7 +310,7 @@ public class FilterDialog extends TrayDialog {
 		// store Event Dialog stack trace filter preferences
 		memento.putBoolean(EventDetailsDialog.FILTER_ENABLED, filterEnabled.getSelection());
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		String[] items = filterList.getItems();
 		for (int i = 0; i < items.length; i++) {
 			sb.append(items[i]);

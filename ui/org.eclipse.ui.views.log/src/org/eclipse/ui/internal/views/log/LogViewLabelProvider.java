@@ -97,7 +97,7 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 						String message = entry.getMessage();
 						if (message.length() > MAX_LABEL_LENGTH) {
 							String warning = Messages.LogViewLabelProvider_truncatedMessage;
-							StringBuffer sb = new StringBuffer(message.substring(0, MAX_LABEL_LENGTH - warning.length()));
+							StringBuilder sb = new StringBuilder(message.substring(0, MAX_LABEL_LENGTH - warning.length()));
 							sb.append(warning);
 							return sb.toString();
 						}

@@ -205,7 +205,7 @@ public class LogEntry extends AbstractEntry {
 		StringTokenizer stok = new StringTokenizer(line, SPACE);
 		severity = 0;
 		code = 0;
-		StringBuffer dateBuffer = new StringBuffer();
+		StringBuilder dateBuffer = new StringBuilder();
 		int tokens = stok.countTokens();
 		String token = null;
 		for (int i = 0; i < tokens; i++) {
@@ -253,7 +253,7 @@ public class LogEntry extends AbstractEntry {
 	 *
 	 * @since 3.6
 	 */
-	void appendToken(StringBuffer buffer, String token) {
+	void appendToken(StringBuilder buffer, String token) {
 		if (buffer.length() > 0) {
 			buffer.append(SPACE);
 		}
@@ -270,7 +270,7 @@ public class LogEntry extends AbstractEntry {
 		//!SUBENTRY <depth> <pluginID> <severity> <code> <date>
 		//!SUBENTRY  <depth> <pluginID> <date>if logged by the framework!!!
 		StringTokenizer stok = new StringTokenizer(line, SPACE);
-		StringBuffer dateBuffer = new StringBuffer();
+		StringBuilder dateBuffer = new StringBuilder();
 		int depth = 0;
 		String token = null;
 		int tokens = stok.countTokens();

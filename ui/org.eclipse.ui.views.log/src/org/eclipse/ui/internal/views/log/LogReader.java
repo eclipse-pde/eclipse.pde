@@ -177,7 +177,7 @@ class LogReader {
 		} else if (writerState == SESSION_STATE && session != null) {
 			session.setSessionData(swriter.toString());
 		} else if (writerState == MESSAGE_STATE && current != null) {
-			StringBuffer sb = new StringBuffer(current.getMessage());
+			StringBuilder sb = new StringBuilder(current.getMessage());
 			String continuation = swriter.toString();
 			if (continuation.length() > 0)
 				sb.append(System.getProperty("line.separator")).append(continuation); //$NON-NLS-1$

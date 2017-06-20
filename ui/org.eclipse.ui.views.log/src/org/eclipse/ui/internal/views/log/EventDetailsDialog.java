@@ -776,7 +776,7 @@ public class EventDetailsDialog extends TrayDialog {
 		}
 
 		StringTokenizer st = new StringTokenizer(stack, "\n"); //$NON-NLS-1$
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		while (st.hasMoreTokens()) {
 			String stackElement = st.nextToken();
 
