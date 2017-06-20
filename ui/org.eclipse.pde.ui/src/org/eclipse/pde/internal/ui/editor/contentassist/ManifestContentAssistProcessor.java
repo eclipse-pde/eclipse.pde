@@ -402,7 +402,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	}
 
 	private String getVersionProposal(IPluginModelBase base) {
-		StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder("\""); //$NON-NLS-1$
 		BundleDescription desc = base.getBundleDescription();
 		if (desc != null) {
 			Version version = desc.getVersion();

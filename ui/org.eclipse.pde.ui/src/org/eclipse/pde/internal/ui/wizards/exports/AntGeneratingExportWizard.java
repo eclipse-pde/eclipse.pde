@@ -88,7 +88,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 				}
 			}
 			if (problemModels.size() > 0) {
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				PDELabelProvider labelProvider = new PDELabelProvider();
 				int maxCount = 10;
 				for (Object object : problemModels) {

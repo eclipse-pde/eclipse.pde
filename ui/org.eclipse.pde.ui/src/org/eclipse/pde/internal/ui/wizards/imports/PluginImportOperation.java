@@ -170,7 +170,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			gd.heightHint = convertHeightInCharsToPixels(10);
 			projectText.setLayoutData(gd);
 
-			StringBuffer projectListBuffer = new StringBuffer();
+			StringBuilder projectListBuffer = new StringBuilder();
 			for (String project : fNamesOfNotImportedProjects) {
 				projectListBuffer.append(project).append('\n');
 			}
@@ -1217,7 +1217,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			} else {
 				try {
 					ManifestElement[] elements = ManifestElement.parseHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH, classpath);
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					for (ManifestElement element : elements) {
 						if (buffer.length() > 0) {
 							buffer.append(","); //$NON-NLS-1$

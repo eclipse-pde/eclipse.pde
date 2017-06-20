@@ -53,7 +53,7 @@ public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 	@Override
 	protected String getNewName(Object destination, Object element) {
 		if (destination instanceof IContainer && element instanceof IResource) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(((IContainer) destination).getProjectRelativePath().toString());
 			if (buffer.length() > 0)
 				buffer.append('/');

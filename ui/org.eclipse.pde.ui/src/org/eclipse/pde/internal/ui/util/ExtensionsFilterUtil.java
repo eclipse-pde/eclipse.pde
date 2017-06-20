@@ -178,7 +178,7 @@ public class ExtensionsFilterUtil {
 				}
 			}
 		}
-		StringBuffer patternBuffer = new StringBuffer();
+		StringBuilder patternBuffer = new StringBuilder();
 		int attributeCount = 0;
 		for (String pattern : filterPatterns) {
 			attributeCount++;

@@ -120,7 +120,7 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 	@Override
 	public String getHoverContent(Control c) {
 		if (c instanceof Label || c instanceof Hyperlink) {
-			StringBuffer result = new StringBuffer();
+			StringBuilder result = new StringBuilder();
 			ISchemaAttribute attribute = getAttribute();
 			if (attribute != null && attribute.getDescription().length() > 0) {
 				// Append required/deprecated info

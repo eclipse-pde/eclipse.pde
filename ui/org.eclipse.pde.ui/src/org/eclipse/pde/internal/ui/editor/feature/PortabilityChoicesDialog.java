@@ -130,7 +130,7 @@ public class PortabilityChoicesDialog extends TrayDialog {
 		Object[] checked = checkboxTablePart.getSelection();
 		if (checked.length == 0)
 			return ""; //$NON-NLS-1$
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < checked.length; i++) {
 			Choice choice = (Choice) checked[i];
 			if (i > 0)

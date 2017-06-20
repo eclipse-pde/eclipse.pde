@@ -153,7 +153,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 	@Override
 	public void saveSettings(IDialogSettings settings) {
 		Object[] objects = fPlatformPart.getSelection();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (Object object : objects) {
 			if (buffer.length() > 0)
 				buffer.append(","); //$NON-NLS-1$

@@ -68,7 +68,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 	@Override
 	protected String getNewName(Object destination, Object element) {
 		if (destination instanceof IPackageFragment && element instanceof IJavaElement) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(((IPackageFragment) destination).getElementName());
 			if (buffer.length() > 0)
 				buffer.append('.');

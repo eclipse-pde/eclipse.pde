@@ -71,7 +71,7 @@ public class CopyToClipboardAction extends Action {
 		// Get the file names and a string representation
 		int len = files.size();
 		String[] fileNames = new String[len];
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0, length = len; i < length; i++) {
 			FileAdapter adapter = (FileAdapter) files.get(i);
 			File file = adapter.getFile();

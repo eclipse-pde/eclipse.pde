@@ -23,7 +23,7 @@ public class LocaleUtil {
 		String[] result = new String[locales.length];
 		for (int i = 0; i < locales.length; i++) {
 			Locale locale = locales[i];
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(locale.toString());
 			buffer.append(" - "); //$NON-NLS-1$
 			buffer.append(locale.getDisplayName());

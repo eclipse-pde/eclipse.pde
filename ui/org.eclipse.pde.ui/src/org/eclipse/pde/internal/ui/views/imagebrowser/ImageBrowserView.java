@@ -532,7 +532,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 //					}
 //				}.open();
 //
-//				StringBuffer text = new StringBuffer();
+//				StringBuilder text = new StringBuilder();
 //				text.append(NLS.bind("Image Path: {0}", path.toString())).append('\n');
 //				text.append(NLS.bind("Plug-in Provider: {0}", ((ImageElement) data).getFullPlugin())).append('\n');
 //				text.append(NLS.bind("Reference URL: {0}", "platform:/plugin/" + ((ImageElement) data).getPlugin() + "/" + ((ImageElement) data).getPath())).append('\n'); //$NON-NLS-1$ //$NON-NLS-2$

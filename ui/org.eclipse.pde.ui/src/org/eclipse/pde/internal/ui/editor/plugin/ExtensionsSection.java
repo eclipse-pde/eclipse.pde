@@ -1081,7 +1081,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	public static String stripShortcuts(String input) {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
 			if (c == '&')

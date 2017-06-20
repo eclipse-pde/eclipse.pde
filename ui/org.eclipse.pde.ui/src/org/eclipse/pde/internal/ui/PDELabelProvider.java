@@ -227,7 +227,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ISchemaObject obj) {
-		StringBuffer text = new StringBuffer(obj.getName());
+		StringBuilder text = new StringBuilder(obj.getName());
 		if (obj instanceof ISchemaRepeatable) {
 			ISchemaRepeatable rso = (ISchemaRepeatable) obj;
 			boolean unbounded = rso.getMaxOccurs() == Integer.MAX_VALUE;
@@ -334,7 +334,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(PackageObject obj) {
-		StringBuffer buffer = new StringBuffer(obj.getName());
+		StringBuilder buffer = new StringBuilder(obj.getName());
 		String version = obj.getVersion();
 		if (version != null && !version.equals(Version.emptyVersion.toString())) {
 			// Format version range for ImportPackageObject.  ExportPackageObject is handled correctly in this function
@@ -862,7 +862,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			if (index > 0) {
 				// begin with zero length Arabic character so version appears on left (correct) side of id.
 				// Then add RTL strong encoding so parentheses and comma have RTL formatting.
-				StringBuffer buffer = new StringBuffer("\u200f\u202e"); //$NON-NLS-1$
+				StringBuilder buffer = new StringBuilder("\u200f\u202e"); //$NON-NLS-1$
 				// begin with leading separator (either parenthesis or bracket)
 				buffer.append(versionRange.charAt(0));
 				// start LTR encoding for min version

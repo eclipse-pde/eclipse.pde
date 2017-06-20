@@ -482,7 +482,7 @@ public class ExportPackageSection extends TableSection {
 	}
 
 	private String getValue(Object[] objects) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (Object object : objects) {
 			IPackageFragment fragment = (IPackageFragment) object;
 			if (buffer.length() > 0)

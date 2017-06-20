@@ -143,7 +143,7 @@ public class PluginConfigurationSection extends TableSection {
 	 * obtain this list from another source that uses the same format.
 	 */
 	private static String getBundlesWithStartLevels() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("org.eclipse.core.runtime@start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.equinox.ds@2:start,"); //$NON-NLS-1$
@@ -346,7 +346,7 @@ public class PluginConfigurationSection extends TableSection {
 		}
 		if (plugins.size() > 0) {
 			// Build a user-presentable description of the plugins and start levels.
-			StringBuffer bundlesList = new StringBuffer();
+			StringBuilder bundlesList = new StringBuilder();
 			bundlesList.append('\n');
 			bundlesList.append('\n');
 			for (int i = 0; i < plugins.size(); i++) {

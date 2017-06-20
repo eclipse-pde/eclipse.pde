@@ -205,7 +205,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 
 	public static InsertEdit getPropertiesInsertEdit(IDocument doc, ModelChangeElement element) {
 		String nl = TextUtilities.getDefaultLineDelimiter(doc);
-		StringBuffer sb = new StringBuffer(nl);
+		StringBuilder sb = new StringBuilder(nl);
 		sb.append(element.getKey());
 		sb.append(" = "); //$NON-NLS-1$
 		sb.append(StringHelper.preparePropertiesString(element.getValue(), nl.toCharArray()));

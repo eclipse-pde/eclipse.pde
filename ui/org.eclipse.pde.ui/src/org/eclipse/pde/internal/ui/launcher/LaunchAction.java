@@ -95,8 +95,8 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments(os, arch));
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getProgramArguments(os, arch));
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, getJREContainer(os));
-		StringBuffer wsplugins = new StringBuffer();
-		StringBuffer explugins = new StringBuffer();
+		StringBuilder wsplugins = new StringBuilder();
+		StringBuilder explugins = new StringBuilder();
 		IPluginModelBase[] models = getModels();
 		for (IPluginModelBase model : models) {
 			if (model.getUnderlyingResource() == null) {
@@ -114,7 +114,7 @@ public class LaunchAction extends Action {
 		return wc.doSave();
 	}
 
-	private void appendBundle(StringBuffer buffer, IPluginModelBase model) {
+	private void appendBundle(StringBuilder buffer, IPluginModelBase model) {
 		IPluginConfiguration configuration = fPluginConfigurations.get(model.getPluginBase().getId());
 		String sl = "default"; //$NON-NLS-1$
 		String autostart = "default"; //$NON-NLS-1$
@@ -130,20 +130,20 @@ public class LaunchAction extends Action {
 	}
 
 	private String getProgramArguments(String os, String arch) {
-		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialProgramArguments());
+		StringBuilder buffer = new StringBuilder(LaunchArgumentsHelper.getInitialProgramArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
 		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteProgramArguments(os, arch)) : ""; //$NON-NLS-1$
 		return concatArgs(buffer, userArgs);
 	}
 
 	private String getVMArguments(String os, String arch) {
-		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialVMArguments());
+		StringBuilder buffer = new StringBuilder(LaunchArgumentsHelper.getInitialVMArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
 		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os, arch)) : ""; //$NON-NLS-1$
 		return concatArgs(buffer, userArgs);
 	}
 
-	private String concatArgs(StringBuffer initialArgs, String userArgs) {
+	private String concatArgs(StringBuilder initialArgs, String userArgs) {
 		List<String> initialArgsList = Arrays.asList(DebugPlugin.splitArguments(initialArgs.toString()));
 		if (userArgs != null && userArgs.length() > 0) {
 			List<String> userArgsList = Arrays.asList(DebugPlugin.splitArguments(userArgs));
@@ -168,7 +168,7 @@ public class LaunchAction extends Action {
 		return arguments;
 	}
 
-	private String removeDuplicateArguments(StringBuffer initialArgs) {
+	private String removeDuplicateArguments(StringBuilder initialArgs) {
 		String[] progArguments = { '-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS, '-' + IEnvironment.P_ARCH,
 				'-' + IEnvironment.P_NL };
 		String defaultStart = "${target."; //$NON-NLS-1$ // see
@@ -191,7 +191,7 @@ public class LaunchAction extends Action {
 				}
 			}
 		}
-		StringBuffer arguments = new StringBuffer();
+		StringBuilder arguments = new StringBuilder();
 		for (Iterator<String> iterator = userArgsList.iterator(); iterator.hasNext();) {
 			Object userArg = iterator.next();
 			arguments.append(userArg);

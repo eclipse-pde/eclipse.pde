@@ -26,7 +26,7 @@ public class AnnotationHover implements IAnnotationHover {
 		if (messages.length == 0)
 			return null;
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < messages.length; i++) {
 			buffer.append(messages[i]);
 			if (i < messages.length - 1)

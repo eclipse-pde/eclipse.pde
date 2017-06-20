@@ -141,8 +141,8 @@ public class TargetStatus {
 
 		};
 
-		private StringBuffer getStatusMessage(IStatus status) {
-			StringBuffer result = new StringBuffer();
+		private StringBuilder getStatusMessage(IStatus status) {
+			StringBuilder result = new StringBuilder();
 			if (status.isMultiStatus()) {
 				IStatus[] children = status.getChildren();
 				for (IStatus child : children) {

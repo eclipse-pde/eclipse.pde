@@ -193,7 +193,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 	protected String getDirectiveValue(String pkgName, Map<String, HashSet<String>> pkgsAndUses) {
 		Set<String> usesPkgs = pkgsAndUses.get(pkgName);
 		usesPkgs.remove(pkgName);
-		StringBuffer buffer = null;
+		StringBuilder buffer = null;
 		Iterator<?> it = usesPkgs.iterator();
 		while (it.hasNext()) {
 			String usedPkgName = (String) it.next();
@@ -203,7 +203,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 				continue;
 			}
 			if (buffer == null)
-				buffer = new StringBuffer();
+				buffer = new StringBuilder();
 			else
 				buffer.append(',');
 			buffer.append(usedPkgName);

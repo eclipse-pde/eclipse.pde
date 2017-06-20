@@ -500,7 +500,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	 * If there's only one package and version is not null, package is exported with that version number.
 	 */
 	protected String getCommaValuesFromPackagesSet(Set<String> values, String version) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		Iterator<String> iter = values.iterator();
 		while (iter.hasNext()) {
 			if (buffer.length() > 0) {

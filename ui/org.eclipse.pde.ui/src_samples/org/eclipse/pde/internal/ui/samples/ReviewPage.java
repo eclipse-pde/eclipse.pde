@@ -44,7 +44,7 @@ public class ReviewPage extends WizardPage {
 	}
 
 	private void updateContent() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<form>"); //$NON-NLS-1$
 		IConfigurationElement selection = wizard.getSelection();
 		if (selection != null) {

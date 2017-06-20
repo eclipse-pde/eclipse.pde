@@ -79,7 +79,7 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 		ResourceBundle resourceBundle = Platform.getResourceBundle(bundle);
 		if (resourceBundle == null)
 			return source;
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		boolean keyMode = false;
 		int keyStartIndex = -1;
 		for (int i = 0; i < source.length(); i++) {

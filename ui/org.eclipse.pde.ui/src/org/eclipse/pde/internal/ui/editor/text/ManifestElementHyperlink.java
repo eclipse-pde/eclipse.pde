@@ -24,7 +24,7 @@ public abstract class ManifestElementHyperlink extends AbstractHyperlink {
 	public void open() {
 		// remove whitespace inbetween chars
 		int len = fElement.length();
-		StringBuffer sb = new StringBuffer(len);
+		StringBuilder sb = new StringBuilder(len);
 		for (int i = 0; i < len; i++) {
 			char c = fElement.charAt(i);
 			if (!Character.isWhitespace(c))

@@ -74,7 +74,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			fLen = 0;
 		}
 		String delim = TextUtilities.getDefaultLineDelimiter(document);
-		StringBuffer documentInsertBuffer = new StringBuffer();
+		StringBuilder documentInsertBuffer = new StringBuilder();
 		boolean doInternalWork = false;
 		// Generate the text to apply depending on the proposal type
 		if (fSchemaObject instanceof ISchemaAttribute) {
@@ -101,7 +101,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		}
 	}
 
-	private boolean applyVirtual(IDocument document, ITextSelection sel, String delim, StringBuffer documentInsertBuffer, boolean doInternalWork) {
+	private boolean applyVirtual(IDocument document, ITextSelection sel, String delim, StringBuilder documentInsertBuffer, boolean doInternalWork) {
 		int type = ((VirtualSchemaObject) fSchemaObject).getVType();
 		switch (type) {
 			case XMLContentAssistProcessor.F_ATTRIBUTE :
@@ -133,7 +133,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		return doInternalWork;
 	}
 
-	private void applyAttributeValue(IDocument document, StringBuffer documentInsertBuffer) {
+	private void applyAttributeValue(IDocument document, StringBuilder documentInsertBuffer) {
 		if (fRange instanceof IDocumentAttributeNode) {
 			fOffset = ((IDocumentAttributeNode) fRange).getValueOffset();
 			String value = fSchemaObject.getName();
@@ -155,7 +155,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		}
 	}
 
-	private void applyExtensionPoint(StringBuffer documentInsertBuffer) {
+	private void applyExtensionPoint(StringBuilder documentInsertBuffer) {
 		String id = "id"; //$NON-NLS-1$
 		documentInsertBuffer.append("<extension-point id=\""); //$NON-NLS-1$
 		fSelOffset = fOffset + documentInsertBuffer.length();
@@ -164,7 +164,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append("\" name=\"name\" />"); //$NON-NLS-1$
 	}
 
-	private void applyExtension(IDocument document, String delim, StringBuffer documentInsertBuffer) {
+	private void applyExtension(IDocument document, String delim, StringBuilder documentInsertBuffer) {
 		documentInsertBuffer.append("<extension"); //$NON-NLS-1$
 		documentInsertBuffer.append(delim);
 		String indent = getIndent(document, fOffset);
@@ -177,7 +177,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append("</extension>"); //$NON-NLS-1$
 	}
 
-	private void applyExtensionFullPoint(IDocument document, String delim, StringBuffer documentInsertBuffer) {
+	private void applyExtensionFullPoint(IDocument document, String delim, StringBuilder documentInsertBuffer) {
 
 		String pointID = fSchemaObject.getName();
 		String indent = getIndent(document, fOffset);
@@ -210,7 +210,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append('>');
 	}
 
-	private void applyElement(String indent, String delim, StringBuffer documentInsertBuffer) {
+	private void applyElement(String indent, String delim, StringBuilder documentInsertBuffer) {
 		documentInsertBuffer.append('<');
 		documentInsertBuffer.append(((ISchemaElement) fSchemaObject).getName());
 		documentInsertBuffer.append('>');
@@ -222,7 +222,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append('>');
 	}
 
-	private void applyAttribute(StringBuffer documentInsertBuffer) {
+	private void applyAttribute(StringBuilder documentInsertBuffer) {
 		if (fRange == null) {
 			// Model is broken
 			// Manually adjust offsets
@@ -405,7 +405,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	}
 
 	private String getIndent(IDocument document, int offset) {
-		StringBuffer indBuff = new StringBuffer();
+		StringBuilder indBuff = new StringBuilder();
 		try {
 			// add indentation
 			int line = document.getLineOfOffset(offset);

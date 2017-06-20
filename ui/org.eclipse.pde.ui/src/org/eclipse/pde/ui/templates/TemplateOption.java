@@ -140,7 +140,7 @@ public abstract class TemplateOption extends TemplateField {
 	 */
 	public String getMessageLabel() {
 		String label = getLabel();
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < label.length(); i++) {
 			char c = label.charAt(i);
 			if (c == '(' && i < label.length() - 1) {

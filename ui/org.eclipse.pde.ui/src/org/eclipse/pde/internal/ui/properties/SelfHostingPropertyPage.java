@@ -149,7 +149,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	@Override
 	public boolean performOk() {
 		Preferences pref = getPreferences(getElement().getAdapter(IProject.class));
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < fViewer.getTable().getItemCount(); i++) {
 			Object object = fViewer.getElementAt(i);
 			if (!fViewer.getChecked(object)) {

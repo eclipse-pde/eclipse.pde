@@ -100,7 +100,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		if (fCustomProjects.size() == 1) {
 			message = NLS.bind(PDEUIMessages.OrganizeManifestsWizardPage_ProjectsUsingCustomBuildWarning, ((IProject) fCustomProjects.iterator().next()).getName());
 		} else {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			for (Iterator<?> iterator = fCustomProjects.iterator(); iterator.hasNext();) {
 				IProject project = (IProject) iterator.next();
 				buf.append(project.getName());

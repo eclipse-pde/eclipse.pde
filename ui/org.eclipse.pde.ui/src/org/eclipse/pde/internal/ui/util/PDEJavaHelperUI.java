@@ -199,7 +199,7 @@ public class PDEJavaHelperUI {
 	 * Gets the reader content as a String
 	 */
 	private static String getString(Reader reader) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		char[] buffer = new char[1024];
 		int count;
 		try {

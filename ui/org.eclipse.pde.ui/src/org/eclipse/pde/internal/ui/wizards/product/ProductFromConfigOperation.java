@@ -110,7 +110,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				if (programArgs != null) {
 					String[] parsedArgs = DebugPlugin.splitArguments(programArgs);
 					List<String> unwantedArgs = Arrays.asList(new String[] {'-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL, '-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS});
-					StringBuffer filteredArgs = new StringBuffer();
+					StringBuilder filteredArgs = new StringBuilder();
 					for (int i = 0; i < parsedArgs.length; i++) {
 						if (unwantedArgs.contains(parsedArgs[i].toLowerCase())) {
 							if (!parsedArgs[i + 1].startsWith("-")) { //$NON-NLS-1$

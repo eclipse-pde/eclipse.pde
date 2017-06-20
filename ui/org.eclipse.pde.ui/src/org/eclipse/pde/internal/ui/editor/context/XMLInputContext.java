@@ -275,7 +275,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				// add text as first child
 				changedObject = parent;
 				String sep = TextUtilities.getDefaultLineDelimiter(getDocumentProvider().getDocument(getInput()));
-				StringBuffer buffer = new StringBuffer(sep);
+				StringBuilder buffer = new StringBuilder(sep);
 				for (int i = 0; i < parent.getLineIndent(); i++)
 					buffer.append(" "); //$NON-NLS-1$
 				buffer.append("   " + getWritableTextNodeString(textNode)); //$NON-NLS-1$
@@ -410,7 +410,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			// tabs printed as \t
 			// spaces printed as *
 			String string = getDocumentProvider().getDocument(getInput()).get(offset, length);
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			for (int i = 0; i < string.length(); i++) {
 				char c = string.charAt(i);
 				if (c == '\n')

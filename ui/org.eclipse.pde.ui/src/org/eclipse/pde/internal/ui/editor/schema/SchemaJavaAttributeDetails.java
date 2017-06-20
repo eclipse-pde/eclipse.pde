@@ -167,7 +167,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 	private void setBasedOn() {
 		String classEntry = fClassEntry.getValue().replaceAll(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		String interfaceEntry = fInterfaceEntry.getValue().replaceAll(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (classEntry.length() > 0)
 			sb.append(classEntry);
 		if (classEntry.length() > 0 || interfaceEntry.length() > 0)

@@ -527,7 +527,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 	}
 
 	private String getErrorMessage(String error, String suggestion) {
-		StringBuffer sb = new StringBuffer(error);
+		StringBuilder sb = new StringBuilder(error);
 		if (suggestion != null) {
 			sb.append(PDEUIMessages.ExternalizeStringsWizardPage_keySuggested);
 			sb.append(suggestion);

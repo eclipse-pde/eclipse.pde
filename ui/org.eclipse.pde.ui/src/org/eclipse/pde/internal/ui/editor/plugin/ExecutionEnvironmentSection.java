@@ -307,7 +307,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	private void addExecutionEnvironments(Object[] result) {
 		IManifestHeader header = getHeader();
 		if (header == null) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			for (Object resultObject : result) {
 				String id = null;
 				if (resultObject instanceof IExecutionEnvironment)

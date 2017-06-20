@@ -522,7 +522,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			if (dialog.open() == Window.OK) {
 				String[] args = dialog.getSelectedArguments();
 				if (args != null && args.length > 0) {
-					StringBuffer resultBuffer = new StringBuffer();
+					StringBuilder resultBuffer = new StringBuilder();
 					for (String arg : args) {
 						resultBuffer.append(arg + " "); //$NON-NLS-1$
 					}

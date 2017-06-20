@@ -452,7 +452,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private void updateDetails() {
 		IInstallableUnit[] selected = fAvailableIUGroup.getSelectedIUs().toArray(new IInstallableUnit[0]);
 		if (selected.length == 1) {
-			StringBuffer result = new StringBuffer();
+			StringBuilder result = new StringBuilder();
 			String description = selected[0].getProperty(IInstallableUnit.PROP_DESCRIPTION, null);
 			if (description != null) {
 				result.append(description);

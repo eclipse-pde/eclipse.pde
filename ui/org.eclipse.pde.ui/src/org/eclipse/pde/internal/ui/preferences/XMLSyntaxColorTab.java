@@ -28,7 +28,7 @@ public class XMLSyntaxColorTab extends SyntaxColorTab {
 
 	@Override
 	protected IDocument getDocument() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		String delimiter = System.getProperty("line.separator"); //$NON-NLS-1$
 		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		buffer.append(delimiter);

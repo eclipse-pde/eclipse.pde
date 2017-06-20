@@ -213,7 +213,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		int loc = id.lastIndexOf('.');
 		if (loc == -1)
 			return id;
-		StringBuffer buf = new StringBuffer(id.substring(loc + 1));
+		StringBuilder buf = new StringBuilder(id.substring(loc + 1));
 		buf.setCharAt(0, Character.toUpperCase(buf.charAt(0)));
 		return buf.toString();
 	}

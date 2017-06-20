@@ -123,7 +123,7 @@ public abstract class AbstractPluginBlock {
 		@Override
 		public String toString() {
 			Collections.sort(nameList);
-			StringBuffer result = new StringBuffer();
+			StringBuilder result = new StringBuilder();
 			for (String name : nameList) {
 				if (result.length() > 0) {
 					result.append(',');

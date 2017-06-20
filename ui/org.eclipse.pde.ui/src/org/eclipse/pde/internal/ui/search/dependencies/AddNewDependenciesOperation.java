@@ -308,7 +308,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 				} else {
 					// if it is not found in the bin.includes, see if a parent folder is.  This is common for binary jar.
 					StringTokenizer tokenizer = new StringTokenizer(library, "/"); //$NON-NLS-1$
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					while (tokenizer.hasMoreTokens()) {
 						buffer.append(tokenizer.nextToken()).append('/');
 						if (binIncludes.contains(buffer.toString()))
@@ -377,7 +377,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			}
 		} else {
 			String currentValue = (mheader != null) ? mheader.getValue() : null;
-			StringBuffer buffer = (currentValue == null) ? new StringBuffer() : new StringBuffer(currentValue).append(", "); //$NON-NLS-1$
+			StringBuilder buffer = (currentValue == null) ? new StringBuilder() : new StringBuilder(currentValue).append(", "); //$NON-NLS-1$
 			while (it.hasNext()) {
 				ExportPackageDescription desc = it.next();
 				String value = (desc.getVersion().equals(Version.emptyVersion)) ? desc.getName() : desc.getName() + "; version=\"" + desc.getVersion() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -410,7 +410,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			}
 		} else {
 			String currentValue = (mheader != null) ? mheader.getValue() : null;
-			StringBuffer buffer = (currentValue == null) ? new StringBuffer() : new StringBuffer(currentValue).append(", "); //$NON-NLS-1$
+			StringBuilder buffer = (currentValue == null) ? new StringBuilder() : new StringBuilder(currentValue).append(", "); //$NON-NLS-1$
 			while (it.hasNext()) {
 				String pluginId = it.next();
 				if (!added.contains(pluginId))

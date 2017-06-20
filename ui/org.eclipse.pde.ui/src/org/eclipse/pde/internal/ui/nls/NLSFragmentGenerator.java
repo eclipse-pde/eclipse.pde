@@ -460,7 +460,7 @@ public class NLSFragmentGenerator {
 	}
 
 	private String join(String delimiter, String[] parts, int offset, int n) {
-		StringBuffer builder = new StringBuffer();
+		StringBuilder builder = new StringBuilder();
 		for (int i = offset; i < n; i++) {
 			builder.append(parts[i]);
 			if (i < parts.length - 1) {

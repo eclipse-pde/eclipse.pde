@@ -154,7 +154,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		}
 
 		private String getTextRequireBundle(RequireBundleObject bundle) {
-			StringBuffer label = new StringBuffer();
+			StringBuilder label = new StringBuilder();
 			// Append the ID
 			label.append(bundle.getId());
 			// Get the version

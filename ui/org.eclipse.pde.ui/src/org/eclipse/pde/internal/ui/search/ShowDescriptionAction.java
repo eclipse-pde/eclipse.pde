@@ -159,7 +159,7 @@ public class ShowDescriptionAction extends Action {
 			return null;
 		}
 		// Generate a consistent unique preview file name for this schema
-		StringBuffer previewFileName = new StringBuffer();
+		StringBuilder previewFileName = new StringBuilder();
 		previewFileName.append("pde_schema_"); //$NON-NLS-1$
 		previewFileName.append(fSchema.getQualifiedPointId().replace('.', '-'));
 		previewFileName.append("_preview.html"); //$NON-NLS-1$

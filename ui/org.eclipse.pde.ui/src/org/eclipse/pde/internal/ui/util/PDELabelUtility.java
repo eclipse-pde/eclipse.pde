@@ -77,7 +77,7 @@ public class PDELabelUtility {
 	}
 
 	public static String qualifyMessage(String qualification, String message) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(qualification);
 		buffer.append(':');
 		buffer.append(' ');
@@ -85,7 +85,7 @@ public class PDELabelUtility {
 		return buffer.toString();
 	}
 
-	private static void addNumberToBase(StringBuffer base, boolean bracketed, HashSet<Integer> set) {
+	private static void addNumberToBase(StringBuilder base, boolean bracketed, HashSet<Integer> set) {
 		if (set.size() > 0) {
 			// Limit on the number of auto-generated item numbers to check for
 			int limit = 100;
@@ -148,7 +148,7 @@ public class PDELabelUtility {
 					}
 				}
 				// We found an auto-generated name
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				// Parse the number between the brackets
 				for (int j = 0; j < numPart.length(); j++) {
 					char current = numPart.charAt(j);
@@ -197,7 +197,7 @@ public class PDELabelUtility {
 	 * 			the non-conflicting name
 	 */
 	public static String generateName(String[] names, String base, boolean bracketed) {
-		StringBuffer result = new StringBuffer(base);
+		StringBuilder result = new StringBuilder(base);
 		// Used to track auto-generated numbers used
 		HashSet<Integer> set = new HashSet<>();
 

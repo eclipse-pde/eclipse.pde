@@ -152,7 +152,7 @@ public class EditorUtilities {
 				if (width == LauncherSection.F_WIN_ICON_DIMENSIONS[w][0] && height == LauncherSection.F_WIN_ICON_DIMENSIONS[w][1] && depth == LauncherSection.F_WIN_ICON_DEPTHS[w])
 					found[w] = true;
 		}
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < found.length; i++) {
 			if (!found[i]) {
 				if (sb.length() == 0)

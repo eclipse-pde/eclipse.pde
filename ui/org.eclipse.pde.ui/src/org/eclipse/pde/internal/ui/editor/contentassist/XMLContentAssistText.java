@@ -39,7 +39,7 @@ public class XMLContentAssistText {
 	public static XMLContentAssistText parse(int offset, IDocument document) {
 		boolean writeCAText = true;
 		int lastCATextOffset = -1;
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		int endOffset = offset - 1;
 		char currentChar;
 

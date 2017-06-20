@@ -201,7 +201,7 @@ public class SchemaIncludesSection extends TableSection {
 			currPath = currPath.removeFirstSegments(matchinSegments);
 			if (schemaPath.segmentCount() == 1)
 				return currPath.toString();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			while (schemaPath.segmentCount() > 1) {
 				sb.append("../"); //$NON-NLS-1$
 				schemaPath = schemaPath.removeFirstSegments(1);

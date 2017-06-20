@@ -157,7 +157,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			// TODO format manifest
 			Manifest manifest = new Manifest(file.getContents());
 			String value = manifest.getMainAttributes().getValue(Constants.REQUIRE_BUNDLE);
-			StringBuffer sb = value != null ? new StringBuffer(value) : new StringBuffer();
+			StringBuilder sb = value != null ? new StringBuilder(value) : new StringBuilder();
 			if (sb.length() > 0)
 				sb.append(","); //$NON-NLS-1$
 			for (int i = 0; i < requiredProjects.size(); i++) {
@@ -386,7 +386,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			value = "."; //$NON-NLS-1$
 		try {
 			ManifestElement[] elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
-			StringBuffer buff = new StringBuffer(value.length());
+			StringBuilder buff = new StringBuilder(value.length());
 			for (int i = 0; i < elems.length; i++) {
 				if (!elems[i].getValue().equals(".")) //$NON-NLS-1$
 					buff.append(elems[i].getValue());

@@ -279,8 +279,8 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	}
 
 	private void initializePluginsList(ILaunchConfigurationWorkingCopy wc) {
-		StringBuffer wsplugins = new StringBuffer();
-		StringBuffer explugins = new StringBuffer();
+		StringBuilder wsplugins = new StringBuilder();
+		StringBuilder explugins = new StringBuilder();
 		Set<?> plugins = DependencyManager.getSelfAndDependencies(fModel, null);
 		Iterator<?> iter = plugins.iterator();
 		while (iter.hasNext()) {
@@ -298,7 +298,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
 	}
 
-	private void appendPlugin(StringBuffer buffer, IPluginModelBase model) {
+	private void appendPlugin(StringBuilder buffer, IPluginModelBase model) {
 		if (buffer.length() > 0)
 			buffer.append(',');
 		buffer.append(model.getPluginBase().getId());

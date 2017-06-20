@@ -18,7 +18,7 @@ public class StringHelper {
 			return null;
 		int length = s.length();
 		int nlLength = newLine.length;
-		StringBuffer sb = new StringBuffer(length + nlLength);
+		StringBuilder sb = new StringBuilder(length + nlLength);
 		int i = 0;
 		while (i < length) {
 			char c = s.charAt(i);
@@ -51,7 +51,7 @@ public class StringHelper {
 	protected static String unwindEscapeChars(String s) {
 		if (s != null) {
 			int length = s.length();
-			StringBuffer sb = new StringBuffer(length);
+			StringBuilder sb = new StringBuilder(length);
 			for (int i = 0; i < length; i++) {
 				char c = s.charAt(i);
 				sb.append(getUnwoundString(c));
@@ -77,7 +77,7 @@ public class StringHelper {
 				return "\\\\";//$NON-NLS-1$
 			default :
 				if (((c < 0x0020) || (c > 0x007e)))
-					return new StringBuffer().append('\\').append('u').append(toHex((c >> 12) & 0xF)).append(toHex((c >> 8) & 0xF)).append(toHex((c >> 4) & 0xF)).append(toHex(c & 0xF)).toString();
+					return new StringBuilder().append('\\').append('u').append(toHex((c >> 12) & 0xF)).append(toHex((c >> 8) & 0xF)).append(toHex((c >> 4) & 0xF)).append(toHex(c & 0xF)).toString();
 		}
 		return String.valueOf(c);
 	}
@@ -92,7 +92,7 @@ public class StringHelper {
 
 		char aChar;
 		int len = s.length();
-		StringBuffer outBuffer = new StringBuffer(len);
+		StringBuilder outBuffer = new StringBuilder(len);
 
 		for (int x = 0; x < len;) {
 			aChar = s.charAt(x++);

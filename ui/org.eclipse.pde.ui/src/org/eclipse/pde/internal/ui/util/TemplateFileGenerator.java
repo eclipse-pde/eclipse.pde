@@ -483,7 +483,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 		if (source.indexOf('$') == -1)
 			return source;
 		int loc = -1;
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		boolean replacementMode = false;
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);
@@ -570,9 +570,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 		int bufsize = 1024;
 		char[] cbuffer = new char[bufsize];
 		int read = 0;
-		StringBuffer keyBuffer = new StringBuffer();
-		StringBuffer outBuffer = new StringBuffer();
-		StringBuffer preBuffer = new StringBuffer();
+		StringBuilder keyBuffer = new StringBuilder();
+		StringBuilder outBuffer = new StringBuilder();
+		StringBuilder preBuffer = new StringBuilder();
 		boolean newLine = true;
 		ControlStack preStack = new ControlStack();
 		preStack.setValueProvider(this);
@@ -586,7 +586,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 				char c = cbuffer[i];
 
 				if (escape) {
-					StringBuffer buf = preprocessorMode ? preBuffer : outBuffer;
+					StringBuilder buf = preprocessorMode ? preBuffer : outBuffer;
 					buf.append(c);
 					escape = false;
 					continue;

@@ -65,7 +65,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	}
 
 	protected String getFormattedPackageName(String id) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < id.length(); i++) {
 			char ch = id.charAt(i);
 			if (buffer.length() == 0) {
@@ -407,7 +407,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 
 	private String getWindowImagesString() {
 		IWindowImages images = fProduct.getWindowImages();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (images != null) {
 			for (int i = 0; i < IWindowImages.TOTAL_IMAGES; i++) {
 				String image = getURL(images.getImagePath(i));

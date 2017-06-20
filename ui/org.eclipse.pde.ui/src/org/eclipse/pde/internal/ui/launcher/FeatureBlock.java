@@ -1107,7 +1107,7 @@ public class FeatureBlock {
 		for (Object model : models) {
 			if (model instanceof FeatureLaunchModel) {
 				FeatureLaunchModel featureModel = (FeatureLaunchModel) model;
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append(featureModel.getId());
 				buffer.append(':');
 				buffer.append(featureModel.getResolutionValue());

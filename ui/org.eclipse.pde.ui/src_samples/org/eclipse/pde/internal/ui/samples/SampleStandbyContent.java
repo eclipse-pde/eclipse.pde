@@ -84,7 +84,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		});
 		instText = toolkit.createFormText(form.getBody(), true);
 		instText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(PDEUIMessages.SampleStandbyContent_content);
 		instText.setText(buf.toString(), true, false);
 		instText.addHyperlinkListener(new HyperlinkAdapter() {

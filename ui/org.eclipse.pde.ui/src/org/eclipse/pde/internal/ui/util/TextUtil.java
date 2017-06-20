@@ -27,7 +27,7 @@ public abstract class TextUtil {
 	}
 
 	public static String createMultiLine(String text, int limit, boolean ignoreNewLine) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		int counter = 0;
 		boolean preformatted = false;
 

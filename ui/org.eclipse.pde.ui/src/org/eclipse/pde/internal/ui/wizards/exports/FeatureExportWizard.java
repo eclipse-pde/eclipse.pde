@@ -163,7 +163,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 	}
 
 	private String getFeatureIDs() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		Object[] objects = fPage.getSelectedItems();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];

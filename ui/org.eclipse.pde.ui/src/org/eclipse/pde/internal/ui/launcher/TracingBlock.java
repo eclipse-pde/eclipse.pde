@@ -340,7 +340,7 @@ public class TracingBlock {
 		} else if (checked.length == fPluginViewer.getTable().getItemCount()) {
 			config.setAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null);
 		} else {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			for (int i = 0; i < checked.length; i++) {
 				IPluginModelBase model = (IPluginModelBase) checked[i];
 				buffer.append(model.getPluginBase().getId());

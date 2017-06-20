@@ -117,7 +117,7 @@ public class SampleEditor extends EditorPart {
 		}
 		instText = toolkit.createFormText(form.getBody(), true);
 		instText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(PDEUIMessages.SampleEditor_content);
 		instText.setText(buf.toString(), true, false);
 		instText.addHyperlinkListener(new HyperlinkAdapter() {

@@ -133,7 +133,7 @@ public abstract class XMLUtil {
 		String expectedType = attInfo.getBasedOn();
 		String className = ""; //$NON-NLS-1$
 		if (expectedType == null) {
-			StringBuffer buf = new StringBuffer(tag);
+			StringBuilder buf = new StringBuilder(tag);
 			buf.setCharAt(0, Character.toUpperCase(tag.charAt(0)));
 			className = buf.toString();
 		} else {

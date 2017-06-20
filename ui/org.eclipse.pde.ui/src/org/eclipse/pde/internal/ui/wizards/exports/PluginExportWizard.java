@@ -130,7 +130,7 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 	}
 
 	private String getPluginIDs() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		Object[] objects = fPage.getSelectedItems();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];

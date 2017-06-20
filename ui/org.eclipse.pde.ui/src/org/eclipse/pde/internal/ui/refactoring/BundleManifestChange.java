@@ -164,7 +164,7 @@ public class BundleManifestChange {
 		if (header != null) {
 			String value = header.getValue();
 			if (oldText.equals(value) || isGoodMatch(value, oldText, isPackage)) {
-				StringBuffer buffer = new StringBuffer(newText);
+				StringBuilder buffer = new StringBuilder(newText);
 				buffer.append(value.substring(oldText.length()));
 				header.setValue(buffer.toString());
 			}

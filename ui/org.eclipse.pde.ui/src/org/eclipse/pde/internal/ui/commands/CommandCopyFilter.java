@@ -96,7 +96,7 @@ public abstract class CommandCopyFilter {
 
 		@Override
 		protected String markup(String escapedSerializedCommand, String markupLabel) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			sb.append("<a href='javascript:executeCommand(\""); //$NON-NLS-1$
 			sb.append(escapedSerializedCommand);
@@ -129,7 +129,7 @@ public abstract class CommandCopyFilter {
 
 		@Override
 		protected String markup(String escapedSerializedCommand, String markupLabel) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			sb.append("<command serialization=\""); //$NON-NLS-1$
 			sb.append(escapedSerializedCommand);
@@ -159,7 +159,7 @@ public abstract class CommandCopyFilter {
 
 		@Override
 		protected String markup(String escapedSerializedCommand, String markupLabel) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			sb.append("<link\n"); //$NON-NLS-1$
 			if (markupLabel != null) {

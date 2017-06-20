@@ -77,7 +77,7 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 	protected final String getLauncherText(boolean osgi, String message) {
 		IConfigurationElement[][] launchElementsByMode = getPDELauncherEditor().getLaunchers(osgi);
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		String indent = Short.toString(getIndent());
 
 		for (IConfigurationElement[] elements : launchElementsByMode) {

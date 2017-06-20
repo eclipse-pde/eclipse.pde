@@ -34,7 +34,7 @@ public class ModelChangeLabelProvider extends PDELabelProvider {
 	}
 
 	private String getObjectText(ModelChangeFile pair) {
-		StringBuffer text = new StringBuffer(pair.getFile().getName());
+		StringBuilder text = new StringBuilder(pair.getFile().getName());
 		int count = pair.getNumChanges();
 		text.append(" ["); //$NON-NLS-1$
 		text.append(count);

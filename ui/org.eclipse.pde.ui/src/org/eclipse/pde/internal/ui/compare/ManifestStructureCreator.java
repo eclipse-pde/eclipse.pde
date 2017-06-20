@@ -87,7 +87,7 @@ public class ManifestStructureCreator extends StructureCreator {
 		String id = "Manifest"; //$NON-NLS-1$
 		ManifestNode parent = new ManifestNode(root, 0, id, doc, 0, doc.getLength());
 		SubMonitor subMonitor = SubMonitor.convert(monitor).split(1);
-		StringBuffer headerBuffer = new StringBuffer();
+		StringBuilder headerBuffer = new StringBuilder();
 		int headerStart = 0;
 		while (true) {
 			lineStart = args[1]; // start of current line
@@ -155,7 +155,7 @@ public class ManifestStructureCreator extends StructureCreator {
 			return null;
 		BufferedReader reader = null;
 		try {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			char[] part = new char[2048];
 			int read = 0;
 			reader = new BufferedReader(new InputStreamReader(is, encoding));

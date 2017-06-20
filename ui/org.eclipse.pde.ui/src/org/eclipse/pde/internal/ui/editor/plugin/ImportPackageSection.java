@@ -140,7 +140,7 @@ public class ImportPackageSection extends TableSection {
 
 		@Override
 		public String getText(Object element) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			ImportItemWrapper p = (ImportItemWrapper) element;
 			buffer.append(p.getName());
 			Version version = p.getVersion();
@@ -459,7 +459,7 @@ public class ImportPackageSection extends TableSection {
 	}
 
 	private String getValue(Object[] objects) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < objects.length; i++) {
 			if (!(objects[i] instanceof ImportItemWrapper))
 				continue;

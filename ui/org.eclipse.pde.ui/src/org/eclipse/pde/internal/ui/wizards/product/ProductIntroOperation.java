@@ -273,8 +273,8 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 		int bufsize = 1024;
 		char[] cbuffer = new char[bufsize];
 		int read = 0;
-		StringBuffer keyBuffer = new StringBuffer();
-		StringBuffer outBuffer = new StringBuffer();
+		StringBuilder keyBuffer = new StringBuilder();
+		StringBuilder outBuffer = new StringBuilder();
 		ControlStack preStack = new ControlStack();
 		preStack.setValueProvider(this);
 

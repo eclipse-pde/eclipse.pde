@@ -91,7 +91,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	}
 
 	private void switchToSampleStandby(SampleWizard wizard) {
-		StringBuffer url = new StringBuffer();
+		StringBuilder url = new StringBuilder();
 		url.append("http://org.eclipse.ui.intro/showStandby?"); //$NON-NLS-1$
 		url.append("pluginId=org.eclipse.pde.ui"); //$NON-NLS-1$
 		url.append("&"); //$NON-NLS-1$

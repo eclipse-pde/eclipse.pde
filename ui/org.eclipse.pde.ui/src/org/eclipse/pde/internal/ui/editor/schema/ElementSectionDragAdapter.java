@@ -52,7 +52,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 	}
 
 	private String createTextualRepresentation(IStructuredSelection sel) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 			String name = iter.next().toString();
 			buf.append(name);

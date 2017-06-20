@@ -51,7 +51,7 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 			IType type = (IType) iter.next();
 			String oldName = type.getFullyQualifiedName('$');
 			int index = oldName.lastIndexOf(type.getElementName());
-			StringBuffer buffer = new StringBuffer(oldName.substring(0, index));
+			StringBuilder buffer = new StringBuilder(oldName.substring(0, index));
 			buffer.append(fElements.get(type));
 			result[i] = buffer.toString();
 		}
