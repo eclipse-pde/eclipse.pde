@@ -43,7 +43,7 @@ public class DSContentAssistText {
 	public static DSContentAssistText parse(int offset, IDocument document) {
 		boolean writeCAText = true;
 		int lastCATextOffset = -1;
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		int endOffset = offset - 1;
 		char currentChar;
 

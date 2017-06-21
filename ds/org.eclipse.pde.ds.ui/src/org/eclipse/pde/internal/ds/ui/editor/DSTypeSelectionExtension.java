@@ -36,7 +36,7 @@ public class DSTypeSelectionExtension extends TypeSelectionExtension {
 
 		@Override
 		public boolean select(ITypeInfoRequestor typeInfoRequestor) {
-			StringBuffer buffer = new StringBuffer(typeInfoRequestor.getPackageName());
+			StringBuilder buffer = new StringBuilder(typeInfoRequestor.getPackageName());
 			buffer.append("."); //$NON-NLS-1$
 			buffer.append(typeInfoRequestor.getTypeName());
 			return !fProvides.contains(buffer.toString());

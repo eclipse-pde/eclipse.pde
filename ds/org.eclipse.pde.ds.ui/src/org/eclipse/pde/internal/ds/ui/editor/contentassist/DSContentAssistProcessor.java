@@ -501,9 +501,9 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 	private String[] guessContentRequest(int[] offset, IDocument doc,
 			boolean brokenModel) {
-		StringBuffer nodeBuffer = new StringBuffer();
-		StringBuffer attrBuffer = new StringBuffer();
-		StringBuffer attrValBuffer = new StringBuffer();
+		StringBuilder nodeBuffer = new StringBuilder();
+		StringBuilder attrBuffer = new StringBuilder();
+		StringBuilder attrValBuffer = new StringBuilder();
 		String node = null;
 		String attr = null;
 		String attVal = null;
