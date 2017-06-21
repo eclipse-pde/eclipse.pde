@@ -489,58 +489,6 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			final Object data = e.widget.getData();
 			if (data instanceof ImageElement) {
 
-				// Example of how we could use a popup dialog instead
-//				org.eclipse.core.runtime.Path path = new org.eclipse.core.runtime.Path(((ImageElement) data).getPath());
-//
-//				new PopupDialog(getSite().getShell(), PopupDialog.HOVER_SHELLSTYLE, true, false, false, false, false, path.lastSegment(), "") {
-//					protected Control createInfoTextArea(Composite parent) {
-//
-//						Composite infoGroup = SWTFactory.createComposite(parent, 4, 1, GridData.FILL_HORIZONTAL, 0, 0);
-//
-//						SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Path, 1);
-//						lblPath = new Label(infoGroup, SWT.NONE);
-//						lblPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-//
-//						SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Width, 1);
-//						lblWidth = new Label(infoGroup, SWT.NONE);
-//						final GridData gd_lblWidth = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-//						gd_lblWidth.widthHint = 50;
-//						lblWidth.setLayoutData(gd_lblWidth);
-//
-//						SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Plugin, 1);
-//						lblPlugin = new Label(infoGroup, SWT.NONE);
-//						lblPlugin.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-//
-//						SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Height, 1);
-//						lblHeight = new Label(infoGroup, SWT.NONE);
-//						final GridData gd_lblHeight = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-//						gd_lblHeight.widthHint = 50;
-//						lblHeight.setLayoutData(gd_lblHeight);
-//
-//						SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Reference, 1);
-//						txtReference = new Text(infoGroup, SWT.BORDER | SWT.READ_ONLY);
-//						txtReference.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
-//
-//						lblPath.setText(((ImageElement) data).getPath());
-//						lblPlugin.setText(((ImageElement) data).getFullPlugin());
-//						txtReference.setText("platform:/plugin/" + ((ImageElement) data).getPlugin() + "/" + ((ImageElement) data).getPath()); //$NON-NLS-1$ //$NON-NLS-2$
-//
-//						lblWidth.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().width)));
-//						lblHeight.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().height)));
-//
-//						return infoGroup;
-//					}
-//				}.open();
-//
-//				StringBuilder text = new StringBuilder();
-//				text.append(NLS.bind("Image Path: {0}", path.toString())).append('\n');
-//				text.append(NLS.bind("Plug-in Provider: {0}", ((ImageElement) data).getFullPlugin())).append('\n');
-//				text.append(NLS.bind("Reference URL: {0}", "platform:/plugin/" + ((ImageElement) data).getPlugin() + "/" + ((ImageElement) data).getPath())).append('\n'); //$NON-NLS-1$ //$NON-NLS-2$
-//				text.append(NLS.bind("Width: {0}   Height: {1}", Integer.toString(((ImageElement) data).getImageData().width), Integer.toString(((ImageElement) data).getImageData().height)));
-//
-//				PopupDialog popup = new PopupDialog(getSite().getShell(), SWT.NONE, false, false, false, false, false, path.lastSegment(), text.toString());
-//				popup.open();
-
 				lblPath.setText(((ImageElement) data).getPath());
 				lblPlugin.setText(((ImageElement) data).getFullPlugin());
 				txtReference.setText("platform:/plugin/" + ((ImageElement) data).getPlugin() + "/" + ((ImageElement) data).getPath()); //$NON-NLS-1$ //$NON-NLS-2$
