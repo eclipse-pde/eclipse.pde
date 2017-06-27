@@ -78,8 +78,10 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 					if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
 						IApiAnnotations annotationsSource = member.getApiComponent().getApiDescription().resolveAnnotations(sourceMember.getHandle());
 						if (annotationsSource != null && !RestrictionModifiers.isExtendRestriction(annotationsSource.getRestrictions())) {
-							problemFlags = IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE;
-							return true;
+							if (!Flags.isFinal(sourceMember.getModifiers())) {
+								problemFlags = IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE;
+								return true;
+							}
 						}
 					}
 					if (RestrictionModifiers.isImplementRestriction(annotations.getRestrictions())) {
