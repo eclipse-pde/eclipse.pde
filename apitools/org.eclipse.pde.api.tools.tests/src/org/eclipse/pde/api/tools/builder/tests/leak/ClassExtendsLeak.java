@@ -638,4 +638,23 @@ public class ClassExtendsLeak extends LeakTest {
 		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
 	}
 
+	/**
+	 * Test that an API class that extends a noextend class is not a leak if it is
+	 * final
+	 */
+	public void testFinalClassExtendsNoExtendClass14F() {
+		x36(false);
+	}
+
+	public void testFinalClassExtendsNoExtendClass14I() {
+		x36(true);
+	}
+
+	private void x36(boolean inc) {
+		expectingNoProblems();
+		String typename = "test36"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] { { "class1", typename } }); //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
+	}
+
 }
