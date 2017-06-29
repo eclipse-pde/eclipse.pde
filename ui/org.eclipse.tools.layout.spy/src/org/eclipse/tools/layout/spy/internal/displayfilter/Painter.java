@@ -59,7 +59,7 @@ public final class Painter extends Object {
 	// Static Methods
 	//
 
-	private static void createCompositeToolTip(StringBuffer buffer, Composite composite) {
+	private static void createCompositeToolTip(StringBuilder buffer, Composite composite) {
 		Layout layout = composite.getLayout();
 		buffer.append(Painter.LINE_SEPARATOR);
 		buffer.append("  layout=");  //$NON-NLS-1$
@@ -81,7 +81,7 @@ public final class Painter extends Object {
 		}
 	}
 
-	private static void createFillLayoutToolTip(StringBuffer buffer, FillLayout layout) {
+	private static void createFillLayoutToolTip(StringBuilder buffer, FillLayout layout) {
 		buffer.append("FormLayout");  //$NON-NLS-1$
 
 		buffer.append(Painter.LINE_SEPARATOR);
@@ -104,7 +104,7 @@ public final class Painter extends Object {
 		buffer.append(')');
 	}
 
-	private static void createFormDataToolTip(StringBuffer buffer, FormData data) {
+	private static void createFormDataToolTip(StringBuilder buffer, FormData data) {
 		buffer.append("FormData");  //$NON-NLS-1$
 
 		buffer.append(Painter.LINE_SEPARATOR);
@@ -132,7 +132,7 @@ public final class Painter extends Object {
 		buffer.append(data.width);
 	}
 
-	private static void createFormLayoutToolTip(StringBuffer buffer, FormLayout layout) {
+	private static void createFormLayoutToolTip(StringBuilder buffer, FormLayout layout) {
 		buffer.append("FormLayout");  //$NON-NLS-1$
 
 		buffer.append(Painter.LINE_SEPARATOR);
@@ -164,7 +164,7 @@ public final class Painter extends Object {
 		buffer.append(layout.spacing);
 	}
 
-	private static void createGridDataToolTip(StringBuffer buffer, GridData gridData) {
+	private static void createGridDataToolTip(StringBuilder buffer, GridData gridData) {
 		buffer.append("GridData");  //$NON-NLS-1$
 
 		buffer.append(Painter.LINE_SEPARATOR);
@@ -220,7 +220,7 @@ public final class Painter extends Object {
 		buffer.append(gridData.widthHint);
 	}
 
-	private static void createGridLayoutToolTip(StringBuffer buffer, GridLayout layout) {
+	private static void createGridLayoutToolTip(StringBuilder buffer, GridLayout layout) {
 		buffer.append("GridLayout");  //$NON-NLS-1$
 
 		buffer.append(Painter.LINE_SEPARATOR);
@@ -264,7 +264,7 @@ public final class Painter extends Object {
 		buffer.append(layout.verticalSpacing);
 	}
 
-	private static void createRowDataToolTip(StringBuffer buffer, RowData data) {
+	private static void createRowDataToolTip(StringBuilder buffer, RowData data) {
 		buffer.append("RowData");  //$NON-NLS-1$
 
 		buffer.append(Painter.LINE_SEPARATOR);
@@ -280,7 +280,7 @@ public final class Painter extends Object {
 		buffer.append(data.width);
 	}
 
-	private static void createRowLayoutToolTip(StringBuffer buffer, RowLayout layout) {
+	private static void createRowLayoutToolTip(StringBuilder buffer, RowLayout layout) {
 		buffer.append("RowLayout");  //$NON-NLS-1$
 
 		buffer.append(Painter.LINE_SEPARATOR);
@@ -335,7 +335,7 @@ public final class Painter extends Object {
 		buffer.append(layout.wrap);
 	}
 
-	private static void createToolTip(StringBuffer buffer, Control control, int childIndex) {
+	private static void createToolTip(StringBuilder buffer, Control control, int childIndex) {
 		if (childIndex != 0) {
 			buffer.append(childIndex);
 			buffer.append(". ");  //$NON-NLS-1$
@@ -421,12 +421,12 @@ public final class Painter extends Object {
 			throw new IllegalArgumentException("The argument 'control' must not be null");  //$NON-NLS-1$
 		}
 		if (!LayoutIssuesDebugFilter.IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER.equals(control.getData())) {
-			StringBuffer buffer = new StringBuffer(Painter.BUFFER_SIZE);
+			StringBuilder buffer = new StringBuilder(Painter.BUFFER_SIZE);
 			Painter.decorate(buffer, control, extraCompositeMargin, 0, 0, toolTip);
 		}
 	}
 
-	private static void decorate(StringBuffer buffer, Control control, int extraCompositeMargin, int colorIndex, int childIndex, boolean toolTip) {
+	private static void decorate(StringBuilder buffer, Control control, int extraCompositeMargin, int colorIndex, int childIndex, boolean toolTip) {
 		int count = Painter.COLORS.length;
 		int index = colorIndex == count ? 0 : colorIndex;
 
@@ -494,7 +494,7 @@ public final class Painter extends Object {
 		return text;
 	}
 
-	private static String getBufferValue(StringBuffer buffer) {
+	private static String getBufferValue(StringBuilder buffer) {
 		String value = buffer.toString();
 		buffer.setLength(0);
 		return value;
@@ -504,7 +504,7 @@ public final class Painter extends Object {
 		long hashCode = object.hashCode();
 		String hexString = Long.toHexString(hashCode);
 
-		StringBuffer buffer = new StringBuffer(15);
+		StringBuilder buffer = new StringBuilder(15);
 		buffer.append('(');
 		buffer.append(hexString);
 		buffer.append(')');
