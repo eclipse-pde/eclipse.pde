@@ -25,34 +25,10 @@
 		</ant>
 	</target>
 	
-	<target name="assemble.linux.gtk.ppc.xml">
-		<ant antfile="${assembleScriptName}" >
-			<property name="archiveName" value="${archiveNamePrefix}-linux.gtk.ppc.zip"/>
-		</ant>
-	</target>
-
 	<target name="assemble.linux.gtk.x86_64.xml">
 		<ant antfile="${assembleScriptName}" >
 			<property name="archiveName" value="${archiveNamePrefix}-linux.gtk.x86_64.zip"/>
 		</ant>
 	</target>
 		
-	<target name="assemble.solaris.gtk.sparc.xml">
-		<ant antfile="${assembleScriptName}" >
-			<property name="archiveName" value="${archiveNamePrefix}-solaris.gtk.sparc.zip"/>
-		</ant>
-	</target>
-	
-	<target name="assemble.macosx.carbon.ppc.xml">
-		<ant antfile="${assembleScriptName}" >
-			<property name="archiveName" value="${archiveNamePrefix}-macosx.carbon.ppc.zip"/>
-		</ant>
-	</target>
-	
-	<target name="assemble.macosx.carbon.x86.xml">
-		<ant antfile="${assembleScriptName}" >
-			<property name="archiveName" value="${archiveNamePrefix}-macosx.carbon.x86.zip"/>
-		</ant>
-	</target>
-
 </project>
