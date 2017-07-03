@@ -214,7 +214,7 @@
       </template>
       <template
             class="org.eclipse.pde.internal.ui.templates.ide.ExtensbileEditorTemplate"
-            contributingId="org.eclipse.pde.ui.templates.template1"
+            contributingId="org.eclipse.ui.genericeditor"
             id="org.eclipse.pde.ui.templates.extensibleEditor"
             name="%template.extensibleEditor.name">
       </template>

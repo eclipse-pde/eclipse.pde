@@ -162,6 +162,17 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 			plugin.add(presentationExtension);
 		}
 		{
+			IPluginExtension presentationExtension = createExtension("org.eclipse.ui.genericeditor.autoEditStrategies", //$NON-NLS-1$
+					true);
+			IPluginElement presentationExtensionElement = factory.createElement(presentationExtension);
+			presentationExtensionElement.setName("autoEditStrategy"); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("class", //$NON-NLS-1$
+					getStringOption(KEY_PACKAGE_NAME) + '.' + javaClassPrefix + "AutoEditStrategy"); //$NON-NLS-1$
+			presentationExtensionElement.setAttribute("contentType", contentTypeName); //$NON-NLS-1$
+			presentationExtension.add(presentationExtensionElement);
+			plugin.add(presentationExtension);
+		}
+		{
 			IPluginExtension documentSetupExtension = createExtension("org.eclipse.core.filebuffers.documentSetup", //$NON-NLS-1$
 					true);
 			IPluginElement presentationExtensionElement = factory.createElement(documentSetupExtension);
