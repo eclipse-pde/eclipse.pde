@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.builders.DependencyLoop;
 import org.eclipse.pde.internal.core.builders.DependencyLoopFinder;
+import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -65,8 +66,19 @@ public class DependencyAnalysisSection extends PDESection {
 					doFindUnusedDependencies();
 				else if (e.getHref().equals("loops")) //$NON-NLS-1$
 					doFindLoops();
-				else if (e.getHref().equals("references")) //$NON-NLS-1$
-					new OpenPluginReferencesAction(PluginRegistry.findModel(getPlugin().getId())).run();
+				else if (e.getHref().equals("references")) { //$NON-NLS-1$
+					String id = null;
+					if (getPlugin() == null) {
+						// if plugin is null, get id of bundle fragment
+						IBaseModel model = getPage().getModel();
+						if (model instanceof IBundleFragmentModel)
+							id = ((IBundleFragmentModel) model).getFragment().getId();
+					}
+					else {
+						id = getPlugin().getId();
+					}
+					new OpenPluginReferencesAction(PluginRegistry.findModel(id)).run();
+				}
 				else if (e.getHref().equals("hierarchy")) //$NON-NLS-1$
 					new OpenPluginDependenciesAction(PluginRegistry.findModel(getPlugin().getId())).run();
 			}
