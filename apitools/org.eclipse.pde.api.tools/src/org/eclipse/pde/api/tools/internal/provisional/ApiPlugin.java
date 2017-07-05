@@ -668,7 +668,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 *         symbolic names contain {@link #EE_DESCRIPTION_PREFIX}
 	 */
 	private String getListOfEEFragments(Bundle[] allFragments) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (Bundle allFragment : allFragments) {
 			if (allFragment.getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0) {
 				result.append(allFragment.getSymbolicName());

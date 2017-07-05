@@ -99,7 +99,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	@Override
 	public String getTagName() {
 		if (fTaglabel == null) {
-			StringBuffer tag = new StringBuffer();
+			StringBuilder tag = new StringBuilder();
 			tag.append("@"); //$NON-NLS-1$
 			tag.append(fName);
 			fTaglabel = tag.toString();
@@ -114,7 +114,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 
 	@Override
 	public String getCompleteTag(int type, int member) {
-		StringBuffer tag = new StringBuffer();
+		StringBuilder tag = new StringBuilder();
 		tag.append(getTagName());
 		String comment = getTagComment(type, member);
 		if (EMPTY_STRING.equals(comment)) {

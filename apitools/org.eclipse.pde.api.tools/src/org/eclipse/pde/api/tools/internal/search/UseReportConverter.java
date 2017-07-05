@@ -228,7 +228,7 @@ public class UseReportConverter extends HTMLConvertor {
 		 */
 		String formatMessages(String[] messages) {
 			if (messages != null) {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				for (int i = 0; i < messages.length; i++) {
 					buffer.append(messages[i]);
 					if (i < messages.length - 1) {
@@ -583,7 +583,7 @@ public class UseReportConverter extends HTMLConvertor {
 	static final String REF_SCRIPT;
 
 	static {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<style type=\"text/css\">\n"); //$NON-NLS-1$
 		buffer.append("\t.main {\t\tfont-family:Arial, Helvetica, sans-serif;\n\t}\n"); //$NON-NLS-1$
 		buffer.append("\t.main h3 {\n\t\tfont-family:Arial, Helvetica, sans-serif;\n\t\t\background-color:#FFFFFF;\n\t\tfont-size:14px;\n\t\tmargin:0.1em;\n\t}\n"); //$NON-NLS-1$
@@ -595,7 +595,7 @@ public class UseReportConverter extends HTMLConvertor {
 		buffer.append("</style>\n"); //$NON-NLS-1$
 		REF_STYLE = buffer.toString();
 
-		buffer = new StringBuffer();
+		buffer = new StringBuilder();
 		buffer.append("<script type=\"text/javascript\">\n\tfunction expand(location) {\n\t\tif(document.getElementById) {\n\t\t\tvar childhtml = location.firstChild;\n\t\t\tif(!childhtml.innerHTML) {\n\t\t\t\tchildhtml = childhtml.nextSibling;\n\t\t\t}\n\t\t\tchildhtml.innerHTML = childhtml.innerHTML == '[+] ' ? '[-] ' : '[+] ';\n\t\t\tvar parent = location.parentNode;\n\t\t\tchildhtml = parent.nextSibling.style ? parent.nextSibling : parent.nextSibling.nextSibling;\n\t\t\tchildhtml.style.display = childhtml.style.display == 'block' ? 'none' : 'block';\n\t\t}\n\t}\n</script>\n"); //$NON-NLS-1$
 		buffer.append("<noscript>\n\t<style type=\"text/css\">\n\t\t.types {display:block;}\n\t\t.kinds{display:block;}\n\t</style>\n</noscript>\n"); //$NON-NLS-1$
 		REF_SCRIPT = buffer.toString();
@@ -799,7 +799,7 @@ public class UseReportConverter extends HTMLConvertor {
 		if (version == null) {
 			versionName = Version.emptyVersion.toString();
 		}
-		StringBuffer buffer = new StringBuffer(3 + id.length() + versionName.length());
+		StringBuilder buffer = new StringBuilder(3 + id.length() + versionName.length());
 		buffer.append(id).append(" (").append(versionName).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 		return buffer.toString();
 	}
@@ -914,7 +914,7 @@ public class UseReportConverter extends HTMLConvertor {
 	protected String getNameFromXMLFilename(File xmlFile) {
 		String fileName = xmlFile.getAbsolutePath();
 		int index = fileName.lastIndexOf('.');
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(fileName.substring(getReportsRoot().getAbsolutePath().length(), index)).append(HTML_EXTENSION);
 		File htmlFile = new File(getHtmlLocation(), String.valueOf(buffer));
 		return htmlFile.getAbsolutePath();
@@ -979,7 +979,7 @@ public class UseReportConverter extends HTMLConvertor {
 			if (!meta.exists()) {
 				meta.createNewFile();
 			}
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			buffer.append(OPEN_TITLE).append(SearchMessages.UseReportConverter_use_scan_info).append(CLOSE_TITLE);
@@ -1032,7 +1032,7 @@ public class UseReportConverter extends HTMLConvertor {
 					sorted.add(missingBundle);
 				}
 			}
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			buffer.append(OPEN_TITLE).append(SearchMessages.UseReportConverter_missing_required).append(CLOSE_TITLE);
@@ -1145,7 +1145,7 @@ public class UseReportConverter extends HTMLConvertor {
 			if (!originhtml.exists()) {
 				originhtml.createNewFile();
 			}
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			buffer.append(REF_STYLE);
@@ -1267,7 +1267,7 @@ public class UseReportConverter extends HTMLConvertor {
 	void writeTypePage(Map<IMemberDescriptor, Member> map, Type type, File typefile, String typename) throws Exception {
 		PrintWriter writer = null;
 		try {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			buffer.append(REF_STYLE);
@@ -1353,7 +1353,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @return the nested table of references as a string
 	 */
 	String getReferencesTable(Member member) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"6\">\n"); //$NON-NLS-1$
 		List<Reference> refs = null;
 		Reference ref = null;
@@ -1442,7 +1442,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @return link text pruned via the given root file
 	 */
 	String extractLinkFrom(File root, String fileName) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		String substring = fileName.substring(root.getAbsolutePath().length()).replace('\\', '/');
 		buffer.append('.');
 		if (substring.charAt(0) != '/') {
@@ -1484,7 +1484,7 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			setReportIndex(reportIndex);
 
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			writeMetadataHeaders(buffer);
@@ -1559,7 +1559,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @since 1.1
 	 */
 	protected String getColourLegend() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_P);
 		buffer.append("<table width=\"20%\" border=\"1\">"); //$NON-NLS-1$
 		buffer.append(OPEN_TR);
@@ -1579,7 +1579,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @return the string to write if there are no reported bundles
 	 */
 	protected String getNoReportsInformation() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_P).append(BR).append(SearchMessages.UseReportConverter_no_reported_usage).append(CLOSE_P);
 		return buffer.toString();
 	}
@@ -1591,7 +1591,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @param buffer
 	 * @throws Exception
 	 */
-	void writeMetadataHeaders(StringBuffer buffer) throws Exception {
+	void writeMetadataHeaders(StringBuilder buffer) throws Exception {
 		writeMetaTag(buffer, "description", SearchMessages.UseReportConverter_root_index_description); //$NON-NLS-1$
 		// TODO could write metadata information here
 	}
@@ -1603,7 +1603,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @param buffer
 	 * @throws Exception
 	 */
-	void writeMetadataSummary(StringBuffer buffer) throws Exception {
+	void writeMetadataSummary(StringBuilder buffer) throws Exception {
 		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_scan_details).append(CLOSE_H4);
 		if (this.metadata != null) {
 			buffer.append("<table border=\"0px\" title=\"").append(SearchMessages.UseReportConverter_scan_details).append("\"width=\"50%\">"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1728,7 +1728,7 @@ public class UseReportConverter extends HTMLConvertor {
 	}
 
 
-	void writeFilterCount(StringBuffer buffer) throws Exception {
+	void writeFilterCount(StringBuilder buffer) throws Exception {
 		boolean isAdditionFilterProvided = this.metadata.getAdditionalfilters() != null && !this.metadata.getAdditionalfilters().isEmpty();
 
 		if (this.filteredCount != -1 && isAdditionFilterProvided) {
@@ -1888,7 +1888,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @param buffer
 	 * @param description
 	 */
-	void writeMetaTag(StringBuffer buffer, String name, String content) {
+	void writeMetaTag(StringBuilder buffer, String name, String content) {
 		buffer.append("<meta name=\"").append(name).append("\" content=\"").append(content).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
@@ -1903,7 +1903,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @return the default references table header
 	 */
 	String getReferencesTableHeader(String sectionname, String columnname, boolean includeversion) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_H4).append(sectionname).append(CLOSE_H4);
 		buffer.append("<table border=\"1\" width=\"80%\">\n"); //$NON-NLS-1$
 		buffer.append(OPEN_TR);
@@ -1950,7 +1950,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @return a single reference table entry
 	 */
 	String getReferenceTableEntry(CountGroup counts, String link, String linktext, boolean includeversion) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<tr bgcolor=\"").append(getRowColour(counts)).append("\">\n"); //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append("\t<td><b><a href=\"").append(link).append("\">").append(getBundleOnlyName(linktext)).append("</a>").append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (includeversion) {
@@ -2015,7 +2015,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @return HTML as a string
 	 */
 	protected String getTypeCountSummary(String typename, CountGroup counts, int membercount) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_summary).append(CLOSE_H4);
 		buffer.append(OPEN_P).append(NLS.bind(SearchMessages.UseReportConverter___has_total_refs, new String[] {
 				typename, Integer.toString(counts.getTotalRefCount()),

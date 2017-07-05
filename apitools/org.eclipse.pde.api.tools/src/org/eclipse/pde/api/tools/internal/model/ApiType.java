@@ -485,7 +485,7 @@ public class ApiType extends ApiMember implements IApiType {
 			IApiTypeRoot file = fMemberTypes.get(simpleName);
 			if (file == null) {
 				// resolve
-				StringBuffer qName = new StringBuffer();
+				StringBuilder qName = new StringBuilder();
 				qName.append(getName());
 				qName.append('$');
 				qName.append(simpleName);
@@ -521,7 +521,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Type : access(") //$NON-NLS-1$
 		.append(getModifiers()).append(") ") //$NON-NLS-1$
 		.append(getName());

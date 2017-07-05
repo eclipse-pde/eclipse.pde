@@ -784,11 +784,11 @@ public class ClassFileComparator {
 				}
 				return member.getName();
 			case IApiElement.METHOD:
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append(type.getName()).append('.').append(getMethodDisplayName((IApiMethod) member, type));
 				return String.valueOf(buffer);
 			case IApiElement.FIELD:
-				buffer = new StringBuffer();
+				buffer = new StringBuilder();
 				buffer.append(type.getName()).append('.').append(member.getName());
 				return String.valueOf(buffer);
 			default:
@@ -2259,7 +2259,7 @@ public class ClassFileComparator {
 	}
 
 	private String getKeyForMethod(IApiMethod method, IApiType type) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (method.isConstructor()) {
 			String name = type.getName();
 			int index = name.lastIndexOf('.');

@@ -119,7 +119,7 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("*** Type Search Scope ***\n"); //$NON-NLS-1$
 		buffer.append("Component: ").append(fComponent); //$NON-NLS-1$
 		if (fPackageToTypes != null) {

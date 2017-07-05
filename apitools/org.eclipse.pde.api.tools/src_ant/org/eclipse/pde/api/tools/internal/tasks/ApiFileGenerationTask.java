@@ -68,7 +68,7 @@ public class ApiFileGenerationTask extends Task {
 		private static final String NATURE_ELEMENT_NAME = "nature"; //$NON-NLS-1$
 		boolean isAPIToolsNature = false;
 		boolean insideNature = false;
-		StringBuffer buffer;
+		StringBuilder buffer;
 
 		@Override
 		public void error(SAXParseException e) throws SAXException {
@@ -82,7 +82,7 @@ public class ApiFileGenerationTask extends Task {
 			}
 			this.insideNature = NATURE_ELEMENT_NAME.equals(name);
 			if (this.insideNature) {
-				this.buffer = new StringBuffer();
+				this.buffer = new StringBuilder();
 			}
 		}
 

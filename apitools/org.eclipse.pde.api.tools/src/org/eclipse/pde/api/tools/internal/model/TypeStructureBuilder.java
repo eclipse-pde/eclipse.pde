@@ -61,7 +61,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-		StringBuffer simpleSig = new StringBuffer();
+		StringBuilder simpleSig = new StringBuilder();
 		simpleSig.append('L');
 		simpleSig.append(name);
 		simpleSig.append(';');
@@ -181,7 +181,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 	static class AnnotationDefaultVisitor extends AnnotationVisitor {
 		ApiMethod method;
 		Object value;
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		boolean trace = false;
 		int traceCount = 0;
 
@@ -392,7 +392,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Type structure builder for: ").append(fType.getName()); //$NON-NLS-1$
 		buffer.append("\nBacked by file: ").append(fFile.getName()); //$NON-NLS-1$
 		return buffer.toString();
@@ -420,7 +420,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 			}
 			int classIndex = inputStream.readShort();
 			String name = pool.get(Integer.valueOf(classIndex));
-			StringBuffer simpleSig = new StringBuffer();
+			StringBuilder simpleSig = new StringBuilder();
 			simpleSig.append('L');
 			simpleSig.append(name);
 			simpleSig.append(';');

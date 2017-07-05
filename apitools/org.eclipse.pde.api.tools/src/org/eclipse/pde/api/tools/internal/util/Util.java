@@ -325,7 +325,7 @@ public final class Util {
 	 * @param key key
 	 * @param value value
 	 */
-	private static void appendProperty(StringBuffer buffer, String key, String value) {
+	private static void appendProperty(StringBuilder buffer, String key, String value) {
 		buffer.append(key);
 		buffer.append('=');
 		buffer.append(value);
@@ -530,9 +530,9 @@ public final class Util {
 	 * @throws IOException if unable to generate description
 	 */
 	public static String generateEEContents(IVMInstall vm, String eeId) throws IOException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		appendProperty(buffer, ExecutionEnvironmentDescription.JAVA_HOME, vm.getInstallLocation().getCanonicalPath());
-		StringBuffer paths = new StringBuffer();
+		StringBuilder paths = new StringBuilder();
 		LibraryLocation[] libraryLocations = JavaRuntime.getLibraryLocations(vm);
 		for (int i = 0; i < libraryLocations.length; i++) {
 			LibraryLocation lib = libraryLocations[i];
@@ -919,7 +919,7 @@ public final class Util {
 	 *         the given flags.
 	 */
 	public static String getDeltaPrefererenceKey(int elementType, int kind, int flags) {
-		StringBuffer buffer = new StringBuffer(Util.getDeltaElementType(elementType));
+		StringBuilder buffer = new StringBuilder(Util.getDeltaElementType(elementType));
 		buffer.append('_').append(Util.getDeltaKindName(kind));
 		if (flags != -1) {
 			buffer.append('_');
@@ -978,7 +978,7 @@ public final class Util {
 	 * @return the details of the delta as a string
 	 */
 	public static String getDetail(IDelta delta) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		switch (delta.getElementType()) {
 			case IDelta.CLASS_ELEMENT_TYPE:
 				buffer.append("class"); //$NON-NLS-1$
@@ -2045,7 +2045,7 @@ public final class Util {
 	 */
 	public static String getJavaClassLibsAsString() {
 		String[] libs = Util.getJavaClassLibs();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0, max = libs.length; i < max; i++) {
 			if (i > 0) {
 				buffer.append(File.pathSeparatorChar);
@@ -2297,7 +2297,7 @@ public final class Util {
 	 * @return API component + version identifier
 	 */
 	public static String getDeltaComponentVersionsId(IApiComponent component) {
-		StringBuffer buffer = new StringBuffer(component.getSymbolicName());
+		StringBuilder buffer = new StringBuilder(component.getSymbolicName());
 		String version = component.getVersion();
 		// remove the qualifier part
 		if (version != null) {
@@ -2323,7 +2323,7 @@ public final class Util {
 	 * @return API component + version identifier
 	 */
 	public static String getComponentVersionsId(IApiComponent component) {
-		StringBuffer buffer = new StringBuffer(component.getSymbolicName());
+		StringBuilder buffer = new StringBuilder(component.getSymbolicName());
 		String version = component.getVersion();
 		// remove the qualifier part
 		if (version != null) {
@@ -2657,7 +2657,7 @@ public final class Util {
 	 * @since 1.0.3
 	 */
 	public static String deepToString(Object[] array) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			buffer.append(array[i].toString());
 			if (i < array.length - 1) {

@@ -173,7 +173,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append("Directory Class File Container: " + getName()); //$NON-NLS-1$
 		return buff.toString();
 	}

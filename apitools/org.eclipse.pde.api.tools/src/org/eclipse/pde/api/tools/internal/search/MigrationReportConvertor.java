@@ -76,7 +76,7 @@ public class MigrationReportConvertor extends UseReportConverter {
 
 	@Override
 	protected String getTypeCountSummary(String typename, CountGroup counts, int membercount) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_summary).append(CLOSE_H4);
 		buffer.append(OPEN_P).append(NLS.bind(SearchMessages.MigrationReportConvertor_member_has_unresolved_refs, new String[] {
 				typename, Integer.toString(counts.getTotalRefCount()),
@@ -87,7 +87,7 @@ public class MigrationReportConvertor extends UseReportConverter {
 	@Override
 	protected String getAdditionalIndexInfo(boolean hasreports) {
 		if (hasreports) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(SearchMessages.MigrationReportConvertor_bundles_have_references);
 			return buffer.toString();
 		}
@@ -96,7 +96,7 @@ public class MigrationReportConvertor extends UseReportConverter {
 
 	@Override
 	protected String getNoReportsInformation() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_P).append(BR).append(SearchMessages.MigrationReportConvertor_no_reported_migration_problems).append(CLOSE_P);
 		return buffer.toString();
 	}

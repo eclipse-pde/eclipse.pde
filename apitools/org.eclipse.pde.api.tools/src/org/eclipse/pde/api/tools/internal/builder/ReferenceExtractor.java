@@ -477,7 +477,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Method visitor for: "); //$NON-NLS-1$
 			buffer.append(methodName);
 			buffer.append("\nCurrent line number: "); //$NON-NLS-1$
@@ -823,7 +823,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append('(').append(this.label).append(',').append(this.location).append(')');
 			return String.valueOf(buffer);
 		}
@@ -859,7 +859,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append('(').append(this.line).append(',').append(this.label).append(')');
 			return String.valueOf(buffer);
 		}
@@ -1010,7 +1010,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Reference extractor for: "); //$NON-NLS-1$
 		buffer.append(fType.getName());
 		buffer.append("\n"); //$NON-NLS-1$

@@ -90,7 +90,7 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(fId);
 		buf.append(' ');
 		buf.append(fRange.toString());

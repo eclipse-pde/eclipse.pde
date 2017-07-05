@@ -214,7 +214,7 @@ public class SignaturesTests extends TestCase {
 	 * Tests the {@link Signatures#appendTypeParameters(StringBuffer, String[])} method
 	 */
 	public void testAppendTypeParameters() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Type"); //$NON-NLS-1$
 		Signatures.appendTypeParameters(buffer, null);
 		assertEquals("Should be no type parameters appended", "Type", buffer.toString()); //$NON-NLS-1$ //$NON-NLS-2$

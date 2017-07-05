@@ -966,7 +966,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @return a single string attribute from an array or arguments
 	 */
 	String createArgAttribute(String[] args) {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		for (int i = 0; i < args.length; i++) {
 			buff.append(args[i]);
 			if (i < args.length - 1) {

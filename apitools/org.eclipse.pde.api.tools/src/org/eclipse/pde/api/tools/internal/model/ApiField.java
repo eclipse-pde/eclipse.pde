@@ -80,7 +80,7 @@ public class ApiField extends ApiMember implements IApiField {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Field : access(") //$NON-NLS-1$
 		.append(getModifiers()).append(") ") //$NON-NLS-1$
 		.append(getSignature()).append(' ').append(getName()).append(" isEnum constant ") //$NON-NLS-1$

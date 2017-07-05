@@ -230,7 +230,7 @@ public abstract class CommonUtilsTask extends Task {
 
 	public static String convertToHtml(String s) {
 		char[] contents = s.toCharArray();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (char c : contents) {
 			switch (c) {
 				case '<':

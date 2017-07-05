@@ -169,7 +169,7 @@ public class SkippedComponent implements IApiElement {
 	 */
 	public String getErrorDetails() {
 		if (this.errors != null) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			String[] problems = resolveRootErrors(this.errors);
 			for (String problem : problems) {
 				buffer.append(problem).append("<br/>"); //$NON-NLS-1$

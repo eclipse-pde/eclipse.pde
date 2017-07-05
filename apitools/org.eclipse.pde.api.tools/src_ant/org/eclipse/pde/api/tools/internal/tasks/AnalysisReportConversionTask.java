@@ -54,7 +54,7 @@ public class AnalysisReportConversionTask extends Task {
 		}
 
 		public String getHtmlMessage() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			char[] chars = this.message.toCharArray();
 			for (char character : chars) {
 				switch (character) {
@@ -79,7 +79,7 @@ public class AnalysisReportConversionTask extends Task {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Problem : ").append(this.message).append(' ').append(this.severity); //$NON-NLS-1$
 			return String.valueOf(buffer);
 		}
@@ -518,7 +518,7 @@ public class AnalysisReportConversionTask extends Task {
 	}
 
 	private String extractLinkFrom(String fileName) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append('.').append(fileName.substring(this.htmlRoot.getAbsolutePath().length()).replace('\\', '/'));
 		return String.valueOf(buffer);
 	}
@@ -526,7 +526,7 @@ public class AnalysisReportConversionTask extends Task {
 	private String extractNameFromXMLName(File xmlFile) {
 		String fileName = xmlFile.getAbsolutePath();
 		int index = fileName.lastIndexOf('.');
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(fileName.substring(this.reportsRoot.getAbsolutePath().length(), index)).append(".html"); //$NON-NLS-1$
 		File htmlFile = new File(this.htmlReportsLocation, String.valueOf(buffer));
 		return htmlFile.getAbsolutePath();

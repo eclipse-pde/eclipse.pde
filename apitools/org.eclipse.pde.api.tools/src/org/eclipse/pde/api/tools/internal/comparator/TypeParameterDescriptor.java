@@ -46,7 +46,7 @@ class TypeParameterDescriptor {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("type parameter ").append(this.name).append(" : ").append(Util.LINE_DELIMITER); //$NON-NLS-1$ //$NON-NLS-2$
 		if (this.classBound != null) {
 			buffer.append("class bound : ").append(this.classBound).append(Util.LINE_DELIMITER); //$NON-NLS-1$

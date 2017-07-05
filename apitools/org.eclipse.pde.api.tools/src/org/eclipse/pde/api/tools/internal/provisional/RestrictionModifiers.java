@@ -134,7 +134,7 @@ public final class RestrictionModifiers {
 	 * @since 1.0.1
 	 */
 	public static String getRestrictionText(int restrictions) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (restrictions == NO_RESTRICTIONS) {
 			return "NO_RESTRICTIONS"; //$NON-NLS-1$
 		}

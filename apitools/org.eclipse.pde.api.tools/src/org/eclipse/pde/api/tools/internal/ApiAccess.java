@@ -61,7 +61,7 @@ public class ApiAccess implements IApiAccess {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Access Level: "); //$NON-NLS-1$
 		buffer.append(getAccessText(getAccessLevel()));
 		return buffer.toString();

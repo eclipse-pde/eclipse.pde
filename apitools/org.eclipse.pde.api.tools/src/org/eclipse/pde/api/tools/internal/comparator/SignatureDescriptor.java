@@ -90,7 +90,7 @@ class SignatureDescriptor {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0, max = this.typeParameterDescriptorsCounter; i < max; i++) {
 			if (i > 0) {
 				buffer.append(',');

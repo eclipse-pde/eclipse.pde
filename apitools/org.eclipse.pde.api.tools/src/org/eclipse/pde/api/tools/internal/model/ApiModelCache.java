@@ -94,7 +94,7 @@ public final class ApiModelCache {
 	 * @return the member type cache key to use
 	 */
 	private String getCacheKey(String baseline, String component, String typename) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(baseline).append('.').append(component).append('.').append(typename);
 		return buffer.toString();
 	}

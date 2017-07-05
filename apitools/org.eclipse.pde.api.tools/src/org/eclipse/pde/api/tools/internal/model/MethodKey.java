@@ -75,7 +75,7 @@ public class MethodKey {
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("Method Key: [enclosing type - ").append(fTypename).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
 		buf.append("[method name - ").append(fSelector).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
 		buf.append("[signature - ").append(fSig).append("] "); //$NON-NLS-1$ //$NON-NLS-2$

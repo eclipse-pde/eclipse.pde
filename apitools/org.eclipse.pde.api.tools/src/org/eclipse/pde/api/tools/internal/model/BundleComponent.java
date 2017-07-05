@@ -904,7 +904,7 @@ public class BundleComponent extends Component {
 	 */
 	protected URL getFileInBundle(File bundleLocation, String filePath) throws MalformedURLException {
 		String extension = new Path(bundleLocation.getName()).getFileExtension();
-		StringBuffer urlSt = new StringBuffer();
+		StringBuilder urlSt = new StringBuilder();
 		if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
 			urlSt.append("jar:file:"); //$NON-NLS-1$
 			urlSt.append(bundleLocation.getAbsolutePath());
@@ -951,7 +951,7 @@ public class BundleComponent extends Component {
 	public synchronized String getVersion() {
 		init();
 		// remove the qualifier
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(fVersion.getMajor()).append('.').append(fVersion.getMinor()).append('.').append(fVersion.getMicro());
 		return String.valueOf(buffer);
 	}
@@ -979,7 +979,7 @@ public class BundleComponent extends Component {
 	public String toString() {
 		if (fBundleDescription != null) {
 			try {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append(fBundleDescription.toString());
 				buffer.append(" - "); //$NON-NLS-1$
 				buffer.append("[fragment: ").append(isFragment()).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -991,7 +991,7 @@ public class BundleComponent extends Component {
 			} catch (CoreException ce) {
 			}
 		} else {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Un-initialized Bundle Component"); //$NON-NLS-1$
 			buffer.append("[location: ").append(fLocation).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("[dev bundle: ").append(fWorkspaceBinary).append("]"); //$NON-NLS-1$ //$NON-NLS-2$

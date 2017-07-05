@@ -167,7 +167,7 @@ public abstract class HTMLConvertor {
 	 * @return a new open <code>&lt;td&gt;</code> tag
 	 */
 	public static String openTD(int width) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<td width=\"").append(width).append("%\">"); //$NON-NLS-1$//$NON-NLS-2$
 		return buffer.toString();
 	}

@@ -67,7 +67,7 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 
 	private boolean isExcluded(IDelta delta) {
 		String typeName = delta.getTypeName();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		String componentId = delta.getComponentId();
 		if (componentId != null) {
 			if (this.excludedElements.containsExactMatch(componentId) || this.excludedElements.containsPartialMatch(componentId)) {

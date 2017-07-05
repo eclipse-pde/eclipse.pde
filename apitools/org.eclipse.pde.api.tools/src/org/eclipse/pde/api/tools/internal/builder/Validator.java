@@ -142,7 +142,7 @@ public abstract class Validator extends ASTVisitor {
 	 * @return the fully qualified name of the enclosing type
 	 */
 	protected String getTypeName(ASTNode node) {
-		return getTypeName(node, new StringBuffer());
+		return getTypeName(node, new StringBuilder());
 	}
 
 	/**
@@ -152,7 +152,7 @@ public abstract class Validator extends ASTVisitor {
 	 * @param buffer the buffer to write the name into
 	 * @return the fully qualified name of the parent
 	 */
-	protected String getTypeName(ASTNode node, StringBuffer buffer) {
+	protected String getTypeName(ASTNode node, StringBuilder buffer) {
 		switch (node.getNodeType()) {
 			case ASTNode.COMPILATION_UNIT: {
 				CompilationUnit unit = (CompilationUnit) node;

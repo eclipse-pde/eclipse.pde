@@ -43,7 +43,7 @@ public class ApiAnnotations implements IApiAnnotations {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(VisibilityModifiers.getVisibilityName(getVisibility()));
 		buffer.append(" / "); //$NON-NLS-1$
 		int restrictions = getRestrictions();

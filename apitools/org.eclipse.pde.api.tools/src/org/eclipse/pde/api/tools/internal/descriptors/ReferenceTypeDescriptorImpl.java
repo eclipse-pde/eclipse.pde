@@ -87,7 +87,7 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 	@Override
 	public synchronized String getQualifiedName() {
 		if (fFullName == null) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(getPackage().getName());
 			if (buffer.length() > 0) {
 				buffer.append('.');
@@ -146,7 +146,7 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 	@Override
 	public String getSignature() {
 		if (fSignature == null) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append('L');
 			buf.append(getQualifiedName());
 			buf.append(';');

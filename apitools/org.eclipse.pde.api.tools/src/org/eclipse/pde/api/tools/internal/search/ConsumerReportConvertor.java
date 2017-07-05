@@ -399,7 +399,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		 */
 		private String formatMessages(String[] messages) {
 			if (messages != null) {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				for (int i = 0; i < messages.length; i++) {
 					buffer.append(messages[i]);
 					if (i < messages.length - 1) {
@@ -497,7 +497,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			}
 			setReportIndex(reportIndex);
 
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			writeMetadataHeaders(buffer);
@@ -585,7 +585,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			if (!originhtml.exists()) {
 				originhtml.createNewFile();
 			}
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			buffer.append(REF_STYLE);
@@ -651,7 +651,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			if (!originhtml.exists()) {
 				originhtml.createNewFile();
 			}
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			buffer.append(REF_STYLE);

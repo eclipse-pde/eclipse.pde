@@ -120,7 +120,7 @@ public final class Signatures {
 	 *             fails
 	 */
 	public static String getQualifiedMethodSignature(IApiMethod method) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		IApiType type = method.getEnclosingType();
 		if (type != null) {
 			buffer.append(getQualifiedTypeSignature(type)).append('.');
@@ -143,7 +143,7 @@ public final class Signatures {
 	 *             fails
 	 */
 	public static String getQualifiedMethodSignature(IMethodDescriptor method) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		IReferenceTypeDescriptor type = method.getEnclosingType();
 		if (type != null) {
 			buffer.append(getQualifiedTypeSignature(type)).append('.');
@@ -169,7 +169,7 @@ public final class Signatures {
 	 *             fails
 	 */
 	public static String getQualifiedMethodSignature(IMethodDescriptor method, boolean qualifiedparams, boolean includereturn) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		IReferenceTypeDescriptor type = method.getEnclosingType();
 		if (type != null) {
 			buffer.append(getQualifiedTypeSignature(type)).append('.');
@@ -193,7 +193,7 @@ public final class Signatures {
 	 * @throws CoreException
 	 */
 	public static String getMethodSignature(IMethodDescriptor method, boolean includereturn) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		String methodsig = method.getSignature();
 		String methodname = getMethodName(method);
 		String dqsig = dequalifySignature(methodsig);
@@ -262,7 +262,7 @@ public final class Signatures {
 	 * @return the type-qualified field signature
 	 */
 	public static String getQualifiedFieldSignature(IApiField field) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		IApiType type = field.getEnclosingType();
 		if (type != null) {
 			buffer.append(getQualifiedTypeSignature(type)).append('.');
@@ -279,7 +279,7 @@ public final class Signatures {
 	 * @throws Core
 	 */
 	public static String getQualifiedFieldSignature(IFieldDescriptor field) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		IReferenceTypeDescriptor type = field.getEnclosingType();
 		if (type != null) {
 			buffer.append(getQualifiedTypeSignature(type)).append('.');
@@ -331,7 +331,7 @@ public final class Signatures {
 	 * @return
 	 */
 	public static String getTypeSignature(String signature, String genericsignature, boolean qualified) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		String sig = signature.replace('/', '.');
 		if (qualified == false) {
 			sig = dequalifySignature(sig);
@@ -385,7 +385,7 @@ public final class Signatures {
 	 * @param buffer
 	 * @param parameters
 	 */
-	public static void appendTypeParameters(StringBuffer buffer, String[] parameters) {
+	public static void appendTypeParameters(StringBuilder buffer, String[] parameters) {
 		if (parameters == null) {
 			return;
 		}
@@ -438,7 +438,7 @@ public final class Signatures {
 	 * @return the converted signature
 	 */
 	public static String dequalifySignature(String signature) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		char[] chars = signature.toCharArray();
 		for (int i = 0, max = chars.length; i < max; i++) {
 			char currentChar = chars[i];
@@ -799,7 +799,7 @@ public final class Signatures {
 			// if the type is static it doesn't need the enclosing type
 			return;
 		}
-		StringBuffer name = new StringBuffer();
+		StringBuilder name = new StringBuilder();
 		while (parent != null) {
 			parent = parent.getParent();
 			if (parent instanceof AbstractTypeDeclaration) {

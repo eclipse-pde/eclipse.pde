@@ -466,7 +466,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 						Element compElement = (Element) componentNodes.item(i);
 						String id = compElement.getAttribute(IApiXmlConstants.ATTR_ID);
 						String ver = compElement.getAttribute(IApiXmlConstants.ATTR_VERSION);
-						StringBuffer name = new StringBuffer();
+						StringBuilder name = new StringBuilder();
 						name.append(id);
 						name.append('_');
 						name.append(ver);

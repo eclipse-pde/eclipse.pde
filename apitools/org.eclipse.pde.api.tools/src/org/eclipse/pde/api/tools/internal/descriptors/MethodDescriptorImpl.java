@@ -41,7 +41,7 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(getEnclosingType().getQualifiedName());
 		buffer.append("#"); //$NON-NLS-1$
 		buffer.append(Signature.toString(getSignature(), getName(), null, true, true));

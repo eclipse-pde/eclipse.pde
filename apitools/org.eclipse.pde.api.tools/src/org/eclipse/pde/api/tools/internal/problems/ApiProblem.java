@@ -275,7 +275,7 @@ public class ApiProblem implements IApiProblem {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("API problem: "); //$NON-NLS-1$
 		buffer.append(fResourcePath != null ? fResourcePath : "no path").append("\n"); //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append("\tseverity: "); //$NON-NLS-1$

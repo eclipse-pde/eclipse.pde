@@ -60,7 +60,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 			if (version == null) {
 				versionName = Version.emptyVersion.toString();
 			}
-			StringBuffer buffer = new StringBuffer(3 + id.length() + versionName.length());
+			StringBuilder buffer = new StringBuilder(3 + id.length() + versionName.length());
 			buffer.append(id).append(" (").append(versionName).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 			return buffer.toString();
 		}
@@ -85,7 +85,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 				if (!originhtml.exists()) {
 					originhtml.createNewFile();
 				}
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append(HTML_HEADER);
 				buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 				buffer.append(REF_STYLE);
@@ -96,9 +96,9 @@ public class MissingRefReportConverter extends UseReportConverter {
 				buffer.append(OPEN_H3).append(getProblemTitle(report.name)).append(CLOSE_H3);
 				buffer.append(getProblemSummary(report));
 
-				StringBuffer typeProblems = new StringBuffer();
-				StringBuffer methodProblems = new StringBuffer();
-				StringBuffer fieldProblems = new StringBuffer();
+				StringBuilder typeProblems = new StringBuilder();
+				StringBuilder methodProblems = new StringBuilder();
+				StringBuilder fieldProblems = new StringBuilder();
 				Integer key = null;
 				TreeMap<String, List<IApiProblem>> types = null;
 				for (Entry<Integer, TreeMap<String, List<IApiProblem>>> entry : report.apiProblems.entrySet()) {
@@ -147,8 +147,8 @@ public class MissingRefReportConverter extends UseReportConverter {
 			}
 		}
 
-		private StringBuffer getProblemRow(StringBuffer type, String header) {
-			StringBuffer buffer = new StringBuffer();
+		private StringBuilder getProblemRow(StringBuilder type, String header) {
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(OPEN_TR);
 			buffer.append("<td align=\"left\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_B);
@@ -163,8 +163,8 @@ public class MissingRefReportConverter extends UseReportConverter {
 			return buffer;
 		}
 
-		private StringBuffer getProblemTable(TreeMap<String, List<IApiProblem>> types) {
-			StringBuffer buffer = new StringBuffer();
+		private StringBuilder getProblemTable(TreeMap<String, List<IApiProblem>> types) {
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"6\">\n"); //$NON-NLS-1$
 			String tname = null;
 			List<IApiProblem> pbs = null;
@@ -186,7 +186,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 		}
 
 		private Object getProblemSummary(Report report) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(OPEN_H4).append(SearchMessages.MissingRefReportConverter_Summary).append(CLOSE_H4);
 			buffer.append(OPEN_P).append(NLS.bind(SearchMessages.MissingRefReportConverter_SummaryDesc, new String[] {
 					report.name, Integer.toString(report.apiProblems.size()) })).append(CLOSE_P);
@@ -201,7 +201,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 		 * @return the default references table header
 		 */
 		String getProblemsTableHeader(String sectionname, String type) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(OPEN_H4).append(sectionname).append(CLOSE_H4);
 			buffer.append(OPEN_P).append(SearchMessages.MissingRefReportConverter_ProblemTableHeader).append(CLOSE_P);
 			buffer.append("<div align=\"left\" class=\"main\">"); //$NON-NLS-1$
@@ -357,7 +357,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 			}
 			// setReportIndex(reportIndex);
 
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			writeMetadataHeaders(buffer);
@@ -415,7 +415,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 	@Override
 	protected String getNoReportsInformation() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_P).append(BR).append(SearchMessages.no_use_scan_ref_problems).append(CLOSE_P);
 		return buffer.toString();
 	}
@@ -428,7 +428,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 	 * @return a single reference table entry
 	 */
 	private Object getReferenceTableEntry(Report report, String link) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_TR);
 		buffer.append("<td><b><a href=\"").append(link).append("\">").append(getBundleOnlyName(report.name)).append("</a>").append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		buffer.append("\t<td align=\"left\">").append(getVersion(report.name)).append(CLOSE_TD); //$NON-NLS-1$
@@ -440,8 +440,8 @@ public class MissingRefReportConverter extends UseReportConverter {
 		return buffer.toString();
 	}
 
-	private StringBuffer getProblemSummaryTable() {
-		StringBuffer buffer = new StringBuffer();
+	private StringBuilder getProblemSummaryTable() {
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_H4).append(SearchMessages.MissingRefReportConverter_ProblemSummaryTitle).append(CLOSE_H4);
 		buffer.append(OPEN_P).append(SearchMessages.MissingRefReportConverter_ProblemSummary).append(CLOSE_P);
 		buffer.append("<table border=\"1\" width=\"80%\">\n"); //$NON-NLS-1$
@@ -473,7 +473,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 	}
 
 	@Override
-	void writeMetadataSummary(StringBuffer buffer) throws Exception {
+	void writeMetadataSummary(StringBuilder buffer) throws Exception {
 		MissingRefMetadata metadata = (MissingRefMetadata) getMetadata();
 		buffer.append(OPEN_H4).append(SearchMessages.MissingRefReportConverter_MetadataTitle).append(CLOSE_H4);
 		buffer.append("<table border=\"0px\" title=\"").append(SearchMessages.MissingRefReportConverter_MetadataTableTitle).append("\"width=\"50%\">"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -524,7 +524,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 	}
 
 	@Override
-	protected void writeMetadataHeaders(StringBuffer buffer) {
+	protected void writeMetadataHeaders(StringBuilder buffer) {
 		buffer.append("<meta name=\"").append("description").append("\" content=\"").append(SearchMessages.MissingRefReportConverter_IndexMetaTag).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 

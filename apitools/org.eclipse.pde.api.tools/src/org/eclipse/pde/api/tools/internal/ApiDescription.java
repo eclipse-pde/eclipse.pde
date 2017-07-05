@@ -150,7 +150,7 @@ public class ApiDescription implements IApiDescription {
 				default:
 					break;
 			}
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(type == null ? "Unknown" : type).append(" Node: ").append(name == null ? "Unknown Name" : name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			buffer.append("\nVisibility: ").append(VisibilityModifiers.getVisibilityName(visibility)); //$NON-NLS-1$
 			buffer.append("\nRestrictions: ").append(RestrictionModifiers.getRestrictionText(restrictions)); //$NON-NLS-1$
@@ -392,7 +392,7 @@ public class ApiDescription implements IApiDescription {
 	 */
 	protected ManifestNode findNode(IElementDescriptor element, boolean write) {
 		if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Looking up manifest node for element: "); //$NON-NLS-1$
 			buffer.append(element);
 			System.out.println(buffer.toString());
@@ -414,7 +414,7 @@ public class ApiDescription implements IApiDescription {
 					}
 				} else {
 					if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-						StringBuffer buffer = new StringBuffer();
+						StringBuilder buffer = new StringBuilder();
 						buffer.append("Returning parent manifest node: "); //$NON-NLS-1$
 						buffer.append(parentNode);
 						buffer.append(" when looking for element"); //$NON-NLS-1$
@@ -430,7 +430,7 @@ public class ApiDescription implements IApiDescription {
 			}
 		}
 		if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Manifest node found: "); //$NON-NLS-1$
 			buffer.append(node);
 			buffer.append(" when looking for element"); //$NON-NLS-1$
@@ -446,7 +446,7 @@ public class ApiDescription implements IApiDescription {
 		if (node != null) {
 			return resolveAnnotations(node, element);
 		} else if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Tried to resolve annotations for manifest node: "); //$NON-NLS-1$
 			buffer.append(node);
 			buffer.append(" but the node could not be found."); //$NON-NLS-1$
@@ -486,14 +486,14 @@ public class ApiDescription implements IApiDescription {
 			res = node.restrictions;
 		}
 		if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-			StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append("Resolved annotations for manifest node: "); //$NON-NLS-1$
-			stringBuffer.append(node);
-			stringBuffer.append(" to be: "); //$NON-NLS-1$
-			stringBuffer.append(VisibilityModifiers.getVisibilityName(vis));
-			stringBuffer.append(" "); //$NON-NLS-1$
-			stringBuffer.append(RestrictionModifiers.getRestrictionText(res));
-			System.out.println(stringBuffer.toString());
+			StringBuilder buffer = new StringBuilder();
+			buffer.append("Resolved annotations for manifest node: "); //$NON-NLS-1$
+			buffer.append(node);
+			buffer.append(" to be: "); //$NON-NLS-1$
+			buffer.append(VisibilityModifiers.getVisibilityName(vis));
+			buffer.append(" "); //$NON-NLS-1$
+			buffer.append(RestrictionModifiers.getRestrictionText(res));
+			System.out.println(buffer.toString());
 		}
 		return new ApiAnnotations(vis, res);
 	}
@@ -528,7 +528,7 @@ public class ApiDescription implements IApiDescription {
 			vis = VisibilityModifiers.API;
 		}
 		if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Creating new manifest node for element: "); //$NON-NLS-1$
 			buffer.append(element);
 			buffer.append(" and adding it to parent node: "); //$NON-NLS-1$
@@ -543,7 +543,7 @@ public class ApiDescription implements IApiDescription {
 		ManifestNode node = findNode(element, true);
 		if (node != null) {
 			if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append("Setting restrictions for manifest node: "); //$NON-NLS-1$
 				buffer.append(node);
 				buffer.append(" to be "); //$NON-NLS-1$
@@ -562,7 +562,7 @@ public class ApiDescription implements IApiDescription {
 		ManifestNode node = findNode(element, true);
 		if (node != null) {
 			if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append("Setting visibility for manifest node: "); //$NON-NLS-1$
 				buffer.append(node);
 				buffer.append(" to be "); //$NON-NLS-1$
@@ -603,7 +603,7 @@ public class ApiDescription implements IApiDescription {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("API description for component: ").append(fOwningComponentId); //$NON-NLS-1$
 		return buffer.toString();
 	}

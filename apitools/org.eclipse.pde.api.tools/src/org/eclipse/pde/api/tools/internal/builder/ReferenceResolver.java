@@ -119,7 +119,7 @@ public final class ReferenceResolver {
 	 * @return a string key for the given reference.
 	 */
 	private static String createSignatureKey(IReference reference) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(reference.getMember().getApiComponent().getSymbolicName());
 		buffer.append("#"); //$NON-NLS-1$
 		buffer.append(reference.getReferencedTypeName());

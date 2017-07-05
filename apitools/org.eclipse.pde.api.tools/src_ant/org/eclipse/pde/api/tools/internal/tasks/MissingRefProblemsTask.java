@@ -93,7 +93,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	@Override
 	public void execute() throws BuildException {
 		if (super.currentBaselineLocation == null || super.reportLocation == null || this.apiUseScans == null) {
-			StringBuffer error = new StringBuffer(NLS.bind(Messages.MissingRefProblemsTask_missingArguments, new String[] {
+			StringBuilder error = new StringBuilder(NLS.bind(Messages.MissingRefProblemsTask_missingArguments, new String[] {
 					super.currentBaselineLocation, super.reportLocation, }));
 			throw new BuildException(error.toString());
 		}
@@ -106,7 +106,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 			for (String usescan : usescans) {
 				File file = new File(usescan.trim());
 				if (!file.exists()) {
-					StringBuffer error = new StringBuffer(Messages.MissingRefProblemsTask_invalidApiUseScanLocation);
+					StringBuilder error = new StringBuilder(Messages.MissingRefProblemsTask_invalidApiUseScanLocation);
 					error.append(usescan);
 					throw new BuildException(error.toString());
 				}

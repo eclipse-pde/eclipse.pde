@@ -46,7 +46,7 @@ public class CompositeApiTypeContainer extends AbstractApiTypeContainer {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append("Composite Class File Container:\n"); //$NON-NLS-1$
 		if (fContainers == null) {
 			buff.append("\t<EMPTY>"); //$NON-NLS-1$

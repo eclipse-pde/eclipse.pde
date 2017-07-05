@@ -187,7 +187,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			ResolverError[] errors = component.getErrors();
 			if (errors != null) {
 				// check if all errors have a constraint
-				StringBuffer buffer = null;
+				StringBuilder buffer = null;
 				for (int i = 0, max = errors.length; i < max; i++) {
 					ResolverError error = errors[i];
 					VersionConstraint constraint = error.getUnsatisfiedConstraint();
@@ -196,7 +196,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 					VersionRange versionRange = constraint.getVersionRange();
 					if (buffer == null) {
-						buffer = new StringBuffer();
+						buffer = new StringBuilder();
 					}
 					if (i > 0) {
 						buffer.append(',').append(' ');
@@ -1562,7 +1562,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						}
 						return;
 					}
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					Version componentVersion = new Version(componentVersionString);
 					buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
 					problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MISSING, new String[] { Util.getDeltaArgumentString(delta) }, delta, member, String.valueOf(buffer));
@@ -1579,7 +1579,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								}
 								return;
 							}
-							StringBuffer buffer = new StringBuffer();
+							StringBuilder buffer = new StringBuilder();
 							if (tagVersion.prefixString() != null) {
 								buffer.append(tagVersion.prefixString());
 							}
@@ -1598,13 +1598,13 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								}
 								return;
 							}
-							StringBuffer accurateVersionBuffer = new StringBuffer();
+							StringBuilder accurateVersionBuffer = new StringBuilder();
 							Version componentVersion = new Version(componentVersionString);
 							accurateVersionBuffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
 							String accurateVersion = String.valueOf(accurateVersionBuffer);
 							if (Util.isDifferentVersion(sinceVersion, accurateVersion)) {
 								// report invalid version number
-								StringBuffer buffer = new StringBuffer();
+								StringBuilder buffer = new StringBuilder();
 								if (tagVersion.prefixString() != null) {
 									buffer.append(tagVersion.prefixString());
 								}
@@ -1693,7 +1693,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					int length = messageargs.length;
 					messageArguments = new String[length];
 					System.arraycopy(messageargs, 0, messageArguments, 0, length);
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					buffer.append(qtn).append('.').append(messageargs[length - 1]);
 					messageArguments[length - 1] = String.valueOf(buffer);
 				} else {

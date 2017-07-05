@@ -73,7 +73,7 @@ public class FilteredElements {
 	@Override
 	public String toString() {
 		final String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("==============================================================================").append(lineSeparator); //$NON-NLS-1$
 		printSet(buffer, this.exactMatches, "Exact matches:"); //$NON-NLS-1$
 		printSet(buffer, this.partialMatches, "Partial matches:"); //$NON-NLS-1$
@@ -81,7 +81,7 @@ public class FilteredElements {
 		return String.valueOf(buffer);
 	}
 
-	private void printSet(StringBuffer buffer, Set<String> set, String title) {
+	private void printSet(StringBuilder buffer, Set<String> set, String title) {
 		final String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 		buffer.append(title).append(lineSeparator);
 		if (set != null) {

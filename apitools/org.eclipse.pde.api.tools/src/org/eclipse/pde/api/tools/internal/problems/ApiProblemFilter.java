@@ -97,7 +97,7 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Filter for : "); //$NON-NLS-1$
 		buffer.append(fProblem.toString());
 		return buffer.toString();
@@ -117,7 +117,7 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 	 * @return returns a handle that can be used to identify the filter
 	 */
 	public String getHandle() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(fProblem.getId());
 		buffer.append(HANDLE_DELIMITER);
 		buffer.append(fProblem.getResourcePath());

@@ -205,7 +205,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append("Archive Class File Container: " + getName()); //$NON-NLS-1$
 		return buff.toString();
 	}

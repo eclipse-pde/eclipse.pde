@@ -109,7 +109,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append("Project Class File Container: " + getName()); //$NON-NLS-1$
 		return buff.toString();
 	}
@@ -136,7 +136,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 						String name = file.getName();
 						String typeName = name.substring(0, name.length() - 6);
 						if (pkgName.length() > 0) {
-							StringBuffer buf = new StringBuffer(pkgName);
+							StringBuilder buf = new StringBuilder(pkgName);
 							buf.append('.');
 							buf.append(typeName);
 							typeName = buf.toString();
@@ -156,7 +156,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 			if (pkgName.length() == 0) {
 				nextName = child.getName();
 			} else {
-				StringBuffer buffer = new StringBuffer(pkgName);
+				StringBuilder buffer = new StringBuilder(pkgName);
 				buffer.append('.');
 				buffer.append(child.getName());
 				nextName = buffer.toString();

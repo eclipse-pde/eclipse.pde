@@ -130,7 +130,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		}
 		switch (member.getType()) {
 			case IApiElement.FIELD: {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				IApiField field = (IApiField) member;
 				buffer.append(typeName).append('.').append(field.getName());
 				return String.valueOf(buffer);

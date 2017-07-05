@@ -198,7 +198,7 @@ public class XmlReferenceDescriptorWriter {
 	 * @throws CoreException
 	 */
 	String getId(IComponentDescriptor component) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(component.getId()).append(" ").append('(').append(component.getVersion()).append(')'); //$NON-NLS-1$
 		return buffer.toString();
 	}
@@ -509,7 +509,7 @@ public class XmlReferenceDescriptorWriter {
 	 * @since 1.1
 	 */
 	String getText(Object[] array) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			buffer.append(array[i].toString());
 			if (i < array.length - 1) {

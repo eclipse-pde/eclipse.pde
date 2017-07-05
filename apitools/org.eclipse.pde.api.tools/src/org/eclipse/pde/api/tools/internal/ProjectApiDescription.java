@@ -137,7 +137,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			String name = ((IPackageDescriptor) element).getName();
 			buffer.append("Package Node: ").append(name.equals("") ? "<default package>" : name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			buffer.append("\nVisibility: ").append(VisibilityModifiers.getVisibilityName(visibility)); //$NON-NLS-1$
@@ -190,7 +190,7 @@ public class ProjectApiDescription extends ApiDescription {
 		protected synchronized ManifestNode refresh() {
 			if (fRefreshing) {
 				if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
 					buffer.append(this);
 					buffer.append(" aborted because a refresh is already in progress"); //$NON-NLS-1$
@@ -209,7 +209,7 @@ public class ProjectApiDescription extends ApiDescription {
 							resource = unit.getUnderlyingResource();
 						} catch (JavaModelException e) {
 							if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-								StringBuffer buffer = new StringBuffer();
+								StringBuilder buffer = new StringBuilder();
 								buffer.append("Failed to get underlying resource for compilation unit: "); //$NON-NLS-1$
 								buffer.append(unit);
 								System.out.println(buffer.toString());
@@ -228,7 +228,7 @@ public class ProjectApiDescription extends ApiDescription {
 								visitType(this, visitor);
 								long crc = visitor.getValue();
 								if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-									StringBuffer buffer = new StringBuffer();
+									StringBuilder buffer = new StringBuilder();
 									buffer.append("Resource has changed for type manifest node: "); //$NON-NLS-1$
 									buffer.append(this);
 									buffer.append(" tag scanning the new type"); //$NON-NLS-1$
@@ -254,7 +254,7 @@ public class ProjectApiDescription extends ApiDescription {
 									// update relative build time stamp
 									fBuildStamp = BuildStamps.getBuildStamp(resource.getProject());
 									if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-										StringBuffer buffer = new StringBuffer();
+										StringBuilder buffer = new StringBuilder();
 										buffer.append("CRC changed for type manifest node: "); //$NON-NLS-1$
 										buffer.append(this);
 										buffer.append(" (CRC "); //$NON-NLS-1$
@@ -266,7 +266,7 @@ public class ProjectApiDescription extends ApiDescription {
 							}
 						} else {
 							if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-								StringBuffer buffer = new StringBuffer();
+								StringBuilder buffer = new StringBuilder();
 								buffer.append("Underlying resource for the type manifest node: "); //$NON-NLS-1$
 								buffer.append(this);
 								buffer.append(" does not exist or is null"); //$NON-NLS-1$
@@ -279,7 +279,7 @@ public class ProjectApiDescription extends ApiDescription {
 						}
 					} else {
 						if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-							StringBuffer buffer = new StringBuffer();
+							StringBuilder buffer = new StringBuilder();
 							buffer.append("Failed to look up compilation unit for "); //$NON-NLS-1$
 							buffer.append(fType);
 							buffer.append(" refreshing type manifest node: "); //$NON-NLS-1$
@@ -311,7 +311,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Type Node: ").append(fType.getFullyQualifiedName()); //$NON-NLS-1$
 			buffer.append("\nVisibility: ").append(VisibilityModifiers.getVisibilityName(visibility)); //$NON-NLS-1$
 			buffer.append("\nRestrictions: ").append(RestrictionModifiers.getRestrictionText(restrictions)); //$NON-NLS-1$
@@ -554,7 +554,7 @@ public class ProjectApiDescription extends ApiDescription {
 	synchronized void refreshPackages() {
 		if (fRefreshingInProgress) {
 			if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
 				buffer.append(this);
 				buffer.append(" aborted because a refresh is already in progress"); //$NON-NLS-1$
@@ -719,7 +719,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Project API description for: ").append(getJavaProject().getElementName()); //$NON-NLS-1$
 		return buffer.toString();
 	}

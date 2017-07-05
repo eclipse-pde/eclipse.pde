@@ -199,7 +199,7 @@ public class APIFreezeReportConversionTask extends Task {
 		}
 
 		public String getDisplayString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			if (this.typeName != null && this.typeName.length() != 0) {
 				buffer.append(this.typeName);
 				switch (this.flags) {
@@ -334,11 +334,11 @@ public class APIFreezeReportConversionTask extends Task {
 	private String htmlFileLocation;
 	private String xmlFileLocation;
 
-	private void dumpEndEntryForComponent(StringBuffer buffer, String componentID) {
+	private void dumpEndEntryForComponent(StringBuilder buffer, String componentID) {
 		buffer.append(NLS.bind(Messages.deltaReportTask_endComponentEntry, componentID));
 	}
 
-	private void dumpEntries(Map<String, List<Entry>> entries, Map<String, List<String>> resolverErrors, StringBuffer buffer) {
+	private void dumpEntries(Map<String, List<Entry>> entries, Map<String, List<String>> resolverErrors, StringBuilder buffer) {
 		dumpHeader(buffer);
 		List<Map.Entry<String, List<Entry>>> allEntries = new ArrayList<>();
 		for (Map.Entry<String, List<Entry>> entry : entries.entrySet()) {
@@ -406,15 +406,15 @@ public class APIFreezeReportConversionTask extends Task {
 		dumpFooter(buffer);
 	}
 
-	private void dumpEntry(StringBuffer buffer, Entry entry) {
+	private void dumpEntry(StringBuilder buffer, Entry entry) {
 		buffer.append(NLS.bind(Messages.deltaReportTask_entry, entry.getDisplayKind(), entry.getDisplayString()));
 	}
 
-	private void dumpEntryForComponent(StringBuffer buffer, String componentID) {
+	private void dumpEntryForComponent(StringBuilder buffer, String componentID) {
 		buffer.append(NLS.bind(Messages.deltaReportTask_componentEntry, componentID));
 	}
 
-	private void dumpResolverErrorSummary(StringBuffer buffer, String componentID, List<String> resolverErrors) {
+	private void dumpResolverErrorSummary(StringBuilder buffer, String componentID, List<String> resolverErrors) {
 		int size = resolverErrors.size();
 		if (size == 1) {
 			buffer.append(NLS.bind(Messages.APIFreezeReportConversionTask_resolverErrorWarningSingle, new String[] {
@@ -425,7 +425,7 @@ public class APIFreezeReportConversionTask extends Task {
 		}
 	}
 
-	private void dumpResolverErrorTable(StringBuffer buffer, String componentID, List<String> resolverErrors) {
+	private void dumpResolverErrorTable(StringBuilder buffer, String componentID, List<String> resolverErrors) {
 		buffer.append(NLS.bind(Messages.APIFreezeReportConversionTask_resolverErrorTableStart, componentID));
 		for (String message : resolverErrors) {
 			buffer.append(NLS.bind(Messages.APIFreezeReportConversionTask_resolverErrorTableEntry, message));
@@ -433,11 +433,11 @@ public class APIFreezeReportConversionTask extends Task {
 		buffer.append(Messages.APIFreezeReportConversionTask_resolverErrorTableEnd);
 	}
 
-	private void dumpFooter(StringBuffer buffer) {
+	private void dumpFooter(StringBuilder buffer) {
 		buffer.append(Messages.deltaReportTask_footer);
 	}
 
-	private void dumpHeader(StringBuffer buffer) {
+	private void dumpHeader(StringBuilder buffer) {
 		buffer.append(Messages.deltaReportTask_header);
 	}
 
@@ -507,12 +507,12 @@ public class APIFreezeReportConversionTask extends Task {
 		try {
 			ConverterDefaultHandler defaultHandler = new ConverterDefaultHandler(this.debug);
 			parser.parse(file, defaultHandler);
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			dumpEntries(defaultHandler.getEntries(), defaultHandler.getResolverErrors(), buffer);
 			writeOutput(buffer);
 		} catch (SAXException e) {
 			// if xml file is empty, create an empty html file
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			try {
 				writeOutput(buffer);
 			} catch (IOException e1) {
@@ -525,7 +525,7 @@ public class APIFreezeReportConversionTask extends Task {
 	}
 
 	private String extractNameFromXMLName(int index) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(this.xmlFileLocation.substring(0, index)).append(".html"); //$NON-NLS-1$
 		return String.valueOf(buffer);
 	}
@@ -576,7 +576,7 @@ public class APIFreezeReportConversionTask extends Task {
 		this.xmlFileLocation = xmlFilePath;
 	}
 
-	private void writeOutput(StringBuffer buffer) throws IOException {
+	private void writeOutput(StringBuilder buffer) throws IOException {
 		FileWriter writer = null;
 		BufferedWriter bufferedWriter = null;
 		try {

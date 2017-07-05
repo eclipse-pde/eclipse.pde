@@ -156,7 +156,7 @@ public class APIDeprecationReportConversionTask extends Task {
 		}
 
 		public String getDisplayString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			if (this.typeName != null && this.typeName.length() != 0) {
 				buffer.append(this.typeName);
 				if (this.flags == IDelta.DEPRECATION) {
@@ -222,11 +222,11 @@ public class APIDeprecationReportConversionTask extends Task {
 	private String htmlFileLocation;
 	private String xmlFileLocation;
 
-	private void dumpEndEntryForComponent(StringBuffer buffer, String componentID) {
+	private void dumpEndEntryForComponent(StringBuilder buffer, String componentID) {
 		buffer.append(NLS.bind(Messages.deprecationReportTask_endComponentEntry, componentID));
 	}
 
-	private void dumpEntries(Map<String, List<Entry>> entries, StringBuffer buffer) {
+	private void dumpEntries(Map<String, List<Entry>> entries, StringBuilder buffer) {
 		dumpHeader(buffer);
 		List<Map.Entry<String, List<Entry>>> allEntries = new ArrayList<>();
 		for (Map.Entry<String, List<Entry>> entry : entries.entrySet()) {
@@ -284,19 +284,19 @@ public class APIDeprecationReportConversionTask extends Task {
 		dumpFooter(buffer);
 	}
 
-	private void dumpEntry(StringBuffer buffer, Entry entry) {
+	private void dumpEntry(StringBuilder buffer, Entry entry) {
 		buffer.append(NLS.bind(Messages.deprecationReportTask_entry, entry.getDisplayKind(), entry.getDisplayString()));
 	}
 
-	private void dumpEntryForComponent(StringBuffer buffer, String componentID) {
+	private void dumpEntryForComponent(StringBuilder buffer, String componentID) {
 		buffer.append(NLS.bind(Messages.deprecationReportTask_componentEntry, componentID));
 	}
 
-	private void dumpFooter(StringBuffer buffer) {
+	private void dumpFooter(StringBuilder buffer) {
 		buffer.append(Messages.deprecationReportTask_footer);
 	}
 
-	private void dumpHeader(StringBuffer buffer) {
+	private void dumpHeader(StringBuilder buffer) {
 		buffer.append(Messages.deprecationReportTask_header);
 	}
 
@@ -335,7 +335,7 @@ public class APIDeprecationReportConversionTask extends Task {
 		try {
 			ConverterDefaultHandler defaultHandler = new ConverterDefaultHandler(this.debug);
 			parser.parse(file, defaultHandler);
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			dumpEntries(defaultHandler.getEntries(), buffer);
 			writeOutput(buffer);
 		} catch (SAXException e) {
@@ -347,7 +347,7 @@ public class APIDeprecationReportConversionTask extends Task {
 
 	private String extractNameFromXMLName() {
 		int index = this.xmlFileLocation.lastIndexOf('.');
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(this.xmlFileLocation.substring(0, index)).append(".html"); //$NON-NLS-1$
 		return String.valueOf(buffer);
 	}
@@ -398,7 +398,7 @@ public class APIDeprecationReportConversionTask extends Task {
 		this.xmlFileLocation = xmlFilePath;
 	}
 
-	private void writeOutput(StringBuffer buffer) throws IOException {
+	private void writeOutput(StringBuilder buffer) throws IOException {
 		FileWriter writer = null;
 		BufferedWriter bufferedWriter = null;
 		try {

@@ -118,7 +118,7 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Method : access(") //$NON-NLS-1$
 		.append(getModifiers()).append(") ") //$NON-NLS-1$
 		.append(getSignature()).append(' ').append(getName());

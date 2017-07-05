@@ -34,7 +34,7 @@ public class FieldDescriptorImpl extends MemberDescriptorImpl implements IFieldD
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(getEnclosingType().getQualifiedName());
 		buffer.append("#"); //$NON-NLS-1$
 		buffer.append(getName());

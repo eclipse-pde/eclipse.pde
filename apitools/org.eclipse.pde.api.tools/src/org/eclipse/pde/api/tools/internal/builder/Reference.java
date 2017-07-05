@@ -609,7 +609,7 @@ public class Reference implements IReference {
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("From: "); //$NON-NLS-1$
 		IApiMember member = getMember();
 		buf.append(member.getHandle().toString());
@@ -647,7 +647,7 @@ public class Reference implements IReference {
 	 * @since 1.0.1
 	 */
 	public static final String getReferenceText(int kind) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if ((kind & IReference.REF_EXTENDS) > 0) {
 			buffer.append("EXTENDS"); //$NON-NLS-1$
 		}
