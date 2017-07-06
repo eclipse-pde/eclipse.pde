@@ -1,0 +1,2 @@
+# To force a version qualifier update add the bug here
+Bug 519291 -Comparator issues in PDE Api tools in 4.7.1 M20170705-0740
