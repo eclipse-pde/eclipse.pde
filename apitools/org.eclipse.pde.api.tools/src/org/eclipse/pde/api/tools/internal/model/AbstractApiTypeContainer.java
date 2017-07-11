@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,6 +118,19 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 			comp = (IApiComponent) container.getAncestor(IApiElement.COMPONENT);
 			if (comp != null) {
 				origin = comp.getSymbolicName();
+				// comp is the fragment - get the origin of root host
+				if (origin != null && !origin.equals(id)) {
+					if (comp.isFragment()) {
+						IApiComponent rootComp = comp;
+						while (rootComp != null && rootComp.isFragment()) {
+							rootComp = rootComp.getHost();
+						}
+						if (rootComp != null) {
+							origin = rootComp.getSymbolicName();
+						}
+					}
+
+				}
 			}
 			if (origin == null) {
 				IApiTypeRoot file = container.findTypeRoot(qualifiedName);
