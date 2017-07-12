@@ -28,7 +28,7 @@ public class OSGiMigrationDelegate extends PDEMigrationDelegate {
 	public void migrate(ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		if (!wc.getAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "").equals("3.3")) { //$NON-NLS-1$ //$NON-NLS-2$
 			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
-			StringBuffer vmArgs = new StringBuffer(wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "")); //$NON-NLS-1$
+			StringBuilder vmArgs = new StringBuilder(wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "")); //$NON-NLS-1$
 			if (vmArgs.indexOf("-Declipse.ignoreApp") == -1) { //$NON-NLS-1$
 				if (vmArgs.length() > 0)
 					vmArgs.append(" "); //$NON-NLS-1$

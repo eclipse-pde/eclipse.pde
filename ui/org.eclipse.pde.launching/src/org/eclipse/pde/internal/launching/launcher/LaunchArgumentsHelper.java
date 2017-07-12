@@ -137,7 +137,7 @@ public class LaunchArgumentsHelper {
 	}
 
 	public static String getInitialProgramArguments() {
-		StringBuffer buffer = new StringBuffer("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"); //$NON-NLS-1$
 
 		try {
 			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());

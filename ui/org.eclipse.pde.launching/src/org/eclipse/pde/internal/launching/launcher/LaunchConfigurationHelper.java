@@ -240,7 +240,7 @@ public class LaunchConfigurationHelper {
 		if (bundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != null)
 			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		Set<String> initialBundleSet = new HashSet<>();
 		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
@@ -333,7 +333,7 @@ public class LaunchConfigurationHelper {
 	}
 
 	private static void resolveLocationPath(ArrayList<String> locations, Properties properties, Map<String, IPluginModelBase> map) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < locations.size(); i++) {
 			String location = locations.get(i);
 			if (location.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
@@ -372,7 +372,7 @@ public class LaunchConfigurationHelper {
 	public static String getBundleURL(IPluginModelBase model, boolean includeReference) {
 		if (model == null || model.getInstallLocation() == null)
 			return null;
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (includeReference) {
 			buf.append(TargetPlatformHelper.REFERENCE_PREFIX);
 		}
@@ -399,7 +399,7 @@ public class LaunchConfigurationHelper {
 		// Fix relative locations in framework extensions (Bug 413986)
 		String extensions = properties.getProperty(PROP_OSGI_EXTENSIONS);
 		if (extensions != null) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			String[] extensionsArray = extensions.split(","); //$NON-NLS-1$
 			for (String element : extensionsArray) {
 				String bundle = TargetPlatformHelper.stripPathInformation(element);
@@ -418,7 +418,7 @@ public class LaunchConfigurationHelper {
 
 		String bundles = properties.getProperty(PROP_OSGI_BUNDLES);
 		if (bundles != null) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			StringTokenizer tokenizer = new StringTokenizer(bundles, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken().trim();
@@ -452,12 +452,12 @@ public class LaunchConfigurationHelper {
 
 	/**
 	 * Convenience method to parses the startData ("startLevel:autoStart"), convert it to the
-	 * format expected by the OSGi bundles property, and append to a StringBuffer.
+	 * format expected by the OSGi bundles property, and append to a StringBuilder.
 	 * @param startData data to parse ("startLevel:autoStart")
 	 * @param defaultAuto default auto start setting
 	 */
 	public static String getStartData(String startData, boolean defaultAuto) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		int index = startData.indexOf(':');
 		String level = index > 0 ? startData.substring(0, index) : "default"; //$NON-NLS-1$
 		String auto = startData;

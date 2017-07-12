@@ -93,7 +93,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			IPluginModelBase model = fAllBundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR);
 			buffer.append(LaunchConfigurationHelper.getBundleURL(model, true));
 			appendStartData(buffer, fModels.get(model), autostart);
@@ -113,7 +113,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	}
 
 	private String getBundles(boolean defaultAuto) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = iter.next();
@@ -136,12 +136,12 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	/**
 	 * Convenience method to parses the startData ("startLevel:autoStart"), convert it to the
-	 * format expected by the OSGi bundles property, and append to a StringBuffer.
+	 * format expected by the OSGi bundles property, and append to a StringBuilder.
 	 * @param buffer buffer to append the data to
 	 * @param startData data to parse ("startLevel:autoStart")
 	 * @param defaultAuto default auto start setting
 	 */
-	private void appendStartData(StringBuffer buffer, String startData, boolean defaultAuto) {
+	private void appendStartData(StringBuilder buffer, String startData, boolean defaultAuto) {
 		int index = startData.indexOf(':');
 		String level = index > 0 ? startData.substring(0, index) : "default"; //$NON-NLS-1$
 		String auto = index > 0 && index < startData.length() - 1 ? startData.substring(index + 1) : "default"; //$NON-NLS-1$

@@ -37,7 +37,7 @@ public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelega
 		if (!candidate.getAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, false)) {
 			candidate.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);
 			String args = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
-			StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialProgramArguments());
+			StringBuilder buffer = new StringBuilder(LaunchArgumentsHelper.getInitialProgramArguments());
 			if (args.length() > 0) {
 				buffer.append(" "); //$NON-NLS-1$
 				buffer.append(args);

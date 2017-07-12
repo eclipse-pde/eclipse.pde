@@ -31,7 +31,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 	}
 
 	private void initializeProgramArguments(ILaunchConfigurationWorkingCopy configuration) {
-		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialProgramArguments());
+		StringBuilder buffer = new StringBuilder(LaunchArgumentsHelper.getInitialProgramArguments());
 		if (buffer.length() > 0) {
 			// Note that -console applies to the same indexof as -consoleLog
 			if (buffer.indexOf("-console ") == -1 && !buffer.toString().endsWith("-console")) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -46,7 +46,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 
 	private void initializeVMArguments(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
-		StringBuffer vmArgs = new StringBuffer(LaunchArgumentsHelper.getInitialVMArguments());
+		StringBuilder vmArgs = new StringBuilder(LaunchArgumentsHelper.getInitialVMArguments());
 		if (vmArgs.indexOf("-Declipse.ignoreApp") == -1) { //$NON-NLS-1$
 			if (vmArgs.length() > 0)
 				vmArgs.append(" "); //$NON-NLS-1$
@@ -107,8 +107,8 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 	}
 
 	private String getStartValue(String value) {
-		StringBuffer buffer = new StringBuffer(value);
-		StringBuffer result = new StringBuffer(":"); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder(value);
+		StringBuilder result = new StringBuilder(":"); //$NON-NLS-1$
 
 		int index = value.indexOf("start"); //$NON-NLS-1$
 		result.append(Boolean.toString(index != -1));

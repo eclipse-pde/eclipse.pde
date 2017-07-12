@@ -459,7 +459,7 @@ public class BundleLauncherHelper {
 	public static String writeBundleEntry(IPluginModelBase model, String startLevel, String autoStart) {
 		IPluginBase base = model.getPluginBase();
 		String id = base.getId();
-		StringBuffer buffer = new StringBuffer(id);
+		StringBuilder buffer = new StringBuilder(id);
 
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		if (entry != null && entry.getActiveModels().length > 1) {
@@ -538,8 +538,8 @@ public class BundleLauncherHelper {
 				}
 				if (!"3.3".equals(version) && newApp) //$NON-NLS-1$
 					list.add("org.eclipse.equinox.app"); //$NON-NLS-1$
-				StringBuffer extensions = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
-				StringBuffer target = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
+				StringBuilder extensions = new StringBuilder(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
+				StringBuilder target = new StringBuilder(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
 				for (int i = 0; i < list.size(); i++) {
 					String plugin = list.get(i).toString();
 					IPluginModelBase model = PluginRegistry.findModel(plugin);
@@ -571,7 +571,7 @@ public class BundleLauncherHelper {
 	public static String writeAdditionalPluginsEntry(IPluginModelBase model, String pluginResolution, boolean checked) {
 		IPluginBase base = model.getPluginBase();
 		String id = base.getId();
-		StringBuffer buffer = new StringBuffer(id);
+		StringBuilder buffer = new StringBuilder(id);
 		buffer.append(':');
 		buffer.append(base.getVersion());
 		buffer.append(':');

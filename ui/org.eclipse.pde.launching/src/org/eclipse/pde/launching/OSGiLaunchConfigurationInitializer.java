@@ -72,8 +72,8 @@ public class OSGiLaunchConfigurationInitializer {
 	 * 			the launch configuration
 	 */
 	protected void initializeBundleState(ILaunchConfigurationWorkingCopy configuration) {
-		StringBuffer explugins = new StringBuffer();
-		StringBuffer wsplugins = new StringBuffer();
+		StringBuilder explugins = new StringBuilder();
+		StringBuilder wsplugins = new StringBuilder();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
 		for (IPluginModelBase model : models) {
 			boolean inWorkspace = model.getUnderlyingResource() != null;
@@ -84,7 +84,7 @@ public class OSGiLaunchConfigurationInitializer {
 		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 	}
 
-	private void appendBundle(StringBuffer buffer, IPluginModelBase model) {
+	private void appendBundle(StringBuilder buffer, IPluginModelBase model) {
 		if (buffer.length() > 0)
 			buffer.append(","); //$NON-NLS-1$
 		String id = model.getPluginBase().getId();
