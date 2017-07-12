@@ -212,7 +212,7 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		for (int i = 0; i < length; i++) {
 			buff.append(characters[start + i]);
 		}
@@ -278,7 +278,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	private String getWritableString(String source) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);
 			switch (c) {
