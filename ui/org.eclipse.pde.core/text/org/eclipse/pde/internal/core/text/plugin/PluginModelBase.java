@@ -40,6 +40,9 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	}
 
 	public IPluginBase createPluginBase(boolean isFragment) {
+		if (fPluginBase != null) {
+			return fPluginBase;
+		}
 		if (isFragment) {
 			fPluginBase = new FragmentNode();
 			fPluginBase.setXMLTagName("fragment"); //$NON-NLS-1$
