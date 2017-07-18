@@ -34,6 +34,7 @@ import org.eclipse.pde.api.tools.ui.internal.preferences.ApiBaselinePreferencePa
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IMarkerResolutionRelevance;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
@@ -41,7 +42,8 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 import com.ibm.icu.text.MessageFormat;
 
-public class ConfigureProblemSeverityForAPIToolsResolution extends WorkbenchMarkerResolution implements IJavaCompletionProposal {
+public class ConfigureProblemSeverityForAPIToolsResolution extends WorkbenchMarkerResolution
+		implements IJavaCompletionProposal, IMarkerResolutionRelevance {
 	protected IMarker fBackingMarker = null;
 	protected String fCategory = null;
 
@@ -209,5 +211,10 @@ public class ConfigureProblemSeverityForAPIToolsResolution extends WorkbenchMark
 	@Override
 	public IContextInformation getContextInformation() {
 		return null;
+	}
+
+	@Override
+	public int getRelevanceForResolution() {
+		return IApiToolProposalRelevance.CONFIGURE_PROBLEM_SEVERITY;
 	}
 }
