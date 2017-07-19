@@ -879,7 +879,8 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		IPluginBase candidateBundle = candidate.getPluginBase();
 
 		for (ISiteBundle currentBundle : currentBundles) {
-			if (currentBundle.getId().equals(candidateBundle.getId()) && currentBundle.getVersion().equals(candidateBundle.getVersion()))
+			if (currentBundle.getId().equals(candidateBundle.getId()) && currentBundle.getVersion() != null
+					&& currentBundle.getVersion().equals(candidateBundle.getVersion()))
 				return false;
 		}
 		return true;
