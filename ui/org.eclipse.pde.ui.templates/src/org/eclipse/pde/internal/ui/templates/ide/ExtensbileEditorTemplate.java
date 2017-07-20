@@ -133,7 +133,7 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 			IPluginElement presentationExtensionElement = factory.createElement(presentationExtension);
 			presentationExtensionElement.setName("presentationReconciler"); //$NON-NLS-1$
 			presentationExtensionElement.setAttribute("class", //$NON-NLS-1$
-					getStringOption(KEY_PACKAGE_NAME) + '.' + javaClassPrefix + "Reconciler"); //$NON-NLS-1$
+					getStringOption(KEY_PACKAGE_NAME) + '.' + javaClassPrefix + "PresentationReconciler"); //$NON-NLS-1$
 			presentationExtensionElement.setAttribute("contentType", contentTypeName); //$NON-NLS-1$
 			presentationExtension.add(presentationExtensionElement);
 			plugin.add(presentationExtension);
@@ -171,6 +171,16 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 			presentationExtensionElement.setAttribute("contentType", contentTypeName); //$NON-NLS-1$
 			presentationExtension.add(presentationExtensionElement);
 			plugin.add(presentationExtension);
+		}
+		{
+			IPluginExtension reconcilerExtension = createExtension("org.eclipse.ui.genericeditor.reconcilers", true); //$NON-NLS-1$
+			IPluginElement reconcilerExtensionElement = factory.createElement(reconcilerExtension);
+			reconcilerExtensionElement.setName("reconciler"); //$NON-NLS-1$
+			reconcilerExtensionElement.setAttribute("class", //$NON-NLS-1$
+					getStringOption(KEY_PACKAGE_NAME) + '.' + javaClassPrefix + "Reconciler"); //$NON-NLS-1$
+			reconcilerExtensionElement.setAttribute("contentType", contentTypeName); //$NON-NLS-1$
+			reconcilerExtension.add(reconcilerExtensionElement);
+			plugin.add(reconcilerExtension);
 		}
 		{
 			IPluginExtension documentSetupExtension = createExtension("org.eclipse.core.filebuffers.documentSetup", //$NON-NLS-1$
