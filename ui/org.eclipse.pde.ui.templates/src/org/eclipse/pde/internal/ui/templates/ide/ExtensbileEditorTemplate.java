@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -184,6 +184,12 @@ public class ExtensbileEditorTemplate extends BaseEditorTemplate {
 			documentSetupExtension.add(presentationExtensionElement);
 			plugin.add(documentSetupExtension);
 		}
+	}
+
+	@Override
+	public String[] getNewFiles() {
+		// so "icons" entry is not generated in build.properties
+		return new String[0];
 	}
 
 	private String toJavaIdentifier(String str) {
