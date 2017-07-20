@@ -15,4 +15,12 @@
             contentType="org.eclipse.pde.targetFile">
       </contentAssistProcessor>
    </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.pde.internal.genericeditor.target.extension.validator.TargedDefinitionSetupParticipant"
+            contentTypeId="org.eclipse.pde.targetFile"
+            extensions="target">
+      </participant>
+   </extension>
 </plugin>
