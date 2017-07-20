@@ -41,28 +41,33 @@ public class $perspectiveClassName$ implements IPerspectiveFactory {
 	private void addViews() {
 		// Creates the overall folder layout. 
 		// Note that each new Folder uses a percentage of the remaining EditorArea.
-		
-		IFolderLayout bottom =
-			factory.createFolder(
-				"bottomRight", //$NON-NLS-1$
-				IPageLayout.BOTTOM,
-				0.75f,
-				factory.getEditorArea());
-		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
-		bottom.addView("org.eclipse.team.ui.GenericHistoryView"); //$NON-NLS-1$
-		bottom.addPlaceholder(IConsoleConstants.ID_CONSOLE_VIEW);
-
 		IFolderLayout topLeft =
 			factory.createFolder(
 				"topLeft", //$NON-NLS-1$
 				IPageLayout.LEFT,
 				0.25f,
 				factory.getEditorArea());
-		topLeft.addView(IPageLayout.ID_RES_NAV);
+		topLeft.addView(IPageLayout.ID_PROJECT_EXPLORER);
 		topLeft.addView("org.eclipse.jdt.junit.ResultView"); //$NON-NLS-1$
 		
-		factory.addFastView("org.eclipse.team.ccvs.ui.RepositoriesView",0.50f); //$NON-NLS-1$
-		factory.addFastView("org.eclipse.team.sync.views.SynchronizeView", 0.50f); //$NON-NLS-1$
+		IFolderLayout bottomLeft =
+				factory.createFolder(
+					"bottomLeft", //$NON-NLS-1$
+					IPageLayout.BOTTOM,
+					0.5f,
+					"topLeft");
+		bottomLeft.addView("org.eclipse.team.ccvs.ui.RepositoriesView"); //$NON-NLS-1$
+		bottomLeft.addView("org.eclipse.team.sync.views.SynchronizeView"); //$NON-NLS-1$
+		
+		IFolderLayout bottom =
+				factory.createFolder(
+						"bottomRight", //$NON-NLS-1$
+						IPageLayout.BOTTOM,
+						0.75f,
+						factory.getEditorArea());
+		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
+		bottom.addView("org.eclipse.team.ui.GenericHistoryView"); //$NON-NLS-1$
+		bottom.addPlaceholder(IConsoleConstants.ID_CONSOLE_VIEW);
 	}
 
 % if(actionSets)	
@@ -106,7 +111,7 @@ public class $perspectiveClassName$ implements IPerspectiveFactory {
 		factory.addShowViewShortcut("org.eclipse.team.ui.GenericHistoryView"); //$NON-NLS-1$
 		factory.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
 		factory.addShowViewShortcut(JavaUI.ID_PACKAGES);
-		factory.addShowViewShortcut(IPageLayout.ID_RES_NAV);
+		factory.addShowViewShortcut(IPageLayout.ID_PROJECT_EXPLORER);
 		factory.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 		factory.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 	}
