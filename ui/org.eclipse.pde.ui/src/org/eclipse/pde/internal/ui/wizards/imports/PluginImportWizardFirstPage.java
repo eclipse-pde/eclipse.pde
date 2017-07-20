@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -234,9 +234,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					PDEPlugin.log(e);
 				}
 			}
-			Collections.sort(targetDefinitions, (o1, o2) -> {
-				ITargetDefinition td1 = (ITargetDefinition) o1;
-				ITargetDefinition td2 = (ITargetDefinition) o2;
+			Collections.sort(targetDefinitions, (td1, td2) -> {
 				String name1 = td1.getName() == null ? "" : td1.getName(); //$NON-NLS-1$
 				String name2 = td2.getName() == null ? "" : td2.getName(); //$NON-NLS-1$
 				return name1.compareTo(name2);
