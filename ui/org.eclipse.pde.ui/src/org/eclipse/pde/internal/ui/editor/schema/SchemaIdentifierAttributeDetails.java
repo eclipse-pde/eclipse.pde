@@ -105,7 +105,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 		fRestrictionsTable.setInput(new Object());
 		fRestrictionsTable.getControl().setEnabled(editable);
 		fAddRestriction.setEnabled(editable);
-		fRemoveRestriction.setEnabled(!fRestrictionsTable.getSelection().isEmpty() && editable);
+		fRemoveRestriction.setEnabled(!fRestrictionsTable.getStructuredSelection().isEmpty() && editable);
 	}
 
 	@Override
@@ -156,13 +156,10 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 		fRemoveRestriction.addSelectionListener(widgetSelectedAdapter(e -> {
 			if (blockListeners())
 				return;
-			ISelection selection = fRestrictionsTable.getSelection();
+			IStructuredSelection selection = fRestrictionsTable.getStructuredSelection();
 			if (selection.isEmpty())
 				return;
-			if (!(selection instanceof IStructuredSelection))
-				return;
-			IStructuredSelection sselection = (IStructuredSelection) selection;
-			Object[] aselection = sselection.toArray();
+			Object[] aselection = selection.toArray();
 			ISchemaSimpleType type = getAttribute().getType();
 			ChoiceRestriction res = (ChoiceRestriction) type.getRestriction();
 			java.util.List<ISchemaEnumeration> vres = new Vector<>();

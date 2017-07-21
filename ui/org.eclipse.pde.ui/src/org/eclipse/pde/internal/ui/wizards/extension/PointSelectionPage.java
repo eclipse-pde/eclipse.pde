@@ -401,20 +401,14 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 
 	public boolean canFinish() {
 		if (fTemplateViewer != null) {
-			ISelection selection = fTemplateViewer.getSelection();
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ssel = (IStructuredSelection) selection;
-				if (!ssel.isEmpty())
-					return false;
-			}
+			IStructuredSelection selection = fTemplateViewer.getStructuredSelection();
+			if (!selection.isEmpty())
+				return false;
 		}
 		if (fPointListViewer != null) {
-			ISelection selection = fPointListViewer.getSelection();
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ssel = (IStructuredSelection) selection;
-				if (ssel.isEmpty() == false)
-					return true;
-			}
+			IStructuredSelection selection = fPointListViewer.getStructuredSelection();
+			if (selection.isEmpty() == false)
+				return true;
 		}
 		return false;
 	}
@@ -557,11 +551,12 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	private void updateTabSelection(int index) {
 		if (index == 0) {
 			// extension point page
-			ISelection selection = fTemplateViewer.getSelection();
+			IStructuredSelection selection = fTemplateViewer.getStructuredSelection();
 			if (selection.isEmpty() == false)
 				selectionChanged(new SelectionChangedEvent(fTemplateViewer, selection));
 			else
-				selectionChanged(new SelectionChangedEvent(fPointListViewer, fPointListViewer.getSelection()));
+				selectionChanged(
+						new SelectionChangedEvent(fPointListViewer, fPointListViewer.getStructuredSelection()));
 			fFilterText.setFocus();
 		} else {
 			// wizard page

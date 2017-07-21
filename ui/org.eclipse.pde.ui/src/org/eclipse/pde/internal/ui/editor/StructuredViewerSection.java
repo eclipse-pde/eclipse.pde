@@ -12,7 +12,8 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
@@ -102,8 +103,7 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 	}
 
 	protected void doPaste() {
-		ISelection selection = getViewerSelection();
-		IStructuredSelection ssel = (IStructuredSelection) selection;
+		IStructuredSelection ssel = getViewerSelection();
 		if (ssel.size() > 1)
 			return;
 
@@ -120,8 +120,7 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		// TODO: MP: CCP: Checking clipboard data done incorrectly.  See Bug 37223
-		ISelection selection = getViewerSelection();
-		IStructuredSelection ssel = (IStructuredSelection) selection;
+		IStructuredSelection ssel = getViewerSelection();
 		if (ssel.size() > 1)
 			return false;
 
@@ -134,8 +133,8 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 		return false;
 	}
 
-	protected ISelection getViewerSelection() {
-		return fViewerPart.getViewer().getSelection();
+	protected IStructuredSelection getViewerSelection() {
+		return fViewerPart.getViewer().getStructuredSelection();
 	}
 
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {

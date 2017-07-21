@@ -187,7 +187,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	private void handleOpenProperties() {
-		Object changeObject = ((IStructuredSelection) fImportViewer.getSelection()).getFirstElement();
+		Object changeObject = fImportViewer.getStructuredSelection().getFirstElement();
 		IPluginImport importObject = ((ImportObject) changeObject).getImport();
 
 		DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(), importObject);
@@ -306,7 +306,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		ISelection selection = fImportViewer.getSelection();
+		IStructuredSelection selection = fImportViewer.getStructuredSelection();
 		manager.add(fAddAction);
 		if (!selection.isEmpty()) {
 			manager.add(fOpenAction);
@@ -325,7 +325,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		if (((IModel) getPage().getModel()).getUnderlyingResource() != null) {
 			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel(), false));
 		}
-		if (fPropertiesAction != null && !fImportViewer.getSelection().isEmpty()) {
+		if (fPropertiesAction != null && !fImportViewer.getStructuredSelection().isEmpty()) {
 			manager.add(new Separator());
 			manager.add(fPropertiesAction);
 		}
@@ -353,7 +353,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fImportViewer.getSelection();
+		IStructuredSelection ssel = fImportViewer.getStructuredSelection();
 		if (!ssel.isEmpty()) {
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			IPluginBase pluginBase = model.getPluginBase();
@@ -508,7 +508,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		fOpenAction = new Action(PDEUIMessages.RequiresSection_open) {
 			@Override
 			public void run() {
-				handleOpen(fImportViewer.getSelection());
+				handleOpen(fImportViewer.getStructuredSelection());
 			}
 		};
 		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) {
@@ -609,7 +609,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 						updateButtons();
 					}
 				} else {
-					fImportViewer.update(((IStructuredSelection) fImportViewer.getSelection()).toArray(), null);
+					fImportViewer.update(fImportViewer.getStructuredSelection().toArray(), null);
 				}
 
 				return Status.OK_STATUS;

@@ -72,7 +72,8 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 		wizardSelectionViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		wizardSelectionViewer.addSelectionChangedListener(this);
 		wizardSelectionViewer.addDoubleClickListener(event -> BusyIndicator.showWhile(wizardSelectionViewer.getControl().getDisplay(), () -> {
-			selectionChanged(new SelectionChangedEvent(wizardSelectionViewer, wizardSelectionViewer.getSelection()));
+					selectionChanged(new SelectionChangedEvent(wizardSelectionViewer,
+							wizardSelectionViewer.getStructuredSelection()));
 			advanceToNextPage();
 		}));
 

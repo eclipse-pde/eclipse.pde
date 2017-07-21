@@ -55,7 +55,7 @@ public class PluginVersionPart {
 
 		@Override
 		protected void buttonSelected(Button button, int index) {
-			IStructuredSelection selection = (IStructuredSelection) getTableViewer().getSelection();
+			IStructuredSelection selection = getTableViewer().getStructuredSelection();
 			if (selection.size() == 1) {
 				IPluginModelBase entry = (IPluginModelBase) selection.getFirstElement();
 				String version = VersionUtil.computeInitialPluginVersion(entry.getBundleDescription().getVersion().toString());

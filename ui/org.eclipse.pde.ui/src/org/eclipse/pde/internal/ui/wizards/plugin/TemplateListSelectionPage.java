@@ -162,7 +162,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 
 	@Override
 	public boolean canFlipToNextPage() {
-		IStructuredSelection ssel = (IStructuredSelection) wizardSelectionViewer.getSelection();
+		IStructuredSelection ssel = wizardSelectionViewer.getStructuredSelection();
 		return fUseTemplate.getSelection() && ssel != null && !ssel.isEmpty();
 	}
 

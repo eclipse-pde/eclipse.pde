@@ -31,7 +31,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -268,7 +269,7 @@ public class UpdatesSection extends TableSection {
 				handleAdd();
 				break;
 			case 1 :
-				handleEdit((IStructuredSelection) fRepositoryTable.getSelection());
+			handleEdit(fRepositoryTable.getStructuredSelection());
 				break;
 			case 2 :
 				handleDelete();
@@ -317,7 +318,7 @@ public class UpdatesSection extends TableSection {
 
 	private void handleDelete() {
 		clearEditors();
-		IStructuredSelection ssel = (IStructuredSelection) fRepositoryTable.getSelection();
+		IStructuredSelection ssel = fRepositoryTable.getStructuredSelection();
 		if (ssel.size() > 0) {
 			Object[] objects = ssel.toArray();
 			IRepositoryInfo[] repos = new IRepositoryInfo[objects.length];
@@ -421,7 +422,7 @@ public class UpdatesSection extends TableSection {
 
 		// Identify the selected row
 		Table table = fRepositoryTable.getTable();
-		IStructuredSelection selection = (IStructuredSelection) fRepositoryTable.getSelection();
+		IStructuredSelection selection = fRepositoryTable.getStructuredSelection();
 		if (selection.isEmpty())
 			return;
 		final TableItem item = table.getSelection()[0];

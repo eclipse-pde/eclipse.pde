@@ -291,7 +291,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			return;
 		}
 		IFeature feature = model.getFeature();
-		IStructuredSelection selection = (IStructuredSelection) fPluginViewer.getSelection();
+		IStructuredSelection selection = fPluginViewer.getStructuredSelection();
 		if (selection.isEmpty())
 			return;
 
@@ -314,7 +314,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	private void handleOpen() {
-		IStructuredSelection sel = (IStructuredSelection) fPluginViewer.getSelection();
+		IStructuredSelection sel = fPluginViewer.getStructuredSelection();
 		Object obj = sel.getFirstElement();
 
 		if (obj instanceof FeatureImport) {
@@ -372,7 +372,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection selection = (StructuredSelection) fPluginViewer.getSelection();
+		IStructuredSelection selection = fPluginViewer.getStructuredSelection();
 		if (!selection.isEmpty()) {
 			manager.add(fOpenAction);
 			manager.add(fDeleteAction);
@@ -585,9 +585,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	void fireSelection() {
-		ISelection sel = fPluginViewer.getSelection();
+		IStructuredSelection sel = fPluginViewer.getStructuredSelection();
 		if (!sel.isEmpty()) {
-			fPluginViewer.setSelection(fPluginViewer.getSelection());
+			fPluginViewer.setSelection(fPluginViewer.getStructuredSelection());
 		} else if (fPluginViewer.getElementAt(0) != null) {
 			fPluginViewer.setSelection(new StructuredSelection(fPluginViewer.getElementAt(0)));
 		}

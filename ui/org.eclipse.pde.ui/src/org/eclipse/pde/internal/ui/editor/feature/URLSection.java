@@ -116,8 +116,8 @@ public class URLSection extends TableSection {
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		IModel model = (IModel) getPage().getModel();
-		ISelection selection = fUrlViewer.getSelection();
-		Object object = ((IStructuredSelection) selection).getFirstElement();
+		IStructuredSelection selection = fUrlViewer.getStructuredSelection();
+		Object object = selection.getFirstElement();
 
 		manager.add(fNewAction);
 		fNewAction.setEnabled(model.isEditable());
@@ -159,7 +159,7 @@ public class URLSection extends TableSection {
 	}
 
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) fUrlViewer.getSelection();
+		IStructuredSelection ssel = fUrlViewer.getStructuredSelection();
 
 		if (ssel.isEmpty())
 			return;
@@ -343,6 +343,6 @@ public class URLSection extends TableSection {
 	}
 
 	void fireSelection() {
-		fUrlViewer.setSelection(fUrlViewer.getSelection());
+		fUrlViewer.setSelection(fUrlViewer.getStructuredSelection());
 	}
 }

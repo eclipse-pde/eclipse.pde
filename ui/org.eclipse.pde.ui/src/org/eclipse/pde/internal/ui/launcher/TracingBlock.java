@@ -79,7 +79,7 @@ public class TracingBlock {
 			masterCheckChanged(true);
 			fTab.updateLaunchConfigurationDialog();
 			if (fTracingCheck.getSelection()) {
-				IStructuredSelection selection = (IStructuredSelection) fPluginViewer.getSelection();
+				IStructuredSelection selection = fPluginViewer.getStructuredSelection();
 				if (!selection.isEmpty()) {
 					pluginSelected((IPluginModelBase) selection.getFirstElement(), fPluginViewer.getChecked(selection.getFirstElement()));
 				}
@@ -184,24 +184,22 @@ public class TracingBlock {
 		fRestoreSelectedDefaultButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ISelection selec = fPluginViewer.getSelection();
-				if (selec instanceof StructuredSelection) {
-					if (((StructuredSelection) selec).getFirstElement() instanceof IPluginModelBase) {
-						IPluginModelBase model = (IPluginModelBase) ((StructuredSelection) selec).getFirstElement();
-						String modelName = model.getBundleDescription().getSymbolicName();
-						if (modelName != null) {
-							Properties properties = PDECore.getDefault().getTracingOptionsManager()
-									.getTracingTemplateCopy();
-							for (String key : properties.stringPropertyNames()) {
-								if (key.startsWith(modelName + '/')) {
-									fMasterOptions.remove(key);
-									fMasterOptions.put(key, properties.getProperty(key));
-									TracingPropertySource source = getPropertySource(model);
-									source.setChanged(true);
-								}
+				IStructuredSelection selec = fPluginViewer.getStructuredSelection();
+				if (selec.getFirstElement() instanceof IPluginModelBase) {
+					IPluginModelBase model = (IPluginModelBase) selec.getFirstElement();
+					String modelName = model.getBundleDescription().getSymbolicName();
+					if (modelName != null) {
+						Properties properties = PDECore.getDefault().getTracingOptionsManager()
+								.getTracingTemplateCopy();
+						for (String key : properties.stringPropertyNames()) {
+							if (key.startsWith(modelName + '/')) {
+								fMasterOptions.remove(key);
+								fMasterOptions.put(key, properties.getProperty(key));
+								TracingPropertySource source = getPropertySource(model);
+								source.setChanged(true);
 							}
-							pluginSelected(model, fPluginViewer.getChecked(model));
 						}
+						pluginSelected(model, fPluginViewer.getChecked(model));
 					}
 				}
 			}
@@ -228,12 +226,10 @@ public class TracingBlock {
 						source.setChanged(false);
 					}
 				}
-				ISelection selec = fPluginViewer.getSelection();
-				if (selec instanceof StructuredSelection) {
-					if (((StructuredSelection) selec).getFirstElement() instanceof IPluginModelBase) {
-						IPluginModelBase model = (IPluginModelBase) ((StructuredSelection) selec).getFirstElement();
-						pluginSelected(model, fPluginViewer.getChecked(model));
-					}
+				IStructuredSelection selec = fPluginViewer.getStructuredSelection();
+				if (selec.getFirstElement() instanceof IPluginModelBase) {
+					IPluginModelBase model = (IPluginModelBase) fPluginViewer.getStructuredSelection().getFirstElement();
+					pluginSelected(model, fPluginViewer.getChecked(model));
 				}
 			}
 		});
@@ -371,7 +367,7 @@ public class TracingBlock {
 
 	private IPluginModelBase getSelectedModel() {
 		if (fTracingCheck.isEnabled()) {
-			Object item = ((IStructuredSelection) fPluginViewer.getSelection()).getFirstElement();
+			Object item = fPluginViewer.getStructuredSelection().getFirstElement();
 			if (item instanceof IPluginModelBase)
 				return ((IPluginModelBase) item);
 		}
@@ -471,7 +467,7 @@ public class TracingBlock {
 		fSelectAllButton.setEnabled(enabled && count > 0);
 		fDeselectAllButton.setEnabled(enabled && count > 0);
 		fRestoreDefaultButton.setEnabled(enabled && count > 0);
-		fRestoreSelectedDefaultButton.setEnabled(!fPluginViewer.getSelection().isEmpty());
+		fRestoreSelectedDefaultButton.setEnabled(!fPluginViewer.getStructuredSelection().isEmpty());
 		if (enabled == false) {
 			fRestoreSelectedDefaultButton.setEnabled(false);
 		}

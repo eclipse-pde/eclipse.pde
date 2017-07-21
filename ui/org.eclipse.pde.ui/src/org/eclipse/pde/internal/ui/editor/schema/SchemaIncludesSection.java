@@ -102,7 +102,7 @@ public class SchemaIncludesSection extends TableSection {
 		getPage().getPDEEditor().setSelection(selection);
 		if (!getSchema().isEditable())
 			return;
-		Object object = ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
+		Object object = fViewer.getStructuredSelection().getFirstElement();
 		getTablePart().setButtonEnabled(1, object instanceof ISchemaInclude);
 	}
 
@@ -149,15 +149,13 @@ public class SchemaIncludesSection extends TableSection {
 
 	protected void handleRemoveInclude() {
 		Object[] selected = new Object[0];
-		ISelection selection = fViewer.getSelection();
+		IStructuredSelection selection = fViewer.getStructuredSelection();
 		if (selection.isEmpty())
 			return;
-		if (selection instanceof IStructuredSelection) {
-			selected = ((IStructuredSelection) selection).toArray();
-			Schema schema = (Schema) getSchema();
-			for (Object selectedObject : selected) {
-				schema.removeInclude((ISchemaInclude) selectedObject);
-			}
+		selected = selection.toArray();
+		Schema schema = (Schema) getSchema();
+		for (Object selectedObject : selected) {
+			schema.removeInclude((ISchemaInclude) selectedObject);
 		}
 	}
 

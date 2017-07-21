@@ -363,7 +363,7 @@ public class PropertiesSection extends TableSection {
 	}
 
 	private void handleEdit() {
-		IStructuredSelection ssel = (IStructuredSelection) fPropertiesTable.getSelection();
+		IStructuredSelection ssel = fPropertiesTable.getStructuredSelection();
 		if (ssel.size() > 0 && ssel.getFirstElement() instanceof IConfigurationProperty) {
 			IConfigurationProperty propertyToEdit = (IConfigurationProperty) ssel.getFirstElement();
 			Set<String> existing = getExistingNames();
@@ -393,7 +393,7 @@ public class PropertiesSection extends TableSection {
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fPropertiesTable.getSelection();
+		IStructuredSelection ssel = fPropertiesTable.getStructuredSelection();
 		if (ssel.size() > 0) {
 			Object[] objects = ssel.toArray();
 			IConfigurationProperty[] properties = new IConfigurationProperty[objects.length];

@@ -551,7 +551,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 
 	private void handleReload() {
-		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 		if (!selection.isEmpty()) {
 			isOutOfSynch = false;
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell()) {
@@ -626,8 +626,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	 * Opens the selected target for editing
 	 */
 	private void handleEdit() {
-		if (!fTableViewer.getSelection().isEmpty()) {
-			ITargetDefinition original = (ITargetDefinition) ((IStructuredSelection) fTableViewer.getSelection()).getFirstElement();
+		IStructuredSelection ssel = fTableViewer.getStructuredSelection();
+		if (!ssel.isEmpty()) {
+			ITargetDefinition original = (ITargetDefinition) ssel.getFirstElement();
 			EditTargetDefinitionWizard wizard = new EditTargetDefinitionWizard(original, true);
 			wizard.setWindowTitle(PDEUIMessages.TargetPlatformPreferencePage2_6);
 			WizardDialog dialog = new WizardDialog(fEditButton.getShell(), wizard);
@@ -662,7 +663,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	 * Removes the selected targets
 	 */
 	private void handleRemove() {
-		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 		if (!selection.isEmpty()) {
 			List<ITargetDefinition> selected = selection.toList();
 
@@ -714,7 +715,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			IPath newTargetLoc = wizard.getTargetFileLocation();
 			IFile file = PDECore.getWorkspace().getRoot().getFile(newTargetLoc);
 			ti.setData(DATA_KEY_MOVED_LOCATION, file.getFullPath().toString());
-			IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+			IStructuredSelection selection = fTableViewer.getStructuredSelection();
 			fMoved.put(selection.getFirstElement(), wizard.getTargetFileLocation());
 			fTableViewer.refresh(true);
 		}
@@ -724,7 +725,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	 * Update enabled state of buttons
 	 */
 	protected void updateButtons() {
-		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 		int size = selection.size();
 		fEditButton.setEnabled(size == 1);
 		fRemoveButton.setEnabled(size > 0);
@@ -742,7 +743,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	 * Updates the details text box with information about the currently selected target
 	 */
 	protected void updateDetails() {
-		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 		if (selection.size() == 1) {
 			ITargetDefinition selected = (ITargetDefinition) selection.getFirstElement();
 			if (!selected.isResolved() && fPrevious != null && selected.getHandle().equals(fPrevious.getHandle()) && fPrevious.isResolved()) {

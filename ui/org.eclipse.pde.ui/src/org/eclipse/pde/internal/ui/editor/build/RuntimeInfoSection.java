@@ -358,8 +358,8 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	protected void fillFolderViewerContextMenu(IMenuManager manager) {
-		final ISelection selection = fFolderViewer.getSelection();
-		ISelection libSelection = fLibraryViewer.getSelection();
+		final IStructuredSelection selection = fFolderViewer.getStructuredSelection();
+		IStructuredSelection libSelection = fLibraryViewer.getStructuredSelection();
 		if (libSelection != null && !libSelection.isEmpty()) {
 			Action newAction = new Action(PDEUIMessages.BuildEditor_RuntimeInfoSection_popupFolder) {
 				@Override
@@ -376,7 +376,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		Action replace = new Action(PDEUIMessages.RuntimeInfoSection_replace) {
 			@Override
 			public void run() {
-				handleRenameFolder(((IStructuredSelection) selection).getFirstElement().toString());
+				handleRenameFolder(selection.getFirstElement().toString());
 			}
 		};
 		replace.setEnabled(!selection.isEmpty() && fEnabled);
@@ -396,7 +396,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	protected void fillLibraryContextMenu(IMenuManager manager) {
-		ISelection selection = fLibraryViewer.getSelection();
+		IStructuredSelection selection = fLibraryViewer.getStructuredSelection();
 		Action newAction = new Action(PDEUIMessages.BuildEditor_RuntimeInfoSection_popupAdd) {
 			@Override
 			public void run() {
@@ -478,7 +478,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		fEnabled = enable;
 		fLibraryPart.setButtonEnabled(F_NEW_INDEX, enable);
 		updateDirectionalButtons();
-		fFolderPart.setButtonEnabled(F_NEW_INDEX, enable && !fLibraryViewer.getSelection().isEmpty());
+		fFolderPart.setButtonEnabled(F_NEW_INDEX, enable && !fLibraryViewer.getStructuredSelection().isEmpty());
 	}
 
 	@Override
@@ -494,7 +494,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	private void doRename() {
-		IStructuredSelection selection = (IStructuredSelection) fLibraryViewer.getSelection();
+		IStructuredSelection selection = fLibraryViewer.getStructuredSelection();
 		if (selection.size() == 1) {
 			IBuildEntry entry = (IBuildEntry) selection.getFirstElement();
 			String oldName = entry.getName().substring(7);
@@ -755,7 +755,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	private void handleDeleteFolder() {
-		Object object = ((IStructuredSelection) fFolderViewer.getSelection()).getFirstElement();
+		Object object = fFolderViewer.getStructuredSelection().getFirstElement();
 		if (object == null)
 			return;
 		IBuildEntry entry = getLibrarySelection();
@@ -929,7 +929,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	private IBuildEntry getLibrarySelection() {
-		IStructuredSelection selection = (IStructuredSelection) fLibraryViewer.getSelection();
+		IStructuredSelection selection = fLibraryViewer.getStructuredSelection();
 		return (IBuildEntry) selection.getFirstElement();
 	}
 }

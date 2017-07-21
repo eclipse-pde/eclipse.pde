@@ -270,7 +270,7 @@ public abstract class SyntaxColorTab {
 	protected abstract IDocument getDocument();
 
 	private ColorElement getColorElement(TableViewer viewer) {
-		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		IStructuredSelection selection = viewer.getStructuredSelection();
 		return (ColorElement) selection.getFirstElement();
 	}
 

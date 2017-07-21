@@ -37,7 +37,8 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 
 		@Override
 		public void run() {
-			selectionChanged(new SelectionChangedEvent(wizardSelectionViewer, wizardSelectionViewer.getSelection()));
+			selectionChanged(
+					new SelectionChangedEvent(wizardSelectionViewer, wizardSelectionViewer.getStructuredSelection()));
 			advanceToNextPage();
 		}
 	}
@@ -160,7 +161,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 
 	@Override
 	public boolean canFlipToNextPage() {
-		IStructuredSelection ssel = (IStructuredSelection) wizardSelectionViewer.getSelection();
+		IStructuredSelection ssel = wizardSelectionViewer.getStructuredSelection();
 		return ssel != null && !ssel.isEmpty();
 	}
 }

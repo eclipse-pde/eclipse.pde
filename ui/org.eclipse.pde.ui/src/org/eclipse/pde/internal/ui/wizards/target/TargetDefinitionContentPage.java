@@ -722,7 +722,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private void handleRemove() {
 		LinkedList<NameVersionDescriptor> bundles = new LinkedList<>();
 		bundles.addAll(Arrays.asList(getTargetDefinition().getImplicitDependencies()));
-		Object[] removeBundles = ((IStructuredSelection) fElementViewer.getSelection()).toArray();
+		Object[] removeBundles = fElementViewer.getStructuredSelection().toArray();
 		if (removeBundles.length > 0) {
 			for (Object bundle : removeBundles) {
 				if (bundle instanceof NameVersionDescriptor) {
@@ -742,7 +742,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	private void updateImpButtons() {
-		boolean empty = fElementViewer.getSelection().isEmpty();
+		boolean empty = fElementViewer.getStructuredSelection().isEmpty();
 		fRemoveButton.setEnabled(!empty);
 		boolean hasElements = fElementViewer.getTable().getItemCount() > 0;
 		fRemoveAllButton.setEnabled(hasElements);
