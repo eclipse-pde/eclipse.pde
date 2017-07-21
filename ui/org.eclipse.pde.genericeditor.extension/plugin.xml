@@ -23,4 +23,11 @@
             extensions="target">
       </participant>
    </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.reconcilers">
+      <reconciler
+            class="org.eclipse.pde.internal.genericeditor.target.extension.reconciler.folding.TargetPlatformFoldingReconciler"
+            contentType="org.eclipse.pde.targetFile">
+      </reconciler>
+   </extension>
 </plugin>
