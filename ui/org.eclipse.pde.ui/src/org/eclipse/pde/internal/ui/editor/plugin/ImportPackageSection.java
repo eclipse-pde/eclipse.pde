@@ -330,7 +330,7 @@ public class ImportPackageSection extends TableSection {
 	}
 
 	private void updateButtons() {
-		Object[] selected = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
+		Object[] selected = fPackageViewer.getStructuredSelection().toArray();
 		int size = selected.length;
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(ADD_INDEX, isEditable());
@@ -384,7 +384,7 @@ public class ImportPackageSection extends TableSection {
 	}
 
 	private void handleOpenProperties() {
-		Object[] selected = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
+		Object[] selected = fPackageViewer.getStructuredSelection().toArray();
 		ImportPackageObject first = (ImportPackageObject) selected[0];
 		DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(), first);
 		dialog.create();
@@ -408,7 +408,7 @@ public class ImportPackageSection extends TableSection {
 	}
 
 	private void handleRemove() {
-		Object[] removed = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
+		Object[] removed = fPackageViewer.getStructuredSelection().toArray();
 		for (Object removedObject : removed) {
 			fHeader.removePackage((PackageObject) removedObject);
 		}
@@ -666,7 +666,7 @@ public class ImportPackageSection extends TableSection {
 		fGoToAction = new Action(PDEUIMessages.ImportPackageSection_goToPackage) {
 			@Override
 			public void run() {
-				handleGoToPackage(fPackageViewer.getSelection());
+				handleGoToPackage(fPackageViewer.getStructuredSelection());
 			}
 		};
 		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) {
@@ -687,9 +687,9 @@ public class ImportPackageSection extends TableSection {
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		final ISelection selection = fPackageViewer.getSelection();
+		final IStructuredSelection selection = fPackageViewer.getStructuredSelection();
 		manager.add(fAddAction);
-		boolean singleSelection = selection instanceof IStructuredSelection && ((IStructuredSelection) selection).size() == 1;
+		boolean singleSelection = selection.size() == 1;
 		if (singleSelection)
 			manager.add(fGoToAction);
 		manager.add(new Separator());
@@ -710,7 +710,7 @@ public class ImportPackageSection extends TableSection {
 			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel(), false));
 		}
 
-		if (shouldEnableProperties(((IStructuredSelection) fPackageViewer.getSelection()).toArray())) {
+		if (shouldEnableProperties(fPackageViewer.getStructuredSelection().toArray())) {
 			manager.add(new Separator());
 			manager.add(fPropertiesAction);
 		}

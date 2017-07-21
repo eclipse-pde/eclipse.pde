@@ -289,7 +289,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	}
 
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) fIncludesViewer.getSelection();
+		IStructuredSelection ssel = fIncludesViewer.getStructuredSelection();
 
 		if (ssel.isEmpty())
 			return;
@@ -535,9 +535,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	}
 
 	void fireSelection() {
-		ISelection sel = fIncludesViewer.getSelection();
+		IStructuredSelection sel = fIncludesViewer.getStructuredSelection();
 		if (!sel.isEmpty()) {
-			fIncludesViewer.setSelection(fIncludesViewer.getSelection());
+			fIncludesViewer.setSelection(fIncludesViewer.getStructuredSelection());
 		} else if (fIncludesViewer.getElementAt(0) != null) {
 			fIncludesViewer.setSelection(new StructuredSelection(fIncludesViewer.getElementAt(0)));
 		}

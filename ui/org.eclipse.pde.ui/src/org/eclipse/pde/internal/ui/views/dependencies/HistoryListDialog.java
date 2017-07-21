@@ -27,7 +27,8 @@ import org.eclipse.pde.internal.ui.parts.StatusInfo;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -119,9 +120,9 @@ public class HistoryListDialog extends StatusDialog {
 		fRemoveButton.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		fRemoveButton.addSelectionListener(widgetSelectedAdapter(e -> {
-			ISelection selection = fHistoryViewer.getSelection();
-			if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-				Object removalCandidate = ((IStructuredSelection) selection).getFirstElement();
+			IStructuredSelection selection = fHistoryViewer.getStructuredSelection();
+			if (!selection.isEmpty()) {
+				Object removalCandidate = selection.getFirstElement();
 				fHistoryList.remove(removalCandidate);
 				fHistoryViewer.remove(removalCandidate);
 			}
@@ -166,19 +167,17 @@ public class HistoryListDialog extends StatusDialog {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				StatusInfo status = new StatusInfo();
-				ISelection selection = fHistoryViewer.getSelection();
-				if (selection instanceof IStructuredSelection) {
-					List<?> selected = ((IStructuredSelection) selection).toList();
-					if (selected.size() != 1) {
-						status.setError(""); //$NON-NLS-1$
-						fResult = null;
-					} else {
-						fResult = (String) selected.get(0);
-					}
-					fRemoveButton.setEnabled(fHistoryList.size() > selected.size() && selected.size() != 0);
-					fHistoryStatus = status;
-					updateStatus(status);
+				IStructuredSelection selection = fHistoryViewer.getStructuredSelection();
+				List<?> selected = selection.toList();
+				if (selected.size() != 1) {
+					status.setError(""); //$NON-NLS-1$
+					fResult = null;
+				} else {
+					fResult = (String) selected.get(0);
 				}
+				fRemoveButton.setEnabled(fHistoryList.size() > selected.size() && selected.size() != 0);
+				fHistoryStatus = status;
+				updateStatus(status);
 			}
 		});
 		return fHistoryViewer.getControl();

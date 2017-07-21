@@ -24,7 +24,8 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -192,7 +193,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 	}
 
 	private void handleRemove() {
-		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 		if (!selection.isEmpty()) {
 			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 				Object file = it.next();

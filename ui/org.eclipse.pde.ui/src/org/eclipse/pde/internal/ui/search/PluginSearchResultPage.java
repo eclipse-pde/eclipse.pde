@@ -77,7 +77,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
 		mgr.add(new Separator());
-		IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
+		IStructuredSelection selection = getViewer().getStructuredSelection();
 		ActionContext context = new ActionContext(selection);
 		PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
 		actionGroup.setContext(context);

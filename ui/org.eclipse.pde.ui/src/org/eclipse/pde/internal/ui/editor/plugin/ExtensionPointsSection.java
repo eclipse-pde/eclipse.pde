@@ -97,7 +97,7 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	void fireSelection() {
-		pointTable.setSelection(pointTable.getSelection());
+		pointTable.setSelection(pointTable.getStructuredSelection());
 	}
 
 	@Override
@@ -135,7 +135,7 @@ public class ExtensionPointsSection extends TableSection {
 	@Override
 	public void refresh() {
 		pointTable.refresh();
-		getManagedForm().fireSelectionChanged(this, pointTable.getSelection());
+		getManagedForm().fireSelectionChanged(this, pointTable.getStructuredSelection());
 		super.refresh();
 	}
 
@@ -176,7 +176,7 @@ public class ExtensionPointsSection extends TableSection {
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		ISelection selection = pointTable.getSelection();
+		IStructuredSelection selection = pointTable.getStructuredSelection();
 
 		Action newAction = new Action(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_newExtensionPoint) {
 			@Override
@@ -198,9 +198,9 @@ public class ExtensionPointsSection extends TableSection {
 		actionGroup.setContext(new ActionContext(selection));
 		actionGroup.fillContextMenu(manager);
 		manager.add(new Separator());
-		if (isEditable() && selection instanceof IStructuredSelection && ((IStructuredSelection) selection).size() == 1) {
+		if (isEditable() && selection.size() == 1) {
 			PDERefactoringAction action = RefactoringActionFactory.createRefactorExtPointAction(PDEUIMessages.ExtensionPointsSection_rename_label);
-			action.setSelection(((IStructuredSelection) selection).getFirstElement());
+			action.setSelection(selection.getFirstElement());
 			manager.add(action);
 			manager.add(new Separator());
 		}
@@ -241,7 +241,7 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	private void handleDelete() {
-		Object[] selection = ((IStructuredSelection) pointTable.getSelection()).toArray();
+		Object[] selection = pointTable.getStructuredSelection().toArray();
 		for (Object selectedObject : selection) {
 			if (selectedObject != null && selectedObject instanceof IPluginExtensionPoint) {
 				IStructuredSelection newSelection = null;

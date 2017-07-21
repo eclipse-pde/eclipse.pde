@@ -381,8 +381,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		maxImages = spinMaxImages.getSelection();
 		imageIndex = 0;
 		// initialize scan job
-		if (!sourceCombo.getSelection().isEmpty()) {
-			repository = (AbstractRepository) ((IStructuredSelection) sourceCombo.getSelection()).getFirstElement();
+		IStructuredSelection ssel = sourceCombo.getStructuredSelection();
+		if (!ssel.isEmpty()) {
+			repository = (AbstractRepository) ssel.getFirstElement();
 			repository.schedule();
 		}
 	}

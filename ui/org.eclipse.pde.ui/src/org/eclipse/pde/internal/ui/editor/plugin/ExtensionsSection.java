@@ -281,7 +281,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				@Override
 				public void modifyText(ModifyEvent e) {
 					StructuredViewer viewer = getStructuredViewerPart().getViewer();
-					IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+					IStructuredSelection ssel = viewer.getStructuredSelection();
 					updateButtons(ssel.size() != 1 ? null : ssel);
 				}
 			});
@@ -1497,7 +1497,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			StructuredViewer viewer = getStructuredViewerPart().getViewer();
-			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+			IStructuredSelection ssel = viewer.getStructuredSelection();
 			updateButtons(ssel);
 		}
 	}

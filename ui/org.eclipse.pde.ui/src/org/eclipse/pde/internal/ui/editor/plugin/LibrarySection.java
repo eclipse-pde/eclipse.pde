@@ -260,7 +260,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(fNewAction);
-		if (!fLibraryTable.getSelection().isEmpty()) {
+		if (!fLibraryTable.getStructuredSelection().isEmpty()) {
 			manager.add(new Separator());
 			manager.add(fRenameAction);
 			manager.add(fRemoveAction);
@@ -271,7 +271,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	}
 
 	private void handleRemove() {
-		Object[] selection = ((IStructuredSelection) fLibraryTable.getSelection()).toArray();
+		Object[] selection = fLibraryTable.getStructuredSelection().toArray();
 		int index = fLibraryTable.getTable().getSelectionIndex();
 		int[] indices = fLibraryTable.getTable().getSelectionIndices();
 		for (int indice : indices)

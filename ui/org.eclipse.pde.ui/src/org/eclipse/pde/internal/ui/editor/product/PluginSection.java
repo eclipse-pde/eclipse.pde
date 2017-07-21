@@ -244,7 +244,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	}
 
 	private void handleProperties() {
-		IStructuredSelection ssel = (IStructuredSelection) fPluginTable.getSelection();
+		IStructuredSelection ssel = fPluginTable.getStructuredSelection();
 		if (ssel.size() == 1) {
 			IProductPlugin plugin = (IProductPlugin) ssel.toArray()[0];
 			VersionDialog dialog = new VersionDialog(PDEPlugin.getActiveWorkbenchShell(), isEditable(), plugin.getVersion());
@@ -297,14 +297,14 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection ssel = (IStructuredSelection) fPluginTable.getSelection();
+		IStructuredSelection ssel = fPluginTable.getStructuredSelection();
 		if (ssel == null)
 			return;
 
 		Action openAction = new Action(PDEUIMessages.PluginSection_open) {
 			@Override
 			public void run() {
-				handleDoubleClick((IStructuredSelection) fPluginTable.getSelection());
+				handleDoubleClick(fPluginTable.getStructuredSelection());
 			}
 		};
 		openAction.setEnabled(isEditable() && ssel.size() == 1);
@@ -407,7 +407,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	}
 
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) fPluginTable.getSelection();
+		IStructuredSelection ssel = fPluginTable.getStructuredSelection();
 		if (ssel.size() > 0) {
 			Object[] objects = ssel.toArray();
 			IProductPlugin[] plugins = new IProductPlugin[objects.length];

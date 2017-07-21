@@ -222,7 +222,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	}
 
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) fPluginViewer.getSelection();
+		IStructuredSelection ssel = fPluginViewer.getStructuredSelection();
 
 		if (ssel.isEmpty())
 			return;
@@ -437,9 +437,9 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	}
 
 	void fireSelection() {
-		ISelection sel = fPluginViewer.getSelection();
+		IStructuredSelection sel = fPluginViewer.getStructuredSelection();
 		if (!sel.isEmpty()) {
-			fPluginViewer.setSelection(fPluginViewer.getSelection());
+			fPluginViewer.setSelection(fPluginViewer.getStructuredSelection());
 		} else if (fPluginViewer.getElementAt(0) != null) {
 			fPluginViewer.setSelection(new StructuredSelection(fPluginViewer.getElementAt(0)));
 		}

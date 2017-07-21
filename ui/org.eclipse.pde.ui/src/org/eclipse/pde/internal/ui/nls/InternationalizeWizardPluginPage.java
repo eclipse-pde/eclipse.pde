@@ -33,7 +33,8 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -492,9 +493,9 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		int importCount = fSelectedViewer.getTable().getItemCount();
 
 		if (doAddEnablement)
-			updateSelectionBasedEnablement(fAvailableViewer.getSelection(), true);
+			updateSelectionBasedEnablement(fAvailableViewer.getStructuredSelection(), true);
 		if (doRemoveEnablement)
-			updateSelectionBasedEnablement(fSelectedViewer.getSelection(), false);
+			updateSelectionBasedEnablement(fSelectedViewer.getStructuredSelection(), false);
 
 		fAddAllButton.setEnabled(availableCount > 0);
 		fRemoveAllButton.setEnabled(importCount > 0);
@@ -508,7 +509,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	private void handleAdd() {
-		IStructuredSelection ssel = (IStructuredSelection) fAvailableViewer.getSelection();
+		IStructuredSelection ssel = fAvailableViewer.getStructuredSelection();
 		if (ssel.size() > 0) {
 			Table table = fAvailableViewer.getTable();
 			int index = table.getSelectionIndices()[0];
@@ -546,7 +547,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fSelectedViewer.getSelection();
+		IStructuredSelection ssel = fSelectedViewer.getStructuredSelection();
 		if (ssel.size() > 0) {
 			Table table = fSelectedViewer.getTable();
 			int index = table.getSelectionIndices()[0];

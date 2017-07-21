@@ -125,7 +125,7 @@ public class PatternSelectionPage extends WizardPage {
 
 	@Override
 	public boolean isPageComplete() {
-		if (this.viewer.getSelection().isEmpty()) {
+		if (this.viewer.getStructuredSelection().isEmpty()) {
 			setErrorMessage(Messages.PatternSelectionPage_must_select_type);
 			return false;
 		}
@@ -138,7 +138,7 @@ public class PatternSelectionPage extends WizardPage {
 	 * @return the selected element in the table
 	 */
 	PatternElement getSelectedElement() {
-		IStructuredSelection ss = (IStructuredSelection) this.viewer.getSelection();
+		IStructuredSelection ss = this.viewer.getStructuredSelection();
 		return (PatternElement) ss.getFirstElement();
 	}
 

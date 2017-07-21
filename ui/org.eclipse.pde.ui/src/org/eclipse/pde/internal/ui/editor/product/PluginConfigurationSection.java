@@ -36,7 +36,8 @@ import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -300,7 +301,7 @@ public class PluginConfigurationSection extends TableSection {
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fConfigurationsTable.getSelection();
+		IStructuredSelection ssel = fConfigurationsTable.getStructuredSelection();
 		if (ssel.size() > 0) {
 			Object[] objects = ssel.toArray();
 			IPluginConfiguration[] configurations = new IPluginConfiguration[objects.length];
@@ -448,7 +449,7 @@ public class PluginConfigurationSection extends TableSection {
 
 		// Identify the selected row
 		Table table = fConfigurationsTable.getTable();
-		IStructuredSelection selection = (IStructuredSelection) fConfigurationsTable.getSelection();
+		IStructuredSelection selection = fConfigurationsTable.getStructuredSelection();
 		if (selection.isEmpty())
 			return;
 		final TableItem item = table.getSelection()[0];

@@ -199,7 +199,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 			manager.add(fAddAction);
 			manager.add(new Separator());
 		}
-		if (!fPackageExportViewer.getSelection().isEmpty()) {
+		if (!fPackageExportViewer.getStructuredSelection().isEmpty()) {
 			manager.add(fRemoveAction);
 		}
 		// Copy, cut, and paste operations not supported for plug-ins that do
@@ -236,7 +236,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fPackageExportViewer.getSelection();
+		IStructuredSelection ssel = fPackageExportViewer.getStructuredSelection();
 		Object[] items = ssel.toArray();
 		try {
 			for (Object item : items) {

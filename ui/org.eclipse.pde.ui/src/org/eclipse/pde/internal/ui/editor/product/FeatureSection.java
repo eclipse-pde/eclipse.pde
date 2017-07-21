@@ -172,7 +172,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	}
 
 	private void handleProperties() {
-		IStructuredSelection ssel = (IStructuredSelection) fFeatureTable.getSelection();
+		IStructuredSelection ssel = fFeatureTable.getStructuredSelection();
 		if (ssel.size() == 1) {
 			IProductFeature feature = (IProductFeature) ssel.toArray()[0];
 			VersionDialog dialog = new VersionDialog(PDEPlugin.getActiveWorkbenchShell(), isEditable(), feature.getVersion());
@@ -262,7 +262,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	}
 
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) fFeatureTable.getSelection();
+		IStructuredSelection ssel = fFeatureTable.getStructuredSelection();
 		if (ssel.size() > 0) {
 			Object[] objects = ssel.toArray();
 			IProductFeature[] features = new IProductFeature[objects.length];
@@ -273,14 +273,14 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection ssel = (IStructuredSelection) fFeatureTable.getSelection();
+		IStructuredSelection ssel = fFeatureTable.getStructuredSelection();
 		if (ssel == null)
 			return;
 
 		Action openAction = new Action(PDEUIMessages.Product_FeatureSection_open) {
 			@Override
 			public void run() {
-				handleDoubleClick((IStructuredSelection) fFeatureTable.getSelection());
+				handleDoubleClick(fFeatureTable.getStructuredSelection());
 			}
 		};
 		openAction.setEnabled(isEditable() && ssel.size() == 1);

@@ -33,7 +33,8 @@ import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -472,9 +473,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 	}
 
 	private void handlePropertySelection() {
-		if (!(fPropertiesViewer.getSelection() instanceof IStructuredSelection))
-			return;
-		Object selection = (((IStructuredSelection) fPropertiesViewer.getSelection()).getFirstElement());
+		Object selection = fPropertiesViewer.getStructuredSelection().getFirstElement();
 		if (selection instanceof ModelChangeElement && fSourceViewer.getDocument() != null) {
 			ModelChangeElement element = (ModelChangeElement) selection;
 			int offset = element.getOffset();

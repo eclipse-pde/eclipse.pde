@@ -169,7 +169,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 	}
 
 	private void updateButtons() {
-		fRemove.setEnabled(!fViewer.getSelection().isEmpty());
+		fRemove.setEnabled(!fViewer.getStructuredSelection().isEmpty());
 		fRemoveAll.setEnabled(fViewer.getTable().getItemCount() > 0);
 	}
 
@@ -242,7 +242,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 	private void handleRemove() {
 		LinkedList<NameVersionDescriptor> bundles = new LinkedList<>();
 		bundles.addAll(Arrays.asList(getTarget().getImplicitDependencies()));
-		Object[] removeBundles = ((IStructuredSelection) fViewer.getSelection()).toArray();
+		Object[] removeBundles = fViewer.getStructuredSelection().toArray();
 		if (removeBundles.length > 0) {
 			for (Object removeBundle : removeBundles) {
 				if (removeBundle instanceof NameVersionDescriptor) {

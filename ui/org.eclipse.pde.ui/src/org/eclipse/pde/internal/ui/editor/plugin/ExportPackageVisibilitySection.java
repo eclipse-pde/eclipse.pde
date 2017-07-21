@@ -279,7 +279,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	}
 
 	private void handleRemove() {
-		Object[] removed = ((IStructuredSelection) fFriendViewer.getSelection()).toArray();
+		Object[] removed = fFriendViewer.getStructuredSelection().toArray();
 		for (Object removedObject : removed) {
 			for (ExportPackageObject fSelectedObject : fSelectedObjects) {
 				fSelectedObject.removeFriend((PackageFriend) removedObject);

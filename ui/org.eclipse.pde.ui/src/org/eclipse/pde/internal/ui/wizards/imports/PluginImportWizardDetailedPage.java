@@ -415,9 +415,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		int importCount = fImportListViewer.getTable().getItemCount();
 
 		if (doAddEnablement)
-			updateSelectionBasedEnablement(fAvailableListViewer.getSelection(), true);
+			updateSelectionBasedEnablement(fAvailableListViewer.getStructuredSelection(), true);
 		if (doRemoveEnablement)
-			updateSelectionBasedEnablement(fImportListViewer.getSelection(), false);
+			updateSelectionBasedEnablement(fImportListViewer.getStructuredSelection(), false);
 
 		fAddAllButton.setEnabled(availableCount > 0);
 		fRemoveAllButton.setEnabled(importCount > 0);
@@ -432,7 +432,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void handleAdd() {
-		IStructuredSelection ssel = (IStructuredSelection) fAvailableListViewer.getSelection();
+		IStructuredSelection ssel = fAvailableListViewer.getStructuredSelection();
 		if (ssel.size() > 0) {
 			Table table = fAvailableListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
@@ -468,7 +468,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fImportListViewer.getSelection();
+		IStructuredSelection ssel = fImportListViewer.getStructuredSelection();
 		if (ssel.size() > 0) {
 			Table table = fImportListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
