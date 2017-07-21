@@ -27,7 +27,8 @@ public class TargetPlatformAttributeRule extends WordRule {
 			ITargetConstants.UNIT_VERSION_ATTR, ITargetConstants.UNIT_ID_ATTR,
 			ITargetConstants.LOCATION_INCLUDE_PLATFORMS_ATTR, ITargetConstants.LOCATION_INCLUDE_MODE_ATTR,
 			ITargetConstants.LOCATION_TYPE_ATTR, ITargetConstants.REPOSITORY_LOCATION_ATTR,
-			ITargetConstants.TARGET_JRE_PATH_ATTR, ITargetConstants.TARGET_SEQ_NO_ATTR };
+			ITargetConstants.TARGET_JRE_PATH_ATTR, ITargetConstants.TARGET_SEQ_NO_ATTR,
+			ITargetConstants.LOCATION_INCLUDE_CONFIG_PHASE_ATTR, ITargetConstants.LOCATION_INCLUDE_SOURCE_ATTR };
 	private IToken attributeToken = new Token(
 			new TextAttribute(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_RED)));
 

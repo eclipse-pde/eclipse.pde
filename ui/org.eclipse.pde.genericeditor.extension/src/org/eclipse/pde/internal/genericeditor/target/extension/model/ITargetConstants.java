@@ -25,6 +25,9 @@ public interface ITargetConstants {
 	public static final String LOCATIONS_TAG = "locations"; //$NON-NLS-1$
 	public static final String REPOSITORY_TAG = "repository"; //$NON-NLS-1$
 	public static final String UNIT_TAG = "unit"; //$NON-NLS-1$
+	public static final String LAUNCHER_ARGS_TAG = "launcherArgs"; //$NON-NLS-1$
+	public static final String VM_ARGS_TAG = "vmArgs";
+	public static final String PROGRAM_ARGS_TAG = "programArgs";
 	public static final String UNIT_ID_ATTR = "id"; //$NON-NLS-1$
 	public static final String UNIT_VERSION_ATTR = "version"; //$NON-NLS-1$
 	public static final String TARGET_NAME_ATTR = "name"; //$NON-NLS-1$

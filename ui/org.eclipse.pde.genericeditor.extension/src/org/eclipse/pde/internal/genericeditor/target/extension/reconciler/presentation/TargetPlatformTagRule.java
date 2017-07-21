@@ -26,7 +26,8 @@ public class TargetPlatformTagRule extends WordRule {
 
 	private String[] tags = new String[] { ITargetConstants.LOCATIONS_TAG, ITargetConstants.LOCATION_TAG,
 			ITargetConstants.TARGET_TAG, ITargetConstants.UNIT_TAG, ITargetConstants.REPOSITORY_TAG,
-			ITargetConstants.TARGET_JRE_TAG };
+			ITargetConstants.TARGET_JRE_TAG, ITargetConstants.LAUNCHER_ARGS_TAG, ITargetConstants.VM_ARGS_TAG,
+			ITargetConstants.PROGRAM_ARGS_TAG };
 
 	private IToken tagToken = new Token(new TextAttribute(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_CYAN)));
 

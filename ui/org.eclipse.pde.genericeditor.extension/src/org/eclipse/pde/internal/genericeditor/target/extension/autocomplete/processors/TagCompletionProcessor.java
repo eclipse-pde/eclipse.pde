@@ -25,11 +25,11 @@ public class TagCompletionProcessor extends DelegateProcessor {
 
 	private String[] tags = new String[] { ITargetConstants.LOCATIONS_TAG, ITargetConstants.LOCATION_TAG,
 			ITargetConstants.TARGET_TAG, ITargetConstants.UNIT_TAG, ITargetConstants.REPOSITORY_TAG,
-			ITargetConstants.TARGET_JRE_TAG };
+			ITargetConstants.TARGET_JRE_TAG, ITargetConstants.LAUNCHER_ARGS_TAG, ITargetConstants.VM_ARGS_TAG,
+			ITargetConstants.PROGRAM_ARGS_TAG };
 
 	private String prefix;
 	private int offset;
-
 	public TagCompletionProcessor(String prefix, String acKey, int offset) {
 		this.prefix = prefix;
 		this.offset = offset;
@@ -37,7 +37,7 @@ public class TagCompletionProcessor extends DelegateProcessor {
 
 	@Override
 	public ICompletionProposal[] getCompletionProposals() {
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 
 		String handyAddition;
 		for (int i = 0; i < tags.length; i++) {
@@ -55,7 +55,7 @@ public class TagCompletionProcessor extends DelegateProcessor {
 			proposals.add(new CompletionProposal(proposal, offset - prefix.length(), prefix.length(),
 					proposal.length() - handyAddition.length(), null, tags[i], null, null));
 		}
-		return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+		return proposals.toArray(new ICompletionProposal[proposals.size()]);
 	}
 
 }

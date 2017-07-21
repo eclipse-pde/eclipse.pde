@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.genericeditor.target.extension.model;
 
 /**
- * Base class for model nodes in a target definiton.
+ * Base class for model nodes in a target definition.
  */
 public class Node {
 
