@@ -27,7 +27,6 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -174,9 +173,7 @@ public class DSProvideSection extends TableSection implements
 	}
 
 	private void handleEdit() {
-
-		ISelection selection = fProvidesTable.getSelection();
-		if (selection != null) {
+		if (fProvidesTable.getStructuredSelection() != null) {
 
 			int selectionIndex = fProvidesTable.getTable().getSelectionIndex();
 			if (selectionIndex != -1) {
@@ -365,8 +362,7 @@ public class DSProvideSection extends TableSection implements
 
 	@Override
 	public void doubleClick(DoubleClickEvent event) {
-		IDSProvide provide = (IDSProvide) ((IStructuredSelection) fProvidesTable
-				.getSelection()).getFirstElement();
+		IDSProvide provide = (IDSProvide) fProvidesTable.getStructuredSelection().getFirstElement();
 		String value = provide.getInterface();
 		IProject project = getProject();
 		try {

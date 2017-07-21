@@ -81,7 +81,7 @@ public class EditableTablePart extends TablePart {
 
 	private void doRename() {
 		TableViewer viewer = getTableViewer();
-		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		IStructuredSelection selection = viewer.getStructuredSelection();
 		if (selection.size() == 1 && isEditable()) {
 			Object obj = selection.getFirstElement();
 			String oldName = obj.toString();

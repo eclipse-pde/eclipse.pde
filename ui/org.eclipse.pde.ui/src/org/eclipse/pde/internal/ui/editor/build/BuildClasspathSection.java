@@ -181,7 +181,7 @@ public class BuildClasspathSection extends TableSection {
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		ISelection selection = fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 
 		// add NEW action
 		Action action = new Action(PDEUIMessages.BuildEditor_ClasspathSection_add) {
@@ -235,7 +235,7 @@ public class BuildClasspathSection extends TableSection {
 	public void enableSection(boolean enable) {
 		fEnabled = enable;
 		EditableTablePart tablePart = getTablePart();
-		tablePart.setButtonEnabled(1, enable && !fTableViewer.getSelection().isEmpty());
+		tablePart.setButtonEnabled(1, enable && !fTableViewer.getStructuredSelection().isEmpty());
 		tablePart.setButtonEnabled(0, enable);
 	}
 

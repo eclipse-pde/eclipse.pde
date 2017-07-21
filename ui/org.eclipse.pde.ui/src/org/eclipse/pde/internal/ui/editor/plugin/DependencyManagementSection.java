@@ -281,7 +281,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		ISelection selection = fAdditionalTable.getSelection();
+		IStructuredSelection selection = fAdditionalTable.getStructuredSelection();
 		manager.add(fNewAction);
 		manager.add(fOpenAction);
 		manager.add(new Separator());
@@ -367,7 +367,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		fOpenAction = new Action(OPEN) {
 			@Override
 			public void run() {
-				handleOpen(fAdditionalTable.getSelection());
+				handleOpen(fAdditionalTable.getStructuredSelection());
 			}
 		};
 
@@ -429,7 +429,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fAdditionalTable.getSelection();
+		IStructuredSelection ssel = fAdditionalTable.getStructuredSelection();
 
 		IBuild build = getBuildModel(false).getBuild();
 		IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);

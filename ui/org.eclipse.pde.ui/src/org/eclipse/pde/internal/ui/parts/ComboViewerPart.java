@@ -116,6 +116,6 @@ public class ComboViewerPart {
 	}
 
 	public Object getSelection() {
-		return ((IStructuredSelection) fComboViewer.getSelection()).getFirstElement();
+		return fComboViewer.getStructuredSelection().getFirstElement();
 	}
 }

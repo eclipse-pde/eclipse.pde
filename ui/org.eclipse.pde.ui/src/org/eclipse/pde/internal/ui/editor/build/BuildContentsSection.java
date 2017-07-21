@@ -432,8 +432,8 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 	}
 
 	@Override
-	protected ISelection getViewerSelection() {
-		return getTreeViewer().getSelection();
+	protected IStructuredSelection getViewerSelection() {
+		return getTreeViewer().getStructuredSelection();
 	}
 
 	@Override

@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -208,8 +207,7 @@ public class DSPropertiesSection extends TableSection {
 	}
 
 	private void handleUpDown(int newRelativeIndex) {
-		ISelection sel = fPropertiesTable.getSelection();
-		Object[] array = ((IStructuredSelection) sel).toArray();
+		Object[] array = fPropertiesTable.getStructuredSelection().toArray();
 
 		if (newRelativeIndex == F_UP_FLAG) {
 			moveUp(newRelativeIndex, array);
@@ -253,9 +251,7 @@ public class DSPropertiesSection extends TableSection {
 	}
 
 	private void handleEdit() {
-
-		ISelection selection = fPropertiesTable.getSelection();
-		if (selection != null) {
+		if (fPropertiesTable.getStructuredSelection() != null) {
 
 			int selectionIndex = fPropertiesTable.getTable()
 					.getSelectionIndex();

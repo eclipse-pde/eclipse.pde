@@ -224,7 +224,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(fAddAction);
-		if (!fEETable.getSelection().isEmpty()) {
+		if (!fEETable.getStructuredSelection().isEmpty()) {
 			manager.add(new Separator());
 			manager.add(fRemoveAction);
 		}
@@ -278,7 +278,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fEETable.getSelection();
+		IStructuredSelection ssel = fEETable.getStructuredSelection();
 		if (ssel.size() > 0) {
 			Iterator<?> iter = ssel.iterator();
 			while (iter.hasNext()) {

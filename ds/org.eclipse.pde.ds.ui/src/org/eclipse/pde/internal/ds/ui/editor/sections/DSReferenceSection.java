@@ -27,7 +27,6 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -220,9 +219,9 @@ public class DSReferenceSection extends TableSection implements
 	}
 
 	private void handleMove(boolean moveUp) {
-		ISelection selection = fReferencesTable.getSelection();
+		IStructuredSelection selection = fReferencesTable.getStructuredSelection();
 		if (selection != null) {
-			Object[] array = ((IStructuredSelection) selection).toArray();
+			Object[] array = selection.toArray();
 			if (moveUp) {
 				moveUp(array);
 			} else {
@@ -257,9 +256,7 @@ public class DSReferenceSection extends TableSection implements
 	}
 
 	private void handleEdit() {
-
-		ISelection selection = fReferencesTable.getSelection();
-		if (selection != null) {
+		if (fReferencesTable.getStructuredSelection() != null) {
 
 			int selectionIndex = fReferencesTable.getTable()
 					.getSelectionIndex();
@@ -449,8 +446,7 @@ public class DSReferenceSection extends TableSection implements
 
 	@Override
 	public void doubleClick(DoubleClickEvent event) {
-		IDSReference reference = (IDSReference) ((IStructuredSelection) fReferencesTable
-				.getSelection()).getFirstElement();
+		IDSReference reference = (IDSReference) fReferencesTable.getStructuredSelection().getFirstElement();
 		String value = reference.getReferenceInterface();
 		IProject project = getProject();
 		try {

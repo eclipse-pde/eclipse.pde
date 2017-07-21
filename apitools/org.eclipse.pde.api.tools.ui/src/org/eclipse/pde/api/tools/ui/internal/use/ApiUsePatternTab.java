@@ -261,7 +261,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 	 * Removes the selected elements from the table
 	 */
 	void doRemove() {
-		IStructuredSelection selection = (IStructuredSelection) ApiUsePatternTab.this.viewer.getSelection();
+		IStructuredSelection selection = ApiUsePatternTab.this.viewer.getStructuredSelection();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			removePattern((Pattern) iter.next());
 		}
@@ -273,7 +273,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 	 * handles editing a selected pattern
 	 */
 	void doEdit() {
-		IStructuredSelection selection = (IStructuredSelection) ApiUsePatternTab.this.viewer.getSelection();
+		IStructuredSelection selection = ApiUsePatternTab.this.viewer.getStructuredSelection();
 		Pattern pattern = (Pattern) selection.getFirstElement();
 		PatternWizard wizard = new PatternWizard(pattern.pattern, pattern.kind);
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);

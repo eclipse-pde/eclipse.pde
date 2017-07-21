@@ -320,11 +320,11 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	 * @return the current selection from the table viewer
 	 */
 	protected IApiBaseline[] getCurrentSelection() {
-		IStructuredSelection ss = (IStructuredSelection) tableviewer.getSelection();
+		IStructuredSelection ss = tableviewer.getStructuredSelection();
 		if (ss.isEmpty()) {
 			return new IApiBaseline[0];
 		}
-		return (IApiBaseline[]) ((IStructuredSelection) tableviewer.getSelection()).toList().toArray(new IApiBaseline[ss.size()]);
+		return (IApiBaseline[]) tableviewer.getStructuredSelection().toList().toArray(new IApiBaseline[ss.size()]);
 	}
 
 	@Override

@@ -166,7 +166,7 @@ public class DownloadStatsSection extends TableSection {
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fArtifactTable.getSelection();
+		IStructuredSelection ssel = fArtifactTable.getStructuredSelection();
 		Iterator<?> iterator = ssel.iterator();
 		while (iterator.hasNext()) {
 			Object object = iterator.next();

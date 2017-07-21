@@ -200,7 +200,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+				IStructuredSelection selection = fTableViewer.getStructuredSelection();
 				remove.setEnabled(!selection.isEmpty());
 				editbutton.setEnabled(selection.size() == 1);
 			}
@@ -288,7 +288,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * Allows you to edit the location of the scan
 	 */
 	void edit() {
-		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 		String location = selection.getFirstElement().toString();
 		File file = new File(location);
 		String newloc = null;
@@ -307,7 +307,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * Removes the selected locations
 	 */
 	void removeLocation() {
-		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 		fLocationList.removeAll(selection.toList());
 		fTableViewer.refresh();
 		validateScans();

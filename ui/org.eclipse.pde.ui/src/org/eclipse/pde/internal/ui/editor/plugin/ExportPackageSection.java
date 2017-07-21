@@ -322,7 +322,7 @@ public class ExportPackageSection extends TableSection {
 	}
 
 	private void updateButtons() {
-		Object[] selected = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
+		Object[] selected = fPackageViewer.getStructuredSelection().toArray();
 
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(ADD_INDEX, canAddExportedPackages());
@@ -401,7 +401,7 @@ public class ExportPackageSection extends TableSection {
 	}
 
 	private void handleOpenProperties() {
-		Object[] selected = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
+		Object[] selected = fPackageViewer.getStructuredSelection().toArray();
 		ExportPackageObject first = (ExportPackageObject) selected[0];
 		DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(), first);
 		dialog.create();
@@ -422,7 +422,7 @@ public class ExportPackageSection extends TableSection {
 	}
 
 	private void handleRemove() {
-		Object[] removed = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
+		Object[] removed = fPackageViewer.getStructuredSelection().toArray();
 		for (Object removedObject : removed) {
 			fHeader.removePackage((PackageObject) removedObject);
 		}
@@ -554,7 +554,7 @@ public class ExportPackageSection extends TableSection {
 		fGoToAction = new Action(PDEUIMessages.ImportPackageSection_goToPackage) {
 			@Override
 			public void run() {
-				handleGoToPackage(fPackageViewer.getSelection());
+				handleGoToPackage(fPackageViewer.getStructuredSelection());
 			}
 		};
 		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) {
@@ -575,9 +575,9 @@ public class ExportPackageSection extends TableSection {
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		ISelection selection = fPackageViewer.getSelection();
+		IStructuredSelection selection = fPackageViewer.getStructuredSelection();
 		manager.add(fAddAction);
-		boolean singleSelection = selection instanceof IStructuredSelection && ((IStructuredSelection) selection).size() == 1;
+		boolean singleSelection = selection.size() == 1;
 		if (singleSelection)
 			manager.add(fGoToAction);
 		manager.add(new Separator());
@@ -588,10 +588,10 @@ public class ExportPackageSection extends TableSection {
 			manager.add(new Action(PDEUIMessages.ExportPackageSection_findReferences) {
 				@Override
 				public void run() {
-					doSearch(fPackageViewer.getSelection());
+					doSearch(fPackageViewer.getStructuredSelection());
 				}
 			});
-		if (shouldEnableProperties(((IStructuredSelection) fPackageViewer.getSelection()).toArray())) {
+		if (shouldEnableProperties(fPackageViewer.getStructuredSelection().toArray())) {
 			manager.add(new Separator());
 			manager.add(fPropertiesAction);
 		}

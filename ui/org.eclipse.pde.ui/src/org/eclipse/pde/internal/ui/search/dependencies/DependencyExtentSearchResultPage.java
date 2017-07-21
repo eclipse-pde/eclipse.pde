@@ -92,16 +92,16 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 		super.fillContextMenu(mgr);
 		mgr.add(new Separator());
 		JavaSearchActionGroup group = new JavaSearchActionGroup(this);
-		group.setContext(new ActionContext(getViewer().getSelection()));
+		group.setContext(new ActionContext(getViewer().getStructuredSelection()));
 		group.fillContextMenu(mgr);
 		addJavaSearchGroup(mgr);
 		PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
-		actionGroup.setContext(new ActionContext(getViewer().getSelection()));
+		actionGroup.setContext(new ActionContext(getViewer().getStructuredSelection()));
 		actionGroup.fillContextMenu(mgr);
 	}
 
 	private void addJavaSearchGroup(IMenuManager mgr) {
-		IStructuredSelection ssel = (IStructuredSelection) getViewer().getSelection();
+		IStructuredSelection ssel = getViewer().getStructuredSelection();
 		if (ssel.size() == 1) {
 			final Object object = ssel.getFirstElement();
 			if (object instanceof IType) {

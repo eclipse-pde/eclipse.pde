@@ -128,7 +128,7 @@ public abstract class DependenciesViewPage extends Page {
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
+		IStructuredSelection selection = fViewer.getStructuredSelection();
 
 		if (selection.size() == 1) {
 			manager.add(fOpenAction);
@@ -205,7 +205,7 @@ public abstract class DependenciesViewPage extends Page {
 	}
 
 	protected IStructuredSelection getSelection() {
-		return (IStructuredSelection) fViewer.getSelection();
+		return fViewer.getStructuredSelection();
 	}
 
 	protected void setSelection(IStructuredSelection selection) {
