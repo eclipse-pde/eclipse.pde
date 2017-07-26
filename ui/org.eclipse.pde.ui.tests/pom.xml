@@ -37,7 +37,7 @@
           <useUIHarness>true</useUIHarness>
           <useUIThread>true</useUIThread>
           <dependencies>
-            <dependency>
+           <dependency>
               <!-- workaround for missing dependency in org.eclipse.e4.ui.services: https://bugs.eclipse.org/462862 -->
               <type>eclipse-plugin</type>
               <artifactId>org.eclipse.equinox.event</artifactId>
@@ -47,12 +47,7 @@
               <type>eclipse-plugin</type>
               <artifactId>org.eclipse.osgi.compatibility.state</artifactId>
               <version>0.0.0</version>
-            </dependency> 
-             <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>org.eclipse.osgi.compatibility.plugins.feature</artifactId>
-              <version>0.0.0</version>
-            </dependency> 
+            </dependency>
           </dependencies>
         </configuration>
       </plugin>
