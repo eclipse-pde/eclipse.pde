@@ -412,26 +412,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	}
 
 	/**
-	 * Tests reading a 3.0 style plug-in that has a MANIFEST file that is not a bundle
-	 * manifest.
-	 *
-	 * @throws Exception
-	 */
-	public void testClassicPluginsWithNonBundleManifest() throws Exception {
-		// extract the plug-in
-		IPath location = extractClassicNonBundleManifestPlugins();
-
-		// the new way
-		ITargetDefinition definition = getNewTarget();
-		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
-		definition.setTargetLocations(new ITargetLocation[]{container});
-		definition.resolve(null);
-		TargetBundle[] bundles = definition.getAllBundles();
-		assertEquals("Wrong number of bundles", 1, bundles.length);
-		assertEquals("Wrong bundle", "org.eclipse.core.variables", bundles[0].getBundleInfo().getSymbolicName());
-	}
-
-	/**
 	 * Returns the given input stream as a byte array
 	 * @param stream the stream to get as a byte array
 	 * @param length the length to read from the stream or -1 for unknown
