@@ -80,24 +80,6 @@ public abstract class AbstractTargetTest extends TestCase {
 	}
 
 	/**
-	 * Extracts the classic plug-ins archive, if not already done, and returns a path to the
-	 * root directory containing the plug-ins.
-	 *
-	 * @return path to the plug-ins directory
-	 * @throws Exception
-	 */
-	protected IPath extractClassicPlugins() throws Exception {
-		// extract the 3.0.2 skeleton
-		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
-		IPath location = stateLocation.append("classic/eclipse");
-		if (location.toFile().exists()) {
-			return location.append("plugins");
-		}
-		doUnZip(location,"/tests/targets/classic-plugins.zip");
-		return location.append("plugins");
-	}
-
-	/**
 	 * Extracts the modified jdt features archive, if not already done, and returns a path to the
 	 * root directory containing the features and plug-ins
 	 *

@@ -351,67 +351,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	}
 
 	/**
-	 * Tests reading a 3.0.2 install with a mix of classic and OSGi plug-ins.
-	 *
-	 * @throws Exception
-	 */
-	public void testClassicPlugins() throws Exception {
-		// extract the 3.0.2 skeleton
-		IPath location = extractClassicPlugins();
-
-		// the new way
-		ITargetDefinition definition = getNewTarget();
-		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
-		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set urls = getAllBundleURLs(definition);
-		assertTrue("Must be bundles", urls.size() > 0);
-
-		// the old way
-		URL[] pluginPaths = PluginPathFinder.getPluginPaths(location.toOSString(), false);
-		for (URL pluginPath : pluginPaths) {
-			URL url = pluginPath;
-			if (!urls.contains(url)) {
-				System.err.println(url.toString());
-			}
-		}
-		assertEquals("Wrong number of bundles", pluginPaths.length, urls.size());
-	}
-
-	/**
-	 * Tests identification of source bundles in a 3.0.2 install.
-	 *
-	 * @throws Exception
-	 */
-	public void testClassicSourcePlugins() throws Exception {
-		// extract the 3.0.2 skeleton
-		IPath location = extractClassicPlugins();
-
-		// the new way
-		ITargetDefinition definition = getNewTarget();
-		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
-		definition.setTargetLocations(new ITargetLocation[]{container});
-
-		definition.resolve(null);
-		TargetBundle[] bundles = definition.getBundles();
-		List source = new ArrayList();
-		for (TargetBundle sb : bundles) {
-			if (sb.isSourceBundle()) {
-				source.add(sb);
-			}
-		}
-
-		assertEquals("Wrong number of source bundles", 4, source.size());
-		Set names = new HashSet();
-		for (int i = 0; i < source.size(); i++) {
-			names.add(((TargetBundle)source.get(i)).getBundleInfo().getSymbolicName());
-		}
-		String[] expected = new String[]{"org.eclipse.platform.source", "org.eclipse.jdt.source", "org.eclipse.pde.source", "org.eclipse.platform.source.win32.win32.x86"};
-		for (String element : expected) {
-			assertTrue("Missing source for " + element, names.contains(element));
-		}
-	}
-
-	/**
 	 * Returns the given input stream as a byte array
 	 * @param stream the stream to get as a byte array
 	 * @param length the length to read from the stream or -1 for unknown
