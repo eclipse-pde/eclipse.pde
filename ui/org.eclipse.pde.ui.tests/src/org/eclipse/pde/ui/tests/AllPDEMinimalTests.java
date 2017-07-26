@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c)  2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 import org.eclipse.pde.ui.tests.launcher.AllLauncherTests;
@@ -24,35 +22,37 @@ import org.eclipse.pde.ui.tests.runtime.AllPDERuntimeTests;
 import org.eclipse.pde.ui.tests.target.AllTargetMinimalTests;
 import org.eclipse.pde.ui.tests.views.log.AllLogViewTests;
 import org.eclipse.pde.ui.tests.wizards.AllNewProjectMinimalTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+@RunWith(Suite.class)
+@SuiteClasses({
+	AllTargetMinimalTests.class,
+	AllNewProjectMinimalTests.class,
+	AllPreferenceTests.class,
+	//	AllImportTests.class,
+	AllBundleModelTests.class,
+	AllXMLModelTests.class,
+	AllValidatorTests.class,
+	AllNLSTests.class,
+	AllPDERuntimeTests.class,
+	//	ExportBundleTests.class,
+	AllLauncherTests.class,
+	AllLogViewTests.class,
+	ProjectCreationTests.class,
+	BundleRootTests.class,
+	PluginRegistryTests.class,
+	ClasspathResolverTest.class,
+	// ClasspathContributorTest.class
+})
 
 /**
  * They run on minimal plugin bundles and dont require the whole SDK ( for
  * hudson gerrit). This class is refactored out of AllPDETests
  *
  */
+
 public class AllPDEMinimalTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.ui"); //$NON-NLS-1$
-
-		suite.addTest(AllTargetMinimalTests.suite());
-		suite.addTest(AllNewProjectMinimalTests.suite());
-		suite.addTest(AllPreferenceTests.suite());
-		// suite.addTest(AllImportTests.suite());
-		suite.addTest(AllBundleModelTests.suite());
-		suite.addTest(AllXMLModelTests.suite());
-		suite.addTest(AllValidatorTests.suite());
-		suite.addTest(AllNLSTests.suite());
-		suite.addTest(AllPDERuntimeTests.suite());
-		// suite.addTest(ExportBundleTests.suite());
-		suite.addTest(AllLauncherTests.suite());
-		suite.addTest(AllLogViewTests.suite());
-		suite.addTest(ProjectCreationTests.suite());
-		suite.addTest(BundleRootTests.suite());
-		suite.addTest(PluginRegistryTestsMinimal.suite());
-		suite.addTest(ClasspathResolverTest.suite());
-		// suite.addTest(ClasspathContributorTest.suite());
-		return suite;
-	}
 
 }

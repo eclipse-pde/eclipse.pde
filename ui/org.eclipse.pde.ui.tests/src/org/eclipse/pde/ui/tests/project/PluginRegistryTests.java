@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.pde.core.plugin.*;
 
 /**
@@ -20,12 +18,10 @@ import org.eclipse.pde.core.plugin.*;
  * @since 3.6
  */
 public class PluginRegistryTests extends PluginRegistryTestsMinimal {
-	public static Test suite() {
-		return new TestSuite(PluginRegistryTests.class);
-	}
 
 	public void testMatchEquivalent() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.ui.tests", "3.10.0", IMatchRules.EQUIVALENT,
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.ui.tests", "3.10.100",
+				IMatchRules.EQUIVALENT,
 				null);
 		assertNotNull("NOTE: This test might also fail because the version of the bundle got changed.", model);
 		assertEquals("org.eclipse.pde.ui.tests", model.getPluginBase().getId());
