@@ -154,31 +154,4 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 		}
 	}
 
-	/**
-	 * Tests that a use scan will find problems when a required bundle is an old
-	 * style (pre-OSGi) plug-in. Old style plug-ins are only supported when
-	 * running in the same JRE as an OSGi runtime.
-	 *
-	 * @throws Exception
-	 */
-	public void testOldStylePlugin() throws Exception {
-		IFolder reportFolder = runTaskAndVerify("testOldStylePlugin"); //$NON-NLS-1$
-		IResource[] members = reportFolder.members();
-		boolean valid = false;
-		boolean validDir = false;
-		for (int index = 0; index < members.length; index++) {
-			if (!members[index].getLocation().toFile().isDirectory()) {
-				continue;
-			}
-			valid = members[index].getName().startsWith("org.eclipse.osgi"); //$NON-NLS-1$
-			assertTrue(members[index].getName() + " should have been filtered out", valid); //$NON-NLS-1$
-			File[] dirs = members[index].getLocation().toFile().listFiles();
-			for (int i = 0; i < dirs.length; i++) {
-				validDir = dirs[i].getName().startsWith("org.example.test.oldstyle.usage"); //$NON-NLS-1$
-				assertTrue(dirs[i].getName() + " should have been filtered out", validDir); //$NON-NLS-1$
-			}
-		}
-		assertTrue("The old style plug-in was not scanned", valid); //$NON-NLS-1$
-		assertTrue("The old style plug-in was not scanned", validDir); //$NON-NLS-1$
-	}
 }
