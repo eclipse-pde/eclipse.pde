@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.reconciler.presentation;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.presentation.IPresentationRepairer;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.IRule;
@@ -48,6 +53,25 @@ public class TargetPlatformPresentationReconciler extends PresentationReconciler
 		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(scanner);
 		this.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		this.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
+	}
+
+	/**
+	 * Performs the repair on the full document to ensure MultiLineRules are
+	 * enforced
+	 */
+	@Override
+	protected TextPresentation createPresentation(IRegion damage, IDocument document) {
+		TextPresentation presentation = new TextPresentation(damage, 1000);
+		IPresentationRepairer repairer = this.getRepairer(IDocument.DEFAULT_CONTENT_TYPE);
+		if (repairer != null)
+			try {
+				repairer.createPresentation(presentation, TextUtilities.computePartitioning(document,
+						getDocumentPartitioning(), 0, document.getLength(), false)[0]);
+			} catch (BadLocationException e) {
+				return null;
+			}
+
+		return presentation;
 	}
 
 }
