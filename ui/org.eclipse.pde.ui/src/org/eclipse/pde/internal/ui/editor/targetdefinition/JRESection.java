@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.pde.core.target.ITargetDefinition;
-
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.TreeSet;
@@ -19,6 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;

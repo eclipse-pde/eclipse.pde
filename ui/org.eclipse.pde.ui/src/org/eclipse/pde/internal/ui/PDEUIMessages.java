@@ -2675,6 +2675,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestContentMergeViewer_title;
 
+	public static String GenericEditorTab_title;
+
 	public static String EnvironmentPage_title;
 
 	public static String JRESection_description;

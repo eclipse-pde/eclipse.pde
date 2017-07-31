@@ -125,6 +125,7 @@ Require-Bundle:
 Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text,
  org.eclipse.jdt.debug.core,
- org.eclipse.jdt.debug.ui.console
+ org.eclipse.jdt.debug.ui.console,
+ org.eclipse.ui.internal.genericeditor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
