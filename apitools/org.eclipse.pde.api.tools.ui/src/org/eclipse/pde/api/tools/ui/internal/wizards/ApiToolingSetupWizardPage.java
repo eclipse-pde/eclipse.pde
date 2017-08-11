@@ -193,7 +193,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		table.setLayoutData(gd);
 		tableviewer = new CheckboxTableViewer(table);
 		tableviewer.setLabelProvider(new WorkbenchLabelProvider());
-		tableviewer.setContentProvider(new ArrayContentProvider());
+		tableviewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableviewer.setInput(getInputProjects());
 		tableviewer.setComparator(new ViewerComparator());
 		tableviewer.addFilter(filter);

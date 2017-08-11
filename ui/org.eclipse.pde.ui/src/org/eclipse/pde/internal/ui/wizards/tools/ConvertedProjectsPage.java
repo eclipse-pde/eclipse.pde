@@ -83,7 +83,7 @@ public class ConvertedProjectsPage extends WizardPage {
 
 		fProjectViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 		fProjectViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		fProjectViewer.setContentProvider(new ArrayContentProvider());
+		fProjectViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fProjectViewer.setLabelProvider(new ProjectLabelProvider());
 		fProjectViewer.setInput(fAllUnconvertedProjects);
 		fProjectViewer.setCheckedElements(fInitialSelection);

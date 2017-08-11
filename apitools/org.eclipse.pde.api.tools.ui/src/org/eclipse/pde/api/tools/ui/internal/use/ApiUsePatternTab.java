@@ -183,7 +183,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		this.viewer.setLabelProvider(new Labels());
-		this.viewer.setContentProvider(new ArrayContentProvider());
+		this.viewer.setContentProvider(ArrayContentProvider.getInstance());
 		this.viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {

@@ -114,7 +114,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		sourceComp.setLayoutData(new RowData());
 		SWTFactory.createLabel(sourceComp, PDEUIMessages.ImageBrowserView_Source, 1);
 		sourceCombo = new ComboViewer(SWTFactory.createCombo(sourceComp, SWT.READ_ONLY, 1, null));
-		sourceCombo.setContentProvider(new ArrayContentProvider());
+		sourceCombo.setContentProvider(ArrayContentProvider.getInstance());
 		sourceCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {

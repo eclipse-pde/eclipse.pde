@@ -168,7 +168,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		table.setLayoutData(gd);
 		tableviewer = new CheckboxTableViewer(table);
 		tableviewer.setLabelProvider(new WorkbenchLabelProvider());
-		tableviewer.setContentProvider(new ArrayContentProvider());
+		tableviewer.setContentProvider(ArrayContentProvider.getInstance());
 		IProject[] input = Util.getApiProjectsMinSourceLevel(JavaCore.VERSION_1_5);
 		if (input == null) {
 			setMessage(WizardMessages.JavadocConversionPage_0, IMessageProvider.WARNING);

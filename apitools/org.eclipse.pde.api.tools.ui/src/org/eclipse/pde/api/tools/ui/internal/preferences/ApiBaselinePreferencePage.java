@@ -125,7 +125,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		});
 		tableviewer = new CheckboxTableViewer(table);
 		tableviewer.setLabelProvider(new BaselineLabelProvider());
-		tableviewer.setContentProvider(new ArrayContentProvider());
+		tableviewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableviewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {

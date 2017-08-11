@@ -89,7 +89,7 @@ public class PatternSelectionPage extends WizardPage {
 		SWTFactory.createWrapLabel(comp, Messages.PatternSelectionPage_pattern_types, 1);
 		this.viewer = new TableViewer(new Table(comp, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION));
 		this.viewer.setLabelProvider(new LP());
-		this.viewer.setContentProvider(new ArrayContentProvider());
+		this.viewer.setContentProvider(ArrayContentProvider.getInstance());
 		this.viewer.setInput(fgelements);
 		this.viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override

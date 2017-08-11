@@ -102,7 +102,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		sashForm.setFont(comp.getFont());
 
 		TableViewer wizardSelectionViewer = new TableViewer(sashForm, SWT.BORDER);
-		wizardSelectionViewer.setContentProvider(new ArrayContentProvider());
+		wizardSelectionViewer.setContentProvider(ArrayContentProvider.getInstance());
 		wizardSelectionViewer.setLabelProvider(new LabelProvider() {
 
 			@Override

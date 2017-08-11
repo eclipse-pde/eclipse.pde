@@ -74,7 +74,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		// Connect the label provider
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fFeatureTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fFeatureTable.setContentProvider(new ArrayContentProvider());
+		fFeatureTable.setContentProvider(ArrayContentProvider.getInstance());
 		fFeatureTable.setSorter(new ViewerSorter());
 
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);

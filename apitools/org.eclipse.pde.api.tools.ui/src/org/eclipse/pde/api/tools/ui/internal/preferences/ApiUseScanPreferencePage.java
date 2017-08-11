@@ -134,7 +134,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		});
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TableColumnLabelProvider());
-		fTableViewer.setContentProvider(new ArrayContentProvider());
+		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		Composite bcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
 		Button button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_3, null);
