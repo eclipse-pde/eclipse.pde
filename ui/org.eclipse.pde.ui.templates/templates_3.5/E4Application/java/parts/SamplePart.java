@@ -32,17 +32,12 @@ public class SamplePart {
 
 		txtInput = new Text(parent, SWT.BORDER);
 		txtInput.setMessage("Enter text to mark part as dirty");
-		txtInput.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				part.setDirty(true);
-			}
-		});
+		txtInput.addModifyListener(e -> part.setDirty(true));
 		txtInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		tableViewer = new TableViewer(parent);
 
-		tableViewer.setContentProvider(ArrayContentProvider.getInstance());;
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(createInitialDataModel());
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
