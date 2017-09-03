@@ -239,7 +239,6 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			} finally {
 				Thread.currentThread().setContextClassLoader(currentTCCL);
 			}
-			RemoteTestRunner.fgTestRunServer = this;
 			return;
 		}
 		defaultInit(args);
