@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,11 +155,18 @@ public class JavaResolutionFactory {
 	}
 
 	/*
-	 * A Change which will add a Require-Bundle entry to resolve the given dependency
+	 * A Change which will add a Require-Bundle entry to resolve the given
+	 * dependency or add multiple Require-Bundle entries to resolve the dependency
+	 * based on description name
 	 */
 	private static class RequireBundleManifestChange extends AbstractManifestChange {
 
 		private RequireBundleManifestChange(IProject project, ExportPackageDescription desc, CompilationUnit cu,
+				String qualifiedTypeToImport) {
+			super(project, desc, cu, qualifiedTypeToImport);
+		}
+
+		private RequireBundleManifestChange(IProject project, String desc, CompilationUnit cu,
 				String qualifiedTypeToImport) {
 			super(project, desc, cu, qualifiedTypeToImport);
 		}
@@ -172,33 +179,66 @@ public class JavaResolutionFactory {
 					if (!(model instanceof IPluginModelBase))
 						return;
 					IPluginModelBase base = (IPluginModelBase) model;
-					String pluginId = ((ExportPackageDescription) getChangeObject()).getSupplier().getSymbolicName();
-					if (!isUndo()) {
-						IPluginImport impt = base.getPluginFactory().createImport();
-						impt.setId(pluginId);
-						base.getPluginBase().add(impt);
-					} else {
-						IPluginImport[] imports = base.getPluginBase().getImports();
-						for (IPluginImport pluginImport : imports) {
-							if (pluginImport.getId().equals(pluginId)) {
-								base.getPluginBase().remove(pluginImport);
+					String[] pluginIdStrings = null;
+					String[] junit5PluginIDList = getJUnit5Bundles();
+					if (getChangeObject() instanceof String && getChangeObject().equals("JUnit 5 bundles")) { //$NON-NLS-1$
+						pluginIdStrings = junit5PluginIDList;
+					}
+					if (getChangeObject() instanceof ExportPackageDescription) {
+						pluginIdStrings = new String[1];
+						pluginIdStrings[0] = ((ExportPackageDescription) getChangeObject()).getSupplier()
+								.getSymbolicName();
+					}
+					for (int i = 0; i < pluginIdStrings.length; i++) {
+						String pluginId = pluginIdStrings[i];
+						if (!isUndo()) {
+							IPluginImport impt = base.getPluginFactory().createImport();
+							impt.setId(pluginId);
+							base.getPluginBase().add(impt);
+						} else {
+							IPluginImport[] imports = base.getPluginBase().getImports();
+							for (IPluginImport pluginImport : imports) {
+								if (pluginImport.getId().equals(pluginId)) {
+									base.getPluginBase().remove(pluginImport);
+								}
 							}
 						}
 					}
+				}
 
+				private String[] getJUnit5Bundles() {
+					String[] junit5PluginIDList = { "org.junit", "org.junit.jupiter.api", "org.junit.jupiter.engine", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							"org.junit.jupiter.migrationsupport", "org.junit.jupiter.params", //$NON-NLS-1$ //$NON-NLS-2$
+							"org.junit.platform.commons", "org.junit.platform.engine", //$NON-NLS-1$ //$NON-NLS-2$
+							"org.junit.platform.launcher", "org.junit.platform.runner", //$NON-NLS-1$ //$NON-NLS-2$
+							 "org.junit.platform.suite.api","org.junit.vintage.engine",  //$NON-NLS-1$ //$NON-NLS-2$
+							"org.hamcrest.core", "org.opentest4j" }; //$NON-NLS-1$ //$NON-NLS-2$
+					return junit5PluginIDList;
 				}
 			}, new NullProgressMonitor());
 
 			insertImport(getCompilationUnit(), getQualifiedTypeToImport(), pm);
 
-			if (!isUndo())
-				return new RequireBundleManifestChange(getProject(), (ExportPackageDescription) getChangeObject(),
-						getCompilationUnit(), getQualifiedTypeToImport()) {
-					@Override
-					public boolean isUndo() {
-						return true;
-					}
-				};
+			if (!isUndo()) {
+				if (getChangeObject() instanceof ExportPackageDescription) {
+					return new RequireBundleManifestChange(getProject(), (ExportPackageDescription) getChangeObject(),
+							getCompilationUnit(), getQualifiedTypeToImport()) {
+						@Override
+						public boolean isUndo() {
+							return true;
+						}
+					};
+				}
+				if (getChangeObject() instanceof String) {
+					return new RequireBundleManifestChange(getProject(),(String) getChangeObject(),
+							getCompilationUnit(), getQualifiedTypeToImport()) {
+						@Override
+						public boolean isUndo() {
+							return true;
+						}
+					};
+				}
+			}
 			return null;
 		}
 
@@ -216,6 +256,10 @@ public class JavaResolutionFactory {
 		@Override
 		public String getName() {
 			if (!isUndo()) {
+				if(getChangeObject() instanceof String) {
+					return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_0,
+							(getChangeObject().toString()));
+				}
 				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_0, ((ExportPackageDescription) getChangeObject()).getExporter().getName());
 			}
 			return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_1, ((ExportPackageDescription) getChangeObject()).getExporter().getName());
@@ -395,6 +439,38 @@ public class JavaResolutionFactory {
 	public static final Object createRequireBundleProposal(IProject project, ExportPackageDescription desc, int type,
 			int relevance, CompilationUnit cu, String qualifiedTypeToImport) {
 		if (desc.getSupplier() == null)
+			return null;
+		AbstractManifestChange change = new RequireBundleManifestChange(project, desc, cu, qualifiedTypeToImport);
+		return createWrapper(change, type, relevance);
+	}
+
+	/**
+	 * Creates and returns a proposal which create multiple Require-Bundle entry in the
+	 * MANIFEST.MF (or corresponding plugin.xml) for desc name.
+	 *
+	 * @param project
+	 *            the project to be updated
+	 * @param desc
+	 *            multiple bundles that is to be  added as a Require-Bundle dependency
+	 *            based on description name
+	 * @param type
+	 *            the type of the proposal to be returned
+	 * @param relevance
+	 *            the relevance of the new proposal
+	 * @param qualifiedTypeToImport
+	 *            the qualified type name of the type that requires this
+	 *            proposal. If this argument and cu are supplied the proposal
+	 *            will add an import statement for this type to the source file
+	 *            in which the proposal was invoked.
+	 * @param cu
+	 *            the AST root of the java source file in which this fix was
+	 *            invoked
+	 * @see JavaResolutionFactory#TYPE_JAVA_COMPLETION
+	 * @see JavaResolutionFactory#TYPE_CLASSPATH_FIX
+	 */
+	public static final Object createRequireBundleProposal(IProject project, String desc, int type, int relevance,
+			CompilationUnit cu, String qualifiedTypeToImport) {
+		if (desc == null)
 			return null;
 		AbstractManifestChange change = new RequireBundleManifestChange(project, desc, cu, qualifiedTypeToImport);
 		return createWrapper(change, type, relevance);
