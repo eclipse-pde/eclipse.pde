@@ -212,7 +212,7 @@ public class JavaResolutionFactory {
 							"org.junit.platform.commons", "org.junit.platform.engine", //$NON-NLS-1$ //$NON-NLS-2$
 							"org.junit.platform.launcher", "org.junit.platform.runner", //$NON-NLS-1$ //$NON-NLS-2$
 							 "org.junit.platform.suite.api","org.junit.vintage.engine",  //$NON-NLS-1$ //$NON-NLS-2$
-							"org.hamcrest.core", "org.opentest4j" }; //$NON-NLS-1$ //$NON-NLS-2$
+							"org.hamcrest.core", "org.opentest4j", "org.apiguardian" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					return junit5PluginIDList;
 				}
 			}, new NullProgressMonitor());
