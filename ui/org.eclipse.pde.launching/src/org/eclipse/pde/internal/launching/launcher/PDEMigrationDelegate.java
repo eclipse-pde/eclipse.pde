@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,14 +15,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.internal.launching.IPDEConstants;
-import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelegate {
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public boolean isCandidate(ILaunchConfiguration candidate) throws CoreException {
-		return !candidate.getAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, false) || candidate.hasAttribute(IPDELauncherConstants.VMINSTALL);
+		return !candidate.getAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, false) || candidate.hasAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH);
 	}
 
 	@Override
@@ -32,7 +30,6 @@ public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelega
 		wc.doSave();
 	}
 
-	@SuppressWarnings("deprecation")
 	public void migrate(ILaunchConfigurationWorkingCopy candidate) throws CoreException {
 		if (!candidate.getAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, false)) {
 			candidate.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);
@@ -44,8 +41,8 @@ public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelega
 			}
 			candidate.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, buffer.toString());
 		}
-		if (candidate.hasAttribute(IPDELauncherConstants.VMINSTALL)) {
-			String name = candidate.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
+		if (candidate.hasAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH)) {
+			String name = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String) null);
 			if (name != null) {
 				IVMInstall vm = VMHelper.getVMInstall(name);
 				if (vm != null) {
@@ -53,7 +50,7 @@ public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelega
 					candidate.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, path.toPortableString());
 				}
 			}
-			candidate.removeAttribute(IPDELauncherConstants.VMINSTALL);
+			candidate.removeAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH);
 		}
 	}
 
