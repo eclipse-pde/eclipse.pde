@@ -1,0 +1,15 @@
+<target >
+<locations >
+<location >
+<unit />
+<repository />
+</location>
+</locations>
+<targetJRE ></targetJRE>
+<environment >
+</environment>
+<launcherArgs >
+<vmArgs ></vmArgs>
+<programArgs ></programArgs>
+</launcherArgs >
+</target>

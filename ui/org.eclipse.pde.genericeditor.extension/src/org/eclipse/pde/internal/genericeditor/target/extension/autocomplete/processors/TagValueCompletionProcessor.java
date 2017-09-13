@@ -48,12 +48,14 @@ public class TagValueCompletionProcessor extends DelegateProcessor {
 	public ICompletionProposal[] getCompletionProposals() {
 		List<ICompletionProposal> proposals = new ArrayList<>();
 		String[] strings = tagTextValues.get(acKey);
-		for (String string : strings) {
-			if (string == null || string.length() == 0 || !string.startsWith(prefix)) {
-				continue;
+		if (strings != null) {
+			for (String string : strings) {
+				if (string == null || string.length() == 0 || !string.startsWith(prefix)) {
+					continue;
+				}
+				proposals.add(new CompletionProposal(string, offset - prefix.length(), prefix.length(),
+						string.length() - 1, null, string, null, null));
 			}
-			proposals.add(new CompletionProposal(string, offset - prefix.length(), prefix.length(), string.length() - 1,
-					null, string, null, null));
 		}
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);
 	}

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lucas Bullen (Red Hat Inc.) - Added TP editor tests
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
@@ -23,6 +24,7 @@ import org.eclipse.pde.ui.tests.preferences.AllPreferenceTests;
 import org.eclipse.pde.ui.tests.project.*;
 import org.eclipse.pde.ui.tests.runtime.AllPDERuntimeTests;
 import org.eclipse.pde.ui.tests.target.AllTargetTests;
+import org.eclipse.pde.ui.tests.target.editor.AllTargetEditorTests;
 import org.eclipse.pde.ui.tests.views.log.AllLogViewTests;
 import org.eclipse.pde.ui.tests.wizards.AllNewProjectTests;
 import org.junit.runner.RunWith;
@@ -47,7 +49,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	BundleRootTests.class,
 	PluginRegistryTests.class,
 	ClasspathResolverTest.class,
-	ClasspathContributorTest.class
+	ClasspathContributorTest.class,
+	AllTargetEditorTests.class
 })
 public class AllPDETests {
 

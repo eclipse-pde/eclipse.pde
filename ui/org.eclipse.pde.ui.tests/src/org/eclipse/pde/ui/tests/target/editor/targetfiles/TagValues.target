@@ -1,0 +1,14 @@
+<target>
+<environment>
+<os></os>
+<ws></ws>
+<arch></arch>
+<nl></nl>
+</environment>
+<locations></locations>
+<targetJRE></targetJRE>
+<launcherArgs>
+<vmArgs></vmArgs>
+<programArgs></programArgs>
+</launcherArgs>
+</target>

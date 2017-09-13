@@ -36,7 +36,8 @@ Require-Bundle: org.junit,
  org.eclipse.ui.editors,
  org.eclipse.ui.views.log,
  org.eclipse.team.cvs.core,
- org.eclipse.debug.core
+ org.eclipse.debug.core,
+ org.eclipse.pde.genericeditor.extension
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BundleShape: dir

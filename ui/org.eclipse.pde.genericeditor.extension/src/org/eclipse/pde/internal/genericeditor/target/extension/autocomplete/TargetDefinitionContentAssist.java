@@ -46,8 +46,8 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 	private static final String ATTRIBUTE_VALUE_PREFIX_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*(\\s+\\w*\\s*=\\s*\".*?\")*\\s+\\w*\\s*=\\s*\"(?<prefix>[^\"]*)"); //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*(\\s*\\w*\\s*=\\s*\".*?\")*\\s+\\w*"); //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_ACKEY_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*(?<ackey>\\w*)(\\s*\\w*\\s*=\\s*\".*?\")*\\s+\\w*"); //$NON-NLS-1$
-	private static final String TAG_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*"); //$NON-NLS-1$
-	private static final String TAG_VALUE_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*\\w*"); //$NON-NLS-1$
+	private static final String TAG_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<"); //$NON-NLS-1$
+	private static final String TAG_VALUE_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("<\\s*\\w+[^<]*>\\s*\\w*"); //$NON-NLS-1$
 	private static final String TAG_VALUE_PREFIX_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*(?<prefix>\\w*)"); //$NON-NLS-1$
 	private static final String TAG_VALUE_ACKEY_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<(?<ackey>\\w*).*"); //$NON-NLS-1$
 
@@ -67,6 +67,7 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 	private static final Pattern TAG_VALUE_ACKEY_PATTERN = Pattern.compile(TAG_VALUE_ACKEY_MATCH);
 
 	private String prefix = ""; //$NON-NLS-1$
+	private IRegion lineInfo;
 	private String acKey;
 
 	@Override
@@ -90,7 +91,8 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 		}
 
 		if (completionType == COMPLETION_TYPE_ATTRIBUTE_NAME) {
-			AttributeNameCompletionProcessor processor = new AttributeNameCompletionProcessor(prefix, acKey, offset);
+			AttributeNameCompletionProcessor processor = new AttributeNameCompletionProcessor(prefix, acKey, offset,
+					lineInfo, text);
 			return processor.getCompletionProposals();
 		}
 
@@ -113,7 +115,7 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 			return COMPLETION_TYPE_HEADER;
 		}
 
-		IRegion lineInfo = null;
+		lineInfo = null;
 		try {
 			lineInfo = doc.getLineInformationOfOffset(offset);
 		} catch (BadLocationException e) {

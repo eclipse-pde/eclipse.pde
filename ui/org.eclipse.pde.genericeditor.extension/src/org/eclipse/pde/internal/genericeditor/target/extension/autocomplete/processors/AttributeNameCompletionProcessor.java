@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
+ *     Lucas Bullen (Red Hat Inc.) 520004
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
@@ -14,7 +15,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
@@ -29,6 +33,11 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 	private String prefix;
 	private String acKey;
 	private int offset;
+	private IRegion lineInfo;
+	private String text;
+
+	private static final String ATTRIBUTE_NAME_FIND = "(?:\\s*(\\w*)\\s*=\\s*\".*?\")";// $NON-NLS-1$
+	private static final Pattern ATT_NAME_PATTERN = Pattern.compile(ATTRIBUTE_NAME_FIND);
 
 	private String[] target = new String[] { ITargetConstants.TARGET_NAME_ATTR, ITargetConstants.TARGET_SEQ_NO_ATTR };
 	private String[] locations = new String[] {};
@@ -38,12 +47,14 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 	private String[] unit = new String[] { ITargetConstants.UNIT_ID_ATTR, ITargetConstants.UNIT_VERSION_ATTR };
 	private String[] repository = new String[] { ITargetConstants.REPOSITORY_LOCATION_ATTR };
 	private String[] targetJRE = new String[] { ITargetConstants.TARGET_JRE_PATH_ATTR };
-	private Map<String, String[]> completionMap = new HashMap<String, String[]>();
+	private Map<String, String[]> completionMap = new HashMap<>();
 
-	public AttributeNameCompletionProcessor(String prefix, String acKey, int offset) {
+	public AttributeNameCompletionProcessor(String prefix, String acKey, int offset, IRegion lineInfo, String text) {
 		this.prefix = prefix;
 		this.acKey = acKey;
 		this.offset = offset;
+		this.lineInfo = lineInfo;
+		this.text = text;
 		init();
 	}
 
@@ -58,17 +69,35 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 
 	@Override
 	public ICompletionProposal[] getCompletionProposals() {
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 		String[] strings = completionMap.get(acKey);
-		for (String string: strings){
-			if (!string.startsWith(prefix)){
-				continue;
+		if (strings != null) {
+			List<String> attributeStrings = getSibblingAttributeNames();
+			for (String string : strings) {
+				if (!string.startsWith(prefix) || attributeStrings.contains(string)) {
+					continue;
+				}
+				String proposal = string + "=\"\""; //$NON-NLS-1$
+				proposals.add(new CompletionProposal(proposal, offset - prefix.length(), prefix.length(),
+						proposal.length() - 1, null, string, null, null));
 			}
-			String proposal = string + "=\"\""; //$NON-NLS-1$
-			proposals.add(new CompletionProposal(proposal, offset - prefix.length(), prefix.length(),
-					proposal.length() - 1, null, string, null, null));
 		}
-		return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+		return proposals.toArray(new ICompletionProposal[proposals.size()]);
+	}
+
+	private List<String> getSibblingAttributeNames() {
+		String lineText = text.substring(lineInfo.getOffset(), lineInfo.getOffset() + lineInfo.getLength());
+		int deltaOffset = offset - lineInfo.getOffset();
+		int offsetOfStart = lineText.lastIndexOf('<', deltaOffset);
+		int offsetOfEnd = lineText.indexOf('>', deltaOffset);
+		String tagText = lineText.substring(offsetOfStart, offsetOfEnd == -1 ? text.length() : offsetOfEnd);
+		List<String> attributeStrings = new ArrayList<>();
+
+		Matcher prefixMatcher = ATT_NAME_PATTERN.matcher(tagText);
+		while (prefixMatcher.find()) {
+			attributeStrings.add(prefixMatcher.group(1));
+		}
+		return attributeStrings;
 	}
 
 }

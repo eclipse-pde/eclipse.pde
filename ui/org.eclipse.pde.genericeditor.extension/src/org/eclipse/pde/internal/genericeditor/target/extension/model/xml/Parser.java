@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,26 +7,23 @@
  *
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
+ *     Lucas Bullen (Red Hat Inc.) - [Bug 520004] autocomplete does not respect tag hierarchy
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.model.xml;
 
 import java.io.ByteArrayInputStream;
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.Location;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.LocationNode;
-import org.eclipse.pde.internal.genericeditor.target.extension.model.TargetNode;
+import org.eclipse.pde.internal.genericeditor.target.extension.model.Node;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.UnitNode;
 
 /**
@@ -36,9 +33,7 @@ public class Parser {
 
 	private static Parser instance;
 
-	private LocationNode locationNode;
-	private TargetNode target;
-	private UnitNode unit;
+	private Node target;
 
 	private XMLInputFactory inputFactory;
 
@@ -54,112 +49,87 @@ public class Parser {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(document.get().getBytes());
 		XMLEventReader eventReader = inputFactory.createXMLEventReader(inputStream);
 		while (eventReader.hasNext()) {
-			XMLEvent event = eventReader.nextEvent();
-			Location locator = event.getLocation();
+			eventReader.nextEvent();
+		}
+
+		target = null;
+		Node currentParent = null;
+		Node currentNode = null;
+		Iterator<XMLElement> tagReaderIterator = createXMLTagItterator(document.get());
+		while (tagReaderIterator.hasNext()) {
+			XMLElement event = tagReaderIterator.next();
 			if (event.isStartElement()) {
-				StartElement startElement = event.asStartElement();
-				String name = startElement.getName().getLocalPart();
-				if (ITargetConstants.TARGET_TAG.equalsIgnoreCase(name)) {
-					target = new TargetNode();
-					int lineNr = locator.getLineNumber();
-					try {
-						int offset = document.getLineOffset(lineNr - 1);
-						target.setOffsetStart(offset);
-					} catch (BadLocationException e) {
-						e.printStackTrace();
-					}
-				}
-
-				if (ITargetConstants.LOCATION_TAG.equalsIgnoreCase(name)) {
-					int lineNr = locator.getLineNumber();
-					try {
-						int offset = document.getLineOffset(lineNr - 1);
-						locationNode = new LocationNode();
-						locationNode.setOffsetStart(offset);
-					} catch (BadLocationException e) {
-						e.printStackTrace();
-					}
-				}
-
-				if (ITargetConstants.REPOSITORY_TAG.equalsIgnoreCase(name)) {
-					Attribute locationAttribute = startElement
-							.getAttributeByName(new QName(ITargetConstants.REPOSITORY_LOCATION_ATTR));
-					String value = locationAttribute == null ? "" : locationAttribute.getValue(); //$NON-NLS-1$
-					if (locationNode == null) {
-						return;
-					}
-					locationNode.setRepositoryLocation(value);
-				}
-
+				String name = event.getName();
 				if (ITargetConstants.UNIT_TAG.equalsIgnoreCase(name)) {
-					if (locationNode == null) {
-						return;
+					UnitNode unit = new UnitNode();
+					String unitValue = event.getAttributeValueByKey(ITargetConstants.UNIT_ID_ATTR);
+					if (unitValue != null) {
+						unit.setId(unitValue);
 					}
-					int lineNr = locator.getLineNumber();
-					try {
-						int offset = document.getLineOffset(lineNr - 1);
-						unit = new UnitNode();
-						Attribute idAttribute = startElement
-								.getAttributeByName(new QName(ITargetConstants.UNIT_ID_ATTR));
-						if (idAttribute != null) {
-							unit.setId(idAttribute.getValue());
-						}
-						Attribute versionAttribute = startElement
-								.getAttributeByName(new QName(ITargetConstants.UNIT_VERSION_ATTR));
-						if (versionAttribute != null) {
-							unit.setVersion(versionAttribute.getValue());
-						}
-						unit.setOffsetStart(offset);
-					} catch (BadLocationException e) {
-						e.printStackTrace();
+					String versionValue = event.getAttributeValueByKey(ITargetConstants.UNIT_VERSION_ATTR);
+					if (versionValue != null) {
+						unit.setVersion(versionValue);
 					}
+					currentNode = unit;
+				} else if (ITargetConstants.LOCATION_TAG.equalsIgnoreCase(name)) {
+					currentNode = new LocationNode();
+				} else if (ITargetConstants.REPOSITORY_TAG.equalsIgnoreCase(name)) {
+					currentNode = new Node();
+					if (currentParent instanceof LocationNode) {
+						String locationValue = event.getAttributeValueByKey(ITargetConstants.REPOSITORY_LOCATION_ATTR);
+						((LocationNode) currentParent).setRepositoryLocation(locationValue);
+					}
+				} else if (ITargetConstants.TARGET_TAG.equalsIgnoreCase(name)) {
+					target = new Node();
+					currentNode = target;
+				} else {
+					currentNode = new Node();
 				}
+				currentNode.setNodeTag(name);
+				currentNode.setOffsetStart(event.getStartOffset());
+				if (currentParent != null) {
+					currentParent.addChildNode(currentNode);
+				}
+				currentParent = currentNode;
 			}
 
 			if (event.isEndElement()) {
-				EndElement endElement = event.asEndElement();
-				String name = endElement.getName().getLocalPart();
-				if (ITargetConstants.TARGET_TAG.equalsIgnoreCase(name)) {
-					int lineNr = locator.getLineNumber();
-					try {
-						int offset = document.getLineOffset(lineNr - 1);
-						target.setOffsetEnd(offset);
-						target.setNodeText(
-								document.get(target.getOffsetStart(), target.getOffsetEnd() - target.getOffsetStart()));
-					} catch (BadLocationException e) {
-						e.printStackTrace();
-					}
-				}
-
-				if (ITargetConstants.LOCATION_TAG.equalsIgnoreCase(name)) {
-					int lineNr = locator.getLineNumber();
-					try {
-						int offset = document.getLineOffset(lineNr - 1);
-						locationNode.setOffsetEnd(offset);
-						target.getNodes().add(locationNode);
-					} catch (BadLocationException e) {
-						e.printStackTrace();
-					}
-				}
-
-				if (ITargetConstants.UNIT_TAG.equalsIgnoreCase(name)) {
-					if (unit == null) {
-						return;
-					}
-					if (locationNode == null) {
-						return;
-					}
-					int lineNr = locator.getLineNumber();
-					try {
-						int offset = document.getLineOffset(lineNr);
-						unit.setOffsetEnd(offset);
-						locationNode.addUnitNode(unit);
-					} catch (BadLocationException e) {
-						e.printStackTrace();
-					}
+				if (currentNode != null) {
+					currentNode.setOffsetEnd(event.getEndOffset());
+					currentNode = currentNode.getParentNode();
+					currentParent = currentNode;
 				}
 			}
 		}
+	}
+
+	private Iterator<XMLElement> createXMLTagItterator(String document) {
+		return new Iterator<XMLElement>() {
+			private String tagRegex = "(?<tag><[^<]*?>)";
+			private String firstTagRegex = "(.|\\n)*?".concat(tagRegex);
+
+			private String text = document;
+			private int start = 0;
+			private int end = text.length();
+
+			private Pattern tagPattern = Pattern.compile(tagRegex);
+			private Pattern firstTagPattern = Pattern.compile(firstTagRegex);
+
+			@Override
+			public boolean hasNext() {
+				return text.length() > 0 && firstTagPattern.matcher(text).find();
+			}
+
+			@Override
+			public XMLElement next() {
+				String oldText = text;
+				text = firstTagPattern.matcher(text).replaceFirst("");
+				Matcher matcher = tagPattern.matcher(oldText.substring(start, end - text.length()));
+				matcher.find();
+				end = text.length();
+				return new XMLElement(matcher.group("tag"), document.length() - text.length());
+			}
+		};
 	}
 
 	public static Parser getDefault() {
@@ -169,7 +139,7 @@ public class Parser {
 		return instance;
 	}
 
-	public TargetNode getRootNode() {
+	public Node getRootNode() {
 		return target;
 	}
 

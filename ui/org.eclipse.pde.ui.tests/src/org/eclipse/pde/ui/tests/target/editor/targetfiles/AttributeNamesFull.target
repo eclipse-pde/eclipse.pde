@@ -1,0 +1,9 @@
+<target  name="" sequenceNumber=""  >
+<locations >
+<location  includeAllPlatforms="" includeConfigurePhase="" includeMode="" includeSource="" type=""  >
+<unit  id="" version=""  />
+<repository  location=""  />
+</location>
+</locations>
+<targetJRE  path=""  ></targetJRE>
+</target>

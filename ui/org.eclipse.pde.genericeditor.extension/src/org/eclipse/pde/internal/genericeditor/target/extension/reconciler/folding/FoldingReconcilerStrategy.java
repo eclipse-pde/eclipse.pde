@@ -25,6 +25,7 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 
 public class FoldingReconcilerStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
@@ -56,7 +57,8 @@ public class FoldingReconcilerStrategy implements IReconcilingStrategy, IReconci
 
 	@Override
 	public void initialReconcile() {
-		if (document.get().equals(oldDocument))
+		ProjectionAnnotationModel projectionAnnotationModel = projectionViewer.getProjectionAnnotationModel();
+		if (document.get().equals(oldDocument) || projectionAnnotationModel == null)
 			return;
 		oldDocument = document.get();
 
@@ -67,8 +69,7 @@ public class FoldingReconcilerStrategy implements IReconcilingStrategy, IReconci
 
 		for (Position position : oldPositions) {
 			if (!positions.contains(position)) {
-				projectionViewer.getProjectionAnnotationModel()
-						.removeAnnotation(oldAnnotations.get(oldPositions.indexOf(position)));
+				projectionAnnotationModel.removeAnnotation(oldAnnotations.get(oldPositions.indexOf(position)));
 				positionsToRemove.add(position);
 				annotationToRemove.add(oldAnnotations.get(oldPositions.indexOf(position)));
 			} else {
@@ -80,7 +81,7 @@ public class FoldingReconcilerStrategy implements IReconcilingStrategy, IReconci
 
 		for (Position position : positions) {
 			Annotation annotation = new ProjectionAnnotation();
-			projectionViewer.getProjectionAnnotationModel().addAnnotation(annotation, position);
+			projectionAnnotationModel.addAnnotation(annotation, position);
 			oldPositions.add(position);
 			oldAnnotations.add(annotation);
 		}
