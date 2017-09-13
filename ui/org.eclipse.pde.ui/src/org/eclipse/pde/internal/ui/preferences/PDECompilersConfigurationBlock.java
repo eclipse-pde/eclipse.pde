@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.natures.PDE;
@@ -773,7 +774,11 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 						if (fProject != null) {
 							message = MessageFormat.format(PDEUIMessages.PDECompilersConfigurationBlock_setting_changed_project, fProject.getName());
 						}
-						if (MessageDialog.openQuestion(fParent.getShell(), PDEUIMessages.PDECompilersConfigurationBlock_settings_changed, message)) {
+						int open = MessageDialog.open(MessageDialog.QUESTION, fParent.getShell(),
+								PDEUIMessages.PDECompilersConfigurationBlock_settings_changed, message, SWT.NONE,
+								PDEUIMessages.PDECompilersConfigurationBlock_buildButtonLabel,
+								PDEUIMessages.PDECompilersConfigurationBlock_dontBuildButtonLabel);
+						if (open == Window.OK) {
 							doFullBuild();
 						}
 					}

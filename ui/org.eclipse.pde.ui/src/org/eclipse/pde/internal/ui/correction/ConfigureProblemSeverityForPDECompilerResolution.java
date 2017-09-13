@@ -36,11 +36,12 @@ import org.eclipse.pde.internal.ui.preferences.PDECompilersConfigurationBlock.Ke
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IMarkerResolutionRelevance;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class ConfigureProblemSeverityForPDECompilerResolution extends AbstractManifestMarkerResolution
-		implements IJavaCompletionProposal {
+		implements IJavaCompletionProposal, IMarkerResolutionRelevance {
 	private static final String CONFIGURE_PROBLEM_SEVERITY_DIALOG_ID = "configure_problem_severity_dialog_id_compiler"; //$NON-NLS-1$
 	IMarker marker = null;
 	String id = ""; //$NON-NLS-1$
@@ -188,6 +189,11 @@ public class ConfigureProblemSeverityForPDECompilerResolution extends AbstractMa
 	@Override
 	public int getRelevance() {
 		// TODO Auto-generated method stub
+		return -1;
+	}
+
+	@Override
+	public int getRelevanceForResolution() {
 		return -1;
 	}
 
