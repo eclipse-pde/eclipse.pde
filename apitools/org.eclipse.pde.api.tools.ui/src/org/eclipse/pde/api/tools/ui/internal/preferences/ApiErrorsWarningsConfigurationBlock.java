@@ -41,6 +41,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.internal.ui.preferences.ConfigurationBlock;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -882,8 +883,9 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		if (tabID == COMPATIBILITY_PAGE_ID) {
 			Link link = new Link(page, SWT.CENTER);
 			link.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 7));
-			String linkHttp = "<a href=\"https://wiki.eclipse.org/Evolving_Java-based_APIs_2\">'Achieving API Binary Compatibility'</a>"; //$NON-NLS-1$
-			link.setText(NLS.bind(PreferenceMessages.ApiErrorsWarningsConfigurationBlock_4, linkHttp));
+			String linkHttp = "<a href=\"https://wiki.eclipse.org/Evolving_Java-based_APIs_2\">" //$NON-NLS-1$
+					+ PreferenceMessages.ApiErrorsWarningsConfigurationBlock_4 + "</a>"; //$NON-NLS-1$
+			link.setText(NLS.bind(PreferenceMessages.ApiErrorsWarningsConfigurationBlock_5, linkHttp));
 			link.setSize(400, 100);
 			link.addSelectionListener(new SelectionAdapter() {
 				@Override

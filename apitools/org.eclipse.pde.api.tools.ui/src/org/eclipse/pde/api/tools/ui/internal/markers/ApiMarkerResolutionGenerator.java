@@ -74,7 +74,8 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 						new FilterProblemWithCommentResolution(marker) };
 			}
 			case IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID: {
-				return new IMarkerResolution[] { profileResolution };
+			return new IMarkerResolution[] { profileResolution,
+					new ConfigureProblemSeverityForAPIToolsResolution(marker) };
 			}
 			case IApiMarkerConstants.SINCE_TAG_MARKER_ID: {
 				return new IMarkerResolution[] {
