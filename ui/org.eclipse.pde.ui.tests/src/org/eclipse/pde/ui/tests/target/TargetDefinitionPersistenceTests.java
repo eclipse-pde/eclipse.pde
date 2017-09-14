@@ -75,7 +75,7 @@ public class TargetDefinitionPersistenceTests extends MinimalTargetDefinitionPer
 			project.open(null);
 			assertTrue("Could not open test project", project.isOpen());
 
-			IFile target = project.getFile(new Long(System.currentTimeMillis()).toString() + "A.target");
+			IFile target = project.getFile(Long.toString(System.currentTimeMillis()) + "A.target");
 			ITargetDefinition definitionA = getTargetService().getTarget(target).getTargetDefinition();
 			initComplexDefiniton(definitionA);
 			getTargetService().saveTargetDefinition(definitionA);

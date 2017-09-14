@@ -58,11 +58,11 @@ public abstract class CompCSObject extends PlatformObject implements
 		DEFAULT_TAG_EXCEPTIONS.add("/span"); //$NON-NLS-1$
 		DEFAULT_TAG_EXCEPTIONS.add("img"); //$NON-NLS-1$
 
-		DEFAULT_SUBSTITUTE_CHARS.put(new Character('&'), "&amp;"); //$NON-NLS-1$
-		DEFAULT_SUBSTITUTE_CHARS.put(new Character('<'), "&lt;"); //$NON-NLS-1$
-		DEFAULT_SUBSTITUTE_CHARS.put(new Character('>'), "&gt;"); //$NON-NLS-1$
-		DEFAULT_SUBSTITUTE_CHARS.put(new Character('\''), "&apos;"); //$NON-NLS-1$
-		DEFAULT_SUBSTITUTE_CHARS.put(new Character('\"'), "&quot;"); //$NON-NLS-1$
+		DEFAULT_SUBSTITUTE_CHARS.put(Character.valueOf('&'), "&amp;"); //$NON-NLS-1$
+		DEFAULT_SUBSTITUTE_CHARS.put(Character.valueOf('<'), "&lt;"); //$NON-NLS-1$
+		DEFAULT_SUBSTITUTE_CHARS.put(Character.valueOf('>'), "&gt;"); //$NON-NLS-1$
+		DEFAULT_SUBSTITUTE_CHARS.put(Character.valueOf('\''), "&apos;"); //$NON-NLS-1$
+		DEFAULT_SUBSTITUTE_CHARS.put(Character.valueOf('\"'), "&quot;"); //$NON-NLS-1$
 	}
 
 	/**

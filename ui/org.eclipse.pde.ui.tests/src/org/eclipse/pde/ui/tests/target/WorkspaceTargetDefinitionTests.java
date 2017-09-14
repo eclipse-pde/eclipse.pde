@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.core.target.ITargetDefinition;
-
-import org.eclipse.core.runtime.CoreException;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.target.ITargetDefinition;
 
 /**
  * Tests for target definitions.  The tested targets will be backed by a workspace file.
@@ -54,7 +52,8 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 
 	@Override
 	protected ITargetDefinition getNewTarget() {
-		IFile target = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME).getFile(new Long(System.currentTimeMillis()).toString() + ".target");
+		IFile target = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME)
+				.getFile(Long.toString(System.currentTimeMillis()) + ".target");
 		try {
 			return getTargetService().getTarget(target).getTargetDefinition();
 		} catch (CoreException e){

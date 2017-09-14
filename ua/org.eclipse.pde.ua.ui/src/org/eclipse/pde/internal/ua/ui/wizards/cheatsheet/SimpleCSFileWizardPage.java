@@ -62,7 +62,7 @@ public class SimpleCSFileWizardPage extends CSFileWizardPage {
 		if (PDETextHelper.isDefined(fProjectName)) {
 			// Form: /<project-name>/<dir>/<dir>/<file>
 			String path = getContainerFullPath().toPortableString();
-			StringTokenizer tokenizer = new StringTokenizer(path, new Character(IPath.SEPARATOR).toString());
+			StringTokenizer tokenizer = new StringTokenizer(path, Character.toString(IPath.SEPARATOR));
 			String compareProject = tokenizer.nextToken();
 			if (compareProject.equals(fProjectName) == false) {
 				setErrorMessage(NLS.bind(CSWizardMessages.SimpleCSFileWizardPage_errorMessage, fProjectName));

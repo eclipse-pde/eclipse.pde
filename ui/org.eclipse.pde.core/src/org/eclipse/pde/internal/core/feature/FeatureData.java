@@ -216,9 +216,9 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	@Override
 	public void setDownloadSize(long downloadSize) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = new Long(this.downloadSize);
+		Object oldValue = Long.valueOf(this.downloadSize);
 		this.downloadSize = downloadSize;
-		firePropertyChanged(P_DOWNLOAD_SIZE, oldValue, new Long(downloadSize));
+		firePropertyChanged(P_DOWNLOAD_SIZE, oldValue, Long.valueOf(downloadSize));
 	}
 
 	/**
@@ -237,9 +237,9 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	@Override
 	public void setInstallSize(long installSize) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = new Long(this.installSize);
+		Object oldValue = Long.valueOf(this.installSize);
 		this.installSize = installSize;
-		firePropertyChanged(P_INSTALL_SIZE, oldValue, new Long(installSize));
+		firePropertyChanged(P_INSTALL_SIZE, oldValue, Long.valueOf(installSize));
 	}
 
 	@Override

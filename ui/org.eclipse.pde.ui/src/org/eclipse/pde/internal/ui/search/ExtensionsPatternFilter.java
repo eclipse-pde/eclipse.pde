@@ -141,7 +141,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 				} else { // resource bundle key found
 					String resourceValue = pluginElement.getResourceString(attributeValue);
 					attributeValue = (resourceValue != null && resourceValue.length() > 0) ? resourceValue : attributeValue;
-					super.setPattern(new String(searchPattern));
+					super.setPattern(String.valueOf(searchPattern));
 					// case insensitive match required with wildcards enabled
 					boolean match = (super.wordMatches(attributeValue));
 					super.setPattern(fSearchPattern);

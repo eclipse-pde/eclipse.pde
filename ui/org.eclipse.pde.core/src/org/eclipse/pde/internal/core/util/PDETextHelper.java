@@ -151,7 +151,7 @@ public class PDETextHelper {
 	}
 
 	private static boolean processSubstituteChars(char currentChar, HashMap<?, ?> substituteChars, StringBuffer buffer) {
-		Character character = new Character(currentChar);
+		Character character = Character.valueOf(currentChar);
 		if (substituteChars.containsKey(character)) {
 			String value = (String) substituteChars.get(character);
 			if (isDefined(value)) {

@@ -26,7 +26,7 @@ public class RegistryModel {
 			adapter.setModel(RegistryModel.this);
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.ADDED);
 
-			bundles.put(new Long(adapter.getId()), adapter);
+			bundles.put(Long.valueOf(adapter.getId()), adapter);
 
 			if (adapter.getFragmentHost() != null) {
 				addFragment(adapter);
@@ -46,7 +46,7 @@ public class RegistryModel {
 		public void removeBundle(Bundle adapter) {
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.REMOVED);
 
-			bundles.remove(new Long(adapter.getId()));
+			bundles.remove(Long.valueOf(adapter.getId()));
 
 			if (adapter.getFragmentHost() != null) {
 				removeFragment(adapter);
@@ -68,7 +68,7 @@ public class RegistryModel {
 			adapter.setModel(RegistryModel.this);
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, updated);
 
-			bundles.put(new Long(adapter.getId()), adapter); // replace old with new one
+			bundles.put(Long.valueOf(adapter.getId()), adapter); // replace old with new one
 
 			if (adapter.getFragmentHost() != null) {
 				addFragment(adapter);
@@ -90,7 +90,7 @@ public class RegistryModel {
 			}
 
 			adapter.setModel(RegistryModel.this);
-			services.put(new Long(adapter.getId()), adapter);
+			services.put(Long.valueOf(adapter.getId()), adapter);
 
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.ADDED);
 
@@ -109,7 +109,7 @@ public class RegistryModel {
 				serviceNameDelta = new ModelChangeDelta(adapter.getName(), ModelChangeDelta.REMOVED);
 			}
 
-			services.remove(new Long(adapter.getId()));
+			services.remove(Long.valueOf(adapter.getId()));
 
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.REMOVED);
 
@@ -126,7 +126,7 @@ public class RegistryModel {
 		@Override
 		public void updateService(ServiceRegistration adapter) {
 			adapter.setModel(RegistryModel.this);
-			services.put(new Long(adapter.getId()), adapter);
+			services.put(Long.valueOf(adapter.getId()), adapter);
 
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.UPDATED);
 

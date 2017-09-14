@@ -977,7 +977,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			return;
 		if (fTabFolder != null)
 			fTabFolder.setSelection(tabId);
-		HashSet<Control> controls = fControlMap.get(new Integer(tabId));// 0 is tab
+		HashSet<Control> controls = fControlMap.get(Integer.valueOf(tabId));// 0 is tab
 		Control curr = null;
 		boolean found = false;
 		for (Control con : controls) {
@@ -992,7 +992,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		if (found) {
 			ExpandableComposite expandable = getParentExpandableComposite(curr);
 			if (expandable != null) {
-				HashSet<Control> controls2 = fControlMap.get(new Integer(tabId));
+				HashSet<Control> controls2 = fControlMap.get(Integer.valueOf(tabId));
 				//collapse other expandable composites
 				for (Control con : controls2) {
 					ExpandableComposite expandableOthers = getParentExpandableComposite(con);
@@ -1009,7 +1009,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private int findTab(Key key) {
 		int tabId = -1;
 		for (int i = 0; i < 3; i++) {
-			HashSet<Control> controls = fControlMap.get(new Integer(i));
+			HashSet<Control> controls = fControlMap.get(Integer.valueOf(i));
 			if (controls == null)
 				continue;
 			for (Control con : controls) {

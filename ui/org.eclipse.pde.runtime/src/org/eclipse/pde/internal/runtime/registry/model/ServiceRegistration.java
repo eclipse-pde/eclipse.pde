@@ -74,7 +74,7 @@ public class ServiceRegistration extends ModelObject implements Comparable {
 
 		Set bundles = new HashSet();
 		for (long usingBundle : usingBundles) {
-			Bundle bundle = model.getBundle(new Long(usingBundle));
+			Bundle bundle = model.getBundle(Long.valueOf(usingBundle));
 			if (bundle != null){
 				bundles.add(bundle);
 			}

@@ -507,7 +507,7 @@ public class TargetPlatformHelper {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc == null)
 				continue;
-			Long id = new Long(desc.getBundleId());
+			Long id = Long.valueOf(desc.getBundleId());
 			if (ClasspathUtilCore.hasExtensibleAPI(model)) {
 				properties.put(id, ICoreConstants.EXTENSIBLE_API + ": true"); //$NON-NLS-1$
 			} else if (ClasspathUtilCore.isPatchFragment(model)) {
@@ -521,7 +521,7 @@ public class TargetPlatformHelper {
 		HashMap<Long, String[]> properties = new HashMap<>();
 		BundleDescription[] bundles = state.getState().getBundles();
 		for (BundleDescription bundle : bundles) {
-			properties.put(new Long(bundle.getBundleId()), getValue(bundle, state));
+			properties.put(Long.valueOf(bundle.getBundleId()), getValue(bundle, state));
 		}
 		return properties;
 	}

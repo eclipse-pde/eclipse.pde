@@ -59,7 +59,7 @@ public class PackageFinder {
 			String fieldName = new String(fieldInfo.getDescriptor());
 			if (!isPrimitiveTypeSignature(fieldName)) {
 				String fieldDescriptor = extractFullyQualifiedTopLevelType(fieldName);
-				packages.add(getPackage(new String(fieldDescriptor)));
+				packages.add(getPackage(fieldDescriptor));
 			}
 		}
 
@@ -79,7 +79,7 @@ public class PackageFinder {
 			for (int j = 0; j < parameterTypes.length; j++) {
 				//have to parse to convert [Ljava/lang/String; to java.lang.String
 				if (!isPrimitiveTypeSignature(parameterTypes[j])) {
-					packages.add(getPackage(new String(extractFullyQualifiedTopLevelType(parameterTypes[j]))));
+					packages.add(getPackage(extractFullyQualifiedTopLevelType(parameterTypes[j])));
 				}
 			}
 			//add return type
