@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
+ *     Lucas Bullen (Red Hat Inc.) - [Bug 522317] Support environment arguments tags in Generic TP editor
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete;
 
@@ -26,6 +27,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors.AttributeNameCompletionProcessor;
 import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors.AttributeValueCompletionProcessor;
 import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors.TagCompletionProcessor;
+import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors.TagValueCompletionProcessor;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
 
 /**
@@ -45,19 +47,25 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 	private static final String ATTRIBUTE_NAME_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*(\\s*\\w*\\s*=\\s*\".*?\")*\\s+\\w*"); //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_ACKEY_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*(?<ackey>\\w*)(\\s*\\w*\\s*=\\s*\".*?\")*\\s+\\w*"); //$NON-NLS-1$
 	private static final String TAG_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*"); //$NON-NLS-1$
+	private static final String TAG_VALUE_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*\\w*"); //$NON-NLS-1$
+	private static final String TAG_VALUE_PREFIX_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*(?<prefix>\\w*)"); //$NON-NLS-1$
+	private static final String TAG_VALUE_ACKEY_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<(?<ackey>\\w*).*"); //$NON-NLS-1$
 
 	private static final int COMPLETION_TYPE_TAG = 0;
 	private static final int COMPLETION_TYPE_ATTRIBUTE_NAME = 1;
 	private static final int COMPLETION_TYPE_ATTRIBUTE_VALUE = 2;
 	private static final int COMPLETION_TYPE_HEADER = 4;
-	private static final int COMPLETION_TYPE_UNKNOWN = 5;
+	private static final int COMPLETION_TYPE_TAG_VALUE = 5;
+	private static final int COMPLETION_TYPE_UNKNOWN = 6;
 
 	private static final Pattern TAG_PREFIX_PATTERN = Pattern.compile(TAG_PREFIX_MATCH);
 	private static final Pattern ATT_NAME_PREFIX_PATTERN = Pattern.compile(ATTRIBUTE_NAME_PREFIX_MATCH);
 	private static final Pattern ATTR_NAME_ACKEY_MATCH = Pattern.compile(ATTRIBUTE_NAME_ACKEY_MATCH);
 	private static final Pattern ATTR_VALUE_PREFIX_PATTERN = Pattern.compile(ATTRIBUTE_VALUE_PREFIX_MATCH);
 	private static final Pattern ATTR_VALUE_ACKEY_PATTERN = Pattern.compile(ATTRIBUTE_VALUE_ACKEY_MATCH);
-	
+	private static final Pattern TAG_VALUE_PREFIX_PATTERN = Pattern.compile(TAG_VALUE_PREFIX_MATCH);
+	private static final Pattern TAG_VALUE_ACKEY_PATTERN = Pattern.compile(TAG_VALUE_ACKEY_MATCH);
+
 	private String prefix = ""; //$NON-NLS-1$
 	private String acKey;
 
@@ -88,6 +96,11 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 
 		if (completionType == COMPLETION_TYPE_ATTRIBUTE_VALUE) {
 			AttributeValueCompletionProcessor processor = new AttributeValueCompletionProcessor(prefix, acKey, offset);
+			return processor.getCompletionProposals();
+		}
+
+		if (completionType == COMPLETION_TYPE_TAG_VALUE) {
+			TagValueCompletionProcessor processor = new TagValueCompletionProcessor(prefix, acKey, offset);
 			return processor.getCompletionProposals();
 		}
 
@@ -135,6 +148,16 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 			matcher.matches();
 			acKey = matcher.group("ackey"); //$NON-NLS-1$
 			return COMPLETION_TYPE_ATTRIBUTE_VALUE;
+		}
+
+		if (partialLineText.matches(TAG_VALUE_MATCH_REGEXP)) {
+			Matcher matcher = TAG_VALUE_PREFIX_PATTERN.matcher(partialLineText);
+			matcher.matches();
+			prefix = matcher.group("prefix"); //$NON-NLS-1$
+			matcher = TAG_VALUE_ACKEY_PATTERN.matcher(partialLineText);
+			matcher.matches();
+			acKey = matcher.group("ackey"); //$NON-NLS-1$
+			return COMPLETION_TYPE_TAG_VALUE;
 		}
 
 		return COMPLETION_TYPE_UNKNOWN;

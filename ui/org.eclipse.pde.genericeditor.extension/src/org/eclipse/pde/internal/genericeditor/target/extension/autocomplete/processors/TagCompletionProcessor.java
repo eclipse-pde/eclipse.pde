@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
+ *     Lucas Bullen (Red Hat Inc.) - [Bug 522317] Support environment arguments tags in Generic TP editor
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
@@ -26,7 +27,8 @@ public class TagCompletionProcessor extends DelegateProcessor {
 	private String[] tags = new String[] { ITargetConstants.LOCATIONS_TAG, ITargetConstants.LOCATION_TAG,
 			ITargetConstants.TARGET_TAG, ITargetConstants.UNIT_TAG, ITargetConstants.REPOSITORY_TAG,
 			ITargetConstants.TARGET_JRE_TAG, ITargetConstants.LAUNCHER_ARGS_TAG, ITargetConstants.VM_ARGS_TAG,
-			ITargetConstants.PROGRAM_ARGS_TAG };
+			ITargetConstants.PROGRAM_ARGS_TAG, ITargetConstants.ENVIRONMENT_TAG, ITargetConstants.OS_TAG,
+			ITargetConstants.WS_TAG, ITargetConstants.ARCH_TAG, ITargetConstants.NL_TAG };
 
 	private String prefix;
 	private int offset;

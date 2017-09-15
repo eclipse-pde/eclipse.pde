@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
+ *     Lucas Bullen (Red Hat Inc.) - [Bug 522317] Support environment arguments tags in Generic TP editor
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.model;
 
@@ -28,6 +29,11 @@ public interface ITargetConstants {
 	public static final String LAUNCHER_ARGS_TAG = "launcherArgs"; //$NON-NLS-1$
 	public static final String VM_ARGS_TAG = "vmArgs";
 	public static final String PROGRAM_ARGS_TAG = "programArgs";
+	public static final String ENVIRONMENT_TAG = "environment"; //$NON-NLS-1$
+	public static final String OS_TAG = "os"; //$NON-NLS-1$
+	public static final String WS_TAG = "ws"; //$NON-NLS-1$
+	public static final String ARCH_TAG = "arch"; //$NON-NLS-1$
+	public static final String NL_TAG = "nl"; //$NON-NLS-1$
 	public static final String UNIT_ID_ATTR = "id"; //$NON-NLS-1$
 	public static final String UNIT_VERSION_ATTR = "version"; //$NON-NLS-1$
 	public static final String TARGET_NAME_ATTR = "name"; //$NON-NLS-1$
