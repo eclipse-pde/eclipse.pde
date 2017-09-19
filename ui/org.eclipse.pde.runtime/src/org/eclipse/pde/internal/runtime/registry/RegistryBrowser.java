@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 211127
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 288405
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
@@ -433,17 +434,30 @@ public class RegistryBrowser extends ViewPart {
 		fShowDisabledAction.setChecked(fMemento.getString(SHOW_DISABLED_MODE).equals("true")); //$NON-NLS-1$
 
 		fCopyAction = new Action(PDERuntimeMessages.RegistryBrowser_copy_label) {
+			/**
+			 * Create string with labels of all selected objects, one object per line.
+			 */
+			private String selectionToTextVersion(ITreeSelection selection, ILabelProvider labelProvider) {
+				if (selection.isEmpty()) {
+					return ""; //$NON-NLS-1$
+				}
+				StringBuilder sb = new StringBuilder();
+				for (Object element : selection.toList()) {
+					String textVersion = labelProvider.getText(element);
+					if ((textVersion != null) && (!textVersion.trim().isEmpty())) {
+						sb.append(textVersion);
+						sb.append(System.lineSeparator());
+					}
+				}
+				return sb.toString().trim();
+			}
+
 			@Override
 			public void run() {
-				ITreeSelection selection = (ITreeSelection) fFilteredTree.getViewer().getSelection();
-				if (selection.isEmpty()) {
-					return;
-				}
-
-				String textVersion = ((ILabelProvider) fTreeViewer.getLabelProvider()).getText(selection.getFirstElement());
-				if ((textVersion != null) && (textVersion.trim().length() > 0)) {
-					// set the clipboard contents
-					fClipboard.setContents(new Object[] {textVersion}, new Transfer[] {TextTransfer.getInstance()});
+				String text = selectionToTextVersion((ITreeSelection) fFilteredTree.getViewer().getSelection(),
+						(ILabelProvider) fTreeViewer.getLabelProvider());
+				if (!text.isEmpty()) {
+					fClipboard.setContents(new Object[] { text }, new Transfer[] { TextTransfer.getInstance() });
 				}
 			}
 		};
