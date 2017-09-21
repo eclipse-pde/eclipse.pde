@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,14 +243,14 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	public static IPluginExtension[] findTOCExtensions(ISharedExtensionsModel model) {
 		IPluginExtension[] extensions = model.getExtensions().getExtensions();
 
-		ArrayList tocExtensions = new ArrayList();
+		ArrayList<IPluginExtension> tocExtensions = new ArrayList<>();
 		for (IPluginExtension extension : extensions) {
 			String point = extension.getPoint();
 			if (F_TOC_EXTENSION_POINT_ID.equals(point)) {
 				tocExtensions.add(extension);
 			}
 		}
-		return (IPluginExtension[]) tocExtensions.toArray(new IPluginExtension[tocExtensions.size()]);
+		return tocExtensions.toArray(new IPluginExtension[tocExtensions.size()]);
 	}
 
 	private void createNewPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,7 @@ import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSCommand;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRun;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRunContainerObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.CSAbstractSubDetails;
 import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.ICSMaster;
@@ -39,12 +35,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -482,11 +473,11 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 
 	private static ICommandService getCommandService() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		return (ICommandService) workbench.getAdapter(ICommandService.class);
+		return workbench.getAdapter(ICommandService.class);
 	}
 
 	private static IHandlerService getGlobalHandlerService() {
-		return (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+		return PlatformUI.getWorkbench().getService(IHandlerService.class);
 	}
 
 	private static IEvaluationContext getSnapshotContext() {

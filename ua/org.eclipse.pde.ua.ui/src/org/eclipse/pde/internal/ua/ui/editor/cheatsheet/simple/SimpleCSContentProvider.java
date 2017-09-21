@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
 
@@ -30,7 +31,7 @@ public class SimpleCSContentProvider implements ITreeContentProvider {
 			return new Object[] { ((ISimpleCSModel) parentElement)
 					.getSimpleCS() };
 		} else if (parentElement instanceof ISimpleCSObject) {
-			List list = ((ISimpleCSObject) parentElement).getChildren();
+			List<IDocumentElementNode> list = ((ISimpleCSObject) parentElement).getChildren();
 			// List is never null
 			if (list.size() > 0) {
 				return list.toArray();

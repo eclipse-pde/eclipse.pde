@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,25 +74,22 @@ public class TocOperation extends WorkspaceModifyOperation {
 	}
 
 	protected void openFile() {
-		Display.getCurrent().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchWindow ww = PDEUserAssistanceUIPlugin.getActiveWorkbenchWindow();
-				if (ww == null) {
-					return;
-				}
-				IWorkbenchPage page = ww.getActivePage();
-				if (page == null || !fFile.exists())
-					return;
-				IWorkbenchPart focusPart = page.getActivePart();
-				if (focusPart instanceof ISetSelectionTarget) {
-					ISelection selection = new StructuredSelection(fFile);
-					((ISetSelectionTarget) focusPart).selectReveal(selection);
-				}
-				try {
-					IDE.openEditor(page, fFile, IConstants.TABLE_OF_CONTENTS_EDITOR_ID);
-				} catch (PartInitException e) {
-				}
+		Display.getCurrent().asyncExec(() -> {
+			IWorkbenchWindow ww = PDEUserAssistanceUIPlugin.getActiveWorkbenchWindow();
+			if (ww == null) {
+				return;
+			}
+			IWorkbenchPage page = ww.getActivePage();
+			if (page == null || !fFile.exists())
+				return;
+			IWorkbenchPart focusPart = page.getActivePart();
+			if (focusPart instanceof ISetSelectionTarget) {
+				ISelection selection = new StructuredSelection(fFile);
+				((ISetSelectionTarget) focusPart).selectReveal(selection);
+			}
+			try {
+				IDE.openEditor(page, fFile, IConstants.TABLE_OF_CONTENTS_EDITOR_ID);
+			} catch (PartInitException e) {
 			}
 		});
 	}

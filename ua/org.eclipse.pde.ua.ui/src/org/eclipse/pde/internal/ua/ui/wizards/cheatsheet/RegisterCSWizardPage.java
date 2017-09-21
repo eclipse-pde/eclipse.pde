@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,6 @@ import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -296,21 +294,11 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	}
 
 	private void createUIListenersCategoryCombo() {
-		fCategoryCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fDataCategoryName = fCategoryCombo.getText();
-			}
-		});
+		fCategoryCombo.addModifyListener(e -> fDataCategoryName = fCategoryCombo.getText());
 	}
 
 	private void createUIListenersDescriptionText() {
-		fDescriptionText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fDataDescription = fDescriptionText.getText();
-			}
-		});
+		fDescriptionText.addModifyListener(e -> fDataDescription = fDescriptionText.getText());
 	}
 
 	private void handleWidgetSelectedCategoryButton() {
@@ -474,14 +462,14 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	public IPluginExtension[] findExtensions(ISharedExtensionsModel model, String extensionPointID) {
 		IPluginExtension[] extensions = model.getExtensions().getExtensions();
 
-		ArrayList csExtensions = new ArrayList();
+		ArrayList<IPluginExtension> csExtensions = new ArrayList<>();
 		for (IPluginExtension extension : extensions) {
 			String point = extension.getPoint();
 			if (extensionPointID.equals(point)) {
 				csExtensions.add(extension);
 			}
 		}
-		return (IPluginExtension[]) csExtensions.toArray(new IPluginExtension[csExtensions.size()]);
+		return csExtensions.toArray(new IPluginExtension[csExtensions.size()]);
 	}
 
 	private String generateCheatSheetID() {

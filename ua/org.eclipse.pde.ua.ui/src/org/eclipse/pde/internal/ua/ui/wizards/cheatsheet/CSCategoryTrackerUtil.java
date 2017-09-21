@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,28 +25,28 @@ public class CSCategoryTrackerUtil {
 
 	public final static int F_TYPE_OLD_CATEGORY = 2;
 
-	private HashMap fCategoryNameMap;
+	private HashMap<String, String> fCategoryNameMap;
 
-	private HashMap fCategoryIDMap;
+	private HashMap<String, String> fCategoryIDMap;
 
-	private HashMap fCategoryTypeMap;
+	private HashMap<String, Integer> fCategoryTypeMap;
 
 	public CSCategoryTrackerUtil() {
 
 		// Look-up hashmap
 		// Keys are category ids
 		// Values are category names
-		fCategoryIDMap = new HashMap();
+		fCategoryIDMap = new HashMap<>();
 
 		// Reverse look-up hashmap
 		// Keys are category names
 		// Values are category ids
-		fCategoryNameMap = new HashMap();
+		fCategoryNameMap = new HashMap<>();
 
 		// Look-up hashmap
 		// Keys are category ids
 		// Values are category types: either new or old
-		fCategoryTypeMap = new HashMap();
+		fCategoryTypeMap = new HashMap<>();
 
 	}
 
@@ -65,15 +65,15 @@ public class CSCategoryTrackerUtil {
 	}
 
 	public String getCategoryName(String id) {
-		return (String) fCategoryIDMap.get(id);
+		return fCategoryIDMap.get(id);
 	}
 
 	public String getCategoryID(String name) {
-		return (String) fCategoryNameMap.get(name);
+		return fCategoryNameMap.get(name);
 	}
 
 	public int getCategoryType(String id) {
-		Integer integer = (Integer) fCategoryTypeMap.get(id);
+		Integer integer = fCategoryTypeMap.get(id);
 		if (integer == null) {
 			return F_TYPE_NO_CATEGORY;
 		}

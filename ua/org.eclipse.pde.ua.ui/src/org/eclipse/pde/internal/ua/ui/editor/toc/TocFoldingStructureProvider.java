@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,22 +27,23 @@ import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 
 public class TocFoldingStructureProvider extends AbstractFoldingStructureProvider {
 
-	private Map fPositionToElement = new HashMap();
+	private Map<Position, IDocumentElementNode> fPositionToElement = new HashMap<>();
 
 	public TocFoldingStructureProvider(PDESourcePage editor, IEditingModel model) {
 		super(editor, model);
 	}
 
 	@Override
-	public void addFoldingRegions(Set currentRegions, IEditingModel model) throws BadLocationException {
+	public void addFoldingRegions(Set<Position> currentRegions, IEditingModel model) throws BadLocationException {
 		TocObject toc = ((TocModel) model).getToc();
-		List childList = toc.getChildren();
-		IDocumentElementNode[] children = (IDocumentElementNode[]) childList.toArray(new IDocumentElementNode[childList.size()]);
+		List<TocObject> childList = toc.getChildren();
+		IDocumentElementNode[] children = childList.toArray(new IDocumentElementNode[childList.size()]);
 
 		addFoldingRegions(currentRegions, children, model.getDocument());
 	}
 
-	private void addFoldingRegions(Set regions, IDocumentElementNode[] nodes, IDocument document) throws BadLocationException {
+	private void addFoldingRegions(Set<Position> regions, IDocumentElementNode[] nodes, IDocument document)
+			throws BadLocationException {
 		for (IDocumentElementNode element : nodes) {
 			int startLine = document.getLineOfOffset(element.getOffset());
 			int endLine = document.getLineOfOffset(element.getOffset() + element.getLength());

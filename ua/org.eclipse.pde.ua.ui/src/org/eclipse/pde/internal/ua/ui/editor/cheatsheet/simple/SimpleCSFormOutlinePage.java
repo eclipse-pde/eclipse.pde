@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
@@ -68,7 +69,7 @@ public class SimpleCSFormOutlinePage extends FormOutlinePage {
 				return list;
 			}
 		} else if (parent instanceof ISimpleCSObject) {
-			List list = ((ISimpleCSObject) parent).getChildren();
+			List<IDocumentElementNode> list = ((ISimpleCSObject) parent).getChildren();
 			// List is never null
 			if (list.size() > 0) {
 				return list.toArray();

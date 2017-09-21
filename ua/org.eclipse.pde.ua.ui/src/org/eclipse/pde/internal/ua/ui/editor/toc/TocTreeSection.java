@@ -355,8 +355,7 @@ public class TocTreeSection extends TreeSection {
 		// 'Remove' is enabled if any object in the selection is removable
 		boolean canRemove = false;
 
-		IStructuredSelection sel = (IStructuredSelection) fTocTree
-				.getSelection();
+		IStructuredSelection sel = fTocTree.getStructuredSelection();
 		// TODO: Implement multi-select move actions from the root TOC element
 
 		// 'Up' is disabled if any object in the selection can't be moved up.
@@ -366,7 +365,7 @@ public class TocTreeSection extends TreeSection {
 		// down.
 		boolean canMoveDown = sel.size() == 1;
 
-		for (Iterator iter = sel.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 			TocObject tocObject = (TocObject) iter.next();
 
 			if (tocObject != null) {
@@ -475,7 +474,7 @@ public class TocTreeSection extends TreeSection {
 		String showInLabel = TocMessages.TocTreeSection_showIn;
 
 		// Add a label for the keybinding for Show In action, if one exists
-		IBindingService bindingService = (IBindingService) PlatformUI
+		IBindingService bindingService = PlatformUI
 				.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null) {
 			String keyBinding = bindingService
@@ -766,12 +765,12 @@ public class TocTreeSection extends TreeSection {
 				// and it is expanded, then insert the dropped items
 				// as the first children of the parent
 				location = ViewerDropAdapter.LOCATION_BEFORE;
-				tocTarget = (TocObject) tocTarget.getChildren().get(0);
+				tocTarget = tocTarget.getChildren().get(0);
 			}
 
 			if (targetParent != null) { // Get the TocObject versions of the
 										// dropped objects
-				ArrayList objectsToAdd = getObjectsToAdd((Object[]) dropped,
+				ArrayList<TocObject> objectsToAdd = getObjectsToAdd((Object[]) dropped,
 						targetParent);
 
 				if (objectsToAdd != null && !objectsToAdd.isEmpty()) {
@@ -884,8 +883,8 @@ public class TocTreeSection extends TreeSection {
 	 * @return a list of the (reconnected) TocObject representations of the
 	 *         dropped objects
 	 */
-	private ArrayList getObjectsToAdd(Object[] droppings, TocTopic targetParent) {
-		ArrayList tocObjects = new ArrayList(droppings.length);
+	private ArrayList<TocObject> getObjectsToAdd(Object[] droppings, TocTopic targetParent) {
+		ArrayList<TocObject> tocObjects = new ArrayList<>(droppings.length);
 
 		if (fDragAdapter.getDraggedElements() != null) { // If there are items
 															// in the drag
@@ -924,9 +923,9 @@ public class TocTreeSection extends TreeSection {
 					tocObjects.add(topic);
 				}
 			} else if (droppings[i] instanceof TocObject) {
-				ArrayList dragged = fDragAdapter.getDraggedElements();
+				ArrayList<TocObject> dragged = fDragAdapter.getDraggedElements();
 				if (fDragFromHere) {
-					TocObject draggedObj = (TocObject) dragged.get(i);
+					TocObject draggedObj = dragged.get(i);
 
 					// Nesting an object inside itself or its children
 					// is so stupid and ridiculous that I get a headache
@@ -939,7 +938,7 @@ public class TocTreeSection extends TreeSection {
 
 				// Reconnect this TocObject, since it was deserialized
 				((TocObject) droppings[i]).reconnect(targetParent, fModel);
-				tocObjects.add(droppings[i]);
+				tocObjects.add((TocObject) droppings[i]);
 			}
 		}
 
@@ -962,7 +961,7 @@ public class TocTreeSection extends TreeSection {
 		String title = TocHTMLTitleUtil.findTitle(path.toFile());
 		if (title == null) {
 			int numChildren = targetParent.getChildren().size();
-			TocObject[] children = (TocObject[]) targetParent.getChildren()
+			TocObject[] children = targetParent.getChildren()
 					.toArray(new TocObject[numChildren]);
 
 			String[] tocObjectNames = new String[children.length];
@@ -1073,9 +1072,9 @@ public class TocTreeSection extends TreeSection {
 	 * @param targetParent
 	 *            The parent object of the newly added objects
 	 */
-	private void handleMultiAddAction(List objectsToAdd, TocObject tocTarget,
+	private void handleMultiAddAction(List<TocObject> objectsToAdd, TocObject tocTarget,
 			boolean insertBefore, TocObject targetParent) {
-		TocObject[] tocObjects = (TocObject[]) objectsToAdd
+		TocObject[] tocObjects = objectsToAdd
 				.toArray(new TocObject[objectsToAdd.size()]);
 		if (tocObjects == null)
 			return;
@@ -1108,13 +1107,13 @@ public class TocTreeSection extends TreeSection {
 	 * Remove the selected objects from the TOC tree
 	 */
 	private void handleDeleteAction() {
-		ArrayList objects = new ArrayList(
-				((IStructuredSelection) fTocTree.getSelection()).toList());
+		ArrayList objects = new ArrayList<>(
+				fTocTree.getStructuredSelection().toList());
 		boolean beep = false;
 
 		// Iterate through the list of selected objects, removing ones
 		// that cannot be removed
-		for (Iterator i = objects.iterator(); i.hasNext();) {
+		for (Iterator<?> i = objects.iterator(); i.hasNext();) {
 			Object object = i.next();
 			if (object instanceof TocObject) {
 				TocObject tocObject = (TocObject) object;
@@ -1140,9 +1139,9 @@ public class TocTreeSection extends TreeSection {
 	 * @param itemsToRemove
 	 *            The list of items to remove from the TOC
 	 */
-	public void handleRemove(List itemsToRemove) {
+	public void handleRemove(List<TocObject> itemsToRemove) {
 		if (!itemsToRemove.isEmpty()) { // Target the objects for removal
-			fRemoveObjectAction.setToRemove((TocObject[]) itemsToRemove
+			fRemoveObjectAction.setToRemove(itemsToRemove
 					.toArray(new TocObject[itemsToRemove.size()]));
 
 			// Run the removal action
@@ -1156,7 +1155,7 @@ public class TocTreeSection extends TreeSection {
 	 * @param itemsDragged
 	 *            The items dragged out of the TOC
 	 */
-	public void handleDrag(List itemsDragged) {
+	public void handleDrag(List<TocObject> itemsDragged) {
 		handleRemove(itemsDragged);
 
 		// The drag is finished, so there is no intra-editor DND operation
@@ -1171,10 +1170,9 @@ public class TocTreeSection extends TreeSection {
 	 *            The direction that the object will move
 	 */
 	private void handleMoveAction(int positionFlag) {
-		IStructuredSelection sel = (IStructuredSelection) fTocTree
-				.getSelection();
+		IStructuredSelection sel = fTocTree.getStructuredSelection();
 
-		for (Iterator iter = sel.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 			Object object = iter.next();
 			if (object == null) {
 				return;

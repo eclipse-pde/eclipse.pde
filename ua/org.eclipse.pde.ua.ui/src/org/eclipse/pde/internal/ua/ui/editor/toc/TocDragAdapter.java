@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,13 +25,14 @@ import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 
 /**
- * TocDragAdapter implements the drag behaviour for the TOC tree section.
+ * TocDragAdapter implements the drag behaviour for the TOC tree
+ * section.
  */
 public class TocDragAdapter implements DragSourceListener {
 	//The TOC Tree Section being dragged from
 	private TocTreeSection fSection;
 	//The dragged items
-	private ArrayList fDraggedItems;
+	private ArrayList<TocObject> fDraggedItems;
 
 	/**
 	 * Constructs a new Drag Adapter with the specified selection
@@ -63,7 +64,7 @@ public class TocDragAdapter implements DragSourceListener {
 				PrintWriter writer = new PrintWriter(sw);
 
 				//Write the XML representation of each selected object
-				for (Iterator iter = sel.iterator(); iter.hasNext();) {
+				for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 					Object obj = iter.next();
 					if (obj instanceof TocObject) {
 						((TocObject) obj).write("", writer); //$NON-NLS-1$
@@ -78,7 +79,7 @@ public class TocDragAdapter implements DragSourceListener {
 			} else if (ModelDataTransfer.getInstance().isSupportedType(event.dataType)) {
 				//If we are dragging items from the model
 				fDraggedItems = getSelectedObjects(sel);
-				TocObject[] selectedObjects = (TocObject[]) fDraggedItems.toArray(new TocObject[fDraggedItems.size()]);
+				TocObject[] selectedObjects = fDraggedItems.toArray(new TocObject[fDraggedItems.size()]);
 				if (selectedObjects.length == 0) { //disable the drag if there are no items selected
 					event.doit = false;
 				} else { //set the event's drag object to the selection
@@ -92,15 +93,15 @@ public class TocDragAdapter implements DragSourceListener {
 	 * @param selection The selection to place in the ArrayList
 	 * @return an ArrayList containing all removable TocObjects in the selection
 	 */
-	private ArrayList getSelectedObjects(IStructuredSelection selection) {
-		ArrayList objects = new ArrayList();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+	private ArrayList<TocObject> getSelectedObjects(IStructuredSelection selection) {
+		ArrayList<TocObject> objects = new ArrayList<>();
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof TocObject && ((TocObject) obj).canBeRemoved()) { //If the object is a removable TocObject, add it
-				objects.add(obj);
+				objects.add((TocObject) obj);
 			} else { //If the object is not a removable TocObject,
 				//we don't want to permit the drag, so return an empty list
-				return new ArrayList();
+				return new ArrayList<>();
 			}
 		}
 
@@ -116,7 +117,7 @@ public class TocDragAdapter implements DragSourceListener {
 		fDraggedItems = null;
 	}
 
-	public ArrayList getDraggedElements() {
+	public ArrayList<TocObject> getDraggedElements() {
 		return fDraggedItems;
 	}
 }

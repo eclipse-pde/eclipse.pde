@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ public class SimpleCSAddSubStepAction extends Action {
 			}
 		}
 
-		String[] names = (String[]) subItemNames.toArray(new String[subItemNames.size()]);
+		String[] names = subItemNames.toArray(new String[subItemNames.size()]);
 
 		// Set on the proper parent object
 		subitem.setLabel(PDELabelUtility.generateName(names, SimpleActionMessages.SimpleCSAddSubStepAction_actionLabel));

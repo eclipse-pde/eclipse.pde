@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,16 +24,16 @@ import org.eclipse.core.runtime.ListenerList;
  */
 public class SimpleCSCommandManager {
 
-	private ListenerList fListeners;
+	private ListenerList<ISimpleCSCommandKeyListener> fListeners;
 
 	private static SimpleCSCommandManager fPinstance;
 
-	private Map fCommandMap;
+	private Map<String, String> fCommandMap;
 
 	private boolean fBlockEvents;
 
 	private SimpleCSCommandManager() {
-		fCommandMap = Collections.synchronizedMap(new HashMap());
+		fCommandMap = Collections.synchronizedMap(new HashMap<>());
 		fBlockEvents = false;
 		fListeners = null;
 	}
@@ -56,7 +56,7 @@ public class SimpleCSCommandManager {
 	public synchronized boolean put(String key, String value) {
 		// Do not add the key-value pair if it is already in the map
 		if (fCommandMap.containsKey(key)) {
-			String presentValue = (String) fCommandMap.get(key);
+			String presentValue = fCommandMap.get(key);
 			if ((presentValue == null) && (value == null)) {
 				// Key-value pair not added
 				return false;
@@ -74,14 +74,14 @@ public class SimpleCSCommandManager {
 	}
 
 	public String get(String key) {
-		return (String) fCommandMap.get(key);
+		return fCommandMap.get(key);
 	}
 
 	public boolean hasKey(String key) {
 		return fCommandMap.containsKey(key);
 	}
 
-	public Set getKeys() {
+	public Set<String> getKeys() {
 		return fCommandMap.keySet();
 	}
 
@@ -91,7 +91,7 @@ public class SimpleCSCommandManager {
 
 	public void addCommandKeyListener(ISimpleCSCommandKeyListener listener) {
 		if (fListeners == null) {
-			fListeners = new ListenerList();
+			fListeners = new ListenerList<>();
 		}
 		fListeners.add(listener);
 	}
@@ -112,9 +112,7 @@ public class SimpleCSCommandManager {
 		// Create the event
 		NewCommandKeyEvent event = new NewCommandKeyEvent(this, key, value);
 		// Notify all listeners
-		Object[] listenerList = fListeners.getListeners();
-		for (int i = 0; i < fListeners.size(); i++) {
-			ISimpleCSCommandKeyListener listener = (ISimpleCSCommandKeyListener) listenerList[i];
+		for (ISimpleCSCommandKeyListener listener : fListeners) {
 			listener.newCommandKey(event);
 		}
 	}

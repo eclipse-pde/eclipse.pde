@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -297,14 +297,14 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	public static IPluginExtension[] findCheatSheetExtensions(ISharedExtensionsModel model) {
 		IPluginExtension[] extensions = model.getExtensions().getExtensions();
 
-		ArrayList csExtensions = new ArrayList();
+		ArrayList<IPluginExtension> csExtensions = new ArrayList<>();
 		for (IPluginExtension extension : extensions) {
 			String point = extension.getPoint();
 			if (F_CS_EXTENSION_POINT_ID.equals(point)) {
 				csExtensions.add(extension);
 			}
 		}
-		return (IPluginExtension[]) csExtensions.toArray(new IPluginExtension[csExtensions.size()]);
+		return csExtensions.toArray(new IPluginExtension[csExtensions.size()]);
 	}
 
 	private void createNewPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {

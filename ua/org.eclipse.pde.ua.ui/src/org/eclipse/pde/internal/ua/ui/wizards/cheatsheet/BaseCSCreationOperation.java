@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,27 +53,24 @@ public abstract class BaseCSCreationOperation extends WorkspaceModifyOperation {
 	protected abstract void createContent() throws CoreException;
 
 	private void openFile() {
-		Display.getCurrent().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchWindow window = PDEUserAssistanceUIPlugin.getActiveWorkbenchWindow();
-				if (window == null) {
-					return;
-				}
-				IWorkbenchPage page = window.getActivePage();
-				if ((page == null) || !fFile.exists()) {
-					return;
-				}
-				IWorkbenchPart focusPart = page.getActivePart();
-				if (focusPart instanceof ISetSelectionTarget) {
-					ISelection selection = new StructuredSelection(fFile);
-					((ISetSelectionTarget) focusPart).selectReveal(selection);
-				}
-				try {
-					IDE.openEditor(page, fFile);
-				} catch (PartInitException e) {
-					// Ignore
-				}
+		Display.getCurrent().asyncExec(() -> {
+			IWorkbenchWindow window = PDEUserAssistanceUIPlugin.getActiveWorkbenchWindow();
+			if (window == null) {
+				return;
+			}
+			IWorkbenchPage page = window.getActivePage();
+			if ((page == null) || !fFile.exists()) {
+				return;
+			}
+			IWorkbenchPart focusPart = page.getActivePart();
+			if (focusPart instanceof ISetSelectionTarget) {
+				ISelection selection = new StructuredSelection(fFile);
+				((ISetSelectionTarget) focusPart).selectReveal(selection);
+			}
+			try {
+				IDE.openEditor(page, fFile);
+			} catch (PartInitException e) {
+				// Ignore
 			}
 		});
 	}

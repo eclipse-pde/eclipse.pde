@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -225,13 +225,13 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	public IPluginExtension[] findExtensions(IPluginModelBase model, String extensionPointID) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 
-		ArrayList tocExtensions = new ArrayList();
+		ArrayList<IPluginExtension> tocExtensions = new ArrayList<>();
 		for (IPluginExtension extension : extensions) {
 			String point = extension.getPoint();
 			if (extensionPointID.equals(point)) {
 				tocExtensions.add(extension);
 			}
 		}
-		return (IPluginExtension[]) tocExtensions.toArray(new IPluginExtension[tocExtensions.size()]);
+		return tocExtensions.toArray(new IPluginExtension[tocExtensions.size()]);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpModel;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
+import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
@@ -60,7 +61,7 @@ public class CtxHelpInputContext extends XMLInputContext {
 				model.setInstallLocation(store.getParent().getParent().toString());
 				model.setCharset(getDefaultCharset());
 			} else if (input instanceof JarEntryEditorInput) {
-				File file = (File) ((JarEntryEditorInput) input).getAdapter(File.class);
+				File file = ((JarEntryEditorInput) input).getAdapter(File.class);
 				model.setInstallLocation(file.toString());
 				model.setCharset(getDefaultCharset());
 			} else {
@@ -81,7 +82,7 @@ public class CtxHelpInputContext extends XMLInputContext {
 	}
 
 	@Override
-	protected void reorderInsertEdits(ArrayList ops) {
+	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 		// NO-OP
 	}
 

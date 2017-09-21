@@ -468,7 +468,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		String showInLabel = CtxHelpMessages.CtxHelpTreeSection_17;
 
 		// Add a label for the keybinding for Show In action, if one exists
-		IBindingService bindingService = (IBindingService) PlatformUI
+		IBindingService bindingService = PlatformUI
 				.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null) {
 			String keyBinding = bindingService
@@ -588,8 +588,8 @@ public class CtxHelpTreeSection extends TreeSection {
 	 */
 	private boolean updateRemoveActionWithSelection(
 			IStructuredSelection selection) {
-		List objectsToRemove = getRemovableObjectFromSelection(selection);
-		fRemoveObjectAction.setToRemove((CtxHelpObject[]) objectsToRemove
+		List<CtxHelpObject> objectsToRemove = getRemovableObjectFromSelection(selection);
+		fRemoveObjectAction.setToRemove(objectsToRemove
 				.toArray(new CtxHelpObject[objectsToRemove.size()]));
 		fRemoveObjectAction.setEnabled(fModel.isEditable());
 		return objectsToRemove.size() > 0;
@@ -604,13 +604,13 @@ public class CtxHelpTreeSection extends TreeSection {
 	 * @return list of {@link CtxHelpObject}s that can be removed, possibly
 	 *         empty.
 	 */
-	private List getRemovableObjectFromSelection(IStructuredSelection selection) {
-		List objectsToRemove = new ArrayList();
-		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+	private List<CtxHelpObject> getRemovableObjectFromSelection(IStructuredSelection selection) {
+		List<CtxHelpObject> objectsToRemove = new ArrayList<>();
+		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 			Object currentObject = iterator.next();
 			if (currentObject instanceof CtxHelpObject
 					&& ((CtxHelpObject) currentObject).canBeRemoved()) {
-				objectsToRemove.add(currentObject);
+				objectsToRemove.add((CtxHelpObject) currentObject);
 			}
 		}
 		return objectsToRemove;

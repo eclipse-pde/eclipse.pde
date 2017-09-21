@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class CtxHelpContentProvider implements ITreeContentProvider {
 			CtxHelpObject root = ((CtxHelpModel) parentElement).getCtxHelpRoot();
 			return new Object[] {root};
 		} else if (parentElement instanceof CtxHelpObject) {
-			List list = ((CtxHelpObject) parentElement).getChildren();
+			List<CtxHelpObject> list = ((CtxHelpObject) parentElement).getChildren();
 			return list.toArray();
 		}
 		return new Object[0];

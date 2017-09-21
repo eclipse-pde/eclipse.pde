@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,14 +78,14 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IShowInSource.class) {
 			if (inUiThread() && isShowInApplicable()) {
-				return getShowInSource();
+				return adapter.cast(getShowInSource());
 			}
 		}
 		if (adapter == IShowInTargetList.class) {
-			return getShowInTargetList();
+			return adapter.cast(getShowInTargetList());
 		}
 		return super.getAdapter(adapter);
 	}
@@ -110,7 +110,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 		}
 		if (getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection selection = (IStructuredSelection) getSelection();
-			for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof CtxHelpTopic && ((CtxHelpTopic) obj).getLocation() != null) {
 					return true;
@@ -125,34 +125,31 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	 * @return the <code>IShowInSource</code>
 	 */
 	private IShowInSource getShowInSource() {
-		return new IShowInSource() {
-			@Override
-			public ShowInContext getShowInContext() {
-				ArrayList resourceList = new ArrayList();
-				IStructuredSelection selection = (IStructuredSelection) getSelection();
-				IStructuredSelection resources;
-				if (selection.isEmpty()) {
-					resources = null;
-				} else {
-					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-					for (Iterator iter = selection.iterator(); iter.hasNext();) {
-						Object obj = iter.next();
-						if (obj instanceof CtxHelpTopic) {
-							IPath path = ((CtxHelpTopic) obj).getLocation();
-							if (path != null && !path.isEmpty()) {
-								CtxHelpModel model = (CtxHelpModel) getAggregateModel();
-								IPath pluginPath = model.getUnderlyingResource().getProject().getFullPath();
-								IResource resource = root.findMember(pluginPath.append(path));
-								if (resource != null) {
-									resourceList.add(resource);
-								}
+		return () -> {
+			ArrayList<IResource> resourceList = new ArrayList<>();
+			IStructuredSelection selection = (IStructuredSelection) getSelection();
+			IStructuredSelection resources;
+			if (selection.isEmpty()) {
+				resources = null;
+			} else {
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
+					Object obj = iter.next();
+					if (obj instanceof CtxHelpTopic) {
+						IPath path = ((CtxHelpTopic) obj).getLocation();
+						if (path != null && !path.isEmpty()) {
+							CtxHelpModel model = (CtxHelpModel) getAggregateModel();
+							IPath pluginPath = model.getUnderlyingResource().getProject().getFullPath();
+							IResource resource = root.findMember(pluginPath.append(path));
+							if (resource != null) {
+								resourceList.add(resource);
 							}
 						}
 					}
-					resources = new StructuredSelection(resourceList);
 				}
-				return new ShowInContext(null, resources);
+				resources = new StructuredSelection(resourceList);
 			}
+			return new ShowInContext(null, resources);
 		};
 	}
 
@@ -161,12 +158,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	 * @return the <code>IShowInTargetList</code>
 	 */
 	private IShowInTargetList getShowInTargetList() {
-		return new IShowInTargetList() {
-			@Override
-			public String[] getShowInTargetIds() {
-				return new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV};
-			}
-		};
+		return () -> new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };
 	}
 
 	@Override
@@ -263,7 +255,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	public boolean canCut(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) selection;
-			for (Iterator iter = sel.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof CtxHelpObject && ((CtxHelpObject) obj).canBeRemoved()) {
 					return canCopy(selection);

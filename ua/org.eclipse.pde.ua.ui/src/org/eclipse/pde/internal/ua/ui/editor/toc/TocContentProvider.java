@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class TocContentProvider implements ITreeContentProvider {
 		if (parentElement instanceof TocModel) {
 			return new Object[] {((TocModel) parentElement).getToc()};
 		} else if (parentElement instanceof TocObject) {
-			List list = ((TocObject) parentElement).getChildren();
+			List<TocObject> list = ((TocObject) parentElement).getChildren();
 			// List is never null
 			if (list.size() > 0) {
 				return list.toArray();

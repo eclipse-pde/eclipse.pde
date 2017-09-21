@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,15 +75,15 @@ public class TocEditor extends MultiSourceEditor {
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (inUiThread() && isShowInApplicable()) {
 			if (adapter == IShowInSource.class) {
-				return getShowInSource();
+				return adapter.cast(getShowInSource());
 			}
 		}
 
 		if (adapter == IShowInTargetList.class) {
-			return getShowInTargetList();
+			return adapter.cast(getShowInTargetList());
 		}
 
 		return super.getAdapter(adapter);
@@ -108,7 +108,7 @@ public class TocEditor extends MultiSourceEditor {
 
 		if (getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection selection = (IStructuredSelection) getSelection();
-			for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (!(obj instanceof TocObject))
 					return false;
@@ -128,52 +128,41 @@ public class TocEditor extends MultiSourceEditor {
 	 * @return the <code>IShowInSource</code>
 	 */
 	private IShowInSource getShowInSource() {
-		return new IShowInSource() {
-			@Override
-			public ShowInContext getShowInContext() {
-				ArrayList resourceList = new ArrayList();
-				IStructuredSelection selection = (IStructuredSelection) getSelection();
-				IStructuredSelection resources;
-				if (selection.isEmpty()) {
-					resources = null;
-				} else {
-					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
-							.getRoot();
+		return () -> {
+			ArrayList<IResource> resourceList = new ArrayList<>();
+			IStructuredSelection selection = (IStructuredSelection) getSelection();
+			IStructuredSelection resources;
+			if (selection.isEmpty()) {
+				resources = null;
+			} else {
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
-					for (Iterator iter = selection.iterator(); iter.hasNext();) {
-						Object obj = iter.next();
-						if (obj instanceof TocObject
-								&& ((TocObject) obj).getPath() != null) {
-							Path resourcePath = new Path(
-									((TocObject) obj).getPath());
+				for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
+					Object obj = iter.next();
+					if (obj instanceof TocObject && ((TocObject) obj).getPath() != null) {
+						Path resourcePath = new Path(((TocObject) obj).getPath());
 
-							if (!resourcePath.isEmpty()) {
-								TocModel model = (TocModel) getAggregateModel();
-								IResource underlyingResource = model
-										.getUnderlyingResource();
-								if (underlyingResource != null) {
-									IProject project = underlyingResource
-											.getProject();
-									if (project != null) {
-										IPath pluginPath = project
-												.getFullPath();
-										IResource resource = root
-												.findMember(pluginPath
-														.append(resourcePath));
-										if (resource != null) {
-											resourceList.add(resource);
-										}
+						if (!resourcePath.isEmpty()) {
+							TocModel model = (TocModel) getAggregateModel();
+							IResource underlyingResource = model.getUnderlyingResource();
+							if (underlyingResource != null) {
+								IProject project = underlyingResource.getProject();
+								if (project != null) {
+									IPath pluginPath = project.getFullPath();
+									IResource resource = root.findMember(pluginPath.append(resourcePath));
+									if (resource != null) {
+										resourceList.add(resource);
 									}
 								}
 							}
 						}
 					}
-
-					resources = new StructuredSelection(resourceList);
 				}
 
-				return new ShowInContext(null, resources);
+				resources = new StructuredSelection(resourceList);
 			}
+
+			return new ShowInContext(null, resources);
 		};
 	}
 
@@ -183,13 +172,7 @@ public class TocEditor extends MultiSourceEditor {
 	 * @return the <code>IShowInTargetList</code>
 	 */
 	private IShowInTargetList getShowInTargetList() {
-		return new IShowInTargetList() {
-			@Override
-			public String[] getShowInTargetIds() {
-				return new String[] { JavaUI.ID_PACKAGES,
-						IPageLayout.ID_RES_NAV };
-			}
-		};
+		return () -> new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };
 	}
 
 	@Override
@@ -291,7 +274,7 @@ public class TocEditor extends MultiSourceEditor {
 	public boolean canCut(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) selection;
-			for (Iterator iter = sel.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof TocObject
 						&& ((TocObject) obj).canBeRemoved()) {

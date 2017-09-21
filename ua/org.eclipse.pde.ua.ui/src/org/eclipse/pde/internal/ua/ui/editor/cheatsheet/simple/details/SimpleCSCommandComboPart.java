@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,9 +139,9 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 
 	public void populate() {
 		// Populate the combo with all the values found in the command manager
-		Iterator iterator = SimpleCSCommandManager.Instance().getKeys().iterator();
+		Iterator<String> iterator = SimpleCSCommandManager.Instance().getKeys().iterator();
 		while (iterator.hasNext()) {
-			String key = (String) iterator.next();
+			String key = iterator.next();
 			add(key);
 		}
 	}

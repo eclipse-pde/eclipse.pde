@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,10 @@ package org.eclipse.pde.internal.ua.ui.wizards.cheatsheet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSWorkspaceModel;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
 
-public class CompCSCreationOperation extends BaseCSCreationOperation implements IRunnableWithProgress {
+public class CompCSCreationOperation extends BaseCSCreationOperation {
 
 	public CompCSCreationOperation(IFile file) {
 		super(file);
