@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -42,6 +42,8 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	protected File fConfigDir = null;
 
+	public static boolean shouldVMAddModuleSystem = false;
+
 	@Override
 	protected boolean isLaunchProblem(IMarker problemMarker) throws CoreException {
 		return super.isLaunchProblem(problemMarker) && (problemMarker.getType().equals(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER) || problemMarker.getType().equals(PDEMarkerFactory.MARKER_ID));
@@ -63,7 +65,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			}
 
 			VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
-			runnerConfig.setVMArguments(getVMArguments(configuration));
+			runnerConfig.setVMArguments(updateVMArgumentWithAddModuleSystem(getVMArguments(configuration)));
 			runnerConfig.setProgramArguments(getProgramArguments(configuration));
 			runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
 			runnerConfig.setEnvironment(getEnvironment(configuration));
@@ -82,6 +84,29 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		} catch (final CoreException e) {
 			throw e;
 		}
+	}
+
+	private String[] updateVMArgumentWithAddModuleSystem(String[] args) {
+		String modAllSystem= "--add-modules=ALL-SYSTEM"; //$NON-NLS-1$
+		if (shouldVMAddModuleSystem && !argumentContainsModuleSystem(args, modAllSystem)) {
+			args = Arrays.copyOf(args, args.length + 1);
+			args[args.length - 1] = modAllSystem;
+		}
+		if (!shouldVMAddModuleSystem) {
+			ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(args));
+			arrayList.remove(modAllSystem);
+			arrayList.trimToSize();
+			args = arrayList.toArray(new String[arrayList.size()]);
+		}
+		return args;
+	}
+
+	private boolean argumentContainsModuleSystem(String[] args, String modAllSystem) {
+		for (String string : args) {
+			if (string.equals(modAllSystem))
+				return true;
+		}
+		return false;
 	}
 
 	/**
@@ -408,6 +433,13 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
+	}
+
+	/**
+	 * 
+	 */
+	public static void updatePDELaunchConfigModuleSystem(boolean java9) {
+		AbstractPDELaunchConfiguration.shouldVMAddModuleSystem = java9;
 	}
 
 }

@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.launching.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.launching.AbstractPDELaunchConfiguration;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
@@ -63,7 +64,7 @@ public class JREBlock {
 				return;
 			fTab.updateLaunchConfigurationDialog();
 			if (source == fEeCombo || source == fEeButton || source == fJreCombo || source == fJreButton) {
-				updateBootstrapEnablement();
+				updateBootstrapVmArguments();
 			}
 			if (source == fJreButton || source == fEeButton)
 				updateJREEnablement();
@@ -138,7 +139,7 @@ public class JREBlock {
 						fJreCombo.setText(currentVM);
 					setEECombo();
 					setEEComboSelection(currentEE);
-					updateBootstrapEnablement();
+					updateBootstrapVmArguments();
 				}
 			}
 		}));
@@ -219,7 +220,7 @@ public class JREBlock {
 		setEEComboSelection(eeId);
 
 		updateJREEnablement();
-		updateBootstrapEnablement();
+		updateBootstrapVmArguments();
 	}
 
 	private void setEEComboSelection(String eeId) {
@@ -252,16 +253,19 @@ public class JREBlock {
 		fEePrefButton.setEnabled(fEeButton.getSelection());
 	}
 
-	private void updateBootstrapEnablement() {
+	private void updateBootstrapVmArguments() {
 		if (fEeButton.getSelection()) {
 			int index = fEeCombo.getSelectionIndex();
 			String string = fEeCombo.getItem(index);
 			fBootstrap.setEnabled(!string.contains(JavaSE_9));
+			AbstractPDELaunchConfiguration.updatePDELaunchConfigModuleSystem(string.contains(JavaSE_9));
 		}
 		if (fJreButton.getSelection()) {
 			int index = fJreCombo.getSelectionIndex();
 			String string = fJreCombo.getItem(index);
-			fBootstrap.setEnabled(!string.equals(getJava9Name()));
+			boolean isJava9 = string.equals(getJava9Name());
+			fBootstrap.setEnabled(!isJava9);
+			AbstractPDELaunchConfiguration.updatePDELaunchConfigModuleSystem(isJava9);
 		}
 	}
 
