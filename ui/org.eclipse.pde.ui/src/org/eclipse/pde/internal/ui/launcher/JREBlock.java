@@ -261,7 +261,7 @@ public class JREBlock {
 		if (fJreButton.getSelection()) {
 			int index = fJreCombo.getSelectionIndex();
 			String string = fJreCombo.getItem(index);
-			fBootstrap.setEnabled(!string.contains(getJava9Name()));
+			fBootstrap.setEnabled(!string.equals(getJava9Name()));
 		}
 	}
 
