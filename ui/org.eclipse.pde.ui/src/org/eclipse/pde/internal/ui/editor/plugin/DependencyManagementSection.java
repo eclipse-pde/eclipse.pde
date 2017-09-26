@@ -85,7 +85,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	private static String OPEN = PDEUIMessages.RequiresSection_open;
 	private static String UP = PDEUIMessages.RequiresSection_up;
 	private static String DOWN = PDEUIMessages.RequiresSection_down;
-	private Object entrySelectedObject = null;
 
 	class ContentProvider implements IStructuredContentProvider {
 
@@ -128,7 +127,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	class SecondaryTableLabelProvider extends SharedLabelProvider {
 		@Override
 		public String getColumnText(Object obj, int index) {
-			entrySelectedObject = obj;
 			return obj.toString();
 		}
 
@@ -475,7 +473,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 				Object changedObject = event.getChangedObjects()[0];
 				if ((changedObject instanceof IBuildEntry && ((IBuildEntry) changedObject).getName().equals(IBuildEntry.SECONDARY_DEPENDENCIES))) {
 					refresh();
-					fAdditionalTable.setSelection(new StructuredSelection(entrySelectedObject));
 					fAdditionalTable.getTable().setFocus();
 				}
 				return Status.OK_STATUS;
