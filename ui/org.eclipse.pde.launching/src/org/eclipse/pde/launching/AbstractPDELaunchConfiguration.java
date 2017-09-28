@@ -42,6 +42,12 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	protected File fConfigDir = null;
 
+	/**
+	 * This field will control the addition of argument --add-modules=ALL-SYSTEM in the VM argument
+	 * during PDE launch. This VM argument is required from Java9 onwards for launching non-modular system
+	 * @since 3.8
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	public static boolean shouldVMAddModuleSystem = false;
 
 	@Override
@@ -436,7 +442,9 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	}
 
 	/**
+	 * Updates the field shouldVMAddModuleSystem.
 	 * 
+	 * @since 3.8
 	 */
 	public static void updatePDELaunchConfigModuleSystem(boolean java9) {
 		AbstractPDELaunchConfiguration.shouldVMAddModuleSystem = java9;
