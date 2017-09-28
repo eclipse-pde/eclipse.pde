@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.pde.launching" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Backported Java 9 work" id="924844039">
+            <message_arguments>
+                <message_argument value="3.7.50"/>
+                <message_argument value="3.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/launching/AbstractPDELaunchConfiguration.java" type="org.eclipse.pde.launching.AbstractPDELaunchConfiguration">
+        <filter comment="Backported Java 9 work" id="1141899266">
+            <message_arguments>
+                <message_argument value="3.8"/>
+                <message_argument value="3.7"/>
+                <message_argument value="updatePDELaunchConfigModuleSystem(boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
