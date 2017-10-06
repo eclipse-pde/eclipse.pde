@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 525701
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
@@ -971,9 +972,9 @@ public class ProjectCreationTests extends TestCase {
 		}
 		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry("tests/A.jar");
 		File ioFile = new File(FileLocator.toFileURL(zipURL).getFile());
-		FileInputStream stream = new FileInputStream(ioFile);
-		file.create(stream, false, null);
-		stream.close();
+		try (FileInputStream stream = new FileInputStream(ioFile)) {
+			file.create(stream, false, null);
+		}
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 525701
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
@@ -228,11 +229,7 @@ public class CoreUtility {
 		File source = new File(originPath.toFile(), name);
 		if (source.exists() == false)
 			return;
-		FileInputStream is = null;
-		FileOutputStream os = null;
-		try {
-			is = new FileInputStream(source);
-			os = new FileOutputStream(target);
+		try (FileInputStream is = new FileInputStream(source); FileOutputStream os = new FileOutputStream(target)) {
 			byte[] buf = new byte[1024];
 			int len = is.read(buf);
 			while (len != -1) {
@@ -241,15 +238,6 @@ public class CoreUtility {
 			}
 		} catch (IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (is != null)
-					is.close();
-				if (os != null)
-					os.close();
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
 		}
 	}
 

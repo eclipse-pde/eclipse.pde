@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 525701
  *******************************************************************************/
 package org.eclipse.pde.api.tools.tests.util;
 
@@ -540,11 +541,12 @@ public class FileUtils {
 	public static void copyFile(File dir, IFile file) throws Exception {
 		File local = new File(dir, file.getName());
 		local.createNewFile();
-		FileOutputStream stream = new FileOutputStream(local);
-		InputStream contents = file.getContents();
-		byte[] bytes = Util.getInputStreamAsByteArray(contents, -1);
-		stream.write(bytes);
-		contents.close();
-		stream.close();
+		try (
+				FileOutputStream stream = new FileOutputStream(local);
+				InputStream contents = file.getContents()
+		) {
+			byte[] bytes = Util.getInputStreamAsByteArray(contents, -1);
+			stream.write(bytes);
+		}
 	}
 }

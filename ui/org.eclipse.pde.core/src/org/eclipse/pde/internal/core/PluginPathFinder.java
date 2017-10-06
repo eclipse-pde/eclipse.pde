@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 525701
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -40,10 +41,8 @@ public class PluginPathFinder {
 	private static String getSitePath(String platformHome, File linkFile, boolean features) {
 		String prefix = new Path(platformHome).removeLastSegments(1).toString();
 		Properties properties = new Properties();
-		try {
-			FileInputStream fis = new FileInputStream(linkFile);
+		try (FileInputStream fis = new FileInputStream(linkFile)) {
 			properties.load(fis);
-			fis.close();
 			String path = properties.getProperty("path"); //$NON-NLS-1$
 			if (path != null) {
 				if (!new Path(path).isAbsolute())

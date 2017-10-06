@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 525701
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
@@ -198,13 +199,12 @@ public class PluginImportHelper {
 	 * @throws CoreException
 	 */
 	public static void copyArchive(File file, IFile dstFile, IProgressMonitor monitor) throws CoreException {
-		try {
-			FileInputStream fstream = new FileInputStream(file);
-			if (dstFile.exists())
+		try (FileInputStream fstream = new FileInputStream(file)) {
+			if (dstFile.exists()) {
 				dstFile.setContents(fstream, true, false, monitor);
-			else
+			} else {
 				dstFile.create(fstream, true, monitor);
-			fstream.close();
+			}
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, e.getMessage(), e);
 			throw new CoreException(status);

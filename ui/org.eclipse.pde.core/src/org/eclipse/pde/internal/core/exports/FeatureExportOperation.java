@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
  *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 477658
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 525701
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
@@ -124,11 +125,8 @@ public class FeatureExportOperation extends Job {
 	}
 
 	protected void save(File file, Properties properties, String header) {
-		try {
-			FileOutputStream stream = new FileOutputStream(file);
+		try (FileOutputStream stream = new FileOutputStream(file)) {
 			properties.store(stream, header);
-			stream.flush();
-			stream.close();
 		} catch (IOException e) {
 			PDECore.logException(e);
 		}
