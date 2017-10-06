@@ -43,11 +43,13 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	protected File fConfigDir = null;
 
 	/**
-	 * This field will control the addition of argument --add-modules=ALL-SYSTEM in the VM argument
+	 * This field will control the addition of argument --add-modules=ALL-SYSTEM in the VM arguments
 	 * during PDE launch. This VM argument is required from Java9 onwards for launching non-modular system
+	 * @deprecated This field was wrongly added and is no longer used.
 	 * @since 3.8
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
+	@Deprecated
 	public static boolean shouldVMAddModuleSystem = false;
 
 	@Override
@@ -71,7 +73,9 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			}
 
 			VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
-			runnerConfig.setVMArguments(updateVMArgumentWithAddModuleSystem(getVMArguments(configuration)));
+			IVMInstall launcher = VMHelper.createLauncher(configuration);
+			boolean isModular = JavaRuntime.isModularJava(launcher);
+			runnerConfig.setVMArguments(updateVMArgumentWithAddModuleSystem(getVMArguments(configuration), isModular));
 			runnerConfig.setProgramArguments(getProgramArguments(configuration));
 			runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
 			runnerConfig.setEnvironment(getEnvironment(configuration));
@@ -92,13 +96,13 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		}
 	}
 
-	private String[] updateVMArgumentWithAddModuleSystem(String[] args) {
+	private String[] updateVMArgumentWithAddModuleSystem(String[] args, boolean isModular) {
 		String modAllSystem= "--add-modules=ALL-SYSTEM"; //$NON-NLS-1$
-		if (shouldVMAddModuleSystem && !argumentContainsModuleSystem(args, modAllSystem)) {
+		if (isModular && !argumentContainsModuleSystem(args, modAllSystem)) {
 			args = Arrays.copyOf(args, args.length + 1);
 			args[args.length - 1] = modAllSystem;
 		}
-		if (!shouldVMAddModuleSystem) {
+		if (!isModular) {
 			ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(args));
 			arrayList.remove(modAllSystem);
 			arrayList.trimToSize();
@@ -445,9 +449,11 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * Updates the field shouldVMAddModuleSystem.
 	 * 
 	 * @since 3.8
+	 * @deprecated This method was wrongly added and is no longer used. It is a no-op now.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Deprecated
 	public static void updatePDELaunchConfigModuleSystem(boolean java9) {
-		AbstractPDELaunchConfiguration.shouldVMAddModuleSystem = java9;
 	}
 
 }

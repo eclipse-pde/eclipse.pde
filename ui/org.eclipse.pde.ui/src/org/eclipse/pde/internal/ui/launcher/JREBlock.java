@@ -18,7 +18,6 @@ import java.util.Comparator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jdt.internal.launching.StandardVM;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.window.Window;
@@ -28,7 +27,6 @@ import org.eclipse.pde.internal.launching.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.launching.AbstractPDELaunchConfiguration;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
@@ -50,8 +48,6 @@ public class JREBlock {
 	private Combo fJreCombo;
 	private Combo fEeCombo;
 	private Text fBootstrap;
-	private static final String JavaSE_9 = "JavaSE-9"; //$NON-NLS-1$
-	private static final String JRE_9 = "9"; //$NON-NLS-1$
 
 	class Listener extends SelectionAdapter implements ModifyListener {
 		@Override
@@ -63,9 +59,6 @@ public class JREBlock {
 			if (source instanceof Button && !((Button) source).getSelection())
 				return;
 			fTab.updateLaunchConfigurationDialog();
-			if (source == fEeCombo || source == fEeButton || source == fJreCombo || source == fJreButton) {
-				updateBootstrapVmArguments();
-			}
 			if (source == fJreButton || source == fEeButton)
 				updateJREEnablement();
 		}
@@ -139,7 +132,6 @@ public class JREBlock {
 						fJreCombo.setText(currentVM);
 					setEECombo();
 					setEEComboSelection(currentEE);
-					updateBootstrapVmArguments();
 				}
 			}
 		}));
@@ -220,7 +212,6 @@ public class JREBlock {
 		setEEComboSelection(eeId);
 
 		updateJREEnablement();
-		updateBootstrapVmArguments();
 	}
 
 	private void setEEComboSelection(String eeId) {
@@ -253,35 +244,7 @@ public class JREBlock {
 		fEePrefButton.setEnabled(fEeButton.getSelection());
 	}
 
-	private void updateBootstrapVmArguments() {
-		if (fEeButton.getSelection()) {
-			int index = fEeCombo.getSelectionIndex();
-			String string = fEeCombo.getItem(index);
-			fBootstrap.setEnabled(!string.contains(JavaSE_9));
-			AbstractPDELaunchConfiguration.updatePDELaunchConfigModuleSystem(string.contains(JavaSE_9));
-		}
-		if (fJreButton.getSelection()) {
-			int index = fJreCombo.getSelectionIndex();
-			String string = fJreCombo.getItem(index);
-			boolean isJava9 = string.equals(getJava9Name());
-			fBootstrap.setEnabled(!isJava9);
-			AbstractPDELaunchConfiguration.updatePDELaunchConfigModuleSystem(isJava9);
-		}
-	}
 
-	@SuppressWarnings("restriction")
-	private String getJava9Name() {
-		IVMInstall[] installs = VMUtil.getAllVMInstances();
-		for (IVMInstall ivmInstall : installs) {
-			if (ivmInstall instanceof StandardVM) {
-				StandardVM vm = (StandardVM) ivmInstall;
-				String javaVersion = vm.getJavaVersion();
-				if (javaVersion.equals(JRE_9))
-					return vm.getName();
-			}
-		}
-		return null;
-	}
 
 	private void initializeBootstrapEntriesSection(ILaunchConfiguration config) throws CoreException {
 		fBootstrap.setText(config.getAttribute(IPDELauncherConstants.BOOTSTRAP_ENTRIES, "")); //$NON-NLS-1$
