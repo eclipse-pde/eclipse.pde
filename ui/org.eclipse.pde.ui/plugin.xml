@@ -2268,4 +2268,21 @@
             type="org.eclipse.ui.internal.views.log.LogView">
       </propertyTester>
    </extension>
+   <extension
+        point="org.eclipse.ui.ide.projectConfigurators">
+     <projectConfigurator
+           class="org.eclipse.pde.internal.ui.wizards.BundleProjectConfigurator"
+           label="Eclipse Plugin/OSGi Bundle">
+        <activeWhen>
+           <hasFile path="META-INF/MANIFEST.MF"/>
+         </activeWhen>
+     </projectConfigurator>
+     <projectConfigurator
+           class="org.eclipse.pde.internal.ui.wizards.FeatureProjectConfigurator"
+           label="Eclipse Feature">
+        <activeWhen>
+           <hasFile path="feature.xml"/>
+        </activeWhen>
+     </projectConfigurator>
+  </extension>
 </plugin>
