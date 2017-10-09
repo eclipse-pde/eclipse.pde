@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2016 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2017 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -400,7 +400,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		displayedImages.clear();
 	}
 
-	private class UpdateUI extends FocusAdapter implements Runnable {
+	private class UpdateUI extends FocusAdapter implements Runnable, SelectionListener {
 
 		Collection<ImageElement> mElements = new LinkedList<>();
 		String mLastPlugin = ""; //$NON-NLS-1$
@@ -448,6 +448,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 					button.setToolTipText(element.getPath());
 					button.setData(element);
 					button.addFocusListener(this);
+					button.addSelectionListener(this);
 				}
 
 				mElements.clear();
@@ -467,7 +468,16 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		}
 
 		@Override
+		public void widgetSelected(SelectionEvent e) {
+			handleEvent(e);
+		}
+
+		@Override
 		public void focusGained(FocusEvent e) {
+			handleEvent(e);
+		}
+
+		private void handleEvent(TypedEvent e) {
 			// Scroll the focused control into view
 			Control child = (Control) e.widget;
 			Rectangle bounds = child.getBounds();
@@ -509,6 +519,12 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			mLastPlugin = ""; //$NON-NLS-1$
 			mElements.clear();
 			mPluginImageContainer = null;
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent e) {
+			// TODO Auto-generated method stub
+
 		}
 	}
 }
