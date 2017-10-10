@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ui.views.imagebrowser;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Map;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -28,11 +27,10 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
-import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * Handler for the image browser view's save to workspace command.
@@ -42,16 +40,14 @@ public class SaveToWorkspace extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		ISourceProviderService service = PlatformUI.getWorkbench().getService(ISourceProviderService.class);
-		ISourceProvider provider = service.getSourceProvider(ActiveImageSourceProvider.ACTIVE_IMAGE);
-		if (provider != null) {
-			Map<?, ?> currentState = provider.getCurrentState();
 
-			Object data = currentState.get(ActiveImageSourceProvider.ACTIVE_IMAGE);
-			if (data instanceof ImageElement) {
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.findView(ImageBrowserView.VIEW_ID);
+		ImageElement data = view.getAdapter(ImageElement.class);
+		if (data != null) {
 				SaveAsDialog dialog = new SaveAsDialog(HandlerUtil.getActiveShell(event));
 				dialog.setTitle(PDEUIMessages.SaveToWorkspace_SaveImageToWorkspace);
-				dialog.setOriginalName(((ImageElement) data).getFileName());
+				dialog.setOriginalName(data.getFileName());
 				// dialog.setMessage("select location & filename to store image to");
 				if (dialog.open() == Window.OK) {
 					IPath result = dialog.getResult();
@@ -69,7 +65,7 @@ public class SaveToWorkspace extends AbstractHandler {
 						ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 						ImageLoader imageLoader = new ImageLoader();
-						imageLoader.data = new ImageData[] {((ImageElement) data).getImageData()};
+						imageLoader.data = new ImageData[] {data.getImageData()};
 						imageLoader.save(out, imageType);
 
 						ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
@@ -85,7 +81,6 @@ public class SaveToWorkspace extends AbstractHandler {
 					}
 				}
 			}
-		}
 		return null;
 	}
 

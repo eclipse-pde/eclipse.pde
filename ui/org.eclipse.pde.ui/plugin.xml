@@ -1730,12 +1730,17 @@
                 class="org.eclipse.pde.internal.ui.views.imagebrowser.SaveToWorkspace"
                 commandId="org.eclipse.pde.ui.imagebrowser.saveToWorkspace">
              <enabledWhen>
-                <with
-                      variable="org.eclipse.pde.ui.imagebrowser.activeImage">
-                   <test
-                         property="org.eclipse.pde.ui.imagebrowser.exists">
-                   </test>
-                </with>
+             <and>
+             <with
+                   variable="activePart">
+                <instanceof
+                      value="org.eclipse.pde.internal.ui.views.imagebrowser.ImageBrowserView">
+                </instanceof>
+             </with>
+             <test
+                   property="org.eclipse.pde.ui.imagebrowser.exists">
+             </test>
+             </and>
              </enabledWhen>
           </handler>
        </extension>
@@ -2166,23 +2171,13 @@
       </locationProvider>
    </extension>
     <extension
-         point="org.eclipse.ui.services">
-      <sourceProvider
-            provider="org.eclipse.pde.internal.ui.views.imagebrowser.ActiveImageSourceProvider">
-         <variable
-               name="org.eclipse.pde.ui.ImageBrowserView.activeImage"
-               priorityLevel="workbench">
-         </variable>
-      </sourceProvider>
-   </extension>
-    <extension
           point="org.eclipse.core.expressions.propertyTesters">
        <propertyTester
              class="org.eclipse.pde.internal.ui.views.imagebrowser.ActiveImagePropertyTester"
              id="org.eclipse.pde.ui.imagebrowser.activeImagePropertyTester"
              namespace="org.eclipse.pde.ui.imagebrowser"
              properties="exists"
-             type="org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement">
+             type="java.lang.Object">
        </propertyTester>
     </extension>
     <extension

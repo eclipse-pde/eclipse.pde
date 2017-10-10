@@ -31,19 +31,19 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * Provides the PDE Image browser view which displays all icons and images from plug-ins.  The plug-ins
  * can be loaded from the target platform, the workspace or the current install.
  */
 public class ImageBrowserView extends ViewPart implements IImageTarget {
+
+	protected final static String VIEW_ID = "org.eclipse.pde.ui.ImageBrowserView"; //$NON-NLS-1$
 
 	private final UpdateUI mUIJob = new UpdateUI();
 
@@ -72,6 +72,8 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	private Text txtFilter;
 	private IFilter textPatternFilter;
 	private PageNavigationControl pageNavigationControl;
+
+	private ImageElement imageElement;
 
 	public ImageBrowserView() {
 		// create default filters
@@ -400,6 +402,14 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		displayedImages.clear();
 	}
 
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (ImageElement.class.equals(adapter)) {
+			return (T) imageElement;
+		}
+		return super.getAdapter(adapter);
+	}
+
 	private class UpdateUI extends FocusAdapter implements Runnable, SelectionListener {
 
 		Collection<ImageElement> mElements = new LinkedList<>();
@@ -507,11 +517,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				lblWidth.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().width)));
 				lblHeight.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().height)));
 
-				// update source provider
-				ISourceProviderService service = PlatformUI.getWorkbench().getService(ISourceProviderService.class);
-				ISourceProvider provider = service.getSourceProvider(ActiveImageSourceProvider.ACTIVE_IMAGE);
-				if (provider instanceof ActiveImageSourceProvider)
-					((ActiveImageSourceProvider) provider).setImageData(((ImageElement) data));
+				imageElement = (ImageElement) data;
 			}
 		}
 

@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.views.imagebrowser;
 
 import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.ui.*;
 
 /**
  * Property tester for the active (selected) image in the plug-in image browser view.  Allows the
@@ -28,8 +29,24 @@ public class ActiveImagePropertyTester extends PropertyTester {
 
 	@Override
 	public boolean test(final Object receiver, final String property, final Object[] args, final Object expectedValue) {
-		if (EXISTS.equals(property))
-			return receiver != null;
+		if (EXISTS.equals(property)) {
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			if (workbench == null)
+				return false;
+			IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
+			if (activeWorkbenchWindow == null)
+				return false;
+			IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+			if (activePage == null)
+				return false;
+			IViewPart view = activePage.findView(ImageBrowserView.VIEW_ID);
+			if (view == null)
+				return false;
+			ImageElement data = view.getAdapter(ImageElement.class);
+			if (data != null)
+				return true;
+			return false;
+		}
 
 		return false;
 	}
