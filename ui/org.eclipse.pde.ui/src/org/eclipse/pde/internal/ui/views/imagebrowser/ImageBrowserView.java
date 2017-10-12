@@ -405,7 +405,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (ImageElement.class.equals(adapter)) {
-			return (T) imageElement;
+			return adapter.cast(imageElement);
 		}
 		return super.getAdapter(adapter);
 	}
