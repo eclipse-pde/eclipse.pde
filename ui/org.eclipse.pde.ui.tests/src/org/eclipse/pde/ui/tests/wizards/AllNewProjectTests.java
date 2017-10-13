@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,19 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.pde.ui.tests.ee.ExecutionEnvironmentTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
+@RunWith(Suite.class)
+@SuiteClasses({ NewFeatureProjectTestCase.class, NewSiteProjectTestCase.class, ConvertProjectToPluginTestCase.class,
+	ExecutionEnvironmentTests.class })
 public class AllNewProjectTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite to test project creation wizards."); //$NON-NLS-1$
-		suite.addTest(NewFeatureProjectTestCase.suite());
-		suite.addTest(NewSiteProjectTestCase.suite());
-		suite.addTest(ConvertProjectToPluginTestCase.suite());
-		suite.addTest(ExecutionEnvironmentTests.suite());
-		return suite;
-	}
-
 }

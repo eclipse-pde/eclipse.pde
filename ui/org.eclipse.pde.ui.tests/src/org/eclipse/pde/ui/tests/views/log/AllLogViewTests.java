@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Zend Technologies Ltd. and others.
+ * Copyright (c) 2009, 2017 Zend Technologies Ltd. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.views.log;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
+@RunWith(Suite.class)
+@SuiteClasses({ LogEntryTest.class })
 public class AllLogViewTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test for log view");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(LogEntryTest.class);
-		//$JUnit-END$
-		return suite;
-	}
 
 }

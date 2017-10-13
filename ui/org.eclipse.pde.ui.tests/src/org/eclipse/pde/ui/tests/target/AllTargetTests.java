@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,22 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
+@RunWith(Suite.class)
+@SuiteClasses({ TargetEnvironmentTestCase.class, TargetPlatformHelperTests.class, LocalTargetDefinitionTests.class,
+	WorkspaceTargetDefinitionTests.class, TargetDefinitionPersistenceTests.class,
+	TargetDefinitionResolutionTests.class, TargetDefinitionFeatureResolutionTests.class,
+	IUBundleContainerTests.class })
 public class AllTargetTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for testing targets"); //$NON-NLS-1$
-		suite.addTest(TargetEnvironmentTestCase.suite());
-		suite.addTest(TargetPlatformHelperTests.suite());
-		suite.addTest(LocalTargetDefinitionTests.suite());
-		suite.addTest(WorkspaceTargetDefinitionTests.suite());
-		suite.addTest(TargetDefinitionPersistenceTests.suite());
-		suite.addTest(TargetDefinitionResolutionTests.suite());
-		suite.addTest(TargetDefinitionFeatureResolutionTests.suite());
-		suite.addTest(IUBundleContainerTests.suite());
-		return suite;
-	}
 
 }

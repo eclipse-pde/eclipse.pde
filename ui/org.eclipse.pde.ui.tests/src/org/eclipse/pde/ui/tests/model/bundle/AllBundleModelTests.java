@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,27 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
+
+@RunWith(Suite.class)
+@SuiteClasses({ ImportPackageTestCase.class, ExportPackageTestCase.class, BundleClasspathTestCase.class,
+	BundleActivatorTestCase.class, BundleNameTestCase.class, BundleLocalizationTestCase.class,
+	LazyStartTestCase.class, RequireBundleTestCase.class, ExecutionEnvironmentTestCase.class,
+	BundleSymbolicNameTestCase.class, BundleVendorTestCase.class, BundleVersionTestCase.class,
+	FragmentHostTestCase.class })
 public class AllBundleModelTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for testing the bundle model"); //$NON-NLS-1$
-		suite.addTest(ImportPackageTestCase.suite());
-		suite.addTest(ExportPackageTestCase.suite());
-		suite.addTest(BundleClasspathTestCase.suite());
-		suite.addTest(BundleActivatorTestCase.suite());
-		suite.addTest(BundleNameTestCase.suite());
-		suite.addTest(BundleLocalizationTestCase.suite());
-		suite.addTest(LazyStartTestCase.suite());
-		suite.addTest(RequireBundleTestCase.suite());
-		suite.addTest(ExecutionEnvironmentTestCase.suite());
-		suite.addTest(BundleSymbolicNameTestCase.suite());
-		suite.addTest(BundleVendorTestCase.suite());
-		suite.addTest(BundleVersionTestCase.suite());
-		suite.addTest(FragmentHostTestCase.suite());
-		return suite;
-	}
-
 }
