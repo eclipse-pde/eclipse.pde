@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,8 @@ package org.eclipse.pde.ui.tests.target;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
@@ -110,11 +111,11 @@ public class TargetDefinitionResolutionTests extends MinimalTargetDefinitionReso
 	 */
 	@SuppressWarnings("deprecation")
 	public void testVMArgumentsMigrationAppend() throws Exception {
-		Preferences store = PDECore.getDefault().getPluginPreferences();
-		boolean original = store.getBoolean(ICoreConstants.VM_LAUNCHER_INI);
-		store.setValue(ICoreConstants.VM_LAUNCHER_INI, true);
-		String originalTarget = store.getString(ICoreConstants.TARGET_MODE);
-		store.setValue(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
+		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(PDECore.PLUGIN_ID);
+		boolean original = store.getBoolean(ICoreConstants.VM_LAUNCHER_INI, false);
+		store.putBoolean(ICoreConstants.VM_LAUNCHER_INI, true);
+		String originalTarget = store.get(ICoreConstants.TARGET_MODE, "");
+		store.put(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
 		try {
 			ITargetDefinition target = ((TargetPlatformService) getTargetService()).newTargetFromPreferences();
 			assertNotNull("No target was created from old preferences", target);
@@ -122,8 +123,8 @@ public class TargetDefinitionResolutionTests extends MinimalTargetDefinitionReso
 			String iniVmArgs = TargetPlatformHelper.getIniVMArgs();
 			assertEquals(vmArguments, iniVmArgs);
 		} finally {
-			store.setValue(ICoreConstants.VM_LAUNCHER_INI, original);
-			store.setValue(ICoreConstants.TARGET_MODE, originalTarget);
+			store.putBoolean(ICoreConstants.VM_LAUNCHER_INI, original);
+			store.put(ICoreConstants.TARGET_MODE, originalTarget);
 		}
 	}
 
