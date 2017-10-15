@@ -15,7 +15,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.*;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -53,10 +53,6 @@ public class ProjectCreationTests extends TestCase {
 
 	public static IBundleProjectService getBundleProjectService() {
 		return (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
-	}
-
-	public static Test suite() {
-		return new TestSuite(ProjectCreationTests.class);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import java.net.URL;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -39,10 +37,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * Tests for the IU bundle container
  */
 public class IUBundleContainerTests extends AbstractTargetTest {
-
-	public static Test suite() {
-		return new TestSuite(IUBundleContainerTests.class);
-	}
 
 	/**
 	 * Returns the metadata repository at the specified location.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.preferences;
 
-import junit.framework.*;
-import org.eclipse.core.runtime.preferences.*;
+import junit.framework.TestCase;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
@@ -44,9 +45,6 @@ public class PDEPreferencesTestCase extends TestCase {
 		preferences.setDefault("stringKey", "defaultValue");
 		preferences.setDefault("booleanKey", false);
 		preferences.setDefault("intKey", -1);
-	}
-	public static Test suite() {
-		return new TestSuite(PDEPreferencesTestCase.class);
 	}
 
 	public void testInstanceScopePDEPreferences(){

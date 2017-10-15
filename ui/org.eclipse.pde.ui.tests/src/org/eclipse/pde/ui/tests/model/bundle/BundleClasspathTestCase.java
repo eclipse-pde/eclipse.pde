@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,19 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
 
 public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
-
-	public static Test suite() {
-		return new TestSuite(BundleClasspathTestCase.class);
-	}
 
 	public BundleClasspathTestCase() {
 		super(Constants.BUNDLE_CLASSPATH);

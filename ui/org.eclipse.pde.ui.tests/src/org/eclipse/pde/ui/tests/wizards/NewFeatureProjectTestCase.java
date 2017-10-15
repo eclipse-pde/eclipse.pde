@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -43,10 +41,6 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		fd.name = DEFAULT_FEATURE_DATA.name;
 		fd.version = DEFAULT_FEATURE_DATA.version;
 		return fd;
-	}
-
-	public static Test suite() {
-		return new TestSuite(NewFeatureProjectTestCase.class);
 	}
 
 	@Override

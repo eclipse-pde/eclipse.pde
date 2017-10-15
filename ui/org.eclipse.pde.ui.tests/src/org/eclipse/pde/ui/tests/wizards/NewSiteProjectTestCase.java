@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,21 +12,9 @@ package org.eclipse.pde.ui.tests.wizards;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
-
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.ui.wizards.site.NewSiteProjectCreationOperation;
@@ -36,10 +24,6 @@ import org.eclipse.ui.progress.IProgressService;
 
 public class NewSiteProjectTestCase extends TestCase {
 	private static final String EXISTING_PROJECT_NAME = "ExistingSiteProject"; //$NON-NLS-1$
-
-	public static Test suite() {
-		return new TestSuite(NewSiteProjectTestCase.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

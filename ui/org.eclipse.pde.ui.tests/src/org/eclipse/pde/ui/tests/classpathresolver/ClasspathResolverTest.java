@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Sonatype, Inc. and others.
+ * Copyright (c) 2011, 2017 Sonatype, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathresolver;
 
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
-
 import java.io.*;
 import java.net.URL;
 import java.util.Properties;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
@@ -27,6 +25,7 @@ import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupDirector;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupQuery;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 
 /**
  * Tests {@link IBundleClasspathResolver} API to extend how the classpath and source lookup path
@@ -34,12 +33,6 @@ import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupQuery;
  *
  */
 public class ClasspathResolverTest extends TestCase {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for bundle classpath resolver API");
-		suite.addTestSuite(ClasspathResolverTest.class);
-		return suite;
-	}
 
 	private static final IProgressMonitor monitor = new NullProgressMonitor();
 

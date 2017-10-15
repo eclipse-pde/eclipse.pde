@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.pde.ui.tests.ee;
 
 import java.util.Hashtable;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -30,10 +28,6 @@ import org.eclipse.pde.ui.tests.util.ProjectUtils;
  * Tests projects with a custom execution environment
  */
 public class ExecutionEnvironmentTests extends PDETestCase {
-
-	public static Test suite() {
-		return new TestSuite(ExecutionEnvironmentTests.class);
-	}
 
 	/**
 	 * Deletes the specified project.

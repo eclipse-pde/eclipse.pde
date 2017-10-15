@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
-import org.eclipse.pde.core.project.IBundleProjectDescription;
-
-import org.eclipse.pde.core.project.IBundleProjectService;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
@@ -31,10 +27,6 @@ import org.osgi.framework.Version;
  * @since 3.6
  */
 public class BundleRootTests extends TestCase {
-
-	public static Test suite() {
-		return new TestSuite(BundleRootTests.class);
-	}
 
 	protected IBundleProjectService getBundleProjectService() {
 		return (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());

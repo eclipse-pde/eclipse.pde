@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -27,10 +25,6 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 	public ExecutionEnvironmentTestCase() {
 		super(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-	}
-
-	public static Test suite() {
-		return new TestSuite(ExecutionEnvironmentTestCase.class);
 	}
 
 	public void testAddExecutionEnvironmentHeader() throws Exception {

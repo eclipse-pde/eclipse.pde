@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.pde.core.plugin.*;
+import org.junit.Test;
 
 /**
  * Tests for plug-in searching
@@ -19,6 +23,7 @@ import org.eclipse.pde.core.plugin.*;
  */
 public class PluginRegistryTests extends PluginRegistryTestsMinimal {
 
+	@Test
 	public void testMatchEquivalent() {
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.ui.tests", "3.10.100",
 				IMatchRules.EQUIVALENT,

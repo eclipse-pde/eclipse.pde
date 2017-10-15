@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.nls;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.pde.internal.ui.nls.StringHelper;
 
 /**
@@ -20,10 +20,6 @@ import org.eclipse.pde.internal.ui.nls.StringHelper;
  */
 public class StringHelperTestCase extends TestCase {
 	private static final String newLine = "\r\n";
-
-	public static Test suite() {
-		return new TestSuite(StringHelperTestCase.class);
-	}
 
 	public void testSimpleLines() {
 		String s1, s2;
@@ -58,19 +54,19 @@ public class StringHelperTestCase extends TestCase {
 		assertEquals("abc   \\r\\n  \\" + newLine + "d  ef", s2);
 	}
 
-//	public void testSpecialChars() {
-//		String s1, s2;
-//
-//		// one unicode character
-//		s1 = "abč";
-//		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
-//		assertEquals("ab\\u010D", s2);
-//
-//		// two lines, more than one unicode character
-//		s1 = "abč " + newLine + "  d  éεﻚ f ";
-//		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
-//		assertEquals("ab\\u010D \\r\\n  \\" + newLine + "d  \\u00E9\\u03B5\\uFEDA f ", s2);
-//	}
+	//	public void testSpecialChars() {
+	//		String s1, s2;
+	//
+	//		// one unicode character
+	//		s1 = "abč";
+	//		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
+	//		assertEquals("ab\\u010D", s2);
+	//
+	//		// two lines, more than one unicode character
+	//		s1 = "abč " + newLine + "  d  éεﻚ f ";
+	//		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
+	//		assertEquals("ab\\u010D \\r\\n  \\" + newLine + "d  \\u00E9\\u03B5\\uFEDA f ", s2);
+	//	}
 
 	public void testSideEffects() {
 		String s1, s2;

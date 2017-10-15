@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,31 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
-import org.eclipse.pde.ui.tests.wizards.NewProjectTestCase;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportOperation;
 import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard.ReplaceQuery;
+import org.eclipse.pde.ui.tests.wizards.NewProjectTestCase;
 
 public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 
 	private String fProjectName;
-
-	public static Test suite() {
-		return new TestSuite(ImportFeatureProjectsTestCase.class);
-	}
 
 	@Override
 	protected void tearDown() {

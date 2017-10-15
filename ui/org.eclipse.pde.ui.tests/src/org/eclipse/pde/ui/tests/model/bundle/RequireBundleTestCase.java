@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,17 +16,10 @@ import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 	public RequireBundleTestCase() {
 		super(Constants.REQUIRE_BUNDLE);
-	}
-
-	public static Test suite() {
-		return new TestSuite(RequireBundleTestCase.class);
 	}
 
 	public void testAddRequireBundleHeader() throws Exception {

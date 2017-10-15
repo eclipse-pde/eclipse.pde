@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -22,10 +20,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 
 public class TargetDefinitionResolutionTests extends MinimalTargetDefinitionResolutionTests {
-
-	public static Test suite() {
-		return new TestSuite(TargetDefinitionResolutionTests.class);
-	}
 
 	public void testMissingBundles() throws Exception {
 		ITargetDefinition definition = getNewTarget();

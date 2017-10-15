@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.pde.ui.tests.target;
 
 import java.io.File;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 
 /**
@@ -19,10 +19,6 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
  * @since 3.4
  */
 public class TargetPlatformHelperTests extends TestCase {
-
-	public static Test suite() {
-		return new TestSuite(TargetPlatformHelperTests.class);
-	}
 
 	public void testStripPathInformation(){
 		String[] bundleStrings = new String[]{

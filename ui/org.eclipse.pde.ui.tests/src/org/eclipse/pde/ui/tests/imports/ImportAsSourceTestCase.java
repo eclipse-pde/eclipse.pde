@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,25 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 
 public class ImportAsSourceTestCase extends BaseImportTestCase {
 
 	private static int TYPE = PluginImportOperation.IMPORT_WITH_SOURCE;
-
-	public static Test suite() {
-		return new TestSuite(ImportAsSourceTestCase.class);
-	}
 
 	@Override
 	protected int getType() {

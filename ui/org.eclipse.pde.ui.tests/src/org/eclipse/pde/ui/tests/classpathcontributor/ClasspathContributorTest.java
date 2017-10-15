@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -29,12 +29,6 @@ import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
  * to be installed as an extension.
  */
 public class ClasspathContributorTest extends TestCase {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for plugin classpath contributor API");
-		suite.addTestSuite(ClasspathContributorTest.class);
-		return suite;
-	}
 
 	private static final IProgressMonitor monitor = new NullProgressMonitor();
 	private IWorkspace workspace = ResourcesPlugin.getWorkspace();

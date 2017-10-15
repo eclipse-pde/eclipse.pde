@@ -27,23 +27,13 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	AllTargetMinimalTests.class,
-	AllNewProjectMinimalTests.class,
-	AllPreferenceTests.class,
-	//	AllImportTests.class,
-	AllBundleModelTests.class,
-	AllXMLModelTests.class,
-	AllValidatorTests.class,
-	AllNLSTests.class,
+@SuiteClasses({ AllTargetMinimalTests.class, AllNewProjectMinimalTests.class, AllPreferenceTests.class,
+	// AllImportTests.class,
+	AllBundleModelTests.class, AllXMLModelTests.class, AllValidatorTests.class, AllNLSTests.class,
 	AllPDERuntimeTests.class,
-	//	ExportBundleTests.class,
-	AllLauncherTests.class,
-	AllLogViewTests.class,
-	ProjectCreationTests.class,
-	BundleRootTests.class,
-	PluginRegistryTests.class,
-	ClasspathResolverTest.class,
+	// ExportBundleTests.class,
+	AllLauncherTests.class, AllLogViewTests.class, ProjectCreationTests.class, BundleRootTests.class,
+	PluginRegistryTestsMinimal.class, ClasspathResolverTest.class,
 	// ClasspathContributorTest.class
 })
 

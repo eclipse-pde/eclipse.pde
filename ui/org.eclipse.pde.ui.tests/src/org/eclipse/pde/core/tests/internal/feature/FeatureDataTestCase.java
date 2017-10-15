@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Martin Karpisek and others.
+ * Copyright (c) 2016, 2017 Martin Karpisek and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.pde.core.tests.internal.feature;
 import java.io.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.feature.FeatureData;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
@@ -21,9 +21,6 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 public class FeatureDataTestCase extends TestCase {
-	public static Test suite() {
-		return new TestSuite(FeatureDataTestCase.class);
-	}
 
 	private static final String FEATURE_INDENT = "      ";
 

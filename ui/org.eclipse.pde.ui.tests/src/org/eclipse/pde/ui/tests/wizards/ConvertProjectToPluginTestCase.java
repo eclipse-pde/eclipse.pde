@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2015 IBM Corporation and others.
+ *  Copyright (c) 2007, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
 package org.eclipse.pde.ui.tests.wizards;
 
 import java.lang.reflect.InvocationTargetException;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -34,10 +32,6 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 	private static String PROJECT_NAME_2 = "Bar";
 
 	private final static String API_TOOLS_NATURE = "org.eclipse.pde.api.tools.apiAnalysisNature";
-
-	public static Test suite() {
-		return new TestSuite(ConvertProjectToPluginTestCase.class);
-	}
 
 	/**
 	 * Test the conversion of a single simple project.

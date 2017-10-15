@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBM Corporation and others.
+ * Copyright (c) 2016, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,27 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * They run on minimal plugin bundles and dont require the whole SDK ( for
  * hudson gerrit). This class is refactored out of AllTargetTests
  *
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+	TargetEnvironmentTestCase.class, TargetPlatformHelperTests.class,
+	// LocalTargetDefinitionTests.class,
+	// WorkspaceTargetDefinitionTests.class
+	MinimalTargetDefinitionPersistenceTests.class, MinimalTargetDefinitionResolutionTests.class,
+	MinimalTargetDefinitionFeatureResolutionTests.class, IUBundleContainerTests.class
+})
 public class AllTargetMinimalTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for testing targets"); //$NON-NLS-1$
-		suite.addTest(TargetEnvironmentTestCase.suite());
-		suite.addTest(TargetPlatformHelperTests.suite());
-		// suite.addTest(LocalTargetDefinitionTests.suite());
-		// suite.addTest(WorkspaceTargetDefinitionTests.suite());
-		suite.addTest(MinimalTargetDefinitionPersistenceTests.suite());
-		suite.addTest(MinimalTargetDefinitionResolutionTests.suite());
-		suite.addTest(MinimalTargetDefinitionFeatureResolutionTests.suite());
-		suite.addTest(IUBundleContainerTests.suite());
-		return suite;
-	}
-
 }

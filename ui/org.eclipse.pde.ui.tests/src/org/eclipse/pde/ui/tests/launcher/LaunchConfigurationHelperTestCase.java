@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2017 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.pde.internal.launching.launcher.LaunchConfigurationHelper;
 
 /**
@@ -18,10 +18,6 @@ import org.eclipse.pde.internal.launching.launcher.LaunchConfigurationHelper;
  * @since 3.5
  */
 public class LaunchConfigurationHelperTestCase extends TestCase {
-
-	public static Test suite() {
-		return new TestSuite(LaunchConfigurationHelperTestCase.class);
-	}
 
 	public void testgetStartData() {
 		assertEquals(LaunchConfigurationHelper.getStartData("", false), "");
