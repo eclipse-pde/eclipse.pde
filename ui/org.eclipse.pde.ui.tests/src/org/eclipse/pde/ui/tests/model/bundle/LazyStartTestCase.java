@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.LazyStartHeader;
@@ -20,12 +17,8 @@ import org.eclipse.text.edits.TextEdit;
 
 public class LazyStartTestCase extends BundleModelTestCase {
 
-	public LazyStartTestCase(String headerName) {
+	public LazyStartTestCase() {
 		super(ICoreConstants.ECLIPSE_AUTOSTART);
-	}
-
-	public static Test suite() {
-		return new TestSuite(BundleLocalizationTestCase.class);
 	}
 
 	public void testGetAutoStart() {

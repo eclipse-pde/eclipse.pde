@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.pde.ui.tests.performance.parts;
 
 import java.io.File;
 import java.net.URL;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.FileLocator;
@@ -42,13 +40,6 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	private static File fManifestFile;
 
 	private static IWorkbenchPage fActivePage;
-
-	/**
-	 * @return
-	 */
-	public static Test suite() {
-		return new TestSuite(OpenManifestEditorPerfTest.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

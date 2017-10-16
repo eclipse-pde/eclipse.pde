@@ -35,7 +35,7 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 	}
 
 	public static Test suite() {
-		TestSuite testSuite = new TestSuite("ImportFromRepoTestCase") ;
+		TestSuite testSuite = new TestSuite("ImportFromRepoTestCase");
 		testSuite.addTest(new ImportFromRepoTestCase("testImportOrgEclipsePdeUaUi"));
 		testSuite.addTest(new ImportFromRepoTestCase("testImportOrgEclipseRcp"));
 		return testSuite;
@@ -146,10 +146,10 @@ public class ImportFromRepoTestCase extends BaseImportTestCase {
 			return prompt;
 		}
 
-	    @Override
+		@Override
 		public boolean promptForHostKeyChange(ICVSRepositoryLocation location) {
-	        return false;
-	    }
+			return false;
+		}
 
 		@Override
 		public Map promptToConfigureRepositoryLocations(Map alternativeMap) {

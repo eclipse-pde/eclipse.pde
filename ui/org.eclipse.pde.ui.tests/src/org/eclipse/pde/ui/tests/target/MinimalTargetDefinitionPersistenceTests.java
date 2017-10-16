@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBM Corporation and others.
+ * Copyright (c) 2016, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import java.io.*;
 import java.net.*;
 import java.util.HashSet;
 import java.util.Set;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -34,10 +34,6 @@ import org.osgi.framework.ServiceReference;
  *
  */
 public class MinimalTargetDefinitionPersistenceTests extends TestCase {
-
-	public static Test suite() {
-		return new TestSuite(MinimalTargetDefinitionPersistenceTests.class);
-	}
 
 	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
 		assertTrue("Target content not equal", ((TargetDefinition) targetA).isContentEqual(targetB));

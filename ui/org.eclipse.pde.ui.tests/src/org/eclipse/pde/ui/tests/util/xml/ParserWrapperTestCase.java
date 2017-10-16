@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.net.URL;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
@@ -32,10 +32,6 @@ public class ParserWrapperTestCase extends TestCase {
 	protected static final int FDOM = 1;
 	protected static File fXMLFile;
 	protected static final String FFILENAME = "/plugin.xml"; //$NON-NLS-1$
-
-	public static Test suite() {
-		return new TestSuite(ParserWrapperTestCase.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {
@@ -76,7 +72,7 @@ public class ParserWrapperTestCase extends TestCase {
 		ParserThread[] threads = new ParserThread[FTHREADCOUNT];
 
 		for (int x = 0; x < FTHREADCOUNT; x++) {
-			threads[x] = new ParserThread(FDOM, fXMLFile); //$NON-NLS-1$
+			threads[x] = new ParserThread(FDOM, fXMLFile);
 			threads[x].start();
 		}
 

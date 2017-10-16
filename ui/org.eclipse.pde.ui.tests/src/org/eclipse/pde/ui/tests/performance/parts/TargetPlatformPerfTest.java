@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -51,10 +49,6 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	private static final int SEARCH_TEST_EXTERNAL_COUNT = 1000;
 
 	private static final String TEST_PLUGIN_LOCATION = "/tests/performance/target/targetPerfTestPlugins.zip";
-
-	public static Test suite() {
-		return new TestSuite(TargetPlatformPerfTest.class);
-	}
 
 	/**
 	 * Resolves an example target definition
@@ -150,41 +144,41 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	/**
 	 * Loads an example target definition as the active target platform
 	 */
-//	public void testChangeTargetPlatform() throws Exception {
-//		tagAsSummary("Change target platform", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
-//		IPath testBundles = extractTargetPerfTestPlugins();
-//
-//		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
-//
-//		ITargetDefinition target = tps.newTarget();
-//		target.setTargetLocations(new ITargetLocation[] {tps.newDirectoryLocation(testBundles.toPortableString())});
-//		target.resolve(null);
-//		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
-//
-//		try {
-//
-//			// Warm-up Iterations
-//			for (int i = 0; i < 1; i++) {
-//				// Execute test from this thread
-//				job.runInWorkspace(new NullProgressMonitor());
-//			}
-//			// Test Iterations
-//			for (int i = 0; i < 2; i++) {
-//				// Execute test from this thread
-//				startMeasuring();
-//				job.runInWorkspace(new NullProgressMonitor());
-//				stopMeasuring();
-//			}
-//			commitMeasurements();
-//			assertPerformance();
-//
-//		} finally {
-//			// Restore the default target platform
-//			ITargetDefinition defaultTarget = tps.newDefaultTarget();
-//			LoadTargetDefinitionJob restoreJob = new LoadTargetDefinitionJob(defaultTarget);
-//			restoreJob.runInWorkspace(null);
-//		}
-//	}
+	//	public void testChangeTargetPlatform() throws Exception {
+	//		tagAsSummary("Change target platform", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
+	//		IPath testBundles = extractTargetPerfTestPlugins();
+	//
+	//		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+	//
+	//		ITargetDefinition target = tps.newTarget();
+	//		target.setTargetLocations(new ITargetLocation[] {tps.newDirectoryLocation(testBundles.toPortableString())});
+	//		target.resolve(null);
+	//		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
+	//
+	//		try {
+	//
+	//			// Warm-up Iterations
+	//			for (int i = 0; i < 1; i++) {
+	//				// Execute test from this thread
+	//				job.runInWorkspace(new NullProgressMonitor());
+	//			}
+	//			// Test Iterations
+	//			for (int i = 0; i < 2; i++) {
+	//				// Execute test from this thread
+	//				startMeasuring();
+	//				job.runInWorkspace(new NullProgressMonitor());
+	//				stopMeasuring();
+	//			}
+	//			commitMeasurements();
+	//			assertPerformance();
+	//
+	//		} finally {
+	//			// Restore the default target platform
+	//			ITargetDefinition defaultTarget = tps.newDefaultTarget();
+	//			LoadTargetDefinitionJob restoreJob = new LoadTargetDefinitionJob(defaultTarget);
+	//			restoreJob.runInWorkspace(null);
+	//		}
+	//	}
 
 	private void executeSearchTest() {
 		IPluginModelBase[] models;

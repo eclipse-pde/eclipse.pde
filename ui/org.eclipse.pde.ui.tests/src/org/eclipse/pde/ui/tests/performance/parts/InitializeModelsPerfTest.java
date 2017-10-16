@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.pde.ui.tests.performance.parts;
 
 import java.io.File;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.pde.core.target.*;
@@ -27,10 +25,6 @@ import org.eclipse.test.performance.PerformanceTestCase;
  *
  */
 public class InitializeModelsPerfTest extends PerformanceTestCase {
-
-	public static Test suite() {
-		return new TestSuite(InitializeModelsPerfTest.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

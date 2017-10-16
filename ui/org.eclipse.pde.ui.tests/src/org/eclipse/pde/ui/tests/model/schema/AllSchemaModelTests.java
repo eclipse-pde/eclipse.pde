@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.schema;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 public class AllSchemaModelTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for testing the schema model"); //$NON-NLS-1$
-		return suite;
-	}
 
 }

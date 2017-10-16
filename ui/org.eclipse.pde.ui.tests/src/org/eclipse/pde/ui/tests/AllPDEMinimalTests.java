@@ -26,6 +26,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * They run on minimal plugin bundles and dont require the whole SDK ( for
+ * hudson gerrit). This class is refactored out of AllPDETests
+ *
+ */
+
 @RunWith(Suite.class)
 @SuiteClasses({ AllTargetMinimalTests.class, AllNewProjectMinimalTests.class, AllPreferenceTests.class,
 	// AllImportTests.class,
@@ -36,13 +42,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	PluginRegistryTestsMinimal.class, ClasspathResolverTest.class,
 	// ClasspathContributorTest.class
 })
-
-/**
- * They run on minimal plugin bundles and dont require the whole SDK ( for
- * hudson gerrit). This class is refactored out of AllPDETests
- *
- */
-
 public class AllPDEMinimalTests {
 
 }
