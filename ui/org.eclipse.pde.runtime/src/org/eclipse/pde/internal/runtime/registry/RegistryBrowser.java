@@ -778,13 +778,13 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	@Override
-	public Object getAdapter(Class clazz) {
+	public <T> T getAdapter(Class<T> clazz) {
 		if (ILabelProvider.class.equals(clazz)) {
-			return fLabelProvider;
+			return clazz.cast(fLabelProvider);
 		}
 
 		if (IContentProvider.class.equals(clazz)) {
-			return fContentProvider;
+			return clazz.cast(fContentProvider);
 		}
 
 		return super.getAdapter(clazz);
