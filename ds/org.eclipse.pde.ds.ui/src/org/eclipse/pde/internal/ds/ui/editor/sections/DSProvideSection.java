@@ -173,18 +173,13 @@ public class DSProvideSection extends TableSection implements
 	}
 
 	private void handleEdit() {
-		if (fProvidesTable.getStructuredSelection() != null) {
-
-			int selectionIndex = fProvidesTable.getTable().getSelectionIndex();
-			if (selectionIndex != -1) {
-				DSEditProvideDialog dialog = new DSEditProvideDialog(Activator
-						.getActiveWorkbenchShell(), (IDSProvide) fProvidesTable
-						.getElementAt(selectionIndex), this);
-				dialog.create();
-				dialog.getShell().setSize(500, 200);
-				dialog.open();
-			}
-
+		int selectionIndex = fProvidesTable.getTable().getSelectionIndex();
+		if (selectionIndex != -1) {
+			DSEditProvideDialog dialog = new DSEditProvideDialog(Activator.getActiveWorkbenchShell(),
+					(IDSProvide) fProvidesTable.getElementAt(selectionIndex), this);
+			dialog.create();
+			dialog.getShell().setSize(500, 200);
+			dialog.open();
 		}
 
 	}
