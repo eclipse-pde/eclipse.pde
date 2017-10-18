@@ -251,32 +251,24 @@ public class DSPropertiesSection extends TableSection {
 	}
 
 	private void handleEdit() {
-		if (fPropertiesTable.getStructuredSelection() != null) {
+		int selectionIndex = fPropertiesTable.getTable().getSelectionIndex();
+		if (selectionIndex != -1) {
+			Object selectionElement = fPropertiesTable.getElementAt(selectionIndex);
 
-			int selectionIndex = fPropertiesTable.getTable()
-					.getSelectionIndex();
-			if (selectionIndex != -1) {
-				Object selectionElement = fPropertiesTable
-						.getElementAt(selectionIndex);
+			if (selectionElement instanceof IDSProperties) {
+				DSEditPropertiesDialog dialog = new DSEditPropertiesDialog(Activator.getActiveWorkbenchShell(),
+						(IDSProperties) selectionElement, this);
+				dialog.create();
+				dialog.getShell().setSize(500, 200);
+				dialog.open();
 
-				if (selectionElement instanceof IDSProperties) {
-					DSEditPropertiesDialog dialog = new DSEditPropertiesDialog(
-							Activator.getActiveWorkbenchShell(),
-							(IDSProperties) selectionElement, this);
-					dialog.create();
-					dialog.getShell().setSize(500, 200);
-					dialog.open();
-
-				} else if (selectionElement instanceof IDSProperty) {
-					DSEditPropertyDialog dialog = new DSEditPropertyDialog(
-							Activator.getActiveWorkbenchShell(),
-							(IDSProperty) selectionElement, this, false);
-					dialog.create();
-					dialog.getShell().setSize(500, 300);
-					dialog.open();
-				}
+			} else if (selectionElement instanceof IDSProperty) {
+				DSEditPropertyDialog dialog = new DSEditPropertyDialog(Activator.getActiveWorkbenchShell(),
+						(IDSProperty) selectionElement, this, false);
+				dialog.create();
+				dialog.getShell().setSize(500, 300);
+				dialog.open();
 			}
-
 		}
 
 	}
