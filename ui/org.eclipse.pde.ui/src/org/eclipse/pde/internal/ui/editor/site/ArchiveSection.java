@@ -137,7 +137,7 @@ public class ArchiveSection extends PDESection {
 		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fEditButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			IStructuredSelection ssel = fViewer.getStructuredSelection();
-			if (ssel != null && ssel.size() == 1)
+			if (ssel.size() == 1)
 				showDialog((ISiteArchive) ssel.getFirstElement());
 		}));
 		fRemoveButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_remove, SWT.PUSH);
@@ -202,12 +202,10 @@ public class ArchiveSection extends PDESection {
 	private void handleDelete() {
 		try {
 			IStructuredSelection ssel = fViewer.getStructuredSelection();
-			if (ssel != null) {
-				if (ssel.size() > 0) {
-					ISiteArchive[] array = (ISiteArchive[]) ssel.toList().toArray(new ISiteArchive[ssel.size()]);
-					ISite site = ((ISiteModel) getPage().getModel()).getSite();
-					site.removeArchives(array);
-				}
+			if (ssel.size() > 0) {
+				ISiteArchive[] array = (ISiteArchive[]) ssel.toList().toArray(new ISiteArchive[ssel.size()]);
+				ISite site = ((ISiteModel) getPage().getModel()).getSite();
+				site.removeArchives(array);
 			}
 		} catch (CoreException e) {
 		}
