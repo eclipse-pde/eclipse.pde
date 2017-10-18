@@ -220,13 +220,11 @@ public class DSReferenceSection extends TableSection implements
 
 	private void handleMove(boolean moveUp) {
 		IStructuredSelection selection = fReferencesTable.getStructuredSelection();
-		if (selection != null) {
-			Object[] array = selection.toArray();
-			if (moveUp) {
-				moveUp(array);
-			} else {
-				moveDown(array);
-			}
+		Object[] array = selection.toArray();
+		if (moveUp) {
+			moveUp(array);
+		} else {
+			moveDown(array);
 		}
 	}
 
@@ -256,20 +254,13 @@ public class DSReferenceSection extends TableSection implements
 	}
 
 	private void handleEdit() {
-		if (fReferencesTable.getStructuredSelection() != null) {
-
-			int selectionIndex = fReferencesTable.getTable()
-					.getSelectionIndex();
-			if (selectionIndex != -1) {
-				DSEditReferenceDialog dialog = new DSEditReferenceDialog(
-						Activator.getActiveWorkbenchShell(),
-						(IDSReference) fReferencesTable
-								.getElementAt(selectionIndex), this);
-				dialog.create();
-				dialog.getShell().setSize(500, 400);
-				dialog.open();
-			}
-
+		int selectionIndex = fReferencesTable.getTable().getSelectionIndex();
+		if (selectionIndex != -1) {
+			DSEditReferenceDialog dialog = new DSEditReferenceDialog(Activator.getActiveWorkbenchShell(),
+					(IDSReference) fReferencesTable.getElementAt(selectionIndex), this);
+			dialog.create();
+			dialog.getShell().setSize(500, 400);
+			dialog.open();
 		}
 
 	}
