@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 526283
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
@@ -37,7 +38,8 @@ import org.eclipse.pde.internal.ui.shared.target.Messages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -437,7 +439,8 @@ public class FeatureImportWizardPage extends WizardPage {
 			total = fModels.length;
 		}
 		int checked = fFeatureViewer.getCheckedLeafCount();
-		fCounterLabel.setText(NLS.bind(PDEUIMessages.WizardCheckboxTablePart_counter, new String[] {Integer.valueOf(checked).toString(), Integer.valueOf(total).toString()}));
+		fCounterLabel.setText(NLS.bind(PDEUIMessages.WizardCheckboxTablePart_counter,
+				new String[] { Integer.toString(checked), Integer.toString(total) }));
 	}
 
 	@Override

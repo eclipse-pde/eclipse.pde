@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 526283
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -127,7 +128,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	 */
 	private void reportMaxOccurenceViolation(ElementOccurrenceResult result, int severity) {
 		Element childElement = result.getElement();
-		String allowedOccurrences = Integer.valueOf(result.getAllowedOccurrences()).toString();
+		String allowedOccurrences = Integer.toString(result.getAllowedOccurrences());
 		String message = NLS.bind(PDECoreMessages.ExtensionsErrorReporter_maxOccurrence, new String[] {allowedOccurrences, childElement.getNodeName()});
 		IMarker marker = report(message, getLine(childElement), severity, PDEMarkerFactory.P_ILLEGAL_XML_NODE, childElement, null, PDEMarkerFactory.CAT_FATAL);
 		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNKNOWN_ELEMENT);
@@ -140,7 +141,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	 */
 	private void reportMinOccurenceViolation(Element parentElement, ElementOccurrenceResult result, int severity) {
 		ISchemaElement childElement = result.getSchemaElement();
-		String allowedOccurrences = Integer.valueOf(result.getAllowedOccurrences()).toString();
+		String allowedOccurrences = Integer.toString(result.getAllowedOccurrences());
 		String message = NLS.bind(PDECoreMessages.ExtensionsErrorReporter_minOccurrence, new String[] {allowedOccurrences, childElement.getName()});
 		IMarker marker = report(message, getLine(parentElement), severity, PDEMarkerFactory.CAT_FATAL);
 		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNKNOWN_ELEMENT);
