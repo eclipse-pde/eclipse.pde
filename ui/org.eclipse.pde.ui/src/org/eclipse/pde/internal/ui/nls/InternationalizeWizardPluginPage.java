@@ -486,8 +486,8 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 
 	private void updateCount() {
 		fCountLabel.setText(NLS.bind(PDEUIMessages.ImportWizard_DetailedPage_count,
-				(new String[] { Integer.toString(fSelectedViewer.getTable().getItemCount()), Integer.toString(
-						fAvailableViewer.getTable().getItemCount() + fSelectedViewer.getTable().getItemCount()) })));
+				Integer.toString(fSelectedViewer.getTable().getItemCount()), Integer.toString(
+						fAvailableViewer.getTable().getItemCount() + fSelectedViewer.getTable().getItemCount())));
 		fCountLabel.getParent().layout();
 	}
 

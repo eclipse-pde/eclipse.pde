@@ -439,8 +439,8 @@ public class FeatureImportWizardPage extends WizardPage {
 			total = fModels.length;
 		}
 		int checked = fFeatureViewer.getCheckedLeafCount();
-		fCounterLabel.setText(NLS.bind(PDEUIMessages.WizardCheckboxTablePart_counter,
-				new String[] { Integer.toString(checked), Integer.toString(total) }));
+		fCounterLabel.setText(NLS.bind(PDEUIMessages.WizardCheckboxTablePart_counter, Integer.toString(checked),
+				Integer.toString(total)));
 	}
 
 	@Override
