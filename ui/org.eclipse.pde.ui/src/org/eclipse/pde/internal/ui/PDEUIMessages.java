@@ -1737,6 +1737,7 @@ public class PDEUIMessages extends NLS {
 	public static String compilers_p_unknown_identifier;
 	public static String compilers_p_no_required_att;
 	public static String compilers_p_not_externalized_att;
+	public static String compilers_p_service_component_without_lazy_act;
 	public static String compilers_p_deprecated;
 	public static String compilers_p_internal;
 	public static String compilers_p_missing_imp_pkg;

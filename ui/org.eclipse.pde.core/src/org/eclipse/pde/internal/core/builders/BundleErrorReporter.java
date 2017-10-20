@@ -1376,6 +1376,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		}
 
-		report(PDECoreMessages.BundleErrorReporter_serviceComponentLazyStart, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_SERVICECOMPONENT_MISSING_LAZY, PDEMarkerFactory.CAT_OTHER);
+		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_SERVICE_COMP_WITHOUT_LAZY_ACT);
+		if (compilerFlag != CompilerFlags.IGNORE) {
+			IMarker marker = report(PDECoreMessages.BundleErrorReporter_serviceComponentLazyStart, header.getLineNumber() + 1, CompilerFlags.P_SERVICE_COMP_WITHOUT_LAZY_ACT, PDEMarkerFactory.M_SERVICECOMPONENT_MISSING_LAZY, PDEMarkerFactory.CAT_OTHER);
+			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_SERVICE_COMP_WITHOUT_LAZY_ACT);
+		}
 	}
 }
