@@ -54,6 +54,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// be paranoid.  something could have gone wrong reading the file etc.
 		if (fModel == null || !validateBundleSymbolicName())
 			return;
+
+		validateAutomaticModuleName();
 		if (!validateVersionOfRequireBundle())
 			return;
 		if (!validateVersionOfImportPackage())
@@ -101,6 +103,80 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateEclipseGenericCapability();
 		validateEclipseGenericRequire();
 		validateServiceComponent();
+	}
+
+
+	public static boolean is9OrHigher(IJavaProject project) {
+		return is9OrHigher(getSourceCompliance(project));
+	}
+	private static String getSourceCompliance(IJavaProject project) {
+		return project != null ? project.getOption(JavaCore.COMPILER_SOURCE, true) : JavaCore.getOption(JavaCore.COMPILER_SOURCE);
+	}
+	public static boolean is9OrHigher(String compliance) {
+		return !isVersionLessThan(compliance, JavaCore.VERSION_9);
+	}
+
+	public static boolean isVersionLessThan(String version1, String version2) {
+		if (JavaCore.VERSION_CLDC_1_1.equals(version1)) {
+			version1= JavaCore.VERSION_1_1 + 'a';
+		}
+		if (JavaCore.VERSION_CLDC_1_1.equals(version2)) {
+			version2= JavaCore.VERSION_1_1 + 'a';
+		}
+		return version1.compareTo(version2) < 0;
+	}
+	private void validateAutomaticModuleName() {
+		IJavaProject jp = JavaCore.create(fProject);
+		if ( BundleErrorReporter.is9OrHigher(jp) == false)
+			return;
+		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_NO_AUTOMATIC_MODULE);
+		if( compilerFlag == CompilerFlags.IGNORE)
+			return;
+		IFile module = null;
+		try {
+			module = getModuleInfoFileInProject(fProject);
+		}
+		catch (Exception e) {
+			PDECore.log(e);
+		}
+		if( module == null ) {
+			IHeader header = fHeaders.get(ICoreConstants.AUTOMATIC_MODULE_NAME.toLowerCase());
+			if (header == null) {
+				IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, ICoreConstants.AUTOMATIC_MODULE_NAME),  1, CompilerFlags.P_NO_AUTOMATIC_MODULE, PDEMarkerFactory.M_NO_AUTOMATIC_MODULE, PDEMarkerFactory.CAT_OTHER);
+				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NO_AUTOMATIC_MODULE);
+			}
+		}
+		if( module !=null) {
+			IHeader header = fHeaders.get(ICoreConstants.AUTOMATIC_MODULE_NAME.toLowerCase());
+			if( header != null) {
+				report(PDECoreMessages.BundleErrorReporter_ConflictingAutoModule, header.getLineNumber() + 1,
+						CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
+			}
+
+		}
+	}
+	private IFile getModuleInfoFileInProject(IContainer container)
+	{
+		IResource[] resources = null;
+		try {
+			resources = container.members();
+		} catch (CoreException e) {
+			return null;
+		}
+		for (IResource res : resources) {
+			if (res instanceof IContainer) {
+				IFile file = getModuleInfoFileInProject((IContainer) res);
+				if (file != null)
+					return file;
+	       }
+			else if (res instanceof IFile) {
+				if (((IFile) res).getName().contains("module-info.java")) { //$NON-NLS-1$
+					return (IFile) res;
+				}
+
+	       }
+	    }
+		return null;
 	}
 
 	private boolean validateBundleManifestVersion() {
@@ -331,7 +407,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (elems.length > 0) {
 				if (!VersionUtil.validateVersionRange(elems[0].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE)).isOK()) {
 					int line = getLine(header, header.getValue());
-					IMarker marker = report(UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion, line, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+					IMarker marker = report("", line, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL); //$NON-NLS-1$
 					addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNRESOLVED_IMPORTS);
 				}
 			}
@@ -704,7 +780,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		if (versionRange != null && !VersionUtil.validateVersionRange(versionRange).isOK()) {
 			IMarker marker = report(
-					NLS.bind(UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion, element.getValue()),
+					NLS.bind("", element.getValue()), //$NON-NLS-1$
 					getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 			addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_MISSING_VERSION_REQ_BUNDLE);
 		}

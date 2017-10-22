@@ -126,6 +126,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		case PDEMarkerFactory.M_SERVICECOMPONENT_MISSING_LAZY:
 			return new IMarkerResolution[] {
 					new AddActivationPolicyResolution(AbstractPDEMarkerResolution.CREATE_TYPE) };
+		case PDEMarkerFactory.M_NO_AUTOMATIC_MODULE:
+			return new IMarkerResolution[] {
+					new AddAutomaticModuleResolution(AbstractPDEMarkerResolution.CREATE_TYPE) };
 		}
 		return NO_RESOLUTIONS;
 	}
