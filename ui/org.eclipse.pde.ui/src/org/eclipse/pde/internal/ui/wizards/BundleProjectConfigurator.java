@@ -119,7 +119,7 @@ public class BundleProjectConfigurator implements ProjectConfigurator {
 	}
 
 	private boolean hasOSGiManifest(IContainer container) {
-		IFile manifestResource = container.getFile(new Path(ICoreConstants.BUILD_FILENAME_DESCRIPTOR));
+		IFile manifestResource = container.getFile(new Path(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR));
 		if (manifestResource.exists()) {
 			Manifest manifest = new Manifest();
 			try (InputStream stream = manifestResource.getContents()) {
