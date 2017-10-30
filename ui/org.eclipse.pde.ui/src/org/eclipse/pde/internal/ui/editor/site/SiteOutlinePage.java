@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.pde.core.IWritable;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.editor.*;
 
@@ -34,7 +33,7 @@ public class SiteOutlinePage extends FormOutlinePage {
 		if (parent instanceof PDEFormPage) {
 			PDEFormPage page = (PDEFormPage) parent;
 			ISiteModel model = (ISiteModel) page.getModel();
-			if (model.isValid()) {
+			if (model != null && model.isValid()) {
 				ISite site = model.getSite();
 				if (page.getId().equals(FeaturesPage.PAGE_ID)) {
 					ArrayList<IWritable> result = new ArrayList<>();
