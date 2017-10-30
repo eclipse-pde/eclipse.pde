@@ -85,7 +85,7 @@ public class ExportPackageSection extends TableSection {
 
 	private boolean isFragment() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
-		return model.isFragmentModel();
+		return model != null && model.isFragmentModel();
 	}
 
 	@Override

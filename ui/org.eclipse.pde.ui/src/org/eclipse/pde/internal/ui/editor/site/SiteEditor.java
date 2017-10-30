@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.exports.SiteBuildOperation;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -169,14 +169,20 @@ public class SiteEditor extends MultiSourceEditor {
 			fBuildAllAction = new Action() {
 				@Override
 				public void run() {
-					handleBuild(((ISiteModel) getAggregateModel()).getSite().getFeatures());
+					ISiteModel model = (ISiteModel) getAggregateModel();
+					if (model != null) {
+						handleBuild(model.getSite().getFeatures());
+					}
 				}
 			};
 			fBuildAllAction.setToolTipText(PDEUIMessages.CategorySection_buildAll);
 			fBuildAllAction.setImageDescriptor(PDEPluginImages.DESC_BUILD_TOOL);
 			updateActionEnablement();
 
-			((ISiteModel) getAggregateModel()).addModelChangedListener(event -> updateActionEnablement());
+			ISiteModel model = (ISiteModel) getAggregateModel();
+			if (model != null) {
+				model.addModelChangedListener(event -> updateActionEnablement());
+			}
 		}
 		return fBuildAllAction;
 	}
@@ -189,13 +195,19 @@ public class SiteEditor extends MultiSourceEditor {
 	}
 
 	protected void handleBuild(ISiteFeature[] sFeatures) {
-		if (sFeatures.length == 0)
+		if (sFeatures.length == 0) {
 			return;
+		}
 		IFeatureModel[] models = getFeatureModels(sFeatures);
-		if (models.length == 0)
+		if (models.length == 0) {
 			return;
+		}
 		ensureContentSaved();
-		ISiteModel buildSiteModel = new WorkspaceSiteModel((IFile) ((IModel) getAggregateModel()).getUnderlyingResource());
+		IModel model = (IModel) getAggregateModel();
+		if (model == null) {
+			return;
+		}
+		ISiteModel buildSiteModel = new WorkspaceSiteModel((IFile) model.getUnderlyingResource());
 		try {
 			buildSiteModel.load();
 		} catch (CoreException e) {

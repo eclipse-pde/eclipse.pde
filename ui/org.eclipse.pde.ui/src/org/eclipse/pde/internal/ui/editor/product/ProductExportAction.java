@@ -32,8 +32,10 @@ public class ProductExportAction extends Action {
 
 	public ProductExportAction(PDEFormEditor editor) {
 		IResource resource = null;
-		if (editor != null)
-			resource = ((IModel) editor.getAggregateModel()).getUnderlyingResource();
+		if (editor != null) {
+			IModel model = (IModel) editor.getAggregateModel();
+			resource = model == null ? null : model.getUnderlyingResource();
+		}
 		fSelection = resource != null ? new StructuredSelection(resource) : new StructuredSelection();
 		fProject = editor.getCommonProject();
 	}

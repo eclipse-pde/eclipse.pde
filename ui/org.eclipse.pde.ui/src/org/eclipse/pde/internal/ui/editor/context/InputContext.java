@@ -134,6 +134,7 @@ public abstract class InputContext {
 	protected abstract IBaseModel createModel(IEditorInput input) throws CoreException;
 
 	protected void create() {
+		fElementListener = new ElementListener();
 		fDocumentProvider = createDocumentProvider(fEditorInput);
 		try {
 			fDocumentProvider.connect(fEditorInput);
@@ -162,7 +163,6 @@ public abstract class InputContext {
 			IAnnotationModel amodel = fDocumentProvider.getAnnotationModel(fEditorInput);
 			if (amodel != null)
 				amodel.connect(fDocumentProvider.getDocument(fEditorInput));
-			fElementListener = new ElementListener();
 			fDocumentProvider.addElementStateListener(fElementListener);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);

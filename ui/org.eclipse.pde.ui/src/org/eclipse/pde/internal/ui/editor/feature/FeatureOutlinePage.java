@@ -90,6 +90,9 @@ public class FeatureOutlinePage extends FormOutlinePage {
 
 	private Object[] getInfos() {
 		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
+		if (model == null) {
+			return new Object[0];
+		}
 		IFeature feature = model.getFeature();
 		Vector<Object> result = new Vector<>();
 		for (int i = 0; i < 3; i++) {
@@ -103,24 +106,36 @@ public class FeatureOutlinePage extends FormOutlinePage {
 
 	private Object[] getReferences() {
 		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
+		if (model == null) {
+			return new Object[0];
+		}
 		IFeature feature = model.getFeature();
 		return feature.getPlugins();
 	}
 
 	private Object[] getImports() {
 		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
+		if (model == null) {
+			return new Object[0];
+		}
 		IFeature feature = model.getFeature();
 		return feature.getImports();
 	}
 
 	private Object[] getIncludes() {
 		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
+		if (model == null) {
+			return new Object[0];
+		}
 		IFeature feature = model.getFeature();
 		return feature.getIncludedFeatures();
 	}
 
 	private Object[] getURLs() {
 		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
+		if (model == null) {
+			return new Object[0];
+		}
 		IFeature feature = model.getFeature();
 		IFeatureURL url = feature.getURL();
 		if (url == null)

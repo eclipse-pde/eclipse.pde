@@ -254,9 +254,4 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 
 		fBlockNotification = false;
 	}
-
-	@Override
-	public boolean isEditable() {
-		return getPage().getPDEEditor().getAggregateModel().isEditable();
-	}
 }

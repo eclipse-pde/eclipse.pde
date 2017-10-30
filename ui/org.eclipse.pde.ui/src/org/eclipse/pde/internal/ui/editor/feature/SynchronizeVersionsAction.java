@@ -49,6 +49,8 @@ public class SynchronizeVersionsAction extends Action {
 	public void setActiveEditor(FeatureEditor editor) {
 		this.activeEditor = editor;
 		IModel model = (IModel) editor.getAggregateModel();
-		setEnabled(model.isEditable());
+		if (model != null) {
+			setEnabled(model.isEditable());
+		}
 	}
 }

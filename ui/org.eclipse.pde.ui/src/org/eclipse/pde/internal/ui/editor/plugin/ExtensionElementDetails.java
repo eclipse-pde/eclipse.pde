@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -62,7 +63,8 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 
 	@Override
 	public boolean isEditable() {
-		return getPage().getPDEEditor().getAggregateModel().isEditable();
+		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
+		return model != null && model.isEditable();
 	}
 
 	@Override

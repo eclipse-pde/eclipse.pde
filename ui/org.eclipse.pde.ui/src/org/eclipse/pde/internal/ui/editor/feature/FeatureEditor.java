@@ -284,12 +284,14 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 
 	@Override
 	public String getTitle() {
-		if (!isModelCorrect(getAggregateModel()))
-			return super.getTitle();
 		IFeatureModel model = (IFeatureModel) getAggregateModel();
-		String name = getTitleText(model.getFeature());
-		if (name == null)
+		if (!isModelCorrect(model)) {
 			return super.getTitle();
+		}
+		String name = getTitleText(model.getFeature());
+		if (name == null) {
+			return super.getTitle();
+		}
 		return model.getResourceString(name);
 	}
 

@@ -63,7 +63,9 @@ public class EditorBuildFeatureAction extends Action {
 	public void setActiveEditor(FeatureEditor editor) {
 		this.activeEditor = editor;
 		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
-		featureFile = (IFile) model.getUnderlyingResource();
-		setEnabled(model.isEditable());
+		if (model != null) {
+			featureFile = (IFile) model.getUnderlyingResource();
+			setEnabled(model.isEditable());
+		}
 	}
 }

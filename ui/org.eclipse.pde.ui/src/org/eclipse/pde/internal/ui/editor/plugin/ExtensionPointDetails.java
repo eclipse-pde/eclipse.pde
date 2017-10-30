@@ -80,7 +80,8 @@ public class ExtensionPointDetails extends PDEDetails {
 
 	@Override
 	public boolean isEditable() {
-		return getPage().getPDEEditor().getAggregateModel().isEditable();
+		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
+		return model != null && model.isEditable();
 	}
 
 	@Override

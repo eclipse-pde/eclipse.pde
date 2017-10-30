@@ -28,7 +28,11 @@ public class RuntimePage extends PDEFormPage {
 
 	@Override
 	protected String getHelpResource() {
-		if (((IPluginModelBase) getPDEEditor().getAggregateModel()).isFragmentModel())
+		IPluginModelBase base = (IPluginModelBase) getPDEEditor().getAggregateModel();
+		if (base == null) {
+			return null;
+		}
+		if (base.isFragmentModel())
 			return IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME;
 		return IHelpContextIds.MANIFEST_PLUGIN_RUNTIME;
 	}
@@ -54,7 +58,11 @@ public class RuntimePage extends PDEFormPage {
 			mform.addPart(new LibraryVisibilitySection(this, form.getBody()));
 		}
 
-		if (((IPluginModelBase) getPDEEditor().getAggregateModel()).isFragmentModel())
+		IPluginModelBase base = (IPluginModelBase) getPDEEditor().getAggregateModel();
+		if (base == null) {
+			return;
+		}
+		if (base.isFragmentModel())
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
 		else
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);

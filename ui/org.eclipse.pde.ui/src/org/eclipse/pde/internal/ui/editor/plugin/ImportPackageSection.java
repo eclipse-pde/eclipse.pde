@@ -170,7 +170,7 @@ public class ImportPackageSection extends TableSection {
 
 	private boolean isFragment() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
-		return model.isFragmentModel();
+		return model != null && model.isFragmentModel();
 	}
 
 	@Override
@@ -786,6 +786,9 @@ public class ImportPackageSection extends TableSection {
 	private Set<String> getForbiddenIds() {
 		HashSet<String> set = new HashSet<>();
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
+		if (model == null) {
+			return set;
+		}
 		String id = model.getPluginBase().getId();
 		if (id != null)
 			set.add(id);

@@ -232,11 +232,6 @@ public class PluginDetailsSection extends PDESection implements IPartSelectionLi
 		fUnpackButton.setEnabled(editable);
 	}
 
-	@Override
-	public boolean isEditable() {
-		return getPage().getPDEEditor().getAggregateModel().isEditable();
-	}
-
 	private long getLong(String svalue) {
 		if (svalue == null)
 			return 0;

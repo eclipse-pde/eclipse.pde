@@ -61,8 +61,10 @@ public class PluginExportAction extends Action {
 			ensureContentSaved();
 		IStructuredSelection selection;
 		IResource resource = null;
-		if (fEditor != null)
-			resource = ((IModel) fEditor.getAggregateModel()).getUnderlyingResource();
+		if (fEditor != null) {
+			IModel model = (IModel) fEditor.getAggregateModel();
+			resource = model == null ? null : model.getUnderlyingResource();
+		}
 		String customWizard = null;
 		if (resource != null) {
 			selection = new StructuredSelection(resource);

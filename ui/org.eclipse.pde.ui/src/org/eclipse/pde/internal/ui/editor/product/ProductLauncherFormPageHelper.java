@@ -36,7 +36,11 @@ public class ProductLauncherFormPageHelper implements ILauncherFormPageHelper {
 		Object file = fEditor.getEditorInput().getAdapter(IFile.class);
 		if (file != null)
 			return file;
-		return ((IProductModel) fEditor.getAggregateModel()).getUnderlyingResource();
+		IProductModel model = (IProductModel) fEditor.getAggregateModel();
+		if (model == null) {
+			return null;
+		}
+		return model.getUnderlyingResource();
 	}
 
 	@Override

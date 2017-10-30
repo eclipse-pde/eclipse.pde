@@ -61,6 +61,9 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 
 	protected Object[] createTopics() {
 		ISchema schema = (ISchema) fEditor.getAggregateModel();
+		if (schema == null) {
+			return new Object[0];
+		}
 		IDocumentSection[] sections = schema.getDocumentSections();
 		Object[] result = new Object[sections.length + 1];
 		result[0] = schema;
@@ -80,6 +83,9 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 
 	private Object[] getMarkup() {
 		ISchema schema = (ISchema) fEditor.getAggregateModel();
+		if (schema == null) {
+			return new Object[0];
+		}
 		return schema.getElements();
 	}
 

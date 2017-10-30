@@ -124,7 +124,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 
 	public boolean useFeatures() {
 		IBaseModel model = getAggregateModel();
-		return ((IProductModel) model).getProduct().useFeatures();
+		return model != null && ((IProductModel) model).getProduct().useFeatures();
 	}
 
 	@Override
@@ -149,7 +149,11 @@ public class ProductEditor extends PDELauncherFormEditor {
 	public void contributeToToolbar(IToolBarManager manager) {
 		contributeLaunchersToToolbar(manager);
 		manager.add(getExportAction());
-		IProduct product = ((IProductModel) getAggregateModel()).getProduct();
+		IBaseModel model = getAggregateModel();
+		if (model == null) {
+			return;
+		}
+		IProduct product = ((IProductModel) model).getProduct();
 		manager.add(new ProductValidateAction(product));
 	}
 

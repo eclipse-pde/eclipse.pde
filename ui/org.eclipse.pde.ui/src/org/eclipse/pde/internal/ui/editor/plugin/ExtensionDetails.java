@@ -15,8 +15,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.IIdentifiable;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
@@ -282,7 +281,8 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 
 	@Override
 	public boolean isEditable() {
-		return getPage().getPDEEditor().getAggregateModel().isEditable();
+		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
+		return model != null && model.isEditable();
 	}
 
 	private void showNoExtensionPointMessage() {

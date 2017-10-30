@@ -44,25 +44,20 @@ public class SiteInputContext extends XMLInputContext {
 	}
 
 	@Override
-	protected IBaseModel createModel(IEditorInput input) {
+	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		IBaseModel model = null;
 		InputStream is = null;
-		try {
-			if (input instanceof IFileEditorInput) {
-				IFile file = ((IFileEditorInput) input).getFile();
-				is = new BufferedInputStream(file.getContents());
-				model = createWorkspaceModel(file, is, true);
-			} else if (input instanceof IStorageEditorInput) {
-				is = new BufferedInputStream(((IStorageEditorInput) input).getStorage().getContents());
-				model = createStorageModel(is);
-			} else if (input instanceof IURIEditorInput) {
-				IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
-				is = store.openInputStream(EFS.CACHE, new NullProgressMonitor());
-				model = createStorageModel(is);
-			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-			return null;
+		if (input instanceof IFileEditorInput) {
+			IFile file = ((IFileEditorInput) input).getFile();
+			is = new BufferedInputStream(file.getContents());
+			model = createWorkspaceModel(file, is, true);
+		} else if (input instanceof IStorageEditorInput) {
+			is = new BufferedInputStream(((IStorageEditorInput) input).getStorage().getContents());
+			model = createStorageModel(is);
+		} else if (input instanceof IURIEditorInput) {
+			IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
+			is = store.openInputStream(EFS.CACHE, new NullProgressMonitor());
+			model = createStorageModel(is);
 		}
 		return model;
 	}
