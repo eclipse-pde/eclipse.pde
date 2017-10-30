@@ -130,7 +130,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 * @param status status to add to the error log
 	 */
 	public static void log(IStatus status) {
-		ResourcesPlugin.getPlugin().getLog().log(status);
+		getDefault().getLog().log(status);
 	}
 
 	/**
@@ -146,16 +146,23 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
 		IStatus status = null;
-		if (e instanceof CoreException)
-			status = ((CoreException) e).getStatus();
-		else {
-			if (message == null)
+		if (e instanceof CoreException) {
+			// Re-use status only if it has attached exception with the stack trace
+			CoreException ce = (CoreException) e;
+			if (ce.getStatus().getException() != null) {
+				status = ce.getStatus();
+			}
+		}
+		if (status == null) {
+			if (message == null) {
 				message = e.getMessage();
-			if (message == null)
+			}
+			if (message == null) {
 				message = e.toString();
+			}
 			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
 		}
-		ResourcesPlugin.getPlugin().getLog().log(status);
+		getDefault().getLog().log(status);
 		Display display = SWTUtil.getStandardDisplay();
 		final IStatus fstatus = status;
 		display.asyncExec(() -> ErrorDialog.openError(null, title, null, fstatus));
@@ -166,13 +173,20 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	}
 
 	public static void log(Throwable e) {
-		if (e instanceof InvocationTargetException)
+		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
+		}
 		IStatus status = null;
-		if (e instanceof CoreException)
-			status = ((CoreException) e).getStatus();
-		else
+		if (e instanceof CoreException) {
+			// Re-use status only if it has attached exception with the stack trace
+			CoreException ce = (CoreException) e;
+			if (ce.getStatus().getException() != null) {
+				status = ce.getStatus();
+			}
+		}
+		if (status == null) {
 			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
+		}
 		log(status);
 	}
 
