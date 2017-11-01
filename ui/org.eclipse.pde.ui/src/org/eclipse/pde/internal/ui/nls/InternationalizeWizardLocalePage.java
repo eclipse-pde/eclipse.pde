@@ -351,10 +351,10 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 
 	private void updateCount() {
 		fCountLabel.setText(NLS.bind(PDEUIMessages.ImportWizard_DetailedPage_count,
-				Integer.valueOf(fSelectedListViewer.getTable().getItemCount()).toString(),
-				Integer.valueOf(
-						fAvailableListViewer.getTable().getItemCount() + fSelectedListViewer.getTable().getItemCount())
-						.toString()));
+				Integer.toString(fSelectedListViewer.getTable().getItemCount()),
+				Integer.toString(fAvailableListViewer.getTable().getItemCount()
+						+ fSelectedListViewer.getTable().getItemCount())
+		));
 		fCountLabel.getParent().layout();
 	}
 
