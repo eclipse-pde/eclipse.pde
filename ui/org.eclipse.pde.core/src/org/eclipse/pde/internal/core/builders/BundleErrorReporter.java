@@ -407,7 +407,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (elems.length > 0) {
 				if (!VersionUtil.validateVersionRange(elems[0].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE)).isOK()) {
 					int line = getLine(header, header.getValue());
-					IMarker marker = report("", line, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL); //$NON-NLS-1$
+					IMarker marker = report(UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion, line,CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNRESOLVED_IMPORTS);
 				}
 			}
@@ -780,7 +780,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		if (versionRange != null && !VersionUtil.validateVersionRange(versionRange).isOK()) {
 			IMarker marker = report(
-					NLS.bind("", element.getValue()), //$NON-NLS-1$
+					NLS.bind(UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion, element.getValue()),
 					getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 			addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_MISSING_VERSION_REQ_BUNDLE);
 		}
