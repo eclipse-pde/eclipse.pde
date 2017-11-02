@@ -59,6 +59,9 @@ public class JREBlock {
 			if (source instanceof Button && !((Button) source).getSelection())
 				return;
 			fTab.updateLaunchConfigurationDialog();
+			if (source == fEeCombo || source == fEeButton || source == fJreCombo || source == fJreButton) {
+				updateBootstrapEnablement();
+			}
 			if (source == fJreButton || source == fEeButton)
 				updateJREEnablement();
 		}
@@ -132,6 +135,7 @@ public class JREBlock {
 						fJreCombo.setText(currentVM);
 					setEECombo();
 					setEEComboSelection(currentEE);
+					updateBootstrapEnablement();
 				}
 			}
 		}));
@@ -212,6 +216,35 @@ public class JREBlock {
 		setEEComboSelection(eeId);
 
 		updateJREEnablement();
+		updateBootstrapEnablement();
+	}
+
+	private void updateBootstrapEnablement() {
+		IPath jrePath = null;
+		if (fJreButton.getSelection()) {
+			if (fJreCombo.getSelectionIndex() != -1) {
+				String jreName = fJreCombo.getText();
+				IVMInstall install = VMHelper.getVMInstall(jreName);
+				// remove the name to make portable
+				jrePath = JavaRuntime.newJREContainerPath(install);
+			}
+		} else {
+			if (fEeCombo.getSelectionIndex() != -1) {
+				IExecutionEnvironment environment = VMUtil
+						.getExecutionEnvironment(parseEESelection(fEeCombo.getText()));
+				if (environment != null) {
+					jrePath = JavaRuntime.newJREContainerPath(environment);
+				}
+			}
+		}
+		if (jrePath != null) {
+			IVMInstall vmInstall = JavaRuntime.getVMInstall(jrePath);
+			if (vmInstall != null) {
+				boolean modularJava = JavaRuntime.isModularJava(vmInstall);
+				fBootstrap.setEnabled(!modularJava);
+			}
+		}
+
 	}
 
 	private void setEEComboSelection(String eeId) {
