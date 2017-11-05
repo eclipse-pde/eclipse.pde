@@ -106,29 +106,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 
-	public static boolean is9OrHigher(IJavaProject project) {
-		return is9OrHigher(getSourceCompliance(project));
-	}
-	private static String getSourceCompliance(IJavaProject project) {
-		return project != null ? project.getOption(JavaCore.COMPILER_SOURCE, true) : JavaCore.getOption(JavaCore.COMPILER_SOURCE);
-	}
-	public static boolean is9OrHigher(String compliance) {
-		return !isVersionLessThan(compliance, JavaCore.VERSION_9);
-	}
-
-	public static boolean isVersionLessThan(String version1, String version2) {
-		if (JavaCore.VERSION_CLDC_1_1.equals(version1)) {
-			version1= JavaCore.VERSION_1_1 + 'a';
-		}
-		if (JavaCore.VERSION_CLDC_1_1.equals(version2)) {
-			version2= JavaCore.VERSION_1_1 + 'a';
-		}
-		return version1.compareTo(version2) < 0;
-	}
 	private void validateAutomaticModuleName() {
-		IJavaProject jp = JavaCore.create(fProject);
-		if ( BundleErrorReporter.is9OrHigher(jp) == false)
-			return;
 		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_NO_AUTOMATIC_MODULE);
 		if( compilerFlag == CompilerFlags.IGNORE)
 			return;
