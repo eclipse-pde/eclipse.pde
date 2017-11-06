@@ -120,7 +120,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if( module == null ) {
 			IHeader header = fHeaders.get(ICoreConstants.AUTOMATIC_MODULE_NAME.toLowerCase());
 			if (header == null) {
-				IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, ICoreConstants.AUTOMATIC_MODULE_NAME),  1, CompilerFlags.P_NO_AUTOMATIC_MODULE, PDEMarkerFactory.M_NO_AUTOMATIC_MODULE, PDEMarkerFactory.CAT_OTHER);
+				IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissingAutoModule, ICoreConstants.AUTOMATIC_MODULE_NAME),  1, CompilerFlags.P_NO_AUTOMATIC_MODULE, PDEMarkerFactory.M_NO_AUTOMATIC_MODULE, PDEMarkerFactory.CAT_OTHER);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NO_AUTOMATIC_MODULE);
 			}
 		}

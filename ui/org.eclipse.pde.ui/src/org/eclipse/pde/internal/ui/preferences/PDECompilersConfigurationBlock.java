@@ -615,6 +615,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		GridData gd = new GridData(GridData.BEGINNING, GridData.CENTER, true, false);
 		lbl.setLayoutData(gd);
 		lbl.setText(label);
+		if (key.equals(KEY_P_NO_AUTOMATIC_MODULE_NAME)) {
+			lbl.setToolTipText(PDEUIMessages.PDECompilersConfigurationBlock_8);
+		}
 		Combo combo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
 		gd = new GridData(GridData.END, GridData.CENTER, false, false);
 		ControlData data = new ControlData(key, SEVERITIES);

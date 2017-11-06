@@ -141,6 +141,8 @@ public class PDEUIMessages extends NLS {
 	public static String PDECompilersConfigurationBlock_6;
 	public static String PDECompilersConfigurationBlock_7;
 
+	public static String PDECompilersConfigurationBlock_8;
+
 	public static String PDECompilersConfigurationBlock_general;
 	public static String PDECompilersConfigurationBlock_versioning;
 	public static String PDECompilersConfigurationBlock_references;
