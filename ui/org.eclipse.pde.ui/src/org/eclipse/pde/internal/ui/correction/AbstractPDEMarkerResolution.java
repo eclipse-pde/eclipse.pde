@@ -18,9 +18,9 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IMarkerResolution2;
+import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
-public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 {
+public abstract class AbstractPDEMarkerResolution extends WorkbenchMarkerResolution {
 
 	public static final int CREATE_TYPE = 1;
 	public static final int RENAME_TYPE = 2;
@@ -39,6 +39,10 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 		fType = type;
 	}
 
+	@Override
+	public IMarker[] findOtherMarkers(IMarker[] markers) {
+		return new IMarker[0];
+	}
 	@Override
 	public Image getImage() {
 		if (image == null) {
