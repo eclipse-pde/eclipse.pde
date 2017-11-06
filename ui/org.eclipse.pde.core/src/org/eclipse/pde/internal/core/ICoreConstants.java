@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -479,4 +479,9 @@ public interface ICoreConstants {
 	 */
 	public static final String NO_TARGET = "NO_TARGET"; //$NON-NLS-1$
 
+	/**
+	 * Preference key for the patterns that determine if a plugin project should be
+	 * treated as test code
+	 */
+	public static final String TEST_PLUGIN_PATTERN = "test_plugin_pattern"; //$NON-NLS-1$
 }

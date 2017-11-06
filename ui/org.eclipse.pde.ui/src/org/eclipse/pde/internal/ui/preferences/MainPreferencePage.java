@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,16 @@ package org.eclipse.pde.internal.ui.preferences;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
@@ -26,10 +31,14 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.BaseBlock;
 import org.eclipse.pde.internal.ui.shared.target.TargetStatus;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -134,6 +143,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fJUnitWorkspaceLocationRadio;
 	private Button fJUnitWorkspacesContainerRadio;
 
+	private Text fTestPluginPatternText;
+
 	public MainPreferencePage() {
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		setDescription(PDEUIMessages.Preferences_MainPage_Description);
@@ -176,6 +187,58 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fAlwaysPreferWorkspace.setSelection(store.getBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
 		fAlwaysPreferWorkspace.setToolTipText(PDEUIMessages.MainPreferencePage_WorkspacePluginsOverrideTargetTooltip);
 
+		Composite pathComposite = new Composite(optionComp, SWT.NONE);
+		pathComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginRight = 12;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		pathComposite.setLayout(layout);
+		pathComposite.setFont(optionComp.getFont());
+
+		Group testGroup = SWTFactory.createGroup(composite, PDEUIMessages.MainPreferencePage_test_plugin_pattern_group,
+				2, 1,
+				GridData.FILL_HORIZONTAL);
+		Label testPluginPatternDescription = new Label(testGroup, SWT.LEFT);
+		testPluginPatternDescription.setText(PDEUIMessages.MainPreferencePage_test_plugin_pattern_description);
+		testPluginPatternDescription.setFont(JFaceResources.getDialogFont());
+		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
+		gd2.widthHint = 200;
+		gd2.horizontalSpan = 2;
+		testPluginPatternDescription.setLayoutData(gd2);
+
+		Label testPluginPatternLabel = new Label(testGroup, SWT.LEFT);
+		testPluginPatternLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		testPluginPatternLabel.setText(PDEUIMessages.MainPreferencePage_test_plugin_pattern_label);
+		testPluginPatternLabel.setFont(JFaceResources.getDialogFont());
+
+		fTestPluginPatternText = new Text(testGroup, SWT.BORDER | SWT.SINGLE);
+		// add some listeners for regex syntax checking
+		fTestPluginPatternText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				updateOKStatus();
+			}
+		});
+
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 200;
+		// new GridData(SWT.FILL, SWT.CENTER, true, false)
+		fTestPluginPatternText.setLayoutData(gd);
+		fTestPluginPatternText.setText(store.getString(IPreferenceConstants.TEST_PLUGIN_PATTERN));
+
+		TextContentAdapter contentAdapter = new TextContentAdapter();
+		FindReplaceDocumentAdapterContentProposalProvider findProposer = new FindReplaceDocumentAdapterContentProposalProvider(
+				true);
+		ContentAssistCommandAdapter contentAssist = new ContentAssistCommandAdapter(fTestPluginPatternText,
+				contentAdapter,
+				findProposer, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new char[0], true);
+		contentAssist.setEnabled(true);
+		Label testPluginPatternNote = new Label(testGroup, SWT.LEFT);
+		testPluginPatternNote.setText(PDEUIMessages.MainPreferencePage_test_plugin_pattern_note);
+		testPluginPatternNote.setFont(JFaceResources.getDialogFont());
+		testPluginPatternNote.setLayoutData(gd2);
+
 		Group group = SWTFactory.createGroup(composite, PDEUIMessages.Preferences_MainPage_showObjects, 2, 1, GridData.FILL_HORIZONTAL);
 		fUseID = new Button(group, SWT.RADIO);
 		fUseID.setText(PDEUIMessages.Preferences_MainPage_useIds);
@@ -204,6 +267,27 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fJUnitWorkspacesContainerRadio.setSelection(jUnitLocationIsContainer);
 
 		return composite;
+	}
+
+	private boolean validateRegex() {
+		try {
+			Pattern.compile(fTestPluginPatternText.getText());
+		} catch (PatternSyntaxException e) {
+			String locMessage = e.getLocalizedMessage();
+			int i = 0;
+			while (i < locMessage.length() && "\n\r".indexOf(locMessage.charAt(i)) == -1) { //$NON-NLS-1$
+				i++;
+			}
+			setErrorMessage(locMessage.substring(0, i));
+			return false;
+		}
+		setErrorMessage(null);
+		return true;
+	}
+
+	final void updateOKStatus() {
+		boolean regexStatus = validateRegex();
+		setValid(regexStatus);
 	}
 
 	@Override
@@ -253,6 +337,13 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			PDECore.getDefault().getModelManager().targetReloaded(null);
 		}
 
+		String pluginPatternText = fTestPluginPatternText.getText();
+		if (!pluginPatternText.equals(store.getString(IPreferenceConstants.TEST_PLUGIN_PATTERN))) {
+			store.setValue(IPreferenceConstants.TEST_PLUGIN_PATTERN, pluginPatternText);
+			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+			prefs.setValue(ICoreConstants.TEST_PLUGIN_PATTERN, pluginPatternText);
+		}
+
 		boolean showTarget = fShowTargetStatus.getSelection();
 		if (store.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS) != showTarget) {
 			store.setValue(IPreferenceConstants.SHOW_TARGET_STATUS, showTarget);
@@ -294,7 +385,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fAddToJavaSearch.setSelection(store.getDefaultBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH));
 		fShowTargetStatus.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
 		fAlwaysPreferWorkspace.setSelection(store.getDefaultBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
-
+		fTestPluginPatternText.setText(store.getDefaultString(IPreferenceConstants.TEST_PLUGIN_PATTERN));
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
 		boolean runtimeLocationIsContainer = launchingStore.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER);
 		fRuntimeWorkspaceLocationRadio.setSelection(!runtimeLocationIsContainer);

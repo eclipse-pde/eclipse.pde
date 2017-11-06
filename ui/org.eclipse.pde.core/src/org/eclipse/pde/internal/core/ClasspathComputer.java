@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -66,7 +67,9 @@ public class ClasspathComputer {
 	}
 
 	private static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, Map<?, ?> sourceLibraryMap, ArrayList<IClasspathEntry> result) throws CoreException {
-
+		String testPluginPattern = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.TEST_PLUGIN_PATTERN);
+		boolean isTestPlugin = testPluginPattern != null && testPluginPattern.length() > 0
+				&& Pattern.compile(testPluginPattern).matcher(project.getName()).find();
 		HashSet<IPath> paths = new HashSet<>();
 
 		// keep existing source folders
@@ -75,7 +78,7 @@ public class ClasspathComputer {
 			for (IClasspathEntry entry : entries) {
 				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					if (paths.add(entry.getPath()))
-						result.add(entry);
+						result.add(updateTestAttribute(isTestPlugin, entry));
 				}
 			}
 		}
@@ -85,7 +88,7 @@ public class ClasspathComputer {
 		for (IPluginLibrary library : libraries) {
 			IBuildEntry buildEntry = build == null ? null : build.getEntry("source." + library.getName()); //$NON-NLS-1$
 			if (buildEntry != null) {
-				addSourceFolder(buildEntry, project, paths, result);
+				addSourceFolder(buildEntry, project, paths, result, isTestPlugin);
 			} else {
 				IPath sourceAttachment = sourceLibraryMap != null ? (IPath) sourceLibraryMap.get(library.getName()) : null;
 				if (library.getName().equals(".")) //$NON-NLS-1$
@@ -98,13 +101,29 @@ public class ClasspathComputer {
 			if (build != null) {
 				IBuildEntry buildEntry = build.getEntry("source.."); //$NON-NLS-1$
 				if (buildEntry != null) {
-					addSourceFolder(buildEntry, project, paths, result);
+					addSourceFolder(buildEntry, project, paths, result, isTestPlugin);
 				}
 			} else if (ClasspathUtilCore.hasBundleStructure(model)) {
 				IPath sourceAttachment = sourceLibraryMap != null ? (IPath) sourceLibraryMap.get(".") : null; //$NON-NLS-1$
 				addJARdPlugin(project, ClasspathUtilCore.getFilename(model), sourceAttachment, attrs, result);
 			}
 		}
+	}
+
+	private static IClasspathEntry updateTestAttribute(boolean isTestPlugin, IClasspathEntry entry) {
+		if (isTestPlugin == entry.isTest() || entry.getEntryKind() != IClasspathEntry.CPE_SOURCE)
+			return entry;
+		IClasspathAttribute[] classpathAttributes = Arrays.stream(entry.getExtraAttributes())
+				.filter(e -> !e.getName().equals(IClasspathAttribute.TEST)).toArray(IClasspathAttribute[]::new);
+		if (isTestPlugin) {
+			int length = classpathAttributes.length;
+			System.arraycopy(classpathAttributes, 0, classpathAttributes = new IClasspathAttribute[length + 1], 0,
+					length);
+			classpathAttributes[length] = JavaCore.newClasspathAttribute(IClasspathAttribute.TEST, "true"); //$NON-NLS-1$
+		}
+		return JavaCore.newSourceEntry(entry.getPath(), entry.getInclusionPatterns(),
+				entry.getExclusionPatterns(), entry.getOutputLocation(), classpathAttributes);
+
 	}
 
 	private static IClasspathAttribute[] getClasspathAttributes(IProject project, IPluginModelBase model) {
@@ -119,7 +138,8 @@ public class ClasspathComputer {
 		return attributes;
 	}
 
-	private static void addSourceFolder(IBuildEntry buildEntry, IProject project, HashSet<IPath> paths, ArrayList<IClasspathEntry> result) throws CoreException {
+	private static void addSourceFolder(IBuildEntry buildEntry, IProject project, HashSet<IPath> paths,
+			ArrayList<IClasspathEntry> result, boolean isTestPlugin) throws CoreException {
 		String[] folders = buildEntry.getTokens();
 		for (String folder : folders) {
 			IPath path = project.getFullPath().append(folder);
@@ -133,7 +153,12 @@ public class ClasspathComputer {
 						continue;
 					}
 				}
-				result.add(JavaCore.newSourceEntry(path));
+				if (isTestPlugin) {
+					result.add(JavaCore.newSourceEntry(path, null, null, null, new IClasspathAttribute[] {
+							JavaCore.newClasspathAttribute(IClasspathAttribute.TEST, "true") })); //$NON-NLS-1$
+				} else {
+					result.add(JavaCore.newSourceEntry(path));
+				}
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,4 +53,13 @@ public interface IPreferenceConstants extends ILaunchingPreferenceConstants {
 	//Run Configurations - Plug-ins Tab - Feature launching
 	public static final String FEATURE_SORT_COLUMN = "Preferences.RunConfigs.Feature.SortColumn"; //$NON-NLS-1$
 	public static final String FEATURE_SORT_ORDER = "Preferences.RunConfigs.Feature.SortOrder"; //$NON-NLS-1$
+
+	/**
+	 * Preference key for the pattern that determines if a plugin project should be
+	 * treated as test code.
+	 */
+	public static final String TEST_PLUGIN_PATTERN = "Preferences.MainPage.testPluginPattern";//$NON-NLS-1$
+	// default value for
+	public static final String TEST_PLUGIN_PATTERN_DEFAULTVALUE = "[.]test[s]?$|[.]tests[.]"; //$NON-NLS-1$
+
 }
