@@ -33,7 +33,13 @@ public class AddAutomaticModuleResolution extends AbstractManifestMarkerResoluti
 			if (header == null) {
 				IManifestHeader headerName = bun.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 				String val = headerName.getValue();
-				bundle.setHeader(ICoreConstants.AUTOMATIC_MODULE_NAME, val.substring(0, val.indexOf(';')));
+				try {
+					val = val.substring(0, val.indexOf(';'));
+				}
+				catch (Exception e) {
+					// for cases where ; not present
+				}
+				bundle.setHeader(ICoreConstants.AUTOMATIC_MODULE_NAME, val);
 			}
 		}
 	}
