@@ -48,9 +48,8 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			return bundle.getResource(name);
 		}
 
-		@SuppressWarnings({"rawtypes", "unchecked"})
 		@Override
-		protected Enumeration findResources(String name) throws IOException {
+		protected Enumeration<URL> findResources(String name) throws IOException {
 			return bundle.getResources(name);
 		}
 	}
@@ -72,9 +71,8 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			return bundle.getResource(name);
 		}
 
-		@SuppressWarnings({"rawtypes", "unchecked"})
 		@Override
-		protected Enumeration findResources(String name) throws IOException {
+		protected Enumeration<URL> findResources(String name) throws IOException {
 			return bundle.getResources(name);
 		}
 
@@ -137,17 +135,16 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			return url;
 		}
 
-		@SuppressWarnings({"rawtypes", "unchecked"})
 		@Override
-		protected Enumeration findResources(String name) throws IOException {
-			Enumeration enumFinal = null;
+		protected Enumeration<URL> findResources(String name) throws IOException {
+			Enumeration<URL> enumFinal = null;
 			for (int i = 0; i < bundleList.size(); i++) {
 				if (i == 0) {
 					enumFinal = bundleList.get(i).getResources(name);
 					continue;
 				}
-				Enumeration e2 = bundleList.get(i).getResources(name);
-				Vector temp = new Vector();
+				Enumeration<URL> e2 = bundleList.get(i).getResources(name);
+				Vector<URL> temp = new Vector<>();
 				while (enumFinal != null && enumFinal.hasMoreElements()) {
 					temp.add(enumFinal.nextElement());
 				}
