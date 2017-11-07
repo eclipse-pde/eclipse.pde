@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,6 +181,13 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(getTestPluginId(configuration));
+		IVMInstall launcher = VMHelper.createLauncher(configuration);
+		boolean isModular = JavaRuntime.isModularJava(launcher);
+		if (isModular) {
+			String modAllSystem = "--add-modules=ALL-SYSTEM"; //$NON-NLS-1$
+			if (!vmArguments.contains(modAllSystem))
+				vmArguments.add(modAllSystem);
+		}
 	}
 
 	/**
