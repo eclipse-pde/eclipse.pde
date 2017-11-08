@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,6 +198,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		// add Bundle Specific fields if applicable
 		if (pluginBase instanceof BundlePluginBase) {
 			IBundle bundle = ((BundlePluginBase) pluginBase).getBundle();
+			bundle.setHeader(ICoreConstants.AUTOMATIC_MODULE_NAME, bundle.getHeader(Constants.BUNDLE_SYMBOLICNAME));
 
 			String value = getCommaValuesFromPackagesSet(getImportPackagesSet(), fData.getVersion());
 			if (value.length() > 0)
