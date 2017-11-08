@@ -419,10 +419,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * fControlMap
 	 */
 	private void updateControls() {
-		HashSet<?> controls = null;
 		Control control = null;
-		for (Integer key : fControlMap.keySet()) {
-			controls = fControlMap.get(key);
+		for (HashSet<?> controls : fControlMap.values()) {
 			if (controls == null) {
 				continue;
 			}

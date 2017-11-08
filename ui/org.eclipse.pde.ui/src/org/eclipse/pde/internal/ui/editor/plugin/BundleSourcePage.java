@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -111,10 +112,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 				BundleModel model = (BundleModel) parent;
 				Map<?, ?> manifest = ((Bundle) model.getBundle()).getHeaders();
 				ArrayList<IDocumentKey> keys = new ArrayList<>();
-				for (Object manifestKey : manifest.keySet()) {
-					IDocumentKey key = (IDocumentKey) manifest.get(manifestKey);
-					if (key.getOffset() > -1)
+				for (Object value : manifest.values()) {
+					IDocumentKey key = (IDocumentKey) value;
+					if (key.getOffset() > -1) {
 						keys.add(key);
+					}
 				}
 				return keys.toArray();
 			}

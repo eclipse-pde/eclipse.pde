@@ -602,11 +602,13 @@ public class PluginImportOperation extends WorkspaceJob {
 					Map<IPath, List<Object>> collected = new HashMap<>();
 					PluginImportHelper.collectBinaryFiles(provider, provider.getRoot(), packageLocations, collected);
 					iterationMonitor.setWorkRemaining(collected.size());
-					for (IPath currentDestination : collected.keySet()) {
+					for (Entry<IPath, List<Object>> entry : collected.entrySet()) {
+						IPath currentDestination = entry.getKey();
 						IPath destination = project.getFullPath();
 						destination = destination.append(currentDestination);
 						PluginImportHelper.importContent(provider.getRoot(), destination, provider,
-								collected.get(currentDestination), iterationMonitor.split(1));
+								entry.getValue(), iterationMonitor.split(1));
+
 					}
 				} finally {
 					if (zip != null) {
@@ -619,11 +621,13 @@ public class PluginImportOperation extends WorkspaceJob {
 				File srcFile = new File(model.getInstallLocation());
 				PluginImportHelper.collectBinaryFiles(FileSystemStructureProvider.INSTANCE, srcFile, packageLocations, collected);
 				iterationMonitor.setWorkRemaining(collected.size());
-				for (IPath currentDestination : collected.keySet()) {
+				for (Entry<IPath, List<Object>> entry : collected.entrySet()) {
+					IPath currentDestination = entry.getKey();
 					IPath destination = project.getFullPath();
 					destination = destination.append(currentDestination);
 					PluginImportHelper.importContent(srcFile, destination, FileSystemStructureProvider.INSTANCE,
-							collected.get(currentDestination), iterationMonitor.split(1));
+							entry.getValue(), iterationMonitor.split(1));
+
 				}
 			}
 

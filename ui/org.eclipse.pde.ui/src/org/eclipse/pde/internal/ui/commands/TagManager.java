@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.commands;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.ListenerList;
 
@@ -62,11 +63,13 @@ public class TagManager {
 	public Command[] getCommands(String tag) {
 		ArrayList<Command> list = new ArrayList<>();
 
-		for (Command command : fCommandToTags.keySet()) {
-			String tags = fCommandToTags.get(command);
+		for (Entry<Command, String> entry : fCommandToTags.entrySet()) {
+			Command command = entry.getKey();
+			String tags = entry.getValue();
 			if (hasTag(tags, tag)) {
 				list.add(command);
 			}
+
 		}
 
 		return list.toArray(new Command[list.size()]);

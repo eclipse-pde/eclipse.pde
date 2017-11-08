@@ -24,7 +24,8 @@ import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -77,8 +78,7 @@ public class CommandList {
 
 		@Override
 		public void dispose() {
-			for (Object object : fImgMap.keySet())
-				fImgMap.get(object).dispose();
+			fImgMap.values().forEach(obj -> obj.dispose());
 			if (fDefaultImage != null)
 				fDefaultImage.dispose();
 			super.dispose();

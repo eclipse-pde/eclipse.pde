@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.Position;
-import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
-
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
@@ -77,8 +75,8 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		@Override
 		public void endCollecting() {
 			synchronized (fLockObject) {
-				for (SpellingAnnotation annotation : fAddAnnotations.keySet()) {
-					fAnnotationModel.addAnnotation(annotation, fAddAnnotations.get(annotation));
+				for (Entry<SpellingAnnotation, Position> entry : fAddAnnotations.entrySet()) {
+					fAnnotationModel.addAnnotation(entry.getKey(), entry.getValue());
 				}
 				deleteNonstringSpellingAnnotations(fAddAnnotations.keySet().iterator());
 			}

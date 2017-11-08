@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.commands;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -150,11 +151,9 @@ public class CommandDetails {
 	}
 
 	protected ParameterizedCommand buildParameterizedCommand() {
-
-		ArrayList<Parameterization> list = new ArrayList<>();
-		for (IParameter parameter : fParameterToValue.keySet()) {
-			String value = fParameterToValue.get(parameter);
-			list.add(new Parameterization(parameter, value));
+		ArrayList<Parameterization> list = new ArrayList<>(fParameterToValue.size());
+		for (Entry<IParameter, String> entry : fParameterToValue.entrySet()) {
+			list.add(new Parameterization(entry.getKey(), entry.getValue()));
 		}
 		Parameterization[] parameterizations = list.toArray(new Parameterization[list.size()]);
 
@@ -238,9 +237,9 @@ public class CommandDetails {
 			if (fPreSel != null && fValues != null) {
 				Object obj = fPreSel.getParameterMap().get(parameter.getId());
 				if (obj != null) {
-					for (Object next : fValues.keySet()) {
-						if (obj.equals(fValues.get(next))) {
-							fValuesCombo.setText(next.toString());
+					for (Entry<?, ?> entry : fValues.entrySet()) {
+						if (obj.equals(entry.getValue())) {
+							fValuesCombo.setText(entry.getKey().toString());
 							break;
 						}
 					}
