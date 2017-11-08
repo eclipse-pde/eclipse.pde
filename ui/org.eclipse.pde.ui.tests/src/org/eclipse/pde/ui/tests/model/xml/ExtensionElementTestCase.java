@@ -40,68 +40,68 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddNewExtensionElement1(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("\t<extension point=\"org.eclipse.pde.ui.samples\"></extension>");
+		StringBuilder buffer = new StringBuilder("\t<extension point=\"org.eclipse.pde.ui.samples\"></extension>");
 		testAddNewExtensionElement(buffer, newLine);
 	}
 
 	private void testAddNewExtensionElement2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("\t<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("\t<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t</extension>");
 		testAddNewExtensionElement(buffer, newLine);
 	}
 
 	private void testAddNewExtensionElement3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("</extension>");
 		testAddNewExtensionElement(buffer, newLine);
 	}
 
 	public void testAddExtensionElement1LF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer1(LF);
+		StringBuilder buffer = getSingleElementBuffer1(LF);
 		testAddExtensionElement(buffer, LF);
 	}
 
 	public void testAddExtensionElement2LF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer2(LF);
+		StringBuilder buffer = getSingleElementBuffer2(LF);
 		testAddExtensionElement(buffer, LF);
 	}
 
 	public void testAddExtensionElement3LF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer3(LF);
+		StringBuilder buffer = getSingleElementBuffer3(LF);
 		testAddExtensionElement(buffer, LF);
 	}
 
 	public void testAddExtensionElement1CRLF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer1(CRLF);
+		StringBuilder buffer = getSingleElementBuffer1(CRLF);
 		testAddExtensionElement(buffer, CRLF);
 	}
 
 	public void testAddExtensionElement2CRLF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer2(CRLF);
+		StringBuilder buffer = getSingleElementBuffer2(CRLF);
 		testAddExtensionElement(buffer, CRLF);
 	}
 
 	public void testAddExtensionElement3CRLF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer3(CRLF);
+		StringBuilder buffer = getSingleElementBuffer3(CRLF);
 		testAddExtensionElement(buffer, CRLF);
 	}
 
-	private StringBuffer getSingleElementBuffer1(String newLine) throws Exception {
-		return new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
+	private StringBuilder getSingleElementBuffer1(String newLine) throws Exception {
+		return new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
 	}
 
-	private StringBuffer getSingleElementBuffer2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+	private StringBuilder getSingleElementBuffer2(String newLine) throws Exception {
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("<sample />");
 		buffer.append(newLine);
 		return buffer.append("</extension>");
 	}
 
-	private StringBuffer getSingleElementBuffer3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("\t<extension point=\"org.eclipse.pde.ui.samples\">");
+	private StringBuilder getSingleElementBuffer3(String newLine) throws Exception {
+		StringBuilder buffer = new StringBuilder("\t<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t\t<sample />");
 		buffer.append(newLine);
@@ -133,81 +133,81 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddNewMultipleExtensionElements1(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("\t<extension point=\"org.eclipse.pde.ui.samples\"></extension>");
+		StringBuilder buffer = new StringBuilder("\t<extension point=\"org.eclipse.pde.ui.samples\"></extension>");
 		testAddNewMultipleExtensionElements(buffer, newLine);
 	}
 
 	private void testAddNewMultipleExtensionElements2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("\t<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("\t<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t</extension>");
 		testAddNewMultipleExtensionElements(buffer, newLine);
 	}
 
 	private void testAddNewMultipleExtensionElements3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("</extension>");
 		testAddNewMultipleExtensionElements(buffer, newLine);
 	}
 
 	public void testAddMultipleExtensionElements1LF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer1(LF);
+		StringBuilder buffer = getSingleElementBuffer1(LF);
 		testAddMultipleExtensionElements(buffer, LF);
 	}
 
 	public void testAddMultipleExtensionElements2LF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer2(LF);
+		StringBuilder buffer = getSingleElementBuffer2(LF);
 		testAddMultipleExtensionElements(buffer, LF);
 	}
 
 	public void testAddMultipleExtensionElements3LF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer3(LF);
+		StringBuilder buffer = getSingleElementBuffer3(LF);
 		testAddMultipleExtensionElements(buffer, LF);
 	}
 
 	public void testAddMultipleExtensionElements1CRLF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer1(CRLF);
+		StringBuilder buffer = getSingleElementBuffer1(CRLF);
 		testAddMultipleExtensionElements(buffer, CRLF);
 	}
 
 	public void testAddMultipleExtensionElements2CRLF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer2(CRLF);
+		StringBuilder buffer = getSingleElementBuffer2(CRLF);
 		testAddMultipleExtensionElements(buffer, CRLF);
 	}
 
 	public void testAddMultipleExtensionElements3CRLF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer3(CRLF);
+		StringBuilder buffer = getSingleElementBuffer3(CRLF);
 		testAddMultipleExtensionElements(buffer, CRLF);
 	}
 
 	public void testRemoveExtensionElement1LF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer1(LF);
+		StringBuilder buffer = getSingleElementBuffer1(LF);
 		testRemoveExtensionElement(buffer, LF);
 	}
 
 	public void testRemoveExtensionElement2LF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer2(LF);
+		StringBuilder buffer = getSingleElementBuffer2(LF);
 		testRemoveExtensionElement(buffer, LF);
 	}
 
 	public void testRemoveExtensionElement3LF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer3(LF);
+		StringBuilder buffer = getSingleElementBuffer3(LF);
 		testRemoveExtensionElement(buffer, LF);
 	}
 
 	public void testRemoveExtensionElement1CRLF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer1(CRLF);
+		StringBuilder buffer = getSingleElementBuffer1(CRLF);
 		testRemoveExtensionElement(buffer, CRLF);
 	}
 
 	public void testRemoveExtensionElement2CRLF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer2(CRLF);
+		StringBuilder buffer = getSingleElementBuffer2(CRLF);
 		testRemoveExtensionElement(buffer, CRLF);
 	}
 
 	public void testRemoveExtensionElement3CRLF() throws Exception {
-		StringBuffer buffer = getSingleElementBuffer3(CRLF);
+		StringBuilder buffer = getSingleElementBuffer3(CRLF);
 		testRemoveExtensionElement(buffer, CRLF);
 	}
 
@@ -236,13 +236,13 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testRemoveMultipleExtensionElements1(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\"><sample />");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\"><sample />");
 		buffer.append("<sample1/><sample2 /></extension>");
 		testRemoveMulitpleExtensionElements(buffer, newLine);
 	}
 
 	private void testRemoveMultipleExtensionElements2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t<sample />");
 		buffer.append(newLine);
@@ -255,7 +255,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testRemoveMultipleExtensionElements3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("\t<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("\t<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t\t<sample />");
 		buffer.append("<sample1/>");
@@ -265,7 +265,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		testRemoveMulitpleExtensionElements(buffer, newLine);
 	}
 
-	private void testAddNewExtensionElement(StringBuffer buffer, String newLine) throws Exception {
+	private void testAddNewExtensionElement(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -284,7 +284,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
 	}
 
-	private void testAddExtensionElement(StringBuffer buffer, String newLine) throws Exception {
+	private void testAddExtensionElement(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -299,7 +299,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		assertEquals(ext.getChildren()[0].getName(), "sample");
 	}
 
-	private void testAddNewMultipleExtensionElements(StringBuffer buffer, String newLine) throws Exception {
+	private void testAddNewMultipleExtensionElements(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -316,7 +316,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		assertEquals(ext.getChildren()[1].getName(), "sample2");
 	}
 
-	private void testAddMultipleExtensionElements(StringBuffer buffer, String newLine) throws Exception {
+	private void testAddMultipleExtensionElements(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -335,7 +335,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		assertEquals(ext.getChildren()[2].getName(), "sample2");
 	}
 
-	private void testRemoveExtensionElement(StringBuffer buffer, String newLine) throws Exception {
+	private void testRemoveExtensionElement(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -351,7 +351,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		assertEquals(ext.getChildCount(), 0);
 	}
 
-	private void testRemoveMulitpleExtensionElements(StringBuffer buffer, String newLine) throws Exception {
+	private void testRemoveMulitpleExtensionElements(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 

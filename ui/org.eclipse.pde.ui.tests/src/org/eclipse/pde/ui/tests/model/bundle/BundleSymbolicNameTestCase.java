@@ -23,7 +23,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 
 	@Override
 	public void testAbsentHeader() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		fDocument.set(buffer.toString());
@@ -34,7 +34,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 
 	@Override
 	public void testPresentHeader() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
@@ -46,7 +46,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 
 	@Override
 	public void testHeaderOffset1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
@@ -59,7 +59,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 
 	@Override
 	public void testHeaderOffset2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
@@ -73,7 +73,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 
 	@Override
 	public void testHeaderLength() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
@@ -86,7 +86,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 
 	@Override
 	public void testHeaderLengthWithWindowsDelimiter() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
 		buffer.append("Bundle-ManifestVersion: 2\r\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\r\n");
@@ -98,7 +98,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	public void testAddBundleSymbolicName() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Require-Bundle: com.example.xyz\n");
@@ -118,7 +118,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	public void testRemoveBundleSymbolicName() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
@@ -138,7 +138,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	public void testChangeBundleSymbolicName() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
@@ -162,7 +162,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	public void testReadSingletonDirective() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz; singleton:=true\n");
@@ -176,7 +176,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	public void testAddSingletonDirective() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
@@ -200,7 +200,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	public void testRemoveSingletonDirective() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz; singleton:=true\n");

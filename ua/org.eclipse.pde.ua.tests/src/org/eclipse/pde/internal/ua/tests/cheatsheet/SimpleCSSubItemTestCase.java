@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class SimpleCSSubItemTestCase extends CheatSheetModelTestCase  {
 	}
 
 	public void simpleSubItemTestCase(int subitemsCount, String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		for (int i =0; i < subitemsCount; i++) {
 			String action = createAction(newline);
@@ -78,7 +78,7 @@ public class SimpleCSSubItemTestCase extends CheatSheetModelTestCase  {
 	}
 
 	public void simpleSubItemCommandTestCase(int subitemsCount, String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		for (int i =0; i < subitemsCount; i++) {
 			String action = createCommand(newline);
@@ -98,7 +98,7 @@ public class SimpleCSSubItemTestCase extends CheatSheetModelTestCase  {
 	}
 
 	public void simpleSubItemActionTestCase(int subitemsCount, String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		for (int i =0; i < subitemsCount; i++) {
 			String action = createAction(newline);
@@ -118,7 +118,7 @@ public class SimpleCSSubItemTestCase extends CheatSheetModelTestCase  {
 	}
 
 	public void simpleRepeatedSubItemTestCase(int subitemsCount, String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		for (int i =0; i < subitemsCount; i++) {
 			buffer.append(createRepeatedSubItem("", newline));
@@ -134,7 +134,7 @@ public class SimpleCSSubItemTestCase extends CheatSheetModelTestCase  {
 	}
 
 	public void simpleConditionalSubItemTestCase(int subitemsCount, String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		for (int i =0; i < subitemsCount; i++) {
 			buffer.append(createConditionalSubItem("", newline));
@@ -150,7 +150,7 @@ public class SimpleCSSubItemTestCase extends CheatSheetModelTestCase  {
 	}
 
 	public ISimpleCSItem process(String subitems, String newline) {
-		StringBuffer buffer = createSimpleCSItem(subitems, newline);
+		StringBuilder buffer = createSimpleCSItem(subitems, newline);
 
 		setXMLContents(buffer, newline);
 		load();

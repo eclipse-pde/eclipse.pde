@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.ui.tests.model.bundle;
 
 import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -54,7 +53,7 @@ public abstract class BundleModelTestCase extends TestCase {
 	}
 
 	public void testAbsentHeader() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -65,7 +64,7 @@ public abstract class BundleModelTestCase extends TestCase {
 	}
 
 	public void testPresentHeader() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -78,7 +77,7 @@ public abstract class BundleModelTestCase extends TestCase {
 	}
 
 	public void testHeaderOffset1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -92,7 +91,7 @@ public abstract class BundleModelTestCase extends TestCase {
 	}
 
 	public void testHeaderOffset2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append(fHeaderName);
@@ -106,7 +105,7 @@ public abstract class BundleModelTestCase extends TestCase {
 	}
 
 	public void testHeaderLength() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -120,7 +119,7 @@ public abstract class BundleModelTestCase extends TestCase {
 	}
 
 	public void testHeaderLengthWithWindowsDelimiter() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
 		buffer.append("Bundle-ManifestVersion: 2\r\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\r\n");

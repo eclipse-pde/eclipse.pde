@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 EclipseSource and others.
+ * Copyright (c) 2009, 2017 EclipseSource and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.ds.core.IDSComponent;
 public class DSv10tov11TestCase extends AbstractDSModelTestCase {
 
 	public void testAddDefaultComponent() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);
 		load();
 
@@ -28,8 +28,8 @@ public class DSv10tov11TestCase extends AbstractDSModelTestCase {
 	}
 
 	@Override
-	protected void setXMLContents(StringBuffer body, String newline) {
-		StringBuffer sb = new StringBuffer();
+	protected void setXMLContents(StringBuilder body, String newline) {
+		StringBuilder sb = new StringBuilder();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		sb.append(newline);
 		sb.append("<component name=\"" + COMPONENT_NAME + "\">");

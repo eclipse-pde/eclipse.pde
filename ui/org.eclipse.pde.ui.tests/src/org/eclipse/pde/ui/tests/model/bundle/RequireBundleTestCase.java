@@ -23,7 +23,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testAddRequireBundleHeader() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -43,7 +43,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testRemoveExistingRequireBundleHeader() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -63,7 +63,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testAddBundle() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -83,13 +83,13 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3) + fDocument.getLineLength(4);
 
-		StringBuffer expected = new StringBuffer("Require-Bundle: com.example.abc,\n");
+		StringBuilder expected = new StringBuilder("Require-Bundle: com.example.abc,\n");
 		expected.append(" com.example.core\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
 	public void testAddMultipleBundles() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -110,7 +110,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(7) - fDocument.getLineOffset(3);
-		StringBuffer expected = new StringBuffer("Require-Bundle: com.example.abc,\n");
+		StringBuilder expected = new StringBuilder("Require-Bundle: com.example.abc,\n");
 		expected.append(" com.example.core,\n");
 		expected.append(" com.example.ui,\n");
 		expected.append(" com.example\n");
@@ -118,7 +118,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testRemoveBundle() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -139,13 +139,13 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(5) - fDocument.getLineOffset(3);
-		StringBuffer expected = new StringBuffer("Require-Bundle: com.example.abc,\n");
+		StringBuilder expected = new StringBuilder("Require-Bundle: com.example.abc,\n");
 		expected.append(" com.example.ui\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
 	public void testRemoveMultipleBundles() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -171,7 +171,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testReadOptionalBundle() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -188,7 +188,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testSetGetVersion() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -208,7 +208,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testReadBundleWithVersion() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -225,7 +225,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testMakeBundleOptional() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -252,7 +252,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testRemoveOptionalDirective() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -279,7 +279,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testAddVersionToBundle() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -306,7 +306,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testRemoveVersionFromBundle() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -333,7 +333,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testAddBundleWithWindowsDelimiter() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
 		buffer.append("Bundle-ManifestVersion: 2\r\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\r\n");
@@ -353,13 +353,13 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3) + fDocument.getLineLength(4);
 
-		StringBuffer expected = new StringBuffer("Require-Bundle: com.example.abc,\r\n");
+		StringBuilder expected = new StringBuilder("Require-Bundle: com.example.abc,\r\n");
 		expected.append(" com.example.core\r\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
 	public void testRemoveBundleWithWindowsDelimiter() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
 		buffer.append("Bundle-ManifestVersion: 2\r\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\r\n");
@@ -380,13 +380,13 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(5) - fDocument.getLineOffset(3);
-		StringBuffer expected = new StringBuffer("Require-Bundle: com.example.abc,\r\n");
+		StringBuilder expected = new StringBuilder("Require-Bundle: com.example.abc,\r\n");
 		expected.append(" com.example.ui\r\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
 	public void testPreserveSpacing() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -407,7 +407,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(6) - fDocument.getLineOffset(3);
 
-		StringBuffer expected = new StringBuffer("Require-Bundle: \n");
+		StringBuilder expected = new StringBuilder("Require-Bundle: \n");
 		expected.append(" com.example.abc,\n");
 		expected.append(" com.example.core\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
@@ -415,7 +415,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testReadBundleReExport() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -432,7 +432,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testMakeBundleReExport() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -459,7 +459,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testRemoveReExport() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");

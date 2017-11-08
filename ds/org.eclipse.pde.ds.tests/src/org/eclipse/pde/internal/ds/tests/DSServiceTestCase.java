@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 	 * Tests a service component with all Attributes and Child values
 	 */
 	public void testAddCompleteService() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<service servicefactory=\"true\" >");
 		buffer.append(LF);
 		buffer.append("<provide interface=\"");
@@ -70,7 +70,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 	 * Tests a service component with multiple Childs
 	 */
 	public void testMultipleProvideService() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<service>");
 
 		buffer.append(LF);
@@ -126,7 +126,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 	 * Tests a service component default values
 	 */
 	public void testDefaultValuesService() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<service>");
 		buffer.append(LF);
 		buffer.append("</service>");
@@ -150,7 +150,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 	 * Test to remove a provided service element from a service element.
 	 */
 	public void testRemoveChildService(){
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<service servicefactory=\"true\" >");
 		buffer.append(LF);
 		buffer.append("<provide interface=\"");
@@ -184,7 +184,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 	 * Tests to add a service by DSDocumentFactory
 	 */
 	public void testAddServiceFactory(){
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer , LF);
 		load();
 

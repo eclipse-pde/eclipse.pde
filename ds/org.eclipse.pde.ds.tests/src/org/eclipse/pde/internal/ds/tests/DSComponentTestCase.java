@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.ds.core.IDSService;
 public class DSComponentTestCase extends AbstractDSModelTestCase {
 
 	public void testAddDefaultComponent() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);
 		load();
 
@@ -39,7 +39,7 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 	}
 
 	public void testAddComponentwithAllAttributes() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);
 		load();
 
@@ -65,7 +65,7 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 	}
 
 	public void testAddMoveRemoveChildrens() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);
 		load();
 

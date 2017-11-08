@@ -22,7 +22,7 @@ public class BundleActivatorTestCase extends BundleModelTestCase {
 	}
 
 	public void testGetActivator() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -37,7 +37,7 @@ public class BundleActivatorTestCase extends BundleModelTestCase {
 	}
 
 	public void testSetActivator() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -62,7 +62,7 @@ public class BundleActivatorTestCase extends BundleModelTestCase {
 	}
 
 	public void testChangeExistingActivator() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");

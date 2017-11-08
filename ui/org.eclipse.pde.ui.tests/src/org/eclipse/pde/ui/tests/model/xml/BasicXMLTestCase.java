@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 public class BasicXMLTestCase extends XMLModelTestCase {
 
 	public void testReadSimpleExtension() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
 		setXMLContents(sb, LF);
 		load();
@@ -29,7 +29,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 	}
 
 	public void testReadSimpleExtensionOneLine() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
 		setXMLContents(sb, ""); // "" means no newline at the end of file
 		load();
@@ -39,7 +39,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 	}
 
 	public void testReadMultilineSimpleExtension() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension ");
 		sb.append(LF);
 		sb.append("point=\"org.eclipse.pde.ui.samples\">");
@@ -82,7 +82,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 	}
 
 	public void testRemoveSimpleExtension() throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
 		setXMLContents(sb, LF);
 		load(true);
@@ -100,7 +100,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 
 	// bug 220178
 	public void testRemoveChildNode() throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples2\"><sample /></extension>");
 		setXMLContents(sb, LF);
@@ -119,7 +119,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 
 	//bug 285134
 	public void testSingleQuoteAttribute() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension point='org.eclipse.pde.ui.samples'><sample /></extension>");
 		setXMLContents(sb, LF);
 		load();

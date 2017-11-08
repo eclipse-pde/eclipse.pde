@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -478,7 +478,7 @@ public class TestSuiteHelper {
 	public static void addAllRequired(IApiBaseline baseline, Set<String> done, IApiComponent component, List<IApiComponent> collection) throws CoreException {
 		IRequiredComponentDescription[] descriptions = component.getRequiredComponents();
 		boolean error = false;
-		StringBuffer buffer = null;
+		StringBuilder buffer = null;
 		for (int i = 0; i < descriptions.length; i++) {
 			IRequiredComponentDescription description = descriptions[i];
 			if (!done.contains(description.getId())) {
@@ -486,7 +486,7 @@ public class TestSuiteHelper {
 				if (bundle == null) {
 					if (!description.isOptional()) {
 						if (buffer == null) {
-							buffer = new StringBuffer();
+							buffer = new StringBuilder();
 						}
 						buffer.append(description.getId()).append(',');
 						error = true;
@@ -582,7 +582,7 @@ public class TestSuiteHelper {
 		}
 		// add all directories as classpath entries
 		if (!directories.isEmpty()) {
-			StringBuffer classpathEntry = new StringBuffer();
+			StringBuilder classpathEntry = new StringBuilder();
 			int length = directories.size();
 			int counter = 0;
 			for (Iterator<String> iterator = directories.iterator(); iterator.hasNext();) {

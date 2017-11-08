@@ -74,7 +74,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 	}
 
 	private void addExtension(String lineDelim) throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(FIRST_INDENT);
 		sb.append("<extension");
 		sb.append(lineDelim);
@@ -94,7 +94,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		reload();
 
 		String newContents = fDocument.get();
-		sb = new StringBuffer();
+		sb = new StringBuilder();
 		sb.append(FIRST_INDENT);
 		sb.append("<extension");
 		sb.append(lineDelim);
@@ -119,7 +119,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 	}
 
 	private void addElement(String lineDelim) throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(FIRST_INDENT);
 		sb.append("<extension");
 		sb.append(lineDelim);
@@ -142,7 +142,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		reload();
 
 		String newContents = fDocument.get();
-		sb = new StringBuffer();
+		sb = new StringBuilder();
 		sb.append(FIRST_INDENT);
 		sb.append("<extension");
 		sb.append(lineDelim);
@@ -161,7 +161,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 	}
 
 	private void addAttributesToElement(String lineDelim) throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(FIRST_INDENT);
 		sb.append("<extension");
 		sb.append(lineDelim);
@@ -192,7 +192,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		reload();
 
 		String newContents = fDocument.get();
-		sb = new StringBuffer();
+		sb = new StringBuilder();
 		sb.append(FIRST_INDENT);
 		sb.append("<extension");
 		sb.append(lineDelim);
@@ -221,7 +221,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 	}
 
 	private void breakOpenElement(String lineDelim) throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(FIRST_INDENT);
 		sb.append("<extension");
 		sb.append(lineDelim);
@@ -252,7 +252,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		reload();
 
 		String newContents = fDocument.get();
-		sb = new StringBuffer();
+		sb = new StringBuilder();
 		sb.append(FIRST_INDENT);
 		sb.append("<extension");
 		sb.append(lineDelim);
@@ -281,7 +281,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 
 	private void preserveCommentAddExtension(String lineDelim) throws Exception {
 		String comment = "<!-- THIS IS A COMMENT -->";
-		StringBuffer sb = new StringBuffer(comment);
+		StringBuilder sb = new StringBuilder(comment);
 		setXMLContents(sb, lineDelim);
 		load(true);
 
@@ -300,7 +300,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 
 	private void preserveContainedCommentAddElement(String lineDelim) throws Exception {
 		String comment = "<!-- THIS IS A COMMENT INSIDE THE EXTENSION -->";
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension point=\"org.eclipse.pde\">");
 		sb.append(lineDelim);
 		sb.append(comment);

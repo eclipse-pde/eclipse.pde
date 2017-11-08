@@ -280,7 +280,7 @@ public class FileUtils {
 		if (!sourceFile.isFile()) {
 			return null;
 		}
-		StringBuffer sourceContentBuffer = new StringBuffer();
+		StringBuilder sourceContentBuffer = new StringBuilder();
 		FileInputStream input = null;
 		input = new FileInputStream(sourceFile);
 		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 
 	public void testAddPropertiesComponent() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<properties entry=\"");
 		buffer.append("OSGI-INF/vendor.properties\">");
 		buffer.append("</properties>");
@@ -41,7 +41,7 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 	 * Tests a  component with multiple properties
 	 */
 	public void testMultipleProperties() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<properties entry=\"");
 		buffer.append("OSGI-INF/vendor.properties1\">");
 		buffer.append("</properties>");
@@ -83,7 +83,7 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 	 * Tests a properties component default values
 	 */
 	public void testDefaultValuesService() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<properties>");
 		buffer.append(LF);
 		buffer.append("</properties>");
@@ -107,7 +107,7 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 	 * Tests to add a properties by DSDocumentFactory
 	 */
 	public void testAddPropertiesFactory(){
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer , LF);
 		load();
 

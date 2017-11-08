@@ -16,7 +16,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 
 	// all one one line
 	public void testSwapTwoChildren() throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\">");
 		sb.append("<child id=\"a\" /><child id=\"b\" />");
 		sb.append("</extension>");
@@ -26,7 +26,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 
 	// all on diff line
 	public void testSwapTwoChildren2() throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\">");
 		sb.append(LF);
 		sb.append("<child id=\"a\" />");
@@ -40,7 +40,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 
 	// all on diff line with tabs
 	public void testSwapTwoChildren3() throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\">");
 		sb.append(LF);
 		sb.append("\t<child id=\"a\" />");
@@ -54,7 +54,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 
 	// some on diff lines with no spacing
 	public void testSwapTwoChildren4() throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\">");
 		sb.append("<child id=\"a\" />");
 		sb.append(LF);
@@ -66,7 +66,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 
 	// some on diff lines with spacing
 	public void testSwapTwoChildren5() throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\">");
 		sb.append("\t<child id=\"a\" />");
 		sb.append(LF);

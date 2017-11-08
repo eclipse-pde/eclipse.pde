@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testAddExportPackageHeader() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -42,7 +42,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testRemoveExistingExportPackageHeader() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -63,7 +63,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testAddPackage() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -84,13 +84,13 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3) + fDocument.getLineLength(4);
 
-		StringBuffer expected = new StringBuffer(fHeaderName + ": com.example.abc,\n");
+		StringBuilder expected = new StringBuilder(fHeaderName + ": com.example.abc,\n");
 		expected.append(" com.example.abc.actions\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
 	public void testAddImportPackageHeader() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -110,7 +110,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testAddMultiplePackages() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -132,7 +132,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(7) - fDocument.getLineOffset(3);
-		StringBuffer expected = new StringBuffer(fHeaderName + ": com.example.abc,\n");
+		StringBuilder expected = new StringBuilder(fHeaderName + ": com.example.abc,\n");
 		expected.append(" com.example.abc.exports,\n");
 		expected.append(" com.example.abc.imports,\n");
 		expected.append(" com.example.abc.views\n");
@@ -140,7 +140,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testRemovePackage() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -162,13 +162,13 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(5) - fDocument.getLineOffset(3);
-		StringBuffer expected = new StringBuffer(fHeaderName + ": com.example.abc,\n");
+		StringBuilder expected = new StringBuilder(fHeaderName + ": com.example.abc,\n");
 		expected.append(" com.example.abc.refactoring\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
 	public void testRemoveMultiplePackages() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -195,7 +195,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testReadPackageWithVersion() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -213,7 +213,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testAddVersionToPackage() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -241,7 +241,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testRemoveVersionFromPackage() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -269,7 +269,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testAddPackageWithWindowsDelimiter() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
 		buffer.append("Bundle-ManifestVersion: 2\r\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\r\n");
@@ -290,13 +290,13 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3) + fDocument.getLineLength(4);
 
-		StringBuffer expected = new StringBuffer(fHeaderName + ": com.example.abc,\r\n");
+		StringBuilder expected = new StringBuilder(fHeaderName + ": com.example.abc,\r\n");
 		expected.append(" com.example.abc.actions\r\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
 	public void testRemovePackageWithWindowsDelimiter() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
 		buffer.append("Bundle-ManifestVersion: 2\r\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\r\n");
@@ -318,13 +318,13 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(5) - fDocument.getLineOffset(3);
-		StringBuffer expected = new StringBuffer(fHeaderName + ": com.example.abc,\r\n");
+		StringBuilder expected = new StringBuilder(fHeaderName + ": com.example.abc,\r\n");
 		expected.append(" com.example.abc.refactoring\r\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
 	public void testPreserveSpacing() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -346,7 +346,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(6) - fDocument.getLineOffset(3);
 
-		StringBuffer expected = new StringBuffer(fHeaderName + ": \n");
+		StringBuilder expected = new StringBuilder(fHeaderName + ": \n");
 		expected.append(" com.example.abc,\n");
 		expected.append(" com.example.abc.actions\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));

@@ -48,7 +48,7 @@ public class ManifestEditorSpellCheckTestCase extends XMLModelTestCase {
 		fProject.open(null);
 		super.setUp();
 
-		StringBuffer buffer = new StringBuffer("<extension point=\"mispel\"><sample />");
+		StringBuilder buffer = new StringBuilder("<extension point=\"mispel\"><sample />");
 		buffer.append("<sample1 id=\"tast\" /><sample2 /></extension>");
 		setXMLContents(buffer, LF);
 	}

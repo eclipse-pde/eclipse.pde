@@ -22,7 +22,7 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 	}
 
 	public void testGetLocalizationDefault() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
@@ -33,7 +33,7 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 	}
 
 	public void testGetLocalization() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
@@ -48,7 +48,7 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 	}
 
 	public void testSetLocalization() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
@@ -73,7 +73,7 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 	}
 
 	public void testChangeExistingLocalization() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");

@@ -22,7 +22,7 @@ public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testAddLibrary() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -48,7 +48,7 @@ public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testRemoveLibrary() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -75,7 +75,7 @@ public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
 	}
 
 	public void testRemoveOnlyLibrary() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");

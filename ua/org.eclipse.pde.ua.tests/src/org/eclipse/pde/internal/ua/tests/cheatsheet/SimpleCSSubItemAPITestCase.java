@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class SimpleCSSubItemAPITestCase extends CheatSheetModelTestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		setXMLContents(new StringBuffer(), LF);
+		setXMLContents(new StringBuilder(), LF);
 		load();
 	}
 
@@ -160,7 +160,7 @@ public class SimpleCSSubItemAPITestCase extends CheatSheetModelTestCase {
 	}
 
 	public ISimpleCSItem process(ISimpleCSSubItemObject[] subitems, String newline) {
-		StringBuffer buffer = createSimpleCSItem(subitems);
+		StringBuilder buffer = createSimpleCSItem(subitems);
 
 		setXMLContents(buffer, newline);
 		load();

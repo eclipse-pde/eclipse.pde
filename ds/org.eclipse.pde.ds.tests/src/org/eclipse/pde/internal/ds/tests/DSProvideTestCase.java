@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ds.core.IDSService;
 public class DSProvideTestCase extends AbstractDSModelTestCase {
 
 	public void testAddCompleteProvidedService() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<service servicefactory=\"true\" >");
 		buffer.append(LF);
 		buffer.append("<provide interface=\"");
@@ -54,7 +54,7 @@ public class DSProvideTestCase extends AbstractDSModelTestCase {
 	 * Tests to add a provided service by DSDocumentFactory
 	 */
 	public void testAddProvidedServicebyFactory() {
-			StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 			setXMLContents(buffer , LF);
 			load();
 

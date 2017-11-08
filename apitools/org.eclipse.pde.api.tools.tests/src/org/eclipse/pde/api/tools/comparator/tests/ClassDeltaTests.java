@@ -2311,10 +2311,10 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
 		class MyDeltaVisitor extends DeltaVisitor {
-			StringBuffer buffer;
+			StringBuilder buffer;
 
 			public MyDeltaVisitor() {
-				this.buffer = new StringBuffer();
+				this.buffer = new StringBuilder();
 			}
 
 			@Override

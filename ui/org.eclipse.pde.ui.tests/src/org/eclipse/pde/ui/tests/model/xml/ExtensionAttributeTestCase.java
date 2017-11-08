@@ -39,12 +39,12 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddNewExtensionAttribute1(String newLine) throws Exception {
-		StringBuffer sb = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
+		StringBuilder sb = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
 		testAddNewExtensionAttribute(sb, newLine);
 	}
 
 	private void testAddNewExtensionAttribute2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("<sample />");
 		buffer.append(newLine);
@@ -53,7 +53,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddNewExtensionAttribute3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t<sample />");
 		buffer.append(newLine);
@@ -86,13 +86,13 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddExtensionAttribute1(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append("<sample id=\"org.eclipse.pde.sample1\"/></extension>");
 		testAddExtensionAttribute(buffer, newLine);
 	}
 
 	private void testAddExtensionAttribute2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("<sample id=\"org.eclipse.pde.sample1\"/>");
 		buffer.append(newLine);
@@ -101,7 +101,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddExtensionAttribute3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t<sample id=\"org.eclipse.pde.sample1\"/>");
 		buffer.append(newLine);
@@ -134,12 +134,12 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddNewMultipleAttributes1(String newLine) throws Exception {
-		StringBuffer sb = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
+		StringBuilder sb = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
 		testAddNewMultipleExtensionAttributes(sb, newLine);
 	}
 
 	private void testAddNewMultipleAttributes2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("<sample />");
 		buffer.append(newLine);
@@ -148,7 +148,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddNewMultipleAttributes3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t<sample />");
 		buffer.append(newLine);
@@ -181,13 +181,13 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testRemoveExtensionAttribute1(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">\t");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">\t");
 		buffer.append("<sample id=\"org.eclipse.pde.sample1\"/>\t</extension>");
 		testRemoveExtensionAttribute(buffer, newLine);
 	}
 
 	private void testRemoveExtensionAttribute2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t<sample id=\"org.eclipse.pde.sample1\"/>");
 		buffer.append(newLine);
@@ -196,7 +196,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testRemoveExtensionAttribute3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("<sample id=\"org.eclipse.pde.sample1\"/>");
 		buffer.append(newLine);
@@ -229,13 +229,13 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testRemoveMultipleExtensionAttributes1(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">\t");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">\t");
 		buffer.append("<sample id=\"org.eclipse.pde.sample1\" name=\"pde sample\" perspectiveId=\"org.eclipse.pde.ui.PDEPerspective\"/></extension>");
 		testRemoveMultipleExtensionAttributes(buffer, newLine);
 	}
 
 	private void testRemoveMultipleExtensionAttributes2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t<sample id=\"org.eclipse.pde.sample1\" name=\"pde sample\" perspectiveId=\"org.eclipse.pde.ui.PDEPerspective\"/>");
 		buffer.append(newLine);
@@ -244,7 +244,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testRemoveMultipleExtensionAttributes3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("<sample id=\"org.eclipse.pde.sample1\" name=\"pde sample\" perspectiveId=\"org.eclipse.pde.ui.PDEPerspective\"/>");
 		buffer.append(newLine);
@@ -277,13 +277,13 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testChangeExtensionAttribute1(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append("<sample id=\"org.eclipse.pde.sample1\" name=\"pde sample\" perspectiveId=\"org.eclipse.pde.ui.PDEPerspective\"/></extension>");
 		testChangeExtensionAttribute(buffer, newLine);
 	}
 
 	private void testChangeExtensionAttribute2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t<sample id=\"org.eclipse.pde.sample1\" name=\"pde sample\" perspectiveId=\"org.eclipse.pde.ui.PDEPerspective\"/>");
 		buffer.append(newLine);
@@ -292,7 +292,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testChangeExtensionAttribute3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
+		StringBuilder buffer = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t\t\t<sample id=\"org.eclipse.pde.sample1\" name=\"pde sample\" perspectiveId=\"org.eclipse.pde.ui.PDEPerspective\"/>");
 		buffer.append(newLine);
@@ -300,8 +300,8 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testChangeExtensionAttribute(buffer, newLine);
 	}
 
-	private void testAddNewExtensionAttribute(StringBuffer buffer, String newLine) throws Exception {
-		StringBuffer sb = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
+	private void testAddNewExtensionAttribute(StringBuilder buffer, String newLine) throws Exception {
+		StringBuilder sb = new StringBuilder("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
 		setXMLContents(sb, LF);
 		load(true);
 
@@ -321,7 +321,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
 	}
 
-	private void testAddExtensionAttribute(StringBuffer buffer, String newLine) throws Exception {
+	private void testAddExtensionAttribute(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -345,7 +345,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		assertEquals(elem.getAttribute("name").getValue(), "pde sample");
 	}
 
-	private void testAddNewMultipleExtensionAttributes(StringBuffer buffer, String newLine) throws Exception {
+	private void testAddNewMultipleExtensionAttributes(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -367,7 +367,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		assertEquals(elem.getAttribute("name").getValue(), "pde sample");
 	}
 
-	private void testRemoveExtensionAttribute(StringBuffer buffer, String newLine) throws Exception {
+	private void testRemoveExtensionAttribute(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -389,7 +389,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		assertEquals(elem.getAttributeCount(), 0);
 	}
 
-	private void testRemoveMultipleExtensionAttributes(StringBuffer buffer, String newLine) throws Exception {
+	private void testRemoveMultipleExtensionAttributes(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -415,7 +415,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		assertEquals(elem.getAttribute("name").getValue(), "pde sample");
 	}
 
-	private void testChangeExtensionAttribute(StringBuffer buffer, String newLine) throws Exception {
+	private void testChangeExtensionAttribute(StringBuilder buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.ds.core.IDSReference;
 public class DSReferenceTestCase extends AbstractDSModelTestCase {
 
 	public void testServiceReference() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);
 		load();
 
@@ -59,7 +59,7 @@ public class DSReferenceTestCase extends AbstractDSModelTestCase {
 	}
 
 	public void testDefaultServiceReference() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);
 		load();
 

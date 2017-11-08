@@ -22,7 +22,7 @@ public class FragmentHostTestCase extends BundleModelTestCase {
 	}
 
 	public void testAddFragmentHost() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -42,7 +42,7 @@ public class FragmentHostTestCase extends BundleModelTestCase {
 	}
 
 	public void testRemoveFragmentHost() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -63,7 +63,7 @@ public class FragmentHostTestCase extends BundleModelTestCase {
 	}
 
 	public void testChangeFragmentHost() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -85,7 +85,7 @@ public class FragmentHostTestCase extends BundleModelTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
 
-		StringBuffer expected = new StringBuffer("Fragment-Host: org.eclipse.jdt\n");
+		StringBuilder expected = new StringBuilder("Fragment-Host: org.eclipse.jdt\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 

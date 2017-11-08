@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,14 +66,14 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 		return subitem;
 	}
 
-	protected StringBuffer createSimpleCSItem(ISimpleCSSubItemObject[] subitems) {
+	protected StringBuilder createSimpleCSItem(ISimpleCSSubItemObject[] subitems) {
 		ISimpleCSItem item = fModel.getFactory().createSimpleCSItem(null);
 		item.setTitle("Title");
 		for (int i = 0; subitems != null && i < subitems.length; i++) {
 			item.addSubItem(subitems[i]);
 		}
 
-		return new StringBuffer(item.toString());
+		return new StringBuilder(item.toString());
 	}
 
 	protected ISimpleCSSubItem createSubItem() {
@@ -91,16 +91,16 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 		return subitem;
 	}
 
-	protected StringBuffer createSimpleCSItem(String subitems, String newline) {
-		StringBuffer buffer = new StringBuffer();
+	protected StringBuilder createSimpleCSItem(String subitems, String newline) {
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<item title=\"Title\">").append(newline);
 		buffer.append(subitems);
 		buffer.append("</item>").append(newline);
 		return buffer;
 	}
 
-	protected StringBuffer createComplexCSItem(String children, String newline) {
-		StringBuffer buffer = new StringBuffer();
+	protected StringBuilder createComplexCSItem(String children, String newline) {
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<item").append(newline);
 		buffer.append(" skip=\"true\"").append(newline);
 		buffer.append(" title=\"Title\"").append(newline);
@@ -118,7 +118,7 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 	}
 
 	protected String createAction(String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<action").append(newline);
 		buffer.append(" class=\"org.eclipse.some.Clazz\"").append(newline);
 		buffer.append(" pluginId=\"org.eclipse.pde.plugin.xyz\"").append(newline);
@@ -129,7 +129,7 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 	}
 
 	protected String createPerformWhen(String executables, String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<perform-when").append(newline);
 		buffer.append(" condition=\"some.example.condition\"").append(newline);
 		buffer.append(">").append(newline);
@@ -139,7 +139,7 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 	}
 
 	protected String createCommand(String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<command").append(newline);
 		buffer.append("required=\"true\"").append(newline);
 		buffer.append("serialization=\"org.eclipse.my.command\"").append(newline);
@@ -148,7 +148,7 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 	}
 
 	protected String createSubItem(String children, String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<subitem").append(newline);
 		buffer.append(" label=\"label1\"").append(newline);
 		buffer.append(" skip=\"true\"").append(newline);
@@ -160,7 +160,7 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 	}
 
 	protected String createRepeatedSubItem(String children, String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<repeated-subitem").append(newline);
 		buffer.append(" values=\"repeat.value\"").append(newline);
 		buffer.append(">").append(newline);
@@ -170,7 +170,7 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 	}
 
 	protected String createConditionalSubItem(String children, String newline) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<conditional-subitem").append(newline);
 		buffer.append(" condition=\"please.do\"").append(newline);
 		buffer.append(">").append(newline);

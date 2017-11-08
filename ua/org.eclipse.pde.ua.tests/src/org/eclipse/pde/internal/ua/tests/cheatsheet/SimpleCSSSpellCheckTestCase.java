@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * in a string with double quotes
 	 */
 	public void testSpellingErrorInDoubleQuotedStringTestCase() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -83,7 +83,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * in a string with single quotes
 	 */
 	public void testSpellingErrorInSingleQuotedStringTestCase() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -110,7 +110,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * in a double quoted string containing single quotes
 	 */
 	public void testSpellingErrorInDoubleQuotedStringWithSingleQuotesTestCase() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -137,7 +137,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * in a single quoted string containing double quotes
 	 */
 	public void testSpellingErrorInDoubleQuotedStringWithDoubleQuotesTestCase() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -199,7 +199,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * The spelling error annotation should not appear for spelling errors in an XML tag
 	 */
 	public void testNoSpellingAnnotationForXMLTag() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -224,7 +224,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * Testing for the multiple spelling error annotations
 	 */
 	public void testMultipleSpellingErrorsTestCase() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -249,7 +249,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * Testing for the zero spelling error annotations
 	 */
 	public void testZeroSpellingErrorsTestCase() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -274,7 +274,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * The spelling errors in the XML comments should be ignored
 	 */
 	public void testSpellingErrorsInXMLCommentTestCase() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -301,7 +301,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * The spelling errors in the multiple line XML comments should be ignored
 	 */
 	public void testSpellingErrorsInMultiLineXMLCommentTestCase() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -330,7 +330,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * Testing for no unwanted spelling annotations due to single quote in XML comment
 	 */
 	public void testSingleQuoteInXMLCommentTestCase() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -357,7 +357,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 * Testing for no unwanted spelling annotations due to double quote in XML comment
 	 */
 	public void testDoubleQuoteInXMLCommentTestCase() {
-		StringBuffer csText = new StringBuffer();
+		StringBuilder csText = new StringBuilder();
 
 		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		append(csText,"<cheatsheet");
@@ -413,7 +413,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 		fDocument = (Document) dp.getDocument(fEditor.getEditorInput());
 	}
 
-	private void append(StringBuffer buffer, String text){
+	private void append(StringBuilder buffer, String text) {
 		buffer.append(text + CRLF);
 	}
 }

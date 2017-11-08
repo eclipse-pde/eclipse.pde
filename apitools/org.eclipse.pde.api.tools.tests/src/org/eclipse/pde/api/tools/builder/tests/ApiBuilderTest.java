@@ -128,7 +128,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		 */
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Line mapping: "); //$NON-NLS-1$
 			buffer.append("[line ").append(this.linenumber).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("[problemid: ").append(problemid).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -215,7 +215,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	@Override
 	protected void expectingNoProblemsFor(IPath[] roots) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		ApiProblem[] problems = allSortedApiProblems(roots);
 		if (problems != null) {
 			for (int i = 0, length = problems.length; i < length; i++) {
@@ -457,7 +457,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 				assertTrue("Missing expected problem: " + message, messages.remove(message)); //$NON-NLS-1$
 			}
 			if (messages.size() > 0) {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append('[');
 				for (String problem : messages) {
 					buffer.append(problem).append(',');
@@ -481,7 +481,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 				assertTrue("Missing expected problem line mapping: " + problems[i], mappings.remove(new LineMapping(problems[i]))); //$NON-NLS-1$
 			}
 			if (mappings.size() > 0) {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append('[');
 				for (LineMapping mapping : mappings) {
 					buffer.append(mapping).append(',');
@@ -742,7 +742,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	@Override
 	protected String arrayToString(Object[] array) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		int length = array == null ? 0 : array.length;
 		if (length == 0) {
 			buffer.append("No problem found"); //$NON-NLS-1$

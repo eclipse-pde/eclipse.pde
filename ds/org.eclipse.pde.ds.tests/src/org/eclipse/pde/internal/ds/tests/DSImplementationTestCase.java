@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ds.core.IDSImplementation;
 public class DSImplementationTestCase extends AbstractDSModelTestCase {
 
 	public void testAddImplementationComponent() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<implementation class=\"");
 		buffer.append("org.example.ds.SampleCommandProvider1\">");
 		buffer.append("</implementation>");
@@ -42,7 +42,7 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 	 * Tests a service component default values
 	 */
 	public void testDefaultValuesService() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<implementation>");
 		buffer.append(LF);
 		buffer.append("</implementation>");
@@ -62,7 +62,7 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 	 * Tests to add a implementation by DSDocumentFactory
 	 */
 	public void testAddImplementationFactory() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);
 		load();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.plugin.XMLTextChangeListener;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSModel;
-import org.eclipse.text.edits.*;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
+
+import junit.framework.TestCase;
 
 public abstract class AbstractCheatSheetModelTestCase extends TestCase {
 
@@ -55,8 +58,8 @@ public abstract class AbstractCheatSheetModelTestCase extends TestCase {
 		}
 	}
 
-	protected void setXMLContents(StringBuffer body, String newline) {
-		StringBuffer sb = new StringBuffer();
+	protected void setXMLContents(StringBuilder body, String newline) {
+		StringBuilder sb = new StringBuilder();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		sb.append(newline);
 		sb.append("<cheatsheet title=\"sample cheatsheet\">");

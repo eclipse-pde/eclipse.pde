@@ -33,7 +33,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 	}
 
 	public void testReadInternalPackage() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -51,7 +51,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 	}
 
 	public void testReadOneFriend() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -71,7 +71,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 	}
 
 	public void testReadMultipleFriend() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -93,7 +93,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 	}
 
 	public void testSetPackageInternal() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -120,7 +120,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 	}
 
 	public void testAddPackageFriend() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
@@ -146,7 +146,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 	}
 
 	public void testAddPackageFriends() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");

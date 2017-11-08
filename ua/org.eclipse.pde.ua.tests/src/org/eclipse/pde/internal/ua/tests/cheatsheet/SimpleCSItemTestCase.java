@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class SimpleCSItemTestCase extends CheatSheetModelTestCase  {
 	}
 
 	public void simpleCSItemTestCase(String newline) {
-		StringBuffer buffer = createComplexCSItem("", newline);
+		StringBuilder buffer = createComplexCSItem("", newline);
 
 		ISimpleCS model = process(buffer, newline);
 
@@ -51,7 +51,7 @@ public class SimpleCSItemTestCase extends CheatSheetModelTestCase  {
 
 	public void testItemActionTestCase() {
 		String action = createAction(LF);
-		StringBuffer buffer = createComplexCSItem(action, LF);
+		StringBuilder buffer = createComplexCSItem(action, LF);
 
 		ISimpleCS model = process(buffer, LF);
 
@@ -64,7 +64,7 @@ public class SimpleCSItemTestCase extends CheatSheetModelTestCase  {
 
 	public void testItemCommandTestCase() {
 		String command = createCommand(LF);
-		StringBuffer buffer = createComplexCSItem(command, LF);
+		StringBuilder buffer = createComplexCSItem(command, LF);
 
 		ISimpleCS model = process(buffer, LF);
 
@@ -77,7 +77,7 @@ public class SimpleCSItemTestCase extends CheatSheetModelTestCase  {
 
 	public void testItemPerformWhenTestCase() {
 		String command = createPerformWhen("", LF);
-		StringBuffer buffer = createComplexCSItem(command, LF);
+		StringBuilder buffer = createComplexCSItem(command, LF);
 
 		ISimpleCS model = process(buffer, LF);
 
@@ -88,7 +88,7 @@ public class SimpleCSItemTestCase extends CheatSheetModelTestCase  {
 		validatePerformWhen(item.getExecutable());
 	}
 
-	public ISimpleCS process(StringBuffer buffer, String newline) {
+	public ISimpleCS process(StringBuilder buffer, String newline) {
 		setXMLContents(buffer, newline);
 		load();
 

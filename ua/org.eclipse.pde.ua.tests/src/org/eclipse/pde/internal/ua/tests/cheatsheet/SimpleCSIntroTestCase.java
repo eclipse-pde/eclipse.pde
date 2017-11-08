@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 	protected static String DESCRIPTION = "some description"; //$NON-NLS-1$
 
 	public void testReadSimpleCSIntro() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<intro href=\"").append(INTRO_HREF).append("\">");
 		buffer.append(LF);
 		buffer.append("<description>");
@@ -139,7 +139,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 	}
 
 	public void testRemoveSimpleCSItem() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<intro></intro>");
 		buffer.append("<item title=\"item1\"></item>");
 		setXMLContents(buffer, LF);
@@ -154,7 +154,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 	}
 
 	public void testRemoveSimpleCSItem2() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<intro></intro>");
 		buffer.append("<item title=\"item1\"></item>");
 		buffer.append("<item title=\"item2\"></item>");
@@ -176,7 +176,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 	}
 
 	public void testMoveSimpleCSItem() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<intro></intro>");
 		buffer.append("<item title=\"item1\"></item>");
 		buffer.append("<item title=\"item2\"></item>");
@@ -221,7 +221,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 
 	//bug 285134
 	public void testSingleQuoteAttributes() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<intro></intro>");
 		buffer.append("<item ");
 		buffer.append(LF);
