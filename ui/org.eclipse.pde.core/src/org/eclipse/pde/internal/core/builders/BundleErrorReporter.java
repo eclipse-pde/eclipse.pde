@@ -110,21 +110,24 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_NO_AUTOMATIC_MODULE);
 		if( compilerFlag == CompilerFlags.IGNORE)
 			return;
-		IFile module = null;
-		try {
-			module = getModuleInfoFileInProject(fProject);
+
+		IJavaProject jp = JavaCore.create(fProject);
+		IModuleDescription moduleDescription = null;
+		if (jp != null) {
+			try {
+				moduleDescription = jp.getModuleDescription();
+			} catch (JavaModelException e) {
+
+			}
 		}
-		catch (Exception e) {
-			PDECore.log(e);
-		}
-		if( module == null ) {
+		if (moduleDescription == null) {
 			IHeader header = fHeaders.get(ICoreConstants.AUTOMATIC_MODULE_NAME.toLowerCase());
 			if (header == null) {
 				IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissingAutoModule, ICoreConstants.AUTOMATIC_MODULE_NAME),  1, CompilerFlags.P_NO_AUTOMATIC_MODULE, PDEMarkerFactory.M_NO_AUTOMATIC_MODULE, PDEMarkerFactory.CAT_OTHER);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NO_AUTOMATIC_MODULE);
 			}
 		}
-		if( module !=null) {
+		if (moduleDescription != null) {
 			IHeader header = fHeaders.get(ICoreConstants.AUTOMATIC_MODULE_NAME.toLowerCase());
 			if( header != null) {
 				report(PDECoreMessages.BundleErrorReporter_ConflictingAutoModule, header.getLineNumber() + 1,
@@ -132,29 +135,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 
 		}
-	}
-	private IFile getModuleInfoFileInProject(IContainer container)
-	{
-		IResource[] resources = null;
-		try {
-			resources = container.members();
-		} catch (CoreException e) {
-			return null;
-		}
-		for (IResource res : resources) {
-			if (res instanceof IContainer) {
-				IFile file = getModuleInfoFileInProject((IContainer) res);
-				if (file != null)
-					return file;
-	       }
-			else if (res instanceof IFile) {
-				if (((IFile) res).getName().contains("module-info.java")) { //$NON-NLS-1$
-					return (IFile) res;
-				}
-
-	       }
-	    }
-		return null;
 	}
 
 	private boolean validateBundleManifestVersion() {
