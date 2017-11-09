@@ -18,7 +18,7 @@ public class AttributeValueCompletionTests extends AbstractTargetEditorTest {
 		final int unitIdOffset = 42;
 		final int unitVersionOffset = 53;
 		ITextViewer textViewer = getTextViewerForTarget("AttributeValues");
-		String expectedValueString = "Started job fetching metadata. Retry when job is finished";
+		String expectedValueString = "Add repository URL first.";
 		ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer, unitIdOffset);
 		assertTrue(completionProposals.length == 1
 				&& completionProposals[0].getDisplayString().equals(expectedValueString));

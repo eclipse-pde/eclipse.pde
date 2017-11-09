@@ -1,0 +1,19 @@
+<!-- comments used to break completion-->
+<target>
+<locations>
+<location>
+<unit id="" />
+<
+<repository/>
+</location>
+<!-- so
+did multiline
+comments-->
+</locations>
+<environment>
+<!--<ws></ws>
+<arch>
+<garbage>-->
+<os>linu</os>
+</environment>
+</target>

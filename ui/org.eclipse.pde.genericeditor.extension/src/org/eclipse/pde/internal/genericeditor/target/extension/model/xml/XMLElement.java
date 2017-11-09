@@ -59,11 +59,11 @@ public class XMLElement {
 	}
 
 	public int getStartOffset() {
-		return offset - element.length();
+		return offset;
 	}
 
 	public int getEndOffset() {
-		return offset;
+		return offset + element.length();
 	}
 
 	public String getAttributeValueByKey(String key) {

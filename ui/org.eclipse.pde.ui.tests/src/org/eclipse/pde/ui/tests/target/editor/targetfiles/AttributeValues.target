@@ -2,7 +2,7 @@
 <locations>
 <location>
 <unit id="" version=""/>
-<repository location="http://download.eclipse.org/releases/oxygen/"/>
+<repository/>
 </location>
 </locations>
 </target>

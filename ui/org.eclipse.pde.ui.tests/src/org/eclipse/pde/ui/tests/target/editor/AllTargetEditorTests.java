@@ -24,7 +24,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AttributeNameCompletionTests.class, AttributeValueCompletionTests.class, TagNameCompletionTests.class,
-		TagValueCompletionTests.class })
+	TagValueCompletionTests.class, Bug527084CompletionWithCommentsTest.class })
 public class AllTargetEditorTests {
 
 }

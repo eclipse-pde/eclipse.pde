@@ -46,12 +46,6 @@ public class Parser {
 	}
 
 	public void parse(IDocument document) throws XMLStreamException {
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(document.get().getBytes());
-		XMLEventReader eventReader = inputFactory.createXMLEventReader(inputStream);
-		while (eventReader.hasNext()) {
-			eventReader.nextEvent();
-		}
-
 		target = null;
 		Node currentParent = null;
 		Node currentNode = null;
@@ -101,37 +95,51 @@ public class Parser {
 				}
 			}
 		}
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(document.get().getBytes());
+		XMLEventReader eventReader = inputFactory.createXMLEventReader(inputStream);
+		while (eventReader.hasNext()) {
+			eventReader.nextEvent();
+		}
 	}
 
 	private Iterator<XMLElement> createXMLTagItterator(String document) {
 		return new Iterator<XMLElement>() {
-			private String tagRegex = "(?<tag><[^<]*?>)";
-			private String firstTagRegex = "(.|\\n)*?".concat(tagRegex);
+			private String tagRegex = "(?<tag><[\\w|/].+?>)";
+			private String commentRegex = "(<!--(.|\\n)*?-->)";
+			private String beforeTagRegex = "(.|\\n)*?(?=".concat(tagRegex).concat(")");
 
 			private String text = document;
-			private int start = 0;
-			private int end = text.length();
 
 			private Pattern tagPattern = Pattern.compile(tagRegex);
-			private Pattern firstTagPattern = Pattern.compile(firstTagRegex);
+			private Pattern commentPattern = Pattern.compile(commentRegex);
+			private Pattern beforeTagPattern = Pattern.compile(beforeTagRegex);
 
 			@Override
 			public boolean hasNext() {
-				return text.length() > 0 && firstTagPattern.matcher(text).find();
+				skipComments();
+				return text.length() > 0 && beforeTagPattern.matcher(text).find();
 			}
 
 			@Override
 			public XMLElement next() {
-				String oldText = text;
-				text = firstTagPattern.matcher(text).replaceFirst("");
-				Matcher matcher = tagPattern.matcher(oldText.substring(start, end - text.length()));
-				matcher.find();
-				end = text.length();
-				return new XMLElement(matcher.group("tag"), document.length() - text.length());
+				skipComments();
+				text = beforeTagPattern.matcher(text).replaceFirst("");
+				Matcher tag = tagPattern.matcher(text);
+				tag.find();
+				int offset = document.length() - text.length();
+				text = text.substring(tag.end());
+				return new XMLElement(tag.group("tag"), offset);
+			}
+
+			private void skipComments() {
+				Matcher comment = commentPattern.matcher(text);
+				Matcher tag = tagPattern.matcher(text);
+				if (comment.find() && tag.find() && comment.start() < tag.start()) {
+					text = text.substring(comment.end());
+				}
 			}
 		};
 	}
-
 	public static Parser getDefault() {
 		if (instance == null) {
 			instance = new Parser();
