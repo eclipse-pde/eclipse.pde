@@ -57,8 +57,8 @@ public class TestPDETemplates {
 		ITargetDefinition targetDef = tpService.newTarget();
 		targetDef.setName("Tycho platform");
 		Bundle[] bundles = Platform.getBundle("org.eclipse.core.runtime").getBundleContext().getBundles();
-		List<ITargetLocation> bundleContainers = new ArrayList<ITargetLocation>();
-		Set<File> dirs = new HashSet<File>();
+		List<ITargetLocation> bundleContainers = new ArrayList<>();
+		Set<File> dirs = new HashSet<>();
 		for (Bundle bundle : bundles) {
 			EquinoxBundle bundleImpl = (EquinoxBundle) bundle;
 			Generation generation = (Generation) bundleImpl.getModule().getCurrentRevision().getRevisionInfo();
