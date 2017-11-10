@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core;
 
 import org.w3c.dom.*;
@@ -27,7 +26,7 @@ public class CheatSheetUtil {
 		// Process only if there are children
 		if (element.getChildNodes().getLength() > 0) {
 			NodeList children = element.getChildNodes();
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			// Traverse over each childe
 			for (int i = 0; i < children.getLength(); i++) {
 				Node node = children.item(i);
@@ -89,7 +88,7 @@ public class CheatSheetUtil {
 			return null;
 		}
 		// Create the buffer
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		// Get the attributes
 		NamedNodeMap attributeMap = element.getAttributes();
 		// Accumulate all attributes

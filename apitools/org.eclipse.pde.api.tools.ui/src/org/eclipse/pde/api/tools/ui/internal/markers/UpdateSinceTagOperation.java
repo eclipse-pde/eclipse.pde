@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,7 +166,7 @@ public class UpdateSinceTagOperation {
 							List<TextElement> fragments = sinceTag.fragments();
 							if (fragments.size() >= 1) {
 								TextElement textElement = fragments.get(0);
-								StringBuffer buffer = new StringBuffer();
+								StringBuilder buffer = new StringBuilder();
 								buffer.append(' ').append(this.sinceTagVersion);
 								rewrite.set(textElement, TextElement.TEXT_PROPERTY, String.valueOf(buffer), null);
 							} else {

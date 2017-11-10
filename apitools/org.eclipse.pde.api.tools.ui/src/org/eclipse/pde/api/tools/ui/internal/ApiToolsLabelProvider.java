@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -207,7 +207,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		}
 		if (element instanceof IApiBaseline) {
 			IApiBaseline baseline = (IApiBaseline) element;
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(baseline.getName());
 			if (isDefaultBaseline(baseline)) {
 				buffer.append(NLS.bind(Messages.ApiToolsLabelProvider_default_baseline_place_holder, Messages.ApiToolsLabelProvider_default_baseline));
@@ -224,7 +224,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		if (element instanceof IResource) {
 			IResource resource = (IResource) element;
 			IPath path = resource.getProjectRelativePath();
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(path.removeFileExtension().lastSegment());
 			buffer.append(" ("); //$NON-NLS-1$
 			buffer.append(path.removeLastSegments(1));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.comp.details;
 
 import java.util.StringTokenizer;
@@ -275,7 +274,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	}
 
 	private String createRelativePath(int dotDotCount, String lastToken, StringTokenizer tokenizer) {
-		StringBuffer relativePath = new StringBuffer();
+		StringBuilder relativePath = new StringBuilder();
 		// Prepend with the number of specified ".."
 		for (int i = 0; i < dotDotCount; i++) {
 			relativePath.append(F_DOT_DOT);
@@ -357,7 +356,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		StringTokenizer basePathTokenizer = new StringTokenizer(basePath, F_PATH_SEPARATOR);
 		// Accumulate the non ".." path segments excluding the file name
 		// and count the number of ".." path segments
-		StringBuffer endPath = new StringBuffer();
+		StringBuilder endPath = new StringBuilder();
 		int dotDotCount = 0;
 		if (convertPathTokenizer.hasMoreTokens()) {
 			while (convertPathTokenizer.countTokens() > 1) {
@@ -379,7 +378,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 			return ""; //$NON-NLS-1$
 		}
 		// Accumulate the initial path segments making up the absolute path
-		StringBuffer startPath = new StringBuffer(F_PATH_SEPARATOR);
+		StringBuilder startPath = new StringBuilder(F_PATH_SEPARATOR);
 		for (int i = 0; i < baseSegementCount; i++) {
 			startPath.append(basePathTokenizer.nextToken());
 			startPath.append(F_PATH_SEPARATOR);

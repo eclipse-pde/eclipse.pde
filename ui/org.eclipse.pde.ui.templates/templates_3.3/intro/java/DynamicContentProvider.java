@@ -24,7 +24,7 @@ public class DynamicContentProvider implements IIntroXHTMLContentProvider {
     }
 
     private String getCurrentTimeString() {
-        StringBuffer content = new StringBuffer(
+        StringBuilder content = new StringBuilder(
                 "Dynamic content from Intro ContentProvider: ");
         content.append("Current time is: ");
         content.append(new Date(System.currentTimeMillis()));

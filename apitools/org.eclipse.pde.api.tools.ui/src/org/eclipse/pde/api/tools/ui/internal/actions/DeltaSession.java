@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -213,13 +213,13 @@ public class DeltaSession implements ISession {
 			}
 			if (ID_ELEMENT_TYPE.equals(propKey)) {
 				int elementType = delta.getElementType();
-				StringBuffer buffer = new StringBuffer(Util.getDeltaElementType(elementType));
+				StringBuilder buffer = new StringBuilder(Util.getDeltaElementType(elementType));
 				buffer.append(" (").append(elementType).append(')'); //$NON-NLS-1$
 				return String.valueOf(buffer);
 			}
 			if (ID_FLAGS.equals(propKey)) {
 				int flags = delta.getFlags();
-				StringBuffer buffer = new StringBuffer(Util.getDeltaFlagsName(flags));
+				StringBuilder buffer = new StringBuilder(Util.getDeltaFlagsName(flags));
 				buffer.append(" (").append(flags).append(')'); //$NON-NLS-1$
 				return String.valueOf(buffer);
 			}
@@ -228,7 +228,7 @@ public class DeltaSession implements ISession {
 			}
 			if (ID_KIND.equals(propKey)) {
 				int kind = delta.getKind();
-				StringBuffer buffer = new StringBuffer(Util.getDeltaKindName(kind));
+				StringBuilder buffer = new StringBuilder(Util.getDeltaKindName(kind));
 				buffer.append(" (").append(kind).append(')'); //$NON-NLS-1$
 				return String.valueOf(buffer);
 			}
@@ -253,7 +253,7 @@ public class DeltaSession implements ISession {
 		}
 
 		private Object getDisplayRestrictions(int restrictions) {
-			StringBuffer buffer = new StringBuffer(RestrictionModifiers.getRestrictionText(restrictions));
+			StringBuilder buffer = new StringBuilder(RestrictionModifiers.getRestrictionText(restrictions));
 			buffer.append(" (0x").append(Integer.toHexString(restrictions)).append(')'); //$NON-NLS-1$
 			return String.valueOf(buffer);
 		}
@@ -283,7 +283,7 @@ public class DeltaSession implements ISession {
 		}
 
 		private static String getDisplayedModifiers(int newModifiers) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			if (newModifiers == 0) {
 				buffer.append(ActionMessages.PropertyPackageVisibility);
 			} else {

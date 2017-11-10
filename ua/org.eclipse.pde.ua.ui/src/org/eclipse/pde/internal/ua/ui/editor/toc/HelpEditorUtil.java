@@ -117,7 +117,7 @@ public class HelpEditorUtil {
 	}
 
 	public static String getPageExtensionList() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		for (int i = 0; i < pageExtensions.length; ++i) {
 			buf.append('.');

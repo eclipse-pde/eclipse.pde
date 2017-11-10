@@ -45,103 +45,40 @@ public abstract class CompCSDataObject extends CompCSObject implements
 		return new ArrayList<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
-	 */
 	public abstract String getElement();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
-	 */
 	public String getName() {
 		return fFieldContent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
-	 */
 	public abstract int getType();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseContent
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseContent(Element element) {
 		// Override to handle unusual mixed content as in this case
 		// Trim leading and trailing whitespace
 		fFieldContent = CheatSheetUtil.parseElementText(element).trim();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseAttributes(Element element) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseElement(Element element) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
-	 * org.w3c.dom.Text)
-	 */
 	protected void parseText(Text text) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
-	 */
 	public void reset() {
 		fFieldContent = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
-	 * (java.lang.StringBuffer)
-	 */
-	protected void writeAttributes(StringBuffer buffer) {
+	protected void writeAttributes(StringBuilder buffer) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
-	 * (java.lang.String, java.io.PrintWriter)
-	 */
 	protected void writeElements(String indent, PrintWriter writer) {
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		// Print contents
@@ -156,22 +93,10 @@ public abstract class CompCSDataObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDataObject#
-	 * getFieldContent()
-	 */
 	public String getFieldContent() {
 		return fFieldContent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDataObject#
-	 * setFieldContent(java.lang.String)
-	 */
 	public void setFieldContent(String content) {
 		String old = fFieldContent;
 		fFieldContent = content;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class TocHTMLOperation extends WorkspaceModifyOperation {
 		String indent = "   "; //$NON-NLS-1$
 		String delimiter = System.getProperty("line.separator"); //$NON-NLS-1$
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<!DOCTYPE HTML PUBLIC"); //$NON-NLS-1$
 		buf.append(" \"-//W3C//DTD HTML 4.01 Transitional//EN\""); //$NON-NLS-1$
 		buf.append(" \"http://www.w3.org/TR/html4/loose.dtd\">"); //$NON-NLS-1$

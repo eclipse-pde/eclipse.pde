@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,59 +77,22 @@ public abstract class CompCSObject extends PlatformObject implements
 	@Override
 	public abstract List<ICompCSTaskObject> getChildren();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getCompCS()
-	 */
 	public ICompCS getCompCS() {
 		return fModel.getCompCS();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getModel()
-	 */
 	public ICompCSModel getModel() {
 		return fModel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getName()
-	 */
 	public abstract String getName();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getParent()
-	 */
 	public ICompCSObject getParent() {
 		return fParent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getType()
-	 */
 	public abstract int getType();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#parse(org
-	 * .w3c.dom.Element)
-	 */
 	public void parse(Element element) {
 		if (element.getNodeName().equals(getElement())) {
 			parseAttributes(element);
@@ -137,33 +100,15 @@ public abstract class CompCSObject extends PlatformObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#reset()
-	 */
 	public abstract void reset();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#setModel
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel)
-	 */
 	public void setModel(ICompCSModel model) {
 		fModel = model;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String,
-	 * java.io.PrintWriter)
-	 */
 	public void write(String indent, PrintWriter writer) {
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		try {
 			// Assemble start element
 			buffer.append(getElement());
@@ -288,7 +233,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	/**
 	 * @param buffer
 	 */
-	protected abstract void writeAttributes(StringBuffer buffer);
+	protected abstract void writeAttributes(StringBuilder buffer);
 
 	/**
 	 * Writes child elements or child content
@@ -298,11 +243,5 @@ public abstract class CompCSObject extends PlatformObject implements
 	 */
 	protected abstract void writeElements(String indent, PrintWriter writer);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getElement()
-	 */
 	public abstract String getElement();
 }

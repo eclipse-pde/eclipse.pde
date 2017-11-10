@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
 import java.io.PrintWriter;
@@ -44,75 +43,33 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 		return new ArrayList<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
-	 */
 	public String getElement() {
 		return ELEMENT_DEPENDENCY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
-	 */
 	public String getName() {
 		return fFieldTask;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
-	 */
 	public int getType() {
 		return TYPE_DEPENDENCY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseAttributes(Element element) {
 		// Process task attribute
 		// Trim leading and trailing whitespace
 		fFieldTask = element.getAttribute(ATTRIBUTE_TASK).trim();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseElement(Element element) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
-	 */
 	public void reset() {
 		fFieldTask = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
-	 * (java.lang.StringBuffer)
-	 */
-	protected void writeAttributes(StringBuffer buffer) {
+	protected void writeAttributes(StringBuilder buffer) {
 		// Print task attribute
 		if ((fFieldTask != null) && (fFieldTask.length() > 0)) {
 			// Trim leading and trailing whitespace
@@ -123,35 +80,14 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
-	 * (java.lang.String, java.io.PrintWriter)
-	 */
 	protected void writeElements(String indent, PrintWriter writer) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDependency#getFieldTask
-	 * ()
-	 */
 	public String getFieldTask() {
 		return fFieldTask;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDependency#setFieldTask
-	 * (java.lang.String)
-	 */
 	public void setFieldTask(String task) {
 		String old = fFieldTask;
 		fFieldTask = task;
@@ -160,13 +96,6 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
-	 * org.w3c.dom.Text)
-	 */
 	protected void parseText(Text text) {
 		// NO-OP
 	}

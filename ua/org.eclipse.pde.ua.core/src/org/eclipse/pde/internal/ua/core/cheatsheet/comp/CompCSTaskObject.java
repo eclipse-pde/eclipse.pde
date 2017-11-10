@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
 import java.io.PrintWriter;
@@ -54,25 +53,10 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 	@Override
 	public abstract List<ICompCSTaskObject> getChildren();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
-	 */
 	public abstract String getName();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
-	 */
 	public abstract int getType();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
-	 */
 	public void reset() {
 		fFieldId = null;
 		fFieldKind = null;
@@ -83,13 +67,6 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		fFieldDependencies = new ArrayList<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
-	 * addFieldDependency
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDependency)
-	 */
 	public void addFieldDependency(ICompCSDependency dependency) {
 		fFieldDependencies.add(dependency);
 		if (isEditable()) {
@@ -97,77 +74,30 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#getFieldId
-	 * ()
-	 */
 	public String getFieldId() {
 		return fFieldId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
-	 * getFieldIntro()
-	 */
 	public ICompCSIntro getFieldIntro() {
 		return fFieldIntro;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#getFieldKind
-	 * ()
-	 */
 	public String getFieldKind() {
 		return fFieldKind;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#getFieldName
-	 * ()
-	 */
 	public String getFieldName() {
 		return fFieldName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
-	 * getFieldOnCompletion()
-	 */
 	public ICompCSOnCompletion getFieldOnCompletion() {
 		return fFieldOnCompletion;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#getFieldSkip
-	 * ()
-	 */
 	public boolean getFieldSkip() {
 		return fFieldSkip;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
-	 * removeFieldDepedency
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDependency)
-	 */
 	public void removeFieldDepedency(ICompCSDependency dependency) {
 		fFieldDependencies.remove(dependency);
 		if (isEditable()) {
@@ -175,13 +105,6 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#setFieldId
-	 * (java.lang.String)
-	 */
 	public void setFieldId(String id) {
 		String old = fFieldId;
 		fFieldId = id;
@@ -190,13 +113,6 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
-	 * setFieldIntro
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSIntro)
-	 */
 	public void setFieldIntro(ICompCSIntro intro) {
 		ICompCSObject old = fFieldIntro;
 		fFieldIntro = intro;
@@ -205,13 +121,6 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#setFieldKind
-	 * (java.lang.String)
-	 */
 	public void setFieldKind(String kind) {
 		String old = fFieldKind;
 		fFieldKind = kind;
@@ -220,13 +129,6 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#setFieldName
-	 * (java.lang.String)
-	 */
 	public void setFieldName(String name) {
 		String old = fFieldName;
 		fFieldName = name;
@@ -235,13 +137,6 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
-	 * setFieldOnCompletion
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSOnCompletion)
-	 */
 	public void setFieldOnCompletion(ICompCSOnCompletion onCompletion) {
 		ICompCSObject old = fFieldOnCompletion;
 		fFieldOnCompletion = onCompletion;
@@ -250,13 +145,6 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#setFieldSkip
-	 * (boolean)
-	 */
 	public void setFieldSkip(boolean skip) {
 		Boolean old = Boolean.valueOf(fFieldSkip);
 		fFieldSkip = skip;
@@ -266,35 +154,15 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject#
-	 * getFieldDependencies()
-	 */
 	public ICompCSDependency[] getFieldDependencies() {
 		return (ICompCSDependency[]) fFieldDependencies
 				.toArray(new ICompCSDependency[fFieldDependencies.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
-	 * org.w3c.dom.Text)
-	 */
 	protected void parseText(Text text) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseAttributes(Element element) {
 		// Process id attribute
 		// Trim leading and trailing whitespace
@@ -312,14 +180,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
-	 * (java.lang.StringBuffer)
-	 */
-	protected void writeAttributes(StringBuffer buffer) {
+	protected void writeAttributes(StringBuilder buffer) {
 		// Print id attribute
 		if ((fFieldId != null) && (fFieldId.length() > 0)) {
 			// Trim leading and trailing whitespace
@@ -348,13 +209,6 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 				Boolean.valueOf(fFieldSkip).toString()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseElement(Element element) {
 		String name = element.getNodeName();
 		ICompCSModelFactory factory = getModel().getFactory();
@@ -375,13 +229,6 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
-	 * (java.lang.String, java.io.PrintWriter)
-	 */
 	protected void writeElements(String indent, PrintWriter writer) {
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		// Print intro element
@@ -400,12 +247,6 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
-	 */
 	public abstract String getElement();
 
 }

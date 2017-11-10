@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -359,7 +359,7 @@ public class EEGenerator {
 			Collections.sort(this.types);
 			for (Iterator<Type> iterator2 = this.types.iterator(); iterator2.hasNext();) {
 				Type type = iterator2.next();
-				StringBuffer buffer = new StringBuffer(this.name.replace('.', '/'));
+				StringBuilder buffer = new StringBuilder(this.name.replace('.', '/'));
 				String simpleName = type.getSimpleName();
 				buffer.append('/').append(simpleName.replace('.', '$'));
 				byte[] classFileBytes = info.getClassFileBytes(type);
@@ -425,7 +425,7 @@ public class EEGenerator {
 		}
 
 		public static String getDocTypeName(String docRoot, Type type) {
-			StringBuffer buffer = new StringBuffer(docRoot);
+			StringBuilder buffer = new StringBuilder(docRoot);
 			char[] typeNameForDoc = CharOperation.replaceOnCopy(type.name, '.', '/');
 			typeNameForDoc = CharOperation.replaceOnCopy(typeNameForDoc, '$', '.');
 			buffer.append(typeNameForDoc);
@@ -1595,7 +1595,7 @@ public class EEGenerator {
 		}
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(this.getPackage() + "." + this.getSimpleName()).append(Util.LINE_SEPARATOR); //$NON-NLS-1$
 			// list all fields
 
@@ -1654,7 +1654,7 @@ public class EEGenerator {
 		}
 	}
 	private static String getAllEEValues() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (String ee : ACCEPTED_EEs) {
 			if (buffer.length() != 0) {
 				buffer.append(", "); //$NON-NLS-1$

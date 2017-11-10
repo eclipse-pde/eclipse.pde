@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,44 +55,20 @@ public class CompCS extends CompCSObject implements ICompCS {
 		return list;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
-	 */
 	public String getName() {
 		return fFieldName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
-	 */
 	public int getType() {
 		return TYPE_COMPOSITE_CHEATSHEET;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseAttributes(Element element) {
 		// Process name attribute
 		// Trim leading and trailing whitespace
 		fFieldName = element.getAttribute(ATTRIBUTE_NAME).trim();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseElement(Element element) {
 		String name = element.getNodeName();
 		ICompCSModelFactory factory = getModel().getFactory();
@@ -108,23 +84,11 @@ public class CompCS extends CompCSObject implements ICompCS {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
-	 */
 	public void reset() {
 		fFieldName = null;
 		fFieldTaskObject = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#write(java
-	 * .lang.String, java.io.PrintWriter)
-	 */
 	public void write(String indent, PrintWriter writer) {
 
 		try {
@@ -137,14 +101,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
-	 * (java.lang.StringBuffer)
-	 */
-	protected void writeAttributes(StringBuffer buffer) {
+	protected void writeAttributes(StringBuilder buffer) {
 		// Print name attribute
 		if ((fFieldName != null) && (fFieldName.length() > 0)) {
 			// Trim leading and trailing whitespace
@@ -155,13 +112,6 @@ public class CompCS extends CompCSObject implements ICompCS {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
-	 * (java.lang.String, java.io.PrintWriter)
-	 */
 	protected void writeElements(String indent, PrintWriter writer) {
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		// Print task / taskGroup element
@@ -170,34 +120,14 @@ public class CompCS extends CompCSObject implements ICompCS {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#getFieldName()
-	 */
 	public String getFieldName() {
 		return fFieldName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#getFieldTaskObject
-	 * ()
-	 */
 	public ICompCSTaskObject getFieldTaskObject() {
 		return fFieldTaskObject;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#setFieldName(java
-	 * .lang.String)
-	 */
 	public void setFieldName(String name) {
 		String old = fFieldName;
 		fFieldName = name;
@@ -206,13 +136,6 @@ public class CompCS extends CompCSObject implements ICompCS {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#setFieldTaskObject
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
-	 */
 	public void setFieldTaskObject(ICompCSTaskObject taskObject) {
 		ICompCSObject old = fFieldTaskObject;
 		fFieldTaskObject = taskObject;
@@ -221,23 +144,10 @@ public class CompCS extends CompCSObject implements ICompCS {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getElement()
-	 */
 	public String getElement() {
 		return ELEMENT_COMPOSITE_CHEATSHEET;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
-	 * org.w3c.dom.Text)
-	 */
 	protected void parseText(Text text) {
 		// NO-OP
 	}

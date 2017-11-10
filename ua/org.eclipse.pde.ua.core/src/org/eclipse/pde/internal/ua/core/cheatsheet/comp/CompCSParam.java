@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,41 +49,18 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 		return new ArrayList<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
-	 */
 	public String getElement() {
 		return ELEMENT_PARAM;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
-	 */
 	public String getName() {
 		return fFieldName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
-	 */
 	public int getType() {
 		return TYPE_PARAM;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseAttributes(Element element) {
 		// Process name attribute
 		// Trim leading and trailing whitespace
@@ -93,35 +70,16 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 		fFieldValue = element.getAttribute(ATTRIBUTE_VALUE).trim();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
-	 * (org.w3c.dom.Element)
-	 */
 	protected void parseElement(Element element) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
-	 */
 	public void reset() {
 		fFieldName = null;
 		fFieldValue = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
-	 * (java.lang.StringBuffer)
-	 */
-	protected void writeAttributes(StringBuffer buffer) {
+	protected void writeAttributes(StringBuilder buffer) {
 		// Print name attribute
 		if ((fFieldName != null) && (fFieldName.length() > 0)) {
 			// No trim required
@@ -139,46 +97,18 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
-	 * (java.lang.String, java.io.PrintWriter)
-	 */
 	protected void writeElements(String indent, PrintWriter writer) {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam#getFieldName
-	 * ()
-	 */
 	public String getFieldName() {
 		return fFieldName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam#getFieldValue
-	 * ()
-	 */
 	public String getFieldValue() {
 		return fFieldValue;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam#setFieldName
-	 * (java.lang.String)
-	 */
 	public void setFieldName(String name) {
 		String old = fFieldName;
 		fFieldName = name;
@@ -187,13 +117,6 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam#setFieldValue
-	 * (java.lang.String)
-	 */
 	public void setFieldValue(String value) {
 		String old = fFieldValue;
 		fFieldValue = value;
@@ -202,13 +125,6 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
-	 * org.w3c.dom.Text)
-	 */
 	protected void parseText(Text text) {
 		// NO-OP
 	}

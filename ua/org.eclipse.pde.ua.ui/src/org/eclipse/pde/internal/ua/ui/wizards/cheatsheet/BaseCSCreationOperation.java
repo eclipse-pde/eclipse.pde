@@ -77,7 +77,7 @@ public abstract class BaseCSCreationOperation extends WorkspaceModifyOperation {
 
 	public static String formatTextBold(String text) {
 		// TODO: MP: CompCS:  Create generalized HTML formatter utility
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<b>"); //$NON-NLS-1$
 		buffer.append(text);
 		buffer.append("</b>"); //$NON-NLS-1$
