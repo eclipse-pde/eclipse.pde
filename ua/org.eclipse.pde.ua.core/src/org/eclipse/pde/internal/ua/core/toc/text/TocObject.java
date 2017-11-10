@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.toc.text;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +23,7 @@ import org.eclipse.pde.internal.ua.core.toc.ITocConstants;
  * This class contains functionality common to all TOC elements.
  */
 public abstract class TocObject extends DocumentObject implements
-		ITocConstants, Serializable {
+		ITocConstants {
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,6 +37,7 @@ public abstract class TocObject extends DocumentObject implements
 		super(model, tagName);
 	}
 
+	@Override
 	protected String getAttributeIndent() {
 		return " "; //$NON-NLS-1$
 	}
@@ -65,6 +64,7 @@ public abstract class TocObject extends DocumentObject implements
 		return list;
 	}
 
+	@Override
 	public boolean isLeafNode() {
 		return !canBeParent();
 	}

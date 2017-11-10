@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,44 +33,22 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 		super(model, ELEMENT_COMMAND);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#getReturns
-	 * ()
-	 */
+	@Override
 	public String getReturns() {
 		return getXMLAttributeValue(ATTRIBUTE_RETURNS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#
-	 * getSerialization()
-	 */
+	@Override
 	public String getSerialization() {
 		return getXMLAttributeValue(ATTRIBUTE_SERIALIZATION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#setReturns
-	 * (java.lang.String)
-	 */
+	@Override
 	public void setReturns(String returns) {
 		setXMLAttribute(ATTRIBUTE_RETURNS, returns);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#
-	 * setSerialization(java.lang.String)
-	 */
+	@Override
 	public void setSerialization(String serialization) {
 		setXMLAttribute(ATTRIBUTE_SERIALIZATION, serialization);
 	}
@@ -80,35 +58,18 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 		return new ArrayList<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
-	 * ()
-	 */
+	@Override
 	public String getName() {
 		// Leave as is. Not a separate node in tree view
 		return ELEMENT_COMMAND;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
-	 * ()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_COMMAND;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isLeafNode()
-	 */
+	@Override
 	public boolean isLeafNode() {
 		return true;
 	}

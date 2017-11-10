@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -37,22 +38,15 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 		fEditable = editable;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IEditableModel#save()
-	 */
+	@Override
 	public void save() {
-		try {
-			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("UTF8")); //$NON-NLS-1$
+		String contents = getContents();
+		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8))) {
 			if (fFile.exists()) {
 				fFile.setContents(stream, false, false, null);
 			} else {
 				fFile.create(stream, false, null);
 			}
-			stream.close();
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		} catch (IOException e) {
@@ -74,20 +68,12 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 		return swriter.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IEditable#isDirty()
-	 */
+	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
-	 */
+	@Override
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			getCompCS().write("", writer); //$NON-NLS-1$
@@ -95,33 +81,18 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 		setDirty(false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
-	 */
+	@Override
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.AbstractModel#fireModelChanged(org.eclipse
-	 * .pde.core.IModelChangedEvent)
-	 */
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(true);
 		super.fireModelChanged(event);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSModel#isEditable()
-	 */
+	@Override
 	public boolean isEditable() {
 		return fEditable;
 	}
@@ -130,20 +101,12 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 		return fFile.getLocation().toOSString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.AbstractModel#getUnderlyingResource()
-	 */
+	@Override
 	public IResource getUnderlyingResource() {
 		return fFile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSModel#isInSync()
-	 */
+	@Override
 	public boolean isInSync() {
 		IPath path = fFile.getLocation();
 		if (path == null) {
@@ -152,11 +115,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 		return isInSync(path.toFile());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSModel#load()
-	 */
+	@Override
 	public void load() throws CoreException {
 		if (fFile.exists()) {
 			InputStream stream = null;
@@ -178,11 +137,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.IWorkspaceModel#reload()
-	 */
+	@Override
 	public void reload() {
 		// Underlying file has to exist in order to reload the model
 		if (fFile.exists()) {

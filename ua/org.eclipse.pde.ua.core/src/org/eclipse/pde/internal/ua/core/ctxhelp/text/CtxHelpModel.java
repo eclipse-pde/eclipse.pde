@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,13 +41,7 @@ public class CtxHelpModel extends XMLEditingModel {
 		super(document, isReconciling);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.XMLEditingModel#createDocumentHandler
-	 * (org.eclipse.pde.core.IModel, boolean)
-	 */
+	@Override
 	protected DefaultHandler createDocumentHandler(IModel model, boolean reconciling) {
 		if (fHandler == null) {
 			fHandler = new CtxHelpDocumentHandler(this, reconciling);
@@ -55,23 +49,12 @@ public class CtxHelpModel extends XMLEditingModel {
 		return fHandler;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#
-	 * createNLResourceHelper()
-	 */
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		// Not needed
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ITocModel#getFactory()
-	 */
 	public CtxHelpDocumentFactory getFactory() {
 		if (fFactory == null) {
 			fFactory = new CtxHelpDocumentFactory(this);
@@ -79,11 +62,6 @@ public class CtxHelpModel extends XMLEditingModel {
 		return fFactory;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ITocModel#getToc()
-	 */
 	public CtxHelpRoot getCtxHelpRoot() {
 		if (fRoot == null) {
 			fRoot = getFactory().createRoot();
@@ -91,11 +69,7 @@ public class CtxHelpModel extends XMLEditingModel {
 		return fRoot;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.text.XMLEditingModel#getRoot()
-	 */
+	@Override
 	protected IWritable getRoot() {
 		return getCtxHelpRoot();
 	}

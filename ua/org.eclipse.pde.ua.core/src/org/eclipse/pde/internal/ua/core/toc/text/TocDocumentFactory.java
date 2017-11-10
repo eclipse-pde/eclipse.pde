@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,25 +14,16 @@ package org.eclipse.pde.internal.ua.core.toc.text;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.ua.core.toc.ITocConstants;
 
-public class TocDocumentFactory extends DocumentNodeFactory implements
-		IDocumentNodeFactory {
+public class TocDocumentFactory extends DocumentNodeFactory {
 	private TocModel fModel;
 
 	public TocDocumentFactory(TocModel model) {
 		fModel = model;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode
-	 * (java.lang.String,
-	 * org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
+	@Override
 	public IDocumentElementNode createDocumentNode(String name,
 			IDocumentElementNode parent) {
 
@@ -40,19 +31,19 @@ public class TocDocumentFactory extends DocumentNodeFactory implements
 		// org.eclipse.platform.doc.isv/reference/extension-points/org_eclipse_help_toc.html
 
 		if (isToc(name)) { // Root
-			return (IDocumentElementNode) createToc();
+			return createToc();
 		}
 
 		if (isTopic(name)) { // Topic
-			return (IDocumentElementNode) createTocTopic();
+			return createTocTopic();
 		}
 
 		if (isLink(name)) { // Link
-			return (IDocumentElementNode) createTocLink();
+			return createTocLink();
 		}
 
 		if (isAnchor(name)) { // Anchor
-			return (IDocumentElementNode) createTocAnchor();
+			return createTocAnchor();
 		}
 
 		return super.createDocumentNode(name, parent);

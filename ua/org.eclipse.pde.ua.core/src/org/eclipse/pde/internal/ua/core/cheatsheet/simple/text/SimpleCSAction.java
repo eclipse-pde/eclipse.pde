@@ -35,10 +35,12 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 		super(model, ELEMENT_ACTION);
 	}
 
+	@Override
 	public String getClazz() {
 		return getXMLAttributeValue(ATTRIBUTE_CLASS);
 	}
 
+	@Override
 	public String getParam(int index) {
 		// Ensure in valid range
 		if ((index < 1) || (index > F_MAX_PARAMS)) {
@@ -61,17 +63,20 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 			}
 			list.add(parameter);
 		}
-		return (String[]) list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
+	@Override
 	public String getPluginId() {
 		return getXMLAttributeValue(ATTRIBUTE_PLUGINID);
 	}
 
+	@Override
 	public void setClazz(String clazz) {
 		setXMLAttribute(ATTRIBUTE_CLASS, clazz);
 	}
 
+	@Override
 	public void setParam(String param, int index) {
 		// Ensure proper index
 		if ((index < 1) || (index > F_MAX_PARAMS)) {
@@ -82,6 +87,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 		setXMLAttribute(buffer.toString(), param);
 	}
 
+	@Override
 	public void setPluginId(String pluginId) {
 		setXMLAttribute(ATTRIBUTE_PLUGINID, pluginId);
 	}
@@ -91,15 +97,18 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 		return new ArrayList<>();
 	}
 
+	@Override
 	public String getName() {
 		// Leave as is. Not a separate node in tree view
 		return ELEMENT_ACTION;
 	}
 
+	@Override
 	public int getType() {
 		return TYPE_ACTION;
 	}
 
+	@Override
 	public boolean isLeafNode() {
 		return true;
 	}

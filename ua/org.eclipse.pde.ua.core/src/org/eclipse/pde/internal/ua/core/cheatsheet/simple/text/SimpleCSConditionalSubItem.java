@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,26 +30,12 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 		super(model, ELEMENT_CONDITIONAL_SUBITEM);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
-	 * #
-	 * addSubItem(org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem
-	 * )
-	 */
+	@Override
 	public void addSubItem(ISimpleCSSubItem subitem) {
-		addChildNode((IDocumentElementNode) subitem, true);
+		addChildNode(subitem, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
-	 * #getCondition()
-	 */
+	@Override
 	public String getCondition() {
 		return getXMLAttributeValue(ATTRIBUTE_CONDITION);
 	}
@@ -57,29 +43,16 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	@Override
 	public ISimpleCSSubItem[] getSubItems() {
 		List<IDocumentElementNode> filteredChildren = getChildNodesList(ISimpleCSSubItem.class, true);
-		return (ISimpleCSSubItem[]) filteredChildren
+		return filteredChildren
 				.toArray(new ISimpleCSSubItem[filteredChildren.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
-	 * #removeSubItem(org.eclipse.pde.internal.ua.core.icheatsheet.simple.
-	 * ISimpleCSSubItem)
-	 */
+	@Override
 	public void removeSubItem(ISimpleCSSubItem subitem) {
-		removeChildNode((IDocumentElementNode) subitem, true);
+		removeChildNode(subitem, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
-	 * #setCondition(java.lang.String)
-	 */
+	@Override
 	public void setCondition(String condition) {
 		setXMLAttribute(ATTRIBUTE_CONDITION, condition);
 	}
@@ -89,25 +62,13 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 		return getChildNodesList(ISimpleCSSubItem.class, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getName
-	 * ()
-	 */
+	@Override
 	public String getName() {
 		// Leave as is. Not supported in editor UI
 		return ELEMENT_CONDITIONAL_SUBITEM;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getType
-	 * ()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_CONDITIONAL_SUBITEM;
 	}

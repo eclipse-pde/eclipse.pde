@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
 import java.io.PrintWriter;
@@ -50,20 +49,24 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		return list;
 	}
 
+	@Override
 	public String getName() {
 		return fFieldName;
 	}
 
+	@Override
 	public int getType() {
 		return TYPE_TASKGROUP;
 	}
 
+	@Override
 	public void reset() {
 		super.reset();
 
 		fFieldTaskObjects = new ArrayList<>();
 	}
 
+	@Override
 	public void addFieldTaskObject(ICompCSTaskObject taskObject) {
 		fFieldTaskObjects.add(taskObject);
 		if (isEditable()) {
@@ -71,6 +74,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		}
 	}
 
+	@Override
 	public void addFieldTaskObject(int index, ICompCSTaskObject taskObject) {
 		if (index < 0) {
 			return;
@@ -86,15 +90,18 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		}
 	}
 
+	@Override
 	public int getFieldTaskObjectCount() {
 		return fFieldTaskObjects.size();
 	}
 
+	@Override
 	public ICompCSTaskObject[] getFieldTaskObjects() {
-		return (ICompCSTaskObject[]) fFieldTaskObjects
+		return fFieldTaskObjects
 				.toArray(new ICompCSTaskObject[fFieldTaskObjects.size()]);
 	}
 
+	@Override
 	public boolean hasFieldTaskObjects() {
 		if (fFieldTaskObjects.isEmpty()) {
 			return false;
@@ -102,10 +109,12 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		return true;
 	}
 
+	@Override
 	public int indexOfFieldTaskObject(ICompCSTaskObject taskObject) {
 		return fFieldTaskObjects.indexOf(taskObject);
 	}
 
+	@Override
 	public boolean isFirstFieldTaskObject(ICompCSTaskObject taskObject) {
 		int position = fFieldTaskObjects.indexOf(taskObject);
 		if (position == 0) {
@@ -114,6 +123,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		return false;
 	}
 
+	@Override
 	public boolean isLastFieldTaskObject(ICompCSTaskObject taskObject) {
 		int position = fFieldTaskObjects.indexOf(taskObject);
 		int lastPosition = fFieldTaskObjects.size() - 1;
@@ -123,6 +133,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		return false;
 	}
 
+	@Override
 	public void removeFieldTaskObject(ICompCSTaskObject taskObject) {
 		fFieldTaskObjects.remove(taskObject);
 		if (isEditable()) {
@@ -130,17 +141,19 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		}
 	}
 
+	@Override
 	public void removeFieldTaskObject(int index) {
 		if ((index < 0) || (index > (fFieldTaskObjects.size() - 1))) {
 			return;
 		}
-		ICompCSTaskObject taskObject = (ICompCSTaskObject) fFieldTaskObjects
+		ICompCSTaskObject taskObject = fFieldTaskObjects
 				.remove(index);
 		if (isEditable()) {
 			fireStructureChanged(taskObject, IModelChangedEvent.REMOVE);
 		}
 	}
 
+	@Override
 	protected void parseElement(Element element) {
 		super.parseElement(element);
 		String name = element.getNodeName();
@@ -159,21 +172,24 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		}
 	}
 
+	@Override
 	protected void writeElements(String indent, PrintWriter writer) {
 		super.writeElements(indent, writer);
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		// Print dependency elements
 		Iterator<ICompCSTaskObject> iterator = fFieldTaskObjects.iterator();
 		while (iterator.hasNext()) {
-			ICompCSTaskObject taskObject = (ICompCSTaskObject) iterator.next();
+			ICompCSTaskObject taskObject = iterator.next();
 			taskObject.write(newIndent, writer);
 		}
 	}
 
+	@Override
 	public String getElement() {
 		return ELEMENT_TASKGROUP;
 	}
 
+	@Override
 	public ICompCSTaskObject getNextSibling(ICompCSTaskObject taskObject) {
 		int position = fFieldTaskObjects.indexOf(taskObject);
 		int lastIndex = fFieldTaskObjects.size() - 1;
@@ -182,9 +198,10 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 			// at the last index
 			return null;
 		}
-		return (ICompCSTaskObject) fFieldTaskObjects.get(position + 1);
+		return fFieldTaskObjects.get(position + 1);
 	}
 
+	@Override
 	public ICompCSTaskObject getPreviousSibling(ICompCSTaskObject taskObject) {
 		int position = fFieldTaskObjects.indexOf(taskObject);
 		if ((position == -1) || (position == 0)) {
@@ -192,9 +209,10 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 			// at the first index
 			return null;
 		}
-		return (ICompCSTaskObject) fFieldTaskObjects.get(position - 1);
+		return fFieldTaskObjects.get(position - 1);
 	}
 
+	@Override
 	public void moveFieldTaskObject(ICompCSTaskObject taskObject,
 			int newRelativeIndex) {
 		// Get the current index of the task object

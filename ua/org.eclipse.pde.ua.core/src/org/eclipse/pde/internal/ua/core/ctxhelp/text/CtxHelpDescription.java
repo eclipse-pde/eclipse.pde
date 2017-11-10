@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,35 +31,22 @@ public class CtxHelpDescription extends CtxHelpObject {
 		super(model, ELEMENT_DESCRIPTION);
 	}
 
+	@Override
 	protected IDocumentTextNode createDocumentTextNode() {
 		return new CtxHelpDescriptionTextNode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.text.toc.TocObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_DESCRIPTION;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return getDescription();
 	}
@@ -83,38 +70,22 @@ public class CtxHelpDescription extends CtxHelpObject {
 		setXMLContent(description);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddChild
-	 * (org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject)
-	 */
+	@Override
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddSibling
-	 * (int)
-	 */
+	@Override
 	public boolean canAddSibling(int objectType) {
 		return objectType == TYPE_COMMAND || objectType == TYPE_TOPIC;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#
-	 * getTerminateIndent()
-	 */
+	@Override
 	protected String getTerminateIndent() {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isContentCollapsed() {
 		return true;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
 import java.io.PrintWriter;
@@ -45,40 +44,50 @@ public abstract class CompCSDataObject extends CompCSObject implements
 		return new ArrayList<>();
 	}
 
+	@Override
 	public abstract String getElement();
 
+	@Override
 	public String getName() {
 		return fFieldContent;
 	}
 
+	@Override
 	public abstract int getType();
 
+	@Override
 	protected void parseContent(Element element) {
 		// Override to handle unusual mixed content as in this case
 		// Trim leading and trailing whitespace
 		fFieldContent = CheatSheetUtil.parseElementText(element).trim();
 	}
 
+	@Override
 	protected void parseAttributes(Element element) {
 		// NO-OP
 	}
 
+	@Override
 	protected void parseElement(Element element) {
 		// NO-OP
 	}
 
+	@Override
 	protected void parseText(Text text) {
 		// NO-OP
 	}
 
+	@Override
 	public void reset() {
 		fFieldContent = null;
 	}
 
+	@Override
 	protected void writeAttributes(StringBuilder buffer) {
 		// NO-OP
 	}
 
+	@Override
 	protected void writeElements(String indent, PrintWriter writer) {
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		// Print contents
@@ -93,10 +102,12 @@ public abstract class CompCSDataObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	public String getFieldContent() {
 		return fFieldContent;
 	}
 
+	@Override
 	public void setFieldContent(String content) {
 		String old = fFieldContent;
 		fFieldContent = content;

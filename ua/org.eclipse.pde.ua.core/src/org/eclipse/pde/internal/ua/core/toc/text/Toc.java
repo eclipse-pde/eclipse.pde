@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.toc.text;
 
 /**
@@ -34,21 +33,12 @@ public class Toc extends TocTopic {
 		setInTheModel(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isRoot()
-	 */
+	@Override
 	public boolean isRoot() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_TOC;
 	}
@@ -57,6 +47,7 @@ public class Toc extends TocTopic {
 	 * @return the link associated with this topic, <br />
 	 *         or <code>null</code> if none exists.
 	 */
+	@Override
 	public String getFieldRef() {
 		return getXMLAttributeValue(ATTRIBUTE_TOPIC);
 	}
@@ -67,6 +58,7 @@ public class Toc extends TocTopic {
 	 * @param value
 	 *            The new page location to be linked by this topic
 	 */
+	@Override
 	public void setFieldRef(String value) {
 		setXMLAttribute(ATTRIBUTE_TOPIC, value);
 	}

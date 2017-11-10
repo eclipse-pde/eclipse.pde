@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.toc.text;
 
 import org.eclipse.core.resources.IFile;
@@ -64,33 +63,22 @@ public class TocLink extends TocObject {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.text.toc.TocObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_LINK;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return getFieldTocPath();
 	}
 
+	@Override
 	public String getPath() {
 		return getFieldTocPath();
 	}

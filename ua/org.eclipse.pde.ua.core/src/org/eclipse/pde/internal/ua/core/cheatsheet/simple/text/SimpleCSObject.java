@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,100 +42,47 @@ public abstract class SimpleCSObject extends DocumentObject implements
 		return getChildNodesList(DocumentGenericNode.class, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getModel
-	 * ()
-	 */
+	@Override
 	public ISimpleCSModel getModel() {
 		return (ISimpleCSModel) getSharedModel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getName
-	 * ()
-	 */
+	@Override
 	public abstract String getName();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getParent
-	 * ()
-	 */
+	@Override
 	public ISimpleCSObject getParent() {
 		return (ISimpleCSObject) getParentNode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getSimpleCS
-	 * ()
-	 */
+	@Override
 	public ISimpleCS getSimpleCS() {
 		return getModel().getSimpleCS();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getType
-	 * ()
-	 */
+	@Override
 	public abstract int getType();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#parse
-	 * (org.w3c.dom.Element)
-	 */
+	@Override
 	public void parse(Element element) {
 		// TODO: MP: TEO: LOW: Remove parse from interface - once old simpleCS
 		// model is deleted
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#setModel
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModel)
-	 */
+	@Override
 	public void setModel(ISimpleCSModel model) {
 		setSharedModel(model);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter
-	 * (java.io.PrintWriter)
-	 */
+	@Override
 	public void writeDelimeter(PrintWriter writer) {
 		// TODO: MP: TEO: LOW: Probably \n for all
 		// NO-OP
 		// Child classes to override
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#
-	 * createDocumentTextNode()
-	 */
+	@Override
 	protected IDocumentTextNode createDocumentTextNode() {
 		return new SimpleCSDocumentTextNode();
 	}

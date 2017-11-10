@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,24 +30,12 @@ public class SimpleCSDescription extends SimpleCSObject implements
 		super(model, ELEMENT_DESCRIPTION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSDescription
-	 * #getContent()
-	 */
+	@Override
 	public String getContent() {
 		return getXMLContent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSDescription
-	 * #setContent(java.lang.String)
-	 */
+	@Override
 	public void setContent(String content) {
 		setXMLContent(content);
 	}
@@ -57,34 +45,17 @@ public class SimpleCSDescription extends SimpleCSObject implements
 		return new ArrayList<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
-	 * ()
-	 */
+	@Override
 	public String getName() {
 		return getContent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
-	 * ()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_DESCRIPTION;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#
-	 * isContentCollapsed()
-	 */
+	@Override
 	public boolean isContentCollapsed() {
 		return true;
 	}

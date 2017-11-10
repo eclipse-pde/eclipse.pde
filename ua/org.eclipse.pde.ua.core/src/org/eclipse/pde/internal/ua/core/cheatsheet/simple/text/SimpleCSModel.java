@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,13 +41,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 		fSimpleCS = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.XMLEditingModel#createDocumentHandler
-	 * (org.eclipse.pde.core.IModel, boolean)
-	 */
+	@Override
 	protected DefaultHandler createDocumentHandler(IModel model,
 			boolean reconciling) {
 
@@ -57,35 +51,18 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 		return fHandler;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#
-	 * createNLResourceHelper()
-	 */
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		// Not needed
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModel#getFactory
-	 * ()
-	 */
+	@Override
 	public ISimpleCSModelFactory getFactory() {
 		return fFactory;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModel#getSimpleCS
-	 * ()
-	 */
+	@Override
 	public ISimpleCS getSimpleCS() {
 		if (fSimpleCS == null) {
 			fSimpleCS = getFactory().createSimpleCS();
@@ -95,11 +72,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 		return fSimpleCS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.text.XMLEditingModel#getRoot()
-	 */
+	@Override
 	protected IWritable getRoot() {
 		return getSimpleCS();
 	}

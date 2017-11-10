@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.core.ctxhelp.text;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,7 @@ import org.eclipse.pde.internal.ua.core.ctxhelp.ICtxHelpConstants;
  * @see CtxHelpDocumentFactory
  */
 public abstract class CtxHelpObject extends DocumentObject implements
-		ICtxHelpConstants, Serializable {
+		ICtxHelpConstants {
 
 	private static final long serialVersionUID = 1L;
 
@@ -66,32 +65,17 @@ public abstract class CtxHelpObject extends DocumentObject implements
 		return list;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.DocumentElementNode#getAttributeIndent
-	 * ()
-	 */
+	@Override
 	protected String getAttributeIndent() {
 		return " "; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.DocumentElementNode#getContentIndent()
-	 */
+	@Override
 	protected String getContentIndent() {
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.text.DocumentElementNode#isLeafNode()
-	 */
+	@Override
 	public boolean isLeafNode() {
 		return !canBeParent();
 	}
@@ -224,13 +208,6 @@ public abstract class CtxHelpObject extends DocumentObject implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.toc.TocObject#moveChild(org.eclipse.pde
-	 * .internal.core.toc.TocObject, int)
-	 */
 	public void moveChild(CtxHelpObject object, int newRelativeIndex) {
 		moveChildNode(object, newRelativeIndex, true);
 	}

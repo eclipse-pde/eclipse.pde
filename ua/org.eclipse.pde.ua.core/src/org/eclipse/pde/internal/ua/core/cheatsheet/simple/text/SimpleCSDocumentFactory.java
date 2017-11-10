@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,27 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 
 import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.plugin.DocumentGenericNode;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSAction;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSCommand;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConditionalSubItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSIntro;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModelFactory;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSOnCompletion;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSPerformWhen;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRepeatedSubItem;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 
 public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		ISimpleCSModelFactory {
@@ -43,14 +29,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		fModel = model;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.DocumentNodeFactory#createDocumentTextNode
-	 * (java.lang.String,
-	 * org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
+	@Override
 	public IDocumentTextNode createDocumentTextNode(String content,
 			IDocumentElementNode parent) {
 		IDocumentTextNode textNode = new SimpleCSDocumentTextNode();
@@ -60,14 +39,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		return textNode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode
-	 * (java.lang.String,
-	 * org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
+	@Override
 	public IDocumentElementNode createDocumentNode(String name,
 			IDocumentElementNode parent) {
 
@@ -83,75 +55,75 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		if (parent == null) {
 			if (isSimpleCS(name)) {
 				// Root
-				return (IDocumentElementNode) createSimpleCS();
+				return createSimpleCS();
 			}
 		} else if (parent instanceof SimpleCS) {
 			if (isIntro(name)) {
 				// Intro
-				return (IDocumentElementNode) createSimpleCSIntro((SimpleCS) parent);
+				return createSimpleCSIntro((SimpleCS) parent);
 			} else if (isItem(name)) {
 				// Item
-				return (IDocumentElementNode) createSimpleCSItem((SimpleCS) parent);
+				return createSimpleCSItem((SimpleCS) parent);
 			}
 		} else if (parent instanceof SimpleCSIntro) {
 			if (isDescription(name)) {
 				// Description
-				return (IDocumentElementNode) createSimpleCSDescription((SimpleCSIntro) parent);
+				return createSimpleCSDescription((SimpleCSIntro) parent);
 			}
 		} else if (parent instanceof SimpleCSItem) {
 			if (isDescription(name)) {
 				// Description
-				return (IDocumentElementNode) createSimpleCSDescription((SimpleCSItem) parent);
+				return createSimpleCSDescription((SimpleCSItem) parent);
 			} else if (isAction(name)) {
 				// Action
-				return (IDocumentElementNode) createSimpleCSAction((SimpleCSItem) parent);
+				return createSimpleCSAction((SimpleCSItem) parent);
 			} else if (isCommand(name)) {
 				// Command
-				return (IDocumentElementNode) createSimpleCSCommand((SimpleCSItem) parent);
+				return createSimpleCSCommand((SimpleCSItem) parent);
 			} else if (isPerformWhen(name)) {
 				// Perform When
-				return (IDocumentElementNode) createSimpleCSPerformWhen((SimpleCSItem) parent);
+				return createSimpleCSPerformWhen((SimpleCSItem) parent);
 			} else if (isSubitem(name)) {
 				// Subitem
-				return (IDocumentElementNode) createSimpleCSSubItem((SimpleCSItem) parent);
+				return createSimpleCSSubItem((SimpleCSItem) parent);
 			} else if (isConditionalSubitem(name)) {
 				// Conditional Subitem
-				return (IDocumentElementNode) createSimpleCSConditionalSubItem((SimpleCSItem) parent);
+				return createSimpleCSConditionalSubItem((SimpleCSItem) parent);
 			} else if (isRepeatedSubitem(name)) {
 				// Repeated Subitem
-				return (IDocumentElementNode) createSimpleCSRepeatedSubItem((SimpleCSItem) parent);
+				return createSimpleCSRepeatedSubItem((SimpleCSItem) parent);
 			} else if (isOnCompletion(name)) {
 				// On Completion
-				return (IDocumentElementNode) createSimpleCSOnCompletion((SimpleCSItem) parent);
+				return createSimpleCSOnCompletion((SimpleCSItem) parent);
 			}
 		} else if (parent instanceof SimpleCSSubItem) {
 			if (isPerformWhen(name)) {
 				// Perform When
-				return (IDocumentElementNode) createSimpleCSPerformWhen((SimpleCSSubItem) parent);
+				return createSimpleCSPerformWhen((SimpleCSSubItem) parent);
 			} else if (isAction(name)) {
 				// Action
-				return (IDocumentElementNode) createSimpleCSAction((SimpleCSSubItem) parent);
+				return createSimpleCSAction((SimpleCSSubItem) parent);
 			} else if (isCommand(name)) {
 				// Command
-				return (IDocumentElementNode) createSimpleCSCommand((SimpleCSSubItem) parent);
+				return createSimpleCSCommand((SimpleCSSubItem) parent);
 			}
 		} else if (parent instanceof SimpleCSConditionalSubItem) {
 			if (isSubitem(name)) {
 				// Subitem
-				return (IDocumentElementNode) createSimpleCSSubItem((SimpleCSConditionalSubItem) parent);
+				return createSimpleCSSubItem((SimpleCSConditionalSubItem) parent);
 			}
 		} else if (parent instanceof SimpleCSRepeatedSubItem) {
 			if (isSubitem(name)) {
 				// Subitem
-				return (IDocumentElementNode) createSimpleCSSubItem((SimpleCSRepeatedSubItem) parent);
+				return createSimpleCSSubItem((SimpleCSRepeatedSubItem) parent);
 			}
 		} else if (parent instanceof SimpleCSPerformWhen) {
 			if (isAction(name)) {
 				// Action
-				return (IDocumentElementNode) createSimpleCSAction((SimpleCSPerformWhen) parent);
+				return createSimpleCSAction((SimpleCSPerformWhen) parent);
 			} else if (isCommand(name)) {
 				// Command
-				return (IDocumentElementNode) createSimpleCSCommand((SimpleCSPerformWhen) parent);
+				return createSimpleCSCommand((SimpleCSPerformWhen) parent);
 			}
 		} else if (parent instanceof SimpleCSDescription) {
 			if (isBr(name)) {
@@ -279,74 +251,33 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_BR);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCS()
-	 */
+	@Override
 	public ISimpleCS createSimpleCS() {
 		return new SimpleCS(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCSAction
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
-	 */
+	@Override
 	public ISimpleCSAction createSimpleCSAction(ISimpleCSObject parent) {
 		return new SimpleCSAction(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCSCommand
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
-	 */
+	@Override
 	public ISimpleCSCommand createSimpleCSCommand(ISimpleCSObject parent) {
 		return new SimpleCSCommand(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCSConditionalSubItem
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
-	 */
+	@Override
 	public ISimpleCSConditionalSubItem createSimpleCSConditionalSubItem(
 			ISimpleCSObject parent) {
 		return new SimpleCSConditionalSubItem(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCSDescription
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
-	 */
+	@Override
 	public ISimpleCSDescription createSimpleCSDescription(ISimpleCSObject parent) {
 		return new SimpleCSDescription(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCSIntro
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
-	 */
+	@Override
 	public ISimpleCSIntro createSimpleCSIntro(ISimpleCSObject parent) {
 		return new SimpleCSIntro(fModel);
 	}
@@ -359,56 +290,29 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * #createSimpleCSItem
 	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
+	@Override
 	public ISimpleCSItem createSimpleCSItem(ISimpleCSObject parent) {
 		return new SimpleCSItem(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCSOnCompletion
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
-	 */
+	@Override
 	public ISimpleCSOnCompletion createSimpleCSOnCompletion(
 			ISimpleCSObject parent) {
 		return new SimpleCSOnCompletion(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCSPerformWhen
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
-	 */
+	@Override
 	public ISimpleCSPerformWhen createSimpleCSPerformWhen(ISimpleCSObject parent) {
 		return new SimpleCSPerformWhen(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCSRepeatedSubItem
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
-	 */
+	@Override
 	public ISimpleCSRepeatedSubItem createSimpleCSRepeatedSubItem(
 			ISimpleCSObject parent) {
 		return new SimpleCSRepeatedSubItem(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCSSubItem
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
-	 */
+	@Override
 	public ISimpleCSSubItem createSimpleCSSubItem(ISimpleCSObject parent) {
 		return new SimpleCSSubItem(fModel);
 	}
@@ -420,6 +324,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		return new DocumentGenericNode(ISimpleCSConstants.ELEMENT_BR) {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public boolean isLeafNode() {
 				return true;
 			}

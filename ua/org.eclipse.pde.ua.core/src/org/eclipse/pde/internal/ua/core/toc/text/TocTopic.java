@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.toc.text;
 
 import org.eclipse.core.resources.IFile;
@@ -73,60 +72,30 @@ public class TocTopic extends TocObject {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return getFieldLabel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.text.toc.TocObject#getPath()
-	 */
+	@Override
 	public String getPath() {
 		return getFieldRef();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_TOPIC;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.toc.TocObject#isFirstChildObject(org.eclipse
-	 * .pde.internal.ua.core.toc.TocObject)
-	 */
 	public boolean isFirstChildObject(TocObject tocObject) {
 		return super.isFirstChildNode(tocObject, TocObject.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.toc.TocObject#isLastChildObject(org.eclipse
-	 * .pde.internal.ua.core.toc.TocObject)
-	 */
 	public boolean isLastChildObject(TocObject tocObject) {
 		return super.isLastChildNode(tocObject, TocObject.class);
 	}
@@ -162,13 +131,6 @@ public class TocTopic extends TocObject {
 		addChildNode(child, currentIndex, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.toc.TocObject#moveChild(org.eclipse.pde
-	 * .internal.core.toc.TocObject, int)
-	 */
 	public void moveChild(TocObject tocObject, int newRelativeIndex) {
 		moveChildNode(tocObject, newRelativeIndex, true);
 	}

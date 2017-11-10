@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,29 +31,17 @@ public class CtxHelpContext extends CtxHelpObject {
 		super(model, ELEMENT_CONTEXT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_CONTEXT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return getId();
 	}
@@ -143,6 +131,7 @@ public class CtxHelpContext extends CtxHelpObject {
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddChild(
 	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject)
 	 */
+	@Override
 	public boolean canAddChild(int objectType) {
 		return objectType == TYPE_TOPIC || objectType == TYPE_COMMAND;
 	}
@@ -154,6 +143,7 @@ public class CtxHelpContext extends CtxHelpObject {
 	 * org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddSibling
 	 * (int)
 	 */
+	@Override
 	public boolean canAddSibling(int objectType) {
 		return objectType == TYPE_CONTEXT;
 	}

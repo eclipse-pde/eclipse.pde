@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,102 +27,50 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 		super(model, ELEMENT_ITEM);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#addSubItem
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
-	 */
+	@Override
 	public void addSubItem(ISimpleCSSubItemObject subitem) {
-		addChildNode((IDocumentElementNode) subitem, true);
+		addChildNode(subitem, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#addSubItem
-	 * (int,
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
-	 */
+	@Override
 	public void addSubItem(int index, ISimpleCSSubItemObject subitem) {
-		addChildNode((IDocumentElementNode) subitem, index, true);
+		addChildNode(subitem, index, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getDescription
-	 * ()
-	 */
+	@Override
 	public ISimpleCSDescription getDescription() {
 		return (ISimpleCSDescription) getChildNode(ISimpleCSDescription.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getDialog
-	 * ()
-	 */
+	@Override
 	public boolean getDialog() {
 		return getBooleanAttributeValue(ATTRIBUTE_DIALOG, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getNextSibling
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
-	 */
+	@Override
 	public ISimpleCSSubItemObject getNextSibling(ISimpleCSSubItemObject subitem) {
 		return (ISimpleCSSubItemObject) getNextSibling(
-				(IDocumentElementNode) subitem, ISimpleCSSubItemObject.class);
+				subitem, ISimpleCSSubItemObject.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#
-	 * getOnCompletion()
-	 */
+	@Override
 	public ISimpleCSOnCompletion getOnCompletion() {
 		return (ISimpleCSOnCompletion) getChildNode(ISimpleCSOnCompletion.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#
-	 * getPreviousSibling
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
-	 */
+	@Override
 	public ISimpleCSSubItemObject getPreviousSibling(
 			ISimpleCSSubItemObject subitem) {
 		return (ISimpleCSSubItemObject) getPreviousSibling(
-				(IDocumentElementNode) subitem, ISimpleCSSubItemObject.class);
+				subitem, ISimpleCSSubItemObject.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getSkip()
-	 */
+	@Override
 	public boolean getSkip() {
 		return getBooleanAttributeValue(ATTRIBUTE_SKIP, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#
-	 * getSubItemCount()
-	 */
+	@Override
 	public int getSubItemCount() {
 		return getChildNodeCount(ISimpleCSSubItemObject.class);
 	}
@@ -130,244 +78,116 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	@Override
 	public ISimpleCSSubItemObject[] getSubItems() {
 		List<IDocumentElementNode> filteredChildren = getChildNodesList(ISimpleCSSubItemObject.class, true);
-		return (ISimpleCSSubItemObject[]) filteredChildren
+		return filteredChildren
 				.toArray(new ISimpleCSSubItemObject[filteredChildren.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getTitle()
-	 */
+	@Override
 	public String getTitle() {
 		return getXMLAttributeValue(ATTRIBUTE_TITLE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#hasSubItems
-	 * ()
-	 */
+	@Override
 	public boolean hasSubItems() {
 		return hasChildNodes(ISimpleCSSubItemObject.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#indexOfSubItem
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
-	 */
+	@Override
 	public int indexOfSubItem(ISimpleCSSubItemObject subitem) {
-		return indexOf((IDocumentElementNode) subitem);
+		return indexOf(subitem);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#isFirstSubItem
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
-	 */
+	@Override
 	public boolean isFirstSubItem(ISimpleCSSubItemObject subitem) {
-		return isFirstChildNode((IDocumentElementNode) subitem,
+		return isFirstChildNode(subitem,
 				ISimpleCSSubItemObject.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#isLastSubItem
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
-	 */
+	@Override
 	public boolean isLastSubItem(ISimpleCSSubItemObject subitem) {
-		return isLastChildNode((IDocumentElementNode) subitem,
+		return isLastChildNode(subitem,
 				ISimpleCSSubItemObject.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#moveSubItem
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject,
-	 * int)
-	 */
+	@Override
 	public void moveSubItem(ISimpleCSSubItemObject subitem, int newRelativeIndex) {
-		moveChildNode((IDocumentElementNode) subitem, newRelativeIndex, true);
+		moveChildNode(subitem, newRelativeIndex, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#removeSubItem
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
-	 */
+	@Override
 	public void removeSubItem(ISimpleCSSubItemObject subitem) {
-		removeChildNode((IDocumentElementNode) subitem, true);
+		removeChildNode(subitem, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#removeSubItem
-	 * (int)
-	 */
+	@Override
 	public void removeSubItem(int index) {
 		removeChildNode(index, ISimpleCSSubItemObject.class, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#setDescription
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSDescription)
-	 */
+	@Override
 	public void setDescription(ISimpleCSDescription description) {
-		setChildNode((IDocumentElementNode) description,
+		setChildNode(description,
 				ISimpleCSDescription.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#setDialog
-	 * (boolean)
-	 */
+	@Override
 	public void setDialog(boolean dialog) {
 		setBooleanAttributeValue(ATTRIBUTE_DIALOG, dialog);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#
-	 * setOnCompletion
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSOnCompletion)
-	 */
+	@Override
 	public void setOnCompletion(ISimpleCSOnCompletion onCompletion) {
-		setChildNode((IDocumentElementNode) onCompletion,
+		setChildNode(onCompletion,
 				ISimpleCSOnCompletion.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#setSkip
-	 * (boolean)
-	 */
+	@Override
 	public void setSkip(boolean skip) {
 		setBooleanAttributeValue(ATTRIBUTE_SKIP, skip);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#setTitle
-	 * (java.lang.String)
-	 */
+	@Override
 	public void setTitle(String title) {
 		setXMLAttribute(ATTRIBUTE_TITLE, title);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
-	 * getContextId()
-	 */
+	@Override
 	public String getContextId() {
 		return getXMLAttributeValue(ATTRIBUTE_CONTEXTID);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
-	 * getHref()
-	 */
+	@Override
 	public String getHref() {
 		return getXMLAttributeValue(ATTRIBUTE_HREF);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
-	 * setContextId(java.lang.String)
-	 */
+	@Override
 	public void setContextId(String contextId) {
 		setXMLAttribute(ATTRIBUTE_CONTEXTID, contextId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
-	 * setHref(java.lang.String)
-	 */
+	@Override
 	public void setHref(String href) {
 		setXMLAttribute(ATTRIBUTE_HREF, href);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRun#getExecutable
-	 * ()
-	 */
+	@Override
 	public ISimpleCSRunContainerObject getExecutable() {
 		return (ISimpleCSRunContainerObject) getChildNode(ISimpleCSRunContainerObject.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRun#setExecutable
-	 * (
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunContainerObject
-	 * )
-	 */
+	@Override
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
-		setChildNode((IDocumentElementNode) executable,
+		setChildNode(executable,
 				ISimpleCSRunContainerObject.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
-	 * ()
-	 */
+	@Override
 	public String getName() {
 		return getTitle();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
-	 * ()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_ITEM;
 	}

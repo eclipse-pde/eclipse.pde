@@ -77,22 +77,28 @@ public abstract class CompCSObject extends PlatformObject implements
 	@Override
 	public abstract List<ICompCSTaskObject> getChildren();
 
+	@Override
 	public ICompCS getCompCS() {
 		return fModel.getCompCS();
 	}
 
+	@Override
 	public ICompCSModel getModel() {
 		return fModel;
 	}
 
+	@Override
 	public abstract String getName();
 
+	@Override
 	public ICompCSObject getParent() {
 		return fParent;
 	}
 
+	@Override
 	public abstract int getType();
 
+	@Override
 	public void parse(Element element) {
 		if (element.getNodeName().equals(getElement())) {
 			parseAttributes(element);
@@ -100,12 +106,15 @@ public abstract class CompCSObject extends PlatformObject implements
 		}
 	}
 
+	@Override
 	public abstract void reset();
 
+	@Override
 	public void setModel(ICompCSModel model) {
 		fModel = model;
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 
 		StringBuilder buffer = new StringBuilder();
@@ -243,5 +252,6 @@ public abstract class CompCSObject extends PlatformObject implements
 	 */
 	protected abstract void writeElements(String indent, PrintWriter writer);
 
+	@Override
 	public abstract String getElement();
 }

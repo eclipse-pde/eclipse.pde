@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,64 +29,32 @@ public class CtxHelpRoot extends CtxHelpObject {
 		setInTheModel(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isRoot()
-	 */
+	@Override
 	public boolean isRoot() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_ROOT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canBeParent()
-	 */
+	@Override
 	public boolean canBeParent() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return ELEMENT_ROOT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddChild
-	 * (org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject)
-	 */
+	@Override
 	public boolean canAddChild(int objectType) {
 		return objectType == TYPE_CONTEXT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddSibling
-	 * (int)
-	 */
+	@Override
 	public boolean canAddSibling(int objectType) {
 		return false;
 	}

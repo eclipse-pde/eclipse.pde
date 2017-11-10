@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
@@ -27,84 +26,42 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 		super(model, tagName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
-	 * getConfirm()
-	 */
+	@Override
 	public boolean getConfirm() {
 		return getBooleanAttributeValue(ATTRIBUTE_CONFIRM, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
-	 * getRequired()
-	 */
+	@Override
 	public boolean getRequired() {
 		return getBooleanAttributeValue(ATTRIBUTE_REQUIRED, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
-	 * getTranslate()
-	 */
+	@Override
 	public String getTranslate() {
 		return getXMLAttributeValue(ATTRIBUTE_TRANSLATE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#getWhen
-	 * ()
-	 */
+	@Override
 	public String getWhen() {
 		return getXMLAttributeValue(ATTRIBUTE_WHEN);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
-	 * setConfirm(boolean)
-	 */
+	@Override
 	public void setConfirm(boolean confirm) {
 		setBooleanAttributeValue(ATTRIBUTE_CONFIRM, confirm);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
-	 * setRequired(boolean)
-	 */
+	@Override
 	public void setRequired(boolean required) {
 		setBooleanAttributeValue(ATTRIBUTE_REQUIRED, required);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
-	 * setTranslate(java.lang.String)
-	 */
+	@Override
 	public void setTranslate(String translate) {
 		setXMLAttribute(ATTRIBUTE_TRANSLATE, translate);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#setWhen
-	 * (java.lang.String)
-	 */
+	@Override
 	public void setWhen(String when) {
 		setXMLAttribute(ATTRIBUTE_WHEN, when);
 	}

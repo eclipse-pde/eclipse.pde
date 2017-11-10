@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 
 import java.util.List;
@@ -30,48 +29,22 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 		super(model, ELEMENT_REPEATED_SUBITEM);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRepeatedSubItem
-	 * #getSubItem()
-	 */
+	@Override
 	public ISimpleCSSubItem getSubItem() {
 		return (ISimpleCSSubItem) getChildNode(ISimpleCSSubItem.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRepeatedSubItem
-	 * #getValues()
-	 */
+	@Override
 	public String getValues() {
 		return getXMLAttributeValue(ATTRIBUTE_VALUES);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRepeatedSubItem
-	 * #
-	 * setSubItem(org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem
-	 * )
-	 */
+	@Override
 	public void setSubItem(ISimpleCSSubItem subitem) {
-		setChildNode((IDocumentElementNode) subitem, ISimpleCSSubItem.class);
+		setChildNode(subitem, ISimpleCSSubItem.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRepeatedSubItem
-	 * #setValues(java.lang.String)
-	 */
+	@Override
 	public void setValues(String values) {
 		setXMLAttribute(ATTRIBUTE_VALUES, values);
 	}
@@ -84,25 +57,13 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 		return getChildNodesList(ISimpleCSSubItem.class, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
-	 * ()
-	 */
+	@Override
 	public String getName() {
 		// Leave as is. Not supported in editor UI
 		return ELEMENT_REPEATED_SUBITEM;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
-	 * ()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_REPEATED_SUBITEM;
 	}

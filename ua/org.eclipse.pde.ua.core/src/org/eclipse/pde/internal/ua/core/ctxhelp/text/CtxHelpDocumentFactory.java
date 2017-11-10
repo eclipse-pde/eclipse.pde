@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ua.core.ctxhelp.text;
 
 import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.ua.core.ctxhelp.ICtxHelpConstants;
 
 /**
@@ -24,22 +23,14 @@ import org.eclipse.pde.internal.ua.core.ctxhelp.ICtxHelpConstants;
  * @see CtxHelpModel
  * @see CtxHelpDocumentHandler
  */
-public class CtxHelpDocumentFactory extends DocumentNodeFactory implements
-		IDocumentNodeFactory {
+public class CtxHelpDocumentFactory extends DocumentNodeFactory {
 	private CtxHelpModel fModel;
 
 	public CtxHelpDocumentFactory(CtxHelpModel model) {
 		fModel = model;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode
-	 * (java.lang.String,
-	 * org.eclipse.pde.internal.core.text.IDocumentElementNode)
-	 */
+	@Override
 	public IDocumentElementNode createDocumentNode(String name,
 			IDocumentElementNode parent) {
 		if (isRoot(name)) { // Root

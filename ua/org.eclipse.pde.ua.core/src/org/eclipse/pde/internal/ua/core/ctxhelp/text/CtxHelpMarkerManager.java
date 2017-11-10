@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class CtxHelpMarkerManager {
 
 		Iterator<Exception> iter = errors.iterator();
 		while (iter.hasNext()) {
-			Throwable exception = (Throwable) iter.next();
+			Throwable exception = iter.next();
 			if (exception instanceof SAXParseException) {
 				int line = ((SAXParseException) exception).getLineNumber();
 				try {

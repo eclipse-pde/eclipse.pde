@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
 import java.io.PrintWriter;
@@ -40,47 +39,27 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		reset();
 	}
 
+	@Override
 	public List<ICompCSTaskObject> getChildren() {
 		return new ArrayList<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#getName()
-	 */
+	@Override
 	public String getName() {
 		return fFieldName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_TASK;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
-	 */
+	@Override
 	public String getElement() {
 		return ELEMENT_TASK;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
-	 * (org.w3c.dom.Element)
-	 */
+	@Override
 	protected void parseElement(Element element) {
 		super.parseElement(element);
 		String name = element.getNodeName();
@@ -94,13 +73,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask#addFieldParam
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam)
-	 */
+	@Override
 	public void addFieldParam(ICompCSParam param) {
 		fFieldParams.add(param);
 		if (isEditable()) {
@@ -108,25 +81,13 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask#getFieldParams
-	 * ()
-	 */
+	@Override
 	public ICompCSParam[] getFieldParams() {
-		return (ICompCSParam[]) fFieldParams
+		return fFieldParams
 				.toArray(new ICompCSParam[fFieldParams.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask#removeFieldParam
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam)
-	 */
+	@Override
 	public void removeFieldParam(ICompCSParam param) {
 		fFieldParams.remove(param);
 		if (isEditable()) {
@@ -134,43 +95,26 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#reset()
-	 */
+	@Override
 	public void reset() {
 		super.reset();
 
 		fFieldParams = new ArrayList<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#writeElements
-	 * (java.lang.String, java.io.PrintWriter)
-	 */
+	@Override
 	protected void writeElements(String indent, PrintWriter writer) {
 		super.writeElements(indent, writer);
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		// Print param elements
 		Iterator<ICompCSParam> iterator = fFieldParams.iterator();
 		while (iterator.hasNext()) {
-			ICompCSParam param = (ICompCSParam) iterator.next();
+			ICompCSParam param = iterator.next();
 			param.write(newIndent, writer);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask#hasFieldParams
-	 * ()
-	 */
+	@Override
 	public boolean hasFieldParams() {
 		if (fFieldParams.isEmpty()) {
 			return false;
@@ -178,20 +122,14 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask#getFieldParam
-	 * (java.lang.String)
-	 */
+	@Override
 	public ICompCSParam getFieldParam(String name) {
 		if (fFieldParams.isEmpty()) {
 			return null;
 		}
 		ListIterator<ICompCSParam> iterator = fFieldParams.listIterator();
 		while (iterator.hasNext()) {
-			ICompCSParam parameter = (ICompCSParam) iterator.next();
+			ICompCSParam parameter = iterator.next();
 			if (parameter.getFieldName().equals(name)) {
 				return parameter;
 			}

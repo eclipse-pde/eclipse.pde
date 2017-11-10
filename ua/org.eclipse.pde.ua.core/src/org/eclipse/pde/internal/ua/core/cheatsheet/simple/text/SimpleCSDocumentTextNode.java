@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 
 import java.util.HashSet;
@@ -35,11 +34,7 @@ public class SimpleCSDocumentTextNode extends DocumentTextNode {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.text.DocumentTextNode#write()
-	 */
+	@Override
 	public String write() {
 		String content = getText().trim();
 		return PDETextHelper.translateWriteText(content, TAG_EXCEPTIONS,

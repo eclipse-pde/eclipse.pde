@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,21 +46,12 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
-	 */
+	@Override
 	protected void updateTimeStamp() {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel#getCompCS()
-	 */
+	@Override
 	public ICompCS getCompCS() {
 		if (fCompCS == null) {
 			fCompCS = getFactory().createCompCS();
@@ -68,12 +59,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 		return fCompCS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel#getFactory()
-	 */
+	@Override
 	public ICompCSModelFactory getFactory() {
 		if (fFactory == null) {
 			fFactory = new CompCSModelFactory(this);
@@ -81,29 +67,17 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 		return fFactory;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#isInSync()
-	 */
+	@Override
 	public boolean isInSync() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#load()
-	 */
+	@Override
 	public void load() throws CoreException {
 		// NO-OP
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
-	 */
+	@Override
 	public void load(InputStream source, boolean outOfSync)
 			throws CoreException {
 
@@ -130,11 +104,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
-	 */
+	@Override
 	public void reload(InputStream source, boolean outOfSync)
 			throws CoreException {
 
@@ -144,11 +114,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 				null));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.core.IBaseModel#isEditable()
-	 */
+	@Override
 	public boolean isEditable() {
 		return false;
 	}

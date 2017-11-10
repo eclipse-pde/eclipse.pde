@@ -53,10 +53,13 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 	@Override
 	public abstract List<ICompCSTaskObject> getChildren();
 
+	@Override
 	public abstract String getName();
 
+	@Override
 	public abstract int getType();
 
+	@Override
 	public void reset() {
 		fFieldId = null;
 		fFieldKind = null;
@@ -67,6 +70,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		fFieldDependencies = new ArrayList<>();
 	}
 
+	@Override
 	public void addFieldDependency(ICompCSDependency dependency) {
 		fFieldDependencies.add(dependency);
 		if (isEditable()) {
@@ -74,30 +78,37 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	public String getFieldId() {
 		return fFieldId;
 	}
 
+	@Override
 	public ICompCSIntro getFieldIntro() {
 		return fFieldIntro;
 	}
 
+	@Override
 	public String getFieldKind() {
 		return fFieldKind;
 	}
 
+	@Override
 	public String getFieldName() {
 		return fFieldName;
 	}
 
+	@Override
 	public ICompCSOnCompletion getFieldOnCompletion() {
 		return fFieldOnCompletion;
 	}
 
+	@Override
 	public boolean getFieldSkip() {
 		return fFieldSkip;
 	}
 
+	@Override
 	public void removeFieldDepedency(ICompCSDependency dependency) {
 		fFieldDependencies.remove(dependency);
 		if (isEditable()) {
@@ -105,6 +116,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	public void setFieldId(String id) {
 		String old = fFieldId;
 		fFieldId = id;
@@ -113,6 +125,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	public void setFieldIntro(ICompCSIntro intro) {
 		ICompCSObject old = fFieldIntro;
 		fFieldIntro = intro;
@@ -121,6 +134,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	public void setFieldKind(String kind) {
 		String old = fFieldKind;
 		fFieldKind = kind;
@@ -129,6 +143,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	public void setFieldName(String name) {
 		String old = fFieldName;
 		fFieldName = name;
@@ -137,6 +152,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	public void setFieldOnCompletion(ICompCSOnCompletion onCompletion) {
 		ICompCSObject old = fFieldOnCompletion;
 		fFieldOnCompletion = onCompletion;
@@ -145,6 +161,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	public void setFieldSkip(boolean skip) {
 		Boolean old = Boolean.valueOf(fFieldSkip);
 		fFieldSkip = skip;
@@ -154,15 +171,18 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	public ICompCSDependency[] getFieldDependencies() {
-		return (ICompCSDependency[]) fFieldDependencies
+		return fFieldDependencies
 				.toArray(new ICompCSDependency[fFieldDependencies.size()]);
 	}
 
+	@Override
 	protected void parseText(Text text) {
 		// NO-OP
 	}
 
+	@Override
 	protected void parseAttributes(Element element) {
 		// Process id attribute
 		// Trim leading and trailing whitespace
@@ -180,6 +200,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	protected void writeAttributes(StringBuilder buffer) {
 		// Print id attribute
 		if ((fFieldId != null) && (fFieldId.length() > 0)) {
@@ -209,6 +230,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 				Boolean.valueOf(fFieldSkip).toString()));
 	}
 
+	@Override
 	protected void parseElement(Element element) {
 		String name = element.getNodeName();
 		ICompCSModelFactory factory = getModel().getFactory();
@@ -229,6 +251,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 	}
 
+	@Override
 	protected void writeElements(String indent, PrintWriter writer) {
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		// Print intro element
@@ -242,11 +265,12 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		// Print dependency elements
 		Iterator<ICompCSDependency> iterator = fFieldDependencies.iterator();
 		while (iterator.hasNext()) {
-			ICompCSDependency dependency = (ICompCSDependency) iterator.next();
+			ICompCSDependency dependency = iterator.next();
 			dependency.write(newIndent, writer);
 		}
 	}
 
+	@Override
 	public abstract String getElement();
 
 }

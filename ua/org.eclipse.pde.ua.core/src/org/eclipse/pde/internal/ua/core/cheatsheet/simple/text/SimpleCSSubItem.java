@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,94 +30,44 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 		super(model, ELEMENT_SUBITEM);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#getLabel
-	 * ()
-	 */
+	@Override
 	public String getLabel() {
 		return getXMLAttributeValue(ATTRIBUTE_LABEL);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#getSkip
-	 * ()
-	 */
+	@Override
 	public boolean getSkip() {
 		return getBooleanAttributeValue(ATTRIBUTE_SKIP, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#getWhen
-	 * ()
-	 */
+	@Override
 	public String getWhen() {
 		return getXMLAttributeValue(ATTRIBUTE_WHEN);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#setLabel
-	 * (java.lang.String)
-	 */
+	@Override
 	public void setLabel(String label) {
 		setXMLAttribute(ATTRIBUTE_LABEL, label);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#setSkip
-	 * (boolean)
-	 */
+	@Override
 	public void setSkip(boolean skip) {
 		setBooleanAttributeValue(ATTRIBUTE_SKIP, skip);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#setWhen
-	 * (java.lang.String)
-	 */
+	@Override
 	public void setWhen(String when) {
 		setXMLAttribute(ATTRIBUTE_WHEN, when);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRun#getExecutable
-	 * ()
-	 */
+	@Override
 	public ISimpleCSRunContainerObject getExecutable() {
 		return (ISimpleCSRunContainerObject) getChildNode(ISimpleCSRunContainerObject.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRun#setExecutable
-	 * (
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunContainerObject
-	 * )
-	 */
+	@Override
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
-		setChildNode((IDocumentElementNode) executable,
+		setChildNode(executable,
 				ISimpleCSRunContainerObject.class);
 	}
 
@@ -129,24 +79,12 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 		return getChildNodesList(ISimpleCSPerformWhen.class, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
-	 * ()
-	 */
+	@Override
 	public String getName() {
 		return getLabel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
-	 * ()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_SUBITEM;
 	}

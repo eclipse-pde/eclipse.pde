@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
@@ -32,23 +31,12 @@ public class CompCSOnCompletion extends CompCSDataObject implements
 		reset();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSDataObject#getElement
-	 * ()
-	 */
+	@Override
 	public String getElement() {
 		return ELEMENT_ONCOMPLETION;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSDataObject#getType()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_ONCOMPLETION;
 	}

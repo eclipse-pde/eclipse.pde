@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 
 import java.util.ArrayList;
@@ -31,25 +30,12 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 		super(model, ELEMENT_PERFORM_WHEN);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSPerformWhen
-	 * #addExecutable
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject)
-	 */
+	@Override
 	public void addExecutable(ISimpleCSRunObject executable) {
-		addChildNode((IDocumentElementNode) executable, true);
+		addChildNode(executable, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSPerformWhen
-	 * #getCondition()
-	 */
+	@Override
 	public String getCondition() {
 		return getXMLAttributeValue(ATTRIBUTE_CONDITION);
 	}
@@ -57,29 +43,16 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	@Override
 	public ISimpleCSRunObject[] getExecutables() {
 		List<IDocumentElementNode> filteredChildren = getChildNodesList(ISimpleCSRunObject.class, true);
-		return (ISimpleCSRunObject[]) filteredChildren
+		return filteredChildren
 				.toArray(new ISimpleCSRunObject[filteredChildren.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSPerformWhen
-	 * #removeExecutable
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject)
-	 */
+	@Override
 	public void removeExecutable(ISimpleCSRunObject executable) {
-		removeChildNode((IDocumentElementNode) executable, true);
+		removeChildNode(executable, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSPerformWhen
-	 * #setCondition(java.lang.String)
-	 */
+	@Override
 	public void setCondition(String condition) {
 		setXMLAttribute(ATTRIBUTE_CONDITION, condition);
 	}
@@ -89,25 +62,13 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 		return new ArrayList<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
-	 * ()
-	 */
+	@Override
 	public String getName() {
 		// Leave as is. Not supported in editor UI
 		return ELEMENT_PERFORM_WHEN;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
-	 * ()
-	 */
+	@Override
 	public int getType() {
 		return TYPE_PERFORM_WHEN;
 	}
