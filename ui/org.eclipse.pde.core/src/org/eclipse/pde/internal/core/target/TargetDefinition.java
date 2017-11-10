@@ -825,7 +825,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(fName != null ? fName : "No Name"); //$NON-NLS-1$
 		if (fContainers == null) {
 			buf.append("\n\tNo containers"); //$NON-NLS-1$

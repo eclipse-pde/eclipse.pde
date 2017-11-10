@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.core.util;
 
 import java.util.*;
@@ -70,7 +69,7 @@ public class PDETextHelper {
 		String inputText = text.trim();
 		int length = inputText.length();
 		char previousChar = ' ';
-		StringBuffer buffer = new StringBuffer(length);
+		StringBuilder buffer = new StringBuilder(length);
 		// Visit each character in text
 		for (int i = 0; i < length; i++) {
 			char currentChar = inputText.charAt(i);
@@ -121,7 +120,7 @@ public class PDETextHelper {
 			processSubstituteChars = true;
 		}
 		// Translated buffer
-		StringBuffer buffer = new StringBuffer(text.length());
+		StringBuilder buffer = new StringBuilder(text.length());
 		// Visit each character in text
 		for (IntegerPointer index = new IntegerPointer(0); index.getInteger() < text.length(); index.increment()) {
 			// Process the current character
@@ -150,7 +149,8 @@ public class PDETextHelper {
 		return buffer.toString();
 	}
 
-	private static boolean processSubstituteChars(char currentChar, HashMap<?, ?> substituteChars, StringBuffer buffer) {
+	private static boolean processSubstituteChars(char currentChar, HashMap<?, ?> substituteChars,
+			StringBuilder buffer) {
 		Character character = Character.valueOf(currentChar);
 		if (substituteChars.containsKey(character)) {
 			String value = (String) substituteChars.get(character);
@@ -164,7 +164,8 @@ public class PDETextHelper {
 		return false;
 	}
 
-	private static boolean processTagExceptions(char currentChar, HashMap<?, ?> substituteChars, HashSet<?> tagExceptions, StringBuffer buffer, int scanLimit, String text, IntegerPointer index) {
+	private static boolean processTagExceptions(char currentChar, HashMap<?, ?> substituteChars,
+			HashSet<?> tagExceptions, StringBuilder buffer, int scanLimit, String text, IntegerPointer index) {
 		// If the current character is an open angle bracket, then it may be
 		// part of a valid tag exception
 		if (currentChar == '<') {
@@ -173,7 +174,7 @@ public class PDETextHelper {
 			// Respect character array boundaries. Adjust accordingly
 			int limit = text.length();
 			// Scan ahead buffer
-			StringBuffer parsedText = new StringBuffer();
+			StringBuilder parsedText = new StringBuilder();
 			// Scan ahead in text to parse out a possible element tag name
 			for (int j = index.getInteger() + 1; j < limit; j++) {
 				char futureChar = text.charAt(j);
@@ -201,7 +202,8 @@ public class PDETextHelper {
 		return false;
 	}
 
-	private static void processTagExceptionCharacters(HashMap<?, ?> substituteChars, StringBuffer buffer, String text) {
+	private static void processTagExceptionCharacters(HashMap<?, ?> substituteChars, StringBuilder buffer,
+			String text) {
 		// Get the tag name
 		String tagName = getTagName(text);
 		// Determine if there is a trailing forward slash
@@ -298,7 +300,7 @@ public class PDETextHelper {
 		// NO '<'
 		// tagName att1="value" att2="value"
 		// NO '>'
-		StringBuffer tagName = new StringBuffer();
+		StringBuilder tagName = new StringBuilder();
 		// The tag name is every non-whitespace character in the buffer until
 		// a whitespace character is encountered
 		for (int i = 0; i < buffer.length(); i++) {

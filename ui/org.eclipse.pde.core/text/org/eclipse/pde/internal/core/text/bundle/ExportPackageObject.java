@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -144,7 +144,7 @@ public class ExportPackageObject extends PackageObject {
 	}
 
 	@Override
-	protected void appendValuesToBuffer(StringBuffer sb, TreeMap<String, Serializable> table) {
+	protected void appendValuesToBuffer(StringBuilder sb, TreeMap<String, Serializable> table) {
 
 		if (table == null) {
 			return;
@@ -198,7 +198,7 @@ public class ExportPackageObject extends PackageObject {
 	 *            The number of items, above which, a new line would be needed
 	 *            between all values.
 	 */
-	private void formatDirective(String directiveName, StringBuffer sb, Object usesValue, final int newLineLimit) {
+	private void formatDirective(String directiveName, StringBuilder sb, Object usesValue, final int newLineLimit) {
 
 		final String INDENT2 = "  "; //$NON-NLS-1$
 		final String INDENT3 = "   "; //$NON-NLS-1$

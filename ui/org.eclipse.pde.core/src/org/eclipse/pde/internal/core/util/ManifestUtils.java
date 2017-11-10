@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -359,7 +359,7 @@ public class ManifestUtils {
 		String[] values = ManifestElement.getArrayFromList(value);
 		if (values == null || values.length == 0)
 			return value;
-		StringBuffer sb = new StringBuffer(value.length() + ((values.length - 1) * MANIFEST_LIST_SEPARATOR.length()));
+		StringBuilder sb = new StringBuilder(value.length() + ((values.length - 1) * MANIFEST_LIST_SEPARATOR.length()));
 		for (int i = 0; i < values.length - 1; i++)
 			sb.append(values[i]).append(MANIFEST_LIST_SEPARATOR);
 		sb.append(values[values.length - 1]);

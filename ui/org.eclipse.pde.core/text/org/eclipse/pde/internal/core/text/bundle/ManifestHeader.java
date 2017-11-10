@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,15 +11,12 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.bundle.BundleObject;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 
 public class ManifestHeader extends BundleObject implements IManifestHeader {
@@ -97,7 +94,7 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 
 	@Override
 	public String write() {
-		StringBuffer sb = new StringBuffer(fName);
+		StringBuilder sb = new StringBuilder(fName);
 		sb.append(": "); //$NON-NLS-1$
 		try {
 			if (fOffset != -1) {

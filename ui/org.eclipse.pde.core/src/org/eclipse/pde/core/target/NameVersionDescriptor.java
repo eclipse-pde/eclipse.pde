@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public class NameVersionDescriptor {
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(fId);
 		if (fVersion != null) {
 			buf.append(' ');
@@ -144,7 +144,7 @@ public class NameVersionDescriptor {
 	 * @return portable form
 	 */
 	public String toPortableString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(fId);
 		buf.append('@');
 		buf.append(fVersion);

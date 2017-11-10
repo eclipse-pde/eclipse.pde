@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
-
-import org.eclipse.jface.text.Position;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -283,7 +281,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 			return;
 
 		IDocumentElementNode parent = fDocumentNodeStack.peek();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(ch, start, length);
 		getDocumentTextNode(buffer.toString(), parent);
 	}

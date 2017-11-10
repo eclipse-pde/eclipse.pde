@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.util;
 
 import java.io.PrintWriter;
 import java.util.Enumeration;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
@@ -22,7 +21,7 @@ public class PropertiesUtil {
 	public static String createWritableName(String source) {
 		if (source.indexOf(' ') >= 0) {
 			// has blanks
-			StringBuffer writableName = new StringBuffer();
+			StringBuilder writableName = new StringBuilder();
 			for (int i = 0; i < source.length(); i++) {
 				char c = source.charAt(i);
 				if (c == ' ') {
@@ -37,7 +36,7 @@ public class PropertiesUtil {
 
 	public static String createEscapedValue(String value) {
 		// if required, escape property values as \\uXXXX
-StringBuffer buf = new StringBuffer(value.length() * 2);
+		StringBuilder buf = new StringBuilder(value.length() * 2);
 		// assume expansion by less than factor of 2
 		for (int i = 0; i < value.length(); i++) {
 			char character = value.charAt(i);
@@ -70,7 +69,7 @@ StringBuffer buf = new StringBuffer(value.length() * 2);
 
 		char aChar;
 		int len = s.length();
-		StringBuffer outBuffer = new StringBuffer(len);
+		StringBuilder outBuffer = new StringBuilder(len);
 
 		for (int x = 0; x < len;) {
 			aChar = s.charAt(x++);

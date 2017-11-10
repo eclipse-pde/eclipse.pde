@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	@Override
 	public String writeShallow(boolean terminate) {
 		// Used by text edit operations
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		// Print opening angle bracket
 		buffer.append("<"); //$NON-NLS-1$
 		// Print namespace
@@ -137,7 +137,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		// TODO: MP: TEO: LOW: Refactor into smaller methods
 		// TODO: MP: TEO: LOW: Do we care about the indent flag? If so make consistent with write attributes and content
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		boolean hasChildren = hasXMLChildren();
 		boolean hasContent = hasXMLContent();
 		boolean terminate = canTerminateStartTag();
@@ -182,7 +182,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	}
 
 	protected String writeXMLContent() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (isDefined(fTextNode)) {
 			buffer.append(getContentIndent());
 			buffer.append(fTextNode.write());
@@ -191,7 +191,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	}
 
 	protected String writeAttributes() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		IDocumentAttributeNode[] attributes = getNodeAttributes();
 		// Write all attributes
 		for (IDocumentAttributeNode attrNode : attributes) {
@@ -395,7 +395,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	 */
 	@Override
 	public String getIndent() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < fIndent; i++) {
 			buffer.append(" "); //$NON-NLS-1$
 		}
@@ -573,7 +573,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	}
 
 	protected String writeXMLDecl() {
-		StringBuffer buffer = new StringBuffer(XMLPrintHandler.XML_HEAD);
+		StringBuilder buffer = new StringBuilder(XMLPrintHandler.XML_HEAD);
 		buffer.append(getFileEncoding());
 		buffer.append(XMLPrintHandler.XML_DBL_QUOTES);
 		buffer.append(XMLPrintHandler.XML_HEAD_END_TAG);

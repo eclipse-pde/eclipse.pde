@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,7 +144,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 
 	@Override
 	public String write() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(PropertiesUtil.createWritableName(fName));
 		buffer.append(" = "); //$NON-NLS-1$
 		int indentLength = fName.length() + 3;

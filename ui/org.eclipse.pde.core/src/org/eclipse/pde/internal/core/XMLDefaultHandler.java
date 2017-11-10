@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,17 +12,10 @@ package org.eclipse.pde.internal.core;
 
 import java.io.StringReader;
 import java.util.Stack;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
+import org.w3c.dom.*;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLDefaultHandler extends DefaultHandler {
@@ -91,7 +84,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 	public void characters(char[] characters, int start, int length) throws SAXException {
 		if (fAbbreviated || !isPrepared())
 			return;
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		for (int i = 0; i < length; i++) {
 			buff.append(characters[start + i]);
 		}

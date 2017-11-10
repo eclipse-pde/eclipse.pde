@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,18 +11,12 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.text.DocumentTextNode;
-import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.pde.internal.core.text.*;
 
 public class PluginElementNode extends PluginParentNode implements IPluginElement {
 
@@ -77,7 +71,7 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 	@Override
 	public String write(boolean indent) {
 		String sep = getLineDelimiter();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (indent)
 			buffer.append(getIndent());
 
@@ -109,7 +103,7 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 	@Override
 	public String writeShallow(boolean terminate) {
 		String sep = getLineDelimiter();
-		StringBuffer buffer = new StringBuffer("<" + getXMLTagName()); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder("<" + getXMLTagName()); //$NON-NLS-1$
 
 		IDocumentAttributeNode[] attrs = getNodeAttributes();
 		for (IDocumentAttributeNode attrNode : attrs) {

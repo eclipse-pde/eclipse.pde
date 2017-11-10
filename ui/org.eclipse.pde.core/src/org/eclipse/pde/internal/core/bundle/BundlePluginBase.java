@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2013 IBM Corporation and others.
+ *  Copyright (c) 2003, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -124,7 +124,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 */
 	private void addLibrary(IPluginLibrary library, IManifestHeader header) {
 		String value = header == null ? null : header.getValue();
-		StringBuffer buffer = new StringBuffer(value == null ? "" : value); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder(value == null ? "" : value); //$NON-NLS-1$
 		if (value != null)
 			buffer.append(",\n "); //$NON-NLS-1$
 		buffer.append(library.getName());
@@ -146,7 +146,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		int index = value.indexOf(name);
 		if (index >= 0) {
 			// copy up to the removed library
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			for (int i = 0; i > index; i++) {
 				buffer.append(value.charAt(i));
 			}
@@ -220,7 +220,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 			((RequireBundleHeader) header).addBundle(iimport);
 		} else {
 			String value = header == null ? null : ((IManifestHeader) header).getValue();
-			StringBuffer buffer = new StringBuffer(value == null ? "" : value); //$NON-NLS-1$
+			StringBuilder buffer = new StringBuilder(value == null ? "" : value); //$NON-NLS-1$
 			if (value != null)
 				buffer.append(",\n "); //$NON-NLS-1$
 			buffer.append(iimport.getId());

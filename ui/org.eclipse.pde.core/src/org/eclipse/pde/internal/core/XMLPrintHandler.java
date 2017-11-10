@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2012 IBM Corporation and others.
+ *  Copyright (c) 2004, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
@@ -29,7 +28,7 @@ public class XMLPrintHandler {
 	public static final String XML_INDENT = "   "; //$NON-NLS-1$
 
 	public static String generateIndent(int level) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < level; i++) {
 			buffer.append(XML_INDENT);
 		}
@@ -37,7 +36,7 @@ public class XMLPrintHandler {
 	}
 
 	public static void printBeginElement(Writer xmlWriter, String elementString, String indent, boolean terminate) throws IOException {
-		StringBuffer temp = new StringBuffer(indent);
+		StringBuilder temp = new StringBuilder(indent);
 		temp.append(XML_BEGIN_TAG);
 		temp.append(elementString);
 		if (terminate)
@@ -49,7 +48,7 @@ public class XMLPrintHandler {
 	}
 
 	public static void printEndElement(Writer xmlWriter, String elementString, String indent) throws IOException {
-		StringBuffer temp = new StringBuffer(indent);
+		StringBuilder temp = new StringBuilder(indent);
 		temp.append(XML_BEGIN_TAG);
 		temp.append(XML_SLASH).append(elementString).append(XML_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
@@ -57,14 +56,14 @@ public class XMLPrintHandler {
 	}
 
 	public static void printText(Writer xmlWriter, String text, String indent) throws IOException {
-		StringBuffer temp = new StringBuffer(indent);
+		StringBuilder temp = new StringBuilder(indent);
 		temp.append(encode(text).toString());
 		temp.append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 	}
 
 	public static void printComment(Writer xmlWriter, String comment, String indent) throws IOException {
-		StringBuffer temp = new StringBuffer("\n"); //$NON-NLS-1$
+		StringBuilder temp = new StringBuilder("\n"); //$NON-NLS-1$
 		temp.append(indent);
 		temp.append(XML_COMMENT_BEGIN_TAG);
 		temp.append(encode(comment).toString()).append(XML_COMMENT_END_TAG).append("\n\n"); //$NON-NLS-1$
@@ -72,19 +71,19 @@ public class XMLPrintHandler {
 	}
 
 	public static void printHead(Writer xmlWriter, String encoding) throws IOException {
-		StringBuffer temp = new StringBuffer(XML_HEAD);
+		StringBuilder temp = new StringBuilder(XML_HEAD);
 		temp.append(encoding).append(XML_DBL_QUOTES).append(XML_HEAD_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 	}
 
 	public static String wrapAttributeForPrint(String attribute, String value) {
-		StringBuffer temp = new StringBuffer(XML_SPACE);
+		StringBuilder temp = new StringBuilder(XML_SPACE);
 		temp.append(attribute).append(XML_EQUAL).append(XML_DBL_QUOTES).append(encode(value).toString()).append(XML_DBL_QUOTES);
 		return temp.toString();
 	}
 
 	public static String wrapAttribute(String attribute, String value) {
-		StringBuffer buffer = new StringBuffer(XML_SPACE);
+		StringBuilder buffer = new StringBuilder(XML_SPACE);
 		buffer.append(attribute);
 		buffer.append(XML_EQUAL);
 		buffer.append(XML_DBL_QUOTES);
@@ -106,7 +105,7 @@ public class XMLPrintHandler {
 			}
 			case Node.ELEMENT_NODE : {
 				//get the attribute list for this node.
-				StringBuffer tempElementString = new StringBuffer(node.getNodeName());
+			StringBuilder tempElementString = new StringBuilder(node.getNodeName());
 				NamedNodeMap attributeList = node.getAttributes();
 				if (attributeList != null) {
 					for (int i = 0; i < attributeList.getLength(); i++) {
@@ -139,8 +138,8 @@ public class XMLPrintHandler {
 
 	}
 
-	public static StringBuffer encode(String value) {
-		StringBuffer buf = new StringBuffer();
+	public static StringBuilder encode(String value) {
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < value.length(); i++) {
 			char c = value.charAt(i);
 			switch (c) {

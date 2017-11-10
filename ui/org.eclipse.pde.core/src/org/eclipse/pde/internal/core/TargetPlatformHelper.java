@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,7 @@ public class TargetPlatformHelper {
 	 * @return the default list of bundles to use in the osgi.bundles property
 	 */
 	public static String getDefaultBundleList() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (getTargetVersion() > 3.1) {
 			buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
 			buffer.append("org.eclipse.update.configurator@3:start,"); //$NON-NLS-1$
@@ -106,7 +106,7 @@ public class TargetPlatformHelper {
 	 */
 	// String.subString() does not return null
 	public static String stripPathInformation(String osgiBundles) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		StringTokenizer tokenizer = new StringTokenizer(osgiBundles, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String token = tokenizer.nextToken();
@@ -586,7 +586,7 @@ public class TargetPlatformHelper {
 //			installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
 		File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
 		BufferedReader in = null;
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		if (eclipseIniFile.exists()) {
 			try {
 				in = new BufferedReader(new FileReader(eclipseIniFile));

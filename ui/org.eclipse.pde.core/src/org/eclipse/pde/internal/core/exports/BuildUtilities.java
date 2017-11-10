@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 
@@ -49,7 +47,7 @@ public class BuildUtilities {
 	}
 
 	public static String getBootClasspath(IVMInstall install) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(install);
 		for (int i = 0; i < locations.length; i++) {
 			buffer.append(locations[i].getSystemLibraryPath().toOSString());

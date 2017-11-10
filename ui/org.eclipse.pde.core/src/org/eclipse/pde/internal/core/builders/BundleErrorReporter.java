@@ -161,7 +161,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			IPackageFragmentRoot[] roots = ManifestUtils.findPackageFragmentRoots(bundleClasspathheader, fProject);
 			// Running list of packages in the project
 			//Set packages = new HashSet();
-			StringBuffer packages = new StringBuffer();
+			StringBuilder packages = new StringBuilder();
 			for (IPackageFragmentRoot root : roots) {
 				try {
 					if (ManifestUtils.isImmediateRoot(root)) {

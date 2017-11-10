@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,17 +11,11 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.isite.ISite;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.core.isite.ISiteObject;
+import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -156,7 +150,7 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 	public static String getWritableString(String source) {
 		if (source == null)
 			return ""; //$NON-NLS-1$
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);
 			switch (c) {

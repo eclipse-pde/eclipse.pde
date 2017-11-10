@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	@Override
 	public String write(boolean indent) {
 		String sep = getLineDelimiter();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (indent)
 			buffer.append(getIndent());
 
@@ -180,7 +180,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 
 	@Override
 	public String writeShallow(boolean terminate) {
-		StringBuffer buffer = new StringBuffer("<" + getXMLTagName()); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder("<" + getXMLTagName()); //$NON-NLS-1$
 
 		IDocumentAttributeNode[] attrs = getNodeAttributes();
 		for (final IDocumentAttributeNode attrNode : attrs) {

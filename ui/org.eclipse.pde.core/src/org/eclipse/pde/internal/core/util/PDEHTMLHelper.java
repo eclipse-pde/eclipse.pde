@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2013 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,10 +36,10 @@ public class PDEHTMLHelper {
 		int length = html.length();
 		boolean write = true;
 		char oldChar = ' ';
-		StringBuffer sb = new StringBuffer(length);
+		StringBuilder sb = new StringBuilder(length);
 
 		boolean processingEntity = false;
-		StringBuffer entityBuffer = new StringBuffer();
+		StringBuilder entityBuffer = new StringBuilder();
 
 		for (int i = 0; i < length; i++) {
 			char curr = html.charAt(i);
@@ -48,7 +48,7 @@ public class PDEHTMLHelper {
 			if (curr == '&') {
 				// Process predefined character entity found
 				processingEntity = true;
-				entityBuffer = new StringBuffer();
+				entityBuffer = new StringBuilder();
 				continue;
 			} else if (processingEntity && (curr == ';')) {
 				// End of predefined character entity found

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.core.util;
 
 import java.lang.ref.SoftReference;
@@ -96,7 +95,7 @@ public class PDEXMLHelper {
 	public static String getWritableString(String source) {
 		if (source == null)
 			return ""; //$NON-NLS-1$
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);
 			switch (c) {
@@ -131,7 +130,7 @@ public class PDEXMLHelper {
 		// Trim the leading and trailing whitespace if any
 		source = source.trim();
 		// Translate source using a buffer
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		// Translate source character by character
 		for (int i = 0; i < source.length(); i++) {
 			char character = source.charAt(i);

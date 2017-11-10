@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class PluginExtensionPointNode extends PluginObjectNode implements IPlugi
 
 	@Override
 	public String writeShallow(boolean terminate) {
-		StringBuffer buffer = new StringBuffer("<extension-point"); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder("<extension-point"); //$NON-NLS-1$
 		appendAttribute(buffer, P_ID);
 		appendAttribute(buffer, P_NAME);
 		appendAttribute(buffer, P_SCHEMA);

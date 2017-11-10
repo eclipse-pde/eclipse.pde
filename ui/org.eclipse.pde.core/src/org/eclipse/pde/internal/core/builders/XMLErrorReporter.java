@@ -160,7 +160,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		for (Node previousSibling = node.getPreviousSibling(); previousSibling != null; previousSibling = previousSibling.getPreviousSibling())
 			childIndex += 1;
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		Node parent = node.getParentNode();
 		if (parent != null && !(parent instanceof Document)) {
 			sb.append(generateLocationPath(parent, null));
@@ -170,7 +170,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		return sb.toString();
 	}
 
-	private String composeNodeString(Node node, int index, String attrName, StringBuffer sb) {
+	private String composeNodeString(Node node, int index, String attrName, StringBuilder sb) {
 		sb.append('(');
 		sb.append(index);
 		sb.append(')');
@@ -247,7 +247,7 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		for (int i = 0; i < length; i++) {
 			buff.append(characters[start + i]);
 		}
@@ -313,7 +313,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	private String getWritableString(String source) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);
 			switch (c) {

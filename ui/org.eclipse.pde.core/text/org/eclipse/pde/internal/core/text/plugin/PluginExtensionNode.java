@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -69,7 +68,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	@Override
 	public String write(boolean indent) {
 		String sep = getLineDelimiter();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (indent)
 			buffer.append(getIndent());
 		buffer.append(writeShallow(false));
@@ -92,7 +91,7 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	public String writeShallow(boolean terminate) {
 		String sep = getLineDelimiter();
 		String attrIndent = "      "; //$NON-NLS-1$
-		StringBuffer buffer = new StringBuffer("<extension"); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder("<extension"); //$NON-NLS-1$
 		IDocumentAttributeNode attr = getDocumentAttribute(P_ID);
 		if (attr != null && attr.getAttributeValue().trim().length() > 0)
 			buffer.append(sep + getIndent() + attrIndent + attr.write());

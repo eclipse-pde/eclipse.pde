@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -213,7 +213,7 @@ class FeatureTable {
 	@Override
 	public synchronized String toString() {
 		IFeatureModel[] models = getAllImpl();
-		StringBuffer buf = new StringBuffer(30 * models.length);
+		StringBuilder buf = new StringBuilder(30 * models.length);
 		buf.append("["); //$NON-NLS-1$
 		for (int i = 0; i < models.length; i++) {
 			if (i > 0) {

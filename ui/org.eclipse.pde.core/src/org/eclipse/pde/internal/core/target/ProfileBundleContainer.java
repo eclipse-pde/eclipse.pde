@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -374,7 +374,8 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 
 	@Override
 	public String toString() {
-		return new StringBuffer().append("Installation ").append(fHome).append(' ').append(fConfiguration == null ? "Default Configuration" : fConfiguration).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		return new StringBuilder("Installation ").append(fHome).append(' ') //$NON-NLS-1$
+				.append(fConfiguration == null ? "Default Configuration" : fConfiguration).toString(); //$NON-NLS-1$
 	}
 
 }

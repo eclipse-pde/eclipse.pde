@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,7 +140,7 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 			return;
 		}
 		// Serialize the document node XML end tag
-		StringBuffer endElementString = new StringBuffer();
+		StringBuilder endElementString = new StringBuilder();
 		endElementString.append('<');
 		endElementString.append('/');
 		endElementString.append(name);

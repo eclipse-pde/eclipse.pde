@@ -201,7 +201,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		 * @return value to enter into build.properties
 		 */
 		String getValue() {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			IContainer root = PDEProject.getBundleRoot(fResource.getProject());
 			buf.append(fResource.getFullPath().makeRelativeTo(root.getFullPath()).makeAbsolute());
 			buf.append('[');
@@ -480,7 +480,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 
 			private String generateList(List<String> strings) {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				Iterator<String> iterator = strings.iterator();
 				while (iterator.hasNext()) {
 					String next = iterator.next();
@@ -732,7 +732,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 	}
 
 	private String join(ProjectFolder[] folders) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (ProjectFolder folder : folders) {
 			String text = folder.getPath().toString().trim();
 			if (text.length() > 0) {

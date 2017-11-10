@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -162,11 +162,11 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 		return PDEXMLHelper.getWritableString(source);
 	}
 
-	protected void appendAttribute(StringBuffer buffer, String attrName) {
+	protected void appendAttribute(StringBuilder buffer, String attrName) {
 		appendAttribute(buffer, attrName, ""); //$NON-NLS-1$
 	}
 
-	protected void appendAttribute(StringBuffer buffer, String attrName, String defaultValue) {
+	protected void appendAttribute(StringBuilder buffer, String attrName, String defaultValue) {
 		IDocumentAttributeNode attr = getDocumentAttribute(attrName);
 		if (attr != null) {
 			String value = attr.getAttributeValue();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class ProjectModifyOperation {
 			if (shorts == null || shorts.length == 0) {
 				pref.remove(ICoreConstants.MANIFEST_LAUNCH_SHORTCUTS); // use defaults
 			} else {
-				StringBuffer value = new StringBuffer();
+				StringBuilder value = new StringBuilder();
 				for (int i = 0; i < shorts.length; i++) {
 					if (i > 0) {
 						value.append(',');
@@ -545,7 +545,7 @@ public class ProjectModifyOperation {
 				if (ees == null) {
 					bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, null); // remove
 				} else {
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					for (String id : ees) {
 						if (buffer.length() > 0) {
 							buffer.append(",\n "); //comma, new-line, space //$NON-NLS-1$

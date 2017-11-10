@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -202,7 +202,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 					properties.put(rootPrefix + ".folder.jre", "absolute:" + vm.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 					String perms = (String) properties.get(rootPrefix + ".permissions.755"); //$NON-NLS-1$
 					if (perms != null) {
-						StringBuffer buffer = new StringBuffer(perms);
+						StringBuilder buffer = new StringBuilder(perms);
 						buffer.append(","); //$NON-NLS-1$
 						buffer.append("jre/bin/java"); //$NON-NLS-1$
 						properties.put(rootPrefix + ".permissions.755", buffer.toString()); //$NON-NLS-1$
@@ -247,7 +247,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 	private String getLauncherLocations(boolean hasLaunchers) {
 		//get the launchers for the eclipse install
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (!hasLaunchers) {
 			File homeDir = new File(TargetPlatform.getLocation());
 			if (homeDir.exists() && homeDir.isDirectory()) {
@@ -273,7 +273,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 	private String getRootFileLocations(boolean hasLaunchers) {
 		//Get the files that go in the root of the eclipse install, excluding the launcher
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (!hasLaunchers) {
 			File homeDir = new File(TargetPlatform.getLocation());
 			if (homeDir.exists() && homeDir.isDirectory()) {
@@ -291,7 +291,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		return buffer.toString();
 	}
 
-	private void appendEclipsePath(StringBuffer buffer, File homeDir) {
+	private void appendEclipsePath(StringBuilder buffer, File homeDir) {
 		File file = null;
 		file = new File(homeDir, "eclipse"); //$NON-NLS-1$
 		if (file.exists()) {
@@ -303,7 +303,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		}
 	}
 
-	private void appendAbsolutePath(StringBuffer buffer, File file) {
+	private void appendAbsolutePath(StringBuilder buffer, File file) {
 		if (buffer.length() > 0)
 			buffer.append(","); //$NON-NLS-1$
 
@@ -382,7 +382,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	}
 
 	private String getWin32Images(ILauncherInfo info) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (info.usesWinIcoFile()) {
 			append(buffer, info.getIconPath(ILauncherInfo.P_ICO_PATH));
 		} else {
@@ -397,7 +397,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		return buffer.length() > 0 ? buffer.toString() : null;
 	}
 
-	private void append(StringBuffer buffer, String path) {
+	private void append(StringBuilder buffer, String path) {
 		path = getExpandedPath(path);
 		if (path != null) {
 			if (buffer.length() > 0)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2017 EclipseSource Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -261,7 +261,7 @@ public class P2TargetUtils {
 	 */
 	private String generateEnvironmentProperties(ITargetDefinition target) {
 		// TODO: are there constants for these keys?
-		StringBuffer env = new StringBuffer();
+		StringBuilder env = new StringBuilder();
 		String ws = target.getWS();
 		if (ws == null) {
 			ws = Platform.getWS();
@@ -816,7 +816,7 @@ public class P2TargetUtils {
 	 * @throws CoreException in unable to generate identifier
 	 */
 	private static String getProfileId(ITargetHandle handle) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(PROFILE_ID_PREFIX);
 		// Memento strings can be very long and exceed max filename lengths, trim down to 200 + prefix + hashcode
 		String memento = handle.getMemento();

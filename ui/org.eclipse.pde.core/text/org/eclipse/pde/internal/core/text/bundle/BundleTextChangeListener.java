@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 	@Override
 	protected void insertKey(IDocumentKey key, String name) {
 		int offset = PropertiesUtil.getInsertOffset(fDocument);
-		StringBuffer buffer = new StringBuffer(key.write());
+		StringBuilder buffer = new StringBuilder(key.write());
 		try {
 			// if the file does not end in a new line and the key to insert does, move the new line
 			// to the start of the key.

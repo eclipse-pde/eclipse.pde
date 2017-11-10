@@ -620,7 +620,7 @@ public class FeatureExportOperation extends Job {
 	}
 
 	private String getConfigInfo(String[][] configs) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < configs.length; i++) {
 			if (i > 0)
 				buffer.append('&');
@@ -634,7 +634,7 @@ public class FeatureExportOperation extends Job {
 	}
 
 	private String getArchivesFormat(String[][] configs) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < configs.length; i++) {
 			if (i > 0)
 				buffer.append('&');

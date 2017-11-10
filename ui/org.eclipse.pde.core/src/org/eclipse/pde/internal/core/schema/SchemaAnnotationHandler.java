@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     David Carver - STAR - bug 212355
  *******************************************************************************/
-
 package org.eclipse.pde.internal.core.schema;
 
 import org.xml.sax.Attributes;
@@ -32,7 +31,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 
 	private final static String NAME_ATTR = "name"; //$NON-NLS-1$
 
-	private StringBuffer fDescription;
+	private StringBuilder fDescription;
 
 	private String fName;
 
@@ -51,7 +50,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 	protected void reset() {
 		super.reset();
 		fName = null;
-		fDescription = new StringBuffer();
+		fDescription = new StringBuilder();
 		fMetaSchemaElemFlag = false;
 		fAppInfoElemFlag = false;
 	}

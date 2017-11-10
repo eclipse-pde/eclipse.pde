@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,7 +93,7 @@ public class JavadocLocationManager {
 					boolean archive = attr == null ? false : "true".equals(attr); //$NON-NLS-1$
 
 					IPath modelPath = new Path(base.getInstallLocation());
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					File file = modelPath.toFile();
 					if (file.exists()) {
 						try {

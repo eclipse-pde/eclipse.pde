@@ -1063,7 +1063,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 * @return concatenated string
 	 */
 	private String join(String token1, String token2) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		if (token1 != null && token1.length() > 0) {
 			result.append(token1);
 		}

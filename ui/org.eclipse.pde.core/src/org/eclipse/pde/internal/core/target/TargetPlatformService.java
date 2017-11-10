@@ -52,7 +52,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	/**
 	 * vm arguments for default target
 	 */
-	private StringBuffer fVMArguments = null;
+	private StringBuilder fVMArguments = null;
 
 	/**
 	 * Collects target files in the workspace
@@ -427,7 +427,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	@SuppressWarnings("deprecation")
 	private void initializeArgumentsInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		target.setProgramArguments(getValueOrNull(preferences.getString(ICoreConstants.PROGRAM_ARGS)));
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		String vmArgs = getValueOrNull(preferences.getString(ICoreConstants.VM_ARGS));
 		if (vmArgs != null) {
 			result.append(vmArgs);
@@ -626,8 +626,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 		return target;
 	}
 
-	private StringBuffer getVMArguments(ITargetLocation[] containers) {
-		StringBuffer arguments = new StringBuffer(""); //$NON-NLS-1$
+	private StringBuilder getVMArguments(ITargetLocation[] containers) {
+		StringBuilder arguments = new StringBuilder(""); //$NON-NLS-1$
 		for (ITargetLocation container : containers) {
 			String[] vmargs = container.getVMArguments();
 			if (vmargs == null)

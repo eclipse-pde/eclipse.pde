@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -287,7 +287,7 @@ public class TargetDefinitionPersistenceHelper {
 	 */
 	static String getTextContent(Element element) throws DOMException {
 		NodeList children = element.getChildNodes();
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < children.getLength(); ++i) {
 			Node currentNode = children.item(i);
 			if (currentNode.getNodeType() == Node.TEXT_NODE) {

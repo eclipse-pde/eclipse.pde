@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2010 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class PackageObject extends PDEManifestElement {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer(getValue());
+		StringBuilder buffer = new StringBuilder(getValue());
 		String version = getVersion();
 		if (version != null && version.length() > 0) {
 			buffer.append(" "); //$NON-NLS-1$

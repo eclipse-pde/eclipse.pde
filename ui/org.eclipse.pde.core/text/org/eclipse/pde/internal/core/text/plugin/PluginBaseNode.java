@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -335,7 +335,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	public String write(boolean indent) {
 		String newLine = getLineDelimiter();
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newLine); //$NON-NLS-1$
 		buffer.append("<?eclipse version=\"3.0\"?>" + newLine); //$NON-NLS-1$
 
@@ -374,7 +374,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	@Override
 	public String writeShallow(boolean terminate) {
 		String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<" + getXMLTagName()); //$NON-NLS-1$
 		buffer.append(newLine);
 

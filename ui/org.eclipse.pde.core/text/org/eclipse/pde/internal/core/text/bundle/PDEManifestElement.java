@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2015 IBM Corporation and others.
+ *  Copyright (c) 2003, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -194,14 +194,14 @@ public class PDEManifestElement extends BundleObject {
 	}
 
 	public String write() {
-		StringBuffer sb = new StringBuffer(getValue());
+		StringBuilder sb = new StringBuilder(getValue());
 		appendValuesToBuffer(sb, fAttributes);
 		appendValuesToBuffer(sb, fDirectives);
 		return sb.toString();
 	}
 
 	public String getValue() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (fValueComponents == null)
 			return ""; //$NON-NLS-1$
 		for (int i = 0; i < fValueComponents.length; i++) {
@@ -212,7 +212,7 @@ public class PDEManifestElement extends BundleObject {
 		return sb.toString();
 	}
 
-	protected void appendValuesToBuffer(StringBuffer sb, TreeMap<String, Serializable> table) {
+	protected void appendValuesToBuffer(StringBuilder sb, TreeMap<String, Serializable> table) {
 		if (table == null)
 			return;
 		Iterator<String> dkeys = table.keySet().iterator();
