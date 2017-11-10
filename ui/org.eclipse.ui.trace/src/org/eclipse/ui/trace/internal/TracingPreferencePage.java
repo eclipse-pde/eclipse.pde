@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -691,13 +691,13 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		prefValues.put(TracingConstants.PREFERENCE_FILE_PATH, tracingFileText.getText());
 		prefValues.put(TracingConstants.PREFERENCE_OUTPUT_STANDARD_STREAM, Boolean.toString(standardOutputStreamButton.getSelection()));
 		// iterate over the displayable components and store their debug options (all trace strings should be saved)
-		StringBuffer optionsAsString = new StringBuffer();
+		StringBuilder optionsAsString = new StringBuilder();
 		if (displayableTracingComponents != null) {
 			Iterator<Map.Entry<String, TracingComponent>> componentIterator = displayableTracingComponents.entrySet().iterator();
 			while (componentIterator.hasNext()) {
 				TracingComponent component = componentIterator.next().getValue();
 				if (component.hasChildren()) {
-					StringBuffer result = getAllUniqueDebugOptions(component);
+					StringBuilder result = getAllUniqueDebugOptions(component);
 					if (result != null) {
 						optionsAsString.append(result);
 					}
@@ -710,17 +710,17 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		PreferenceHandler.savePreferences(prefValues);
 	}
 
-	private StringBuffer getAllUniqueDebugOptions(TracingNode node) {
-		StringBuffer buffer = null;
+	private StringBuilder getAllUniqueDebugOptions(TracingNode node) {
+		StringBuilder buffer = null;
 		if (node.hasChildren()) {
-			buffer = new StringBuffer();
+			buffer = new StringBuilder();
 			TracingNode[] children = node.getChildren();
 			for (TracingNode element : children) {
 				// add this child node (all child nodes will be of type TracingComponentDebugOption)
 				String debugOptionAsString = TracingUtils.convertToString((TracingComponentDebugOption) element);
 				buffer.append(debugOptionAsString);
 				// add all of this childs nodes
-				StringBuffer result = getAllUniqueDebugOptions(element);
+				StringBuilder result = getAllUniqueDebugOptions(element);
 				if (result != null) {
 					buffer.append(result);
 				}
