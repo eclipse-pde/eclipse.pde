@@ -628,12 +628,14 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	private StringBuilder getVMArguments(ITargetLocation[] containers) {
 		StringBuilder arguments = new StringBuilder(""); //$NON-NLS-1$
-		for (ITargetLocation container : containers) {
-			String[] vmargs = container.getVMArguments();
-			if (vmargs == null)
-				continue;
-			for (String vmarg : vmargs) {
-				arguments.append(vmarg).append(' ');
+		if (containers != null) {
+			for (ITargetLocation container : containers) {
+				String[] vmargs = container.getVMArguments();
+				if (vmargs == null)
+					continue;
+				for (String vmarg : vmargs) {
+					arguments.append(vmarg).append(' ');
+				}
 			}
 		}
 		return arguments;

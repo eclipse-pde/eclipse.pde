@@ -63,7 +63,7 @@ public class EditBundleContainerWizard extends Wizard {
 
 			// Add the new container or replace the old one
 			ITargetLocation newContainer = fPage.getBundleContainer();
-			if (newContainer != null) {
+			if (newContainer != null && fTarget.getTargetLocations() != null) {
 				ITargetLocation[] containers = fTarget.getTargetLocations();
 				List<ITargetLocation> newContainers = new ArrayList<>(containers.length);
 				for (int i = 0; i < containers.length; i++) {

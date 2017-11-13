@@ -50,6 +50,9 @@ public class ExportTargetJob extends Job {
 		try {
 			constructFilter(fTarget);
 			ITargetLocation[] containers = fTarget.getTargetLocations();
+			if (containers == null) {
+				containers = new ITargetLocation[0];
+			}
 			int totalWork = containers.length;
 			monitor.beginTask(PDECoreMessages.ExportTargetDefinition_task, totalWork);
 

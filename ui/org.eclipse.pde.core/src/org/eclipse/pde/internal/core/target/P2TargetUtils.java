@@ -1247,6 +1247,9 @@ public class P2TargetUtils {
 	private URI[] getArtifactRepositories(ITargetDefinition target) throws CoreException {
 		Set<URI> result = new HashSet<>();
 		ITargetLocation[] containers = target.getTargetLocations();
+		if (containers == null) {
+			containers = new ITargetLocation[0];
+		}
 		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
 		for (ITargetLocation container : containers) {
 			if (container instanceof IUBundleContainer) {
@@ -1346,6 +1349,9 @@ public class P2TargetUtils {
 
 		HashSet<IInstallableUnit> result = new HashSet<>();
 		ITargetLocation[] containers = definition.getTargetLocations();
+		if (containers == null) {
+			return new IInstallableUnit[0];
+		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, containers.length * 10);
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		for (ITargetLocation container : containers) {
@@ -1374,6 +1380,9 @@ public class P2TargetUtils {
 	private URI[] getMetadataRepositories(ITargetDefinition target) throws CoreException {
 		Set<URI> result = new HashSet<>();
 		ITargetLocation[] containers = target.getTargetLocations();
+		if (containers == null) {
+			containers = new ITargetLocation[0];
+		}
 		IMetadataRepositoryManager manager = getRepoManager();
 		for (ITargetLocation container : containers) {
 			if (container instanceof IUBundleContainer) {

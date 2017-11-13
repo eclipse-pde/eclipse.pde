@@ -33,7 +33,8 @@ import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
 import org.eclipse.pde.ui.target.ITargetLocationEditor;
 import org.eclipse.pde.ui.target.ITargetLocationUpdater;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -377,7 +378,9 @@ public class TargetLocationsGroup {
 
 			if (removedContainer) {
 				Set<ITargetLocation> newContainers = new HashSet<>();
-				newContainers.addAll(Arrays.asList(fTarget.getTargetLocations()));
+				if (fTarget.getTargetLocations() != null) {
+					newContainers.addAll(Arrays.asList(fTarget.getTargetLocations()));
+				}
 				newContainers.removeAll(toRemove);
 				if (newContainers.size() > 0) {
 					fTarget.setTargetLocations(newContainers.toArray(new ITargetLocation[newContainers.size()]));

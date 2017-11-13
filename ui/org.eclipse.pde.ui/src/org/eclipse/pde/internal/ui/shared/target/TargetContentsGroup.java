@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -262,16 +262,10 @@ public class TargetContentsGroup {
 			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 			Object first = selection.getFirstElement();
 			fTree.setChecked(first, !fTree.getChecked(first));
-			saveIncludedBundleState();
-			contentChanged();
-			updateButtons();
-			fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
+			handleTreeStateChange();
 		});
 		fTree.addCheckStateListener(event -> {
-			saveIncludedBundleState();
-			contentChanged();
-			updateButtons();
-			fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
+			handleTreeStateChange();
 		});
 		fTree.addSelectionChangedListener(event -> updateButtons());
 		fTree.setSorter(new ViewerSorter() {
@@ -317,6 +311,17 @@ public class TargetContentsGroup {
 		tree.setMenu(contextMenu);
 
 		return fTree;
+	}
+
+	private void handleTreeStateChange() {
+		saveIncludedBundleState();
+		contentChanged();
+		updateButtons();
+		ITargetLocation[] locations = fTargetDefinition.getTargetLocations();
+		if (locations == null) {
+			locations = new ITargetLocation[0];
+		}
+		fTree.update(locations, new String[] { IBasicPropertyConstants.P_TEXT });
 	}
 
 	/**
@@ -456,10 +461,7 @@ public class TargetContentsGroup {
 				for (Object selectedObject : selected) {
 					fTree.setChecked(selectedObject, true);
 				}
-				saveIncludedBundleState();
-				contentChanged();
-				updateButtons();
-				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
+				handleTreeStateChange();
 			}
 		}));
 
@@ -469,27 +471,18 @@ public class TargetContentsGroup {
 				for (Object selectedObject : selected) {
 					fTree.setChecked(selectedObject, false);
 				}
-				saveIncludedBundleState();
-				contentChanged();
-				updateButtons();
-				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
+				handleTreeStateChange();
 			}
 		}));
 
 		fSelectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			fTree.setAllChecked(true);
-			saveIncludedBundleState();
-			contentChanged();
-			updateButtons();
-			fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
+			handleTreeStateChange();
 		}));
 
 		fDeselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			fTree.setAllChecked(false);
-			saveIncludedBundleState();
-			contentChanged();
-			updateButtons();
-			fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
+			handleTreeStateChange();
 		}));
 
 		fSelectRequiredButton.addSelectionListener(widgetSelectedAdapter(e -> {
@@ -503,10 +496,7 @@ public class TargetContentsGroup {
 			for (Object requiredObject : required) {
 				fTree.setChecked(requiredObject, true);
 			}
-			saveIncludedBundleState();
-			contentChanged();
-			updateButtons();
-			fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
+			handleTreeStateChange();
 		}));
 
 		fPluginModeButton.addSelectionListener(widgetSelectedAdapter(e -> {
@@ -1205,7 +1195,7 @@ public class TargetContentsGroup {
 					if (fTargetDefinition.getOtherBundles().length > 0) {
 						result.add(OTHER_CATEGORY);
 					}
-				} else if (fGrouping == GROUP_BY_CONTAINER) {
+				} else if (fGrouping == GROUP_BY_CONTAINER && fTargetDefinition.getTargetLocations() != null) {
 					result.addAll(Arrays.asList(fTargetDefinition.getTargetLocations()));
 				} else if (fGrouping == GROUP_BY_NONE) {
 					// Missing bundles are already handled by adding to fMissing, avoid adding twice
