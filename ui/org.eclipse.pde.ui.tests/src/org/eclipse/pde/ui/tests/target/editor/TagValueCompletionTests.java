@@ -33,7 +33,7 @@ public class TagValueCompletionTests extends AbstractTargetEditorTest {
 	}
 
 	public void testAttributeNameSuggestions() throws Exception {
-		ITextViewer textViewer = getTextViewerForTarget("TagValues");
+		ITextViewer textViewer = getTextViewerForTarget("TagValuesTestCaseTarget");
 		String text = textViewer.getDocument().get();
 		int offset = 0;
 		while (offset < text.length()) {

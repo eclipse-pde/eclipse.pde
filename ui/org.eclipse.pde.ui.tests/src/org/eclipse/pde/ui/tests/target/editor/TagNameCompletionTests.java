@@ -36,7 +36,7 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 		// target
 		expectedProposalsByOffset.put(170, new String[] { "targetJRE" });
 
-		ITextViewer textViewer = getTextViewerForTarget("TagNames");
+		ITextViewer textViewer = getTextViewerForTarget("TagNamesTestCaseTarget");
 		IDocument document = textViewer.getDocument();
 		String text = document.get();
 
@@ -57,7 +57,7 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 	}
 
 	public void testNoAttributeNameRepeatSuggestions() throws Exception {
-		ITextViewer textViewer = getTextViewerForTarget("TagNamesFull");
+		ITextViewer textViewer = getTextViewerForTarget("TagNamesFullTestCaseTarget");
 		IDocument document = textViewer.getDocument();
 		String text = document.get();
 

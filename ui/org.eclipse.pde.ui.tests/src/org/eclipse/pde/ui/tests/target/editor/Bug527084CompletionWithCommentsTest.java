@@ -18,7 +18,7 @@ public class Bug527084CompletionWithCommentsTest extends AbstractTargetEditorTes
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		textViewer = getTextViewerForTarget("Comments");
+		textViewer = getTextViewerForTarget("CommentsTestCaseTarget");
 	}
 
 	public void testTagNameCompletion() throws Exception {

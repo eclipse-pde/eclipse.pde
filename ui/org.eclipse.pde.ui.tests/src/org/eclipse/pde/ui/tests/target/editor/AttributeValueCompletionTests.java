@@ -17,7 +17,7 @@ public class AttributeValueCompletionTests extends AbstractTargetEditorTest {
 	public void testAttributeNameSuggestions() throws Exception {
 		final int unitIdOffset = 42;
 		final int unitVersionOffset = 53;
-		ITextViewer textViewer = getTextViewerForTarget("AttributeValues");
+		ITextViewer textViewer = getTextViewerForTarget("AttributeValuesTestCaseTarget");
 		String expectedValueString = "Add repository URL first.";
 		ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer, unitIdOffset);
 		assertTrue(completionProposals.length == 1

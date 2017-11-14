@@ -45,9 +45,9 @@ public class AbstractTargetEditorTest extends TestCase {
 	}
 
 	protected ITextViewer getTextViewerForTarget(String name) throws Exception {
-		name = name + ".target";
-		IFile targetFile = project.getFile(name);
-		targetFile.create(getClass().getResourceAsStream("targetfiles/" + name), true, new NullProgressMonitor());
+		IFile targetFile = project.getFile(name + ".target");
+		targetFile.create(getClass().getResourceAsStream("targetfiles/" + name + ".txt"), true,
+				new NullProgressMonitor());
 		IEditorPart editor = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
 				targetFile, "org.eclipse.ui.genericeditor.GenericEditor");
 		return (ITextViewer) editor.getAdapter(ITextOperationTarget.class);

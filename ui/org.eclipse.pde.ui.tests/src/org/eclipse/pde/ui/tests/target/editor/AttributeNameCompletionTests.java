@@ -31,7 +31,7 @@ public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 		// targetJRE
 		expectedProposalsByOffset.put(95, new String[] { "path" });
 
-		ITextViewer textViewer = getTextViewerForTarget("AttributeNames");
+		ITextViewer textViewer = getTextViewerForTarget("AttributeNamesTestCaseTarget");
 		String text = textViewer.getDocument().get();
 		int offset = 0;
 		while (offset < text.length()) {
@@ -60,7 +60,7 @@ public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 	}
 
 	public void testNoAttributeNameRepeatSuggestions() throws Exception {
-		ITextViewer textViewer = getTextViewerForTarget("AttributeNamesFull");
+		ITextViewer textViewer = getTextViewerForTarget("AttributeNamesFullTestCaseTarget");
 		String text = textViewer.getDocument().get();
 		int offset = 0;
 		while (offset < text.length()) {
