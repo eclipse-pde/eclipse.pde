@@ -516,13 +516,15 @@ public class TargetPlatformService implements ITargetPlatformService {
 		StringTokenizer tokenizer = new StringTokenizer(additional, ","); //$NON-NLS-1$
 		int size = tokenizer.countTokens();
 		if (size > 0) {
-			ITargetLocation[] locations = new ITargetLocation[size + 1];
-			locations[0] = target.getTargetLocations()[0];
-			int i = 1;
-			while (tokenizer.hasMoreTokens()) {
-				locations[i++] = newDirectoryLocation(tokenizer.nextToken().trim());
+			List<ITargetLocation> locations = new ArrayList<>(size + 1);
+			ITargetLocation[] targetLocations = target.getTargetLocations();
+			if (targetLocations != null) {
+				locations.add(targetLocations[0]);
 			}
-			target.setTargetLocations(locations);
+			while (tokenizer.hasMoreTokens()) {
+				locations.add(newDirectoryLocation(tokenizer.nextToken().trim()));
+			}
+			target.setTargetLocations(locations.toArray(targetLocations));
 		}
 	}
 
