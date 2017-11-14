@@ -460,7 +460,6 @@ public class UtilTests extends TestCase {
 				"org.eclipse.equinox.p2.core", //$NON-NLS-1$
 				"org.eclipse.debug.ui", //$NON-NLS-1$
 				"org.eclipse.ui.navigator", //$NON-NLS-1$
-				"org.eclipse.update.core", //$NON-NLS-1$
 				"javax.servlet.jsp", //$NON-NLS-1$
 				"org.eclipse.ui.workbench", //$NON-NLS-1$
 				"org.eclipse.equinox.event", //$NON-NLS-1$
@@ -514,7 +513,6 @@ public class UtilTests extends TestCase {
 				"org.eclipse.jdt.debug", //$NON-NLS-1$
 				"org.eclipse.ecf.provider.filetransfer.ssl", //$NON-NLS-1$
 				"org.eclipse.platform.doc.isv", //$NON-NLS-1$
-				"org.eclipse.update.core.win32", //$NON-NLS-1$
 				"org.eclipse.pde.api.tools", //$NON-NLS-1$
 				"org.eclipse.ui.ide.application", //$NON-NLS-1$
 				"org.eclipse.equinox.p2.metadata", //$NON-NLS-1$
