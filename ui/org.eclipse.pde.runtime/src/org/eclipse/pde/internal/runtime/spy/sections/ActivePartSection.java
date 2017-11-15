@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,14 @@ public class ActivePartSection implements ISpySection {
 		buffer.append("<form>"); //$NON-NLS-1$
 
 		// time to analyze the active part
-		buffer.append(toolkit.createClassSection(text, NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType), new Class[] {part.getClass()}));
+		buffer.append(toolkit.createClassSection(text, NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType),
+				part.getClass()));
 		if (part instanceof PageBookView) {
 			PageBookView outline = (PageBookView) part;
 			IPage currentPage = outline.getCurrentPage();
 			if (currentPage != null) {
-				buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activePageBook_title, new Class[] {currentPage.getClass()}));
+				buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activePageBook_title,
+						currentPage.getClass()));
 			}
 		}
 
@@ -78,12 +80,12 @@ public class ActivePartSection implements ISpySection {
 		// get menu information using reflection
 		try {
 			PartSite site = (PartSite) part.getSite();
-			Class clazz = site.getClass().getSuperclass();
+			Class<?> clazz = site.getClass().getSuperclass();
 			Field field = clazz.getDeclaredField("menuExtenders"); //$NON-NLS-1$
 			field.setAccessible(true);
 			List list = (List) field.get(site);
 			if (list != null && list.size() > 0) {
-				Set menuIds = new LinkedHashSet();
+				Set<String> menuIds = new LinkedHashSet<>();
 				for (int i = 0; i < list.size(); i++) {
 					PopupMenuExtender extender = (PopupMenuExtender) list.get(i);
 					menuIds.addAll(extender.getMenuIds());
@@ -91,7 +93,7 @@ public class ActivePartSection implements ISpySection {
 				buffer.append("<p>"); //$NON-NLS-1$
 				buffer.append(PDERuntimeMessages.SpyDialog_activeMenuIds);
 				buffer.append("</p>"); //$NON-NLS-1$
-				for (Iterator it = menuIds.iterator(); it.hasNext();) {
+				for (Iterator<String> it = menuIds.iterator(); it.hasNext();) {
 					buffer.append("<li bindent=\"20\" style=\"image\" value=\"menu\">"); //$NON-NLS-1$
 					buffer.append(it.next().toString());
 					buffer.append("</li>"); //$NON-NLS-1$

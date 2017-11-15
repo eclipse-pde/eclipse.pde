@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2013 IBM Corporation and others.
+ *  Copyright (c) 2007, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class ActiveWizardSection implements ISpySection {
 		Object object = shell.getData();
 		if (object == null)
 			return;
-		Class clazz = object.getClass();
+		Class<?> clazz = object.getClass();
 
 		if (object instanceof WizardDialog) {
 			WizardDialog dialog = (WizardDialog) object;
@@ -55,7 +55,7 @@ public class ActiveWizardSection implements ISpySection {
 			buffer.append("<form>"); //$NON-NLS-1$
 			section.setText(NLS.bind(PDERuntimeMessages.SpyDialog_activeWizard_title, wizard.getWindowTitle()));
 
-			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeWizard_desc, new Class[] {clazz}));
+			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeWizard_desc, clazz));
 
 			Bundle bundle = FrameworkUtil.getBundle(clazz);
 			toolkit.generatePluginDetailsText(bundle, null, "wizard", buffer, text); //$NON-NLS-1$

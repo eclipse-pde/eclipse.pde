@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2013 IBM Corporation and others.
+ *  Copyright (c) 2007, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class ActiveDialogPageSection implements ISpySection {
 		Object object = shell.getData();
 		if (object == null)
 			return;
-		Class clazz = object.getClass();
+		Class<?> clazz = object.getClass();
 
 		if (object instanceof IPageChangeProvider) {
 			IPageChangeProvider pageChangeProvider = (IPageChangeProvider) object;
@@ -62,7 +62,8 @@ public class ActiveDialogPageSection implements ISpySection {
 				StringBuilder buffer = new StringBuilder();
 				buffer.append("<form>"); //$NON-NLS-1$
 
-				buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeDialogPageSection_desc, new Class[] {clazz}));
+				buffer.append(toolkit.createClassSection(text,
+						PDERuntimeMessages.SpyDialog_activeDialogPageSection_desc, clazz));
 
 				Bundle bundle = FrameworkUtil.getBundle(clazz);
 				toolkit.generatePluginDetailsText(bundle, null, "dialog page", buffer, text); //$NON-NLS-1$

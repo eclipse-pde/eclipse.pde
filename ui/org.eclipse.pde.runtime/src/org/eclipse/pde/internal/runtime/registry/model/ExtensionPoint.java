@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ public class ExtensionPoint extends ModelObject {
 	private String uniqueIdentifier;
 	private String namespaceIdentifier;
 	private Long contributor;
-	private List extensions = new ArrayList();
+	private List<Extension> extensions = new ArrayList<>();
 
 	public void setLabel(String label) {
 		this.label = label;
@@ -37,11 +37,11 @@ public class ExtensionPoint extends ModelObject {
 		this.contributor = contributor;
 	}
 
-	public void setExtensions(List extensions) {
+	public void setExtensions(List<Extension> extensions) {
 		this.extensions = extensions;
 	}
 
-	public List getExtensions() {
+	public List<Extension> getExtensions() {
 		return extensions;
 	}
 

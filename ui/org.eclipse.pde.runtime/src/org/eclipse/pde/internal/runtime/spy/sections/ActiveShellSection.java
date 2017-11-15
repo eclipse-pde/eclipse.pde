@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class ActiveShellSection implements ISpySection {
 		Object object = shell.getData();
 		if (object == null)
 			return;
-		Class clazz = object.getClass();
+		Class<?> clazz = object.getClass();
 
 		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 		section.clientVerticalSpacing = 9;
@@ -45,7 +45,7 @@ public class ActiveShellSection implements ISpySection {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<form>"); //$NON-NLS-1$
 
-		buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeShell_desc, new Class[] {clazz}));
+		buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeShell_desc, clazz));
 
 		buffer.append("</form>"); //$NON-NLS-1$
 		text.setText(buffer.toString(), true, false);

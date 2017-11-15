@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2017 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,13 +56,14 @@ public class ActiveFormEditorSection implements ISpySection {
 
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<form>"); //$NON-NLS-1$
-		buffer.append(toolkit.createClassSection(text, NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, "editor tab"), new Class[] {activePage.getClass()})); //$NON-NLS-1$
+		buffer.append(toolkit.createClassSection(text,
+				NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, "editor tab"), activePage.getClass())); //$NON-NLS-1$
 
 		SectionPart activeSection = getActiveFormSection(activePage);
 		if (activeSection != null) {
 			buffer.append(toolkit.createClassSection(text,
 					NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, "form section"), //$NON-NLS-1$
-					new Class[] { activeSection.getClass() }));
+					activeSection.getClass()));
 
 		}
 		buffer.append("</form>"); //$NON-NLS-1$

@@ -288,12 +288,7 @@ public class RegistryBrowser extends ViewPart {
 		getViewSite().setSelectionProvider(fTreeViewer);
 
 		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager mng) {
-				fillContextMenu(mng);
-			}
-		};
+		IMenuListener listener = mng -> fillContextMenu(mng);
 		popupMenuManager.setRemoveAllWhenShown(true);
 		popupMenuManager.addMenuListener(listener);
 		Menu menu = popupMenuManager.createContextMenu(tree);
@@ -301,15 +296,12 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	private void hookDoubleClickAction() {
-		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-				if (selection.size() == 1) {
-					Object obj = selection.getFirstElement();
-					if (obj instanceof Bundle)
-						ManifestEditor.openPluginEditor(((Bundle) obj).getSymbolicName());
-				}
+		fTreeViewer.addDoubleClickListener(event -> {
+			IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+			if (selection.size() == 1) {
+				Object obj = selection.getFirstElement();
+				if (obj instanceof Bundle)
+					ManifestEditor.openPluginEditor(((Bundle) obj).getSymbolicName());
 			}
 		});
 	}
@@ -394,12 +386,7 @@ public class RegistryBrowser extends ViewPart {
 		fRefreshAction = new Action("refresh") { //$NON-NLS-1$
 			@Override
 			public void run() {
-				BusyIndicator.showWhile(fTreeViewer.getTree().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						refresh(fTreeViewer.getInput());
-					}
-				});
+				BusyIndicator.showWhile(fTreeViewer.getTree().getDisplay(), () -> refresh(fTreeViewer.getInput()));
 			}
 		};
 		fRefreshAction.setText(PDERuntimeMessages.RegistryView_refresh_label);
@@ -482,9 +469,9 @@ public class RegistryBrowser extends ViewPart {
 			@Override
 			public void run() {
 				try {
-					List bundles = getSelectedBundles();
-					for (Iterator it = bundles.iterator(); it.hasNext();) {
-						Bundle bundle = (Bundle) it.next();
+					List<Bundle> bundles = getSelectedBundles();
+					for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
+						Bundle bundle = it.next();
 						bundle.start();
 					}
 				} catch (BundleException e) {
@@ -497,9 +484,9 @@ public class RegistryBrowser extends ViewPart {
 			@Override
 			public void run() {
 				try {
-					List bundles = getSelectedBundles();
-					for (Iterator it = bundles.iterator(); it.hasNext();) {
-						Bundle bundle = (Bundle) it.next();
+					List<Bundle> bundles = getSelectedBundles();
+					for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
+						Bundle bundle = it.next();
 						bundle.stop();
 					}
 				} catch (BundleException e) {
@@ -511,9 +498,9 @@ public class RegistryBrowser extends ViewPart {
 		fEnableAction = new Action(PDERuntimeMessages.RegistryView_enableAction_label) {
 			@Override
 			public void run() {
-				List bundles = getSelectedBundles();
-				for (Iterator it = bundles.iterator(); it.hasNext();) {
-					Bundle bundle = (Bundle) it.next();
+				List<Bundle> bundles = getSelectedBundles();
+				for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
+					Bundle bundle = it.next();
 					bundle.enable();
 				}
 			}
@@ -522,9 +509,9 @@ public class RegistryBrowser extends ViewPart {
 		fDisableAction = new Action(PDERuntimeMessages.RegistryView_disableAction_label) {
 			@Override
 			public void run() {
-				List bundles = getSelectedBundles();
-				for (Iterator it = bundles.iterator(); it.hasNext();) {
-					Bundle bundle = (Bundle) it.next();
+				List<Bundle> bundles = getSelectedBundles();
+				for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
+					Bundle bundle = it.next();
 					bundle.disable();
 				}
 			}
@@ -533,9 +520,9 @@ public class RegistryBrowser extends ViewPart {
 		fDiagnoseAction = new Action(PDERuntimeMessages.RegistryView_diagnoseAction_label) {
 			@Override
 			public void run() {
-				List bundles = getSelectedBundles();
-				for (Iterator it = bundles.iterator(); it.hasNext();) {
-					Bundle bundle = (Bundle) it.next();
+				List<Bundle> bundles = getSelectedBundles();
+				for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
+					Bundle bundle = it.next();
 					MultiStatus problems = bundle.diagnose();
 
 					Dialog dialog;
@@ -614,14 +601,14 @@ public class RegistryBrowser extends ViewPart {
 		return true;
 	}
 
-	private List getSelectedBundles() {
-		List bundles = new ArrayList();
+	private List<Bundle> getSelectedBundles() {
+		List<Bundle> bundles = new ArrayList<>();
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		if (selection != null) {
 			Object[] elements = selection.toArray();
 			for (Object element : elements) {
 				if (element instanceof Bundle) {
-					bundles.add(element);
+					bundles.add((Bundle) element);
 				}
 			}
 		}
@@ -632,9 +619,9 @@ public class RegistryBrowser extends ViewPart {
 	 * @return true if none is stopped, false if at least one is stopped
 	 */
 	private boolean selectedBundlesStarted() {
-		List bundles = getSelectedBundles();
-		for (Iterator it = bundles.iterator(); it.hasNext();) {
-			Bundle bundle = (Bundle) it.next();
+		List<Bundle> bundles = getSelectedBundles();
+		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
+			Bundle bundle = it.next();
 			if (bundle.getState() != Bundle.ACTIVE)
 				return false;
 		}
@@ -645,9 +632,9 @@ public class RegistryBrowser extends ViewPart {
 	 * @return true if none is active, false if at least one is active
 	 */
 	private boolean selectedBundlesStopped() {
-		List bundles = getSelectedBundles();
-		for (Iterator it = bundles.iterator(); it.hasNext();) {
-			Bundle bundle = (Bundle) it.next();
+		List<Bundle> bundles = getSelectedBundles();
+		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
+			Bundle bundle = it.next();
 			if (bundle.getState() == Bundle.ACTIVE)
 				return false;
 		}
@@ -658,9 +645,9 @@ public class RegistryBrowser extends ViewPart {
 	 * @return true if none is enabled, false if at least one is enabled
 	 */
 	private boolean selectedBundlesDisabled() {
-		List bundles = getSelectedBundles();
-		for (Iterator it = bundles.iterator(); it.hasNext();) {
-			Bundle bundle = (Bundle) it.next();
+		List<Bundle> bundles = getSelectedBundles();
+		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
+			Bundle bundle = it.next();
 			if (bundle.isEnabled())
 				return false;
 		}
@@ -671,9 +658,9 @@ public class RegistryBrowser extends ViewPart {
 	 * @return true if none is disabled, false if at least one is disabled
 	 */
 	private boolean selectedBundlesEnabled() {
-		List bundles = getSelectedBundles();
-		for (Iterator it = bundles.iterator(); it.hasNext();) {
-			Bundle bundle = (Bundle) it.next();
+		List<Bundle> bundles = getSelectedBundles();
+		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
+			Bundle bundle = it.next();
 			if (!bundle.isEnabled())
 				return false;
 		}
@@ -723,28 +710,22 @@ public class RegistryBrowser extends ViewPart {
 			updateTitle();
 			lastRefresh = now;
 		} else {
-			Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					try {
-						Thread.sleep(REFRESH_DELAY);
-					} catch (InterruptedException e) {
-						return;
-					}
-					refreshThread = null;
-					if (fTreeViewer.getTree().isDisposed())
-						return;
-
-					fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (!fTreeViewer.getTree().isDisposed()) {
-								fTreeViewer.refresh();
-								updateTitle();
-							}
-						}
-					});
+			Runnable runnable = () -> {
+				try {
+					Thread.sleep(REFRESH_DELAY);
+				} catch (InterruptedException e) {
+					return;
 				}
+				refreshThread = null;
+				if (fTreeViewer.getTree().isDisposed())
+					return;
+
+				fTreeViewer.getTree().getDisplay().asyncExec(() -> {
+					if (!fTreeViewer.getTree().isDisposed()) {
+						fTreeViewer.refresh();
+						updateTitle();
+					}
+				});
 			};
 			refreshThread = new Thread(runnable);
 			refreshThread.start();

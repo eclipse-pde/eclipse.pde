@@ -68,7 +68,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 
 			Bundle bundle = (Bundle) element;
 
-			List folders = new ArrayList(9);
+			List<Object> folders = new ArrayList<>(9);
 
 			folders.add(new Attribute(Attribute.F_LOCATION, bundle.getLocation()));
 			if (bundle.getImports().length > 0)
@@ -128,7 +128,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		if (element instanceof ServiceRegistration) {
 			ServiceRegistration service = (ServiceRegistration) element;
 
-			List folders = new ArrayList();
+			List<Folder> folders = new ArrayList<>();
 
 			if (service.getProperties().length > 0)
 				folders.add(new Folder(Folder.F_PROPERTIES, service));

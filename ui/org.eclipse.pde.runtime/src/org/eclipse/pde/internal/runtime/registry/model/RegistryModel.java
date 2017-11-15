@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,7 @@ public class RegistryModel {
 			for (Extension extension : extensionAdapters) {
 				extension.setModel(RegistryModel.this);
 				String id = extension.getExtensionPointUniqueIdentifier();
-				ExtensionPoint extPoint = (ExtensionPoint) extensionPoints.get(id);
+				ExtensionPoint extPoint = extensionPoints.get(id);
 				extPoint.getExtensions().add(extension);
 			}
 
@@ -153,7 +153,7 @@ public class RegistryModel {
 		public void removeExtensions(Extension[] extensionAdapters) {
 			for (Extension extension : extensionAdapters) {
 				String id = extension.getExtensionPointUniqueIdentifier();
-				ExtensionPoint extPoint = (ExtensionPoint) extensionPoints.get(id);
+				ExtensionPoint extPoint = extensionPoints.get(id);
 				extPoint.getExtensions().remove(extension);
 			}
 
@@ -200,30 +200,30 @@ public class RegistryModel {
 		}
 	};
 
-	private List listeners = new ArrayList();
-	private Map bundles;
-	private Map services;
-	private Map extensionPoints;
-	private Set serviceNames;
-	private Map fragments;
+	private List<ModelChangeListener> listeners = new ArrayList<>();
+	private Map<Long, Bundle> bundles;
+	private Map<Long, ServiceRegistration> services;
+	private Map<String, ExtensionPoint> extensionPoints;
+	private Set<ServiceName> serviceNames;
+	private Map<String, Set<Bundle>> fragments;
 
 	protected RegistryBackend backend;
 
 	public RegistryModel(RegistryBackend backend) {
-		bundles = Collections.synchronizedMap(new HashMap());
-		services = Collections.synchronizedMap(new HashMap());
-		extensionPoints = Collections.synchronizedMap(new HashMap());
-		serviceNames = Collections.synchronizedSet(new HashSet());
-		fragments = Collections.synchronizedMap(new HashMap());
+		bundles = Collections.synchronizedMap(new HashMap<>());
+		services = Collections.synchronizedMap(new HashMap<>());
+		extensionPoints = Collections.synchronizedMap(new HashMap<>());
+		serviceNames = Collections.synchronizedSet(new HashSet<>());
+		fragments = Collections.synchronizedMap(new HashMap<>());
 
 		this.backend = backend;
 		backend.setRegistryListener(backendListener);
 	}
 
 	protected void addFragment(Bundle fragment) {
-		Set hostFragments = (Set) fragments.get(fragment.getFragmentHost());
+		Set<Bundle> hostFragments = fragments.get(fragment.getFragmentHost());
 		if (hostFragments == null) {
-			hostFragments = Collections.synchronizedSet(new HashSet());
+			hostFragments = Collections.synchronizedSet(new HashSet<>());
 			fragments.put(fragment.getFragmentHost(), hostFragments);
 		}
 
@@ -235,7 +235,7 @@ public class RegistryModel {
 	}
 
 	protected void removeFragment(Bundle fragment) {
-		Set hostFragments = (Set) fragments.get(fragment.getFragmentHost());
+		Set<Bundle> hostFragments = fragments.get(fragment.getFragmentHost());
 		if (hostFragments == null) {
 			return;
 		}
@@ -262,33 +262,33 @@ public class RegistryModel {
 	}
 
 	public Bundle[] getBundles() {
-		return (Bundle[]) bundles.values().toArray(new Bundle[bundles.values().size()]);
+		return bundles.values().toArray(new Bundle[bundles.values().size()]);
 	}
 
 	public ExtensionPoint[] getExtensionPoints() {
-		return (ExtensionPoint[]) extensionPoints.values().toArray(new ExtensionPoint[extensionPoints.values().size()]);
+		return extensionPoints.values().toArray(new ExtensionPoint[extensionPoints.values().size()]);
 	}
 
 	public ServiceRegistration[] getServices() {
-		return (ServiceRegistration[]) services.values().toArray(new ServiceRegistration[services.values().size()]);
+		return services.values().toArray(new ServiceRegistration[services.values().size()]);
 	}
 
 	public ServiceName[] getServiceNames() {
-		return (ServiceName[]) serviceNames.toArray(new ServiceName[serviceNames.size()]);
+		return serviceNames.toArray(new ServiceName[serviceNames.size()]);
 	}
 
 	public ServiceRegistration[] getServices(String[] classes) {
-		List result = new ArrayList();
+		List<ServiceRegistration> result = new ArrayList<>();
 
 		synchronized (services) {
-			for (Iterator i = services.values().iterator(); i.hasNext();) {
-				ServiceRegistration sr = (ServiceRegistration) i.next();
+			for (Iterator<ServiceRegistration> i = services.values().iterator(); i.hasNext();) {
+				ServiceRegistration sr = i.next();
 				if (Arrays.equals(classes, sr.getName().getClasses()))
 					result.add(sr);
 			}
 		}
 
-		return (ServiceRegistration[]) result.toArray(new ServiceRegistration[result.size()]);
+		return result.toArray(new ServiceRegistration[result.size()]);
 	}
 
 	public void addModelChangeListener(ModelChangeListener listener) {
@@ -306,20 +306,20 @@ public class RegistryModel {
 	 * @param objects
 	 */
 	protected void fireModelChangeEvent(ModelChangeDelta[] delta) {
-		for (Iterator i = listeners.iterator(); i.hasNext();) {
-			ModelChangeListener listener = (ModelChangeListener) i.next();
+		for (Iterator<ModelChangeListener> i = listeners.iterator(); i.hasNext();) {
+			ModelChangeListener listener = i.next();
 			listener.modelChanged(delta);
 		}
 	}
 
 	public Bundle getBundle(Long id) {
-		return (Bundle) bundles.get(id);
+		return bundles.get(id);
 	}
 
 	public Bundle getBundle(String symbolicName, String versionRange) {
 		synchronized (bundles) {
-			for (Iterator i = bundles.values().iterator(); i.hasNext();) {
-				Bundle bundle = (Bundle) i.next();
+			for (Iterator<Bundle> i = bundles.values().iterator(); i.hasNext();) {
+				Bundle bundle = i.next();
 
 				if (bundle.getSymbolicName().equals(symbolicName)) {
 					if (versionMatches(bundle.getVersion(), versionRange))
@@ -332,25 +332,25 @@ public class RegistryModel {
 	}
 
 	public ExtensionPoint getExtensionPoint(String extensionPointUniqueIdentifier) {
-		return (ExtensionPoint) extensionPoints.get(extensionPointUniqueIdentifier);
+		return extensionPoints.get(extensionPointUniqueIdentifier);
 	}
 
 	public Bundle[] getFragments(Bundle bundle) {
-		Set set = (Set) fragments.get(bundle.getSymbolicName());
+		Set<Bundle> set = fragments.get(bundle.getSymbolicName());
 		if (set == null)
 			return new Bundle[0];
 
-		List result = new ArrayList(set.size());
+		List<Bundle> result = new ArrayList<>(set.size());
 		Version hostVersion = Version.parseVersion(bundle.getVersion());
-		for (Iterator i = set.iterator(); i.hasNext();) {
-			Bundle fragment = (Bundle) i.next();
+		for (Iterator<Bundle> i = set.iterator(); i.hasNext();) {
+			Bundle fragment = i.next();
 			String fragmentVersionOrRange = fragment.getFragmentHostVersion();
 
 			if (versionMatches(hostVersion, fragmentVersionOrRange))
 				result.add(fragment);
 		}
 
-		return (Bundle[]) result.toArray(new Bundle[result.size()]);
+		return result.toArray(new Bundle[result.size()]);
 	}
 
 	private boolean versionMatches(String hostVersion, String versionOrRange) {

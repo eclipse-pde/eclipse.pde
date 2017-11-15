@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class SpyFormToolkit extends FormToolkit {
 			String href = (String) e.getHref();
 			if (href.startsWith(CLASS_PROTOCOL_PREFIX)) {
 				String clazz = href.substring(CLASS_PROTOCOL_PREFIX.length());
-				Bundle bundle = (Bundle) bundleClassByName.get(clazz);
+				Bundle bundle = bundleClassByName.get(clazz);
 				SpyIDEUtil.openClass(bundle.getSymbolicName(), clazz);
 				fDialog.close();
 			} else if (href.startsWith(BUNDLE_PROTOCOL_PREFIX)) {
@@ -105,7 +105,7 @@ public class SpyFormToolkit extends FormToolkit {
 		}
 	}
 
-	private Map bundleClassByName = new HashMap();
+	private Map<String, Bundle> bundleClassByName = new HashMap<>();
 	private PopupDialog dialog;
 	private static String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
 
@@ -155,13 +155,13 @@ public class SpyFormToolkit extends FormToolkit {
 		});
 	}
 
-	public String createInterfaceSection(FormText text, String title, Class[] clazzes) {
+	public String createInterfaceSection(FormText text, String title, Class<?>... clazzes) {
 		StringBuilder buffer = new StringBuilder();
 		if (clazzes.length > 0) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
 			buffer.append("</p>"); //$NON-NLS-1$
-			for (Class clazz : clazzes) {
+			for (Class<?> clazz : clazzes) {
 				buffer.append("<li bindent=\"20\" style=\"image\" value=\"interface\">"); //$NON-NLS-1$
 				createClassReference(buffer, clazz);
 				buffer.append("</li>"); //$NON-NLS-1$
@@ -172,13 +172,13 @@ public class SpyFormToolkit extends FormToolkit {
 		return buffer.toString();
 	}
 
-	public String createClassSection(FormText text, String title, Class[] clazzes) {
+	public String createClassSection(FormText text, String title, Class<?>... clazzes) {
 		StringBuilder buffer = new StringBuilder();
 		if (clazzes.length > 0) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
 			buffer.append("</p>"); //$NON-NLS-1$
-			for (Class clazz : clazzes) {
+			for (Class<?> clazz : clazzes) {
 				buffer.append("<li bindent=\"20\" style=\"image\" value=\"class\">"); //$NON-NLS-1$
 				createClassReference(buffer, clazz);
 				buffer.append("</li>"); //$NON-NLS-1$
@@ -226,7 +226,7 @@ public class SpyFormToolkit extends FormToolkit {
 		return buffer.toString();
 	}
 
-	private void createClassReference(StringBuilder buffer, Class clazz) {
+	private void createClassReference(StringBuilder buffer, Class<?> clazz) {
 		Bundle bundle = PDERuntimePlugin.HAS_IDE_BUNDLES ? FrameworkUtil.getBundle(clazz) : null;
 		if (bundle != null) {
 			bundleClassByName.put(clazz.getName(), bundle);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,11 +48,11 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		PDERuntimePlugin.getDefault().getBundleContext().removeServiceListener(this);
 	}
 
-	protected static boolean isRegisteredService(org.osgi.framework.Bundle bundle, ServiceReference ref) {
+	protected static boolean isRegisteredService(org.osgi.framework.Bundle bundle, ServiceReference<?> ref) {
 		return bundle.equals(ref.getBundle());
 	}
 
-	protected static boolean isServiceInUse(org.osgi.framework.Bundle bundle, ServiceReference ref) {
+	protected static boolean isServiceInUse(org.osgi.framework.Bundle bundle, ServiceReference<?> ref) {
 		org.osgi.framework.Bundle[] usingBundles = ref.getUsingBundles();
 		return (usingBundles != null && Arrays.asList(usingBundles).contains(bundle));
 	}
@@ -132,7 +132,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		if (monitor.isCanceled())
 			return;
 
-		ServiceReference[] references = null;
+		ServiceReference<?>[] references = null;
 		try {
 			references = PDERuntimePlugin.getDefault().getBundleContext().getAllServiceReferences(null, null);
 		} catch (InvalidSyntaxException e) { // nothing
@@ -142,7 +142,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			return;
 		}
 
-		for (ServiceReference reference : references) {
+		for (ServiceReference<?> reference : references) {
 			if (monitor.isCanceled()){
 				return;
 			}
@@ -254,7 +254,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	 * @param ref the service reference to get the registration for
 	 * @return a new service registration containing information from the service reference
 	 */
-	private ServiceRegistration createServiceReferenceAdapter(ServiceReference ref) {
+	private ServiceRegistration createServiceReferenceAdapter(ServiceReference<?> ref) {
 		ServiceRegistration service = new ServiceRegistration();
 		service.setId(((Long) ref.getProperty(org.osgi.framework.Constants.SERVICE_ID)).longValue());
 		org.osgi.framework.Bundle bundle = ref.getBundle();
@@ -444,7 +444,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 
 	@Override
 	public void serviceChanged(ServiceEvent event) {
-		ServiceReference ref = event.getServiceReference();
+		ServiceReference<?> ref = event.getServiceReference();
 		ServiceRegistration adapter = createServiceReferenceAdapter(ref);
 
 		switch (event.getType()) {

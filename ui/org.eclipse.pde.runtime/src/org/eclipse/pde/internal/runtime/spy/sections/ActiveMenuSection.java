@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2017 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,8 +106,9 @@ public class ActiveMenuSection implements ISpySection {
 		} else if (item instanceof CommandContributionItem) { // TODO... this is hard...
 			CommandContributionItem contributionItem = (CommandContributionItem) item;
 			Command command = contributionItem.getCommand().getCommand();
-			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_2, new Class[] {command.getClass()}));
-			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_3, new Class[] {command.getHandler().getClass()}));
+			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_2, command.getClass()));
+			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_3,
+					command.getHandler().getClass()));
 		}
 	}
 
@@ -122,12 +123,12 @@ public class ActiveMenuSection implements ISpySection {
 
 		if (action instanceof PluginAction) {
 			PluginAction pluginAction = (PluginAction) action;
-			Class clazz = pluginAction.getClass();
+			Class<?> clazz = pluginAction.getClass();
 			createActionContributionItemText(object, buffer, toolkit, text, clazz, pluginAction);
 
 		} else {
 			// normal JFace Actions
-			Class clazz = action.getClass();
+			Class<?> clazz = action.getClass();
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_5, new Class[] {clazz}));
 			Bundle bundle = FrameworkUtil.getBundle(clazz);
 			toolkit.generatePluginDetailsText(bundle, null, "meow", buffer, text); //$NON-NLS-1$
@@ -135,7 +136,8 @@ public class ActiveMenuSection implements ISpySection {
 
 	}
 
-	private void createActionContributionItemText(Object object, StringBuilder buffer, SpyFormToolkit toolkit, FormText text, Class clazz, PluginAction pluginAction) {
+	private void createActionContributionItemText(Object object, StringBuilder buffer, SpyFormToolkit toolkit,
+			FormText text, Class<?> clazz, PluginAction pluginAction) {
 		try {
 			RetargetAction retargetAction = null;
 			IActionDelegate delegate = null;
@@ -157,12 +159,13 @@ public class ActiveMenuSection implements ISpySection {
 					delegate = (IActionDelegate) field.get(pluginAction);
 				}
 			}
-			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_6, new Class[] {(retargetAction == null) ? delegate.getClass() : retargetAction.getActionHandler().getClass()}));
+			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_6,
+					(retargetAction == null) ? delegate.getClass() : retargetAction.getActionHandler().getClass()));
 			Bundle bundle = FrameworkUtil.getBundle(clazz);
 			toolkit.generatePluginDetailsText(bundle, null, "menu item", buffer, text); //$NON-NLS-1$
 
 		} catch (Exception e) {
-			Class superclass = clazz.getSuperclass();
+			Class<?> superclass = clazz.getSuperclass();
 			if (superclass != null) {
 				createActionContributionItemText(object, buffer, toolkit, text, superclass, pluginAction);
 			}

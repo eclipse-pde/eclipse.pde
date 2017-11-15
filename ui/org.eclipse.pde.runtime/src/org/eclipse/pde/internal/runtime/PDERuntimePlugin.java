@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,8 +29,8 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 
 	private static PDERuntimePlugin inst;
 	private BundleContext fContext;
-	private ServiceTracker packageAdminTracker;
-	private ServiceTracker platformAdminTracker;
+	private ServiceTracker<?, PackageAdmin> packageAdminTracker;
+	private ServiceTracker<?, PlatformAdmin> platformAdminTracker;
 
 	public PDERuntimePlugin() {
 		inst = this;
@@ -72,14 +72,14 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		if (packageAdminTracker == null) {
 			return null;
 		}
-		return (PackageAdmin) packageAdminTracker.getService();
+		return packageAdminTracker.getService();
 	}
 
 	public PlatformAdmin getPlatformAdmin() {
 		if (platformAdminTracker == null) {
 			return null;
 		}
-		return (PlatformAdmin) platformAdminTracker.getService();
+		return platformAdminTracker.getService();
 	}
 
 	public static PDERuntimePlugin getDefault() {
@@ -99,10 +99,10 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		super.start(context);
 		this.fContext = context;
 
-		packageAdminTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
+		packageAdminTracker = new ServiceTracker<>(context, PackageAdmin.class, null);
 		packageAdminTracker.open();
 
-		platformAdminTracker = new ServiceTracker(context, PlatformAdmin.class.getName(), null);
+		platformAdminTracker = new ServiceTracker<>(context, PlatformAdmin.class, null);
 		platformAdminTracker.open();
 	}
 
