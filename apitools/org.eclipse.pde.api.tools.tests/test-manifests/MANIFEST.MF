@@ -9,7 +9,6 @@ Require-Bundle: org.eclipse.osgi,
  org.apache.ant,
  org.eclipse.core.runtime,
  org.eclipse.pde.core,
- org.eclipse.update.configurator,
  org.eclipse.jdt.core
 Export-Package: org.eclipse.pde.api.tools.internal.model;x-friends:="org.eclipse.pde.api.tools.ui,org.eclipse.pde.api.tools.tests",
  org.eclipse.pde.api.tools.internal.state;x-internal:=true,

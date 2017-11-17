@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -148,15 +148,6 @@ public class LaunchConfigurationHelper {
 		// Special processing for launching with p2 (simple configurator)
 		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && bundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 
-			// If update configurator is set to its default start level, override it as simple/update configurators should not be autostarted together
-			IPluginModelBase updateConfiguratorBundle = bundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR);
-			if (updateConfiguratorBundle != null) {
-				String startLevel = bundlesWithStartLevels.get(updateConfiguratorBundle);
-				if (startLevel != null && startLevel.equals(BundleLauncherHelper.DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL)) {
-					bundlesWithStartLevels.put(updateConfiguratorBundle, "4:false"); //$NON-NLS-1$
-				}
-			}
-
 			// Write out P2 files (bundles.txt)
 			URL bundlesTxt = null;
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
@@ -169,10 +160,6 @@ public class LaunchConfigurationHelper {
 			// Add bundles.txt as p2 config data
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
-				// if we have simple configurator and update configurator together, ensure update doesn't reconcile
-				if (bundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR) != null) {
-					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
 			}
 
 			// Make the p2 data area in the configuration area itself, rather than a sibling of the configuration
@@ -257,24 +244,23 @@ public class LaunchConfigurationHelper {
 			}
 		}
 
-		// if org.eclipse.update.configurator is not included (LIKE IN BASIC RCP APPLICATION), then write out all bundles in osgi.bundles - bug 170772
-		if (!initialBundleSet.contains(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR)) {
-			initialBundleSet.add(IPDEBuildConstants.BUNDLE_OSGI);
-			Iterator<IPluginModelBase> iter = bundlesWithStartLevels.keySet().iterator();
-			while (iter.hasNext()) {
-				IPluginModelBase model = iter.next();
-				String id = model.getPluginBase().getId();
-				if (!initialBundleSet.contains(id)) {
-					if (buffer.length() > 0)
-						buffer.append(',');
+		// write out all bundles in osgi.bundles - bug 170772
+		initialBundleSet.add(IPDEBuildConstants.BUNDLE_OSGI);
+		Iterator<IPluginModelBase> iter = bundlesWithStartLevels.keySet().iterator();
+		while (iter.hasNext()) {
+			IPluginModelBase model = iter.next();
+			String id = model.getPluginBase().getId();
+			if (!initialBundleSet.contains(id)) {
+				if (buffer.length() > 0)
+					buffer.append(',');
 
-					String slinfo = bundlesWithStartLevels.get(model);
-					buffer.append(id);
-					buffer.append('@');
-					buffer.append(slinfo);
-				}
+				String slinfo = bundlesWithStartLevels.get(model);
+				buffer.append(id);
+				buffer.append('@');
+				buffer.append(slinfo);
 			}
 		}
+
 		return buffer.toString();
 	}
 

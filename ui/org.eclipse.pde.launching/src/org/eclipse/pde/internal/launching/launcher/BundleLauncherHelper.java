@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -360,8 +360,6 @@ public class BundleLauncherHelper {
 			return "2"; //$NON-NLS-1$
 		} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
 			return "-1"; //$NON-NLS-1$
-		} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
-			return DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL_TEXT;
 		} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
 			if (TargetPlatformHelper.getTargetVersion() > 3.1) {
 				return "default"; //$NON-NLS-1$
@@ -384,8 +382,6 @@ public class BundleLauncherHelper {
 			return "true"; //$NON-NLS-1$
 		} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
 			return "true"; //$NON-NLS-1$
-		} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
-			return DEFAULT_UPDATE_CONFIGURATOR_AUTO_START_TEXT;
 		} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
 			if (TargetPlatformHelper.getTargetVersion() > 3.1) {
 				return "true"; //$NON-NLS-1$

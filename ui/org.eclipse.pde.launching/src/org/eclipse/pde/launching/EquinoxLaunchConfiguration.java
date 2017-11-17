@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,22 +76,10 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		String bundles = null;
 		if (fAllBundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 
-			// If update configurator is set to its default start level, override it as simple/update configurators should not be autostarted together
-			IPluginModelBase updateConfiguratorBundle = fAllBundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR);
-			if (updateConfiguratorBundle != null) {
-				String startLevel = fModels.get(updateConfiguratorBundle);
-				if (startLevel != null && startLevel.equals(BundleLauncherHelper.DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL)) {
-					fModels.put(updateConfiguratorBundle, "4:false"); //$NON-NLS-1$
-				}
-			}
-
 			// If simple configurator is being used, we need to write out the bundles.txt instead of writing out the list in the config.ini
 			URL bundlesTxt = P2Utils.writeBundlesTxt(fModels, start, autostart, getConfigDir(configuration), null);
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
-				if (fAllBundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR) != null) {
-					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
 			}
 			StringBuilder buffer = new StringBuilder();
 			IPluginModelBase model = fAllBundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR);

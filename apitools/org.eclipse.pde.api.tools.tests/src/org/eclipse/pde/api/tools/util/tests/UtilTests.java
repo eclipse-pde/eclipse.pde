@@ -536,7 +536,6 @@ public class UtilTests extends TestCase {
 				"org.eclipse.pde.runtime", //$NON-NLS-1$
 				"org.eclipse.equinox.security.ui", //$NON-NLS-1$
 				"org.eclipse.core.jobs", //$NON-NLS-1$
-				"org.eclipse.update.configurator", //$NON-NLS-1$
 				"org.eclipse.equinox.http.jetty", //$NON-NLS-1$
 				"org.eclipse.pde.ds.ui", //$NON-NLS-1$
 				"org.apache.lucene.analysis", //$NON-NLS-1$
