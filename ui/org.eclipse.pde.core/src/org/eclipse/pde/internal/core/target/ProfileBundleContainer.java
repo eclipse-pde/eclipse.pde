@@ -18,7 +18,8 @@ import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.P2Utils;
+import org.eclipse.pde.internal.core.PDECore;
 
 /**
  * A bundle container representing an installed profile.
@@ -104,13 +105,8 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 
 		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
 		if (infos == null) {
-			TargetBundle[] platformXML = resolvePlatformXML(definition, home, monitor);
-			if (platformXML != null) {
-				return platformXML;
-			}
 			infos = new BundleInfo[0];
 		}
-
 		if (monitor.isCanceled()) {
 			return new TargetBundle[0];
 		}
@@ -156,43 +152,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			return ((TargetDefinition) definition).resolveFeatures(getLocation(false), monitor);
 		}
 		return new TargetFeature[0];
-	}
-
-	/**
-	 * Resolves installed bundles based on update manager's platform XML or scans the plugins directory if
-	 * no platform.xml is available
-	 *
-	 * TODO When we are willing to drop support for platform.xml (pre Eclipse 3.4) we should
-	 * replace this method with a simple directory scan like {@link DirectoryBundleContainer}
-	 *
-	 * @param definition
-	 * @param home
-	 * @param monitor
-	 * @return resolved bundles or <code>null</code> if none
-	 * @throws CoreException
-	 */
-	protected TargetBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
-		URL[] files = PluginPathFinder.getPlatformXMLPaths(home, false);
-		if (files.length > 0) {
-			List<TargetBundle> all = new ArrayList<>(files.length);
-			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
-			for (URL file : files) {
-				if (localMonitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
-				try {
-					File plugin = new File(file.getFile());
-					all.add(new TargetBundle(plugin));
-				} catch (CoreException e) {
-					// Ignore non-bundle files
-				}
-				localMonitor.split(1);
-			}
-			if (!all.isEmpty()) {
-				return all.toArray(new TargetBundle[all.size()]);
-			}
-		}
-		return null;
 	}
 
 	/**

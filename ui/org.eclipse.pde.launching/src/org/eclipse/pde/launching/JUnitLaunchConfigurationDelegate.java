@@ -243,8 +243,6 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	private IPluginModelBase findPlugin(String id) throws CoreException {
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model == null)
-			model = PDECore.getDefault().findPluginInHost(id);
-		if (model == null)
 			abort(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id), null, IStatus.OK);
 		return model;
 	}

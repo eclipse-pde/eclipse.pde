@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.Hashtable;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -19,7 +18,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.pde.core.IBundleClasspathResolver;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
@@ -28,7 +26,6 @@ import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
-import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.*;
 
 public class PDECore extends Plugin implements DebugOptionsListener {
@@ -60,7 +57,6 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	// Shared instance
 	private static PDECore inst;
 
-	private static IPluginModelBase[] registryPlugins;
 	private static PDEExtensionRegistry fExtensionRegistry = null;
 
 	/**
@@ -164,20 +160,6 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	public PDECore() {
 		inst = this;
-	}
-
-	public IPluginModelBase findPluginInHost(String id) {
-		if (registryPlugins == null) {
-			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
-			PDEState state = new PDEState(pluginPaths, false, false, new NullProgressMonitor());
-			registryPlugins = state.getTargetModels();
-		}
-
-		for (IPluginModelBase plugin : registryPlugins) {
-			if (plugin.getPluginBase().getId().equals(id))
-				return plugin;
-		}
-		return null;
 	}
 
 	public PluginModelManager getModelManager() {
