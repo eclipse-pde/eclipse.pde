@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,10 +20,8 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
@@ -138,21 +136,11 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		if (!isBundle() && isEditable()) {
 			String content;
-			PluginConverter converter = (PluginConverter) PDECore.getDefault().acquireService(PluginConverter.class.getName());
-			if (converter == null) {
-				// Help the user install the plugin converter service
-				if (isFragment()) {
-					content = PDEUIMessages.OverviewPage_NoPluginConverterFragment;
-				} else {
-					content = PDEUIMessages.OverviewPage_NoPluginConverterPlugin;
-				}
+			// Inform the user to convert manually to OSGi
+			if (isFragment()) {
+				content = PDEUIMessages.OverviewPage_NoPluginConverterFragment;
 			} else {
-				// Provide link to run the conversion service
-				if (isFragment()) {
-					content = PDEUIMessages.OverviewPage_fOsgi;
-				} else {
-					content = PDEUIMessages.OverviewPage_osgi;
-				}
+				content = PDEUIMessages.OverviewPage_NoPluginConverterPlugin;
 			}
 			FormText warningText = createClient(container, content, toolkit);
 			warningText.setImage("warning", lp.get(PDEPluginImages.DESC_WARNING_ST_OBJ, 0)); //$NON-NLS-1$

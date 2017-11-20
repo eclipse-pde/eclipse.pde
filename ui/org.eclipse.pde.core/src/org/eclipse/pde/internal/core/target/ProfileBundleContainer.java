@@ -19,7 +19,6 @@ import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.util.ManifestUtils;
 
 /**
  * A bundle container representing an installed profile.
@@ -185,11 +184,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 					File plugin = new File(file.getFile());
 					all.add(new TargetBundle(plugin));
 				} catch (CoreException e) {
-					// If an old style conversion fails because the service is not available, log the error.
-					// Otherwise, ignore non-bundle files
-					if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE) {
-						PDECore.log(e);
-					}
+					// Ignore non-bundle files
 				}
 				localMonitor.split(1);
 			}

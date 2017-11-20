@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -194,13 +194,7 @@ public class BundleComponent extends Component {
 			try {
 				fManifest = ManifestUtils.loadManifest(new File(fLocation));
 			} catch (CoreException e) {
-				if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE) {
-					// If we encounter an old style bundle, but can't convert
-					// because the service is unavailable, inform the user, but
-					// don't quit
-					System.err.println(e.getMessage());
-					return null;
-				} else if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_NOT_A_BUNDLE_MANIFEST) {
+				if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_NOT_A_BUNDLE_MANIFEST) {
 					// If we load a component with a manifest file that isn't a
 					// bundle, ignore it
 					return null;

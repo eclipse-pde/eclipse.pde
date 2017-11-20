@@ -18,7 +18,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.util.ManifestUtils;
 
 /**
  * A directory of bundles.
@@ -73,11 +72,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 					TargetBundle rb = new TargetBundle(file);
 					bundles.add(rb);
 				} catch (CoreException e) {
-					// If an old style conversion fails because the service is not available, log the error.
-					// Otherwise, ignore non-bundle files
-					if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE) {
-						PDECore.log(e);
-					}
+					// Ignore non-bundle files
 				}
 				localMonitor.split(1);
 			}

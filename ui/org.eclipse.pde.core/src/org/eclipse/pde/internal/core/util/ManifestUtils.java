@@ -18,8 +18,6 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
-import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
@@ -44,39 +42,39 @@ public class ManifestUtils {
 	private static int MANIFEST_MAXLINE = 511;
 
 	/**
-	 * Status code given to the returned core exception when an old style plug-in manifest
-	 * cannot be converted because the {@link PluginConverter} service is not available.
-	 */
-	public static final int STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE = 201;
-
-	/**
 	 * Status code given to the returned core exception when a manifest file is found,
 	 * but not have the contain the required Bundle-SymbolicName header.
 	 */
 	public static final int STATUS_CODE_NOT_A_BUNDLE_MANIFEST = 204;
 
 	/**
-	 * Utility method to parse a bundle's manifest into a dictionary. The bundle may be in
-	 * a directory or an archive at the specified location.  If the manifest does not contain
-	 * the necessary entries, the plugin.xml and fragment.xml will be checked for an old style
-	 * plug-in.  If the plugin.xml cannot be converted because the {@link PluginConverter}
-	 * service is not available, the thrown core exception will have a status code of
-	 * {@link #STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE} to allow special processing.
+	 * Utility method to parse a bundle's manifest into a dictionary. The bundle may
+	 * be in a directory or an archive at the specified location. If the manifest
+	 * does not contain the necessary entries, the plugin.xml and fragment.xml will
+	 * be checked for an old style plug-in.
 	 * <p>
-	 * If this method is being called from a dev mode workspace, the returned map should be passed to
-	 * {@link TargetWeaver#weaveManifest(Map)} so that the bundle classpath can be corrected.
-	 * </p><p>
-	 * This method is called by org.eclipse.pde.api.tools.internal.model.BundleComponent.getManifest()
-	 * when OSGi is not running to load manifest information for a bundle.
-	 * </p><p>
-	 * TODO This method may be removed in favour of one that caches manifest contents. Currently caching is not
-	 * worthwhile as calling <code>ManifestElement.parseManifest()</code> takes trivial time (under 1ms) on repeat
-	 * calls to the same file.
+	 * If this method is being called from a dev mode workspace, the returned map
+	 * should be passed to {@link TargetWeaver#weaveManifest(Map)} so that the
+	 * bundle classpath can be corrected.
+	 * </p>
+	 * <p>
+	 * This method is called by
+	 * org.eclipse.pde.api.tools.internal.model.BundleComponent.getManifest() when
+	 * OSGi is not running to load manifest information for a bundle.
+	 * </p>
+	 * <p>
+	 * TODO This method may be removed in favour of one that caches manifest
+	 * contents. Currently caching is not worthwhile as calling
+	 * <code>ManifestElement.parseManifest()</code> takes trivial time (under 1ms)
+	 * on repeat calls to the same file.
 	 * </p>
 	 *
-	 * @param bundleLocation root location of the bundle, may be a archive file or directory
+	 * @param bundleLocation
+	 *            root location of the bundle, may be a archive file or directory
 	 * @return map of bundle manifest properties
-	 * @throws CoreException if manifest has invalid syntax, is missing or there is a problem converting as old style plug-in
+	 * @throws CoreException
+	 *             if manifest has invalid syntax, is missing or there is a problem
+	 *             converting as old style plug-in
 	 */
 	public static Map<String, String> loadManifest(File bundleLocation) throws CoreException {
 		// Check if the file is a archive or a directory
@@ -97,17 +95,6 @@ public class ManifestUtils {
 								return map;
 							}
 						}
-						// Manifest.MF wasn't good, check for plugin.xml or fragment.xml
-						ZipEntry pluginEntry = jarFile.getEntry(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-						if (pluginEntry == null) {
-							pluginEntry = jarFile.getEntry(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
-						}
-						if (pluginEntry != null) {
-							Map<String, String> map = loadPluginXML(bundleLocation);
-							if (map != null && map.containsKey(Constants.BUNDLE_SYMBOLICNAME)) {
-								return map;
-							}
-						}
 					}
 				} finally {
 					closeZipFileAndStream(stream, jarFile);
@@ -116,26 +103,11 @@ public class ManifestUtils {
 				// Check the manifest.MF
 				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
 				if (file.exists()) {
-					InputStream stream = null;
-					try {
-						stream = new FileInputStream(file);
+					try (InputStream stream = new FileInputStream(file);) {
 						Map<String, String> map = ManifestElement.parseBundleManifest(stream, new HashMap<String, String>(10));
 						if (map != null && map.containsKey(Constants.BUNDLE_SYMBOLICNAME)) {
 							return map;
 						}
-					} finally {
-						if (stream != null) {
-							stream.close();
-						}
-					}
-				}
-				// Manifest.MF wasn't good, check for plugin.xml or fragment.xml
-				File pxml = new File(bundleLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-				File fxml = new File(bundleLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
-				if (pxml.exists() || fxml.exists()) {
-					Map<String, String> map = loadPluginXML(bundleLocation);
-					if (map != null && map.containsKey(Constants.BUNDLE_SYMBOLICNAME)) {
-						return map;
 					}
 				}
 			}
@@ -147,40 +119,6 @@ public class ManifestUtils {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
-		}
-	}
-
-	/**
-	 * Uses the OSGi PluginConverter to generate a manifest for the given project. Will
-	 * attempt to refresh the project when complete. If the plugin.xml cannot be
-	 * converted because the {@link PluginConverter} service is not available, the
-	 * thrown core exception will have a status code of
-	 * {@link #STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE} to allow special processing.
-	 *
-	 * @param project the project to convert
-	 * @param targetVersion the runtime version the converted manifest is targeted for
-	 * @param devProperties a dictionary of development time classpath properties.
-	 * 			The dictionary contains a mapping from plugin id to development time
-	 * 			classpath. A value of null indicates that the default development time
-	 * 			classpath properties will be used.
-	 * @throws CoreException if there is a problem converting the manifest or the compatibility fragment hosting the converter service is not available
-	 */
-	public static void convertToOSGIFormat(IProject project, String targetVersion, Dictionary<String, String> devProperties) throws CoreException {
-		File outputFile = new File(PDEProject.getManifest(project).getLocation().toOSString());
-		File inputFile = new File(project.getLocation().toOSString());
-		PluginConverter converter = (PluginConverter) PDECore.getDefault().acquireService(PluginConverter.class.getName());
-		if (converter == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE, NLS.bind(UtilMessages.ManifestUtils_NeedCompatFragmentToConvertManifestFile, project.getLocation()), null));
-		}
-		try {
-			converter.convertManifest(inputFile, outputFile, false, targetVersion, true, devProperties);
-		} catch (PluginConversionException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(UtilMessages.ErrorReadingOldStyleManifest, inputFile.getAbsolutePath()), e));
-		}
-		try {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		} catch (CoreException e) {
-			// If there is a problem due to resource lock, skip the refresh
 		}
 	}
 
@@ -279,49 +217,6 @@ public class ManifestUtils {
 			return model.getBuild();
 		}
 		return null;
-	}
-
-	/**
-	 * Parses an old style plug-in's (or fragment's) XML definition file into a dictionary.
-	 * The provided file may be an zip archive or directory.  The existence of a plugin.xml
-	 * or fragment.xml is not checked in this method. If the plugin.xml cannot be converted
-	 * because the {@link PluginConverter} service is not available, the thrown core
-	 * exception will have a status code of {@link #STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE}
-	 * to allow special processing.
-	 *
-	 * @param pluginLocation location of the bundle (archive file or directory)
-	 * @return bundle manifest dictionary or <code>null</code> if none
-	 * @throws CoreException if manifest has invalid syntax
-	 */
-	private static Map<String, String> loadPluginXML(File pluginLocation) throws CoreException {
-		// This may be called from API Tools without OSGi running, so we try to return a useful status
-		if (PDECore.getDefault() == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE, UtilMessages.ManifestUtils_PluginConverterOnlyAvailableWithOSGi, null));
-		}
-
-		PluginConverter converter = (PluginConverter) PDECore.getDefault().acquireService(PluginConverter.class.getName());
-		if (converter == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE, NLS.bind(UtilMessages.ManifestUtils_NeedCompatFragmentToConvertManifest, pluginLocation.toString()), null));
-		}
-
-		Dictionary<String, String> convert;
-		try {
-			convert = converter.convertManifest(pluginLocation, false, null, false, null);
-		} catch (PluginConversionException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(UtilMessages.ErrorReadingOldStyleManifest, pluginLocation.getAbsolutePath()), e));
-		}
-
-		if (convert == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(UtilMessages.ErrorReadingOldStyleManifest, pluginLocation.getAbsolutePath())));
-		}
-
-		Map<String, String> map = new HashMap<>(convert.size(), 1.0f);
-		Enumeration<String> keys = convert.keys();
-		while (keys.hasMoreElements()) {
-			String key = keys.nextElement();
-			map.put(key, convert.get(key));
-		}
-		return map;
 	}
 
 	/**

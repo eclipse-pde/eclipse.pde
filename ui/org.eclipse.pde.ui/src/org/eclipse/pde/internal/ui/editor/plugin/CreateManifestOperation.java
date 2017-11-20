@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,10 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ClasspathHelper;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.project.PDEProject;
-import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.text.edits.*;
 
 public class CreateManifestOperation implements IRunnableWithProgress {
@@ -36,19 +33,12 @@ public class CreateManifestOperation implements IRunnableWithProgress {
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
-			handleConvert();
 			trimOldManifest();
 		} catch (BadLocationException e) {
 			throw new InvocationTargetException(e);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		}
-	}
-
-	private void handleConvert() throws CoreException {
-		IProject project = fModel.getUnderlyingResource().getProject();
-		String target = TargetPlatformHelper.getTargetVersionString();
-		ManifestUtils.convertToOSGIFormat(project, target, ClasspathHelper.getDevDictionary(fModel));
 	}
 
 	private void trimOldManifest() throws BadLocationException, CoreException {
