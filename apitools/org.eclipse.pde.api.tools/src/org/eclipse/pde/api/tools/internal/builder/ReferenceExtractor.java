@@ -79,7 +79,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		protected List<Reference> references;
 
 		public ClassFileSignatureVisitor() {
-			super(Opcodes.ASM5);
+			super(Opcodes.ASM6);
 			this.references = new ArrayList<>();
 		}
 
@@ -244,7 +244,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		 * @param mv
 		 */
 		public ClassFileMethodVisitor(MethodVisitor mv, String name, int argumentcount) {
-			super(Opcodes.ASM5, mv);
+			super(Opcodes.ASM6, mv);
 			this.argumentcount = argumentcount;
 			this.linePositionTracker = new LinePositionTracker();
 			this.lastLineNumber = -1;
@@ -628,7 +628,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	class ClassFileFieldVisitor extends FieldVisitor {
 
 		ClassFileFieldVisitor() {
-			super(Opcodes.ASM5);
+			super(Opcodes.ASM6);
 		}
 
 		@Override
@@ -983,7 +983,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 *            {@link ReferenceModifiers}
 	 */
 	public ReferenceExtractor(IApiType type, Set<Reference> collector, int referenceKinds) {
-		super(Opcodes.ASM5, new ClassNode());
+		super(Opcodes.ASM6, new ClassNode());
 		fType = type;
 		this.collector = collector;
 		fReferenceKinds = referenceKinds;
@@ -1000,7 +1000,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * @param tracker
 	 */
 	protected ReferenceExtractor(IApiType type, Set<Reference> collector, int referenceKinds, FieldTracker tracker) {
-		super(Opcodes.ASM5, new ClassNode());
+		super(Opcodes.ASM6, new ClassNode());
 		fType = type;
 		this.collector = collector;
 		fReferenceKinds = referenceKinds;
