@@ -54,8 +54,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// be paranoid.  something could have gone wrong reading the file etc.
 		if (fModel == null || !validateBundleSymbolicName())
 			return;
-
-		validateAutomaticModuleName();
+		try {
+			if (fProject.hasNature(JavaCore.NATURE_ID)) {
+				validateAutomaticModuleName();
+			}
+		} catch (CoreException e1) {
+		}
 		if (!validateVersionOfRequireBundle())
 			return;
 		if (!validateVersionOfImportPackage())
