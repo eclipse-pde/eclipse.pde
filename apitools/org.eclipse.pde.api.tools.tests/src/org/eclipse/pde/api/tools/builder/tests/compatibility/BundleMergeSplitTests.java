@@ -326,7 +326,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 				cleanBuild();
 				fullBuild();
 			}
-		} while (errors && attempts < 10);
+		} while (errors && attempts < 20);
 
 		expectingNoJDTProblems();
 		// problems are now reported on the types from the fragment
