@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,11 +35,12 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @return target platform service
 	 */
 	protected ITargetPlatformService getTargetService() {
-		ServiceReference reference = PDETestsPlugin.getBundleContext().getServiceReference(ITargetPlatformService.class.getName());
+		ServiceReference<ITargetPlatformService> reference = PDETestsPlugin.getBundleContext()
+				.getServiceReference(ITargetPlatformService.class);
 		assertNotNull("Missing target platform service", reference);
 		if (reference == null)
 			return null;
-		return (ITargetPlatformService) PDETestsPlugin.getBundleContext().getService(reference);
+		return PDETestsPlugin.getBundleContext().getService(reference);
 	}
 
 	/**

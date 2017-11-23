@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.Collections;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
@@ -28,7 +27,8 @@ public class TestUtils {
 
 	public static Bundle getBundle(String symbolicName) {
 		if (packageAdmin == null) {
-			packageAdmin = (PackageAdmin) PDETestsPlugin.getBundleContext().getService(PDETestsPlugin.getBundleContext().getServiceReference(PackageAdmin.class.getName()));
+			packageAdmin = PDETestsPlugin.getBundleContext()
+					.getService(PDETestsPlugin.getBundleContext().getServiceReference(PackageAdmin.class));
 		}
 		Bundle[] bundles = packageAdmin.getBundles(symbolicName, null);
 
@@ -45,10 +45,6 @@ public class TestUtils {
 
 	public static IExtension getExtension(String extensionId) {
 		return Platform.getExtensionRegistry().getExtension(extensionId);
-	}
-
-	public static ServiceReference getServiceReference(String clazzName) {
-		return PDETestsPlugin.getBundleContext().getServiceReference(clazzName);
 	}
 
 	public static String findPath(String path) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,14 +22,16 @@ import org.osgi.framework.Version;
  * <p>
  * An instance of this service can be obtained from a {@link BundleContext} as
  * follows
+ * 
  * <pre>
  * BundleContext context = ...
- * ServiceReference ref = context.getServiceReference(IBundleContextService.class.getName());
- * IBundleContextService service = (IBundleContextService)context.getService(ref);
+ * ServiceReference<IBundleContextService> ref = context.getServiceReference(IBundleContextService.class);
+ * IBundleContextService service = context.getService(ref);
  * ...
  * context.ungetService(ref);
  * </pre>
  * </p>
+ * 
  * @since 3.6
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

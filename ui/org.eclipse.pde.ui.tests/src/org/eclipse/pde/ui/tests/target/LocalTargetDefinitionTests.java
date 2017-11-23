@@ -42,11 +42,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Override
 	protected ITargetPlatformService getTargetService() {
-		ServiceReference reference = PDETestsPlugin.getBundleContext().getServiceReference(ITargetPlatformService.class.getName());
+		ServiceReference<ITargetPlatformService> reference = PDETestsPlugin.getBundleContext()
+				.getServiceReference(ITargetPlatformService.class);
 		assertNotNull("Missing target platform service", reference);
 		if (reference == null)
 			return null;
-		return (ITargetPlatformService) PDETestsPlugin.getBundleContext().getService(reference);
+		return PDETestsPlugin.getBundleContext().getService(reference);
 	}
 
 	/**
