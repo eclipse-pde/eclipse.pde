@@ -45,12 +45,6 @@
    		<configuration>
       		<dependency-resolution>
          		<extraRequirements>
-         		<requirement>
-              <!-- workaround for missing dependency in org.eclipse.e4.ui.services: https://bugs.eclipse.org/462862 -->
-              <type>eclipse-plugin</type>
-              <id>org.eclipse.equinox.event</id>
-              <versionRange>0.0.0</versionRange>
-            </requirement>
              <requirement>
               <type>eclipse-plugin</type>
               <id>org.eclipse.osgi.compatibility.state</id>
