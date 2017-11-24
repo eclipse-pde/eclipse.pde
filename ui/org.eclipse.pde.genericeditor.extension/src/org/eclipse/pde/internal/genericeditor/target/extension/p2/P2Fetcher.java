@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,14 +42,15 @@ public class P2Fetcher {
 	 * @return List of available installable unit models. See {@link UnitNode}
 	 */
 	public static List<UnitNode> fetchAvailableUnits(String repositoryLocation) {
-		List<UnitNode> units = new ArrayList<UnitNode>();
+		List<UnitNode> units = new ArrayList<>();
 		IQueryResult<IInstallableUnit> result = null;
 		try {
 			String uri = repositoryLocation;
 			BundleContext context = FrameworkUtil.getBundle(P2Fetcher.class).getBundleContext();
-			ServiceReference<?> sr = context.getServiceReference(IProvisioningAgentProvider.SERVICE_NAME);
+			ServiceReference<IProvisioningAgentProvider> sr = context
+					.getServiceReference(IProvisioningAgentProvider.class);
 			IProvisioningAgentProvider agentProvider = null;
-			agentProvider = (IProvisioningAgentProvider) context.getService(sr);
+			agentProvider = context.getService(sr);
 			IProvisioningAgent agent = null;
 
 			try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	/**
 	 * Tracker for the XML parser service
 	 */
-	private ServiceTracker<?, ?> xmlTracker = null;
+	private ServiceTracker<?, SAXParserFactory> xmlTracker = null;
 
 	private Object fKey = null;
 
@@ -164,10 +164,10 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	@Override
 	public SAXParserFactory getXMLParser() {
 		if (xmlTracker == null) {
-			xmlTracker = new ServiceTracker<>(PDECore.getDefault().getBundleContext(), SAXParserFactory.class.getName(), null);
+			xmlTracker = new ServiceTracker<>(PDECore.getDefault().getBundleContext(), SAXParserFactory.class, null);
 			xmlTracker.open();
 		}
-		return (SAXParserFactory) xmlTracker.getService();
+		return xmlTracker.getService();
 	}
 
 	private void processBundles(IExtensionRegistry registry) {
