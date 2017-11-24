@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.pde.internal.ui.wizards.plugin.*;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
+import org.eclipse.ui.PlatformUI;
 import org.junit.*;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
@@ -99,7 +100,8 @@ public class TestPDETemplates {
 
 	@Before
 	public void createProject() throws CoreException {
-		String id = getClass().getName() + System.currentTimeMillis();
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllEditors(false);
+		String id = getClass().getSimpleName() + '_' + template.getID() + '_' + System.currentTimeMillis();
 		this.project = ResourcesPlugin.getWorkspace().getRoot().getProject(id);
 		project.create(new NullProgressMonitor());
 		project.open(new NullProgressMonitor());
@@ -156,6 +158,7 @@ public class TestPDETemplates {
 
 	@After
 	public void deleteProject() throws CoreException {
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllEditors(false);
 		this.project.delete(true, new NullProgressMonitor());
 	}
 }
