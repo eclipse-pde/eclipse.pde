@@ -124,7 +124,7 @@ public class LaunchArgumentsHelper {
 	 */
 	public static String getInitialVMArguments() {
 		try {
-			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (service != null) {
 				String result = service.getWorkspaceTargetDefinition().getVMArguments();
 				result = result != null ? result : ""; //$NON-NLS-1$
@@ -140,7 +140,7 @@ public class LaunchArgumentsHelper {
 		StringBuilder buffer = new StringBuilder("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"); //$NON-NLS-1$
 
 		try {
-			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (service != null) {
 				String result = service.getWorkspaceTargetDefinition().getProgramArguments();
 				if (result != null) {

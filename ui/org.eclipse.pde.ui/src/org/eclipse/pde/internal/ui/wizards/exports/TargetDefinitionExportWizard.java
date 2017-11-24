@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 EclipseSource Corporation and others.
+ * Copyright (c) 2010, 2017 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class TargetDefinitionExportWizard extends Wizard implements IExportWizar
 		fTarget = target;
 		if (fTarget == null)
 			try {
-				ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+				ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 				if (service != null) {
 					fTarget = service.getWorkspaceTargetDefinition();
 				}

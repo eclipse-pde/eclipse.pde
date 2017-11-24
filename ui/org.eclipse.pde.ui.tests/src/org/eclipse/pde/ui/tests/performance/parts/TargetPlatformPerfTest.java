@@ -57,7 +57,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 		tagAsSummary("Resolve target definition", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		IPath testBundles = extractTargetPerfTestPlugins();
 
-		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 
 		ITargetDefinition originalTarget = tps.newTarget();
 		originalTarget.setTargetLocations(new ITargetLocation[]{tps.newDirectoryLocation(testBundles.toPortableString())});
@@ -90,8 +90,8 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 		tagAsSummary("Resolve target definition", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		IPath testBundles = extractTargetPerfTestPlugins();
 
-		IBundleProjectService service = (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
-		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		IBundleProjectService service = PDECore.getDefault().acquireService(IBundleProjectService.class);
+		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 
 		// Create a workspace model
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
@@ -148,7 +148,8 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	//		tagAsSummary("Change target platform", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 	//		IPath testBundles = extractTargetPerfTestPlugins();
 	//
-	//		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+	// ITargetPlatformService tps =
+	// PDECore.getDefault().acquireService(ITargetPlatformService.class);
 	//
 	//		ITargetDefinition target = tps.newTarget();
 	//		target.setTargetLocations(new ITargetLocation[] {tps.newDirectoryLocation(testBundles.toPortableString())});

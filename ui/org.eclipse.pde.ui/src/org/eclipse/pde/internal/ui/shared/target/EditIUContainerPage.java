@@ -133,7 +133,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 	@Override
 	public ITargetLocation getBundleContainer() {
-		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		if (service == null) {
 			PDEPlugin.log(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.EditIUContainerPage_9));
 		}

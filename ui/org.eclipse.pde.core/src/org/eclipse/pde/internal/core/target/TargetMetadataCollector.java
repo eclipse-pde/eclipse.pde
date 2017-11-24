@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class TargetMetadataCollector {
 	public static URI[] getMetadataRepositories(ITargetDefinition definition) throws CoreException {
 		// Lookup the active target definition
 		if (definition == null) {
-			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (service == null) {
 				return null;
 			}

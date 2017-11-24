@@ -1,5 +1,6 @@
 /*******************************************************************************
-* Copyright (c) 2010, 2015 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2010, 2017 EclipseSource and others. 
+* All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -76,7 +77,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler {
 	 * @param repositories list of repositories the container can use as a context or <code>null</code> to use all available repos
 	 */
 	private static void installIntoActiveTarget(IInstallableUnit[] units, URI[] repositories) throws CoreException {
-		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition definition = service.getWorkspaceTargetDefinition();
 		// Force the target into slicer mode as all requirements may not be available
 		int flags = IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE;

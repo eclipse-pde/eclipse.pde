@@ -129,7 +129,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_2, fId)));
 			}
 			// search bundles in plug-ins directory
-			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (service == null) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.FeatureBundleContainer_4));
 			}

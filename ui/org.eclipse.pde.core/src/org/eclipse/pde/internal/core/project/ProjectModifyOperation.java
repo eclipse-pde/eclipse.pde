@@ -53,7 +53,7 @@ public class ProjectModifyOperation {
 	public void execute(IProgressMonitor monitor, IBundleProjectDescription description) throws CoreException {
 		// retrieve current description of the project to detect differences
 		IProject project = description.getProject();
-		IBundleProjectService service = (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
+		IBundleProjectService service = PDECore.getDefault().acquireService(IBundleProjectService.class);
 		IBundleProjectDescription before = service.getDescription(project);
 		boolean considerRoot = !project.exists();
 		String taskName = null;

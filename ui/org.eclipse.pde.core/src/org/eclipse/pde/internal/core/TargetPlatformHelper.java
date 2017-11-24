@@ -221,7 +221,7 @@ public class TargetPlatformHelper {
 	 */
 
 	public static ITargetDefinition getUnresolvedRepositoryBasedWorkspaceTarget() throws CoreException {
-		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		if (service == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
 		}
@@ -474,7 +474,7 @@ public class TargetPlatformHelper {
 	 * @throws CoreException if there is a problem accessing the workspace target definition
 	 */
 	public static ITargetDefinition getWorkspaceTargetResolved(IProgressMonitor monitor) throws CoreException {
-		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		if (service == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
 		}

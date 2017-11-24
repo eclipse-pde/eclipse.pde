@@ -178,7 +178,8 @@ public class P2Utils {
 	 * @throws IOException
 	 */
 	private static BundleInfo[] getBundlesFromFile(URL fileURL, File home) throws IOException {
-		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) PDECore.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
+		SimpleConfiguratorManipulator manipulator = PDECore.getDefault()
+				.acquireService(SimpleConfiguratorManipulator.class);
 		if (manipulator == null) {
 			return null;
 		}
@@ -290,7 +291,8 @@ public class P2Utils {
 		BundleInfo[] infos = bundleInfo.toArray(new BundleInfo[bundleInfo.size()]);
 		BundleInfo[] sources = sourceInfo.toArray(new BundleInfo[sourceInfo.size()]);
 
-		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
+		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault()
+				.acquireService(SimpleConfiguratorManipulator.class.getName());
 		try {
 			manipulator.saveConfiguration(infos, bundlesTxt, null);
 			manipulator.saveConfiguration(sources, srcBundlesTxt, null);
@@ -319,7 +321,7 @@ public class P2Utils {
 	 * @return whether the profile exists
 	 */
 	public static boolean profileExists(String profileID, File p2DataArea) throws CoreException {
-		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) PDECore.getDefault().acquireService(IProvisioningAgentProvider.SERVICE_NAME);
+		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		if (provider == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
@@ -350,7 +352,7 @@ public class P2Utils {
 	 */
 	public static void createProfile(String profileID, File p2DataArea, Collection<?> bundles) throws CoreException {
 		// Acquire the required p2 services, creating an agent in the target p2 metadata area
-		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) PDECore.getDefault().acquireService(IProvisioningAgentProvider.SERVICE_NAME);
+		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		if (provider == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}

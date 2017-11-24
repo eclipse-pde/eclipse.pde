@@ -171,7 +171,7 @@ public class P2TargetUtils {
 	public static List<String> cleanOrphanedTargetDefinitionProfiles() throws CoreException {
 		List<String> list = new ArrayList<>();
 		IProfileRegistry registry = getProfileRegistry();
-		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		if (registry != null && tps != null) {
 			IProfile[] profiles = registry.getProfiles();
 			for (IProfile profile : profiles) {
@@ -315,7 +315,7 @@ public class P2TargetUtils {
 				context.ungetService(serviceReferences[0]);
 		}
 
-		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) PDECore.getDefault().acquireService(IProvisioningAgentProvider.SERVICE_NAME);
+		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		try {
 			if (provider == null) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
@@ -343,7 +343,7 @@ public class P2TargetUtils {
 	 * @throws CoreException
 	 */
 	public static IProvisioningAgent getGlobalAgent() throws CoreException {
-		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		IProvisioningAgent agent = PDECore.getDefault().acquireService(IProvisioningAgent.class);
 		if (agent == null)
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_11));
 		return agent;
@@ -444,7 +444,7 @@ public class P2TargetUtils {
 	 * @return preferences service or null if none
 	 */
 	public static IPreferencesService getPreferences() {
-		return (IPreferencesService) PDECore.getDefault().acquireService(IPreferencesService.class.getName());
+		return PDECore.getDefault().acquireService(IPreferencesService.class);
 	}
 
 	/**

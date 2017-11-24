@@ -257,7 +257,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @return target platform service or <code>null</code>
 	 */
 	private ITargetPlatformService getTargetPlatformService() {
-		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		return service;
 	}
 

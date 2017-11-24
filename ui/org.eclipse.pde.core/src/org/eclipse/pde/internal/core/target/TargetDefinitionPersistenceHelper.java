@@ -271,7 +271,7 @@ public class TargetDefinitionPersistenceHelper {
 
 	static ITargetPlatformService getTargetPlatformService() throws CoreException {
 		if (fTargetService == null) {
-			fTargetService = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			fTargetService = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (fTargetService == null) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetDefinitionPersistenceHelper_1));
 			}

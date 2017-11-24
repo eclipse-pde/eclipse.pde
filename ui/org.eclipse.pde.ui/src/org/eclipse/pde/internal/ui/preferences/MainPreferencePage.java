@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -229,7 +229,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			store.setValue(IPreferenceConstants.ADD_TO_JAVA_SEARCH, synchJavaSearch);
 			try {
 				if (synchJavaSearch) {
-					ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+					ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 					if (service != null) {
 						AddToJavaSearchJob.synchWithTarget(service.getWorkspaceTargetDefinition());
 					}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -350,16 +350,17 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	}
 
 	/**
-	 * Returns a service with the specified name or <code>null</code> if none.
+	 * Returns a service for the specified class or <code>null</code> if none.
 	 *
-	 * @param serviceName name of service
-	 * @return service object or <code>null</code> if none
+	 * @param serviceClass
+	 *            class of service
+	 * @return service service or <code>null</code> if none
 	 */
-	public Object acquireService(String serviceName) {
-		ServiceReference<?> reference = fBundleContext.getServiceReference(serviceName);
+	public <T> T acquireService(Class<T> serviceClass) {
+		ServiceReference<T> reference = fBundleContext.getServiceReference(serviceClass);
 		if (reference == null)
 			return null;
-		Object service = fBundleContext.getService(reference);
+		T service = fBundleContext.getService(reference);
 		if (service != null) {
 			fBundleContext.ungetService(reference);
 		}

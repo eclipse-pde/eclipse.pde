@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2012, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,15 +27,15 @@ public class TestBundleCreator extends TestCase {
 	private static final String TEST_BUNDLE_NAME = "TestBundle_";
 
 	// Commented out to prevent it being run as a JUnit test
-//	public void testCreatePlugins() throws CoreException {
-//		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-//		IPath path = root.getLocation();
-//		createPlugins(path.toFile(), 1000);
-//	}
+	//	public void testCreatePlugins() throws CoreException {
+	//		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	//		IPath path = root.getLocation();
+	//		createPlugins(path.toFile(), 1000);
+	//	}
 
 	public static void createPlugins(File root, int count) throws CoreException {
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		IBundleProjectService service = (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
+		IBundleProjectService service = PDECore.getDefault().acquireService(IBundleProjectService.class);
 		List projects = new ArrayList();
 
 		// Disable building until the end
@@ -66,8 +66,8 @@ public class TestBundleCreator extends TestCase {
 			}
 			description.setRequiredBundles((IRequiredBundleDescription[]) requiredBundles.toArray(new IRequiredBundleDescription[requiredBundles.size()]));
 
-//			service.newPackageImport(name, range, optional);
-//			description.setPackageImports(imports)
+			//			service.newPackageImport(name, range, optional);
+			//			description.setPackageImports(imports)
 
 			description.apply(null);
 

@@ -52,7 +52,7 @@ public class ProjectCreationTests extends TestCase {
 	}
 
 	public static IBundleProjectService getBundleProjectService() {
-		return (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
+		return PDECore.getDefault().acquireService(IBundleProjectService.class);
 	}
 
 	/**

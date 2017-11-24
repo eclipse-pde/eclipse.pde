@@ -454,7 +454,7 @@ public class TargetEditor extends FormEditor {
 		}
 
 		private ITargetPlatformService getTargetPlatformService() throws CoreException {
-			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (service == null) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "ITargetPlatformService not available")); //$NON-NLS-1$
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
-
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
 
 /**
@@ -54,6 +53,6 @@ public abstract class TargetDefinitionPage extends WizardPage {
 	 * @return target service or <code>null</code>
 	 */
 	protected static ITargetPlatformService getTargetService() {
-		return (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		return PDECore.getDefault().acquireService(ITargetPlatformService.class);
 	}
 }

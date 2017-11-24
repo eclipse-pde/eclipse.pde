@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Manumitting Technologies Inc and others
+ * Copyright (c) 2015, 2017 Manumitting Technologies Inc and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class TargetAsBaselineTests extends AbstractApiTest {
 		File file = path.toFile();
 		assertTrue(file.exists());
 
-		ITargetPlatformService service = (ITargetPlatformService) ApiPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetPlatformService service = ApiPlugin.getDefault().acquireService(ITargetPlatformService.class);
 		definition = service.newTarget();
 		definition.setName("Test Definition"); //$NON-NLS-1$
 		ITargetLocation location = service.newDirectoryLocation(file.getAbsolutePath());

@@ -812,13 +812,13 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	}
 
 	/**
-	 * Returns a service with the specified name or <code>null</code> if none.
+	 * Returns a service with the specified class or <code>null</code> if none.
 	 *
-	 * @param serviceName name of service
-	 * @return service object or <code>null</code> if none
+	 * @param serviceClass name of service
+	 * @return service service or <code>null</code> if none
 	 */
-	public Object acquireService(String serviceName) {
-		ServiceReference<?> reference = fBundleContext.getServiceReference(serviceName);
+	public <T> T acquireService(Class<T> serviceClass) {
+		ServiceReference<T> reference = fBundleContext.getServiceReference(serviceClass);
 		if (reference == null) {
 			return null;
 		}

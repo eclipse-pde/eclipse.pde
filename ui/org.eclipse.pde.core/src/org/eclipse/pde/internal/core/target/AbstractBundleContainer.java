@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,7 +206,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 
 	@Override
 	public String[] getVMArguments() {
-		
+
 		for (AbstractBundleContainer key : hash.keySet()) {
 			if (key.equals(this)) {
 				return hash.get(key);
@@ -215,12 +215,12 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$
 		if (fVMArgs == null) {
 			try {
-				FrameworkAdmin fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
+				FrameworkAdmin fwAdmin = PDECore.getDefault().acquireService(FrameworkAdmin.class);
 				if (fwAdmin == null) {
 					Bundle fwAdminBundle = Platform.getBundle(FWK_ADMIN_EQ);
 					if (fwAdminBundle != null) {
 						fwAdminBundle.start();
-						fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
+						fwAdmin = PDECore.getDefault().acquireService(FrameworkAdmin.class);
 					}
 				}
 				if (fwAdmin != null) {

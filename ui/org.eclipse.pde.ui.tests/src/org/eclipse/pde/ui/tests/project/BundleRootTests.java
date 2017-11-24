@@ -29,7 +29,7 @@ import org.osgi.framework.Version;
 public class BundleRootTests extends TestCase {
 
 	protected IBundleProjectService getBundleProjectService() {
-		return (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
+		return PDECore.getDefault().acquireService(IBundleProjectService.class);
 	}
 
 	/**

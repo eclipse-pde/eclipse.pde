@@ -764,7 +764,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	 * @return target platform service or <code>null</code>
 	 */
 	private ITargetPlatformService getTargetService() {
-		return (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		return PDECore.getDefault().acquireService(ITargetPlatformService.class);
 	}
 
 	@Override

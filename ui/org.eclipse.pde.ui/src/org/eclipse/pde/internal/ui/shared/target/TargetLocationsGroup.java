@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -450,7 +450,8 @@ public class TargetLocationsGroup {
 
 							// If the target is the current platform, run a load job for the user
 							try {
-								ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+								ITargetPlatformService service = PDECore.getDefault()
+										.acquireService(ITargetPlatformService.class);
 								if (service != null) {
 									ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
 									if (fTarget.getHandle().equals(currentTarget))

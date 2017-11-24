@@ -36,7 +36,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	public void testModels() throws Exception {
 		tagAsGlobalSummary("Initialize PDE Models", Dimension.ELAPSED_PROCESS);
 		IPath testBundles = TargetPlatformPerfTest.extractTargetPerfTestPlugins();
-		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition originalTarget = tps.newTarget();
 		originalTarget.setTargetLocations(new ITargetLocation[]{tps.newDirectoryLocation(testBundles.toPortableString())});
 		tps.saveTargetDefinition(originalTarget);
