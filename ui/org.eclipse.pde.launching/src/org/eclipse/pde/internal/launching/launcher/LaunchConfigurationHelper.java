@@ -93,7 +93,8 @@ public class LaunchConfigurationHelper {
 
 	/**
 	 * Writes out the config.ini and other configuration files based on the bundles being launched.  This includes
-	 * writing out bundles.info if the simple configurator is being used.
+	 * writing out bundles.info if the simple configurator is being used or platform.xml if update configurator
+	 * is being used.
 	 *
 	 * @param configuration launch configuration
 	 * @param productID id of the product being launched, may be <code>null</code>
@@ -176,6 +177,11 @@ public class LaunchConfigurationHelper {
 				}
 				properties.setProperty("eclipse.p2.profile", profileID); //$NON-NLS-1$
 			}
+		} else {
+			// Special processing for update manager (update configurator)
+			String brandingId = LaunchConfigurationHelper.getContributingPlugin(productID);
+			// Create a platform.xml
+			TargetPlatform.createPlatformConfiguration(configurationDirectory, bundles.values().toArray(new IPluginModelBase[bundles.size()]), brandingId != null ? (IPluginModelBase) bundles.get(brandingId) : null);
 		}
 
 		setBundleLocations(bundles, properties, autostart);

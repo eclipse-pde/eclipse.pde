@@ -14,14 +14,22 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Properties;
+import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.configurator.IPlatformConfiguration.ISiteEntry;
 
 @SuppressWarnings("deprecation")
+// PDE still supports searching the platform.xml for plug-in/feature listings
 public class PluginPathFinder {
+
+	private static final String URL_PROPERTY = "org.eclipse.update.resolution_url"; //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
 	 *
@@ -135,6 +143,9 @@ public class PluginPathFinder {
 			return urls;
 		}
 
+		if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation())) && !isDevLaunchMode())
+			return ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
+
 		return getPlatformXMLPaths(platformHome, false);
 	}
 
@@ -143,20 +154,94 @@ public class PluginPathFinder {
 	}
 
 	/**
-	 * Returns a list of file URLs for plug-ins or features found in the default
-	 * directory ("plugins"/"features").
+	 * Returns a list of file URLs for plug-ins or features found in a platform.xml file or in the default
+	 * directory ("plugins"/"features") if no platform.xml is available.
 	 *
-	 * @param platformHome
-	 *            base location for the installation, used to search for
-	 *            plugins/features
-	 * @param findFeatures
-	 *            if <code>true</code> will return paths to features, otherwise will
-	 *            return paths to plug-ins.
-	 * @return a list of URL paths to plug-ins or features. Possibly empty if the
-	 *         default directory had no valid files
+	 * @param platformHome base location for the installation, used to search for platform.xml
+	 * @param findFeatures if <code>true</code> will return paths to features, otherwise will return paths to plug-ins.
+	 * @return a list of URL paths to plug-ins or features.  Possibly empty if the platform.xml had no entries or the default directory had no valid files
 	 */
 	public static URL[] getPlatformXMLPaths(String platformHome, boolean findFeatures) {
+		File file = getPlatformFile(platformHome);
+		if (file != null) {
+			try {
+				String value = new Path(platformHome).toFile().toURL().toExternalForm();
+				System.setProperty(URL_PROPERTY, value);
+				try {
+					IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
+					return getConfiguredSitesPaths(platformHome, config, findFeatures);
+				} finally {
+					System.setProperty(URL_PROPERTY, EMPTY_STRING);
+				}
+			} catch (MalformedURLException e) {
+			} catch (IOException e) {
+			}
+		}
 		return scanLocations(getSites(platformHome, findFeatures));
+	}
+
+	/**
+	 * Returns a File object representing the platform.xml or null if the file cannot be found.
+	 * @return File representing platform.xml or <code>null</code>
+	 */
+	private static File getPlatformFile(String platformHome) {
+		String location = System.getProperty("org.eclipse.pde.platform_location"); //$NON-NLS-1$
+		File file = null;
+		if (location != null) {
+			try {
+				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+				location = manager.performStringSubstitution(location);
+				Path path = new Path(location);
+				if (path.isAbsolute())
+					file = path.toFile();
+				else
+					file = new File(platformHome, location);
+				if (file.exists())
+					return file;
+			} catch (CoreException e) {
+				PDECore.log(e);
+			}
+		}
+		file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
+		return file.exists() ? file : null;
+	}
+
+	private static URL[] getConfiguredSitesPaths(String platformHome, IPlatformConfiguration configuration, boolean features) {
+		URL[] installPlugins = scanLocations(new File[] {new File(platformHome, features ? "features" : "plugins")}); //$NON-NLS-1$ //$NON-NLS-2$
+		URL[] extensionPlugins = getExtensionPluginURLs(configuration, features);
+
+		URL[] all = new URL[installPlugins.length + extensionPlugins.length];
+		System.arraycopy(installPlugins, 0, all, 0, installPlugins.length);
+		System.arraycopy(extensionPlugins, 0, all, installPlugins.length, extensionPlugins.length);
+		return all;
+	}
+
+	/**
+	 *
+	 * @param config
+	 * @param features true for features false for plugins
+	 * @return URLs for features or plugins on the site
+	 */
+	private static URL[] getExtensionPluginURLs(IPlatformConfiguration config, boolean features) {
+		ArrayList<URL> extensionPlugins = new ArrayList<>();
+		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
+		for (ISiteEntry site : sites) {
+			URL url = site.getURL();
+			if ("file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
+				String[] entries;
+				if (features)
+					entries = site.getFeatures();
+				else
+					entries = site.getPlugins();
+				for (String entry : entries) {
+					try {
+						extensionPlugins.add(new File(url.getFile(), entry).toURL());
+					} catch (MalformedURLException e) {
+					}
+				}
+			}
+		}
+		return extensionPlugins.toArray(new URL[extensionPlugins.size()]);
 	}
 
 	/**
