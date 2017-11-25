@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -264,7 +265,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			BufferedInputStream stream = null;
 			try {
 				stream = new BufferedInputStream(new FileInputStream(file));
-				String xml = new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
+				String xml = new String(Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8));
 				Element root = Util.parseDocument(xml);
 				if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
 					abort(ScannerMessages.ComponentXMLScanner_0, null);

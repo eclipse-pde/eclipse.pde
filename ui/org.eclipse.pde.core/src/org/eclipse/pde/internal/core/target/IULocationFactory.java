@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.target;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
@@ -37,7 +38,8 @@ public class IULocationFactory implements ITargetLocationFactory {
 		Element location;
 		try {
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document document = docBuilder.parse(new ByteArrayInputStream(serializedXML.getBytes("UTF-8"))); //$NON-NLS-1$
+			Document document = docBuilder
+					.parse(new ByteArrayInputStream(serializedXML.getBytes(StandardCharsets.UTF_8)));
 			location = document.getDocumentElement();
 		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));

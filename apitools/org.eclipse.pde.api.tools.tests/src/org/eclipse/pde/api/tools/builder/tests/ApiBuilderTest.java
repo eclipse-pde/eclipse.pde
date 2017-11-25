@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -357,7 +358,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		File desc = new File(componentDir, ".api_description"); //$NON-NLS-1$
 		desc.createNewFile();
 		try (FileOutputStream stream = new FileOutputStream(desc)) {
-			stream.write(xml.getBytes("UTF-8")); //$NON-NLS-1$
+			stream.write(xml.getBytes(StandardCharsets.UTF_8));
 		}
 	}
 

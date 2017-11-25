@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2017 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.category;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -135,19 +136,15 @@ public class CategoryInputContext extends XMLInputContext {
 		ISiteModel model = (ISiteModel) getModel();
 		boolean cleanModel = true;
 		String text = doc.get();
+		InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
 		try {
-			InputStream stream = new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
-			try {
-				model.reload(stream, false);
-			} catch (CoreException e) {
-				cleanModel = false;
-			}
-			try {
-				stream.close();
-			} catch (IOException e) {
-			}
-		} catch (UnsupportedEncodingException e) {
-			PDEPlugin.logException(e);
+			model.reload(stream, false);
+		} catch (CoreException e) {
+			cleanModel = false;
+		}
+		try {
+			stream.close();
+		} catch (IOException e) {
 		}
 		return cleanModel;
 	}

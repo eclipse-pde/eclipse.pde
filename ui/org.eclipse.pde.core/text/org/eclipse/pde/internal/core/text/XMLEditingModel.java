@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.resources.IFile;
@@ -86,7 +87,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		try {
 			IFile file = (IFile) getUnderlyingResource();
 			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
@@ -127,13 +128,11 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 
 		try {
 			// Turn the document's text into a stream
-			stream = new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
+			stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
 			// Reload the model using the stream
 			reload(stream, false);
 			// Remove the dirty (*) indicator from the editor window
 			setDirty(false);
-		} catch (UnsupportedEncodingException e) {
-			PDECore.logException(e);
 		} catch (CoreException e) {
 			// Ignore
 		}

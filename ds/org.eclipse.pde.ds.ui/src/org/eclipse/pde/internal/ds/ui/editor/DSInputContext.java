@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2017 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.pde.internal.ds.ui.editor;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.eclipse.core.filesystem.EFS;
@@ -65,7 +66,7 @@ public class DSInputContext extends XMLInputContext {
 			if (input instanceof IFileEditorInput) {
 				IFile file = ((IFileEditorInput) input).getFile();
 				model.setUnderlyingResource(file);
-				model.setCharset(file.getCharset());
+				model.setCharset(Charset.forName(file.getCharset()));
 			} else if (input instanceof IURIEditorInput) {
 				IFileStore store = EFS.getStore(((IURIEditorInput) input)
 						.getURI());

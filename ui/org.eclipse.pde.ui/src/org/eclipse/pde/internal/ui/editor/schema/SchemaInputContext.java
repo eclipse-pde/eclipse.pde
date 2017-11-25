@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
@@ -159,18 +160,13 @@ public class SchemaInputContext extends XMLInputContext {
 			return getModel() == null;
 		}
 		String text = doc.get();
+		InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+		schema.reload(stream);
+		if (schema instanceof IEditable)
+			((IEditable) schema).setDirty(false);
 		try {
-			InputStream stream = new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
-			schema.reload(stream);
-			if (schema instanceof IEditable)
-				((IEditable) schema).setDirty(false);
-			try {
-				stream.close();
-			} catch (IOException e) {
-			}
-		} catch (UnsupportedEncodingException e) {
-			PDEPlugin.logException(e);
-			return false;
+			stream.close();
+		} catch (IOException e) {
 		}
 		return true;
 	}

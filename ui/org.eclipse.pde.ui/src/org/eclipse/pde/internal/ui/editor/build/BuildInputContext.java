@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.editor.build;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.eclipse.core.resources.IFile;
@@ -38,8 +40,8 @@ public class BuildInputContext extends InputContext {
 	}
 
 	@Override
-	protected String getDefaultCharset() {
-		return "ISO-8859-1"; //$NON-NLS-1$
+	protected Charset getDefaultCharset() {
+		return StandardCharsets.ISO_8859_1;
 	}
 
 	@Override
@@ -52,7 +54,7 @@ public class BuildInputContext extends InputContext {
 			if (input instanceof IFileEditorInput) {
 				IFile file = ((IFileEditorInput) input).getFile();
 				model.setUnderlyingResource(file);
-				model.setCharset(file.getCharset());
+				model.setCharset(Charset.forName(file.getCharset()));
 			} else {
 				model.setCharset(getDefaultCharset());
 			}

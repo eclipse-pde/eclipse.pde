@@ -17,7 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -347,9 +347,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	private void writeBaselineDescription(IApiBaseline baseline, OutputStream stream) throws CoreException {
 		String xml = getProfileXML(baseline);
 		try {
-			stream.write(xml.getBytes(IApiCoreConstants.UTF_8));
-		} catch (UnsupportedEncodingException e) {
-			abort("Error writing pofile descrition", e); //$NON-NLS-1$
+			stream.write(xml.getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {
 			abort("Error writing pofile descrition", e); //$NON-NLS-1$
 		}

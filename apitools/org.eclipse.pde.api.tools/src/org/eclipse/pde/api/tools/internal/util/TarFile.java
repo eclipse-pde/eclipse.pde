@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
 
@@ -205,14 +206,14 @@ public class TarFile {
 			while (pos < 100 && header[pos] != 0) {
 				pos++;
 			}
-			String name = new String(header, 0, pos, "UTF8"); //$NON-NLS-1$
+			String name = new String(header, 0, pos, StandardCharsets.UTF_8);
 			// Prepend the prefix here.
 			pos = 345;
 			if (header[pos] != 0) {
 				while (pos < 500 && header[pos] != 0) {
 					pos++;
 				}
-				String prefix = new String(header, 345, pos - 345, "UTF8"); //$NON-NLS-1$
+				String prefix = new String(header, 345, pos - 345, StandardCharsets.UTF_8);
 				name = prefix + "/" + name; //$NON-NLS-1$
 			}
 
@@ -309,7 +310,7 @@ public class TarFile {
 				while (pos < longNameData.length && longNameData[pos] != 0) {
 					pos++;
 				}
-				longLinkName = new String(longNameData, 0, pos, "UTF8"); //$NON-NLS-1$
+				longLinkName = new String(longNameData, 0, pos, StandardCharsets.UTF_8);
 				return getNextEntryInternal();
 			}
 			return entry;

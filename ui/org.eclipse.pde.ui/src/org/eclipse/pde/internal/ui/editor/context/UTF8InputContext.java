@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2015 IBM Corporation and others.
+ *  Copyright (c) 2003, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,14 +8,10 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 27, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 package org.eclipse.pde.internal.ui.editor.context;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.ui.IEditorInput;
 
@@ -29,8 +25,8 @@ public abstract class UTF8InputContext extends InputContext {
 	}
 
 	@Override
-	protected String getDefaultCharset() {
-		return "UTF-8"; //$NON-NLS-1$
+	protected Charset getDefaultCharset() {
+		return StandardCharsets.UTF_8;
 	}
 
 }

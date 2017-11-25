@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
@@ -21,7 +23,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String ATTRIBUTE_VALUE_ENCODING = "UTF-8"; //$NON-NLS-1$
+	public static final Charset ATTRIBUTE_VALUE_ENCODING = StandardCharsets.UTF_8;
 
 	public static final String ATTRIBUTE_VALUE_TRUE = "true"; //$NON-NLS-1$
 
@@ -568,7 +570,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		return false;
 	}
 
-	protected String getFileEncoding() {
+	protected Charset getFileEncoding() {
 		return ATTRIBUTE_VALUE_ENCODING;
 	}
 

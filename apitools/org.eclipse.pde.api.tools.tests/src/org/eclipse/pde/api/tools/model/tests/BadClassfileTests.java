@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.pde.api.tools.model.tests;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -45,6 +43,8 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 
+import junit.framework.TestCase;
+
 /**
  * Tests that our framework properly handles bad class files. I.e. class files
  * that are not well-formed
@@ -55,10 +55,6 @@ public class BadClassfileTests extends TestCase {
 	DirectoryApiTypeContainer container = null;
 	String CLASSFILE = "nobytecodes"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		if (source == null) {
@@ -262,7 +258,8 @@ public class BadClassfileTests extends TestCase {
 	 */
 	public void testTagScanner() throws Exception {
 		writePreamble("testTagScanner()"); //$NON-NLS-1$
-		CompilationUnit unit = new CompilationUnit(TestSuiteHelper.getPluginDirectoryPath().append("test-classes").append("bad").append("nobytecodes.java").toOSString(), IApiCoreConstants.UTF_8); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		CompilationUnit unit = new CompilationUnit(TestSuiteHelper.getPluginDirectoryPath().append("test-classes") //$NON-NLS-1$
+				.append("bad").append("nobytecodes.java").toOSString(), IApiCoreConstants.UTF_8); //$NON-NLS-1$ //$NON-NLS-2$
 		TagScanner scanner = TagScanner.newScanner();
 		try {
 			scanner.scan(unit, new ApiDescription("test"), this.container, null, null); //$NON-NLS-1$

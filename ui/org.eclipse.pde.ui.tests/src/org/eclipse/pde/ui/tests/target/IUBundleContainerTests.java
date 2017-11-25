@@ -13,6 +13,7 @@ package org.eclipse.pde.ui.tests.target;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -514,7 +515,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		String xml = new String(out.toByteArray());
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
-		Document doc = parser.parse(new InputSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
+		Document doc = parser.parse(new InputSource(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))));
 
 		ITargetDefinition definition = getTargetService().newTarget();
 		Element root = doc.getDocumentElement();

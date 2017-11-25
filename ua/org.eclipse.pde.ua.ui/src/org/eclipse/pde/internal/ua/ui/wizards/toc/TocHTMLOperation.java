@@ -11,15 +11,12 @@
 package org.eclipse.pde.internal.ua.ui.wizards.toc;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class TocHTMLOperation extends WorkspaceModifyOperation {
@@ -97,13 +94,7 @@ public class TocHTMLOperation extends WorkspaceModifyOperation {
 		buf.append("</html>"); //$NON-NLS-1$
 		buf.append(delimiter);
 
-		try {
-			return buf.toString().getBytes("UTF8"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			PDEUserAssistanceUIPlugin.logException(e);
-			IStatus status = new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e);
-			throw new CoreException(status);
-		}
+		return buf.toString().getBytes(StandardCharsets.UTF_8);
 	}
 
 	public TocHTMLOperation(IFile file) {

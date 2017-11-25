@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.pde.internal.core.ICoreConstants;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -122,7 +121,7 @@ public class ShowDescriptionAction extends Action {
 
 			SchemaTransformer transformer = new SchemaTransformer();
 			OutputStream os = new FileOutputStream(fPreviewFile);
-			PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, ICoreConstants.UTF_8), true);
+			PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), true);
 			transformer.transform(fSchema, printWriter);
 			os.flush();
 			os.close();

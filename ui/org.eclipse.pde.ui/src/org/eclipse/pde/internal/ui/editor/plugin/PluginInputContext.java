@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2016 IBM Corporation and others.
+ *  Copyright (c) 2003, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.*;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -52,7 +53,7 @@ public class PluginInputContext extends XMLInputContext {
 		if (input instanceof IFileEditorInput) {
 			IFile file = ((IFileEditorInput) input).getFile();
 			model.setUnderlyingResource(file);
-			model.setCharset(file.getCharset());
+			model.setCharset(Charset.forName(file.getCharset()));
 		} else if (input instanceof IURIEditorInput) {
 			IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
 			model.setInstallLocation(store.getParent().toString());

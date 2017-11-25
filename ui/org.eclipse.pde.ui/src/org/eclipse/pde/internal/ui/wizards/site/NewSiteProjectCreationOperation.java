@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.site;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -422,7 +423,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 
 	private void writeFile(IFile file, StringWriter swriter) {
 		try {
-			ByteArrayInputStream stream = new ByteArrayInputStream(swriter.toString().getBytes("UTF8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(swriter.toString().getBytes(StandardCharsets.UTF_8));
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {

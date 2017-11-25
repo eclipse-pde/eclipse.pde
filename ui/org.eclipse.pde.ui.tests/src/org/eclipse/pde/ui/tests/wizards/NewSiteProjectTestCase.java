@@ -12,6 +12,7 @@ package org.eclipse.pde.ui.tests.wizards;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -37,7 +38,7 @@ public class NewSiteProjectTestCase extends TestCase {
 					+ "<site>" //$NON-NLS-1$
 					+ "<category-def name=\"new_category_1\" label=\"New Category 1\"/>" //$NON-NLS-1$
 					+ "</site>"; //$NON-NLS-1$
-			ByteArrayInputStream source = new ByteArrayInputStream(content.getBytes("ASCII")); //$NON-NLS-1$
+			ByteArrayInputStream source = new ByteArrayInputStream(content.getBytes(StandardCharsets.US_ASCII));
 			if (file.exists())
 				file.setContents(source, true, false, new NullProgressMonitor());
 			else

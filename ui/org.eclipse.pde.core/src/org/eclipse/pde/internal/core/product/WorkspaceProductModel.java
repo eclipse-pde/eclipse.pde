@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -84,7 +85,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		ByteArrayInputStream stream = null;
 		try {
 			String contents = fixLineDelimiter(getContents(), fFile);
-			stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+			stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
 			if (fFile.exists()) {
 				fFile.setContents(stream, false, false, null);
 			} else {

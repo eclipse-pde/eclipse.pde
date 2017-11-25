@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
@@ -236,7 +237,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	}
 
 	@Override
-	protected String getFileEncoding() {
+	protected Charset getFileEncoding() {
 		if ((fModel != null) && (fModel instanceof IEditingModel)) {
 			return ((IEditingModel) fModel).getCharset();
 		}

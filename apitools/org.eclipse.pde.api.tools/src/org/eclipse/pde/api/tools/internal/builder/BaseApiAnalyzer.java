@@ -17,6 +17,7 @@ import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,7 +66,6 @@ import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
-import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
@@ -2199,7 +2199,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			LineNumberReader reader = null;
 			try {
 				inputStream = file.getContents(true);
-				contents = Util.getInputStreamAsCharArray(inputStream, -1, IApiCoreConstants.UTF_8);
+				contents = Util.getInputStreamAsCharArray(inputStream, -1, StandardCharsets.UTF_8);
 				reader = new LineNumberReader(new BufferedReader(new StringReader(new String(contents))));
 				int lineCounter = 0;
 				String line = null;

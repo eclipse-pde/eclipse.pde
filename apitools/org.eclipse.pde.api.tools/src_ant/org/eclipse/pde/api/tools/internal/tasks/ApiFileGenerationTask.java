@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -603,7 +604,7 @@ public class ApiFileGenerationTask extends Task {
 		BufferedInputStream stream = null;
 		try {
 			stream = new BufferedInputStream(new FileInputStream(dotProjectFile));
-			String contents = new String(Util.getInputStreamAsCharArray(stream, -1, "UTF-8")); //$NON-NLS-1$
+			String contents = new String(Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8));
 			return containsAPIToolsNature(contents);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.resources.IResource;
@@ -29,7 +31,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	private transient NLResourceHelper fNLResourceHelper;
 	private IDocument fDocument;
 	private boolean fDirty;
-	private String fCharset;
+	private Charset fCharset;
 	private IResource fUnderlyingResource;
 	private String fInstallLocation;
 	private boolean fStale;
@@ -105,10 +107,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 
 	@Override
 	public final void load() throws CoreException {
-		try {
-			load(getInputStream(getDocument()), false);
-		} catch (UnsupportedEncodingException e) {
-		}
+		load(getInputStream(getDocument()), false);
 	}
 
 	@Override
@@ -138,7 +137,6 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 				} else {
 					reload(getInputStream(document), false);
 				}
-			} catch (UnsupportedEncodingException e) {
 			} catch (CoreException e) {
 			}
 			if (isDirty())
@@ -148,17 +146,17 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 
 	public abstract void adjustOffsets(IDocument document) throws CoreException;
 
-	protected InputStream getInputStream(IDocument document) throws UnsupportedEncodingException {
+	protected InputStream getInputStream(IDocument document) {
 		return new BufferedInputStream(new ByteArrayInputStream(document.get().getBytes(getCharset())));
 	}
 
 	@Override
-	public String getCharset() {
-		return fCharset != null ? fCharset : "UTF-8"; //$NON-NLS-1$
+	public Charset getCharset() {
+		return fCharset != null ? fCharset : StandardCharsets.UTF_8;
 	}
 
 	@Override
-	public void setCharset(String charset) {
+	public void setCharset(Charset charset) {
 		fCharset = charset;
 	}
 

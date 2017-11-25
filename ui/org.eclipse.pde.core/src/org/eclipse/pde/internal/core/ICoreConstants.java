@@ -479,9 +479,4 @@ public interface ICoreConstants {
 	 */
 	public static final String NO_TARGET = "NO_TARGET"; //$NON-NLS-1$
 
-	/**
-	 * Constant representing the value for UTF-8 encoding.
-	 * Value is: <code>UTF-8</code>
-	 */
-	public static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 }

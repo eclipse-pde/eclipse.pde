@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.core.feature;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -152,15 +153,13 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 		ByteArrayInputStream stream = null;
 		try {
 			String contents = fixLineDelimiter(getContents(), file);
-			stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+			stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
 				file.create(stream, false, null);
 			}
 		} catch (CoreException e) {
-			PDECore.logException(e);
-		} catch (IOException e) {
 			PDECore.logException(e);
 		} finally {
 			try {

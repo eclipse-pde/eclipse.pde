@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -82,7 +83,7 @@ public class SystemApiDescriptionProcessor {
 					}
 				}
 				if (stream != null) {
-					return new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
+					return new String(Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8));
 				}
 			} catch (IOException e) {
 				ApiPlugin.log(e);

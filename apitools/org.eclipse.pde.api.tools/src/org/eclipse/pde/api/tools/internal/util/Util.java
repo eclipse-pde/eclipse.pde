@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -35,6 +34,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -498,7 +498,7 @@ public final class Util {
 		FileOutputStream outputStream = null;
 		try {
 			outputStream = new FileOutputStream(eeFile);
-			outputStream.write(string.getBytes(IApiCoreConstants.UTF_8));
+			outputStream.write(string.getBytes(StandardCharsets.UTF_8));
 		} finally {
 			if (outputStream != null) {
 				outputStream.close();
@@ -1380,7 +1380,7 @@ public final class Util {
 	/**
 	 * Rewrite a parameter type signature with type erasure and using the
 	 * parameterized type bounds lookup table. For example:
-	 * 
+	 *
 	 * <pre>
 	 *     expand("QList&lt;QE;&gt;;", {"E" &rarr; "Ljava.lang.Object;"}) = "QList;"
 	 *     expand("QE;", {"E" &rarr; "Ljava.lang.Object;"}) = "Ljava.lang.Object;"
@@ -1472,6 +1472,22 @@ public final class Util {
 			System.err.println("Unsupported charset : " + encoding); //$NON-NLS-1$
 			return null;
 		}
+		return getInputStreamAsCharArray(stream, length, charset);
+	}
+
+	/**
+	 * Returns the given input stream's contents as a character array. If a
+	 * length is specified (i.e. if length != -1), this represents the number of
+	 * bytes in the stream. Note the specified stream is not closed in this
+	 * method
+	 *
+	 * @param stream the stream to get convert to the char array
+	 * @param length the length of the input stream, or -1 if unknown
+	 * @param charset the encoding to use when reading the stream
+	 * @return the given input stream's contents as a character array.
+	 * @throws IOException if a problem occurred reading the stream.
+	 */
+	public static char[] getInputStreamAsCharArray(InputStream stream, int length, Charset charset) throws IOException {
 		CharsetDecoder charsetDecoder = charset.newDecoder();
 
 		charsetDecoder.onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(CodingErrorAction.REPLACE);
@@ -1785,7 +1801,7 @@ public final class Util {
 		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
-			stream = new ByteArrayInputStream(document.getBytes(IApiCoreConstants.UTF_8));
+			stream = new ByteArrayInputStream(document.getBytes(StandardCharsets.UTF_8));
 			root = parser.parse(stream).getDocumentElement();
 		} catch (ParserConfigurationException e) {
 			abort("Unable to parse XML document.", e); //$NON-NLS-1$
@@ -1843,7 +1859,7 @@ public final class Util {
 		FileInputStream stream = null;
 		try {
 			stream = new FileInputStream(file);
-			char[] array = getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8);
+			char[] array = getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8);
 			contents = new String(array);
 		} catch (IOException ioe) {
 			ApiPlugin.log(ioe);
@@ -1867,12 +1883,7 @@ public final class Util {
 	 * @return the {@link InputStream} for the given string
 	 */
 	public static InputStream getInputStreamFromString(String string) {
-		try {
-			return new ByteArrayInputStream(string.getBytes(IApiCoreConstants.UTF_8));
-		} catch (UnsupportedEncodingException uee) {
-			ApiPlugin.log(uee);
-		}
-		return null;
+		return new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8));
 	}
 
 	/**
@@ -2544,7 +2555,7 @@ public final class Util {
 			char[] contents = null;
 			try {
 				stream = new BufferedInputStream(new FileInputStream(file));
-				contents = getInputStreamAsCharArray(stream, -1, ISO_8859_1);
+				contents = getInputStreamAsCharArray(stream, -1, StandardCharsets.ISO_8859_1);
 			} catch (FileNotFoundException e) {
 				abort(NLS.bind(UtilMessages.Util_couldNotFindFilterFile, location), e);
 			} catch (IOException e) {

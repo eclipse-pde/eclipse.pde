@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -481,7 +482,7 @@ public class ApiDescriptionProcessor {
 					}
 				}
 				if (stream != null) {
-					return new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
+					return new String(Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8));
 				}
 			} catch (IOException e) {
 				ApiPlugin.log(e);

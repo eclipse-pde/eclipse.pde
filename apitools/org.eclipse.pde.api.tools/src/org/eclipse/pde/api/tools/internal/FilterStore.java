@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 IBM Corporation and others.
+ * Copyright (c) 2012, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -302,7 +303,7 @@ public class FilterStore implements IApiFilterStore {
 		if (contents == null) {
 			throw new IOException(CoreMessages.FilterStore_0);
 		}
-		String xml = new String(Util.getInputStreamAsCharArray(contents, -1, IApiCoreConstants.UTF_8));
+		String xml = new String(Util.getInputStreamAsCharArray(contents, -1, StandardCharsets.UTF_8));
 		Element root = null;
 		try {
 			root = Util.parseDocument(xml);

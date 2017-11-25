@@ -31,13 +31,13 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.jdt.core.compiler.CharOperation;
-import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 
 public class Util {
 	private static final int DEFAULT_READING_SIZE = 8192;
@@ -332,7 +332,7 @@ public class Util {
 							final int charsetIndex = getIndexOf(contents, CHARSET, offset);
 							if (charsetIndex != -1) {
 								int start = charsetIndex + CHARSET.length;
-								encoding = new String(contents, start, index2 - start, IApiCoreConstants.UTF_8);
+								encoding = new String(contents, start, index2 - start, StandardCharsets.UTF_8);
 							}
 						}
 					}

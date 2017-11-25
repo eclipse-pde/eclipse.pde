@@ -18,7 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.BaseApiAnalyzer;
 import org.eclipse.pde.api.tools.internal.builder.BuildContext;
@@ -268,8 +267,6 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 
 			MissingRefMetadata metadata = new MissingRefMetadata(super.currentBaselineLocation, super.reportLocation, this.apiUseScans);
 			metadata.serializeToFile(file);
-		} catch (UnsupportedEncodingException e) {
-			ApiPlugin.log(e);
 		} catch (FileNotFoundException e) {
 			ApiPlugin.log(e);
 		} catch (IOException e) {
@@ -364,7 +361,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 				comp.setAttribute(IApiXmlConstants.SKIPPED_DETAILS, component.getErrorDetails());
 				root.appendChild(comp);
 			}
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), IApiCoreConstants.UTF_8));
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
 			writer.write(Util.serializeDocument(doc));
 			writer.flush();
 		} catch (FileNotFoundException fnfe) {

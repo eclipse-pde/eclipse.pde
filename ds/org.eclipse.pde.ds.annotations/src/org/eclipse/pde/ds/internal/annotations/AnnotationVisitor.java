@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -387,7 +388,7 @@ public class AnnotationVisitor extends ASTVisitor {
 
 		final DSModel dsModel = new DSModel(document, true);
 		dsModel.setUnderlyingResource(file);
-		dsModel.setCharset("UTF-8"); //$NON-NLS-1$
+		dsModel.setCharset(StandardCharsets.UTF_8); // $NON-NLS-1$
 		dsModel.load();
 
 		// note: we can't use XMLTextChangeListener because it generates overlapping edits!

@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -326,7 +327,7 @@ public class TargetDefinitionPersistenceHelper {
 			String xml = targetLocation.serialize();
 			if (xml == null)
 				return null;
-			Document document = docBuilder.parse(new ByteArrayInputStream(xml.getBytes("UTF-8"))); //$NON-NLS-1$
+			Document document = docBuilder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
 			Element root = document.getDocumentElement();
 			if (!root.getNodeName().equalsIgnoreCase(LOCATION)) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetDefinitionPersistenceHelper_WrongRootElementInXML, targetLocation.getType(), xml)));

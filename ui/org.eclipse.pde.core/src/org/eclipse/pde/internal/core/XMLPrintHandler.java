@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import org.w3c.dom.*;
 
 public class XMLPrintHandler {
@@ -171,7 +172,7 @@ public class XMLPrintHandler {
 		OutputStream out = null;
 		try {
 			out = new FileOutputStream(file);
-			writer = new OutputStreamWriter(out, "UTF-8"); //$NON-NLS-1$
+			writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
 			XMLPrintHandler.printNode(writer, doc, "UTF-8", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			try {

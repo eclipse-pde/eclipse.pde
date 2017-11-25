@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,7 +52,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
-import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -990,7 +990,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(W3C_FOOTER);
 
 			// write file
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(meta), IApiCoreConstants.UTF_8));
+			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(meta), StandardCharsets.UTF_8));
 			writer.println(buffer.toString());
 			writer.flush();
 		} catch (IOException ioe) {
@@ -1055,7 +1055,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(W3C_FOOTER);
 
 			// write file
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(missing), IApiCoreConstants.UTF_8));
+			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(missing), StandardCharsets.UTF_8));
 			writer.println(buffer.toString());
 			writer.flush();
 		} catch (IOException ioe) {
@@ -1206,7 +1206,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), IApiCoreConstants.UTF_8));
+			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8));
 			writer.println(buffer.toString());
 			writer.flush();
 		} catch (IOException ioe) {
@@ -1305,7 +1305,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(W3C_FOOTER);
 
 			// write the file
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(typefile), IApiCoreConstants.UTF_8));
+			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(typefile), StandardCharsets.UTF_8));
 			writer.print(buffer.toString());
 			writer.flush();
 		} catch (IOException ioe) {
@@ -1540,7 +1540,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(CLOSE_BODY).append(CLOSE_HTML);
 
 			// write the file
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(reportIndex), IApiCoreConstants.UTF_8));
+			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(reportIndex), StandardCharsets.UTF_8));
 			writer.print(buffer.toString());
 			writer.flush();
 		} catch (IOException e) {

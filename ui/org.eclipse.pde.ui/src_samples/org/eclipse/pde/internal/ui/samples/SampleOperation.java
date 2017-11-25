@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.samples;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
@@ -160,10 +161,9 @@ public class SampleOperation implements IRunnableWithProgress {
 				out.flush();
 				String contents = out.toString();
 				out.close();
-				ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+				ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
 				file.create(stream, true, monitor);
 				stream.close();
-			} catch (UnsupportedEncodingException e) {
 			} catch (IOException e) {
 			}
 		}

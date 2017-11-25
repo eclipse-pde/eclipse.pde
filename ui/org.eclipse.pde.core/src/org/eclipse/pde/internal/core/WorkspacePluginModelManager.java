@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -198,7 +199,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	private void recreateSchemaPreviewFileContents(File schemaPreviewFile, ISchema schema) throws IOException {
 		SchemaTransformer transformer = new SchemaTransformer();
 		OutputStream os = new FileOutputStream(schemaPreviewFile);
-		PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, ICoreConstants.UTF_8), true);
+		PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), true);
 		transformer.transform(schema, printWriter);
 		os.flush();
 		os.close();

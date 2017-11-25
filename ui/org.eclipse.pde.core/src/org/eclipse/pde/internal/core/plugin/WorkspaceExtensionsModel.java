@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -121,7 +122,7 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 		ByteArrayInputStream stream = null;
 		try {
 			String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
-			stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+			stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
@@ -129,8 +130,6 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 				adjustBuildPropertiesFile(fUnderlyingResource);
 			}
 		} catch (CoreException e) {
-			PDECore.logException(e);
-		} catch (IOException e) {
 			PDECore.logException(e);
 		} finally {
 			try {

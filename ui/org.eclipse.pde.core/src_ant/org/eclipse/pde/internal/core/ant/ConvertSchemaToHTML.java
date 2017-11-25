@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.ant;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.apache.tools.ant.*;
 import org.eclipse.core.runtime.IPath;
@@ -103,7 +104,7 @@ public class ConvertSchemaToHTML extends Task {
 				if (id.indexOf('.') == -1)
 					id = pluginID + "." + id; //$NON-NLS-1$
 				File file = new File(directory, id.replace('.', '_') + ".html"); //$NON-NLS-1$
-				out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), ICoreConstants.UTF_8), true);
+				out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8), true);
 				fTransformer.transform(schema, out, cssURL, SchemaTransformer.BUILD);
 			} catch (Exception e) {
 				throw new BuildException(e);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.resources.IFile;
@@ -117,12 +117,11 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				IRegion lineInfo = document.getLineInformation(l);
 				String line = document.get(lineInfo.getOffset(), lineInfo.getLength());
 				// test lines' length
-				Charset charset = Charset.forName("UTF-8"); //$NON-NLS-1$
 				String lineDelimiter = document.getLineDelimiter(l);
 				if (lineDelimiter == null) {
 					lineDelimiter = ""; //$NON-NLS-1$
 				}
-				ByteBuffer byteBuf = charset.encode(line);
+				ByteBuffer byteBuf = StandardCharsets.UTF_8.encode(line);
 				if (byteBuf.limit() + lineDelimiter.length() > 512) {
 					report(PDECoreMessages.BundleErrorReporter_lineTooLong, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;

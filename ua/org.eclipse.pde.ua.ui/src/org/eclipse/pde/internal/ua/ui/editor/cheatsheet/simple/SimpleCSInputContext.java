@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.eclipse.core.filesystem.EFS;
@@ -60,7 +61,7 @@ public class SimpleCSInputContext extends XMLInputContext {
 			// File from workspace
 			IFile file = ((IFileEditorInput) input).getFile();
 			model.setUnderlyingResource(file);
-			model.setCharset(file.getCharset());
+			model.setCharset(Charset.forName(file.getCharset()));
 		} else if (input instanceof IURIEditorInput) {
 			// File from file system
 			IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());

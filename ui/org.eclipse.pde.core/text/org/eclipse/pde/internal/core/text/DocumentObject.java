@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2013 IBM Corporation and others.
+ *  Copyright (c) 2007, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.jface.text.IDocument;
@@ -596,7 +597,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	}
 
 	@Override
-	protected String getFileEncoding() {
+	protected Charset getFileEncoding() {
 		if ((fModel != null) && (fModel instanceof IEditingModel)) {
 			return ((IEditingModel) fModel).getCharset();
 		}

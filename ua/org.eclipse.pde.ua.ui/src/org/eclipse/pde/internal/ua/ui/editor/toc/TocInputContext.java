@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ua.ui.editor.toc;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.eclipse.core.filesystem.EFS;
@@ -51,7 +52,7 @@ public class TocInputContext extends XMLInputContext {
 			if (input instanceof IFileEditorInput) {
 				IFile file = ((IFileEditorInput) input).getFile();
 				model.setUnderlyingResource(file);
-				model.setCharset(file.getCharset());
+				model.setCharset(Charset.forName(file.getCharset()));
 			} else if (input instanceof IURIEditorInput) {
 				IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
 				model.setInstallLocation(store.getParent().toString());

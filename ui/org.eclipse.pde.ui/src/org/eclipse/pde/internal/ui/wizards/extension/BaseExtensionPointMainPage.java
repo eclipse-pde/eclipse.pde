@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -212,13 +213,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
-		try {
-			String content = swriter.toString();
-			content = AbstractModel.fixLineDelimiter(content, schemaFile);
-			return new ByteArrayInputStream(content.getBytes("UTF8")); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			return new ByteArrayInputStream(new byte[0]);
-		}
+		String content = swriter.toString();
+		content = AbstractModel.fixLineDelimiter(content, schemaFile);
+		return new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
 	}
 
 	private IFile generateSchemaFile(String pluginId, String id, String name, boolean shared, String schema, IProgressMonitor monitor) throws CoreException {
