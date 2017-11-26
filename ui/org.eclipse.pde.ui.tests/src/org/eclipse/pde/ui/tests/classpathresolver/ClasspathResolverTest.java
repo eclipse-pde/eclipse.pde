@@ -76,11 +76,8 @@ public class ClasspathResolverTest extends TestCase {
 		ClasspathHelper.getDevEntriesProperties(devProperties.getCanonicalPath(), false);
 
 		Properties properties = new Properties();
-		InputStream is = new FileInputStream(devProperties);
-		try {
+		try (InputStream is = new FileInputStream(devProperties)) {
 			properties.load(is);
-		} finally {
-			is.close();
 		}
 
 		assertEquals(project.getFolder("cpe").getLocation().toPortableString(), properties.get(bundleName));
@@ -137,17 +134,15 @@ public class ClasspathResolverTest extends TestCase {
 		src.getParentFile().mkdirs();
 		dst.getParentFile().mkdirs();
 
-		BufferedInputStream in = new BufferedInputStream(new FileInputStream(src));
-		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dst));
+		try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(src));
+				BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dst))) {
 
-		byte[] buf = new byte[10240];
-		int len;
-		while ((len = in.read(buf)) != -1) {
-			out.write(buf, 0, len);
+			byte[] buf = new byte[10240];
+			int len;
+			while ((len = in.read(buf)) != -1) {
+				out.write(buf, 0, len);
+			}
 		}
-
-		out.close();
-		in.close();
 	}
 
 }

@@ -97,12 +97,12 @@ public class ManifestEditorSpellCheckTestCase extends XMLModelTestCase {
 		file.createNewFile();
 		projectFile.create(new FileInputStream(file), true, null);
 
-		FileOutputStream fos = new FileOutputStream(file);
-		OutputStreamWriter osw = new OutputStreamWriter(fos);
-		BufferedWriter bw = new BufferedWriter(osw);
-		bw.write(fileContents);
-		bw.flush();
-		bw.close();
+		try (FileOutputStream fos = new FileOutputStream(file);
+				OutputStreamWriter osw = new OutputStreamWriter(fos);
+				BufferedWriter bw = new BufferedWriter(osw)) {
+			bw.write(fileContents);
+			bw.flush();
+		}
 
 		projectFile.refreshLocal(IResource.DEPTH_INFINITE, null);
 		fEditor = IDE.openEditor(PDEPlugin.getActivePage(), projectFile, EDITOR_ID, true);

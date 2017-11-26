@@ -24,7 +24,7 @@ public class TagValueCompletionTests extends AbstractTargetEditorTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		expectedCompletionOffsets = new ArrayList<Integer>();
+		expectedCompletionOffsets = new ArrayList<>();
 		// os, ws, arch, nl
 		expectedCompletionOffsets.add(27);
 		expectedCompletionOffsets.add(37);

@@ -660,9 +660,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		URL url = PDETestsPlugin.getBundleContext().getBundle().getEntry("/tests/targets/target-files/" + name + ".target");
 		File file = new File(FileLocator.toFileURL(url).getFile());
 		ITargetDefinition target = getNewTarget();
-		FileInputStream stream = new FileInputStream(file);
-		TargetDefinitionPersistenceHelper.initFromXML(target, stream);
-		stream.close();
+		try (FileInputStream stream = new FileInputStream(file)) {
+			TargetDefinitionPersistenceHelper.initFromXML(target, stream);
+		}
 		return target;
 	}
 

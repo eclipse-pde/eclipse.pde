@@ -242,26 +242,25 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	private static IPath doUnZip(IPath location, String archivePath) throws IOException {
 		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
 		Path zipPath = new Path(new File(FileLocator.toFileURL(zipURL).getFile()).getAbsolutePath());
-		ZipFile zipFile = new ZipFile(zipPath.toFile());
-		Enumeration entries = zipFile.entries();
-		IPath parent = location.removeLastSegments(1);
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry) entries.nextElement();
-			if (!entry.isDirectory()) {
-				IPath entryPath = parent.append(entry.getName());
-				File dir = entryPath.removeLastSegments(1).toFile();
-				dir.mkdirs();
-				File file = entryPath.toFile();
-				file.createNewFile();
-				InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
-				byte[] bytes = LocalTargetDefinitionTests.getInputStreamAsByteArray(inputStream, -1);
-				inputStream.close();
-				BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-				outputStream.write(bytes);
-				outputStream.close();
+		try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
+			Enumeration entries = zipFile.entries();
+			IPath parent = location.removeLastSegments(1);
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry) entries.nextElement();
+				if (!entry.isDirectory()) {
+					IPath entryPath = parent.append(entry.getName());
+					File dir = entryPath.removeLastSegments(1).toFile();
+					dir.mkdirs();
+					File file = entryPath.toFile();
+					file.createNewFile();
+					try (InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
+							BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+						byte[] bytes = LocalTargetDefinitionTests.getInputStreamAsByteArray(inputStream, -1);
+						outputStream.write(bytes);
+					}
+				}
 			}
+			return parent;
 		}
-		zipFile.close();
-		return parent;
 	}
 }

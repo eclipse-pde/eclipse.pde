@@ -37,20 +37,14 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 
 	@Override
 	protected void executeTest() throws Exception {
-		URLConnection connection = null;
-		InputStream input = null;
-		try {
-			connection = SchemaUtil.getURLConnection(fXSDFile.toURL());
-			input = connection.getInputStream();
+		URLConnection connection = SchemaUtil.getURLConnection(fXSDFile.toURL());
+		try (InputStream input = connection.getInputStream()) {
 			SAXParserWrapper parser = new SAXParserWrapper();
 			XMLDefaultHandler handler = new XMLDefaultHandler(true);
 			parser.parse(input, handler);
 			EditableSchema schema = new EditableSchema("pluginID", "pointID", "name", true);
 			schema.traverseDocumentTree(handler.getDocumentElement());
 		} finally {
-			if (input != null) {
-				input.close();
-			}
 			if (connection instanceof JarURLConnection){
 				((JarURLConnection)connection).getJarFile().close();
 			}

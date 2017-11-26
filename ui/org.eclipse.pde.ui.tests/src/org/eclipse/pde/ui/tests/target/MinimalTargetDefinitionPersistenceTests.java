@@ -193,9 +193,9 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 				.getEntry("/tests/targets/target-files/" + name + ".trgt");
 		File file = new File(FileLocator.toFileURL(url).getFile());
 		ITargetDefinition target = getTargetService().newTarget();
-		FileInputStream stream = new FileInputStream(file);
-		TargetDefinitionPersistenceHelper.initFromXML(target, stream);
-		stream.close();
+		try (FileInputStream stream = new FileInputStream(file)) {
+			TargetDefinitionPersistenceHelper.initFromXML(target, stream);
+		}
 		return target;
 	}
 

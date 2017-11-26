@@ -96,17 +96,16 @@ public class ClasspathContributorTest extends TestCase {
 		src.getParentFile().mkdirs();
 		dst.getParentFile().mkdirs();
 
-		BufferedInputStream in = new BufferedInputStream(new FileInputStream(src));
-		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dst));
+		try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(src));
+				BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dst))) {
 
-		byte[] buf = new byte[10240];
-		int len;
-		while ((len = in.read(buf)) != -1) {
-			out.write(buf, 0, len);
+			byte[] buf = new byte[10240];
+			int len;
+			while ((len = in.read(buf)) != -1) {
+				out.write(buf, 0, len);
+			}
+
 		}
-
-		out.close();
-		in.close();
 	}
 
 }
