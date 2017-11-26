@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	private static final String SIMPLE_CONFIGURATOR_CONFIG_URL = "org.eclipse.equinox.simpleconfigurator.configUrl"; //$NON-NLS-1$
 	private static final String START_LEVEL_1 = "@1:start"; //$NON-NLS-1$
 	private static final String START_LEVEL_2 = "@2:start"; //$NON-NLS-1$
-	private static final String START_LEVEL_3 = "@3:start"; //$NON-NLS-1$
 	private static final String START = "@start"; //$NON-NLS-1$
 
 	private static final String INSTALL_INSTRUCTION = "installBundle(bundle:${artifact});"; //$NON-NLS-1$
@@ -184,9 +183,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		defaults[0] = new BundleInfo(BUNDLE_SIMPLE_CONFIGURATOR, null, null, 1, true);
 		defaults[1] = new BundleInfo(BUNDLE_EQUINOX_COMMON, null, null, 2, true);
 		defaults[2] = new BundleInfo(BUNDLE_OSGI, null, null, -1, true);
-		defaults[3] = new BundleInfo(BUNDLE_UPDATE_CONFIGURATOR, null, null, 4, true);
-		defaults[4] = new BundleInfo(BUNDLE_CORE_RUNTIME, null, null, 4, true);
-		defaults[5] = new BundleInfo(BUNDLE_DS, null, null, 2, true);
+		defaults[3] = new BundleInfo(BUNDLE_CORE_RUNTIME, null, null, 4, true);
+		defaults[4] = new BundleInfo(BUNDLE_DS, null, null, 2, true);
 		return defaults;
 	}
 
@@ -216,10 +214,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:" + infos[i].getStartLevel() + ");markStarted(started:" + Boolean.toString(infos[i].isMarkedAsStarted()) + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "setStartLevel(startLevel:-1);markStarted(started:false);"; //$NON-NLS-1$
 
-				if (bundle.getSymbolicName().equals(BUNDLE_UPDATE_CONFIGURATOR)) {
-					instructions[P2InfUtils.INSTRUCTION_CONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:false);"; //$NON-NLS-1$
-					instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:);"; //$NON-NLS-1$
-				}
 				if (!GENERIC_VERSION_NUMBER.equals(productVersionString))
 					P2InfUtils.printBundleCU(buffer, index++, bundle.getSymbolicName(), productVersionString, bundle.getVersion(), bundle.getPlatformFilter(), instructions);
 				else
@@ -346,10 +340,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		if (assembly.getPlugin(BUNDLE_SIMPLE_CONFIGURATOR, null) != null) {
 			result |= CONFIG_STYLE_SIMPLE;
-		} else if (assembly.getPlugin(BUNDLE_UPDATE_CONFIGURATOR, null) != null) {
-			Properties props = productFile.getConfigProperties();
-			if (Boolean.valueOf(props.getProperty("org.eclipse.update.reconcile", "true")).booleanValue()) //$NON-NLS-1$ //$NON-NLS-2$
-				result |= CONFIG_STYLE_UPDATE;
 		}
 
 		if (assembly.getPlugin(BUNDLE_DS, null) != null)
@@ -437,10 +427,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				buffer.append(BUNDLE_EQUINOX_COMMON);
 				buffer.append(START_LEVEL_2);
 				buffer.append(',');
-				//org.eclipse.update.configurator@3:start
-				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
-				buffer.append(START_LEVEL_3);
-				buffer.append(',');
 				if ((style & CONFIG_INCLUDES_DS) > 0) {
 					//org.eclipse.equinox.ds@1:start
 					buffer.append(BUNDLE_DS);
@@ -454,9 +440,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				//start level for 3.1 and 3.0
 				buffer.append(BUNDLE_CORE_RUNTIME);
 				buffer.append(START_LEVEL_2);
-				buffer.append(',');
-				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
-				buffer.append(START_LEVEL_3);
 			}
 		}
 		buffer.append('\n');

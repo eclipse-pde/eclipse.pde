@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -517,7 +517,7 @@ public class ProductTests extends PDETestCase {
 		extra.append("  <plugin id=\"org.eclipse.equinox.common\" autoStart=\"true\" startLevel=\"-1\" />              \n");
 		extra.append("  <property name=\"org.eclipse.update.reconcile\" value=\"false\" />                            \n");
 		extra.append("</configurations>                                                                               \n");
-		String[] bundles = new String[] {"org.eclipse.core.runtime", "org.eclipse.update.configurator", "org.eclipse.equinox.common"};
+		String[] bundles = new String[] {"org.eclipse.core.runtime", "org.eclipse.equinox.common"};
 		Utils.generateProduct(product, "foo.product", "1.0.0", null, bundles, false, extra);
 
 		Utils.generateFeature(buildFolder, "container", null, bundles);
@@ -530,7 +530,7 @@ public class ProductTests extends PDETestCase {
 		IFile config = buildFolder.getFile("features/container/productRootFiles/win32.win32.x86/configuration/config.ini");
 
 		assertLogContainsLine(config, "org.eclipse.update.reconcile=false");
-		assertLogContainsLines(config, new String[] {"osgi.bundles=org.eclipse.core.runtime,", "org.eclipse.update.configurator,", "org.eclipse.equinox.common@start"});
+		assertLogContainsLines(config, new String[] {"osgi.bundles=org.eclipse.core.runtime,", "org.eclipse.equinox.common@start"});
 
 	}
 

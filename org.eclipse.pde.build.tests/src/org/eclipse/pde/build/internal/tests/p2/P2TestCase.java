@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -28,7 +28,7 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.osgi.framework.*;
 
-public class P2TestCase extends PDETestCase {
+public abstract class P2TestCase extends PDETestCase {
 	static final private String IU_NAMESPACE = "org.eclipse.equinox.p2.iu";
 
 	static private BundleContext context = null;

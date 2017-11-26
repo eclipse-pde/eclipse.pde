@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,6 @@ public interface IPDEBuildConstants {
 	public static final String BUNDLE_EQUINOX_LAUNCHER = Constants.BUNDLE_EQUINOX_LAUNCHER;
 	public static final String BUNDLE_EQUINOX_COMMON = "org.eclipse.equinox.common"; //$NON-NLS-1$
 	public static final String BUNDLE_CORE_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
-	public static final String BUNDLE_UPDATE_CONFIGURATOR = "org.eclipse.update.configurator"; //$NON-NLS-1$
 	public static final String BUNDLE_SIMPLE_CONFIGURATOR = "org.eclipse.equinox.simpleconfigurator"; //$NON-NLS-1$
 	public static final String BUNDLE_DS = "org.eclipse.equinox.ds"; //$NON-NLS-1$
 	public static final String FEATURE_PLATFORM_LAUNCHERS = "org.eclipse.platform.launchers"; //$NON-NLS-1$
