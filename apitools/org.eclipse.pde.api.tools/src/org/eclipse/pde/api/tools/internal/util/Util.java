@@ -95,12 +95,22 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeParameter;
+import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.compiler.codegen.ConstantPool;
+import org.eclipse.jdt.internal.core.BinaryType;
+import org.eclipse.jdt.internal.core.ClassFile;
+import org.eclipse.jdt.internal.core.CompilationUnit;
+import org.eclipse.jdt.internal.core.DefaultWorkingCopyOwner;
+import org.eclipse.jdt.internal.core.JavaProject;
+import org.eclipse.jdt.internal.core.NameLookup;
+import org.eclipse.jdt.internal.core.PackageFragment;
+import org.eclipse.jdt.internal.core.SourceType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -1137,6 +1147,16 @@ public final class Util {
 		} catch (JavaModelException e) {
 			// ignore
 		}
+		IType typeInProject = getTypeInSameJavaProject(type, typeName, javaProject);
+		if (typeInProject != null) {
+			type = typeInProject;
+		}
+		if (type instanceof BinaryType) {
+			IType sourceType = Util.findSourceTypeinJavaProject(javaProject, delta.getTypeName().replace('$', '.'));
+			if (sourceType != null) {
+				type = sourceType;
+			}
+		}
 		if (type == null) {
 			return null;
 		}
@@ -1213,6 +1233,81 @@ public final class Util {
 				break;
 		}
 		return null;
+	}
+
+	public static IType updateType(String typeName, IJavaProject javaProject) throws JavaModelException {
+		String typeNameWithDot = typeName.replace('$', '.');
+		String typeNameWithSeparator = typeNameWithDot.replace(".", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		IPath path = new Path(typeNameWithSeparator);
+		IPath pathExceptLastSegment = path.removeLastSegments(1);
+		IJavaElement packFrag = javaProject.findElement(pathExceptLastSegment, DefaultWorkingCopyOwner.PRIMARY);
+		if (packFrag instanceof PackageFragment) {
+			PackageFragment pf = (PackageFragment) packFrag;
+			ArrayList<?> children = pf.getChildrenOfType(IJavaElement.COMPILATION_UNIT);
+			for (Object object : children) {
+				if (object instanceof CompilationUnit) {
+					CompilationUnit compilationUn = (CompilationUnit) object;
+					ITypeRoot typeRoot = compilationUn.getTypeRoot();
+					if (typeRoot.findPrimaryType() == null) {
+						continue;
+					}
+					if (typeRoot.findPrimaryType().getFullyQualifiedName().equals(typeName.replace('$', '.'))) {
+						return typeRoot.findPrimaryType();
+					}
+				}
+
+			}
+			ArrayList<?> children2 = pf.getChildrenOfType(IJavaElement.CLASS_FILE);
+			for (Object object : children2) {
+				if (object instanceof ClassFile) {
+					ClassFile compilationUn = (ClassFile) object;
+					ITypeRoot typeRoot = compilationUn.getTypeRoot();
+					if (typeRoot.findPrimaryType() == null) {
+						continue;
+					}
+					if (typeRoot.findPrimaryType().getFullyQualifiedName().equals(typeName.replace('$', '.'))) {
+						return typeRoot.findPrimaryType();
+					}
+				}
+			}
+		}
+		return null;
+
+	}
+
+	/**
+	 * Checks if type is not in the same project, then it tries to get the type
+	 * in the same project and return type if it could find one. It return null
+	 * if type is in the same project or if type cannot be found in the same
+	 * project.
+	 *
+	 * @param type
+	 * @param typeName
+	 * @param javaProject
+	 * @return
+	 */
+
+	public static IType getTypeInSameJavaProject(IType type, String typeName, IJavaProject javaProject) {
+		if (type == null) {
+			return null;
+		}
+		IJavaElement ancestor = type.getAncestor(IJavaElement.JAVA_PROJECT);
+		IType newType = null;
+		try {
+			if (ancestor instanceof IJavaProject) {
+				IJavaProject pro = (IJavaProject) ancestor;
+				if (!pro.equals(javaProject)) {
+					newType = updateType(typeName, javaProject);
+					if (newType != null) {
+						return newType;
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			// return null
+		}
+		return newType;
 	}
 
 	private static IMember getMethod(IType type, String key) {
@@ -2431,6 +2526,10 @@ public final class Util {
 				try {
 					IJavaProject javaProject = JavaCore.create(project);
 					IType findType = javaProject.findType(typeName);
+					IType typeInProject = Util.getTypeInSameJavaProject(findType, typeName, javaProject);
+					if (typeInProject != null) {
+						findType = typeInProject;
+					}
 					if (findType != null) {
 						ICompilationUnit compilationUnit = findType.getCompilationUnit();
 						if (compilationUnit != null) {
@@ -2869,4 +2968,41 @@ public final class Util {
 		return tab;
 	}
 
+	/**
+	 * Tries to find SourceType of name typeName in the project. It returns null
+	 * if it cannot find SourceType of name typeName
+	 *
+	 * @param javaProject
+	 * @param typeName
+	 * @return
+	 */
+
+	public static IType findSourceTypeinJavaProject(IJavaProject javaProject, String typeName) {
+		IType type = null;
+		try {
+			String pkgName = typeName.substring(0, typeName.lastIndexOf('.'));
+			if (javaProject instanceof JavaProject) {
+				JavaProject jp = (JavaProject) javaProject;
+				NameLookup newNameLookup = null;
+				try {
+					newNameLookup = jp.newNameLookup(DefaultWorkingCopyOwner.PRIMARY);
+
+				} catch (JavaModelException e) {
+					ApiPlugin.log(e);
+
+				}
+				IPackageFragment[] findPackageFragment = newNameLookup.findPackageFragments(pkgName, false);
+				for (IPackageFragment iJavaElement : findPackageFragment) {
+					type = newNameLookup.findType(typeName.substring(typeName.lastIndexOf('.') + 1, typeName.length()), iJavaElement, false, NameLookup.ACCEPT_ALL);
+					if (type instanceof SourceType) {
+						break;
+
+					}
+				}
+			}
+		} catch (Exception e) {
+			// return null
+		}
+		return type;
+	}
 }

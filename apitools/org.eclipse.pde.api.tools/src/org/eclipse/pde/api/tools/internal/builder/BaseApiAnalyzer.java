@@ -58,6 +58,7 @@ import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.internal.core.BinaryType;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.service.resolver.ResolverError;
@@ -513,6 +514,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			try {
 
 				IType type = fJavaProject.findType(primaryTypeName);
+				IType typeInProject = Util.getTypeInSameJavaProject(type, primaryTypeName, fJavaProject);
+				if (typeInProject != null) {
+					type = typeInProject;
+				}
 				IResource res = Util.getResource(fJavaProject.getProject(), type);
 				if (res == null) {
 					return null;
@@ -629,7 +634,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					if (type == null) {
 						continue;
 					}
-					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(type)));
+					IType type2 = fJavaProject.findType(Signatures.getPrimaryTypeName(type));
+					IType typeInProject = Util.getTypeInSameJavaProject(type2, Signatures.getPrimaryTypeName(type), fJavaProject);
+					if (typeInProject != null) {
+						type2 = typeInProject;
+					}
+					resource = Util.getResource(project, type2);
 					if (resource != null) {
 						filters = store.getUnusedFilters(resource, type, null);
 						if (autoremove) {
@@ -709,6 +719,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					String typeName = problem.getTypeName();
 					if (typeName != null) {
 						type = fJavaProject.findType(typeName.replace('$', '.'));
+					}
+					if (type instanceof BinaryType) {
+						IType sourceType = Util.findSourceTypeinJavaProject(fJavaProject, typeName.replace('$', '.'));
+						if (sourceType != null) {
+							type = sourceType;
+						}
 					}
 					IProject project = fJavaProject.getProject();
 					resource = Util.getResource(project, type);
@@ -1120,6 +1136,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private void processType(String typename, boolean tags, boolean annotations) {
 		try {
 			IType type = fJavaProject.findType(typename);
+			IType typeInProject = Util.getTypeInSameJavaProject(type, typename, fJavaProject);
+			if (typeInProject != null) {
+				type = typeInProject;
+			}
 			if (type != null && !type.isMember()) {
 				// member types are processed while processing the compilation
 				// unit
@@ -1742,8 +1762,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (fJavaProject != null) {
 				try {
 					type = fJavaProject.findType(delta.getTypeName().replace('$', '.'));
+					IType typeInProject = Util.getTypeInSameJavaProject(type, delta.getTypeName(), fJavaProject);
+					if (typeInProject != null) {
+						type = typeInProject;
+					}
 				} catch (JavaModelException e) {
 					ApiPlugin.log(e);
+				}
+				if (type instanceof BinaryType) {
+					IType sourceType = Util.findSourceTypeinJavaProject(fJavaProject, delta.getTypeName().replace('$', '.'));
+					if (sourceType != null) {
+						type = sourceType;
+					}
 				}
 				IProject project = fJavaProject.getProject();
 				resource = Util.getResource(project, type);

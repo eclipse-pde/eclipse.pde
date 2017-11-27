@@ -158,6 +158,10 @@ public class ApiDescriptionProcessor {
 						topLevelType = refType.getEnclosingType();
 					}
 					IType type = project.findType(refType.getQualifiedName(), new NullProgressMonitor());
+					IType typeInProject = Util.getTypeInSameJavaProject(type, refType.getQualifiedName(), project);
+					if (typeInProject != null) {
+						type = typeInProject;
+					}
 					if (type != null) {
 						processTagUpdates(type, refType, apiDescription, members, fCollector);
 					}
@@ -703,6 +707,10 @@ public class ApiDescriptionProcessor {
 					if (project != null) {
 						try {
 							type = project.findType(rtype.getQualifiedName());
+							IType typeInProject = Util.getTypeInSameJavaProject(type, rtype.getQualifiedName(), project);
+							if (typeInProject != null) {
+								type = typeInProject;
+							}
 							if (type != null) {
 								if (Flags.isInterface(type.getFlags())) {
 									res &= ~RestrictionModifiers.NO_INSTANTIATE;
