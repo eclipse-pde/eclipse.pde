@@ -320,14 +320,14 @@ public class PluginModelManager implements IModelProviderListener {
 
 		if (map.size() > 0) {
 			// update class path for all affected workspace plug-ins in one operation
-			Iterator<?> iterator = map.entrySet().iterator();
+			Iterator<Entry<IJavaProject, RequiredPluginsClasspathContainer>> iterator = map.entrySet().iterator();
 			IJavaProject[] projects = new IJavaProject[map.size()];
 			IClasspathContainer[] containers = new IClasspathContainer[projects.length];
 			int index = 0;
 			while (iterator.hasNext()) {
-				Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
-				projects[index] = (IJavaProject) entry.getKey();
-				containers[index] = (IClasspathContainer) entry.getValue();
+				Entry<IJavaProject, RequiredPluginsClasspathContainer> entry = iterator.next();
+				projects[index] = entry.getKey();
+				containers[index] = entry.getValue();
 				index++;
 			}
 			// TODO Consider always running in a job - better reporting and cancellation options
