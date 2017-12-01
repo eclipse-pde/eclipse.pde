@@ -128,3 +128,4 @@ Import-Package: com.ibm.icu.text,
  org.eclipse.ui.internal.genericeditor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.pde.ui

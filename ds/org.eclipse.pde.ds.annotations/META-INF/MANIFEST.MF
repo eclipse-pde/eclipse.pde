@@ -20,3 +20,4 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.105.0,4.0.0)",
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.pde.ds.internal.annotations;x-internal:=true
+Automatic-Module-Name: org.eclipse.pde.ds.annotations

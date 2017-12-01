@@ -22,3 +22,4 @@ Export-Package: org.eclipse.pde.internal.ua.core;x-internal:=true,
  org.eclipse.pde.internal.ua.core.icheatsheet.comp;x-friends:="org.eclipse.pde.ua.ui",
  org.eclipse.pde.internal.ua.core.toc;x-friends:="org.eclipse.pde.ua.ui",
  org.eclipse.pde.internal.ua.core.toc.text;x-friends:="org.eclipse.pde.ua.ui"
+Automatic-Module-Name: org.eclipse.pde.ua.core

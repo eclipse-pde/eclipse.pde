@@ -28,3 +28,4 @@ Export-Package: org.eclipse.pde.internal.ua.tests;x-internal:="true",
  org.eclipse.pde.internal.ua.tests.toc;x-internal:="true"
 Bundle-Localization: plugin
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.pde.ua.tests

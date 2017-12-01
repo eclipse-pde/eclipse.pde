@@ -14,3 +14,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: org.eclipse.pde.internal.junit.runtime.PDEJUnitRuntimePlugin
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ui.testing;resolution:=optional
+Automatic-Module-Name: org.eclipse.pde.junit.runtime

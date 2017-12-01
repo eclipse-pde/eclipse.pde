@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.pde.api.tools.generator;singleton:=true
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.1.100.qualifier
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.objectweb.asm;bundle-version="[6.0.0,7.0.0)",
@@ -13,3 +13,4 @@ Main-Class: org.eclipse.pde.api.tools.generator.EEGenerator
 Export-Package: org.eclipse.pde.api.tools.generator;x-internal:=true,
  org.eclipse.pde.api.tools.generator.util;x-internal:=true
 Bundle-Localization: plugin
+Automatic-Module-Name: org.eclipse.pde.api.tools.generator

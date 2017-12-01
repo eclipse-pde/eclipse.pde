@@ -26,3 +26,4 @@ Export-Package: org.eclipse.pde.internal.genericeditor.target.extension.autocomp
  org.eclipse.pde.internal.genericeditor.target.extension.reconciler.folding;x-internal:=true,
  org.eclipse.pde.internal.genericeditor.target.extension.reconciler.presentation;x-internal:=true,
  org.eclipse.pde.internal.genericeditor.target.extension.validator;x-internal:=true
+Automatic-Module-Name: org.eclipse.pde.genericeditor.extension

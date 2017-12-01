@@ -29,3 +29,4 @@ Export-Package: org.eclipse.pde.internal.ds.ui;x-internal:=true,
  org.eclipse.pde.internal.ds.ui.wizards;x-internal:=true
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
+Automatic-Module-Name: org.eclipse.pde.ds.ui

@@ -40,3 +40,4 @@ Require-Bundle: org.junit,
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.pde.ui.tests

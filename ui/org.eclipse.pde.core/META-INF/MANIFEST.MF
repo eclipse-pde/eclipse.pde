@@ -104,3 +104,4 @@ Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.ibm.icu.util
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.pde.core

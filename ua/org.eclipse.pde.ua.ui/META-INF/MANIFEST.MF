@@ -39,3 +39,4 @@ Export-Package: org.eclipse.pde.internal.ua.ui;x-internal:=true,
  org.eclipse.pde.internal.ua.ui.wizards.toc;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
+Automatic-Module-Name: org.eclipse.pde.ua.ui
