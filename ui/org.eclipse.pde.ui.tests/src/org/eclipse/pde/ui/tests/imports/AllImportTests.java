@@ -20,7 +20,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 	// Temporarily disabled until git migration is complete and we have access to a
 	// stable cvs repo (bug 355873)
-	// ImportFromRepoTestCase.class,
+	// ImportFromRepoTestCase.class
+	// ( removed since it depends on CVS, if it is to be restored in future, we need
+	// to add extraIU for this test case see bug 527999 )
 	// BundleImporterTests.class
 	ImportFeatureProjectsTestCase.class })
 public class AllImportTests {
