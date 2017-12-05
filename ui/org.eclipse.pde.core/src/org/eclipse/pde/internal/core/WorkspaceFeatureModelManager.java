@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
@@ -79,4 +80,12 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 		return (IFeatureModel) getModel(project);
 	}
 
+	public void removeModel(IFeatureModel iFeatureModel) {
+		for (Entry<IProject, IModel> entry : fModels.entrySet()) {
+			if (entry.getValue() == iFeatureModel) {
+				this.removeModel(entry.getKey());
+				break;
+			}
+		}
+	}
 }

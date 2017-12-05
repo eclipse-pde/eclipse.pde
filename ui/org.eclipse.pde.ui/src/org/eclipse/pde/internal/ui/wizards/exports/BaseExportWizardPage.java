@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,9 +22,12 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTreePart;
@@ -181,6 +184,16 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 			fExportPart.getTreeViewer().setChecked(firstTI.getData(), !firstTI.getChecked());
 			fExportPart.updateCounterLabel();
 		});
+		Object input = getInput();
+		if (input instanceof FeatureModelManager) {
+			FeatureModelManager fmm = (FeatureModelManager) input;
+			IFeatureModel[] models = fmm.getWorkspaceModels();
+			for (IFeatureModel iFeatureModel : models) {
+				if (iFeatureModel.getFeature().getId() == null) {
+					fmm.removeFromWorkspaceFeature(iFeatureModel);
+				}
+			}
+		}
 		fExportPart.getTreeViewer().setInput(getInput());
 	}
 
