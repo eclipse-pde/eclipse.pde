@@ -188,7 +188,7 @@ public class PDEJavaHelperUI {
 	}
 
 	private static String formatJavaDoc(String text) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		HTMLPrinter.insertPageProlog(buffer, 0, TextUtil.getJavaDocStyleSheerURL());
 		buffer.append(text);
 		HTMLPrinter.addPageEpilog(buffer);

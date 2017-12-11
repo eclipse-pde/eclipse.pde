@@ -425,7 +425,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		if (fAddInfo == null) {
 			if (fSchemaObject == null)
 				return null;
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			HTMLPrinter.insertPageProlog(sb, 0, TextUtil.getJavaDocStyleSheerURL());
 			String desc = null;
 			if (fSchemaObject == null)

@@ -613,7 +613,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 
 	private void setPointDescriptionText(String text) {
 		if (fPointDescBrowser != null) {
-			StringBuffer desc = new StringBuffer();
+			StringBuilder desc = new StringBuilder();
 			HTMLPrinter.insertPageProlog(desc, 0, TextUtil.getJavaDocStyleSheerURL());
 			desc.append(text);
 			HTMLPrinter.addPageEpilog(desc);
