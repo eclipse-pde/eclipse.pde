@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,7 +19,7 @@ import org.eclipse.pde.internal.build.site.BuildTimeSite;
 
 public class SourceFeatureWriter extends FeatureWriter {
 
-	public SourceFeatureWriter(OutputStream out, Feature feature, BuildTimeSite site) throws IOException {
+	public SourceFeatureWriter(OutputStream out, Feature feature, BuildTimeSite site) {
 		super(out, feature, site);
 	}
 

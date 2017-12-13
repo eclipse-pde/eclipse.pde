@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,7 +25,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	private final BuildTimeSite site;
 	private final Map<String, String> parameters = new LinkedHashMap<>(10);
 
-	public FeatureWriter(OutputStream out, Feature feature, BuildTimeSite site) throws IOException {
+	public FeatureWriter(OutputStream out, Feature feature, BuildTimeSite site) {
 		super(out);
 		this.feature = feature;
 		this.site = site;

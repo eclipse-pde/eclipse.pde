@@ -359,13 +359,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		//Create feature.xml
 		File file = new File(directory, Constants.FEATURE_FILENAME_DESCRIPTOR);
 		OutputStream output = new BufferedOutputStream(new FileOutputStream(file));
-		XMLWriter writer = null;
-		try {
-			writer = new XMLWriter(output);
-		} catch (UnsupportedEncodingException e) {
-			//should not happen
-			return;
-		}
+		XMLWriter writer = new XMLWriter(output);
 		try {
 			Map<String, String> parameters = new LinkedHashMap<>();
 			Dictionary<String, String> environment = new Hashtable<>(3);
