@@ -99,7 +99,7 @@ public class BundleHelper {
 				context.ungetService(serviceReferences[0]);
 		}
 
-		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) acquireService(IProvisioningAgentProvider.SERVICE_NAME);
+		IProvisioningAgentProvider provider = acquireService(IProvisioningAgentProvider.class);
 		try {
 			return provider.createAgent(location);
 		} catch (ProvisionException e) {
@@ -107,8 +107,8 @@ public class BundleHelper {
 		}
 	}
 
-	public Object acquireService(String serviceName) {
-		ServiceReference<?> reference = context.getServiceReference(serviceName);
+	public <T> T acquireService(Class<T> serviceClass) {
+		ServiceReference<T> reference = context.getServiceReference(serviceClass);
 		if (reference == null)
 			return null;
 		return context.getService(reference);

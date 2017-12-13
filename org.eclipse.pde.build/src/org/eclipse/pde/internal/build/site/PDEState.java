@@ -82,7 +82,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private PluginConverter acquirePluginConverter() throws Exception {
-		return (PluginConverter) BundleHelper.getDefault().acquireService(PluginConverter.class.getName());
+		return BundleHelper.getDefault().acquireService(PluginConverter.class);
 	}
 
 	//Add a bundle to the state, updating the version number 

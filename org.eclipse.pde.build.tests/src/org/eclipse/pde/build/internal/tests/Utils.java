@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -326,8 +326,8 @@ public class Utils {
 		if (deltaLocation != null)
 			return deltaLocation;
 
-		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault()
-				.acquireService(SimpleConfiguratorManipulator.class.getName());
+		SimpleConfiguratorManipulator manipulator = BundleHelper.getDefault()
+				.acquireService(SimpleConfiguratorManipulator.class);
 		if (manipulator != null) {
 			BundleInfo[] bundles = manipulator
 					.loadConfiguration(BundleHelper.getDefault().getBundle().getBundleContext(), null);

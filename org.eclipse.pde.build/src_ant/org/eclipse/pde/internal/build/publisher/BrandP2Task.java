@@ -83,7 +83,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 		if (launcherProvider == null || launcherProvider.startsWith("${")) //$NON-NLS-1$
 			launcherProvider = IPDEBuildConstants.FEATURE_EQUINOX_EXECUTABLE;
 
-		IProvisioningAgent agent = (IProvisioningAgent) BundleHelper.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		IProvisioningAgent agent = BundleHelper.getDefault().acquireService(IProvisioningAgent.class);
 		if (agent == null)
 			throw new BuildException(TaskMessages.error_agentService);
 		IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);

@@ -38,7 +38,7 @@ public class P2Utils {
 	 * 	to locate a bundles.info
 	 */
 	public static URL[] readBundlesTxt(String platformHome) {
-		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
+		SimpleConfiguratorManipulator manipulator = BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class);
 
 		File root = new File(platformHome);
 		File bundlesTxt = new File(root, "configuration/" + SimpleConfiguratorManipulator.BUNDLES_INFO_PATH); //$NON-NLS-1$
@@ -168,7 +168,7 @@ public class P2Utils {
 		BundleInfo[] infos = bundleInfos.toArray(new BundleInfo[bundleInfos.size()]);
 		BundleInfo[] sources = sourceInfos.toArray(new BundleInfo[sourceInfos.size()]);
 
-		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
+		SimpleConfiguratorManipulator manipulator = BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class);
 		try {
 			manipulator.saveConfiguration(infos, bundlesTxt, base.toURI());
 			manipulator.saveConfiguration(sources, srcBundlesTxt, base.toURI());
