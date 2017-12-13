@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
- *     Lucas Bullen (Red Hat Inc.) 520004
+ *     Lucas Bullen (Red Hat Inc.) 520004, 528706
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
@@ -86,11 +86,9 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 	}
 
 	private List<String> getSibblingAttributeNames() {
-		String lineText = text.substring(lineInfo.getOffset(), lineInfo.getOffset() + lineInfo.getLength());
-		int deltaOffset = offset - lineInfo.getOffset();
-		int offsetOfStart = lineText.lastIndexOf('<', deltaOffset);
-		int offsetOfEnd = lineText.indexOf('>', deltaOffset);
-		String tagText = lineText.substring(offsetOfStart, offsetOfEnd == -1 ? text.length() : offsetOfEnd);
+		int offsetOfStart = text.lastIndexOf('<', offset);
+		int offsetOfEnd = text.indexOf('>', offset);
+		String tagText = text.substring(offsetOfStart, offsetOfEnd == -1 ? text.length() : offsetOfEnd);
 		List<String> attributeStrings = new ArrayList<>();
 
 		Matcher prefixMatcher = ATT_NAME_PATTERN.matcher(tagText);

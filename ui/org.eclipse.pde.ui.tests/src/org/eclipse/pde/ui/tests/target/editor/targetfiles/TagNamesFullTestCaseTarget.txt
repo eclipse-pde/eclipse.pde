@@ -1,6 +1,6 @@
 
-<target>
-
+<<target>
+<
 <targetJRE>
 </targetJRE>
 <environment>
@@ -8,14 +8,16 @@
 <ws></ws>
 <arch></arch>
 <nl></nl>
-
+<
 </environment>
 <launcherArgs>
 <vmArgs></vmArgs>
 <programArgs></programArgs>
-
+<
 </launcherArgs>
 <locations>
 </locations>
-
+<
 </target>
+
+<

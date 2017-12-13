@@ -30,8 +30,8 @@ public class AbstractTargetEditorTest extends TestCase {
 		assertEquals("Proposal lengths are not equal at offset " + offset + ". Actual: "
 				+ proposalListToString(actualProposals), expectedProposals.length, actualProposals.length);
 		for (int i = 0; i < actualProposals.length; i++) {
-			assertTrue("Proposal at index " + i + " did not match expected at offset "+offset,
-					actualProposals[i].getDisplayString().equals(expectedProposals[i]));
+			assertEquals("Proposal at index " + i + " did not match expected at offset " + offset,
+					actualProposals[i].getDisplayString(), expectedProposals[i]);
 		}
 	}
 

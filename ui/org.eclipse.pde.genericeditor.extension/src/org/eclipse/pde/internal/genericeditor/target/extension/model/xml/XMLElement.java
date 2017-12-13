@@ -23,15 +23,15 @@ public class XMLElement {
 	private boolean isEndElement;
 	private boolean isStartElement;
 
-	private Pattern startElementNamePattern = Pattern.compile("<\\s*(?<name>\\w*).*"); //$NON-NLS-1$
-	private Pattern endElementNamePattern = Pattern.compile("</\\s*(?<name>\\w*).*"); //$NON-NLS-1$
-	private Pattern attributePattern = Pattern.compile("((?<key>\\w*)\\s*=\\s*\"(?<value>.*?)\")");//$NON-NLS-1$
+	private Pattern startElementNamePattern = Pattern.compile("<\\s*(?<name>\\w*).*", Pattern.DOTALL); //$NON-NLS-1$
+	private Pattern endElementNamePattern = Pattern.compile("</\\s*(?<name>\\w*).*", Pattern.DOTALL); //$NON-NLS-1$
+	private Pattern attributePattern = Pattern.compile("((?<key>\\w*)\\s*=\\s*\"(?<value>.*?)\")", Pattern.DOTALL);//$NON-NLS-1$
 
 	public XMLElement(String element, int offset) {
 		this.element = element;
 		this.offset = offset;
-		this.isEndElement = element.matches("</.*|.*/>.*"); //$NON-NLS-1$
-		this.isStartElement = element.matches("<[^/].*"); //$NON-NLS-1$
+		this.isEndElement = element.matches("</(.|\n)*|(.|\n)*/>(.|\n)*"); //$NON-NLS-1$
+		this.isStartElement = element.matches("<[^/](.|\n)*"); //$NON-NLS-1$
 
 		Pattern namePattern;
 		if (isStartElement()) {

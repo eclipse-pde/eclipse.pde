@@ -8,6 +8,7 @@
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
  *     Lucas Bullen (Red Hat Inc.) - [Bug 520004] autocomplete does not respect tag hierarchy
+ *                                 - [Bug 528706] autocomplete does not respect multiline tags
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.model.xml;
 
@@ -105,14 +106,14 @@ public class Parser {
 	private Iterator<XMLElement> createXMLTagItterator(String document) {
 		return new Iterator<XMLElement>() {
 			private String tagRegex = "(?<tag><[\\w|/].+?>)";
-			private String commentRegex = "(<!--(.|\\n)*?-->)";
-			private String beforeTagRegex = "(.|\\n)*?(?=".concat(tagRegex).concat(")");
+			private String commentRegex = "(<!--.*?-->)";
+			private String beforeTagRegex = ".*?(?=".concat(tagRegex).concat(")");
 
 			private String text = document;
 
-			private Pattern tagPattern = Pattern.compile(tagRegex);
-			private Pattern commentPattern = Pattern.compile(commentRegex);
-			private Pattern beforeTagPattern = Pattern.compile(beforeTagRegex);
+			private Pattern tagPattern = Pattern.compile(tagRegex, Pattern.DOTALL);
+			private Pattern commentPattern = Pattern.compile(commentRegex, Pattern.DOTALL);
+			private Pattern beforeTagPattern = Pattern.compile(beforeTagRegex, Pattern.DOTALL);
 
 			@Override
 			public boolean hasNext() {

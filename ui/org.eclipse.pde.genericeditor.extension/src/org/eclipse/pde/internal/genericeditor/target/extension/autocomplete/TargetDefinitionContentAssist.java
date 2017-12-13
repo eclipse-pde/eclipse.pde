@@ -8,6 +8,7 @@
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
  *     Lucas Bullen (Red Hat Inc.) - [Bug 522317] Support environment arguments tags in Generic TP editor
+ *                                 - [Bug 528706] autocomplete does not respect multiline tags
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete;
 
@@ -38,14 +39,16 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
  */
 public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 
-	private static final String PREVIOUS_TAGS_MATCH = "(\\s*<.*>\\s*)*"; //$NON-NLS-1$
+	private static final String PREVIOUS_TAGS_MATCH = "(\\s*<(.|\\n)*>\\s*)*"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_PREFIX_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*(\\s*\\w*\\s*=\\s*\".*?\")*\\s+(?<prefix>\\w*)"); //$NON-NLS-1$
 	private static final String TAG_PREFIX_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*(?<prefix>\\w*)"); //$NON-NLS-1$
-	private static final String ATTRIBUTE_VALUE_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*(\\s+\\w*\\s*=\\s*\".*?\")*\\s+\\w*\\s*=\\s*\"[^\"]*"); //$NON-NLS-1$
-	private static final String ATTRIBUTE_VALUE_ACKEY_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*(\\s+\\w*\\s*=\\s*\".*?\")*\\s+(?<ackey>\\w*)\\s*=\\s*\"[^\"]*"); //$NON-NLS-1$
-	private static final String ATTRIBUTE_VALUE_PREFIX_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*(\\s+\\w*\\s*=\\s*\".*?\")*\\s+\\w*\\s*=\\s*\"(?<prefix>[^\"]*)"); //$NON-NLS-1$
-	private static final String ATTRIBUTE_NAME_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*(\\s*\\w*\\s*=\\s*\".*?\")*\\s+\\w*"); //$NON-NLS-1$
-	private static final String ATTRIBUTE_NAME_ACKEY_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*(?<ackey>\\w*)(\\s*\\w*\\s*=\\s*\".*?\")*\\s+\\w*"); //$NON-NLS-1$
+	private static final String ATTRIBUTE_VALUE_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*(\\s+\\w+\\s*=\\s*\"(.|\\n)*?\")*\\s+\\w+\\s*=\\s*\"[^\"]*"); //$NON-NLS-1$
+	private static final String ATTRIBUTE_VALUE_ACKEY_MATCH = PREVIOUS_TAGS_MATCH
+			.concat("\\s*<\\s*\\w*(\\s+\\w+\\s*=\\s*\".*?\")*\\s+(?<ackey>\\w+)\\s*=\\s*\"[^\"]*"); //$NON-NLS-1$
+	private static final String ATTRIBUTE_VALUE_PREFIX_MATCH = PREVIOUS_TAGS_MATCH
+			.concat("\\s*<\\s*\\w*(\\s+\\w+\\s*=\\s*\".*?\")*\\s+\\w+\\s*=\\s*\"(?<prefix>[^\"]*)"); //$NON-NLS-1$
+	private static final String ATTRIBUTE_NAME_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w*(\\s*\\w+\\s*=\\s*\"(.|\\n)*?\")*\\s+\\w*"); //$NON-NLS-1$
+	private static final String ATTRIBUTE_NAME_ACKEY_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*(?<ackey>\\w*)(\\s*\\w+\\s*=\\s*\".*?\")*\\s+\\w*"); //$NON-NLS-1$
 	private static final String TAG_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<"); //$NON-NLS-1$
 	private static final String TAG_VALUE_MATCH_REGEXP = PREVIOUS_TAGS_MATCH.concat("\\s*<\\s*\\w+[^<]*>\\s*\\w*"); //$NON-NLS-1$
 	private static final String TAG_VALUE_PREFIX_MATCH = PREVIOUS_TAGS_MATCH.concat("\\s*(?<prefix>\\w*)"); //$NON-NLS-1$
@@ -58,13 +61,15 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 	private static final int COMPLETION_TYPE_TAG_VALUE = 5;
 	private static final int COMPLETION_TYPE_UNKNOWN = 6;
 
-	private static final Pattern TAG_PREFIX_PATTERN = Pattern.compile(TAG_PREFIX_MATCH);
-	private static final Pattern ATT_NAME_PREFIX_PATTERN = Pattern.compile(ATTRIBUTE_NAME_PREFIX_MATCH);
-	private static final Pattern ATTR_NAME_ACKEY_MATCH = Pattern.compile(ATTRIBUTE_NAME_ACKEY_MATCH);
-	private static final Pattern ATTR_VALUE_PREFIX_PATTERN = Pattern.compile(ATTRIBUTE_VALUE_PREFIX_MATCH);
-	private static final Pattern ATTR_VALUE_ACKEY_PATTERN = Pattern.compile(ATTRIBUTE_VALUE_ACKEY_MATCH);
-	private static final Pattern TAG_VALUE_PREFIX_PATTERN = Pattern.compile(TAG_VALUE_PREFIX_MATCH);
-	private static final Pattern TAG_VALUE_ACKEY_PATTERN = Pattern.compile(TAG_VALUE_ACKEY_MATCH);
+	private static final Pattern TAG_PREFIX_PATTERN = Pattern.compile(TAG_PREFIX_MATCH, Pattern.DOTALL);
+	private static final Pattern ATT_NAME_PREFIX_PATTERN = Pattern.compile(ATTRIBUTE_NAME_PREFIX_MATCH, Pattern.DOTALL);
+	private static final Pattern ATTR_NAME_ACKEY_MATCH = Pattern.compile(ATTRIBUTE_NAME_ACKEY_MATCH, Pattern.DOTALL);
+	private static final Pattern ATTR_VALUE_PREFIX_PATTERN = Pattern.compile(ATTRIBUTE_VALUE_PREFIX_MATCH,
+			Pattern.DOTALL);
+	private static final Pattern ATTR_VALUE_ACKEY_PATTERN = Pattern.compile(ATTRIBUTE_VALUE_ACKEY_MATCH,
+			Pattern.DOTALL);
+	private static final Pattern TAG_VALUE_PREFIX_PATTERN = Pattern.compile(TAG_VALUE_PREFIX_MATCH, Pattern.DOTALL);
+	private static final Pattern TAG_VALUE_ACKEY_PATTERN = Pattern.compile(TAG_VALUE_ACKEY_MATCH, Pattern.DOTALL);
 
 	private String prefix = ""; //$NON-NLS-1$
 	private IRegion lineInfo;
@@ -122,41 +127,40 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 			e.printStackTrace();
 			return COMPLETION_TYPE_UNKNOWN;
 		}
-		String lineText = text.substring(lineInfo.getOffset(), lineInfo.getOffset() + lineInfo.getLength());
-		int deltaOffset = offset - lineInfo.getOffset();
-		String partialLineText = lineText.substring(0, deltaOffset);
-		if (partialLineText.matches(TAG_MATCH_REGEXP)) {
-			Matcher matcher = TAG_PREFIX_PATTERN.matcher(partialLineText);
+		int indexOfLastTagStart = text.lastIndexOf('<', offset - 1);
+		String tagText = text.substring(Math.max(0, indexOfLastTagStart), offset);
+		if (tagText.matches(TAG_MATCH_REGEXP)) {
+			Matcher matcher = TAG_PREFIX_PATTERN.matcher(tagText);
 			matcher.matches();
 			prefix = matcher.group("prefix"); //$NON-NLS-1$
 			return COMPLETION_TYPE_TAG;
 		}
 
-		if (partialLineText.matches(ATTRIBUTE_NAME_MATCH_REGEXP)) {
-			Matcher matcher = ATT_NAME_PREFIX_PATTERN.matcher(partialLineText);
+		if (tagText.matches(ATTRIBUTE_NAME_MATCH_REGEXP)) {
+			Matcher matcher = ATT_NAME_PREFIX_PATTERN.matcher(tagText);
 			matcher.matches();
 			prefix = matcher.group("prefix"); //$NON-NLS-1$
-			matcher = ATTR_NAME_ACKEY_MATCH.matcher(partialLineText);
+			matcher = ATTR_NAME_ACKEY_MATCH.matcher(tagText);
 			matcher.matches();
 			acKey = matcher.group("ackey"); //$NON-NLS-1$
 			return COMPLETION_TYPE_ATTRIBUTE_NAME;
 		}
 
-		if (partialLineText.matches(ATTRIBUTE_VALUE_MATCH_REGEXP)) {
-			Matcher matcher = ATTR_VALUE_PREFIX_PATTERN.matcher(partialLineText);
+		if (tagText.matches(ATTRIBUTE_VALUE_MATCH_REGEXP)) {
+			Matcher matcher = ATTR_VALUE_PREFIX_PATTERN.matcher(tagText);
 			matcher.matches();
 			prefix = matcher.group("prefix"); //$NON-NLS-1$
-			matcher = ATTR_VALUE_ACKEY_PATTERN.matcher(partialLineText);
+			matcher = ATTR_VALUE_ACKEY_PATTERN.matcher(tagText);
 			matcher.matches();
 			acKey = matcher.group("ackey"); //$NON-NLS-1$
 			return COMPLETION_TYPE_ATTRIBUTE_VALUE;
 		}
 
-		if (partialLineText.matches(TAG_VALUE_MATCH_REGEXP)) {
-			Matcher matcher = TAG_VALUE_PREFIX_PATTERN.matcher(partialLineText);
+		if (tagText.matches(TAG_VALUE_MATCH_REGEXP)) {
+			Matcher matcher = TAG_VALUE_PREFIX_PATTERN.matcher(tagText);
 			matcher.matches();
 			prefix = matcher.group("prefix"); //$NON-NLS-1$
-			matcher = TAG_VALUE_ACKEY_PATTERN.matcher(partialLineText);
+			matcher = TAG_VALUE_ACKEY_PATTERN.matcher(tagText);
 			matcher.matches();
 			acKey = matcher.group("ackey"); //$NON-NLS-1$
 			return COMPLETION_TYPE_TAG_VALUE;

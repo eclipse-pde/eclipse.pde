@@ -1,0 +1,22 @@
+<target>
+<locations>
+<
+<location>
+<unit  version=""/>
+<unit
+	
+	version="" />
+<unit  version=""/>
+</location>
+<
+</locations>
+<environment>
+<ws>carb</ws>
+<os>
+
+linu
+
+</os>
+<arch>PA_RIS</arch>
+</environment>
+</target>
