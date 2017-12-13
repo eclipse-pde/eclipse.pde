@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -56,6 +56,7 @@ public abstract class PDETestCase extends TestCase {
 		BuildDirector.p2Gathering = false;
 	}
 
+	@Override
 	protected void runTest() throws Throwable {
 		super.runTest();
 
@@ -171,7 +172,7 @@ public abstract class PDETestCase extends TestCase {
 			args[idx++] = logger;
 		}
 		if (additionalProperties != null && additionalProperties.size() > 0) {
-			Enumeration e = additionalProperties.keys();
+			Enumeration<Object> e = additionalProperties.keys();
 			while (e.hasMoreElements()) {
 				String key = (String) e.nextElement();
 				String value = additionalProperties.getProperty(key);
@@ -195,22 +196,21 @@ public abstract class PDETestCase extends TestCase {
 	 * @param entries
 	 * @throws Exception
 	 */
-	public static void assertZipContents(IFolder buildFolder, String archive, Set entries) throws Exception {
+	public static void assertZipContents(IFolder buildFolder, String archive, Set<String> entries) throws Exception {
 		assertZipContents(buildFolder, archive, entries, true);
 	}
 
-	public static void assertZipContents(File archiveFile, Set entries) throws Exception {
+	public static void assertZipContents(File archiveFile, Set<String> entries) throws Exception {
 		assertZipContents(archiveFile, entries, true);
 	}
 
-	public static void assertZipContents(File archiveFile, Set entries, boolean assertEmpty) throws Exception {
+	public static void assertZipContents(File archiveFile, Set<String> entries, boolean assertEmpty) throws Exception {
 		assertTrue(archiveFile.exists());
 
-		ZipFile zip = new ZipFile(archiveFile);
-		try {
-			Enumeration e = zip.getEntries();
+		try (ZipFile zip = new ZipFile(archiveFile)) {
+			Enumeration<ZipEntry> e = zip.getEntries();
 			while (e.hasMoreElements() && entries.size() > 0) {
-				ZipEntry entry = (ZipEntry) e.nextElement();
+				ZipEntry entry = e.nextElement();
 				String name = entry.getName();
 				if (entries.contains(name)) {
 					if (!entry.isDirectory())
@@ -218,14 +218,12 @@ public abstract class PDETestCase extends TestCase {
 					entries.remove(name);
 				}
 			}
-		} finally {
-			zip.close();
 		}
 		if (assertEmpty)
 			assertTrue("Missing entry in archive: " + entries, entries.size() == 0);
 	}
 
-	public static void assertZipContents(IFolder buildFolder, String archive, Set entries, boolean assertEmpty) throws Exception {
+	public static void assertZipContents(IFolder buildFolder, String archive, Set<String> entries, boolean assertEmpty) throws Exception {
 		File folder = new File(buildFolder.getLocation().toOSString());
 		File archiveFile = new File(folder, archive);
 		assertZipContents(archiveFile, entries, assertEmpty);
@@ -280,17 +278,17 @@ public abstract class PDETestCase extends TestCase {
 		assertTrue(logFile.length() > 0);
 
 		int idx = 0;
-		BufferedReader reader = new BufferedReader(new FileReader(logFile));
-		while (reader.ready()) {
-			String line = reader.readLine();
-			if (line.indexOf(lines[idx]) >= 0) {
-				if (++idx >= lines.length) {
-					reader.close();
-					return;
+		try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
+			while (reader.ready()) {
+				String line = reader.readLine();
+				if (line.indexOf(lines[idx]) >= 0) {
+					if (++idx >= lines.length) {
+						reader.close();
+						return;
+					}
 				}
 			}
 		}
-		reader.close();
 		assertTrue(false);
 	}
 
@@ -304,7 +302,7 @@ public abstract class PDETestCase extends TestCase {
 		return assertValidAntScript(buildXML, null);
 	}
 
-	public static Project assertValidAntScript(IFile buildXML, Map alternateTasks) throws Exception {
+	public static Project assertValidAntScript(IFile buildXML, Map<String, String> alternateTasks) throws Exception {
 		assertResourceFile((IFolder) buildXML.getParent(), buildXML.getName());
 
 		// Parse the build file using ant
@@ -315,7 +313,7 @@ public abstract class PDETestCase extends TestCase {
 		AntXMLContext context = new AntXMLContext(project);
 		project.addReference("ant.parsing.context", context);
 		project.addReference("ant.targets", context.getTargets());
-		context.setCurrentTargets(new HashMap());
+		context.setCurrentTargets(new HashMap<>());
 
 		AntUtils.setupProject(project, alternateTasks);
 		project.init();
@@ -331,10 +329,10 @@ public abstract class PDETestCase extends TestCase {
 
 	public static void assertJarVerifies(File jarFile, boolean throwIfNotSigned) throws Exception {
 		BundleContext context = Activator.getDefault().getContext();
-		ServiceReference certRef = context.getServiceReference(SignedContentFactory.class.getName());
+		ServiceReference<SignedContentFactory> certRef = context.getServiceReference(SignedContentFactory.class);
 		if (certRef == null)
 			throw new IllegalStateException("The SignedContentFactory service is not available");
-		SignedContentFactory certFactory = (SignedContentFactory) context.getService(certRef);
+		SignedContentFactory certFactory = context.getService(certRef);
 		try {
 			SignedContent content = certFactory.getSignedContent(jarFile);
 			if (content.isSigned()) {

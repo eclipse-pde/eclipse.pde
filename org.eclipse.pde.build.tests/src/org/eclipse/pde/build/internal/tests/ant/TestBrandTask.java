@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.build.internal.tests.ant;
 
 import org.apache.tools.ant.BuildException;
@@ -40,7 +39,8 @@ public class TestBrandTask extends Task {
 		os = value;
 	}
 
+	@Override
 	public void execute() throws BuildException {
-		//nothing
+		// nothing
 	}
 }

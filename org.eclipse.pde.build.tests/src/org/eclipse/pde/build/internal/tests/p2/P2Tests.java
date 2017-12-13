@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -67,7 +67,7 @@ public class P2Tests extends P2TestCase {
 		assertNotNull(repository);
 
 		//some basic existance
-		ArrayList ius = new ArrayList();
+		ArrayList<IInstallableUnit> ius = new ArrayList<>();
 		ius.add(getIU(repository, "test"));
 		ius.add(getIU(repository, "org.eclipse.equinox.launcher"));
 		ius.add(getIU(repository, OSGI));
@@ -165,7 +165,7 @@ public class P2Tests extends P2TestCase {
 
 		IInstallableUnit iu = getIU(repository, "FRoot");
 		IInstallableUnit rootIU = getIU(repository, "toolingFRoot.rootfiles");
-		ArrayList ius = new ArrayList();
+		ArrayList<IInstallableUnit> ius = new ArrayList<>();
 		ius.add(getIU(repository, OSGI));
 		ius.add(getIU(repository, CORE_RUNTIME));
 		ius.add(rootIU);
@@ -208,7 +208,7 @@ public class P2Tests extends P2TestCase {
 		assertNotNull(repository);
 
 		IInstallableUnit iu = getIU(repository, "toolingrcp.product.config.win32.win32.x86");
-		ArrayList requiredIUs = new ArrayList();
+		ArrayList<IInstallableUnit> requiredIUs = new ArrayList<>();
 		IInstallableUnit rootFileCU = getIU(repository, "toolingrcp.product.rootfiles.win32.win32.x86");
 		requiredIUs.add(rootFileCU);
 		requiredIUs.add(getIU(repository, "rcp.product.rootfiles.win32.win32.x86"));
@@ -279,8 +279,8 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(buildFolder, "repo/artifacts.jar");
 
 		IMetadataRepository metadata = loadMetadataRepository(repo.getLocationURI());
-		IQueryResult result = metadata.query(QueryUtil.createIUQuery("new_category_1"), null);
-		IInstallableUnit iu = (IInstallableUnit) result.iterator().next();
+		IQueryResult<IInstallableUnit> result = metadata.query(QueryUtil.createIUQuery("new_category_1"), null);
+		IInstallableUnit iu = result.iterator().next();
 		assertNotNull(iu);
 		assertEquals(iu.getId(), "new_category_1");
 		assertEquals(iu.getVersion().toString(), "1.2.3.456");
@@ -354,11 +354,7 @@ public class P2Tests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		File plugins = repo.getFolder("plugins").getLocation().toFile();
-		File[] bundles = plugins.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.startsWith("org.junit_") || name.startsWith("org.eclipse.pde.build");
-			}
-		});
+		File[] bundles = plugins.listFiles((FilenameFilter) (dir, name) -> name.startsWith("org.junit_") || name.startsWith("org.eclipse.pde.build"));
 		assertTrue(bundles.length == 2);
 		assertJarVerifies(bundles[0]);
 		assertJarVerifies(bundles[1]);
@@ -480,7 +476,7 @@ public class P2Tests extends P2TestCase {
 		IFolder zipped = Utils.createFolder(buildFolder, "zipped");
 		ZipOutputStream output = new ZipOutputStream(new FileOutputStream(new File(zipped.getLocation().toFile(), "zipped repo.zip")));
 		File root = buildFolder.getFolder("repo/r1").getLocation().toFile();
-		FileUtils.zip(output, root, Collections.EMPTY_SET, FileUtils.createRootPathComputer(root));
+		FileUtils.zip(output, root, Collections.emptySet(), FileUtils.createRootPathComputer(root));
 		org.eclipse.pde.internal.build.Utils.close(output);
 
 		//bug 318144
@@ -550,11 +546,11 @@ public class P2Tests extends P2TestCase {
 
 		IFolder repoFolder = buildFolder.getFolder("repo");
 		IArtifactRepository repository = loadArtifactRepository(repoLocation);
-		Map repoProps = repository.getProperties();
+		Map<String, String> repoProps = repository.getProperties();
 		assertEquals(repoProps.get("publishPackFilesAsSiblings"), "true");
-		IQueryResult keys = repository.query(ArtifactKeyQuery.ALL_KEYS, null);
-		for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
-			IArtifactKey key = (IArtifactKey) iterator.next();
+		IQueryResult<IArtifactKey> keys = repository.query(ArtifactKeyQuery.ALL_KEYS, null);
+		for (Iterator<IArtifactKey> iterator = keys.iterator(); iterator.hasNext();) {
+			IArtifactKey key = iterator.next();
 			IArtifactDescriptor[] descriptors = repository.getArtifactDescriptors(key);
 
 			if (key.getClassifier().equals("osgi.bundle") && key.getId().equals("org.eclipse.cvs")) {

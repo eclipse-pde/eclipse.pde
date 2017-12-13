@@ -45,7 +45,7 @@ public abstract class P2TestCase extends PDETestCase {
 		if (context == null)
 			throw new IllegalStateException();
 
-		ServiceReference reference = context.getServiceReference(IMetadataRepositoryManager.class.getName());
+		ServiceReference<IMetadataRepositoryManager> reference = context.getServiceReference(IMetadataRepositoryManager.class);
 		if (reference == null) {
 			IProvisioningAgent agent = (IProvisioningAgent) ServiceHelper.getService(context, IProvisioningAgent.SERVICE_NAME);
 			if (agent == null)
@@ -60,12 +60,12 @@ public abstract class P2TestCase extends PDETestCase {
 		context.ungetService(reference);
 		metadataManager = (IMetadataRepositoryManager) result;
 
-		reference = context.getServiceReference(IArtifactRepositoryManager.class.getName());
-		if (reference == null)
+		ServiceReference<IArtifactRepositoryManager> reference2 = context.getServiceReference(IArtifactRepositoryManager.class);
+		if (reference2 == null)
 			throw new IllegalStateException();
 
-		result = context.getService(reference);
-		context.ungetService(reference);
+		result = context.getService(reference2);
+		context.ungetService(reference2);
 		artifactManager = (IArtifactRepositoryManager) result;
 	}
 
@@ -149,11 +149,11 @@ public abstract class P2TestCase extends PDETestCase {
 	}
 
 	public IInstallableUnit getIU(IMetadataRepository repository, String name, boolean assertNotNull) {
-		IQueryResult queryResult = repository.query(QueryUtil.createIUQuery(name), null);
+		IQueryResult<IInstallableUnit> queryResult = repository.query(QueryUtil.createIUQuery(name), null);
 
 		IInstallableUnit unit = null;
 		if (!queryResult.isEmpty())
-			unit = (IInstallableUnit) queryResult.iterator().next();
+			unit = queryResult.iterator().next();
 		if (assertNotNull) {
 			assertEquals(1, queryResult.toUnmodifiableSet().size());
 			assertNotNull(unit);
@@ -172,9 +172,9 @@ public abstract class P2TestCase extends PDETestCase {
 	}
 
 	public void assertTouchpoint(IInstallableUnit iu, String phase, String action) {
-		Collection/*<ITouchpointData>*/ data = iu.getTouchpointData();
-		for (Iterator iter = data.iterator(); iter.hasNext();) {
-			ITouchpointInstruction instruction = ((ITouchpointData) iter.next()).getInstruction(phase);
+		Collection<ITouchpointData> data = iu.getTouchpointData();
+		for (Iterator<ITouchpointData> iter = data.iterator(); iter.hasNext();) {
+			ITouchpointInstruction instruction = iter.next().getInstruction(phase);
 			if (instruction != null && instruction.getBody().indexOf(action) > -1)
 				return;
 		}
@@ -182,9 +182,9 @@ public abstract class P2TestCase extends PDETestCase {
 	}
 
 	public void assertProvides(IInstallableUnit iu, String namespace, String name) {
-		Collection/*<IProvidedCapability>*/ caps = iu.getProvidedCapabilities();
-		for (Iterator iterator = caps.iterator(); iterator.hasNext();) {
-			IProvidedCapability cap = (IProvidedCapability) iterator.next();
+		Collection<IProvidedCapability> caps = iu.getProvidedCapabilities();
+		for (Iterator<IProvidedCapability> iterator = caps.iterator(); iterator.hasNext();) {
+			IProvidedCapability cap = iterator.next();
 			if (cap.getNamespace().equals(namespace) && cap.getName().equals(name))
 				return;
 
@@ -193,8 +193,8 @@ public abstract class P2TestCase extends PDETestCase {
 	}
 
 	public void assertRequires(IInstallableUnit iu, String namespace, String name) {
-		Collection/*<IRequirement>*/ reqs = iu.getRequirements();
-		for (Iterator iterator = reqs.iterator(); iterator.hasNext();) {
+		Collection<IRequirement> reqs = iu.getRequirements();
+		for (Iterator<IRequirement> iterator = reqs.iterator(); iterator.hasNext();) {
 			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
 			if (reqCap.getNamespace().equals(namespace) && reqCap.getName().equals(name))
 				return;
@@ -203,12 +203,12 @@ public abstract class P2TestCase extends PDETestCase {
 		assertTrue(false);
 	}
 
-	public ArrayList assertRequires(IInstallableUnit iu, ArrayList requiredIUs, boolean requireAll) {
-		outer: for (Iterator iterator = requiredIUs.iterator(); iterator.hasNext();) {
-			IInstallableUnit reqIU = (IInstallableUnit) iterator.next();
+	public ArrayList<IInstallableUnit> assertRequires(IInstallableUnit iu, ArrayList<IInstallableUnit> requiredIUs, boolean requireAll) {
+		outer: for (Iterator<IInstallableUnit> iterator = requiredIUs.iterator(); iterator.hasNext();) {
+			IInstallableUnit reqIU = iterator.next();
 
-			Collection/*<IRequirement>*/ reqs = iu.getRequirements();
-			for (Iterator iterator2 = reqs.iterator(); iterator2.hasNext();) {
+			Collection<IRequirement> reqs = iu.getRequirements();
+			for (Iterator<IRequirement> iterator2 = reqs.iterator(); iterator2.hasNext();) {
 				IRequiredCapability reqCap = (IRequiredCapability) iterator2.next();
 				if (reqCap.getNamespace().equals(IU_NAMESPACE) && reqCap.getName().equals(reqIU.getId()) && reqCap.getRange().isIncluded(reqIU.getVersion())) {
 					iterator.remove();

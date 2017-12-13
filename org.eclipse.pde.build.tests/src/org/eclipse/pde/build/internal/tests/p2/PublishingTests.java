@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -65,16 +65,16 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar");
 		IFile jar = buildFolder.getFile("buildRepo/plugins/bundle_1.0.0.v1234.jar");
 
-		ZipFile zip = new ZipFile(jar.getLocation().toFile());
-		Enumeration entries = zip.entries();
-		ZipEntry entry = (ZipEntry) entries.nextElement();
-		assertTrue(entry.getName().equalsIgnoreCase("META-INF/MANIFEST.MF"));
-		Map headers = new HashMap();
-		ManifestElement.parseBundleManifest(zip.getInputStream(entry), headers);
-		assertEquals(headers.get(Constants.BUNDLE_VERSION), "1.0.0.v1234");
-		zip.close();
+		try (ZipFile zip = new ZipFile(jar.getLocation().toFile())) {
+			Enumeration<? extends ZipEntry> entries = zip.entries();
+			ZipEntry entry = entries.nextElement();
+			assertTrue(entry.getName().equalsIgnoreCase("META-INF/MANIFEST.MF"));
+			Map<String, String> headers = new HashMap<>();
+			ManifestElement.parseBundleManifest(zip.getInputStream(entry), headers);
+			assertEquals(headers.get(Constants.BUNDLE_VERSION), "1.0.0.v1234");
+		}
 
-		HashSet contents = new HashSet();
+		HashSet<String> contents = new HashSet<>();
 
 		contents.add("about.txt");
 		contents.add("A.class");
@@ -201,7 +201,7 @@ public class PublishingTests extends P2TestCase {
 		}
 		assertFalse(fail);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("contents/file");
 		entries.add("second");
 		assertZipContents(buildFolder, "buildRepo/binary/f_root_1.0.0", entries);
@@ -304,7 +304,7 @@ public class PublishingTests extends P2TestCase {
 		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();
 		runAntScript(buildXMLPath, new String[] {"build.jars", "publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
-		HashSet contents = new HashSet();
+		HashSet<String> contents = new HashSet<>();
 		contents.add("a.txt");
 		contents.add("b.txt");
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar", contents);
@@ -364,19 +364,11 @@ public class PublishingTests extends P2TestCase {
 	}
 
 	protected File findExecutableFeature(File delta) throws Exception {
-		FilenameFilter filter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.startsWith(EQUINOX_EXECUTABLE);
-			}
-		};
+		FilenameFilter filter = (dir, name) -> name.startsWith(EQUINOX_EXECUTABLE);
 
 		File[] features = new File(delta, "features").listFiles(filter);
 		assertTrue(features.length > 0);
-		Arrays.sort(features, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				return -1 * ((File) o1).getName().compareTo(((File) o2).getName());
-			}
-		});
+		Arrays.sort(features, (o1, o2) -> -1 * o1.getName().compareTo(o2.getName()));
 		return features[0];
 	}
 
@@ -413,7 +405,7 @@ public class PublishingTests extends P2TestCase {
 		String buildXMLPath = f.getFile("build.xml").getLocation().toOSString();
 		runAntScript(buildXMLPath, new String[] {"publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
-		HashSet contents = new HashSet();
+		HashSet<String> contents = new HashSet<>();
 		contents.add("a.txt");
 		contents.add("feature.xml");
 		contents.add("p2.inf");
@@ -450,7 +442,7 @@ public class PublishingTests extends P2TestCase {
 		String executable = EQUINOX_EXECUTABLE;
 		String fileName = originalExecutable.getName();
 		String version = fileName.substring(fileName.indexOf('_') + 1);
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 
 		// Linux zips contain launcher and about.html (libCairo no longer packaged in the delta pack (bug 354978))
 		//		entries.add("libcairo-swt.so");
@@ -519,7 +511,7 @@ public class PublishingTests extends P2TestCase {
 		runAntScript(buildXMLPath, new String[] {"build.jars", "publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
 		assertResourceFile(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar");
-		HashSet contents = new HashSet();
+		HashSet<String> contents = new HashSet<>();
 		contents.add("A.class");
 		contents.add("b/B.class");
 		contents.add(".api_description");
@@ -545,7 +537,7 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		assertNotNull(repository);
 
-		HashSet entries = new HashSet();
+		HashSet<String> entries = new HashSet<>();
 
 		IInstallableUnit iu = getIU(repository, "a");
 		assertEquals(iu.getVersion().toString(), "1.0.0");
@@ -604,7 +596,7 @@ public class PublishingTests extends P2TestCase {
 		runBuild(buildFolder);
 
 		assertResourceFile(buildFolder, "buildRepo/plugins/bundle.source_1.0.0.jar");
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("A.java");
 		entries.add("b/B.java");
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle.source_1.0.0.jar", entries);
@@ -655,7 +647,7 @@ public class PublishingTests extends P2TestCase {
 
 		runProductBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("branded.app/Contents/Info.plist");
 		entries.add("branded.app/Contents/MacOS/branded.ini");
 		entries.add("branded.app/Contents/MacOS/branded");
@@ -740,7 +732,7 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder, "untarred/artifacts.jar");
 		assertResourceFile(buildFolder, "untarred/content.jar");
 
-		HashSet entries = new HashSet();
+		HashSet<String> entries = new HashSet<>();
 		entries.add("license.html");
 		assertZipContents(buildFolder, "untarred/binary/f_root_1.0.0", entries);
 
@@ -937,7 +929,7 @@ public class PublishingTests extends P2TestCase {
 		assertJarVerifies(new File(buildFile, "tmp/eclipse/plugins/p_1.0.0.jar"), true);
 		assertJarVerifies(new File(buildFile, "tmp/eclipse/features/f_1.0.0.jar"), true);
 
-		HashSet entries = new HashSet();
+		HashSet<String> entries = new HashSet<>();
 		entries.add("META-INF/PDE_BUIL.SF");
 		entries.add("META-INF/PDE_BUIL.DSA");
 
@@ -1026,7 +1018,7 @@ public class PublishingTests extends P2TestCase {
 		assertTouchpoint(iuA, "zipped", "true");
 
 		IInstallableUnit iuB = getIU(repo, "b");
-		assertTrue(Boolean.valueOf((String) iuB.getProperties().get("pde.build")).booleanValue());
+		assertTrue(Boolean.valueOf(iuB.getProperties().get("pde.build")).booleanValue());
 
 		/*
 		 * Part 2. Use the above zipped repo as input to a build to test reusing IUs (bug 259792) 
@@ -1076,7 +1068,7 @@ public class PublishingTests extends P2TestCase {
 		repo = loadMetadataRepository(URIUtil.toJarURI(uri, new Path("")));
 
 		iuB = getIU(repo, "b");
-		assertTrue(Boolean.valueOf((String) iuB.getProperties().get("pde.build")).booleanValue());
+		assertTrue(Boolean.valueOf(iuB.getProperties().get("pde.build")).booleanValue());
 
 		repo = null;
 		removeMetadataRepository(uri);
@@ -1204,7 +1196,7 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/plugins/e_1.0.0.jar"));
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/features/e.source_1.0.0.jar"));
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("license.html");
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/e.source_1.0.0.jar", entries);
 	}
@@ -1260,7 +1252,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("license.html");
 		assertZipContents(buildFolder, "tmp/eclipse/binary/f_root_1.0.0", entries);
 
@@ -1295,7 +1287,7 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(metadata, "equinox.executable");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable.feature.jar");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", EQUINOX_LAUNCHER);
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("bin/win32/win32/x86/launcher.exe");
 		entries.add("bin/carbon/macosx/ppc/Eclipse.app/Contents/MacOS/launcher");
 		entries.add("bin/gtk/linux/x86/launcher");
@@ -1364,7 +1356,7 @@ public class PublishingTests extends P2TestCase {
 
 		URI repoURI = URIUtil.fromString("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
-		IQueryResult queryResult = metadata.query(QueryUtil.createIUQuery("a"), null);
+		IQueryResult<IInstallableUnit> queryResult = metadata.query(QueryUtil.createIUQuery("a"), null);
 		assertTrue(queryResult.isEmpty());
 		getIU(metadata, "b");
 	}
@@ -1479,7 +1471,7 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(finalRepo, "binary/rcp.product_root.win32.win32.x86_1.0.0");
 		assertResourceFile(finalRepo, "features/f_1.0.0.jar");
 
-		HashSet entries = new HashSet();
+		HashSet<String> entries = new HashSet<>();
 		entries.add("eclipse/eclipse.exe");
 		entries.add("eclipse/features/f_1.0.0/feature.xml");
 		entries.add("eclipse/sub/important.txt");
@@ -1562,7 +1554,7 @@ public class PublishingTests extends P2TestCase {
 
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("src.jar");
 		entries.add("foob.class");
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/foo_1.0.0.jar", entries);
@@ -1639,9 +1631,9 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
 		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
-		Collection/*<IRequirement>*/ required = iu.getRequirements();
+		Collection<IRequirement> required = iu.getRequirements();
 		assertEquals(required.size(), 2);
-		Iterator it = required.iterator();
+		Iterator<IRequirement> it = required.iterator();
 		IRequiredCapability req0 = (IRequiredCapability) it.next();
 		IRequiredCapability req1 = (IRequiredCapability) it.next();
 		if (req0.getName().equals(EQUINOX_COMMON))
@@ -1861,8 +1853,8 @@ public class PublishingTests extends P2TestCase {
 
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "foo");
-		Collection/*<IRequirement>*/ required = iu.getRequirements();
-		for (Iterator iterator = required.iterator(); iterator.hasNext();) {
+		Collection<IRequirement> required = iu.getRequirements();
+		for (Iterator<IRequirement> iterator = required.iterator(); iterator.hasNext();) {
 			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
 			if (reqCap.getName().equals("a")) {
 				VersionRange range = reqCap.getRange();
@@ -1896,7 +1888,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("feature.xml");
 		entries.add("file1.txt");
 		assertZipContents(buildFolder, "tmp/eclipse/features/F1_1.0.0.jar", entries, true);

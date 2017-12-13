@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -244,7 +244,7 @@ public class FetchTests extends PDETestCase {
 		URL mapFile = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new Path("/resources/p2.get/directory.txt.template"), null);
 		URL repoLocation = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new Path("/resources/repos/1"), null);
 		repoLocation = FileLocator.resolve(repoLocation);
-		Map replacements = new HashMap();
+		Map<String, String> replacements = new HashMap<>();
 		replacements.put("repoLocation", repoLocation.toExternalForm());
 		Utils.transferAndReplace(mapFile, buildFolder.getFile("directory.txt"), replacements);
 

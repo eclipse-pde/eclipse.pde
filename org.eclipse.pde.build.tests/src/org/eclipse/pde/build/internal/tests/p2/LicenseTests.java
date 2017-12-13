@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -57,12 +57,12 @@ public class LicenseTests extends P2TestCase {
 		IArtifactKey rootFileKey = (IArtifactKey) rootFileIU.getArtifacts().toArray()[0];
 		File actualRootFile = ((IFileArtifactRepository) artifacts).getArtifactFile(rootFileKey);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("root.html");
 		assertZipContents(actualRootFile, entries);
 
 		// Check that all expected files are in zip
-		entries = new HashSet();
+		entries = new HashSet<>();
 		entries.add("feature.properties");
 		entries.add("feature.xml");
 		entries.add("feature_fr.properties");
@@ -84,7 +84,7 @@ public class LicenseTests extends P2TestCase {
 
 		assertEquals("Result feature.properties has incorrect number of properties", originalProperties.size() + 2, actualProperties.size());
 
-		Enumeration keys = originalProperties.keys();
+		Enumeration<Object> keys = originalProperties.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
 			assertEquals(originalProperties.getProperty(key, "originalMissing"), actualProperties.getProperty(key));
@@ -182,7 +182,7 @@ public class LicenseTests extends P2TestCase {
 		runBuild(buildFolder);
 
 		// Check that all expected files are in zip
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/features/F1_1.0.0/feature.properties");
 		entries.add("eclipse/features/F1_1.0.0/feature.xml");
 		entries.add("eclipse/features/F1_1.0.0/feature_fr.properties");
@@ -205,7 +205,7 @@ public class LicenseTests extends P2TestCase {
 
 		assertEquals("Result feature.properties has incorrect number of properties", originalProperties.size() + 2, actualProperties.size());
 
-		Enumeration keys = originalProperties.keys();
+		Enumeration<Object> keys = originalProperties.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
 			assertEquals(originalProperties.getProperty(key, "originalMissing"), actualProperties.getProperty(key));
@@ -237,7 +237,7 @@ public class LicenseTests extends P2TestCase {
 
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("license.html");
 		assertZipContents(buildFolder, "buildRepo/features/F1_1.0.0.jar", entries);
 
@@ -260,7 +260,7 @@ public class LicenseTests extends P2TestCase {
 		properties.put("license", buildFolder.getFolder("features/L1").getLocation().toString());
 		runAntScript(testXML.getLocation().toOSString(), new String[] {"publish"}, buildFolder.getLocation().toOSString(), properties);
 
-		entries = new HashSet();
+		entries = new HashSet<>();
 		entries.add("license.html");
 		assertZipContents(repo2, "features/F1_1.0.0.jar", entries);
 	}
@@ -300,12 +300,12 @@ public class LicenseTests extends P2TestCase {
 
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("sub/license.html");
 		entries.add("a.txt");
 		assertZipContents(buildFolder, "buildRepo/features/F1_1.0.0.jar", entries);
 
-		entries = new HashSet();
+		entries = new HashSet<>();
 		entries.add("rootFile.html");
 		assertZipContents(buildFolder, "buildRepo/binary/F1_root_1.0.0", entries);
 	}
@@ -353,7 +353,7 @@ public class LicenseTests extends P2TestCase {
 		Utils.storeBuildProperties(build3, properties);
 		runBuild(build3);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("sub/license.html");
 		assertZipContents(build3, "buildRepo/features/F1_1.0.0.jar", entries);
 		assertResourceFile(build2, "tmp/eclipse/features/F1_1.0.0/sub/license.html");

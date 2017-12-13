@@ -24,9 +24,10 @@ import org.eclipse.pde.build.tests.Activator;
 
 public class AntUtils {
 
-	/* This is somewhat destructive to the target, as resolving UnknownTasks
-	 * results in Types being filtered from the getTasks list and no longer
-	 * being accessible.
+	/*
+	 * This is somewhat destructive to the target, as resolving UnknownTasks results
+	 * in Types being filtered from the getTasks list and no longer being
+	 * accessible.
 	 */
 	static public Object getFirstChildByName(Target target, String name) {
 		Task[] tasks = target.getTasks();
@@ -43,7 +44,9 @@ public class AntUtils {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	static public Object[] getChildrenByName(Target target, String name) {
+		@SuppressWarnings("rawtypes")
 		List list = new ArrayList();
 		Task[] tasks = target.getTasks();
 		for (int i = 0; i < tasks.length; i++) {
@@ -64,22 +67,23 @@ public class AntUtils {
 		Field nestedField = parallel.getClass().getDeclaredField("nestedTasks");
 		nestedField.setAccessible(true);
 
-		Vector nested = (Vector) nestedField.get(parallel);
-		return (Task[]) nested.toArray(new Task[nested.size()]);
+		@SuppressWarnings("unchecked")
+		Vector<Task> nested = (Vector<Task>) nestedField.get(parallel);
+		return nested.toArray(new Task[nested.size()]);
 	}
 
-	static public void setupProject(Project project, Map alternateTasks) {
+	static public void setupProject(Project project, Map<String, String> alternateTasks) {
 		setupClasspath();
 
-		List tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
-		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
-			org.eclipse.ant.core.Task coreTask = (org.eclipse.ant.core.Task) iterator.next();
+		List<org.eclipse.ant.core.Task> tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
+		for (Iterator<org.eclipse.ant.core.Task> iterator = tasks.iterator(); iterator.hasNext();) {
+			org.eclipse.ant.core.Task coreTask = iterator.next();
 
 			AntTypeDefinition def = new AntTypeDefinition();
 			String name = ProjectHelper.genComponentName(coreTask.getURI(), coreTask.getTaskName());
 			def.setName(name);
 			if (alternateTasks != null && alternateTasks.containsKey(name))
-				def.setClassName((String) alternateTasks.get(name));
+				def.setClassName(alternateTasks.get(name));
 			else
 				def.setClassName(coreTask.getClassName());
 			def.setClassLoader(Activator.getDefault().getClass().getClassLoader());
@@ -88,9 +92,9 @@ public class AntUtils {
 			ComponentHelper.getComponentHelper(project).addDataTypeDefinition(def);
 		}
 
-		List types = AntCorePlugin.getPlugin().getPreferences().getTypes();
-		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
-			Type type = (Type) iterator.next();
+		List<Type> types = AntCorePlugin.getPlugin().getPreferences().getTypes();
+		for (Iterator<Type> iterator = types.iterator(); iterator.hasNext();) {
+			Type type = iterator.next();
 			AntTypeDefinition def = new AntTypeDefinition();
 			String name = ProjectHelper.genComponentName(type.getURI(), type.getTypeName());
 			def.setName(name);
@@ -114,7 +118,8 @@ public class AntUtils {
 			buff.append("; "); //$NON-NLS-1$
 		}
 
-		org.apache.tools.ant.types.Path systemClasspath = new org.apache.tools.ant.types.Path(null, buff.substring(0, buff.length() - 2));
+		org.apache.tools.ant.types.Path systemClasspath = new org.apache.tools.ant.types.Path(null,
+				buff.substring(0, buff.length() - 2));
 		org.apache.tools.ant.types.Path.systemClasspath = systemClasspath;
 	}
 }

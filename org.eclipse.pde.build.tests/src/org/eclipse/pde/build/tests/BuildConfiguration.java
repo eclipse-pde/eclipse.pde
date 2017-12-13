@@ -26,7 +26,8 @@ public class BuildConfiguration {
 	private static Properties defaultScriptConfig = new Properties();
 	static {
 		// use the template build.properties from pde.build
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/templates/headless-build/build.properties"), null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
+				new Path("/templates/headless-build/build.properties"), null);
 		try {
 			String buildPropertiesPath = FileLocator.toFileURL(resource).getPath();
 			defaultBuildConfig.load(new BufferedInputStream(new FileInputStream(buildPropertiesPath)));
@@ -64,7 +65,7 @@ public class BuildConfiguration {
 
 	private static Properties getBuildConfig() {
 		Properties properties = new Properties();
-		Enumeration e = defaultBuildConfig.keys();
+		Enumeration<Object> e = defaultBuildConfig.keys();
 		while (e.hasMoreElements()) {
 			String key = (String) e.nextElement();
 			properties.put(key, defaultBuildConfig.get(key));
@@ -74,7 +75,9 @@ public class BuildConfiguration {
 	}
 
 	/**
-	 * Get a default build configuration build.properties based on the template from pde.build
+	 * Get a default build configuration build.properties based on the template from
+	 * pde.build
+	 * 
 	 * @param buildFolder
 	 * @return
 	 */
@@ -88,8 +91,10 @@ public class BuildConfiguration {
 	}
 
 	/**
-	 * Get a default set of properties used for invoking the genericTargets/generateScript task 
-	 * (which invokes the eclipse.buildScript target)
+	 * Get a default set of properties used for invoking the
+	 * genericTargets/generateScript task (which invokes the eclipse.buildScript
+	 * target)
+	 * 
 	 * @param buildFolder
 	 * @param type
 	 * @param id

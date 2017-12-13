@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -68,7 +68,7 @@ public class SourceTests extends PDETestCase {
 
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/features/a.feature.sdk_1.0.0/feature.xml");
 		entries.add("eclipse/features/a.feature.source_1.0.0/feature.xml");
 		entries.add("eclipse/plugins/a.feature.source_1.0.0/src/a.plugin_1.0.0/src.zip");
@@ -81,6 +81,7 @@ public class SourceTests extends PDETestCase {
 	}
 
 	// test that generated source fragments have a proper platform filter
+	@SuppressWarnings("unchecked")
 	public void testBug184517() throws Exception {
 		IFolder buildFolder = newTest("184517");
 		IFolder features = Utils.createFolder(buildFolder, "features");
@@ -116,19 +117,20 @@ public class SourceTests extends PDETestCase {
 
 		// check the manifest for a correct platform filter
 		assertResourceFile(sourceFragment, "META-INF/MANIFEST.MF");
-		InputStream stream = new BufferedInputStream(sourceFragment.getFile("META-INF/MANIFEST.MF").getLocationURI().toURL().openStream());
-		Manifest manifest = new Manifest(stream);
-		stream.close();
+		try (InputStream stream = new BufferedInputStream(sourceFragment.getFile("META-INF/MANIFEST.MF").getLocationURI().toURL().openStream())) {
+			Manifest manifest = new Manifest(stream);
+			String filter = manifest.getMainAttributes().getValue("Eclipse-PlatformFilter");
+			assertTrue(filter.length() > 0);
+			properties = new Properties();
+			properties.put("osgi.os", os);
+			properties.put("osgi.ws", ws);
+			properties.put("osgi.arch", arch);
+			// In 1.6 VMs properties is not casted correctly to dictionary causing a compilation error (Bug 390267)
+			@SuppressWarnings("rawtypes")
+			Dictionary dictionary = properties;
+			assertTrue(FrameworkUtil.createFilter(filter).match(dictionary));
+		}
 
-		String filter = manifest.getMainAttributes().getValue("Eclipse-PlatformFilter");
-		assertTrue(filter.length() > 0);
-		properties = new Properties();
-		properties.put("osgi.os", os);
-		properties.put("osgi.ws", ws);
-		properties.put("osgi.arch", arch);
-		// In 1.6 VMs properties is not casted correctly to dictionary causing a compilation error (Bug 390267)
-		Dictionary dictionary = properties;
-		assertTrue(FrameworkUtil.createFilter(filter).match(dictionary));
 	}
 
 	// test that '<' and '>' are properly escaped in generated source feature
@@ -159,9 +161,9 @@ public class SourceTests extends PDETestCase {
 		//add some source to a.bundle
 		File src = new File(bundleFolder.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
-		FileOutputStream stream = new FileOutputStream(src);
-		stream.write("//L33T CODEZ\n".getBytes());
-		stream.close();
+		try (FileOutputStream stream = new FileOutputStream(src)) {
+			stream.write("//L33T CODEZ\n".getBytes());
+		}
 
 		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"a.bundle"});
 
@@ -174,7 +176,7 @@ public class SourceTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/plugins/rcp.source_1.0.0/src/a.bundle_1.0.0/src.zip");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 	}
@@ -187,9 +189,9 @@ public class SourceTests extends PDETestCase {
 		Utils.generateBundle(bundleFolder, "a.bundle");
 		File src = new File(bundleFolder.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
-		FileOutputStream stream = new FileOutputStream(src);
-		stream.write("//L33T CODEZ\n".getBytes());
-		stream.close();
+		try (FileOutputStream stream = new FileOutputStream(src)) {
+			stream.write("//L33T CODEZ\n".getBytes());
+		}
 
 		Utils.generateFeature(buildFolder, "single", null, new String[] {"single.source", "a.bundle"});
 		Properties properties = new Properties();
@@ -200,7 +202,7 @@ public class SourceTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/plugins/single.source_1.0.0/src/a.bundle_1.0.0/src.zip");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 	}
@@ -216,16 +218,16 @@ public class SourceTests extends PDETestCase {
 		Utils.generateBundle(bundleA, "bundleA");
 		File src = new File(bundleA.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
-		FileOutputStream outputStream = new FileOutputStream(src);
-		outputStream.write("//L33T CODEZ\n".getBytes());
-		outputStream.close();
+		try (FileOutputStream outputStream = new FileOutputStream(src)) {
+			outputStream.write("//L33T CODEZ\n".getBytes());
+		}
 
 		Utils.generateBundle(bundleDoc, "bundleDoc");
 		src = new File(bundleDoc.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
-		outputStream = new FileOutputStream(src);
-		outputStream.write("//L33T CODEZ\n".getBytes());
-		outputStream.close();
+		try (FileOutputStream outputStream = new FileOutputStream(src)) {
+			outputStream.write("//L33T CODEZ\n".getBytes());
+		}
 
 		//generate an SDK feature
 		//test bug 208617 by naming the source feature something other than just originating feature + .source
@@ -243,7 +245,7 @@ public class SourceTests extends PDETestCase {
 
 		//bundleDoc only gets in the build by being added to the generated source feature,
 		//check that it is there in the result and is in jar form.
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/plugins/bundleDoc_1.0.0.jar");
 		entries.add("eclipse/plugins/source_1.0.0/src/bundleA_1.0.0/src.zip");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
@@ -287,20 +289,20 @@ public class SourceTests extends PDETestCase {
 		Utils.generatePluginBuildProperties(bundleA, buildProperties);
 		File src = new File(bundleA.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
-		FileOutputStream outputStream = new FileOutputStream(src);
-		outputStream.write("//L33T CODEZ\n".getBytes());
-		outputStream.close();
+		try (FileOutputStream outputStream = new FileOutputStream(src)) {
+			outputStream.write("//L33T CODEZ\n".getBytes());
+		}
 		File about = new File(bundleA.getLocation().toFile(), "about.html");
-		outputStream = new FileOutputStream(about);
-		outputStream.write("about\n".getBytes());
-		outputStream.close();
+		try (FileOutputStream outputStream = new FileOutputStream(about)) {
+			outputStream.write("about\n".getBytes());
+		}
 
 		Utils.generateBundle(bundleB, "bundleB");
 		src = new File(bundleB.getLocation().toFile(), "src/b.java");
 		src.getParentFile().mkdir();
-		outputStream = new FileOutputStream(src);
-		outputStream.write("//L33T CODEZ\n".getBytes());
-		outputStream.close();
+		try (FileOutputStream outputStream = new FileOutputStream(src)) {
+			outputStream.write("//L33T CODEZ\n".getBytes());
+		}
 
 		//generate an SDK feature
 		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, null);
@@ -317,18 +319,18 @@ public class SourceTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/plugins/bundleA.source_1.0.0.jar");
 		entries.add("eclipse/plugins/bundleB.source_1.0.0.jar");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 
-		ZipFile zip = new ZipFile(buildFolder.getFile("I.TestBuild/eclipse.zip").getLocation().toFile());
-		ZipEntry entry = zip.getEntry("eclipse/plugins/bundleA.source_1.0.0.jar");
-		InputStream in = new BufferedInputStream(zip.getInputStream(entry));
-		IFile jar = buildFolder.getFile("bundleA.source_1.0.0.jar");
-		OutputStream out = new BufferedOutputStream(new FileOutputStream(jar.getLocation().toFile()));
-		org.eclipse.pde.internal.build.Utils.transferStreams(in, out);
-		zip.close();
+		try (ZipFile zip = new ZipFile(buildFolder.getFile("I.TestBuild/eclipse.zip").getLocation().toFile())) {
+			ZipEntry entry = zip.getEntry("eclipse/plugins/bundleA.source_1.0.0.jar");
+			InputStream in = new BufferedInputStream(zip.getInputStream(entry));
+			IFile jar = buildFolder.getFile("bundleA.source_1.0.0.jar");
+			OutputStream out = new BufferedOutputStream(new FileOutputStream(jar.getLocation().toFile()));
+			org.eclipse.pde.internal.build.Utils.transferStreams(in, out);
+		}
 
 		entries.clear();
 		entries.add("about.html");
@@ -384,7 +386,7 @@ public class SourceTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.clear();
 		entries.add("A.java");
 		entries.add("about.html");
@@ -405,9 +407,9 @@ public class SourceTests extends PDETestCase {
 		Utils.generateBundle(bundleA, "bundleA");
 		File src = new File(bundleA.getLocation().toFile(), "src/A.java");
 		src.getParentFile().mkdir();
-		FileOutputStream outputStream = new FileOutputStream(src);
-		outputStream.write("class A {\n}\n".getBytes());
-		outputStream.close();
+		try (FileOutputStream outputStream = new FileOutputStream(src)) {
+			outputStream.write("class A {\n}\n".getBytes());
+		}
 
 		//generate an SDK feature
 		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"bundleA", "bundleA.source"});
@@ -429,13 +431,13 @@ public class SourceTests extends PDETestCase {
 		assertResourceFile(binaryASource, "A.java");
 
 		IFile manifestFile = plugins.getFile("bundleA.source_1.0.0/META-INF/MANIFEST.MF");
-		InputStream contents = manifestFile.getContents();
-		Manifest manifest = new Manifest(contents);
-		contents.close();
-		Attributes attr = manifest.getMainAttributes();
-		assertEquals(attr.getValue("Bundle-Version"), "1.0.0");
-		assertEquals(attr.getValue("Bundle-SymbolicName"), "bundleA.source");
-		assertTrue(attr.getValue("Eclipse-SourceBundle").startsWith("bundleA;version=\"1.0.0\""));
+		try (InputStream contents = manifestFile.getContents()) {
+			Manifest manifest = new Manifest(contents);
+			Attributes attr = manifest.getMainAttributes();
+			assertEquals(attr.getValue("Bundle-Version"), "1.0.0");
+			assertEquals(attr.getValue("Bundle-SymbolicName"), "bundleA.source");
+			assertTrue(attr.getValue("Eclipse-SourceBundle").startsWith("bundleA;version=\"1.0.0\""));
+		}
 	}
 
 	public void test243475_243227() throws Exception {
@@ -450,14 +452,14 @@ public class SourceTests extends PDETestCase {
 		//add some source to a.bundle
 		File src = new File(bundleFolder.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
-		FileOutputStream stream = new FileOutputStream(src);
-		stream.write("//L33T CODEZ\n".getBytes());
-		stream.close();
+		try (FileOutputStream stream = new FileOutputStream(src)) {
+			stream.write("//L33T CODEZ\n".getBytes());
+		}
 		//add the about.html
 		File about = new File(bundleFolder.getLocation().toFile(), "about.html");
-		stream = new FileOutputStream(about);
-		stream.write("about\n".getBytes());
-		stream.close();
+		try (FileOutputStream stream = new FileOutputStream(about)) {
+			stream.write("about\n".getBytes());
+		}
 
 		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"a.bundle"}, "1.0.0.qualifier");
 
@@ -656,7 +658,7 @@ public class SourceTests extends PDETestCase {
 
 		IFile buildScript = buildFolder.getFile("plugins/bundleA.source_1.0.0/build.xml");
 		Project antProject = assertValidAntScript(buildScript);
-		Target publishBinParts = (Target) antProject.getTargets().get("publish.bin.parts");
+		Target publishBinParts = antProject.getTargets().get("publish.bin.parts");
 		assertNotNull(publishBinParts);
 		Object child = AntUtils.getFirstChildByName(publishBinParts, "ant");
 		assertNotNull(child);

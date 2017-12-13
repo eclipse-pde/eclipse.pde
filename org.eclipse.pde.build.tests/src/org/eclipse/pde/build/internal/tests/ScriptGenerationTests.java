@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -56,7 +56,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		IProject buildProject = newTest();
 
 		class MyBuildScriptGenerator extends BuildScriptGenerator {
-			public HashMap getArchivesFormat() {
+			@Override
+			public HashMap<Config, String> getArchivesFormat() {
 				return super.getArchivesFormat();
 			}
 		};
@@ -70,9 +71,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		generator.setArchivesFormat("win32, win32, x86 - antZip");
 		generator.generate();
 
-		HashMap map = generator.getArchivesFormat();
+		HashMap<Config, String> map = generator.getArchivesFormat();
 		assertEquals(map.size(), 1);
-		Config config = (Config) map.keySet().iterator().next();
+		Config config = map.keySet().iterator().next();
 		assertEquals(map.get(config), "antZip");
 
 		clearStatics();
@@ -87,7 +88,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		map = generator.getArchivesFormat();
 		assertEquals(map.size(), 1);
-		config = (Config) map.keySet().iterator().next();
+		config = map.keySet().iterator().next();
 		assertEquals(map.get(config), "folder");
 	}
 
@@ -141,6 +142,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		String baseLocation = Platform.getInstallLocation().getURL().getPath();
 		File features = new File(baseLocation, "features");
 		FileFilter filter = new FileFilter() {
+			@Override
 			public boolean accept(File pathname) {
 				return pathname.getName().startsWith("org.eclipse.rcp_");
 			}
@@ -152,7 +154,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		// copy platform.xml and set the baseLocation and rcp version
 		IFile sourceXML = buildFolder.getFile("platform.xml");
-		Map replacements = new HashMap();
+		Map<String, String> replacements = new HashMap<>();
 		replacements.put("BASE_LOCATION", baseLocation);
 		replacements.put("RCP_VERSION", version);
 		Utils.transferAndReplace(sourceXML.getLocationURI().toURL(), configFolder.getFile("platform.xml"), replacements);
@@ -300,7 +302,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		IFile buildScript = buildFolder.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildScript);
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		assertNotNull(dot);
 		Object child = AntUtils.getFirstChildByName(dot, "path");
 		assertNotNull(child);
@@ -326,7 +328,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		IFile buildScript = buildFolder.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildScript);
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		assertNotNull(dot);
 		Object child = AntUtils.getFirstChildByName(dot, "path");
 		assertNotNull(child);
@@ -376,7 +378,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		//from the state by the filtering, check that is isn't in the classpath 
 		IFile buildScript = bundleFolder.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildScript);
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Object child = AntUtils.getFirstChildByName(dot, "path");
 		assertTrue(child instanceof Path);
 		String path = child.toString();
@@ -771,7 +773,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		IFile buildScript = buildFolder.getFile("compile.feature.xml");
 		Project antProject = assertValidAntScript(buildScript);
-		Target main = (Target) antProject.getTargets().get("main");
+		Target main = antProject.getTargets().get("main");
 		assertNotNull(main);
 		Object[] children = AntUtils.getChildrenByName(main, "parallel");
 		assertTrue(children.length == 4);
@@ -920,7 +922,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("plugins/P1_1.0.0/@dot.log");
 		entries.add("plugins/P2_1.0.0/@dot.log");
 		assertZipContents(f1, "F1_1.0.0.log.zip", entries);
@@ -1014,14 +1016,14 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.writeBuffer(custom.getFile("profiles/my.profile"), buffer);
 		Utils.writeBuffer(custom.getFile("profile.list"), new StringBuffer("java.profiles=profiles/my.profile\n"));
 
-		ZipOutputStream jar = new ZipOutputStream(new FileOutputStream(new File(custom.getLocation().toOSString() + ".jar")));
-		jar.putNextEntry(new ZipEntry(JarFile.MANIFEST_NAME));
-		Utils.transferStreams(custom.getFile(JarFile.MANIFEST_NAME).getContents(), true, jar, false);
-		jar.putNextEntry(new ZipEntry("profile.list"));
-		Utils.transferStreams(custom.getFile("profile.list").getContents(), true, jar, false);
-		jar.putNextEntry(new ZipEntry("profiles/my.profile"));
-		Utils.transferStreams(custom.getFile("profiles/my.profile").getContents(), true, jar, false);
-		jar.close();
+		try (ZipOutputStream jar = new ZipOutputStream(new FileOutputStream(new File(custom.getLocation().toOSString() + ".jar")))) {
+			jar.putNextEntry(new ZipEntry(JarFile.MANIFEST_NAME));
+			Utils.transferStreams(custom.getFile(JarFile.MANIFEST_NAME).getContents(), true, jar, false);
+			jar.putNextEntry(new ZipEntry("profile.list"));
+			Utils.transferStreams(custom.getFile("profile.list").getContents(), true, jar, false);
+			jar.putNextEntry(new ZipEntry("profiles/my.profile"));
+			Utils.transferStreams(custom.getFile("profiles/my.profile").getContents(), true, jar, false);
+		}
 
 		custom.delete(true, null);
 
@@ -1085,7 +1087,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
-		Set zipEntries = new HashSet();
+		Set<String> zipEntries = new HashSet<>();
 		zipEntries.add("eclipse/1");
 		zipEntries.add("eclipse/sub/2");
 		zipEntries.add("eclipse/3");
@@ -1134,13 +1136,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		runAntScript(buildXMLPath, new String[] {"build.update.jar"}, buildFolder.getLocation().toOSString(), null);
 
 		assertResourceFile(bundle, "bundle_1.0.0.jar");
-		JarFile jar = null;
-		try {
-			jar = new JarFile(bundle.getFile("bundle_1.0.0.jar").getLocation().toFile());
+		try (JarFile jar = new JarFile(bundle.getFile("bundle_1.0.0.jar").getLocation().toFile());) {
 			Manifest manifest = jar.getManifest();
 			assertEquals(manifest.getMainAttributes().getValue("Bundle-SymbolicName"), "bundle");
-		} finally {
-			jar.close();
 		}
 	}
 
@@ -1226,7 +1224,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
-		Set zipEntries = new HashSet();
+		Set<String> zipEntries = new HashSet<>();
 		zipEntries.add("plugins/p1_1.0.0.jar");
 		zipEntries.add("plugins/p2_1.0.0.jar");
 		assertZipContents(buildFolder, "I.TestBuild/f-TestBuild.zip", zipEntries);
@@ -1260,15 +1258,11 @@ public class ScriptGenerationTests extends PDETestCase {
 		zipEntries.add("plugins/p2_1.0.0.jar.pack.gz");
 		assertZipContents(buildFolder, "I.TestBuild/f-TestBuild.zip", zipEntries);
 
-		java.util.zip.ZipFile zip = null;
 		File tempJar = new File(zipFile.getParentFile(), "temp.jar");
-		try {
-			zip = new java.util.zip.ZipFile(zipFile);
+		try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(zipFile)) {
 			ZipEntry entry = zip.getEntry("plugins/p1_1.0.0.jar");
 			OutputStream output = new BufferedOutputStream(new FileOutputStream(tempJar));
 			Utils.transferStreams(zip.getInputStream(entry), true, output, true);
-		} finally {
-			zip.close();
 		}
 		assertJarVerifies(tempJar, true);
 	}
@@ -1699,6 +1693,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		antProperties.put(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true");
 
 		BuildScriptGenerator generator = new BuildScriptGenerator() {
+			@Override
 			public void setImmutableAntProperties(Properties properties) {
 				AbstractScriptGenerator.setStaticAntProperties(properties);
 			}
@@ -1742,37 +1737,37 @@ public class ScriptGenerationTests extends PDETestCase {
 		Project antProject = assertValidAntScript(buildScript);
 
 		// check the excludes directive for copying files over
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Copy copyChild = (Copy) AntUtils.getFirstChildByName(dot, "copy");
-		Enumeration rc = ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
-		RuntimeConfigurable configurable = (RuntimeConfigurable) rc.nextElement();
+		Enumeration<RuntimeConfigurable> rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
+		RuntimeConfigurable configurable = rc.nextElement();
 		assertEquals(configurable.getElementTag(), "exclude");
 		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.aj");
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.groovy");
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/package.htm*");
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.aj");
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.groovy");
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/package.htm*");
 		assertFalse("Should have only found 4 filter elements", rc.hasMoreElements());
 
 		// check the includes directive for copying source files
-		Target copySource = (Target) antProject.getTargets().get("copy.src.zip");
+		Target copySource = antProject.getTargets().get("copy.src.zip");
 		copyChild = (Copy) AntUtils.getFirstChildByName(copySource, "copy");
-		rc = ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
-		configurable = (RuntimeConfigurable) rc.nextElement();
+		rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
+		configurable = rc.nextElement();
 		assertEquals(configurable.getElementTag(), "include");
 		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.aj");
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.groovy");
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.aj");
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.groovy");
 		assertFalse("Should have only found 3 filter elements", rc.hasMoreElements());
 
 		// check the includes directive for zipping source files
-		Target zipSource = (Target) antProject.getTargets().get("zip.src.zip");
+		Target zipSource = antProject.getTargets().get("zip.src.zip");
 		Zip zipChild = (Zip) AntUtils.getFirstChildByName(zipSource, "zip");
-		rc = ((RuntimeConfigurable) zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
-		configurable = (RuntimeConfigurable) rc.nextElement();
+		rc = zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
+		configurable = rc.nextElement();
 		assertEquals(configurable.getElementTag(), "include");
 		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.aj");
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.groovy");
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.aj");
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.groovy");
 		assertFalse("Should have only found 3 filter elements", rc.hasMoreElements());
 	}
 
@@ -1798,25 +1793,25 @@ public class ScriptGenerationTests extends PDETestCase {
 		Project antProject = assertValidAntScript(buildScript);
 
 		// check the excludes directive for copying files over
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Copy copyChild = (Copy) AntUtils.getFirstChildByName(dot, "copy");
-		Enumeration rc = ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.java");
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/package.htm*");
+		Enumeration<RuntimeConfigurable> rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.java");
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/package.htm*");
 		assertFalse("Should have only found 2 filter elements", rc.hasMoreElements());
 
 		// check the includes directive for copying source files
-		Target copySource = (Target) antProject.getTargets().get("copy.src.zip");
+		Target copySource = antProject.getTargets().get("copy.src.zip");
 		copyChild = (Copy) AntUtils.getFirstChildByName(copySource, "copy");
-		rc = ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.java");
+		rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.java");
 		assertFalse("Should have only found 1 filter elements", rc.hasMoreElements());
 
 		// check the includes directive for zipping source files
-		Target zipSource = (Target) antProject.getTargets().get("zip.src.zip");
+		Target zipSource = antProject.getTargets().get("zip.src.zip");
 		Zip zipChild = (Zip) AntUtils.getFirstChildByName(zipSource, "zip");
-		rc = ((RuntimeConfigurable) zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
-		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.java");
+		rc = zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
+		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.java");
 		assertFalse("Should have only found 1 filter elements", rc.hasMoreElements());
 	}
 
@@ -1839,7 +1834,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFile buildxml = plugin.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildxml);
 
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
 		Object compiler = javac.getRuntimeConfigurableWrapper().getAttributeMap().get("compiler");
 		assertEquals("Incorrect compiler adapter", "org.foo.someCompilerAdapter", compiler);
@@ -1864,13 +1859,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFile buildxml = plugin.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildxml);
 
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
 
 		// check that the build file contains the expected lines
-		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		Enumeration<RuntimeConfigurable> en = javac.getRuntimeConfigurableWrapper().getChildren();
 		while (en.hasMoreElements()) {
-			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
 				if (rc.getAttributeMap().containsKey("line") && "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					return;
@@ -1900,13 +1895,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFile buildxml = plugin.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildxml);
 
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
 
 		// check that the build file contains the expected lines
-		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		Enumeration<RuntimeConfigurable> en = javac.getRuntimeConfigurableWrapper().getChildren();
 		while (en.hasMoreElements()) {
-			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
 				if (rc.getAttributeMap().containsKey("line") && "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					return;
@@ -1936,13 +1931,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFile buildxml = plugin.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildxml);
 
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
 
 		// check that the build file contains the expected lines
-		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		Enumeration<RuntimeConfigurable> en = javac.getRuntimeConfigurableWrapper().getChildren();
 		while (en.hasMoreElements()) {
-			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
 				if (rc.getAttributeMap().containsKey("line") && "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					fail("Should not have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'");
@@ -1971,13 +1966,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFile buildxml = plugin.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildxml);
 
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
 
 		// check that the build file contains the expected lines
-		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		Enumeration<RuntimeConfigurable> en = javac.getRuntimeConfigurableWrapper().getChildren();
 		while (en.hasMoreElements()) {
-			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
 				if (rc.getAttributeMap().containsKey("value") && "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					return;
@@ -2008,13 +2003,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFile buildxml = plugin.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildxml);
 
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
 
 		// check that the build file contains the expected lines
-		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		Enumeration<RuntimeConfigurable> en = javac.getRuntimeConfigurableWrapper().getChildren();
 		while (en.hasMoreElements()) {
-			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
 				if (rc.getAttributeMap().containsKey("value") && "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					return;
@@ -2045,13 +2040,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFile buildxml = plugin.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildxml);
 
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
 
 		// check that the build file contains the expected lines
-		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		Enumeration<RuntimeConfigurable> en = javac.getRuntimeConfigurableWrapper().getChildren();
 		while (en.hasMoreElements()) {
-			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
 				if (rc.getAttributeMap().containsKey("value") && "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					fail("Should not have found compiler log entry:\n@${basedir}/javaCompiler...args");
@@ -2078,13 +2073,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertResourceFile(plugin, "build.xml");
 		IFile buildxml = plugin.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildxml);
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
 
 		// check that the build file contains the expected lines
-		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		Enumeration<RuntimeConfigurable> en = javac.getRuntimeConfigurableWrapper().getChildren();
 		while (en.hasMoreElements()) {
-			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
 				if (rc.getAttributeMap().containsKey("line") && "-foo -bar baz".equals(rc.getAttributeMap().get("line"))) {
 					return;
@@ -2113,13 +2108,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertResourceFile(plugin, "build.xml");
 		IFile buildxml = plugin.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildxml);
-		Target dot = (Target) antProject.getTargets().get("@dot");
+		Target dot = antProject.getTargets().get("@dot");
 		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
 
 		// check that the build file contains the expected lines
-		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		Enumeration<RuntimeConfigurable> en = javac.getRuntimeConfigurableWrapper().getChildren();
 		while (en.hasMoreElements()) {
-			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
 				if (rc.getAttributeMap().containsKey("line") && "-foo -bar baz".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					return;

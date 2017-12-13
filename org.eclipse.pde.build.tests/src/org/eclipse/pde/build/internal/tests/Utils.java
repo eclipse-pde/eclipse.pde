@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.build.internal.tests;
 
 import java.io.*;
@@ -25,8 +24,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.pde.build.tests.Activator;
-import org.eclipse.pde.internal.build.BundleHelper;
-import org.eclipse.pde.internal.build.FeatureGenerator;
+import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 public class Utils {
@@ -34,31 +32,36 @@ public class Utils {
 	private static final String VERSION = "version";
 
 	/**
-	 * Transfer the contents of resource into the destination IFile.  During the transfer, replace all 
-	 * instances of "@replaceTag@" with "replaceString"
+	 * Transfer the contents of resource into the destination IFile. During the
+	 * transfer, replace all instances of "@replaceTag@" with "replaceString"
 	 * 
-	 * @param resource		- input URL
-	 * @param destination	- IFile destination
-	 * @param replacements	- map of tokens and values to replaces, file should contain "@replaceTag@"
-	 * @throws IOException 
-	 * @throws CoreException 
+	 * @param resource
+	 *            - input URL
+	 * @param destination
+	 *            - IFile destination
+	 * @param replacements
+	 *            - map of tokens and values to replaces, file should contain
+	 *            "@replaceTag@"
+	 * @throws IOException
+	 * @throws CoreException
 	 */
-	static public void transferAndReplace(URL resource, IFile destination, Map replacements) throws IOException, CoreException {
+	static public void transferAndReplace(URL resource, IFile destination, Map<String, String> replacements)
+			throws IOException, CoreException {
 		Reader reader = new InputStreamReader(new BufferedInputStream(resource.openStream()));
 		final ReplaceTokens replaces = new ReplaceTokens(reader);
 
-		for (Iterator iterator = replacements.keySet().iterator(); iterator.hasNext();) {
-			String replaceTag = (String) iterator.next();
-			String replaceString = (String) replacements.get(replaceTag);
+		for (Iterator<String> iterator = replacements.keySet().iterator(); iterator.hasNext();) {
+			String replaceTag = iterator.next();
+			String replaceString = replacements.get(replaceTag);
 			ReplaceTokens.Token token = new ReplaceTokens.Token();
 			token.setKey(replaceTag);
 			token.setValue(replaceString);
 			replaces.addConfiguredToken(token);
 		}
 
-		ReaderInputStream inputStream = new ReaderInputStream(replaces);
-		destination.create(inputStream, true, null);
-		inputStream.close();
+		try (ReaderInputStream inputStream = new ReaderInputStream(replaces)) {
+			destination.create(inputStream, true, null);
+		}
 	}
 
 	static public String[] getVersionsNoQualifier(String[] bundles) {
@@ -73,18 +76,20 @@ public class Utils {
 	static public void generateAllElements(IFolder buildFolder, String element) throws CoreException, IOException {
 		if (element != null) {
 			// get the productBuild/allElements.xml and replace @ELEMENT@ with element
-			URL allElements = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/allElements.xml"), null);
-			Map replacements = new HashMap(1);
+			URL allElements = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID),
+					new Path("/resources/allElements.xml"), null);
+			Map<String, String> replacements = new HashMap<>(1);
 			replacements.put("ELEMENT", element);
 			transferAndReplace(allElements, buildFolder.getFile("allElements.xml"), replacements);
 			buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
 		}
 	}
 
-	static public void generatePluginBuildProperties(IFolder folder, Properties properties) throws FileNotFoundException, IOException {
+	static public void generatePluginBuildProperties(IFolder folder, Properties properties)
+			throws FileNotFoundException, IOException {
 		Properties buildProperties = properties != null ? properties : new Properties();
 
-		//default contents:
+		// default contents:
 		if (!buildProperties.containsKey("source.."))
 			buildProperties.put("source..", "src/");
 		if (!buildProperties.containsKey("output.."))
@@ -95,7 +100,8 @@ public class Utils {
 		storeBuildProperties(folder, buildProperties);
 	}
 
-	static public void generateBundleManifest(IFolder folder, String bundleId, String bundleVersion, Attributes additionalAttributes) throws CoreException, IOException {
+	static public void generateBundleManifest(IFolder folder, String bundleId, String bundleVersion,
+			Attributes additionalAttributes) throws CoreException, IOException {
 		Manifest manifest = new Manifest();
 		Attributes mainAttributes = manifest.getMainAttributes();
 		mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
@@ -110,9 +116,10 @@ public class Utils {
 		IFolder metaInf = (IFolder) manifestFile.getParent();
 		if (!metaInf.exists())
 			metaInf.create(true, true, null);
-		OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(manifestFile.getLocation().toFile()));
-		manifest.write(outputStream);
-		outputStream.close();
+		try (OutputStream outputStream = new BufferedOutputStream(
+				new FileOutputStream(manifestFile.getLocation().toFile()))) {
+			manifest.write(outputStream);
+		}
 	}
 
 	static public void generateBundle(IFolder folder, String bundleId) throws CoreException, IOException {
@@ -122,41 +129,48 @@ public class Utils {
 		folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
 
-	static public void generateBundle(IFolder folder, String bundleId, String version) throws CoreException, IOException {
+	static public void generateBundle(IFolder folder, String bundleId, String version)
+			throws CoreException, IOException {
 		generateBundleManifest(folder, bundleId, version, null);
 		generatePluginBuildProperties(folder, null);
 		writeBuffer(folder.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
 		folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
 
-	static public void storeBuildProperties(IFolder buildFolder, Properties buildProperties) throws FileNotFoundException, IOException {
+	static public void storeBuildProperties(IFolder buildFolder, Properties buildProperties)
+			throws FileNotFoundException, IOException {
 		storeProperties(buildFolder.getFile("build.properties"), buildProperties);
 	}
 
-	static public void storeProperties(IFile propertiesFile, Properties buildProperties) throws FileNotFoundException, IOException {
+	static public void storeProperties(IFile propertiesFile, Properties buildProperties)
+			throws FileNotFoundException, IOException {
 		File buildPropertiesFile = propertiesFile.getLocation().toFile();
-		OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(buildPropertiesFile));
-		buildProperties.store(outputStream, "");
-		outputStream.close();
+		try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(buildPropertiesFile))) {
+			buildProperties.store(outputStream, "");
+		}
 	}
 
-	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList) throws CoreException, IOException {
+	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList)
+			throws CoreException, IOException {
 		generateFeature(workingDirectory, id, featureList, pluginList, null, false, false, null);
 	}
 
-	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String version) throws CoreException, IOException {
+	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList,
+			String version) throws CoreException, IOException {
 		generateFeature(workingDirectory, id, featureList, pluginList, null, false, false, version);
 	}
 
-	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String product, boolean includeLaunchers, boolean verify, String version) throws CoreException, IOException {
+	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList,
+			String product, boolean includeLaunchers, boolean verify, String version)
+			throws CoreException, IOException {
 		FeatureGenerator generator = new FeatureGenerator();
 		if (verify) {
-			FeatureGenerator.setConfigInfo("*,*,*");
+			AbstractScriptGenerator.setConfigInfo("*,*,*");
 			String baseLocation = Platform.getInstallLocation().getURL().getPath();
 			BuildTimeSiteFactory.setInstalledBaseSite(baseLocation);
 			File delta = findDeltaPack();
 			if (delta != null && !delta.equals(new File(baseLocation)))
-				generator.setPluginPath(new String[] {delta.getAbsolutePath()});
+				generator.setPluginPath(new String[] { delta.getAbsolutePath() });
 		}
 		generator.setIncludeLaunchers(includeLaunchers);
 		generator.setVerify(verify);
@@ -169,23 +183,30 @@ public class Utils {
 		generator.generate();
 	}
 
-	static public void generateProduct(IFile productFile, String id, String version, String[] entryList, boolean features) throws CoreException, IOException {
+	static public void generateProduct(IFile productFile, String id, String version, String[] entryList,
+			boolean features) throws CoreException, IOException {
 		generateProduct(productFile, id, version, null, entryList, features, null);
 	}
 
-	static public void generateProduct(IFile productFile, String id, String version, String application, String[] entryList, boolean features) throws CoreException, IOException {
+	static public void generateProduct(IFile productFile, String id, String version, String application,
+			String[] entryList, boolean features) throws CoreException, IOException {
 		generateProduct(productFile, id, version, application, entryList, features, null);
 	}
 
-	static public void generateProduct(IFile productFile, String id, String version, String application, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
+	static public void generateProduct(IFile productFile, String id, String version, String application,
+			String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
 		generateProduct(productFile, null, id, version, application, null, entryList, features, extra);
 	}
 
-	static public void generateProduct(IFile productFile, String id, String version, String application, String launcher, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
+	static public void generateProduct(IFile productFile, String id, String version, String application,
+			String launcher, String[] entryList, boolean features, StringBuffer extra)
+			throws CoreException, IOException {
 		generateProduct(productFile, null, id, version, application, launcher, entryList, features, extra);
 	}
 
-	static public void generateProduct(IFile productFile, String uid, String id, String version, String application, String launcher, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
+	static public void generateProduct(IFile productFile, String uid, String id, String version, String application,
+			String launcher, String[] entryList, boolean features, StringBuffer extra)
+			throws CoreException, IOException {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<product ");
 		if (uid != null) {
@@ -218,7 +239,8 @@ public class Utils {
 		if (features) {
 			buffer.append("  <features>\n");
 			for (int i = 0; i < entryList.length; i++) {
-				Map items = org.eclipse.pde.internal.build.Utils.parseExtraBundlesString(entryList[i], false);
+				Map<String, Object> items = org.eclipse.pde.internal.build.Utils.parseExtraBundlesString(entryList[i],
+						false);
 				buffer.append("    <feature id=\"");
 				buffer.append(items.get(ID));
 				buffer.append("\"");
@@ -233,7 +255,8 @@ public class Utils {
 		} else {
 			buffer.append("  <plugins>\n");
 			for (int i = 0; i < entryList.length; i++) {
-				Map items = org.eclipse.pde.internal.build.Utils.parseExtraBundlesString(entryList[i], false);
+				Map<String, Object> items = org.eclipse.pde.internal.build.Utils.parseExtraBundlesString(entryList[i],
+						false);
 				buffer.append("    <plugin id=\"");
 				buffer.append(items.get(ID));
 				buffer.append("\"");
@@ -257,7 +280,7 @@ public class Utils {
 	}
 
 	/**
-	 * Creates a IFolder resources.  Will create any folders necessary under parent
+	 * Creates a IFolder resources. Will create any folders necessary under parent
 	 */
 	static public IFolder createFolder(IFolder parent, String path) throws CoreException {
 		parent.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -266,14 +289,14 @@ public class Utils {
 			return folder;
 		IFolder container = (IFolder) folder.getParent();
 		if (!container.exists()) {
-			LinkedList stack = new LinkedList();
+			LinkedList<IFolder> stack = new LinkedList<>();
 			while (!container.equals(parent) && !container.exists()) {
 				stack.add(0, container);
 				container = (IFolder) container.getParent();
 			}
 
-			for (Iterator iterator = stack.iterator(); iterator.hasNext();) {
-				container = (IFolder) iterator.next();
+			for (Iterator<IFolder> iterator = stack.iterator(); iterator.hasNext();) {
+				container = iterator.next();
 				container.create(true, true, null);
 			}
 		}
@@ -283,11 +306,7 @@ public class Utils {
 
 	private static File findExecutable(File baseLocation) {
 		File plugins = new File(baseLocation, "features");
-		FilenameFilter filter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.startsWith("org.eclipse.equinox.executable");
-			}
-		};
+		FilenameFilter filter = (dir, name) -> name.startsWith("org.eclipse.equinox.executable");
 		String[] files = plugins.list(filter);
 
 		if (files != null && files.length > 0)
@@ -307,11 +326,14 @@ public class Utils {
 		if (deltaLocation != null)
 			return deltaLocation;
 
-		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
+		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault()
+				.acquireService(SimpleConfiguratorManipulator.class.getName());
 		if (manipulator != null) {
-			BundleInfo[] bundles = manipulator.loadConfiguration(BundleHelper.getDefault().getBundle().getBundleContext(), null);
-			//find a fragment for a platform we aren't
-			String id = "org.eclipse.equinox.launcher.win32.win32.x86" + (Platform.getOSArch().equals("x86") ? "_64" : "");
+			BundleInfo[] bundles = manipulator
+					.loadConfiguration(BundleHelper.getDefault().getBundle().getBundleContext(), null);
+			// find a fragment for a platform we aren't
+			String id = "org.eclipse.equinox.launcher.win32.win32.x86"
+					+ (Platform.getOSArch().equals("x86") ? "_64" : "");
 			for (int i = 0; i < bundles.length; i++) {
 				if (bundles[i].getSymbolicName().equals(id)) {
 					URI location = bundles[i].getLocation();
@@ -324,8 +346,10 @@ public class Utils {
 		}
 
 		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
-			// After https://bugs.eclipse.org/431116 and related changes, the install location on the Mac
-			// moved down two directories (from <folder-containing-Eclipse.app> to Eclipse.app/Contents/Eclipse).
+			// After https://bugs.eclipse.org/431116 and related changes, the install
+			// location on the Mac
+			// moved down two directories (from <folder-containing-Eclipse.app> to
+			// Eclipse.app/Contents/Eclipse).
 			baseLocation = baseLocation.getParentFile().getParentFile();
 		}
 		deltaLocation = findExecutable(new File(baseLocation.getParent(), "deltapack/eclipse"));
@@ -333,15 +357,10 @@ public class Utils {
 	}
 
 	public static void writeBuffer(IFile outputFile, StringBuffer buffer) throws IOException, CoreException {
-		FileOutputStream stream = null;
-		try {
-			File output = outputFile.getLocation().toFile();
-			output.getParentFile().mkdirs();
-			stream = new FileOutputStream(output);
+		File output = outputFile.getLocation().toFile();
+		output.getParentFile().mkdirs();
+		try (FileOutputStream stream = new FileOutputStream(output)) {
 			stream.write(buffer.toString().getBytes());
-		} finally {
-			if (stream != null)
-				stream.close();
 		}
 		outputFile.getParent().refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
@@ -350,7 +369,8 @@ public class Utils {
 		transferStreams(source, true, destination, true);
 	}
 
-	public static void transferStreams(InputStream source, boolean closeIn, OutputStream destination, boolean closeOut) throws IOException {
+	public static void transferStreams(InputStream source, boolean closeIn, OutputStream destination, boolean closeOut)
+			throws IOException {
 		source = new BufferedInputStream(source);
 		destination = new BufferedOutputStream(destination);
 		try {
@@ -378,15 +398,14 @@ public class Utils {
 		}
 	}
 
-	public static boolean extractFromZip(IFolder buildFolder, String zipFile, String zipEntry, IFile outputFile) throws CoreException {
+	public static boolean extractFromZip(IFolder buildFolder, String zipFile, String zipEntry, IFile outputFile)
+			throws CoreException {
 		File folder = new File(buildFolder.getLocation().toOSString());
 		File archiveFile = new File(folder, zipFile);
 		if (!archiveFile.exists())
 			return false;
 
-		ZipFile zip = null;
-		try {
-			zip = new ZipFile(archiveFile);
+		try (ZipFile zip = new ZipFile(archiveFile);) {
 			ZipEntry entry = zip.getEntry(zipEntry);
 			if (entry == null)
 				return false;
@@ -395,13 +414,6 @@ public class Utils {
 			transferStreams(stream, out);
 		} catch (Exception e) {
 			return false;
-		} finally {
-			try {
-				if (zip != null)
-					zip.close();
-			} catch (IOException e) {
-				return false;
-			}
 		}
 		outputFile.refreshLocal(IResource.DEPTH_ONE, null);
 		return true;
@@ -412,21 +424,12 @@ public class Utils {
 		if (!propertiesFile.exists())
 			return null;
 
-		InputStream stream = null;
-		try {
-			Properties props = new Properties();
-			stream = propertiesFile.getContents(true);
+		Properties props = new Properties();
+		try (InputStream stream = propertiesFile.getContents(true)) {
 			props.load(stream);
 			return props;
 		} catch (IOException e) {
 			return null;
-		} finally {
-			if (stream != null)
-				try {
-					stream.close();
-				} catch (IOException e) {
-					return null;
-				}
 		}
 	}
 
@@ -443,31 +446,13 @@ public class Utils {
 				copy(children[i], new File(target, children[i].getName()));
 			return;
 		}
-		InputStream input = null;
-		OutputStream output = null;
-		try {
-			input = new BufferedInputStream(new FileInputStream(source));
-			output = new BufferedOutputStream(new FileOutputStream(target));
+		try (InputStream input = new BufferedInputStream(new FileInputStream(source));
+				OutputStream output = new BufferedOutputStream(new FileOutputStream(target))) {
 
 			byte[] buffer = new byte[8192];
 			int bytesRead = 0;
 			while ((bytesRead = input.read(buffer)) != -1)
 				output.write(buffer, 0, bytesRead);
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					//ignore
-				}
-			}
-			if (output != null) {
-				try {
-					output.close();
-				} catch (IOException e) {
-					//ignore
-				}
-			}
 		}
 	}
 

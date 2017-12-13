@@ -59,7 +59,7 @@ public class ProductTests extends PDETestCase {
 
 		runBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/.eclipseproduct");
 		entries.add("eclipse/configuration/config.ini");
 		entries.add("eclipse/rcp.app/Contents/Info.plist");
@@ -91,7 +91,7 @@ public class ProductTests extends PDETestCase {
 
 		runProductBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/pablo.exe");
 		entries.add("eclipse/configuration/config.ini");
 
@@ -152,10 +152,10 @@ public class ProductTests extends PDETestCase {
 
 		IFile assembleScript = buildFolder.getFile("assemble.F.win32.win32.x86.xml");
 
-		Map alternateTasks = new HashMap();
+		Map<String, String> alternateTasks = new HashMap<>();
 		alternateTasks.put("eclipse.brand", "org.eclipse.pde.build.internal.tests.ant.TestBrandTask");
 		Project antProject = assertValidAntScript(assembleScript, alternateTasks);
-		Target main = (Target) antProject.getTargets().get("main");
+		Target main = antProject.getTargets().get("main");
 		assertNotNull(main);
 		TestBrandTask brand = (TestBrandTask) AntUtils.getFirstChildByName(main, "eclipse.brand");
 		assertNotNull(brand);
@@ -163,7 +163,7 @@ public class ProductTests extends PDETestCase {
 		assertTrue(brand.icons.indexOf("mail.ico") > 0);
 
 		//bug 178928
-		Target gather = (Target) antProject.getTargets().get("gather.bin.parts");
+		Target gather = antProject.getTargets().get("gather.bin.parts");
 		Task[] subTasks = gather.getTasks();
 		assertEquals(subTasks.length, 2);
 	}
@@ -229,11 +229,7 @@ public class ProductTests extends PDETestCase {
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 
-		FilenameFilter filter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.startsWith("org.eclipse.equinox.executable");
-			}
-		};
+		FilenameFilter filter = (dir, name) -> name.startsWith("org.eclipse.equinox.executable");
 		File[] files = new File(delta, "features").listFiles(filter);
 
 		File win32Exe = new File(files[0], "bin/win32/win32/x86/launcher.exe");
@@ -253,12 +249,12 @@ public class ProductTests extends PDETestCase {
 
 		//IconExe prints to stderr, redirect that to a file
 		PrintStream oldErr = System.err;
-		PrintStream newErr = new PrintStream(new FileOutputStream(buildFolder.getLocation().toOSString() + "/out.out"));
-		System.setErr(newErr);
-		IconExe.main(new String[] {win32File.getLocation().toOSString(), icoFile.getLocation().toOSString()});
-		IconExe.main(new String[] {win64File.getLocation().toOSString(), icoFile.getLocation().toOSString()});
-		System.setErr(oldErr);
-		newErr.close();
+		try (PrintStream newErr = new PrintStream(new FileOutputStream(buildFolder.getLocation().toOSString() + "/out.out"))) {
+			System.setErr(newErr);
+			IconExe.main(new String[] {win32File.getLocation().toOSString(), icoFile.getLocation().toOSString()});
+			IconExe.main(new String[] {win64File.getLocation().toOSString(), icoFile.getLocation().toOSString()});
+			System.setErr(oldErr);
+		}
 
 		assertEquals(0, new File(buildFolder.getLocation().toOSString(), "out.out").length());
 	}
@@ -269,7 +265,7 @@ public class ProductTests extends PDETestCase {
 		Utils.generateFeature(buildFolder, "f", null, new String[] {"a", "b", "c", "d"});
 		Utils.generateProduct(product, null, "1.0.0", null, new String[] {"f"}, true);
 
-		AssembleScriptGenerator.setConfigInfo("win32,win32,x86 & linux,gtk,x86");
+		AbstractScriptGenerator.setConfigInfo("win32,win32,x86 & linux,gtk,x86");
 		Config win32 = new Config("win32,win32,x86");
 		Config linux = new Config("linux, gtk, x86");
 		AssemblyInformation assembly = new AssemblyInformation();
@@ -337,11 +333,7 @@ public class ProductTests extends PDETestCase {
 		FileUtils.unzipFile(buildFolder.getFile("I.TestBuild/eclipse-win32.win32.x86.zip").getLocation().toFile(), tmp.getLocation().toFile());
 
 		File file = buildFolder.getFolder("tmp/eclipse/plugins").getLocation().toFile();
-		String[] a = file.list(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.startsWith("A_1.0.0.v");
-			}
-		});
+		String[] a = file.list((dir, name) -> name.startsWith("A_1.0.0.v"));
 		assertTrue(a.length == 1);
 		String bundleString = a[0].substring(0, a[0].length() - 4); //trim .jar
 
@@ -446,10 +438,10 @@ public class ProductTests extends PDETestCase {
 		ProductFile productFile = new ProductFile(product.getLocation().toOSString(), null);
 		assertEquals(productFile.getVersion(), "1.2.3.va");
 
-		Iterator i = productFile.getProductEntries().iterator();
-		assertEquals(((FeatureEntry) i.next()).getVersion(), "1.2.3");
-		assertEquals(((FeatureEntry) i.next()).getVersion(), "2.3.4");
-		assertEquals(((FeatureEntry) i.next()).getVersion(), "1.2.1");
+		Iterator<FeatureEntry> i = productFile.getProductEntries().iterator();
+		assertEquals(i.next().getVersion(), "1.2.3");
+		assertEquals(i.next().getVersion(), "2.3.4");
+		assertEquals(i.next().getVersion(), "1.2.1");
 	}
 
 	public void testBug262324() throws Exception {
@@ -573,7 +565,7 @@ public class ProductTests extends PDETestCase {
 
 		runProductBuild(buildFolder);
 
-		Set entries = new HashSet();
+		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/plugins/A_1.0.0.jar");
 		entries.add("eclipse/rcp.exe");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
