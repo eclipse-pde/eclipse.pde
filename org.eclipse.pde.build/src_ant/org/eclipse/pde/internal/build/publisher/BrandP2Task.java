@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2009, 2017 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -269,7 +269,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	private List<ITouchpointData> brandTouchpointData(Collection<ITouchpointData> data) {
 		if (config.getOs().equals("macosx")) //$NON-NLS-1$
 			return brandMacTouchpointData();
-		ArrayList<ITouchpointData> results = new ArrayList<ITouchpointData>(data.size() + 1);
+		ArrayList<ITouchpointData> results = new ArrayList<>(data.size() + 1);
 		results.addAll(data);
 
 		boolean haveChmod = false;
@@ -282,7 +282,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 
 		for (int i = 0; i < results.size(); i++) {
 			ITouchpointData td = results.get(i);
-			Map<String, ITouchpointInstruction> instructions = new HashMap<String, ITouchpointInstruction>(td.getInstructions());
+			Map<String, ITouchpointInstruction> instructions = new HashMap<>(td.getInstructions());
 
 			String[] phases = new String[] {INSTALL, CONFIGURE};
 			for (int phase = 0; phase < phases.length; phase++) {
@@ -326,7 +326,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 		if (!haveChmod && !config.getOs().equals("win32")) { //$NON-NLS-1$
 			String body = "chmod(targetDir:${installFolder}, targetFile:" + brandedLauncher + ", permissions:755)"; //$NON-NLS-1$ //$NON-NLS-2$
 			TouchpointInstruction newInstruction = new TouchpointInstruction(body, null);
-			Map<String, ITouchpointInstruction> instructions = new HashMap<String, ITouchpointInstruction>();
+			Map<String, ITouchpointInstruction> instructions = new HashMap<>();
 			instructions.put(INSTALL, newInstruction);
 			results.add(new TouchpointData(instructions));
 		}
@@ -334,10 +334,10 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	private List<ITouchpointData> brandMacTouchpointData() {
-		Map<String, ITouchpointInstruction> instructions = new HashMap<String, ITouchpointInstruction>(3);
+		Map<String, ITouchpointInstruction> instructions = new HashMap<>(3);
 		instructions.put(INSTALL, getMacInstallInstruction());
 		instructions.put(UNINSTALL, getMacUninstallInstruction());
-		List<ITouchpointData> result = new ArrayList<ITouchpointData>(2);
+		List<ITouchpointData> result = new ArrayList<>(2);
 		result.add(new TouchpointData(instructions));
 		return result;
 	}
@@ -378,7 +378,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	private Map<String, String> parseAction(String action) {
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new HashMap<>();
 		int open = action.indexOf('(');
 		int close = action.lastIndexOf(')');
 		String parameterString = action.substring(open + 1, close);

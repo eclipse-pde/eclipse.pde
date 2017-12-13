@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2010 Eclipse Foundation and others.
+ * Copyright (c) 2004, 2017 Eclipse Foundation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.pde.internal.build;
-
-import org.eclipse.core.runtime.IConfigurationElement;
 
 import java.util.*;
 import org.eclipse.core.runtime.*;
@@ -28,8 +26,8 @@ public class FetchTaskFactoriesRegistry implements IPDEBuildConstants {
 	private final Map<String, IFetchFactory> cache;
 
 	public FetchTaskFactoriesRegistry() {
-		factories = new HashMap<String, IConfigurationElement>();
-		cache = new HashMap<String, IFetchFactory>();
+		factories = new HashMap<>();
+		cache = new HashMap<>();
 		initializeRegistry();
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.build.publisher.compatibility;
-
-import org.eclipse.equinox.p2.publisher.IPublisherAction;
 
 import java.io.File;
 import java.net.URI;
@@ -46,7 +44,7 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 
 		File sourceFile = source != null ? new File(source) : null;
 
-		List<IPublisherAction> actions = new ArrayList<IPublisherAction>();
+		List<IPublisherAction> actions = new ArrayList<>();
 		switch (operation) {
 			case 0 :
 				if (product != null) {

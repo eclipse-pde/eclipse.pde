@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -28,7 +28,7 @@ public class ProfileManager {
 	public static final String PROFILE_JAVAC_SOURCE = "org.eclipse.jdt.core.compiler.source"; //$NON-NLS-1$
 	public static final String PROFILE_JAVAC_TARGET = "org.eclipse.jdt.core.compiler.codegen.targetPlatform"; //$NON-NLS-1$
 
-	private final HashMap<String, Properties> profileMap = new HashMap<String, Properties>();
+	private final HashMap<String, Properties> profileMap = new HashMap<>();
 	private String[] profileSources = null;
 
 	public ProfileManager() {

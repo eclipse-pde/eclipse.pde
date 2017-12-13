@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,10 +30,10 @@ import org.osgi.framework.Version;
  * against which the code must be compiled. Moreover this site provide access to
  * a pluginRegistry.
  */
-public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLConstants {
+public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLConstants {
 	private final BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-	private final Map<String, Set<BuildTimeFeature>> featureCache = new HashMap<String, Set<BuildTimeFeature>>();
-	private final Map<URL, BuildTimeFeature> featureURLCache = new HashMap<URL, BuildTimeFeature>();
+	private final Map<String, Set<BuildTimeFeature>> featureCache = new HashMap<>();
+	private final Map<URL, BuildTimeFeature> featureURLCache = new HashMap<>();
 	private List<FeatureReference> featureReferences;
 	private BuildTimeSiteContentProvider contentProvider;
 	private boolean featuresResolved = false;
@@ -70,13 +70,8 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	public Properties getFeatureVersions() {
 		if (repositoryVersions == null) {
 			repositoryVersions = new Properties();
-			try {
-				InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_FEATURE_REPOTAG_FILENAME_DESCRIPTOR));
-				try {
-					repositoryVersions.load(input);
-				} finally {
-					input.close();
-				}
+			try (InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_FEATURE_REPOTAG_FILENAME_DESCRIPTOR))) {
+				repositoryVersions.load(input);
 			} catch (IOException e) {
 				//Ignore
 			}
@@ -92,7 +87,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	}
 
 	private Collection<File> removeDuplicates(Collection<File> bundles) {
-		Set<File> result = new LinkedHashSet<File>(bundles.size() / 2);
+		Set<File> result = new LinkedHashSet<>(bundles.size() / 2);
 		for (Iterator<File> iterator = bundles.iterator(); iterator.hasNext();) {
 			File bundle = iterator.next();
 			try {
@@ -213,7 +208,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 
 	//Return whether the resolution error is caused because we are not building for the proper configurations.
 	static public boolean isConfigError(BundleDescription bundle, ResolverError[] errors, List<Config> configs) {
-		Dictionary<String, String> environment = new Hashtable<String, String>(3);
+		Dictionary<String, String> environment = new Hashtable<>(3);
 		Filter bundleFilter = BundleHelper.getDefault().getFilter(bundle);
 		if (bundleFilter != null && hasPlatformFilterError(errors) != null) {
 			for (Iterator<Config> iter = configs.iterator(); iter.hasNext();) {
@@ -347,15 +342,15 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 
 	public void addFeatureReferenceModel(FeatureReference featureReference) {
 		if (this.featureReferences == null)
-			this.featureReferences = new ArrayList<FeatureReference>();
+			this.featureReferences = new ArrayList<>();
 
 		this.featureReferences.add(featureReference);
 		featuresResolved = false;
 	}
 
 	private SortedSet<ReachablePlugin> findAllReferencedPlugins() throws CoreException {
-		ArrayList<BuildTimeFeature> rootFeatures = new ArrayList<BuildTimeFeature>();
-		SortedSet<ReachablePlugin> allPlugins = new TreeSet<ReachablePlugin>();
+		ArrayList<BuildTimeFeature> rootFeatures = new ArrayList<>();
+		SortedSet<ReachablePlugin> allPlugins = new TreeSet<>();
 		for (Iterator<String> iter = rootFeaturesForFilter.iterator(); iter.hasNext();) {
 			BuildTimeFeature correspondingFeature = findFeature(iter.next(), (String) null, true);
 			if (correspondingFeature == null)
@@ -463,7 +458,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 			Set<BuildTimeFeature> set = featureCache.get(feature.getId());
 			set.add(feature);
 		} else {
-			TreeSet<BuildTimeFeature> set = new TreeSet<BuildTimeFeature>(featureComparator);
+			TreeSet<BuildTimeFeature> set = new TreeSet<>(featureComparator);
 			set.add(feature);
 			featureCache.put(feature.getId(), set);
 		}

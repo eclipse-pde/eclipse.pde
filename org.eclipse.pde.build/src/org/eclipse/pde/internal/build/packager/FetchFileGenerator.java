@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,13 +96,8 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	private void writeDirectory() throws CoreException {
 		Properties selectedFiles = new Properties();
 		selectedFiles.put("toUnzip", collectedFiles); //$NON-NLS-1$
-		try {
-			OutputStream stream = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR));
-			try {
-				selectedFiles.store(stream, null);
-			} finally {
-				stream.close();
-			}
+		try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR))) {
+			selectedFiles.store(stream, null);
 		} catch (FileNotFoundException e) {
 			String message = NLS.bind(Messages.exception_writingFile, workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -90,7 +90,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 
 		String zipEntries = zipsList.getProperty("toUnzip", ""); //$NON-NLS-1$	//$NON-NLS-2$
 
-		List<String[]> toUnzipWithOrder = new ArrayList<String[]>(unzipOrder.length);
+		List<String[]> toUnzipWithOrder = new ArrayList<>(unzipOrder.length);
 		String[] allZipEntries = Utils.getArrayFromString(zipEntries, ENTRY_SEPARATOR);
 		for (int i = 0; i < allZipEntries.length; i++) {
 			String[] entryDetail = Utils.getArrayFromString(allZipEntries[i], DATA_SEPARATOR);
@@ -147,7 +147,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 			applyingConfigs = getConfigInfos();
 		} else {
 			String[] configs = Utils.getArrayFromString(entryDetail[CONFIGS], "&"); //$NON-NLS-1$
-			applyingConfigs = new ArrayList<Config>(configs.length);
+			applyingConfigs = new ArrayList<>(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				applyingConfigs.add(new Config(configs[i]));
 			}
@@ -156,7 +156,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateUnzipArchive(String[] entryDetail) {
-		List<String> parameters = new ArrayList<String>(1);
+		List<String> parameters = new ArrayList<>(1);
 		parameters.add("-o -X ${unzipArgs} "); //$NON-NLS-1$
 		parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ 
 		script.printExecTask("unzip", "${tempDirectory}/" + entryDetail[FOLDER], parameters, null, true); //$NON-NLS-1$//$NON-NLS-2$
@@ -167,7 +167,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 		//Unzip the root files in a "config specific folder" for all the configurations that matched this entry
 		for (Iterator<Config> iter = getMatchingConfig(entryDetail).iterator(); iter.hasNext();) {
 			Config config = iter.next();
-			List<String> parameters = new ArrayList<String>(3);
+			List<String> parameters = new ArrayList<>(3);
 			String rootFilesFolder = "${tempDirectory}/" + config.toString(".") + '/' + entryDetail[FOLDER]; //$NON-NLS-1$ //$NON-NLS-2$
 			script.printMkdirTask(rootFilesFolder);
 			parameters.add("-o -X ${unzipArgs} "); //$NON-NLS-1$
@@ -178,7 +178,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateUntarArchice(String[] entryDetail) {
-		List<String> parameters = new ArrayList<String>(2);
+		List<String> parameters = new ArrayList<>(2);
 		parameters.add("-" + (entryDetail[ARCHIVE_NAME].endsWith(".gz") ? "z" : "") + "pxvf"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ 
 		script.printExecTask("tar", "${tempDirectory}/" + entryDetail[FOLDER], parameters, null, true); //$NON-NLS-1$//$NON-NLS-2$	
@@ -188,7 +188,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 		//Unzip the root files in a "config specific folder" for all the configurations that matched this entry
 		for (Iterator<Config> iter = getMatchingConfig(entryDetail).iterator(); iter.hasNext();) {
 			Config config = iter.next();
-			List<String> parameters = new ArrayList<String>(4);
+			List<String> parameters = new ArrayList<>(4);
 			String rootFilesFolder = "${tempDirectory}/" + config.toString(".") + '/' + entryDetail[FOLDER]; //$NON-NLS-1$ //$NON-NLS-2$
 			script.printMkdirTask(rootFilesFolder);
 			parameters.add("-" + (entryDetail[ARCHIVE_NAME].endsWith(".gz") ? "z" : "") + "pxvf"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$

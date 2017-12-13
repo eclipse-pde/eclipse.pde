@@ -69,7 +69,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				return;
 			}
 			if (attributes == null)
-				attributes = new LinkedHashMap<String, String>();
+				attributes = new LinkedHashMap<>();
 			attributes.put(key, value);
 		}
 
@@ -106,8 +106,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 	private static Set<Entry> createSet(String[] contents) {
 		if (contents == null)
-			return new LinkedHashSet<Entry>(0);
-		Set<Entry> result = new LinkedHashSet<Entry>(contents.length);
+			return new LinkedHashSet<>(0);
+		Set<Entry> result = new LinkedHashSet<>(contents.length);
 		for (int i = 0; i < contents.length; i++)
 			if (contents[i] != null) {
 				StringTokenizer tokenizer = new StringTokenizer(contents[i], ";"); //$NON-NLS-1$
@@ -127,9 +127,6 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.build.AbstractScriptGenerator#generate()
-	 */
 	@Override
 	public void generate() throws CoreException {
 		AbstractScriptGenerator.setStaticAntProperties(antProperties);
@@ -141,8 +138,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			Set<Entry> fragments = null;
 			if (shouldNestInclusions()) {
 				features = createSet(new String[] {generateNestedRequirements()});
-				fragments = new LinkedHashSet<Entry>();
-				plugins = new LinkedHashSet<Entry>();
+				fragments = new LinkedHashSet<>();
+				plugins = new LinkedHashSet<>();
 			} else {
 				plugins = createSet(pluginList);
 				features = createSet(featureList);
@@ -370,8 +367,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			return;
 		}
 		try {
-			Map<String, String> parameters = new LinkedHashMap<String, String>();
-			Dictionary<String, String> environment = new Hashtable<String, String>(3);
+			Map<String, String> parameters = new LinkedHashMap<>();
+			Dictionary<String, String> environment = new Hashtable<>(3);
 
 			parameters.put(ID, feature);
 			parameters.put(VERSION, version != null ? version : "1.0.0"); //$NON-NLS-1$ 
@@ -505,21 +502,11 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			buildProperties = new Properties();
 			buildProperties.put("pde", "marker"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		OutputStream stream = null;
-		try {
-			stream = new BufferedOutputStream(new FileOutputStream(file));
+		try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(file))) {
 			buildProperties.store(stream, ""); //$NON-NLS-1$
 			stream.flush();
 		} catch (IOException e) {
 			// nothing for now
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e1) {
-					// nothing
-				}
-			}
 		}
 	}
 
@@ -528,13 +515,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 		File propertiesFile = new File(file);
 		if (propertiesFile.exists()) {
-			try {
-				InputStream input = new BufferedInputStream(new FileInputStream(file));
-				try {
-					buildProperties.load(input);
-				} finally {
-					input.close();
-				}
+			try (InputStream input = new BufferedInputStream(new FileInputStream(file))) {
+				buildProperties.load(input);
 			} catch (IOException e) {
 				// nothing
 			}

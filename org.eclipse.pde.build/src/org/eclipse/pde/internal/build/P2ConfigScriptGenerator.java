@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,9 +69,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	}
 
 	protected void initializeCollections() {
-		Collection<Object> p = new LinkedHashSet<Object>();
-		Collection<Object> f = new LinkedHashSet<Object>();
-		Collection<BuildTimeFeature> r = new LinkedHashSet<BuildTimeFeature>();
+		Collection<Object> p = new LinkedHashSet<>();
+		Collection<Object> f = new LinkedHashSet<>();
+		Collection<BuildTimeFeature> r = new LinkedHashSet<>();
 		for (Iterator<Config> iterator = getConfigInfos().iterator(); iterator.hasNext();) {
 			Config config = iterator.next();
 			p.addAll(assemblyInformation.getPlugins(config));
@@ -305,7 +305,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		ProductFile product = getProductFile();
 		ArrayList<BuildTimeFeature> binaryFeatures = null;
 		if (product == null) {
-			binaryFeatures = new ArrayList<BuildTimeFeature>();
+			binaryFeatures = new ArrayList<>();
 			for (int i = 0; i < features.length; i++) {
 				BuildTimeFeature feature = features[i];
 				if (feature.isBinary())
@@ -316,7 +316,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		if (product == null && (binaryFeatures == null || binaryFeatures.size() == 0))
 			return;
 
-		Map<String, String> args = new HashMap<String, String>();
+		Map<String, String> args = new HashMap<>();
 		// note that if the raw attribute (p2.mirror.raw) has not been set in the build.properties, then the default was set in #generatePrologue()
 		args.put("raw", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_RAW)); //$NON-NLS-1$
 		script.printStartTag("p2.mirror", args); //$NON-NLS-1$
@@ -416,7 +416,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 	@Override
 	protected void generateCustomGatherMacro() {
-		List<String> attributes = new ArrayList<String>(5);
+		List<String> attributes = new ArrayList<>(5);
 		attributes.add("dir"); //$NON-NLS-1$
 		attributes.add("propertyName"); //$NON-NLS-1$
 		attributes.add("propertyValue"); //$NON-NLS-1$
@@ -424,7 +424,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		attributes.add(PROPERTY_PROJECT_NAME);
 		script.printMacroDef(PROPERTY_CUSTOM_GATHER, attributes);
 
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("@{propertyName}", "@{propertyValue}"); //$NON-NLS-1$//$NON-NLS-2$
 		script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, "@{dir}", TARGET_PUBLISH_BIN_PARTS, null, null, params); //$NON-NLS-1$
 
@@ -440,8 +440,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	@Override
 	protected void generateGatherBinPartsTarget() {
 		BuildTimeFeature oldExecutableFeature = null;
-		ArrayList<FileSet> binaryFeatures = new ArrayList<FileSet>();
-		ArrayList<FileSet> binaryBundles = new ArrayList<FileSet>();
+		ArrayList<FileSet> binaryFeatures = new ArrayList<>();
+		ArrayList<FileSet> binaryBundles = new ArrayList<>();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
@@ -452,7 +452,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 				printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(pluginLocation, new Path(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
 		}
 
-		Set<BuildTimeFeature> featureSet = BuildDirector.p2Gathering ? new HashSet<BuildTimeFeature>() : null;
+		Set<BuildTimeFeature> featureSet = BuildDirector.p2Gathering ? new HashSet<>() : null;
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
 			IPath featureLocation = new Path(feature.getRootLocation());
@@ -531,7 +531,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printAttribute("overrides", overridesFile.getAbsolutePath(), true); //$NON-NLS-1$
 		script.println("/>"); //$NON-NLS-1$
 
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put(PROPERTY_PROJECT_LOCATION, "${basedir}/" + Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString()); //$NON-NLS-1$
 		params.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		params.put(PROPERTY_PROJECT_NAME, featureFullName);

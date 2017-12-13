@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,15 +61,8 @@ public class DevClassPathHelper {
 	 */
 	private static Properties load(URL url) {
 		Properties props = new Properties();
-		try {
-			InputStream is = null;
-			try {
-				is = url.openStream();
-				props.load(is);
-			} finally {
-				if (is != null)
-					is.close();
-			}
+		try (InputStream is = url.openStream()) {
+			props.load(is);
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_missingFile, url.toExternalForm());
 			BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, message, null));

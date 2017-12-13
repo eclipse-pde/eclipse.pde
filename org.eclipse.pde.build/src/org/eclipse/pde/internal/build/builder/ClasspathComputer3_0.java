@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,13 +146,13 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 */
 	@Override
 	public List<Object> getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
-		List<Object> classpath = new ArrayList<Object>(20);
-		List<BundleDescription> pluginChain = new ArrayList<BundleDescription>(10); //The list of plugins added to detect cycle
+		List<Object> classpath = new ArrayList<>(20);
+		List<BundleDescription> pluginChain = new ArrayList<>(10); //The list of plugins added to detect cycle
 		modelLocation = generator.getLocation(model);
-		Set<BundleDescription> addedPlugins = new HashSet<BundleDescription>(10); //The set of all the plugins already added to the classpath (this allows for optimization)
-		pathElements = new HashMap<String, ClasspathElement>();
+		Set<BundleDescription> addedPlugins = new HashSet<>(10); //The set of all the plugins already added to the classpath (this allows for optimization)
+		pathElements = new HashMap<>();
 		visiblePackages = getVisiblePackages(model);
-		requiredIds = new HashSet<Long>();
+		requiredIds = new HashSet<>();
 		allowBinaryCycles = AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
 
 		//PREREQUISITE
@@ -183,7 +183,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	private Map<String, String> getVisiblePackages(BundleDescription model) {
-		Map<String, String> packages = new HashMap<String, String>(20);
+		Map<String, String> packages = new HashMap<>(20);
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, model, packages);
 		if (model.getHost() != null)
@@ -632,7 +632,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			return true;
 
 		//The plugin for which we are generating the classpath and target are not platform independent
-		Dictionary<String, Object> properties = new Hashtable<String, Object>(3);
+		Dictionary<String, Object> properties = new Hashtable<>(3);
 		if (os != null) {
 			Object value = os.indexOf(',') > -1 ? (Object) Utils.getArrayFromString(os, ",") : os; //$NON-NLS-1$
 			properties.put(OSGI_OS, value);

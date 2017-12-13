@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -112,10 +113,8 @@ public class PluginVersionReplaceTask extends Task {
 			buffer.replace(startVersionId + 1, endVersionId, newVersion);
 			versionFound = true;
 		}
-		try {
-			OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(pluginFilePath)), "UTF-8"); //$NON-NLS-1$
+		try (OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(pluginFilePath)), StandardCharsets.UTF_8)) {
 			w.write(buffer.toString());
-			w.close();
 		} catch (FileNotFoundException e) {
 			// ignore
 		} catch (IOException e) {
@@ -141,7 +140,7 @@ public class PluginVersionReplaceTask extends Task {
 	}
 
 	private StringBuffer readFile(File targetName) throws IOException {
-		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), "UTF-8"); //$NON-NLS-1$
+		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), StandardCharsets.UTF_8);
 		StringBuffer result = new StringBuffer();
 		char[] buf = new char[4096];
 		int count;

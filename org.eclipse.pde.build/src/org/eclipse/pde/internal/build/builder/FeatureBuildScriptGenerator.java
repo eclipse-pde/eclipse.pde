@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,7 +162,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	private void generateGatherSourcesTarget() {
 		script.printTargetDeclaration(TARGET_GATHER_SOURCES, null, null, null, null);
-		Map<String, String> params = new HashMap<String, String>(2);
+		Map<String, String> params = new HashMap<>(2);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + sourceFeatureFullNameVersioned + '/' + "src"); //$NON-NLS-1$
 		params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
 		script.printAntCallTask(TARGET_CHILDREN, true, params);
@@ -180,7 +180,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printMkdirTask(destinationTempFolder);
 		script.printProperty(PROPERTY_DESTINATION_TEMP_FOLDER, destinationTempFolder);
 		script.printConditionIsSet(PROPERTY_LOG_EXTENSION_PARAM, PROPERTY_LOG_EXTENSION, PROPERTY_LOG_EXTENSION, PROPERTY_LOG_EXTENSION_PARAM);
-		Map<String, String> params = new HashMap<String, String>(3);
+		Map<String, String> params = new HashMap<>(3);
 		params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, destinationTempFolder);
 		params.put(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION_PARAM), Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
@@ -213,7 +213,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		}
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_ZIPS, TARGET_INIT + zips.toString(), null, null, null);
-		Map<String, String> params = new HashMap<String, String>(2);
+		Map<String, String> params = new HashMap<>(2);
 		params.put(PROPERTY_TARGET, TARGET_BUILD_ZIPS);
 		script.printAntCallTask(TARGET_ALL_CHILDREN, true, params);
 		script.printTargetEnd();
@@ -243,7 +243,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".log.zip", null); //$NON-NLS-1$
 		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".src.zip", null); //$NON-NLS-1$
 		script.printDeleteTask(featureTempFolder, null, null);
-		Map<String, String> params = new HashMap<String, String>(2);
+		Map<String, String> params = new HashMap<>(2);
 		params.put(PROPERTY_TARGET, TARGET_CLEAN);
 		script.printAntCallTask(TARGET_ALL_CHILDREN, true, params);
 		script.printTargetEnd();
@@ -258,7 +258,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printDeleteTask(featureTempFolder, null, null);
 		script.printMkdirTask(featureTempFolder);
 		script.printConditionIsSet(PROPERTY_LOG_EXTENSION_PARAM, PROPERTY_LOG_EXTENSION, PROPERTY_LOG_EXTENSION, PROPERTY_LOG_EXTENSION_PARAM);
-		Map<String, String> params = new HashMap<String, String>(1);
+		Map<String, String> params = new HashMap<>(1);
 		params.put(PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 		params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString());
@@ -278,7 +278,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_ZIP_SOURCES, TARGET_INIT, null, null, null);
 		script.printDeleteTask(featureTempFolder, null, null);
 		script.printMkdirTask(featureTempFolder);
-		Map<String, String> params = new HashMap<String, String>(3);
+		Map<String, String> params = new HashMap<>(3);
 		params.put(PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 		params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, featureTempFolder + '/' + DEFAULT_PLUGIN_LOCATION + '/' + sourceFeatureFullNameVersioned + '/' + "src"); //$NON-NLS-1$
@@ -307,7 +307,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 		Map<String, String> callbackParams = null;
 		if (customFeatureCallbacks != null) {
-			callbackParams = new HashMap<String, String>(2);
+			callbackParams = new HashMap<>(2);
 			callbackParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
 			callbackParams.put(PROPERTY_FEATURE_DIRECTORY, featureTemp);
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, callbackParams, null);
@@ -364,13 +364,13 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 		Map<String, String> callbackParams = null;
 		if (customFeatureCallbacks != null) {
-			callbackParams = new HashMap<String, String>(2);
+			callbackParams = new HashMap<>(2);
 			callbackParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
 			callbackParams.put(PROPERTY_FEATURE_DIRECTORY, root);
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, callbackParams, null);
 		}
 
-		Map<String, String> params = new HashMap<String, String>(2);
+		Map<String, String> params = new HashMap<>(2);
 		params.put(PROPERTY_TARGET, TARGET_GATHER_BIN_PARTS);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
 		script.printAntCallTask(TARGET_CHILDREN, true, params);
@@ -446,7 +446,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 *  
 	 */
 	private void generateRootFilesAndPermissionsCalls() {
-		Map<String, String> param = new HashMap<String, String>(1);
+		Map<String, String> param = new HashMap<>(1);
 		param.put(TARGET_ROOT_TARGET, TARGET_ROOTFILES_PREFIX + Utils.getPropertyFormat(PROPERTY_OS) + '_' + Utils.getPropertyFormat(PROPERTY_WS) + '_' + Utils.getPropertyFormat(PROPERTY_ARCH));
 		script.printAntCallTask(TARGET_ROOTFILES_PREFIX, true, param);
 	}
@@ -552,7 +552,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	private void generateBuildUpdateJarTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, NLS.bind(Messages.build_feature_buildUpdateJar, feature.getId()));
-		Map<String, String> params = new HashMap<String, String>(1);
+		Map<String, String> params = new HashMap<>(1);
 		params.put(PROPERTY_TARGET, TARGET_BUILD_UPDATE_JAR);
 		script.printAntCallTask(TARGET_ALL_CHILDREN, true, params);
 		script.printProperty(PROPERTY_FEATURE_BASE, featureTempFolder);
@@ -596,7 +596,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_ZIP_DISTRIBUTION, TARGET_INIT, null, null, NLS.bind(Messages.build_feature_zips, feature.getId()));
 		script.printDeleteTask(featureTempFolder, null, null);
 		script.printMkdirTask(featureTempFolder);
-		Map<String, String> params = new HashMap<String, String>(1);
+		Map<String, String> params = new HashMap<>(1);
 		params.put(PROPERTY_FEATURE_BASE, featureTempFolder);
 		params.put(PROPERTY_INCLUDE_CHILDREN, TRUE);
 		params.put(PROPERTY_OS, feature.getOS() == null ? Config.ANY : feature.getOS());
@@ -638,7 +638,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		List<BundleDescription> sortedPlugins = Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins);
 		script.println();
 		script.printTargetDeclaration(TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
-		Set<BundleDescription> writtenCalls = new HashSet<BundleDescription>(sortedPlugins.size());
+		Set<BundleDescription> writtenCalls = new HashSet<>(sortedPlugins.size());
 		for (Iterator<BundleDescription> iter = sortedPlugins.iterator(); iter.hasNext();) {
 			BundleDescription current = iter.next();
 			//If it is not a compiled element, then we don't generate a call
@@ -656,7 +656,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 					continue;
 				Map<String, String> params = null;
 				Config aMatchingConfig = list.get(0);
-				params = new HashMap<String, String>(3);
+				params = new HashMap<>(3);
 				if (!aMatchingConfig.getOs().equals(Config.ANY))
 					params.put(PROPERTY_OS, aMatchingConfig.getOs());
 				if (!aMatchingConfig.getWs().equals(Config.ANY))
@@ -671,7 +671,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected Set<BundleDescription> computeElements() throws CoreException {
-		Set<BundleDescription> computedElements = new LinkedHashSet<BundleDescription>(5);
+		Set<BundleDescription> computedElements = new LinkedHashSet<>(5);
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (int i = 0; i < pluginList.length; i++) {
 			FeatureEntry entry = pluginList[i];
@@ -786,7 +786,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	private void generateBuildJarsTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_JARS, TARGET_INIT, null, null, NLS.bind(Messages.build_feature_buildJars, feature.getId()));
-		Map<String, String> params = new HashMap<String, String>(1);
+		Map<String, String> params = new HashMap<>(1);
 		params.put(PROPERTY_TARGET, TARGET_BUILD_JARS);
 		script.printAntCallTask(TARGET_ALL_CHILDREN, true, params);
 		script.printTargetEnd();
@@ -806,7 +806,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, NLS.bind(Messages.build_feature_refresh, feature.getId()));
 		script.printConvertPathTask(new Path(featureRootLocation).removeLastSegments(0).toOSString().replace('\\', '/'), PROPERTY_RESOURCE_PATH, false);
 		script.printRefreshLocalTask(Utils.getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
-		Map<String, String> params = new HashMap<String, String>(2);
+		Map<String, String> params = new HashMap<>(2);
 		params.put(PROPERTY_TARGET, TARGET_REFRESH);
 		script.printAntCallTask(TARGET_ALL_CHILDREN, true, params);
 		script.printTargetEnd();

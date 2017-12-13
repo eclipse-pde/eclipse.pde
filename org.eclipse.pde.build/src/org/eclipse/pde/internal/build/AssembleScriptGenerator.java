@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void printAssembleMacroDef() {
-		List<String> attributes = new ArrayList<String>(4);
+		List<String> attributes = new ArrayList<>(4);
 		attributes.add("config"); //$NON-NLS-1$
 		attributes.add("element"); //$NON-NLS-1$
 		attributes.add("dot"); //$NON-NLS-1$
@@ -93,7 +93,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.printMacroDef("assemble", attributes); //$NON-NLS-1$
 		printDefaultAssembleCondition();
 		script.printConditionIsSet("customOrDefault.@{config}", "assemble.@{element}@{dot}@{config}", "assemble.@{element}@{dot}@{config}", "${defaultAssemble.@{config}}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		properties.put("assembleScriptName", "@{scriptPrefix}.@{element}@{dot}@{config}.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("element", "@{element}"); //$NON-NLS-1$//$NON-NLS-2$
 		properties.put("config", "@{config}"); //$NON-NLS-1$//$NON-NLS-2$
@@ -112,10 +112,10 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		if (shouldGroupConfigs()) {
-			Collection<BundleDescription> allPlugins = new LinkedHashSet<BundleDescription>();
-			Collection<BuildTimeFeature> allFeatures = new LinkedHashSet<BuildTimeFeature>();
-			Collection<BuildTimeFeature> features = new LinkedHashSet<BuildTimeFeature>();
-			Collection<BuildTimeFeature> rootFiles = new LinkedHashSet<BuildTimeFeature>();
+			Collection<BundleDescription> allPlugins = new LinkedHashSet<>();
+			Collection<BuildTimeFeature> allFeatures = new LinkedHashSet<>();
+			Collection<BuildTimeFeature> features = new LinkedHashSet<>();
+			Collection<BuildTimeFeature> rootFiles = new LinkedHashSet<>();
 			for (Iterator<Config> allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
 				@SuppressWarnings("rawtypes")
 				Collection[] configInfo = getConfigInfos(allConfigs.next());

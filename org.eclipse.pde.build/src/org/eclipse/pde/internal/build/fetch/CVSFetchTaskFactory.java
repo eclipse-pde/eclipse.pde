@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		String element = (String) entryInfos.get(KEY_ELEMENT_NAME);
 		boolean prebuilt = Boolean.valueOf((String) entryInfos.get(KEY_PREBUILT)).booleanValue();
 
-		Map<String, String> params = new HashMap<String, String>(5);
+		Map<String, String> params = new HashMap<>(5);
 		// we directly export the CVS content into the destination. if we have a pre-built JAR then
 		// we want to put it right in the /plugins directory and not a sub-directory so strip off 2 segments
 		// to leave us with the build directory (/plugins will be added by the "element" attribute)
@@ -176,7 +176,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		}
 
 		// build up the table of arguments in the map file entry
-		Map<String, String> table = new HashMap<String, String>();
+		Map<String, String> table = new HashMap<>();
 		for (int i = 0; i < arguments.length; i++) {
 			String arg = arguments[i];
 			// if we have at least one arg without an equals sign, then

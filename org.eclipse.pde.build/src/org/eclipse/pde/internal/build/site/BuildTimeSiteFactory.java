@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,7 +18,7 @@ import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureReference;
 
-public class BuildTimeSiteFactory /*extends BaseSiteFactory*/implements IPDEBuildConstants {
+public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBuildConstants {
 	// The whole site : things to be compiled and the installedBase
 	private BuildTimeSite site = null;
 
@@ -156,7 +156,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/implements IPDEBuil
 	 * of the /features directory. (do not do an infinite depth look-up)
 	 */
 	private Collection<File> findFeatureXMLs() {
-		Collection<File> features = new ArrayList<File>();
+		Collection<File> features = new ArrayList<>();
 		Collection<File> foundFeatures = null;
 		for (int i = 0; i < sitePaths.length; i++) {
 			File file = new File(sitePaths[i], Constants.FEATURE_FILENAME_DESCRIPTOR);

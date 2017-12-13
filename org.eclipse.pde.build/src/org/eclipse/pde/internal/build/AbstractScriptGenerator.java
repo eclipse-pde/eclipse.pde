@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,20 +36,10 @@ import org.osgi.framework.Version;
  * It contains basic informations like the script, the configurations, and a location 
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
-	private static final FilenameFilter METADATA_REPO_FILTER = new FilenameFilter() {
-		@Override
-		public boolean accept(File dir, String name) {
-			return name.startsWith("content.") || name.startsWith("compositeContent.") || //$NON-NLS-1$ //$NON-NLS-2$
-					name.endsWith(".profile") || name.endsWith(".profile.gz"); //$NON-NLS-1$//$NON-NLS-2$
-		}
-	};
+	private static final FilenameFilter METADATA_REPO_FILTER = (dir, name) -> name.startsWith("content.") || name.startsWith("compositeContent.") || //$NON-NLS-1$ //$NON-NLS-2$
+			name.endsWith(".profile") || name.endsWith(".profile.gz"); //$NON-NLS-1$//$NON-NLS-2$
 
-	private static final FilenameFilter ARTIFACT_REPO_FILTER = new FilenameFilter() {
-		@Override
-		public boolean accept(File dir, String name) {
-			return name.startsWith("artifacts.") || name.startsWith("compositeArtifacts."); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	};
+	private static final FilenameFilter ARTIFACT_REPO_FILTER = (dir, name) -> name.startsWith("artifacts.") || name.startsWith("compositeArtifacts."); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static Properties immutableAntProperties = null;
 	protected static boolean embeddedSource = false;
@@ -73,15 +63,15 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 * Indicate whether the content of the pdestate should only contain the plugins that are in the transitive closure of the features being built
 	 */
 	protected boolean filterState = false;
-	protected List<String> featuresForFilterRoots = new ArrayList<String>();
-	protected List<String> pluginsForFilterRoots = new ArrayList<String>();
+	protected List<String> featuresForFilterRoots = new ArrayList<>();
+	protected List<String> pluginsForFilterRoots = new ArrayList<>();
 	protected boolean filterP2Base = false;
 
 	protected boolean reportResolutionErrors;
 
 	static {
 		// By default, a generic configuration is set
-		configInfos = new ArrayList<Config>(1);
+		configInfos = new ArrayList<>(1);
 		configInfos.add(Config.genericConfig());
 	}
 
@@ -136,7 +126,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public static void setConfigInfo(String spec) throws CoreException {
 		configInfos.clear();
 		String[] configs = Utils.getArrayFromStringWithBlank(spec, "&"); //$NON-NLS-1$
-		configInfos = new ArrayList<Config>(configs.length);
+		configInfos = new ArrayList<>(configs.length);
 		String[] os = new String[configs.length];
 		String[] ws = new String[configs.length];
 		String[] archs = new String[configs.length];
@@ -212,13 +202,8 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 		Properties result = new Properties();
 		File file = new File(location, fileName);
-		try {
-			InputStream input = new BufferedInputStream(new FileInputStream(file));
-			try {
-				result.load(input);
-			} finally {
-				input.close();
-			}
+		try (InputStream input = new BufferedInputStream(new FileInputStream(file))) {
+			result.load(input);
 		} catch (FileNotFoundException e) {
 			if (errorLevel != IStatus.INFO && errorLevel != IStatus.OK) {
 				String message = NLS.bind(Messages.exception_missingFile, file);
@@ -554,7 +539,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	public void setContextMetadataRepositories(URI[] uris) {
-		Set<URI> uriSet = new HashSet<URI>();
+		Set<URI> uriSet = new HashSet<>();
 		uriSet.addAll(Arrays.asList(uris));
 
 		for (int i = 0; i < uris.length; i++) {
@@ -571,7 +556,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		List<URI> artifacts = filterRepos(repos, ARTIFACT_REPO_FILTER);
 
 		if (contextMetadata != null) {
-			Set<URI> uriSet = new HashSet<URI>();
+			Set<URI> uriSet = new HashSet<>();
 			uriSet.addAll(Arrays.asList(contextMetadata));
 			uriSet.addAll(metadata);
 			contextMetadata = uriSet.toArray(new URI[uriSet.size()]);
@@ -580,7 +565,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 
 		if (contextArtifacts != null) {
-			Set<URI> uriSet = new HashSet<URI>();
+			Set<URI> uriSet = new HashSet<>();
 			uriSet.addAll(Arrays.asList(contextArtifacts));
 			uriSet.addAll(artifacts);
 			contextArtifacts = uriSet.toArray(new URI[uriSet.size()]);
@@ -593,7 +578,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private List<URI> filterRepos(URI[] contexts, FilenameFilter repoFilter) {
 		if (contexts == null)
 			return null;
-		ArrayList<URI> result = new ArrayList<URI>();
+		ArrayList<URI> result = new ArrayList<>();
 		for (int i = 0; i < contexts.length; i++) {
 			File repo = URIUtil.toFile(contexts[i]);
 			if (repo == null) {
@@ -612,7 +597,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (profileFile == null || !profileFile.exists() || !profileFile.getName().endsWith(".profile")) //$NON-NLS-1$
 			return Collections.emptyList();
 
-		ArrayList<URI> result = new ArrayList<URI>();
+		ArrayList<URI> result = new ArrayList<>();
 		URI profileURI = profileFile.toURI();
 		result.add(profileURI);
 
@@ -698,7 +683,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (path.segmentCount() < 4)
 			return null;
 
-		Map<String, Object> results = new HashMap<String, Object>();
+		Map<String, Object> results = new HashMap<>();
 		results.put(PROFILE_TIMESTAMP, new Long(-1));
 
 		String profileId = null;

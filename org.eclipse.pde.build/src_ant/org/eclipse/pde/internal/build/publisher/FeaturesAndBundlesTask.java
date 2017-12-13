@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,8 @@ import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
 import org.eclipse.equinox.p2.publisher.eclipse.FeaturesAction;
 
 public class FeaturesAndBundlesTask extends AbstractPublisherTask {
-	private final ArrayList<FileSet> features = new ArrayList<FileSet>();
-	private final ArrayList<FileSet> bundles = new ArrayList<FileSet>();
+	private final ArrayList<FileSet> features = new ArrayList<>();
+	private final ArrayList<FileSet> bundles = new ArrayList<>();
 	private URI siteXML = null;
 	private URI categoryXML = null;
 	private String siteQualifier = ""; //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 	}
 
 	private File[] getLocations(List<FileSet> collection) {
-		ArrayList<File> results = new ArrayList<File>();
+		ArrayList<File> results = new ArrayList<>();
 		for (Iterator<FileSet> iterator = collection.iterator(); iterator.hasNext();) {
 			FileSet set = iterator.next();
 

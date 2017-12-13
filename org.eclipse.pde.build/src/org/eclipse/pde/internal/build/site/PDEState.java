@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2015 IBM Corporation and others.
+ *  Copyright (c) 2004, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -56,8 +56,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		id = initialState.getNextId();
 		bundleClasspaths = initialState.getClasspaths();
 		patchBundles = initialState.getPatchData();
-		addedBundle = new ArrayList<BundleDescription>();
-		unqualifiedBundles = new ArrayList<BundleDescription>();
+		addedBundle = new ArrayList<>();
+		unqualifiedBundles = new ArrayList<>();
 		//forceQualifiers();
 	}
 
@@ -66,9 +66,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		state = factory.createState(false);
 		state.setResolver(Platform.getPlatformAdmin().createResolver());
 		id = 0;
-		bundleClasspaths = new HashMap<Long, String[]>();
-		patchBundles = new HashMap<Long, String>();
-		convertedManifests = new HashSet<Dictionary<String, String>>(2);
+		bundleClasspaths = new HashMap<>();
+		patchBundles = new HashMap<>();
+		convertedManifests = new HashSet<>(2);
 		loadPluginTagFile();
 		loadSourceReferences();
 	}
@@ -190,13 +190,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	private void loadPluginTagFile() {
 		repositoryVersions = new Properties();
-		try {
-			InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_PLUGIN_REPOTAG_FILENAME_DESCRIPTOR));
-			try {
-				repositoryVersions.load(input);
-			} finally {
-				input.close();
-			}
+		try (InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_PLUGIN_REPOTAG_FILENAME_DESCRIPTOR))) {
+			repositoryVersions.load(input);
 		} catch (IOException e) {
 			//Ignore
 		}
@@ -204,13 +199,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	private void loadSourceReferences() {
 		sourceReferences = new Properties();
-		try {
-			InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR));
-			try {
-				sourceReferences.load(input);
-			} finally {
-				input.close();
-			}
+		try (InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR))) {
+			sourceReferences.load(input);
 		} catch (IOException e) {
 			//Ignore
 		}
@@ -313,7 +303,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			return convertPluginManifest(bundleLocation, true);
 
 		try {
-			Hashtable<String, String> result = new Hashtable<String, String>();
+			Hashtable<String, String> result = new Hashtable<>();
 			result.putAll(ManifestElement.parseBundleManifest(manifestStream, null));
 			return result;
 		} catch (IOException ioe) {
@@ -412,7 +402,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public void resolveState() {
 		List<Config> configs = AbstractScriptGenerator.getConfigInfos();
-		ArrayList<Dictionary<String, Object>> properties = new ArrayList<Dictionary<String, Object>>(); //Collection of dictionaries
+		ArrayList<Dictionary<String, Object>> properties = new ArrayList<>(); //Collection of dictionaries
 		Dictionary<String, Object> prop;
 
 		// initialize profileManager and get the JRE profiles
@@ -422,7 +412,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 		for (Iterator<Config> iter = configs.iterator(); iter.hasNext();) {
 			Config aConfig = iter.next();
-			prop = new Hashtable<String, Object>();
+			prop = new Hashtable<>();
 			if (AbstractScriptGenerator.getPropertyAsBoolean(RESOLVER_DEV_MODE))
 				prop.put(PROPERTY_RESOLVER_MODE, VALUE_DEVELOPMENT);
 			String os = aConfig.getOs();
@@ -467,7 +457,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					systemPackages = profileProps.getProperty(ProfileManager.SYSTEM_PACKAGES);
 					ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
 
-					prop = new Hashtable<String, Object>();
+					prop = new Hashtable<>();
 					prop.put(ProfileManager.SYSTEM_PACKAGES, systemPackages);
 					prop.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
 					properties.add(prop);
@@ -504,7 +494,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (root == null)
 			return new BundleDescription[0];
 		ExportPackageDescription[] packages = root.getResolvedImports();
-		ArrayList<BundleDescription> resolvedImports = new ArrayList<BundleDescription>(packages.length);
+		ArrayList<BundleDescription> resolvedImports = new ArrayList<>(packages.length);
 		for (int i = 0; i < packages.length; i++)
 			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
 				resolvedImports.add(packages[i].getExporter());
@@ -605,7 +595,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public static BundleDescription[] getImportedByFragments(BundleDescription root) {
 		BundleDescription[] fragments = root.getFragments();
-		List<BundleDescription> importedByFragments = new ArrayList<BundleDescription>();
+		List<BundleDescription> importedByFragments = new ArrayList<>();
 		for (int i = 0; i < fragments.length; i++) {
 			if (!fragments[i].isResolved())
 				continue;
@@ -617,7 +607,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public static BundleDescription[] getRequiredByFragments(BundleDescription root) {
 		BundleDescription[] fragments = root.getFragments();
-		List<BundleDescription> importedByFragments = new ArrayList<BundleDescription>();
+		List<BundleDescription> importedByFragments = new ArrayList<>();
 		for (int i = 0; i < fragments.length; i++) {
 			if (!fragments[i].isResolved())
 				continue;
@@ -637,13 +627,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public Properties loadPropertyFileIn(Map<String, String> toMerge, File location) {
 		Properties result = new Properties();
 		result.putAll(toMerge);
-		try {
-			InputStream propertyStream = new BufferedInputStream(new FileInputStream(new File(location, PROPERTIES_FILE)));
-			try {
-				result.load(propertyStream);
-			} finally {
-				propertyStream.close();
-			}
+		try (InputStream propertyStream = new BufferedInputStream(new FileInputStream(new File(location, PROPERTIES_FILE)))) {
+			result.load(propertyStream);
 		} catch (IOException e) {
 			//ignore because compiled plug-ins do not have such files
 		}

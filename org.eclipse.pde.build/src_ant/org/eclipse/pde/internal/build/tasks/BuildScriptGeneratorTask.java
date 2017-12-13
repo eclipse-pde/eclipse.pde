@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -324,7 +324,7 @@ public class BuildScriptGeneratorTask extends Task {
 
 	public void setContextRepository(String contexts) {
 		String[] locations = Utils.getArrayFromString(contexts, ","); //$NON-NLS-1$
-		ArrayList<URI> uris = new ArrayList<URI>();
+		ArrayList<URI> uris = new ArrayList<>();
 		for (int i = 0; i < locations.length; i++) {
 			String context = locations[i];
 			if (context == null || context.startsWith("${") || context.length() == 0) //$NON-NLS-1$

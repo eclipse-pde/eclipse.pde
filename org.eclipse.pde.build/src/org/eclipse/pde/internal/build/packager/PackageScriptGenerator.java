@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,13 +175,8 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		File adviceFile = null;
 		if (versionAdvice != null) {
 			adviceFile = new File(working, "versionAdvice.properties"); //$NON-NLS-1$
-			try {
-				OutputStream os = new BufferedOutputStream(new FileOutputStream(adviceFile));
-				try {
-					versionAdvice.store(os, null);
-				} finally {
-					os.close();
-				}
+			try (OutputStream os = new BufferedOutputStream(new FileOutputStream(adviceFile))) {
+				versionAdvice.store(os, null);
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.exception_writingFile, adviceFile.toString());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));

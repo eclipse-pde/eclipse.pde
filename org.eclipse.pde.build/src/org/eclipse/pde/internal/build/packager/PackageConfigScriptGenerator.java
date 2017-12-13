@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,8 +82,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			//nothing
 		}
 
-		ArrayList<FileSet> p2Features = BuildDirector.p2Gathering ? new ArrayList<FileSet>() : null;
-		ArrayList<FileSet> p2Bundles = BuildDirector.p2Gathering ? new ArrayList<FileSet>() : null;
+		ArrayList<FileSet> p2Features = BuildDirector.p2Gathering ? new ArrayList<>() : null;
+		ArrayList<FileSet> p2Bundles = BuildDirector.p2Gathering ? new ArrayList<>() : null;
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			String location = pluginLocation.toOSString();
@@ -161,14 +161,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		if (packagingPropertiesLocation == null || packagingPropertiesLocation.equals("")) //$NON-NLS-1$
 			return;
 
-		InputStream propertyStream = null;
-		try {
-			propertyStream = new BufferedInputStream(new FileInputStream(packagingPropertiesLocation));
-			try {
-				packagingProperties.load(propertyStream);
-			} finally {
-				propertyStream.close();
-			}
+		try (InputStream propertyStream = new BufferedInputStream(new FileInputStream(packagingPropertiesLocation))) {
+			packagingProperties.load(propertyStream);
 		} catch (FileNotFoundException e) {
 			String message = NLS.bind(Messages.exception_readingFile, packagingPropertiesLocation);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
@@ -180,7 +174,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		if (packagingProperties.size() > 0) {
 			//This is need so that the call in assemble config script generator gather the root files 
 			if (rootFileProviders == null)
-				rootFileProviders = new ArrayList<BuildTimeFeature>(1);
+				rootFileProviders = new ArrayList<>(1);
 			// TODO Unclear why "elt" was added as a root provider, instead we will add an empty feature
 			//	rootFileProviders.add("elt"); //$NON-NLS-1$
 			rootFileProviders.add(new BuildTimeFeature());

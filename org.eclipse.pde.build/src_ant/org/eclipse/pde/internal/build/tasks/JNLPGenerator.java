@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -151,7 +151,7 @@ public class JNLPGenerator extends DefaultHandler {
 		String appendix = ".properties"; //$NON-NLS-1$
 		String[] potentials = createNLSPotentials();
 
-		Map<String, File> validEntries = new HashMap<String, File>();
+		Map<String, File> validEntries = new HashMap<>();
 		File[] files = root.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			String filename = files[i].getName();
@@ -194,7 +194,7 @@ public class JNLPGenerator extends DefaultHandler {
 		String appendix = ".properties"; //$NON-NLS-1$
 		String[] potentials = createNLSPotentials();
 
-		Map<String, ZipEntry> validEntries = new HashMap<String, ZipEntry>();
+		Map<String, ZipEntry> validEntries = new HashMap<>();
 		for (Enumeration<? extends ZipEntry> enumeration = featureArchive.entries(); enumeration.hasMoreElements();) {
 			ZipEntry entry = enumeration.nextElement();
 			String entryName = entry.getName();
@@ -472,8 +472,10 @@ public class JNLPGenerator extends DefaultHandler {
 			return true;
 		if (siteValues == null)
 			return false;
-		if ("*".equals(candidateValues))return true; //$NON-NLS-1$
-		if ("".equals(candidateValues))return true; //$NON-NLS-1$
+		if ("*".equals(candidateValues)) //$NON-NLS-1$
+			return true;
+		if ("".equals(candidateValues)) //$NON-NLS-1$
+			return true;
 		StringTokenizer siteTokens = new StringTokenizer(siteValues, ","); //$NON-NLS-1$
 		//$NON-NLS-1$	
 		while (siteTokens.hasMoreTokens()) {
@@ -508,7 +510,7 @@ public class JNLPGenerator extends DefaultHandler {
 		}
 		StringTokenizer tokens = new StringTokenizer(spec, "&"); //$NON-NLS-1$
 		int configNbr = tokens.countTokens();
-		ArrayList<Config> configInfos = new ArrayList<Config>(configNbr);
+		ArrayList<Config> configInfos = new ArrayList<>(configNbr);
 		while (tokens.hasMoreElements()) {
 			String aConfig = tokens.nextToken();
 			StringTokenizer configTokens = new StringTokenizer(aConfig, ","); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,19 +45,10 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 			return executionEnvironmentMappings;
 
 		Properties properties = new Properties();
-		InputStream stream = null;
-		try {
-			stream = BundleHelper.getDefault().getBundle().getEntry("data/env.properties").openStream(); //$NON-NLS-1$
+		try (InputStream stream = BundleHelper.getDefault().getBundle().getEntry("data/env.properties").openStream()) { //$NON-NLS-1$
 			properties.load(stream);
 		} catch (IOException e) {
 			//ignore
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				//ignore
-			}
 		}
 		executionEnvironmentMappings = properties;
 		return executionEnvironmentMappings;
@@ -87,7 +78,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @return List
 	 */
 	public List<Config> selectConfigs(IPlatformEntry element) {
-		List<Config> result = new ArrayList<Config>(getConfigInfos());
+		List<Config> result = new ArrayList<>(getConfigInfos());
 
 		if (((element.getOS() == null || element.getOS().equals(Config.ANY)) && includePlatformIndependent == false) && ((element.getWS() == null || element.getWS().equals(Config.ANY)) && includePlatformIndependent == false) && ((element.getArch() == null || element.getArch().equals(Config.ANY)) && includePlatformIndependent == false)) {
 			result.clear();
@@ -130,7 +121,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 
 	public Set<String> getCompiledElements() {
 		if (compiledElements == null)
-			compiledElements = new HashSet<String>();
+			compiledElements = new HashSet<>();
 		return compiledElements;
 	}
 

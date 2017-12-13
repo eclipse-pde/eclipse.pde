@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2008, 2017 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -51,7 +51,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	private String targetFolder = null;
 	private String gatheredSource = null;
 	private String unpack = null;
-	private final Map<String, Set<OutputFileSet>> sourceMap = new HashMap<String, Set<OutputFileSet>>();
+	private final Map<String, Set<OutputFileSet>> sourceMap = new HashMap<>();
 
 	@Override
 	public void execute() throws BuildException {
@@ -140,7 +140,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 			}
 
 			List<String> includedFiles = Arrays.asList(fileSet.getDirectoryScanner().getIncludedFiles());
-			LinkedHashSet<String> set = new LinkedHashSet<String>(includedFiles);
+			LinkedHashSet<String> set = new LinkedHashSet<>(includedFiles);
 
 			// Manifest must go first, and must have been specifically excluded earlier from the buildResultFolder to not get added.
 			if (new File(buildResultFolder, JarFile.MANIFEST_NAME).exists())
@@ -275,7 +275,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 			Set<OutputFileSet> set = sourceMap.get(key);
 			set.add(output);
 		} else {
-			Set<OutputFileSet> set = new HashSet<OutputFileSet>();
+			Set<OutputFileSet> set = new HashSet<>();
 			set.add(output);
 			sourceMap.put(key, set);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.build.site.BuildTimeSite;
 public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	protected Feature feature;
 	private final BuildTimeSite site;
-	private final Map<String, String> parameters = new LinkedHashMap<String, String>(10);
+	private final Map<String, String> parameters = new LinkedHashMap<>(10);
 
 	public FeatureWriter(OutputStream out, Feature feature, BuildTimeSite site) throws IOException {
 		super(out);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		this.assemblyData = assemblageInformation;
 	}
 
-	private final Map<String, String> extractedLocations = new HashMap<String, String>();
+	private final Map<String, String> extractedLocations = new HashMap<>();
 
 	public String getExtractedRoot(ClasspathElement element) {
 		if (element.getSubPath() == null)
@@ -111,7 +111,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 * @throws CoreException
 	 */
 	protected Set<BundleDescription> computeElements(BuildTimeFeature feature) throws CoreException {
-		Set<BundleDescription> computedElements = new LinkedHashSet<BundleDescription>(5);
+		Set<BundleDescription> computedElements = new LinkedHashSet<>(5);
 		Properties featureProperties = getBuildProperties(feature);
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (int i = 0; i < pluginList.length; i++) {
@@ -169,7 +169,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		}
 		Set<FeatureEntry> entries = (Set) bundleProperties.get(PLUGIN_ENTRY);
 		if (entries == null) {
-			entries = new HashSet<FeatureEntry>();
+			entries = new HashSet<>();
 			bundleProperties.put(PLUGIN_ENTRY, entries);
 		}
 		entries.add(entry);
@@ -513,7 +513,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		if (binaryFeature == false || models.isEmpty())
 			return;
 
-		Set<BundleDescription> generatedScripts = new HashSet<BundleDescription>(models.size());
+		Set<BundleDescription> generatedScripts = new HashSet<>(models.size());
 		for (Iterator<BundleDescription> iterator = models.iterator(); iterator.hasNext();) {
 			BundleDescription model = iterator.next();
 			if (generatedScripts.contains(model))

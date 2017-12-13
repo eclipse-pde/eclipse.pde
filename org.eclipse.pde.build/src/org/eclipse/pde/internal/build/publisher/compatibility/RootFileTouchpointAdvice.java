@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class RootFileTouchpointAdvice extends RootFilesAdvice implements ITouchp
 				configInstruction += "chmod(targetDir:${installFolder}, targetFile:" + launcherFile.getName() + ", permissions:755);"; //$NON-NLS-1$ //$NON-NLS-2$				
 			}
 
-			Map<String, ITouchpointInstruction> newInstructions = new HashMap<String, ITouchpointInstruction>();
+			Map<String, ITouchpointInstruction> newInstructions = new HashMap<>();
 			newInstructions.put("configure", MetadataFactory.createTouchpointInstruction(configInstruction, "org.eclipse.equinox.p2.touchpoint.eclipse.setLauncherName")); //$NON-NLS-1$ //$NON-NLS-2$ 
 			return MetadataFactory.mergeTouchpointData(existingData, newInstructions);
 		}

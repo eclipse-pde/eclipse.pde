@@ -353,13 +353,13 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private List<BundleDescription> getBundlesFromProductFile(Config config) {
 		BundleHelper helper = BundleHelper.getDefault();
-		Dictionary<String, String> environment = new Hashtable<String, String>(3);
+		Dictionary<String, String> environment = new Hashtable<>(3);
 		environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
 		environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
 		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
 
 		List<FeatureEntry> pluginList = productFile.getProductEntries();
-		List<BundleDescription> results = new ArrayList<BundleDescription>(pluginList.size());
+		List<BundleDescription> results = new ArrayList<>(pluginList.size());
 		for (Iterator<FeatureEntry> iter = pluginList.iterator(); iter.hasNext();) {
 			FeatureEntry entry = iter.next();
 			if (!entry.isPlugin())
@@ -451,7 +451,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		buffer.append("osgi.bundles="); //$NON-NLS-1$
 
 		//When the plugins are all listed.
-		Dictionary<String, String> environment = new Hashtable<String, String>(3);
+		Dictionary<String, String> environment = new Hashtable<>(3);
 		environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
 		environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
 		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
@@ -544,19 +544,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			}
 		}
 
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(new File(configDir, "config.ini")); //$NON-NLS-1$
+		try (FileWriter writer = new FileWriter(new File(configDir, "config.ini"))) { //$NON-NLS-1$
 			writer.write(buffer.toString());
 		} catch (IOException e) {
 			//nothing
-		} finally {
-			try {
-				if (writer != null)
-					writer.close();
-			} catch (IOException e) {
-				//nothing
-			}
 		}
 	}
 
@@ -580,22 +571,12 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			if (bundle != null)
 				properties.put(VERSION, bundle.getVersion().toString());
 		}
-		OutputStream stream = null;
-		try {
-			File file = new File(dir, ".eclipseproduct"); //$NON-NLS-1$
-			stream = new BufferedOutputStream(new FileOutputStream(file));
+		File file = new File(dir, ".eclipseproduct"); //$NON-NLS-1$
+		try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));) {
 			properties.store(stream, "Eclipse Product File"); //$NON-NLS-1$
 			stream.flush();
 		} catch (IOException e) {
 			//nothing
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					//nothing
-				}
-			}
 		}
 	}
 
@@ -620,7 +601,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		StringBuffer buffer = new StringBuffer("platform:/base/plugins/"); //$NON-NLS-1$
 		buffer.append(plugin);
 
-		Dictionary<String, String> environment = new Hashtable<String, String>(4);
+		Dictionary<String, String> environment = new Hashtable<>(4);
 		environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
 		environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
 		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
@@ -661,9 +642,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			return;
 
 		String lineDelimiter = Platform.OS_WIN32.equals(os) ? "\r\n" : "\n"; //$NON-NLS-1$ //$NON-NLS-2$
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(new FileWriter(new File(dir, launcher + ".ini"))); //$NON-NLS-1$
+		try (PrintWriter writer = new PrintWriter(new FileWriter(new File(dir, launcher + ".ini")))) { //$NON-NLS-1$
 			if (programArgs != null && programArgs.length() > 0) {
 				QuotedTokenizer tokenizer = new QuotedTokenizer(programArgs);
 				while (tokenizer.hasMoreTokens()) {
@@ -688,10 +667,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			}
 		} catch (IOException e) {
 			//nothing
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 

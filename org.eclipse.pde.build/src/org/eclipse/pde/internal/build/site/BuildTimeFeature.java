@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class BuildTimeFeature extends Feature {
 	private String rootLocation = null;
 
 	public FeatureEntry[] getRawIncludedFeatureReferences() {
-		ArrayList<FeatureEntry> included = new ArrayList<FeatureEntry>();
+		ArrayList<FeatureEntry> included = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || entries[i].isPlugin())
@@ -61,7 +61,7 @@ public class BuildTimeFeature extends Feature {
 	}
 
 	public FeatureEntry[] getIncludedFeatureReferences() {
-		ArrayList<FeatureEntry> included = new ArrayList<FeatureEntry>();
+		ArrayList<FeatureEntry> included = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || entries[i].isPlugin())
@@ -76,7 +76,7 @@ public class BuildTimeFeature extends Feature {
 	}
 
 	public FeatureEntry[] getPluginEntries() {
-		ArrayList<FeatureEntry> plugins = new ArrayList<FeatureEntry>();
+		ArrayList<FeatureEntry> plugins = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || !entries[i].isPlugin())
@@ -89,7 +89,7 @@ public class BuildTimeFeature extends Feature {
 	}
 
 	public FeatureEntry[] getRawPluginEntries() {
-		ArrayList<FeatureEntry> plugins = new ArrayList<FeatureEntry>();
+		ArrayList<FeatureEntry> plugins = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || !entries[i].isPlugin())
@@ -100,7 +100,7 @@ public class BuildTimeFeature extends Feature {
 	}
 
 	public FeatureEntry[] getImports() {
-		ArrayList<FeatureEntry> imports = new ArrayList<FeatureEntry>();
+		ArrayList<FeatureEntry> imports = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (!entries[i].isRequires())

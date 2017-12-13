@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 
 	//For every entry, return all the children of this entry is it is named plugins, otherwise return the entry itself  
 	private Collection<File> findPluginXML(File[] location) {
-		Collection<File> collectedElements = new ArrayList<File>(10);
+		Collection<File> collectedElements = new ArrayList<>(10);
 		for (int i = 0; i < location.length; i++) {
 			File f = new File(location[i], DEFAULT_PLUGIN_LOCATION);
 			if (f.exists()) {

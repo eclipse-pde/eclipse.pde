@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,9 @@ package org.eclipse.pde.internal.build.builder;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import java.util.jar.*;
+import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
+import java.util.jar.Manifest;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.publisher.eclipse.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -196,12 +197,12 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				sourceFeature.addEntry(entry);
 			} else if (extraEntries[i].startsWith("exclude@")) { //$NON-NLS-1$
 				if (excludedEntries == null)
-					excludedEntries = new HashMap<String, List<Version>>();
+					excludedEntries = new HashMap<>();
 
 				if (excludedEntries.containsKey(id)) {
 					excludedEntries.get(id).add(version);
 				} else {
-					List<Version> versionList = new ArrayList<Version>();
+					List<Version> versionList = new ArrayList<>();
 					versionList.add(version);
 					excludedEntries.put(id, versionList);
 				}
@@ -355,13 +356,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		sourceDir.mkdirs();
 		// write the source feature to the feature.xml
 		File file = new File(sourceFeatureDir + '/' + Constants.FEATURE_FILENAME_DESCRIPTOR);
-		try {
-			SourceFeatureWriter writer = new SourceFeatureWriter(new BufferedOutputStream(new FileOutputStream(file)), sourceFeature, getSite());
-			try {
-				writer.printFeature();
-			} finally {
-				writer.close();
-			}
+		try (SourceFeatureWriter writer = new SourceFeatureWriter(new BufferedOutputStream(new FileOutputStream(file)), sourceFeature, getSite())) {
+			writer.printFeature();
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.error_creatingFeature, sourceFeature.getId());
 			throw new CoreException(new Status(IStatus.OK, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
@@ -613,13 +609,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 		File manifestFile = new File(sourcePluginDirURL.toFile(), Constants.BUNDLE_FILENAME_DESCRIPTOR);
 		manifestFile.getParentFile().mkdirs();
-		try {
-			OutputStream out = new BufferedOutputStream(new FileOutputStream(manifestFile));
-			try {
-				manifest.write(out);
-			} finally {
-				out.close();
-			}
+		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(manifestFile))) {
+			manifest.write(out);
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_writingFile, manifestFile.getAbsolutePath());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
@@ -754,29 +745,18 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private void replaceManifestValue(String location, String attribute, String newVersion) {
 		Manifest manifest = null;
-		try {
+		try (InputStream is = new SequenceInputStream(new BufferedInputStream(new FileInputStream(location)), new ByteArrayInputStream(new byte[] {'\n'}))) {
 			//work around for bug 256787 
-			InputStream is = new SequenceInputStream(new BufferedInputStream(new FileInputStream(location)), new ByteArrayInputStream(new byte[] {'\n'}));
-			try {
-				manifest = new Manifest(is);
-			} finally {
-				is.close();
-			}
+			manifest = new Manifest(is);
 		} catch (IOException e) {
 			return;
 		}
 
 		manifest.getMainAttributes().put(new Attributes.Name(attribute), newVersion);
 
-		OutputStream os = null;
-		try {
-			os = new BufferedOutputStream(new FileOutputStream(location));
-			try {
-				manifest.write(os);
-				os.write(new byte[] {'\n'});
-			} finally {
-				os.close();
-			}
+		try (OutputStream os = new BufferedOutputStream(new FileOutputStream(location))) {
+			manifest.write(os);
+			os.write(new byte[] {'\n'});
 		} catch (IOException e1) {
 			//ignore
 		}

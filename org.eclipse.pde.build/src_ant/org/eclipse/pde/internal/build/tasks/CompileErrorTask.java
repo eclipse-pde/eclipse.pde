@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class CompileErrorTask extends Task {
 
 		Union union = new Union(problemFiles);
 		String[] prereqFiles = union.list();
-		List<String> problems = new ArrayList<String>();
+		List<String> problems = new ArrayList<>();
 		BufferedReader reader = null;
 		for (int i = 0; i < prereqFiles.length; i++) {
 			File file = new File(prereqFiles[i]);

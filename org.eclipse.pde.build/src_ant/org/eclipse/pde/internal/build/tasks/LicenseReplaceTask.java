@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Properties;
 import org.apache.tools.ant.BuildException;
@@ -34,7 +35,6 @@ public class LicenseReplaceTask extends Task {
 	private String licensePath;
 
 	private class Feature {
-		private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 		private static final String FEATURE_START_TAG = "<feature";//$NON-NLS-1$
 		private static final String LICENSE_START_TAG = "<license"; //$NON-NLS-1$;
 		private static final String LICENSE_END_TAG = "</license>"; //$NON-NLS-1$;
@@ -147,10 +147,8 @@ public class LicenseReplaceTask extends Task {
 			if (!contentChanged)
 				return;
 
-			try {
-				OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(featureFilePath)), UTF_8);
+			try (OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(featureFilePath)), StandardCharsets.UTF_8)) {
 				w.write(buffer.toString());
-				w.close();
 			} catch (FileNotFoundException e) {
 				// ignore
 			} catch (IOException e) {
@@ -224,7 +222,7 @@ public class LicenseReplaceTask extends Task {
 		}
 
 		private StringBuffer readFile(File targetName) throws IOException {
-			InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), UTF_8);
+			InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), StandardCharsets.UTF_8);
 			StringBuffer result = new StringBuffer();
 			char[] buf = new char[4096];
 			int count;
@@ -350,19 +348,13 @@ public class LicenseReplaceTask extends Task {
 
 			// Now append (or create) necessary feature_*.properties files
 
-			try {
-				FileWriter featurePropertyWriter = new FileWriter(featurePropertyFile, true);
-				FileReader licensePropertyReader = new FileReader(licensePropertyFile);
-
+			try (FileWriter featurePropertyWriter = new FileWriter(featurePropertyFile, true); FileReader licensePropertyReader = new FileReader(licensePropertyFile)) {
 				char[] buffer = new char[1024];
 				int bytesRead = licensePropertyReader.read(buffer);
 				while (bytesRead > -1) {
 					featurePropertyWriter.write(buffer, 0, bytesRead);
 					bytesRead = licensePropertyReader.read(buffer);
 				}
-
-				featurePropertyWriter.close();
-				licensePropertyReader.close();
 			} catch (IOException e) {
 				throw new BuildException(e);
 			}

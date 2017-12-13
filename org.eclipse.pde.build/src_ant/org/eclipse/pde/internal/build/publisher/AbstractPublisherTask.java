@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,8 +86,8 @@ public abstract class AbstractPublisherTask extends Task {
 	protected PublisherInfo publisherInfo = null;
 	private Properties buildProperties = null;
 	protected String overrides = null;
-	protected List<URI> contextMetadataRepositories = new ArrayList<URI>();
-	protected List<URI> contextArtifactRepositories = new ArrayList<URI>();
+	protected List<URI> contextMetadataRepositories = new ArrayList<>();
+	protected List<URI> contextArtifactRepositories = new ArrayList<>();
 
 	protected Properties getBuildProperties() {
 		if (buildProperties != null)

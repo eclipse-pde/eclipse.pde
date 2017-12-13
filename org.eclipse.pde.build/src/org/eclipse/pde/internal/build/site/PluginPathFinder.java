@@ -33,10 +33,8 @@ public class PluginPathFinder {
 	private static String getSitePath(String platformHome, File linkFile, boolean features) {
 		String prefix = new Path(platformHome).removeLastSegments(1).toString();
 		Properties properties = new Properties();
-		try {
-			FileInputStream fis = new FileInputStream(linkFile);
+		try (FileInputStream fis = new FileInputStream(linkFile)) {
 			properties.load(fis);
-			fis.close();
 			String path = properties.getProperty("path"); //$NON-NLS-1$
 			if (path != null) {
 				if (!new Path(path).isAbsolute())
@@ -63,7 +61,7 @@ public class PluginPathFinder {
 	 * @return array of ".../plugins" or ".../features" Files
 	 */
 	private static File[] getSites(String platformHome, boolean features) {
-		ArrayList<File> sites = new ArrayList<File>();
+		ArrayList<File> sites = new ArrayList<>();
 
 		File file = new File(platformHome, features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
 		if (!features && !file.exists())
@@ -88,8 +86,8 @@ public class PluginPathFinder {
 		if (!dropins.exists())
 			return Collections.emptyList();
 
-		ArrayList<File> sites = new ArrayList<File>();
-		ArrayList<File> results = new ArrayList<File>();
+		ArrayList<File> sites = new ArrayList<>();
+		ArrayList<File> results = new ArrayList<>();
 
 		File[] contents = dropins.listFiles();
 		for (int i = 0; i < contents.length; i++) {
@@ -164,7 +162,7 @@ public class PluginPathFinder {
 	 * @return URLs to plugins/features
 	 */
 	private static List<File> scanLocations(File[] sites) {
-		ArrayList<File> result = new ArrayList<File>();
+		ArrayList<File> result = new ArrayList<>();
 		for (int i = 0; i < sites.length; i++) {
 			if (sites[i] == null || !sites[i].exists())
 				continue;

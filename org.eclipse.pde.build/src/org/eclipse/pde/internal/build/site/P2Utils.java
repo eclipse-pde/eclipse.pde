@@ -44,7 +44,7 @@ public class P2Utils {
 		File bundlesTxt = new File(root, "configuration/" + SimpleConfiguratorManipulator.BUNDLES_INFO_PATH); //$NON-NLS-1$
 		File sourceTxt = new File(root, "configuration/" + SimpleConfiguratorManipulator.SOURCE_INFO_PATH); //$NON-NLS-1$
 
-		List<BundleInfo> infos = new ArrayList<BundleInfo>();
+		List<BundleInfo> infos = new ArrayList<>();
 		try {
 			//streams are closed for us
 			if (bundlesTxt.exists())
@@ -90,8 +90,8 @@ public class P2Utils {
 	 * @return URL location of the bundles.info or <code>null</code>
 	 */
 	public static File writeBundlesTxt(Collection<BundleDescription> bundles, File directory, ProductFile productFile, boolean refactoredRuntime) {
-		List<BundleInfo> bundleInfos = new ArrayList<BundleInfo>(bundles.size());
-		List<BundleInfo> sourceInfos = new ArrayList<BundleInfo>(bundles.size());
+		List<BundleInfo> bundleInfos = new ArrayList<>(bundles.size());
+		List<BundleInfo> sourceInfos = new ArrayList<>(bundles.size());
 		ShapeAdvisor advisor = new ShapeAdvisor();
 
 		int defaultStartLevel = 4;

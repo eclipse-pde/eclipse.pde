@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 	private static final String TASK_REPO2RUNNABLE = "p2.repo2runnable"; //$NON-NLS-1$
 	private static final String TARGET_GET_IUS_FROM_REPO = "FetchIUsFromRepo"; //$NON-NLS-1$
 
-	private final Map<String, ArrayList<IUFetchInfo>> iusToFetchBySource = new LinkedHashMap<String, ArrayList<IUFetchInfo>>(2);
+	private final Map<String, ArrayList<IUFetchInfo>> iusToFetchBySource = new LinkedHashMap<>(2);
 
 	/*
 	 * Helper method to throw an exception with the given message.
@@ -105,7 +105,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 		script.println();
 		script.printTargetDeclaration(TARGET_GET_IUS_FROM_REPO, null, null, null, null);
 
-		Map<String, String> args = new LinkedHashMap<String, String>(2);
+		Map<String, String> args = new LinkedHashMap<>(2);
 		for (Iterator<Entry<String, ArrayList<IUFetchInfo>>> stream = iusToFetchBySource.entrySet().iterator(); stream.hasNext();) {
 			Entry<String, ArrayList<IUFetchInfo>> entry = stream.next();
 			String sourceRepository = entry.getKey();
@@ -170,7 +170,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 	 */
 	@Override
 	public void generateRetrieveFilesCall(Map<String, Object> entryInfos, IPath destination, String[] files, IAntScript script) {
-		Map<String, String> args = new HashMap<String, String>();
+		Map<String, String> args = new HashMap<>();
 		args.put(ATTRIBUTE_SOURCE, (String) entryInfos.get(KEY_REPOSITORY));
 		args.put(ATTRIBUTE_DESTINATION, destination.toOSString());
 		script.printStartTag(TASK_REPO2RUNNABLE, args);
@@ -213,7 +213,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 		String[] arguments = Utils.getArrayFromStringWithBlank(rawEntry, SEPARATOR);
 
 		// build up the table of arguments in the map file entry
-		Map<String, String> table = new HashMap<String, String>();
+		Map<String, String> table = new HashMap<>();
 		for (int i = 0; i < arguments.length; i++) {
 			String arg = arguments[i];
 			// if we have at least one arg without an equals sign then we are malformed and should bail

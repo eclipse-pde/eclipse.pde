@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -21,7 +22,6 @@ import org.apache.tools.ant.Task;
  * @since 3.0
  */
 public class IdReplaceTask extends Task {
-	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private static final String FEATURE_START_TAG = "<feature";//$NON-NLS-1$
 	private static final String PRODUCT_START_TAG = "<product"; //$NON-NLS-1$
 	private static final String ID = "id";//$NON-NLS-1$
@@ -42,11 +42,11 @@ public class IdReplaceTask extends Task {
 	//Map of the plugin ids and version (key) and their version number (value)
 	//  the key is id:version  and the value is the actual version of the element
 	// the keys are such that a regular lookup will always return the appropriate value if available
-	private Map<String, String> pluginIds = new HashMap<String, String>(10);
+	private Map<String, String> pluginIds = new HashMap<>(10);
 	//Map of the feature ids and version (key) and their version number (value)
 	//  the key is id:version  and the value is the actual version of the element
 	// the keys are such that a regular lookup will always return the appropriate value if available    
-	private Map<String, String> featureIds = new HashMap<String, String>(4);
+	private Map<String, String> featureIds = new HashMap<>(4);
 	//The new version number for this feature
 	private String selfVersion;
 
@@ -84,7 +84,7 @@ public class IdReplaceTask extends Task {
 	 * For example: org.eclipse.pde.build,2.1.0,org.eclipse.core.resources,1.2.0
 	 */
 	public void setPluginIds(String values) {
-		pluginIds = new HashMap<String, String>(10);
+		pluginIds = new HashMap<>(10);
 		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			String id = EMPTY;
@@ -106,7 +106,7 @@ public class IdReplaceTask extends Task {
 	 * @param values
 	 */
 	public void setFeatureIds(String values) {
-		featureIds = new HashMap<String, String>(10);
+		featureIds = new HashMap<>(10);
 		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			String id = EMPTY;
@@ -299,10 +299,8 @@ public class IdReplaceTask extends Task {
 		if (!contentChanged)
 			return;
 
-		try {
-			OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(filePath)), UTF_8);
+		try (OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(filePath)), StandardCharsets.UTF_8)) {
 			w.write(buffer.toString());
-			w.close();
 		} catch (FileNotFoundException e) {
 			// ignore
 		} catch (IOException e) {
@@ -335,7 +333,7 @@ public class IdReplaceTask extends Task {
 	}
 
 	private StringBuffer readFile(File targetName) throws IOException {
-		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), UTF_8);
+		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), StandardCharsets.UTF_8);
 		StringBuffer result = new StringBuffer();
 		char[] buf = new char[4096];
 		int count;

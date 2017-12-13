@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -48,15 +48,12 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, message, null));
 			}
 			readDirectory();
-			PrintWriter output = new PrintWriter(new BufferedOutputStream(new FileOutputStream(destination)));
-			try {
-				List<String> entries = new ArrayList<String>(20);
+			try (PrintWriter output = new PrintWriter(new BufferedOutputStream(new FileOutputStream(destination)))) {
+				List<String> entries = new ArrayList<>(20);
 				for (int i = 0; i < elements.length; i++)
 					collectEntries(entries, elements[i]);
 				generatePrologue(output);
 				generateEntries(output, entries);
-			} finally {
-				output.close();
 			}
 		} catch (Exception e) {
 			throw new BuildException(e);
@@ -212,11 +209,8 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 		try {
 			directory = new Properties();
 			File file = new File(directoryLocation);
-			InputStream is = new BufferedInputStream(new FileInputStream(file));
-			try {
+			try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
 				directory.load(is);
-			} finally {
-				is.close();
 			}
 		} catch (IOException e) {
 			String message = NLS.bind(TaskMessages.error_readingDirectory, directoryLocation);

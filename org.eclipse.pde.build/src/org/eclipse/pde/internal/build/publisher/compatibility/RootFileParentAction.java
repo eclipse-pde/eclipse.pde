@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class RootFileParentAction extends AbstractPublisherAction {
 		final String idPrefix = baseId + ".rootfiles"; //$NON-NLS-1$
 		final String flavorPrefix = flavor + baseId + ".rootfiles"; //$NON-NLS-1$
 
-		HashSet<IInstallableUnit> collector = new HashSet<IInstallableUnit>();
+		HashSet<IInstallableUnit> collector = new HashSet<>();
 		Iterator<IInstallableUnit> iter = results.getIUs(null, IPublisherResult.NON_ROOT).iterator();
 		while (iter.hasNext()) {
 			IInstallableUnit iu = iter.next();

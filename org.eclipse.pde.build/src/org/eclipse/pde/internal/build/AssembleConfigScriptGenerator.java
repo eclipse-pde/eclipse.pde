@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected String filename;
 	protected Collection<BuildTimeFeature> rootFileProviders;
 	protected String rootFolder = null;
-	protected ArrayList<String> addedByPermissions = new ArrayList<String>(); //contains the list of files and folders that have been added to an archive by permission management
+	protected ArrayList<String> addedByPermissions = new ArrayList<>(); //contains the list of files and folders that have been added to an archive by permission management
 
 	private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
 	private static final String PROPERTY_ELEMENT_NAME = "elementName"; //$NON-NLS-1$
@@ -70,7 +70,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		this.directory = directoryName;
 		this.featureId = feature;
 		this.configInfo = configurationInformation;
-		this.rootFileProviders = rootProviders != null ? rootProviders : new ArrayList<BuildTimeFeature>(0);
+		this.rootFileProviders = rootProviders != null ? rootProviders : new ArrayList<>(0);
 		this.rootFolder = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
 		this.features = new BuildTimeFeature[featureList.size()];
 		featureList.toArray(this.features);
@@ -163,7 +163,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateMirrorProductTask() {
-		Map<String, String> mirrorArgs = new HashMap<String, String>();
+		Map<String, String> mirrorArgs = new HashMap<>();
 		mirrorArgs.put(PROPERTY_P2_MIRROR_METADATA_DEST, Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO));
 		mirrorArgs.put(PROPERTY_P2_MIRROR_ARTIFACT_DEST, Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO));
 
@@ -290,7 +290,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		script.printTargetDeclaration(TARGET_RUN_DIRECTOR, assembling ? TARGET_RUN_DIRECTOR_CONDITION : null, null, assembling ? TARGET_RUN_DIRECTOR_CONDITION : PROPERTY_SKIP_DIRECTOR, null);
-		Map<String, String> parameters = new HashMap<String, String>();
+		Map<String, String> parameters = new HashMap<>();
 		parameters.put(PROPERTY_OS, Utils.getPropertyFormat(PROPERTY_OS));
 		parameters.put(PROPERTY_WS, Utils.getPropertyFormat(PROPERTY_WS));
 		parameters.put(PROPERTY_ARCH, Utils.getPropertyFormat(PROPERTY_ARCH));
@@ -374,7 +374,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		String assemblyCondition = BuildDirector.p2Gathering ? TARGET_ASSEMBLE_ARCHIVE_CONDITION : null;
 		String packageCondition = BuildDirector.p2Gathering ? (productFile != null ? PROPERTY_SKIP_DIRECTOR : PROPERTY_SKIP_MIRRORING) : null;
 		script.printTargetDeclaration(TARGET_ASSEMBLE_ARCHIVE, condition ? TARGET_ASSEMBLE_ARCHIVE_CONDITION : null, null, assembling ? assemblyCondition : packageCondition, null);
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		properties.put(PROPERTY_ROOT_FOLDER, rootFolder);
 		printCustomAssemblyAntCall(PROPERTY_PRE + "archive", properties); //$NON-NLS-1$
 
@@ -408,7 +408,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printMoveTask(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), rootFiles, false);
 			script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), null, null); //$NON-NLS-1$
 		} else {
-			List<String> params = new ArrayList<String>(3);
+			List<String> params = new ArrayList<>(3);
 			params.add("-R"); //$NON-NLS-1$
 			params.add("."); //$NON-NLS-1$
 			params.add('\'' + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '\'');
@@ -431,7 +431,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	protected void generateGatherSourceTarget() {
 		script.printTargetDeclaration(TARGET_GATHER_SOURCES, null, null, null, null);
-		Map<String, String> properties = new HashMap<String, String>(1);
+		Map<String, String> properties = new HashMap<>(1);
 		properties.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS));
 
 		for (int i = 0; i < plugins.length; i++) {
@@ -456,7 +456,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			}
 		}
 
-		properties = new HashMap<String, String>(1);
+		properties = new HashMap<>(1);
 		properties.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
@@ -475,7 +475,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printComment("Beginning of the jarUp task"); //$NON-NLS-1$
 		script.printTargetDeclaration(TARGET_JARUP, null, null, null, Messages.assemble_jarUp);
 		script.printAvailableTask(fileExists, fileName);
-		Map<String, String> params = new HashMap<String, String>(2);
+		Map<String, String> params = new HashMap<>(2);
 		params.put(PROPERTY_SOURCE, Utils.getPropertyFormat(PROPERTY_SOURCE));
 		params.put(PROPERTY_ELEMENT_NAME, Utils.getPropertyFormat(PROPERTY_ELEMENT_NAME));
 		script.printAvailableTask(PROPERTY_JARING_MANIFEST, fileName + '/' + JarFile.MANIFEST_NAME);
@@ -558,7 +558,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateCustomGatherMacro() {
-		List<String> attributes = new ArrayList<String>(5);
+		List<String> attributes = new ArrayList<>(5);
 		attributes.add("dir"); //$NON-NLS-1$
 		attributes.add("propertyName"); //$NON-NLS-1$
 		attributes.add("propertyValue"); //$NON-NLS-1$
@@ -566,7 +566,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		attributes.add(PROPERTY_PROJECT_NAME);
 		script.printMacroDef(PROPERTY_CUSTOM_GATHER, attributes);
 
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("@{propertyName}", "@{propertyValue}"); //$NON-NLS-1$//$NON-NLS-2$
 		script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, "@{dir}", TARGET_GATHER_BIN_PARTS, null, null, params); //$NON-NLS-1$
 
@@ -636,7 +636,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
 		}
 
-		Set<BuildTimeFeature> featureSet = new HashSet<BuildTimeFeature>();
+		Set<BuildTimeFeature> featureSet = new HashSet<>();
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
 			String placeToGather = feature.getRootLocation();
@@ -661,7 +661,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generateSignJarCall(String name, String version, byte type) {
 		if (!signJars)
 			return;
-		Map<String, String> properties = new HashMap<String, String>(2);
+		Map<String, String> properties = new HashMap<>(2);
 		properties.put(PROPERTY_SOURCE, type == BUNDLE_TYPE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES));
 		properties.put(PROPERTY_ELEMENT_NAME, name + '_' + version);
 		script.printAntCallTask(TARGET_JARSIGNING, true, properties);
@@ -691,7 +691,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateJarUpCall(String name, String version, byte type) {
-		Map<String, String> properties = new HashMap<String, String>(2);
+		Map<String, String> properties = new HashMap<>(2);
 		properties.put(PROPERTY_SOURCE, type == BUNDLE_TYPE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES));
 		properties.put(PROPERTY_ELEMENT_NAME, name + '_' + version);
 		script.printAntCallTask(TARGET_JARUP, true, properties);
@@ -734,7 +734,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void printCustomAssemblyAntCall(String customTarget, Map<String, String> properties) {
-		Map<String, String> params = (properties != null) ? new HashMap<String, String>(properties) : new HashMap<String, String>(1);
+		Map<String, String> params = (properties != null) ? new HashMap<>(properties) : new HashMap<>(1);
 		params.put(PROPERTY_CUSTOM_TARGET, customTarget);
 		script.printAntCallTask(TARGET_CUSTOM_ASSEMBLY, true, params);
 	}
@@ -845,7 +845,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	private void generateZipTarget() {
 		final int parameterSize = 15;
-		List<String> parameters = new ArrayList<String>(parameterSize + 1);
+		List<String> parameters = new ArrayList<>(parameterSize + 1);
 
 		if (BuildDirector.p2Gathering) {
 			parameters.add(Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX));
@@ -892,7 +892,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (rootFileProviders.size() == 0)
 			return;
 
-		List<String> parameters = new ArrayList<String>(1);
+		List<String> parameters = new ArrayList<>(1);
 		parameters.add("-r -q ${zipargs} '" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' . "); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printExecTask("zip", Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), parameters, null); //$NON-NLS-1$ //$NON-NLS-2$ 
 	}
@@ -910,7 +910,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	public void generateTarGZTasks(boolean assembling) {
 		//This task only supports creation of archive with eclipse at the root 
 		//Need to do the copy using cp because of the link
-		List<String> parameters = new ArrayList<String>(2);
+		List<String> parameters = new ArrayList<>(2);
 		if (rootFileProviders.size() > 0) {
 			parameters.add("-r '" + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "' '" + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '\''); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
 			script.printExecTask("cp", Utils.getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
@@ -927,7 +927,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		script.printAntCallTask(TARGET_GZIP_RESULTS, true, null);
 
-		List<String> args = new ArrayList<String>(2);
+		List<String> args = new ArrayList<>(2);
 		args.add("-rf"); //$NON-NLS-1$
 		args.add('\'' + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '\'');
 		script.printExecTask("rm", null, args, null); //$NON-NLS-1$
@@ -935,7 +935,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	//TODO this code and the generateAntTarTarget() should be refactored using a factory or something like that.
 	protected void generateAntZipTarget() {
-		List<FileSet> fileSets = new ArrayList<FileSet>();
+		List<FileSet> fileSets = new ArrayList<>();
 
 		if (BuildDirector.p2Gathering) {
 			//TODO permissions
@@ -976,14 +976,14 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected Collection<BuildTimeFeature> getArchiveRootFileProviders() {
-		return rootFileProviders != null ? rootFileProviders : new ArrayList<BuildTimeFeature>(0);
+		return rootFileProviders != null ? rootFileProviders : new ArrayList<>(0);
 	}
 
 	protected FileSet[] generatePermissions(String root, boolean zip) {
 		String configInfix = configInfo.toString("."); //$NON-NLS-1$
 		String prefixPermissions = ROOT_PREFIX + configInfix + '.' + PERMISSIONS + '.';
 		String commonPermissions = ROOT_PREFIX + PERMISSIONS + '.';
-		ArrayList<ZipFileSet> fileSets = new ArrayList<ZipFileSet>();
+		ArrayList<ZipFileSet> fileSets = new ArrayList<>();
 
 		for (Iterator<BuildTimeFeature> iter = getArchiveRootFileProviders().iterator(); iter.hasNext();) {
 			Properties featureProperties = getFeatureBuildProperties(iter.next());
@@ -1018,7 +1018,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	//TODO this code andn the generateAntZipTarget() should be refactored using a factory or something like that.
 	private void generateAntTarTarget() {
-		List<Object> fileSets = new ArrayList<Object>();
+		List<Object> fileSets = new ArrayList<>();
 
 		if (BuildDirector.p2Gathering) {
 			FileSet[] permissions = generatePermissions(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), false);

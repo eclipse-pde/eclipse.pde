@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	// The content of the build.properties file associated with the feature
 	protected Properties featureProperties;
 	// Variables to control is a mkdir to a specific folder was already.
-	protected List<String> mkdirLocations = new ArrayList<String>(5);
+	protected List<String> mkdirLocations = new ArrayList<>(5);
 	// A property table containing the association between the plugins and the version from the map  
 	protected Properties repositoryPluginTags = new Properties();
 	protected Properties repositoryFeatureTags = new Properties();
@@ -73,7 +73,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	//The registry of the task factories
 	private FetchTaskFactoriesRegistry fetchTaskFactories;
 	//Set of all the used factories while generating the fetch script for the top level element
-	private final Set<IFetchFactory> encounteredTypeOfRepo = new HashSet<IFetchFactory>();
+	private final Set<IFetchFactory> encounteredTypeOfRepo = new HashSet<>();
 
 	public static final String FEATURE_ONLY = "featureOnly"; //$NON-NLS-1$
 	public static final String FEATURE_AND_PLUGINS = "featureAndPlugins"; //$NON-NLS-1$
@@ -138,24 +138,14 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	private void saveRepositoryTags(Properties properties, String fileName) throws CoreException {
 		synchronized (SAVE_LOCK) {
-			try {
-				InputStream input = new BufferedInputStream(new FileInputStream(workingDirectory + '/' + fileName));
-				try {
-					properties.load(input);
-				} finally {
-					input.close();
-				}
+			try (InputStream input = new BufferedInputStream(new FileInputStream(workingDirectory + '/' + fileName))) {
+				properties.load(input);
 			} catch (IOException e) {
 				//ignore the exception, the same may not exist
 			}
 
-			try {
-				OutputStream os = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + fileName));
-				try {
-					properties.store(os, null);
-				} finally {
-					os.close();
-				}
+			try (OutputStream os = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + fileName))) {
+				properties.store(os, null);
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.exception_writingFile, workingDirectory + '/' + fileName);
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
@@ -259,7 +249,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * @throws CoreException
 	 */
 	private Map<String, Object> processMapFileEntry(String entry, Version version) throws CoreException {
-		Map<String, Object> entryInfos = new HashMap<String, Object>(5);
+		Map<String, Object> entryInfos = new HashMap<>(5);
 
 		// extract type and element from entry
 		int index = entry.indexOf('@');
@@ -489,9 +479,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			try {
 				feature = factory.createFeature(featureLocation.toURL(), null);
 				featureProperties = new Properties();
-				InputStream featureStream = new BufferedInputStream(new FileInputStream(new File(featureLocation, PROPERTIES_FILE)));
-				featureProperties.load(featureStream);
-				featureStream.close();
+				try (InputStream featureStream = new BufferedInputStream(new FileInputStream(new File(featureLocation, PROPERTIES_FILE)))) {
+					featureProperties.load(featureStream);
+				}
 				return;
 			} catch (Exception e) {
 				String message = NLS.bind(Messages.exception_missingFeature, elementName);
@@ -530,7 +520,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		// Run the Ant script to go to and retrieve the feature.xml. Call the Update
 		// code to construct the feature object to return.
 		try {
-			Map<String, String> retrieveProp = new HashMap<String, String>();
+			Map<String, String> retrieveProp = new HashMap<>();
 			retrieveProp.put("fetch.failonerror", "true"); //$NON-NLS-1$//$NON-NLS-2$
 			retrieveProp.put("buildDirectory", getWorkingDirectory()); //$NON-NLS-1$
 			if (fetchCache != null)
@@ -559,9 +549,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			target.delete();
 
 			featureProperties = new Properties();
-			InputStream featureStream = new BufferedInputStream(new FileInputStream(new File(featureFolder, PROPERTIES_FILE)));
-			featureProperties.load(featureStream);
-			featureStream.close();
+			try (InputStream featureStream = new BufferedInputStream(new FileInputStream(new File(featureFolder, PROPERTIES_FILE)))) {
+				featureProperties.load(featureStream);
+			}
 			clear(featureFolder);
 			if (feature == null) {
 				String message = NLS.bind(Messages.exception_missingFeature, elementName);
@@ -687,7 +677,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	private void initializeSortedDirectory() {
 		if (directory != null)
 			return;
-		directory = new TreeMap<MapFileEntry, Object>();
+		directory = new TreeMap<>();
 		for (Iterator<Entry<Object, Object>> iter = directoryFile.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry<Object, Object> entry = iter.next();
 			String[] entryInfo = Utils.getArrayFromString((String) entry.getKey());
@@ -806,7 +796,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * @param value a string CVS tag
 	 */
 	public void setFetchTagAsString(String value) {
-		fetchOverrides = new HashMap<String, Properties>();
+		fetchOverrides = new HashMap<>();
 		fetchTags = new Properties();
 
 		String[] entries = Utils.getArrayFromString(value);

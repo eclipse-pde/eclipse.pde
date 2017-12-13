@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,8 +160,8 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			else
 				config = reorderConfig(config);
 			GatheringComputer computer = new GatheringComputer();
-			Map<FileSet, String> configFileSets = new HashMap<FileSet, String>();
-			ArrayList<String> permissionsKeys = new ArrayList<String>();
+			Map<FileSet, String> configFileSets = new HashMap<>();
+			ArrayList<String> permissionsKeys = new ArrayList<>();
 			for (Iterator<String> rootEntries = rootMap.keySet().iterator(); rootEntries.hasNext();) {
 				String key = rootEntries.next();
 				if (key.startsWith(Utils.ROOT_PERMISSIONS)) {
@@ -253,7 +253,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 	 */
 	private String[] selectFiles(OrSelector selector, String folder, String[] files) {
 		String prefix = (folder.length() > 0) ? folder + '/' : ""; //$NON-NLS-1$
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 
 		for (int i = 0; i < files.length; i++) {
 			String finalLocation = prefix + files[i];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,8 +109,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			archivesFormatAsString = null;
 		}
 
-		List<String> plugins = new ArrayList<String>(5);
-		List<String> features = new ArrayList<String>(5);
+		List<String> plugins = new ArrayList<>(5);
+		List<String> features = new ArrayList<>(5);
 		try {
 			AbstractScriptGenerator.setStaticAntProperties(antProperties);
 
@@ -315,8 +315,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		if (assemblageInformation == null)
 			return;
 		List<Config> configs = getConfigInfos();
-		Set<BuildTimeFeature> features = new HashSet<BuildTimeFeature>();
-		Set<BundleDescription> plugins = new HashSet<BundleDescription>();
+		Set<BuildTimeFeature> features = new HashSet<>();
+		Set<BundleDescription> plugins = new HashSet<>();
 		Properties versions = new Properties();
 
 		//For each configuration, save the version of all the features in a file 
@@ -391,13 +391,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	protected void readVersions(Properties properties, String fileName) {
 		String location = getFilePath(fileName);
-		try {
-			InputStream is = new BufferedInputStream(new FileInputStream(location));
-			try {
-				properties.load(is);
-			} finally {
-				is.close();
-			}
+		try (InputStream is = new BufferedInputStream(new FileInputStream(location))) {
+			properties.load(is);
 		} catch (IOException e) {
 			//Ignore
 		}
@@ -405,13 +400,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	protected void saveVersions(Properties properties, String fileName) throws CoreException {
 		String location = getFilePath(fileName);
-		try {
-			OutputStream os = new BufferedOutputStream(new FileOutputStream(location));
-			try {
-				properties.store(os, null);
-			} finally {
-				os.close();
-			}
+		try (OutputStream os = new BufferedOutputStream(new FileOutputStream(location))) {
+			properties.store(os, null);
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_writingFile, location);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
