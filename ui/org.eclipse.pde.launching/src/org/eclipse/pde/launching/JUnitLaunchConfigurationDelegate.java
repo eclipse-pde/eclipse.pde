@@ -301,6 +301,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		return classpath;
 	}
 
+	/**
+	 * @since 3.8
+	 */
 	@Override
 	public String[][] getClasspathAndModulepath(ILaunchConfiguration configuration) throws CoreException {
 		String[] classpath = LaunchArgumentsHelper.constructClasspath(configuration);
