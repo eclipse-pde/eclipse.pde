@@ -52,7 +52,7 @@ public class ReachablePlugin implements Comparable<Object> {
 			if (result != 0)
 				return result;
 			//We want the object with the widest version range to sort first
-			result = substract(toCompare.range.getRight(), toCompare.range.getMinimum()).compareTo(substract(range.getRight(), range.getMinimum()));
+			result = substract(toCompare.range.getMaximum(), toCompare.range.getMinimum()).compareTo(substract(range.getMaximum(), range.getMinimum()));
 			if (result != 0)
 				return result;
 			if (range.getIncludeMaximum() && !toCompare.range.getIncludeMaximum())
@@ -61,7 +61,7 @@ public class ReachablePlugin implements Comparable<Object> {
 				return 1;
 			if (this.equals(o))
 				return 0;
-			result = range.getMinimum().compareTo(toCompare.range.getRight());
+			result = range.getMinimum().compareTo(toCompare.range.getMaximum());
 			if (result != 0)
 				return result;
 			//Give up
@@ -107,7 +107,7 @@ public class ReachablePlugin implements Comparable<Object> {
 				return false;
 			if (range.getIncludeMaximum() != toCompare.range.getIncludeMaximum())
 				return false;
-			return range.getMinimum().equals(toCompare.range.getMinimum()) && range.getRight().equals(toCompare.range.getRight());
+			return range.getMinimum().equals(toCompare.range.getMinimum()) && range.getMaximum().equals(toCompare.range.getMaximum());
 		}
 		return false;
 	}

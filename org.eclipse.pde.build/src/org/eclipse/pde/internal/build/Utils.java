@@ -136,7 +136,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			return new VersionRange(version, true, upper, false);
 		}
 		if (match.equals("greaterOrEqual")) //$NON-NLS-1$
-			return new VersionRange(version, true, new VersionRange(null).getRight(), true);
+			return new VersionRange(version, true, new VersionRange(null).getMaximum(), true);
 
 		return VersionRange.emptyRange;
 	}
