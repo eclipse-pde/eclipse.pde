@@ -291,8 +291,8 @@ public class P2Utils {
 		BundleInfo[] infos = bundleInfo.toArray(new BundleInfo[bundleInfo.size()]);
 		BundleInfo[] sources = sourceInfo.toArray(new BundleInfo[sourceInfo.size()]);
 
-		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault()
-				.acquireService(SimpleConfiguratorManipulator.class.getName());
+		SimpleConfiguratorManipulator manipulator = BundleHelper.getDefault()
+				.acquireService(SimpleConfiguratorManipulator.class);
 		try {
 			manipulator.saveConfiguration(infos, bundlesTxt, null);
 			manipulator.saveConfiguration(sources, srcBundlesTxt, null);
