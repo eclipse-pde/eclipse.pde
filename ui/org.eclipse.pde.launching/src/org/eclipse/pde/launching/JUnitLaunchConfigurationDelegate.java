@@ -291,6 +291,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		return DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
 	}
 
+	@Deprecated
 	@Override
 	public String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
 		String[] classpath = LaunchArgumentsHelper.constructClasspath(configuration);
@@ -298,6 +299,17 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			abort(PDEMessages.WorkbenchLauncherConfigurationDelegate_noStartup, null, IStatus.OK);
 		}
 		return classpath;
+	}
+
+	@Override
+	public String[][] getClasspathAndModulepath(ILaunchConfiguration configuration) throws CoreException {
+		String[] classpath = LaunchArgumentsHelper.constructClasspath(configuration);
+		if (classpath == null) {
+			abort(PDEMessages.WorkbenchLauncherConfigurationDelegate_noStartup, null, IStatus.OK);
+		}
+		String[][] cpmp = super.getClasspathAndModulepath(configuration);
+		cpmp[0] = classpath;
+		return cpmp;
 	}
 
 	@Override
