@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -72,7 +71,6 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 	private static final Pattern TAG_VALUE_ACKEY_PATTERN = Pattern.compile(TAG_VALUE_ACKEY_MATCH, Pattern.DOTALL);
 
 	private String prefix = ""; //$NON-NLS-1$
-	private IRegion lineInfo;
 	private String acKey;
 
 	@Override
@@ -97,7 +95,7 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 
 		if (completionType == COMPLETION_TYPE_ATTRIBUTE_NAME) {
 			AttributeNameCompletionProcessor processor = new AttributeNameCompletionProcessor(prefix, acKey, offset,
-					lineInfo, text);
+					text);
 			return processor.getCompletionProposals();
 		}
 
@@ -120,9 +118,8 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 			return COMPLETION_TYPE_HEADER;
 		}
 
-		lineInfo = null;
 		try {
-			lineInfo = doc.getLineInformationOfOffset(offset);
+			doc.getLineInformationOfOffset(offset);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 			return COMPLETION_TYPE_UNKNOWN;

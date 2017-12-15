@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
@@ -33,7 +32,6 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 	private String prefix;
 	private String acKey;
 	private int offset;
-	private IRegion lineInfo;
 	private String text;
 
 	private static final String ATTRIBUTE_NAME_FIND = "(?:\\s*(\\w*)\\s*=\\s*\".*?\")";// $NON-NLS-1$
@@ -49,11 +47,10 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 	private String[] targetJRE = new String[] { ITargetConstants.TARGET_JRE_PATH_ATTR };
 	private Map<String, String[]> completionMap = new HashMap<>();
 
-	public AttributeNameCompletionProcessor(String prefix, String acKey, int offset, IRegion lineInfo, String text) {
+	public AttributeNameCompletionProcessor(String prefix, String acKey, int offset, String text) {
 		this.prefix = prefix;
 		this.acKey = acKey;
 		this.offset = offset;
-		this.lineInfo = lineInfo;
 		this.text = text;
 		init();
 	}

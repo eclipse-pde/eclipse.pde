@@ -37,7 +37,6 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 		expectedProposalsByOffset.put(179, new String[] { "targetJRE" });
 
 		ITextViewer textViewer = getTextViewerForTarget("TagNamesTestCaseTarget");
-		IDocument document = textViewer.getDocument();
 
 		for (int offset : expectedProposalsByOffset.keySet()) {
 			ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer,
