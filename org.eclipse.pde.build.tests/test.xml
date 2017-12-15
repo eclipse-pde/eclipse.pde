@@ -40,14 +40,13 @@
       <property name="data-dir" value="${pdebuild_folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" value="org.eclipse.pde.build.tests.PDEBuildTestSuite"/>
-      <property name="extraVMargs" value="-XX:MaxPermSize=256m -Dpde.build.includeP2=false" />
+      <property name="extraVMargs" value="-Dpde.build.includeP2=false" />
     </ant>
   	
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${pdebuild_folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" value="org.eclipse.pde.build.tests.P2TestSuite"/>
-      <property name="extraVMargs" value="-XX:MaxPermSize=256m" />
     </ant>
   </target>
 
