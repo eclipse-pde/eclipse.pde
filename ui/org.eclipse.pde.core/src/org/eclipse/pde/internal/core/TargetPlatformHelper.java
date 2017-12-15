@@ -33,6 +33,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -72,6 +73,17 @@ public class TargetPlatformHelper {
 	public static final String PLATFORM_PREFIX = "platform:"; //$NON-NLS-1$
 	public static final String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
 	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
+
+	/**
+	 * The regular expression matching an underscore character followed by a
+	 * version number and a file extension or just one of the common bundle
+	 * extensions (jar, war, zip) if a bundle path contains no version number.
+	 * Note exceptions made for interpreting some architecture IDs as a part of
+	 * the bundle name.
+	 */
+	private static final Pattern PATTERN_BUNDLE_PATH_POSTFIX = Pattern.compile(
+			"(_\\d+(?<!x86_64|ia64_32)(\\.\\d+(\\.\\d+(\\.[a-zA-Z0-9_-]+)?)?)?(\\.\\w+)?$)|(\\.(?:jar|war|zip)$)", //$NON-NLS-1$
+			Pattern.CASE_INSENSITIVE);
 
 	private static Map<String, String> fgCachedLocations;
 	private static HashMap<ITargetHandle, List<TargetDefinition>> fgCachedTargetDefinitionMap = new HashMap<>();
@@ -173,14 +185,8 @@ public class TargetPlatformHelper {
 				id = path.lastSegment();
 			}
 			if (id != null) {
-				int underscoreIndex = id.indexOf('_');
-				if (underscoreIndex >= 0) {
-					id = id.substring(0, underscoreIndex);
-				}
-				// If a relative path is used with a non .jar extension and does not have a version, we have no way of recognizing what the symbolic name is (bug 355890)
-				if (id.endsWith(JAR_EXTENSION)) {
-					id = id.substring(0, id.length() - 4);
-				}
+				// strip version number and file extension
+				id = PATTERN_BUNDLE_PATH_POSTFIX.matcher(id).replaceFirst("");//$NON-NLS-1$
 			}
 			if (result.length() > 0) {
 				result.append(","); //$NON-NLS-1$
