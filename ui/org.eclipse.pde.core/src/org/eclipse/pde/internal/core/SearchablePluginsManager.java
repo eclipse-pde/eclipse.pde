@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -56,16 +57,25 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 				}
 				return true;
 			}
-			if (delta.getElement() instanceof IJavaProject) {
-				IJavaProject project = (IJavaProject) delta.getElement();
+			if (element instanceof IJavaProject) {
+				IJavaProject project = (IJavaProject) element;
 				if (project.getElementName().equals(PROXY_PROJECT_NAME)) {
 					if (delta.getKind() == IJavaElementDelta.REMOVED) {
-						fPluginIdSet.clear();
+						synchronized (fPluginIdSet) {
+							fPluginIdSet.clear();
+						}
 					} else if (delta.getKind() == IJavaElementDelta.ADDED) {
 						// We may be getting a queued delta from when the manager was initialized, ignore unless we don't already have data
-						if (fPluginIdSet == null || fPluginIdSet.size() == 0) {
+						boolean emptyIds;
+						synchronized (fPluginIdSet) {
+							emptyIds = fPluginIdSet.isEmpty();
+						}
+						if (emptyIds) {
 							// Something other than the manager created the project, check if it has a .searchable file to load from
-							fPluginIdSet = loadStates();
+							Set<String> ids = loadStates();
+							synchronized (fPluginIdSet) {
+								fPluginIdSet = ids;
+							}
 						}
 					}
 				}
@@ -91,9 +101,9 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 				IFile proxyFile = project.getFile(PROXY_FILE_NAME);
 				if (proxyFile.exists()) {
 					Properties properties = new Properties();
-					InputStream stream = proxyFile.getContents(true);
-					properties.load(stream);
-					stream.close();
+					try (InputStream stream = proxyFile.getContents(true)) {
+						properties.load(stream);
+					}
 					String value = properties.getProperty(KEY);
 					if (value != null) {
 						StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
@@ -139,9 +149,12 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 				result.add(JavaCore.newProjectEntry(project.getFullPath()));
 			}
 		}
-		Iterator<String> iter = fPluginIdSet.iterator();
-		while (iter.hasNext()) {
-			ModelEntry entry = PluginRegistry.findEntry(iter.next().toString());
+		List<String> plugins;
+		synchronized (fPluginIdSet) {
+			plugins = new ArrayList<>(fPluginIdSet);
+		}
+		for (String id : plugins) {
+			ModelEntry entry = PluginRegistry.findEntry(id);
 			if (entry != null) {
 				boolean addModel = true;
 				wModels = entry.getWorkspaceModels();
@@ -235,16 +248,21 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	public void addToJavaSearch(IPluginModelBase[] models) {
 		checkForProxyProject();
 		PluginModelDelta delta = new PluginModelDelta();
-		int size = fPluginIdSet.size();
+		Set<String> toAdd = new HashSet<>();
 		for (IPluginModelBase model : models) {
 			String id = model.getPluginBase().getId();
-			if (fPluginIdSet.add(id)) {
+			if (!isInJavaSearch(id) && !toAdd.contains(id)) {
+				toAdd.add(id);
 				ModelEntry entry = PluginRegistry.findEntry(id);
-				if (entry != null)
+				if (entry != null) {
 					delta.addEntry(entry, PluginModelDelta.CHANGED);
+				}
 			}
 		}
-		if (fPluginIdSet.size() > size) {
+		if (!toAdd.isEmpty()) {
+			synchronized (fPluginIdSet) {
+				fPluginIdSet.addAll(toAdd);
+			}
 			resetContainer();
 			fireDelta(delta);
 		}
@@ -252,39 +270,49 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 
 	public void removeFromJavaSearch(IPluginModelBase[] models) {
 		PluginModelDelta delta = new PluginModelDelta();
-		int size = fPluginIdSet.size();
+		Set<String> toRemove = new HashSet<>();
 		for (IPluginModelBase model : models) {
 			String id = model.getPluginBase().getId();
-			if (fPluginIdSet.remove(id)) {
+			if (isInJavaSearch(id)) {
+				toRemove.add(id);
 				ModelEntry entry = PluginRegistry.findEntry(id);
 				if (entry != null) {
 					delta.addEntry(entry, PluginModelDelta.CHANGED);
 				}
 			}
 		}
-		if (fPluginIdSet.size() < size) {
+		if (!toRemove.isEmpty()) {
+			synchronized (fPluginIdSet) {
+				fPluginIdSet.removeAll(toRemove);
+			}
 			resetContainer();
 			fireDelta(delta);
 		}
 	}
 
 	public void removeAllFromJavaSearch() {
-		if (fPluginIdSet.size() > 0) {
+		Set<String> oldIds;
+		synchronized (fPluginIdSet) {
+			oldIds = fPluginIdSet;
+			fPluginIdSet = new TreeSet<>();
+		}
+		if (!oldIds.isEmpty()) {
 			PluginModelDelta delta = new PluginModelDelta();
-			for (String id : fPluginIdSet) {
+			for (String id : oldIds) {
 				ModelEntry entry = PluginRegistry.findEntry(id);
 				if (entry != null) {
 					delta.addEntry(entry, PluginModelDelta.CHANGED);
 				}
 			}
-			fPluginIdSet.clear();
 			resetContainer();
 			fireDelta(delta);
 		}
 	}
 
 	public boolean isInJavaSearch(String symbolicName) {
-		return fPluginIdSet.contains(symbolicName);
+		synchronized (fPluginIdSet) {
+			return fPluginIdSet.contains(symbolicName);
+		}
 	}
 
 	private void resetContainer() {
@@ -301,9 +329,11 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	@Override
 	public void modelsChanged(PluginModelDelta delta) {
 		ModelEntry[] entries = delta.getRemovedEntries();
-		for (ModelEntry entry : entries) {
-			if (fPluginIdSet.contains(entry.getId())) {
-				fPluginIdSet.remove(entry.getId());
+		synchronized (fPluginIdSet) {
+			for (ModelEntry entry : entries) {
+				if (fPluginIdSet.contains(entry.getId())) {
+					fPluginIdSet.remove(entry.getId());
+				}
 			}
 		}
 		resetContainer();
@@ -335,28 +365,28 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		IProject project = root.getProject(PROXY_PROJECT_NAME);
 		if (project.exists() && project.isOpen()) {
 			// modify the .searchable file only if there is any change
-			if (loadStates().equals(fPluginIdSet))
-				return;
+			Set<String> loadedStates = loadStates();
+			String propertyToSave;
+			synchronized (fPluginIdSet) {
+				if (loadedStates.equals(fPluginIdSet)) {
+					return;
+				}
+				propertyToSave = fPluginIdSet.stream().collect(Collectors.joining(",")); //$NON-NLS-1$
+			}
 			IFile file = project.getFile(PROXY_FILE_NAME);
 			Properties properties = new Properties();
-			StringBuilder buffer = new StringBuilder();
-			Iterator<String> iter = fPluginIdSet.iterator();
-			while (iter.hasNext()) {
-				if (buffer.length() > 0)
-					buffer.append(","); //$NON-NLS-1$
-				buffer.append(iter.next().toString());
-			}
-			properties.setProperty(KEY, buffer.toString());
+			properties.setProperty(KEY, propertyToSave);
 			try {
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				properties.store(outStream, ""); //$NON-NLS-1$
 				outStream.flush();
 				outStream.close();
 				ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
-				if (file.exists())
+				if (file.exists()) {
 					file.setContents(inStream, true, false, new NullProgressMonitor());
-				else
+				} else {
 					file.create(inStream, true, new NullProgressMonitor());
+				}
 				inStream.close();
 			} catch (IOException e) {
 				PDECore.log(e);
