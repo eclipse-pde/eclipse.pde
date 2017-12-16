@@ -224,9 +224,8 @@ public class PluginsTab extends AbstractLauncherTab {
 		return IPDELauncherConstants.TAB_PLUGINS_ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
+	/**
+	 * @since 3.11
 	 */
 	@Override
 	protected void initializeAttributes() {
