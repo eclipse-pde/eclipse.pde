@@ -107,8 +107,9 @@ public class TracingTab extends AbstractLauncherTab {
 		return IPDELauncherConstants.TAB_TRACING_ID;
 	}
 
-	/**
-	 * @since 3.11
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
 	 */
 	@Override
 	protected void initializeAttributes() {

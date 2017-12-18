@@ -147,8 +147,9 @@ public class ConfigurationTab extends AbstractLauncherTab
 		return org.eclipse.pde.launching.IPDELauncherConstants.TAB_CONFIGURATION_ID;
 	}
 
-	/**
-	 * @since 3.11
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
 	 */
 	@Override
 	protected void initializeAttributes() {
