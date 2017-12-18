@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
@@ -170,6 +172,12 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	public ArchiveApiTypeContainer(IApiElement parent, String path) {
 		super(parent, IApiElement.API_TYPE_CONTAINER, path);
 		this.fLocation = path;
+		if (path.endsWith("jrt-fs.jar")) { //$NON-NLS-1$
+			IPath newPath = new Path(path);
+			newPath = newPath.removeLastSegments(2).addTrailingSeparator();
+			newPath = newPath.append("jmods").append("java.base.jmod"); //$NON-NLS-1$ //$NON-NLS-2$
+			this.fLocation = newPath.toOSString();
+		}
 	}
 
 	/**
@@ -233,6 +241,18 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 			String fileName = qualifiedName.replace('.', '/') + Util.DOT_CLASS_SUFFIX;
 			if (classFileNames.contains(fileName)) {
 				return new ArchiveApiTypeRoot(this, fileName);
+			}
+		}
+		if (classFileNames == null && qualifiedName.equals("java.lang.Object")) { //$NON-NLS-1$
+			// For java 9 and above
+			String newQualifiedName = "classes." + qualifiedName; //$NON-NLS-1$
+			String newPackageName = "classes." + packageName; //$NON-NLS-1$
+			classFileNames = fPackages.get(newPackageName);
+			if (classFileNames != null) {
+				String fileName = newQualifiedName.replace('.', '/') + Util.DOT_CLASS_SUFFIX;
+				if (classFileNames.contains(fileName)) {
+					return new ArchiveApiTypeRoot(this, fileName);
+				}
 			}
 		}
 		return null;

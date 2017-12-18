@@ -1944,6 +1944,10 @@ public class ClassFileComparator {
 				if (elementDescription != null) {
 					visibility = elementDescription.getVisibility();
 				}
+				if (Util.isJavaLangObject(superName) && includeObject) {
+					list.add(superClass);
+					break;
+				}
 				if (includePrivate || ((visibility & visibilityModifiers) != 0)) {
 					list.add(superClass);
 				}
