@@ -31,6 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Detects leaked super types.
@@ -240,6 +241,9 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	 * @return whether the given type has API visibility
 	 */
 	private boolean isAPIType(IApiType type) throws CoreException {
+		if (Util.isJavaLangObject(type.getName())) {
+			return true;
+		}
 		IApiDescription description = type.getApiComponent().getApiDescription();
 		IApiAnnotations annotations = description.resolveAnnotations(type.getHandle());
 		if (annotations == null) {
