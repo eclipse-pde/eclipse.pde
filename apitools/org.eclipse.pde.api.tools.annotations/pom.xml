@@ -11,7 +11,7 @@
   <parent>
     <artifactId>eclipse.pde.ui</artifactId>
     <groupId>eclipse.pde.ui</groupId>
-    <version>4.7.2-SNAPSHOT</version>
+    <version>4.7.3-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
   <groupId>org.eclipse.pde</groupId>
