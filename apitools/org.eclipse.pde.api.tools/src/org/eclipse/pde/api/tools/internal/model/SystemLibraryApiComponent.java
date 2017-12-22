@@ -94,6 +94,10 @@ public class SystemLibraryApiComponent extends Component {
 		// have to fill in java.* as well
 		String[] packageNames = getPackageNames();
 		for (String packageName : packageNames) {
+			// for java 9
+			if (packageName.startsWith("classes.java.")) { //$NON-NLS-1$
+				packageName = packageName.substring(8);
+			}
 			if (packageName.startsWith("java.")) { //$NON-NLS-1$
 				IPackageDescriptor pkg = Factory.packageDescriptor(packageName);
 				api.setVisibility(pkg, VisibilityModifiers.API);
