@@ -35,6 +35,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddActivationHeaderResolution_label;
 
+	public static String AddAutomaticModuleResolution_desc;
+
+	public static String AddAutomaticModuleResolution_label;
+
 	public static String AddLibraryDialog_nospaces;
 
 	public static String BaseExtensionPointMainPage_errorMsgPluginNotFound;
@@ -136,6 +140,8 @@ public class PDEUIMessages extends NLS {
 	public static String PDECompilersConfigurationBlock_5;
 	public static String PDECompilersConfigurationBlock_6;
 	public static String PDECompilersConfigurationBlock_7;
+
+	public static String PDECompilersConfigurationBlock_8;
 
 	public static String PDECompilersConfigurationBlock_general;
 	public static String PDECompilersConfigurationBlock_versioning;
@@ -1737,6 +1743,7 @@ public class PDEUIMessages extends NLS {
 	public static String compilers_p_unknown_identifier;
 	public static String compilers_p_no_required_att;
 	public static String compilers_p_not_externalized_att;
+	public static String compilers_p_no_automatic_module_name;
 	public static String compilers_p_deprecated;
 	public static String compilers_p_internal;
 	public static String compilers_p_missing_imp_pkg;

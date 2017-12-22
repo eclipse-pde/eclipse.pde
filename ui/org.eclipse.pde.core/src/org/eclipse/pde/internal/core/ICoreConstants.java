@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -411,6 +411,7 @@ public interface ICoreConstants {
 	public static final String ECLIPSE_BUNDLE_SHAPE = "Eclipse-BundleShape"; //$NON-NLS-1$
 	public static final String ECLIPSE_SOURCE_REFERENCES = "Eclipse-SourceReferences"; //$NON-NLS-1$
 	public static final String SERVICE_COMPONENT = "Service-Component"; //$NON-NLS-1$
+	public static final String AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"; //$NON-NLS-1$
 
 	// Equinox-specific system properties
 	public static final String OSGI_SYSTEM_BUNDLE = "osgi.system.bundle"; //$NON-NLS-1$

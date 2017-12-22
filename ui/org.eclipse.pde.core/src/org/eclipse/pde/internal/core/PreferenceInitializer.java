@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		prefs.putInt(CompilerFlags.P_UNKNOWN_RESOURCE, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_UNKNOWN_IDENTIFIER, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_NOT_EXTERNALIZED, CompilerFlags.IGNORE);
+		prefs.putInt(CompilerFlags.P_NO_AUTOMATIC_MODULE, CompilerFlags.WARNING);
 
 		prefs.putInt(CompilerFlags.P_BUILD, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_BUILD_MISSING_OUTPUT, CompilerFlags.IGNORE);
