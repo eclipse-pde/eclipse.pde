@@ -93,7 +93,6 @@ public class FilteredCheckboxTree extends FilteredTree {
 		filterJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
-				if (event.getResult().isOK()) {
 					getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {
@@ -102,7 +101,6 @@ public class FilteredCheckboxTree extends FilteredTree {
 							checkboxViewer.restoreLeafCheckState();
 						}
 					});
-				}
 			}
 		});
 		return filterJob;
