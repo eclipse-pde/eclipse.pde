@@ -243,7 +243,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 				return new ArchiveApiTypeRoot(this, fileName);
 			}
 		}
-		if (classFileNames == null && qualifiedName.equals("java.lang.Object")) { //$NON-NLS-1$
+		if (classFileNames == null && qualifiedName.startsWith("java.")) { //$NON-NLS-1$
 			// For java 9 and above
 			String newQualifiedName = "classes." + qualifiedName; //$NON-NLS-1$
 			String newPackageName = "classes." + packageName; //$NON-NLS-1$
