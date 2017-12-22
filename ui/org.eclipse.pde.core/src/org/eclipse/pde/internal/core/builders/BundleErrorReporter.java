@@ -113,13 +113,17 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_NO_AUTOMATIC_MODULE);
 		if (compilerFlag == CompilerFlags.IGNORE)
 			return;
-		IFile module = null;
-		try {
-			module = getModuleInfoFileInProject(fProject);
-		} catch (Exception e) {
-			PDECore.log(e);
+
+		IJavaProject jp = JavaCore.create(fProject);
+		IModuleDescription moduleDescription = null;
+		if (jp != null) {
+			try {
+				moduleDescription = jp.getModuleDescription();
+			} catch (JavaModelException e) {
+
+			}
 		}
-		if (module == null) {
+		if (moduleDescription == null) {
 			IHeader header = fHeaders.get(ICoreConstants.AUTOMATIC_MODULE_NAME.toLowerCase());
 			if (header == null) {
 				IMarker marker = report(
@@ -130,7 +134,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NO_AUTOMATIC_MODULE);
 			}
 		}
-		if (module != null) {
+		if (moduleDescription != null) {
 			IHeader header = fHeaders.get(ICoreConstants.AUTOMATIC_MODULE_NAME.toLowerCase());
 			if (header != null) {
 				report(PDECoreMessages.BundleErrorReporter_ConflictingAutoModule, header.getLineNumber() + 1,
@@ -138,28 +142,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 
 		}
-	}
-
-	private IFile getModuleInfoFileInProject(IContainer container) {
-		IResource[] resources = null;
-		try {
-			resources = container.members();
-		} catch (CoreException e) {
-			return null;
-		}
-		for (IResource res : resources) {
-			if (res instanceof IContainer) {
-				IFile file = getModuleInfoFileInProject((IContainer) res);
-				if (file != null)
-					return file;
-			} else if (res instanceof IFile) {
-				if (((IFile) res).getName().contains("module-info.java")) { //$NON-NLS-1$
-					return (IFile) res;
-				}
-
-			}
-		}
-		return null;
 	}
 
 	private boolean validateBundleManifestVersion() {
@@ -1434,7 +1416,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (getHeader(Constants.BUNDLE_ACTIVATIONPOLICY) != null) {
 			return;
 		}
- 
+
 		report(PDECoreMessages.BundleErrorReporter_serviceComponentLazyStart, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_SERVICECOMPONENT_MISSING_LAZY, PDEMarkerFactory.CAT_OTHER);
 	}
 }
