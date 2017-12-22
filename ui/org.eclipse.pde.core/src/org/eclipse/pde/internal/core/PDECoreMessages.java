@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,6 @@ public class PDECoreMessages extends NLS {
 	public static String BuildErrorReporter_cannotFindBundle;
 
 	public static String BuildErrorReporter_cannotFindJar;
-
-	public static String BundleErrorReporter_ConflictingAutoModule;
 
 	public static String BundleErrorReporter_badFilter;
 	public static String BundleErrorReporter_bundleActivationPolicy_unsupported;
@@ -198,7 +196,6 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_singletonAttrRequired;
 	public static String BundleErrorReporter_singletonRequired;
 	public static String BundleErrorReporter_headerMissing;
-	public static String BundleErrorReporter_headerMissingAutoModule;
 	public static String BundleErrorReporter_NoSymbolicName;
 	public static String BundleErrorReporter_illegalManifestVersion;
 	public static String BundleErrorReporter_serviceComponentLazyStart;

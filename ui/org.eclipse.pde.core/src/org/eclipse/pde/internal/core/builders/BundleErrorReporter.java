@@ -54,8 +54,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// be paranoid.  something could have gone wrong reading the file etc.
 		if (fModel == null || !validateBundleSymbolicName())
 			return;
-
-		validateAutomaticModuleName();
 		if (!validateVersionOfRequireBundle())
 			return;
 		if (!validateVersionOfImportPackage())
@@ -103,59 +101,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateEclipseGenericCapability();
 		validateEclipseGenericRequire();
 		validateServiceComponent();
-	}
-
-	private void validateAutomaticModuleName() {
-		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_NO_AUTOMATIC_MODULE);
-		if (compilerFlag == CompilerFlags.IGNORE)
-			return;
-		IFile module = null;
-		try {
-			module = getModuleInfoFileInProject(fProject);
-		} catch (Exception e) {
-			PDECore.log(e);
-		}
-		if (module == null) {
-			IHeader header = fHeaders.get(ICoreConstants.AUTOMATIC_MODULE_NAME.toLowerCase());
-			if (header == null) {
-				IMarker marker = report(
-						NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissingAutoModule,
-								ICoreConstants.AUTOMATIC_MODULE_NAME),
-						1, CompilerFlags.P_NO_AUTOMATIC_MODULE, PDEMarkerFactory.M_NO_AUTOMATIC_MODULE,
-						PDEMarkerFactory.CAT_OTHER);
-				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NO_AUTOMATIC_MODULE);
-			}
-		}
-		if (module != null) {
-			IHeader header = fHeaders.get(ICoreConstants.AUTOMATIC_MODULE_NAME.toLowerCase());
-			if (header != null) {
-				report(PDECoreMessages.BundleErrorReporter_ConflictingAutoModule, header.getLineNumber() + 1,
-						CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
-			}
-
-		}
-	}
-
-	private IFile getModuleInfoFileInProject(IContainer container) {
-		IResource[] resources = null;
-		try {
-			resources = container.members();
-		} catch (CoreException e) {
-			return null;
-		}
-		for (IResource res : resources) {
-			if (res instanceof IContainer) {
-				IFile file = getModuleInfoFileInProject((IContainer) res);
-				if (file != null)
-					return file;
-			} else if (res instanceof IFile) {
-				if (((IFile) res).getName().contains("module-info.java")) { //$NON-NLS-1$
-					return (IFile) res;
-				}
-
-			}
-		}
-		return null;
 	}
 
 	private boolean validateBundleManifestVersion() {
@@ -1430,7 +1375,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (getHeader(Constants.BUNDLE_ACTIVATIONPOLICY) != null) {
 			return;
 		}
- 
+
 		report(PDECoreMessages.BundleErrorReporter_serviceComponentLazyStart, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_SERVICECOMPONENT_MISSING_LAZY, PDEMarkerFactory.CAT_OTHER);
 	}
 }
