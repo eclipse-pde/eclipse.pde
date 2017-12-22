@@ -466,13 +466,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 
 	private void reconnectAttributes() {
 		// Get all attributes
-		Iterator<String> keys = fAttributes.keySet().iterator();
 		// Fill in appropriate transient field values for all attributes
-		while (keys.hasNext()) {
-			String key = keys.next();
-			IDocumentAttributeNode attribute = fAttributes.get(key);
-			attribute.reconnect(this);
-		}
+		fAttributes.values().forEach(attribute -> attribute.reconnect(this));
 	}
 
 	/**
@@ -480,11 +475,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	 */
 	private void reconnectChildren(IModel model) {
 		// Fill in appropriate transient field values
-		for (int i = 0; i < fChildren.size(); i++) {
-			IDocumentElementNode child = fChildren.get(i);
-			// Reconnect child
-			child.reconnect(this, model);
-		}
+		fChildren.forEach(child -> child.reconnect(this, model));
 	}
 
 	/**

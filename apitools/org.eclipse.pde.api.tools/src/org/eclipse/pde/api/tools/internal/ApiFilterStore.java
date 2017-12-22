@@ -616,8 +616,9 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		fUnusedFilters = new HashMap<>();
 		Map<String, Set<IApiProblemFilter>> types = null;
 		Set<IApiProblemFilter> values = null;
-		for (IResource resource : fFilterMap.keySet()) {
-			types = fFilterMap.get(resource);
+		for (Entry<IResource, Map<String, Set<IApiProblemFilter>>> filterEntry : fFilterMap.entrySet()) {
+			IResource resource = filterEntry.getKey();
+			types = filterEntry.getValue();
 			values = new HashSet<>();
 			fUnusedFilters.put(resource, values);
 			for (Entry<String, Set<IApiProblemFilter>> entry : types.entrySet()) {

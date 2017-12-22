@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.launching.launcher;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -246,15 +247,14 @@ public class LaunchConfigurationHelper {
 
 		// write out all bundles in osgi.bundles - bug 170772
 		initialBundleSet.add(IPDEBuildConstants.BUNDLE_OSGI);
-		Iterator<IPluginModelBase> iter = bundlesWithStartLevels.keySet().iterator();
-		while (iter.hasNext()) {
-			IPluginModelBase model = iter.next();
+		for (Entry<IPluginModelBase, String> entry : bundlesWithStartLevels.entrySet()) {
+			IPluginModelBase model = entry.getKey();
 			String id = model.getPluginBase().getId();
 			if (!initialBundleSet.contains(id)) {
 				if (buffer.length() > 0)
 					buffer.append(',');
 
-				String slinfo = bundlesWithStartLevels.get(model);
+				String slinfo = entry.getValue();
 				buffer.append(id);
 				buffer.append('@');
 				buffer.append(slinfo);

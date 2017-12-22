@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.core.target;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -206,10 +207,9 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 
 	@Override
 	public String[] getVMArguments() {
-
-		for (AbstractBundleContainer key : hash.keySet()) {
-			if (key.equals(this)) {
-				return hash.get(key);
+		for (Entry<AbstractBundleContainer, String[]> entry : hash.entrySet()) {
+			if (entry.getKey().equals(this)) {
+				return entry.getValue();
 			}
 		}
 		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$

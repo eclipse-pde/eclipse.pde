@@ -14,6 +14,7 @@ package org.eclipse.pde.ui.launcher;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -100,9 +101,8 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	private String getBundles(boolean defaultAuto) {
 		StringBuilder buffer = new StringBuilder();
-		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
-		while (iter.hasNext()) {
-			IPluginModelBase model = iter.next();
+		for (Entry<IPluginModelBase, String> entry : fModels.entrySet()) {
+			IPluginModelBase model = entry.getKey();
 			String id = model.getPluginBase().getId();
 			if (!IPDEBuildConstants.BUNDLE_OSGI.equals(id)) {
 				if (buffer.length() > 0)
@@ -113,7 +113,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				if (model instanceof IFragmentModel)
 					continue;
 
-				String data = fModels.get(model).toString();
+				String data = entry.getValue();
 				appendStartData(buffer, data, defaultAuto);
 			}
 		}

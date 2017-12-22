@@ -12,7 +12,9 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -207,14 +209,13 @@ public class ConvertPreferencesWizard extends Wizard {
 								}
 							}
 							monitor.worked(20);
-							Iterator<String> it = properties.keySet().iterator();
-							while (it.hasNext()) {
-								Object key = it.next();
+							for (Entry<String, String> entry : properties.entrySet()) {
+								String key = entry.getKey();
 								String comment = null;
 								comment = mapKeyCommentPreference.get(key);
 								if (comment != null)
 									out.append(comment);
-								Object value = properties.get(key);
+								String value = entry.getValue();
 								out.append(key + "=" + value); //$NON-NLS-1$
 								out.append('\n');
 							}

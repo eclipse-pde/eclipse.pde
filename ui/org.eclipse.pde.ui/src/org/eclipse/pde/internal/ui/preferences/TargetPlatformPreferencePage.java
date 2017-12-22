@@ -842,30 +842,27 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		}
 
 		// Move the marked definitions to workspace
-		if (fMoved.size() > 0) {
-			Iterator<Object> iterator = fMoved.keySet().iterator();
-			while (iterator.hasNext()) {
-				try {
-					ITargetDefinition target = (ITargetDefinition) iterator.next();
-					//IPath path = Path.fromPortableString((String) fMoved.get(target));
-					IFile targetFile = PDECore.getWorkspace().getRoot().getFile((IPath) fMoved.get(target));
+		for (Entry<Object, Object> entry : fMoved.entrySet()) {
+			try {
+				ITargetDefinition target = (ITargetDefinition) entry.getKey();
+				// IPath path = Path.fromPortableString((String) fMoved.get(target));
+				IFile targetFile = PDECore.getWorkspace().getRoot().getFile((IPath) entry.getValue());
 
-					WorkspaceFileTargetHandle wrkspcTargetHandle = new WorkspaceFileTargetHandle(targetFile);
-					ITargetDefinition newTarget = service.newTarget();
-					service.copyTargetDefinition(target, newTarget);
-					wrkspcTargetHandle.save(newTarget);
-					fRemoved.add(target);
-					fTargets.remove(target);
-					ITargetDefinition workspaceTarget = wrkspcTargetHandle.getTargetDefinition();
-					fTargets.add(workspaceTarget);
-					fTableViewer.refresh(false);
-					if (target == fActiveTarget) {
-						load = true;
-						toLoad = workspaceTarget;
-					}
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
+				WorkspaceFileTargetHandle wrkspcTargetHandle = new WorkspaceFileTargetHandle(targetFile);
+				ITargetDefinition newTarget = service.newTarget();
+				service.copyTargetDefinition(target, newTarget);
+				wrkspcTargetHandle.save(newTarget);
+				fRemoved.add(target);
+				fTargets.remove(target);
+				ITargetDefinition workspaceTarget = wrkspcTargetHandle.getTargetDefinition();
+				fTargets.add(workspaceTarget);
+				fTableViewer.refresh(false);
+				if (target == fActiveTarget) {
+					load = true;
+					toLoad = workspaceTarget;
 				}
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
 			}
 		}
 

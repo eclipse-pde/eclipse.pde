@@ -13,6 +13,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -99,13 +100,13 @@ public class PluginBlock extends AbstractPluginBlock {
 	 * then we check the plugins that had been selected and saved in the config.
 	 */
 	protected void initWorkspacePluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map<?, ?> map = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
-		Iterator<?> iter = map.keySet().iterator();
+		Map<IPluginModelBase, String> map = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null,
+				IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
 		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, false);
-		while (iter.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iter.next();
+		for (Entry<IPluginModelBase, String> entry : map.entrySet()) {
+			IPluginModelBase model = entry.getKey();
 			if (fPluginTreeViewer.setChecked(model, true)) {
-				setText(model, map.get(model).toString());
+				setText(model, entry.getValue().toString());
 			}
 		}
 		fNumWorkspaceChecked = map.size();
@@ -116,13 +117,13 @@ public class PluginBlock extends AbstractPluginBlock {
 	}
 
 	protected void initExternalPluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map<?, ?> map = BundleLauncherHelper.getTargetBundleMap(configuration, Collections.EMPTY_SET, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
-		Iterator<?> iter = map.keySet().iterator();
+		Map<IPluginModelBase, String> map = BundleLauncherHelper.getTargetBundleMap(configuration,
+				Collections.EMPTY_SET, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
 		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
-		while (iter.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iter.next();
+		for (Entry<IPluginModelBase, String> entry : map.entrySet()) {
+			IPluginModelBase model = entry.getKey();
 			if (fPluginTreeViewer.setChecked(model, true)) {
-				setText(model, map.get(model).toString());
+				setText(model, entry.getValue().toString());
 			}
 		}
 		fNumExternalChecked = map.size();

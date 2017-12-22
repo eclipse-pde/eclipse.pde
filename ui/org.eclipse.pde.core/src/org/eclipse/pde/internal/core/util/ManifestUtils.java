@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.util;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -202,10 +203,8 @@ public class ManifestUtils {
 		writeEntry(out, Constants.EXPORT_PACKAGE, manifestToWrite.remove(Constants.EXPORT_PACKAGE));
 		writeEntry(out, ICoreConstants.PROVIDE_PACKAGE, manifestToWrite.remove(ICoreConstants.PROVIDE_PACKAGE));
 		writeEntry(out, Constants.REQUIRE_BUNDLE, manifestToWrite.remove(Constants.REQUIRE_BUNDLE));
-		Iterator<?> keys = manifestToWrite.keySet().iterator();
-		while (keys.hasNext()) {
-			String key = (String) keys.next();
-			writeEntry(out, key, manifestToWrite.get(key));
+		for (Entry<String, String> entry : manifestToWrite.entrySet()) {
+			writeEntry(out, entry.getKey(), entry.getValue());
 		}
 		out.flush();
 	}

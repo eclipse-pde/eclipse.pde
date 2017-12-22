@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -269,12 +270,12 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			MultiTextEdit multiedit = null;
 			Set<TextEdit> alledits = null;
 			TextEdit edit = null;
-			for (Iterator<IFile> iter = map.keySet().iterator(); iter.hasNext();) {
-				file = iter.next();
+			for (Entry<IFile, Set<TextEdit>> entry : map.entrySet()) {
+				file = entry.getKey();
 				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new Object[] { file.getName() }), file);
 				multiedit = new MultiTextEdit();
 				change.setEdit(multiedit);
-				alledits = map.get(file);
+				alledits = entry.getValue();
 				if (alledits != null) {
 					for (Iterator<TextEdit> iter2 = alledits.iterator(); iter2.hasNext();) {
 						edit = iter2.next();

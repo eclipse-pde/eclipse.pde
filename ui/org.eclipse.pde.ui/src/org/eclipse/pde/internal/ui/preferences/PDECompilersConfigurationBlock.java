@@ -17,6 +17,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import com.ibm.icu.text.MessageFormat;
 import java.util.*;
 import java.util.List;
+import java.util.Map.Entry;
 import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -871,11 +872,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * @param control
 	 */
 	private void addBuilder(Control control) {
-		HashSet<?> controls = null;
-		Integer key = null;
-		for (Iterator<Integer> iter = fControlMap.keySet().iterator(); iter.hasNext();) {
-			key = iter.next();
-			controls = fControlMap.get(key);
+		for (Entry<Integer, HashSet<Control>> entry : fControlMap.entrySet()) {
+			Integer key = entry.getKey();
+			HashSet<Control> controls = entry.getValue();
 			if (controls == null) {
 				continue;
 			}

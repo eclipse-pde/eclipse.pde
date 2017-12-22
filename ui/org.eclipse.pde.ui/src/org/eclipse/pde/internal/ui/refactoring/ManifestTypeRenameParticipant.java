@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -45,17 +45,16 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 
 	@Override
 	protected String[] getNewNames() {
-		String[] result = new String[fElements.size()];
-		Iterator<Object> iter = fElements.keySet().iterator();
-		for (int i = 0; i < fElements.size(); i++) {
-			IType type = (IType) iter.next();
+		List<String> result = new ArrayList<>(fElements.size());
+		for (Entry<Object, String> entry : fElements.entrySet()) {
+			IType type = (IType) entry.getKey();
 			String oldName = type.getFullyQualifiedName('$');
 			int index = oldName.lastIndexOf(type.getElementName());
 			StringBuilder buffer = new StringBuilder(oldName.substring(0, index));
 			buffer.append(fElements.get(type));
-			result[i] = buffer.toString();
+			result.add(buffer.toString());
 		}
-		return result;
+		return result.toArray(new String[result.size()]);
 	}
 
 	@Override

@@ -123,9 +123,9 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 		buffer.append("*** Type Search Scope ***\n"); //$NON-NLS-1$
 		buffer.append("Component: ").append(fComponent); //$NON-NLS-1$
 		if (fPackageToTypes != null) {
-			for (String pack : fPackageToTypes.keySet()) {
-				buffer.append("Package: ").append(pack).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-				buffer.append("Types: ").append(fPackageToTypes.get(pack).toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			for (Entry<String, Set<IReferenceTypeDescriptor>> entry : fPackageToTypes.entrySet()) {
+				buffer.append("Package: ").append(entry.getKey()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append("Types: ").append(entry.getValue().toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return buffer.toString();

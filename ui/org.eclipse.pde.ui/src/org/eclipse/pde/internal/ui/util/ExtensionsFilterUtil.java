@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.util;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginNode;
@@ -299,13 +300,11 @@ public class ExtensionsFilterUtil {
 		// test for custom relations
 		String elementName = getElementPath(pluginElement);
 		if (elementName != null) {
-			Set<String> keySet = CUSTOM_RELATIONS.keySet();
-			for (String key : keySet) {
-				if (elementName.endsWith(key)) {
-					Object attributes = CUSTOM_RELATIONS.get(key);
+			for (Entry<String, String[]> entry : CUSTOM_RELATIONS.entrySet()) {
+				if (elementName.endsWith(entry.getKey())) {
+					String[] attributes = entry.getValue();
 					if (attributes != null) {
-						String[] attributesArray = (String[]) attributes;
-						for (String element : attributesArray) {
+						for (String element : attributes) {
 							IPluginAttribute attribute = pluginElement.getAttribute(element);
 							if (attribute != null) {
 								return true;

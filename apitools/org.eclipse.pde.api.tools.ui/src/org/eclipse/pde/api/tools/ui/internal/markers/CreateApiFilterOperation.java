@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -114,10 +114,10 @@ public class CreateApiFilterOperation extends UIJob {
 				filters.add(ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, comment));
 				Util.touchCorrespondingResource(project, resource, typeNameFromMarker);
 			}
-			for (Iterator<IApiComponent> iter = map.keySet().iterator(); iter.hasNext();) {
-				component = iter.next();
+			for (Entry<IApiComponent, HashSet<IApiProblemFilter>> entry : map.entrySet()) {
+				component = entry.getKey();
 				IApiFilterStore store = component.getFilterStore();
-				filters = map.get(component);
+				filters = entry.getValue();
 				if (filters == null) {
 					continue;
 				}

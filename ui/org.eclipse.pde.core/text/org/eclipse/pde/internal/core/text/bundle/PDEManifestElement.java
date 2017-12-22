@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.bundle.BundleObject;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -213,12 +214,12 @@ public class PDEManifestElement extends BundleObject {
 	}
 
 	protected void appendValuesToBuffer(StringBuilder sb, TreeMap<String, Serializable> table) {
-		if (table == null)
+		if (table == null) {
 			return;
-		Iterator<String> dkeys = table.keySet().iterator();
-		while (dkeys.hasNext()) {
-			String dkey = dkeys.next();
-			Object value = table.get(dkey);
+		}
+		for (Entry<String, Serializable> entry : table.entrySet()) {
+			String dkey = entry.getKey();
+			Object value = entry.getValue();
 			if (value == null)
 				continue;
 			sb.append(";"); //$NON-NLS-1$

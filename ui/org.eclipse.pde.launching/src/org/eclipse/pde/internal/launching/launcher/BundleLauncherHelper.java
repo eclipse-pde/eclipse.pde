@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.launching.launcher;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -100,7 +101,8 @@ public class BundleLauncherHelper {
 
 			// Get the feature model for each selected feature id and resolve its plugins
 			Set<IPluginModelBase> launchPlugins = new HashSet<>();
-			for (String id : featureResolutionMap.keySet()) {
+			for (Entry<String, String> entry : featureResolutionMap.entrySet()) {
+				String id = entry.getKey();
 				IFeatureModel featureModel = null;
 				if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultLocation)) {
 					featureModel = workspaceFeatureMap.get(id);
@@ -115,7 +117,7 @@ public class BundleLauncherHelper {
 				}
 
 				IFeaturePlugin[] featurePlugins = featureModel.getFeature().getPlugins();
-				String pluginResolution = featureResolutionMap.get(id);
+				String pluginResolution = entry.getValue();
 				if (IPDELauncherConstants.LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution)) {
 					pluginResolution = defaultPluginResolution;
 				}

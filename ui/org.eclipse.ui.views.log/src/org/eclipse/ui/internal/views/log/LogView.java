@@ -26,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
@@ -866,11 +867,11 @@ public class LogView extends ViewPart implements ILogListener {
 			return Messages.LogView_WorkspaceLogFile;
 		}
 
-		Map sources = LogFilesManager.getLogSources();
+		Map<?, ?> sources = LogFilesManager.getLogSources();
 		if (sources.containsValue(path)) {
-			for (Iterator i = sources.keySet().iterator(); i.hasNext();) {
-				String key = (String) i.next();
-				if (sources.get(key).equals(path)) {
+			for (Entry<?, ?> entry : sources.entrySet()) {
+				String key = (String) entry.getKey();
+				if (entry.getValue().equals(path)) {
 					return NLS.bind(Messages.LogView_LogFileTitle, new String[] {key, path});
 				}
 			}

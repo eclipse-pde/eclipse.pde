@@ -309,13 +309,8 @@ public class ExportPackageObject extends PackageObject {
 	 */
 	private void reconnectFriends() {
 		// Get all the friends
-		Iterator<String> keys = fFriends.keySet().iterator();
 		// Fill in appropriate transient field values for all friends
-		while (keys.hasNext()) {
-			String key = keys.next();
-			PackageFriend friend = fFriends.get(key);
-			friend.reconnect(this);
-		}
+		fFriends.values().forEach(f -> f.reconnect(this));
 	}
 
 }

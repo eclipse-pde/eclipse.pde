@@ -389,9 +389,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 	}
 
 	public void validate() {
-
-		for (IPath outputPath : fOutputFolderMap.keySet()) {
-			OutputFolder outputFolder = fOutputFolderMap.get(outputPath);
+		for (Entry<IPath, OutputFolder> entry : fOutputFolderMap.entrySet()) {
+			IPath outputPath = entry.getKey();
+			OutputFolder outputFolder = entry.getValue();
 			ArrayList<SourceFolder> sourceFolders = outputFolder.getSourceFolders();
 			ArrayList<String> outputFolderLibs = new ArrayList<>(outputFolder.getLibs());
 
@@ -509,8 +509,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		HashMap<String, MissingOutputEntry> missingOutputEntryErrors = new HashMap<>(4);
 
 		List<SourceFolder> toValidate = new ArrayList<>(); // list of source folders to perform encoding validation on
-		for (IPath sourcePath : fSourceFolderMap.keySet()) {
-			SourceFolder sourceFolder = fSourceFolderMap.get(sourcePath);
+		for (Entry<IPath, SourceFolder> entry : fSourceFolderMap.entrySet()) {
+			IPath sourcePath = entry.getKey();
+			SourceFolder sourceFolder = entry.getValue();
 			OutputFolder outputFolder = sourceFolder.getOutputLocation();
 
 			if (outputFolder == null) {
@@ -551,8 +552,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
-		for (String libName : missingOutputEntryErrors.keySet()) {
-			MissingOutputEntry errorEntry = missingOutputEntryErrors.get(libName);
+		for (Entry<String, MissingOutputEntry> entry : missingOutputEntryErrors.entrySet()) {
+			String libName = entry.getKey();
+			MissingOutputEntry errorEntry = entry.getValue();
 			String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, errorEntry.getSourceList(), PROPERTY_OUTPUT_PREFIX + libName);
 			prepareError(PROPERTY_OUTPUT_PREFIX + libName, errorEntry.getOutputList(), message, PDEMarkerFactory.B_ADDITION, fMissingOutputLibSeverity,CompilerFlags.P_BUILD_MISSING_OUTPUT, PDEMarkerFactory.CAT_OTHER);
 		}

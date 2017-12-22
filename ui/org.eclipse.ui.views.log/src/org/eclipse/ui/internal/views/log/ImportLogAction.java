@@ -13,6 +13,7 @@
 package org.eclipse.ui.internal.views.log;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.Control;
@@ -151,14 +152,12 @@ public class ImportLogAction extends Action implements IMenuCreator {
 	 */
 	private ImportConfigurationLogAction[] getLogActions() {
 		List<ImportConfigurationLogAction> result = new ArrayList<>();
-		Map sources = LogFilesManager.getLogSources();
-
-		for (Iterator j = sources.keySet().iterator(); j.hasNext();) {
-			String name = (String) j.next();
-			String location = (String) sources.get(name);
+		Map<?, ?> sources = LogFilesManager.getLogSources();
+		for (Entry<?, ?> entry : sources.entrySet()) {
+			String name = (String) entry.getKey();
+			String location = (String) entry.getValue();
 			result.add(new ImportConfigurationLogAction(name, location));
 		}
-
 		return result.toArray(new ImportConfigurationLogAction[result.size()]);
 	}
 

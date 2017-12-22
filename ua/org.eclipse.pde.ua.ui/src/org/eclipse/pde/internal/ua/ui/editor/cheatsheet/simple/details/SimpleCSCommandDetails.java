@@ -11,8 +11,8 @@
 
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.details;
 
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
@@ -422,15 +422,12 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		return null;
 	}
 
-	private void updateCommandTable(Map parameters) {
+	private void updateCommandTable(Map<?, ?> parameters) {
 		// Clear the table contents
 		fCommandTable.clearAll();
-
-		if ((parameters != null) && (parameters.isEmpty() == false)) {
-			// Iterate over the keys in the map
-			Iterator it = parameters.keySet().iterator();
+		if (parameters != null && !parameters.isEmpty()) {
 			int rowCount = 0;
-			while (it.hasNext()) {
+			for (Entry<?, ?> entry : parameters.entrySet()) {
 				// Track number of keys / rows processed
 				TableItem item = null;
 				// Determine if there is an existing row already at that index
@@ -441,10 +438,8 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 					// There isn't, create a new one
 					item = new TableItem(fCommandTable, SWT.NONE);
 				}
-				// Get key
-				Object key = it.next();
-				if (key instanceof String) {
-					String keyString = (String) key;
+				if (entry.getKey() instanceof String) {
+					String keyString = (String) entry.getKey();
 					// If present, remove the fully qualified ID from the
 					// paramater key
 					// i.e. "org.eclipse.ui.perspective" becomes just
@@ -456,7 +451,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 					// Set parameter key in first column
 					item.setText(0, keyString);
 				}
-				Object value = parameters.get(key);
+				Object value = entry.getValue();
 				if (value instanceof String) {
 					// Set parameter value in second column
 					item.setText(1, (String) value);
