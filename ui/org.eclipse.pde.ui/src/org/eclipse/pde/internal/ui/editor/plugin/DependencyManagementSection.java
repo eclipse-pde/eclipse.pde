@@ -473,7 +473,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 				Object changedObject = event.getChangedObjects()[0];
 				if ((changedObject instanceof IBuildEntry && ((IBuildEntry) changedObject).getName().equals(IBuildEntry.SECONDARY_DEPENDENCIES))) {
 					refresh();
-					fAdditionalTable.getTable().setFocus();
+					updateButtons();
 				}
 				return Status.OK_STATUS;
 			}
@@ -654,8 +654,8 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			if (entry instanceof org.eclipse.pde.internal.core.text.build.BuildEntry)
 				((org.eclipse.pde.internal.core.text.build.BuildEntry) entry).swap(index, index + newOffset);
-		}
-		updateButtons();
+			}
+			updateButtons();
 	}
 
 	@Override
