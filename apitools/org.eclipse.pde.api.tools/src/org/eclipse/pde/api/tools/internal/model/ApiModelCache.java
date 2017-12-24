@@ -27,7 +27,7 @@ public final class ApiModelCache {
 	/**
 	 * Cache used for {@link IApiElement}s
 	 */
-	class Cache extends OverflowingLRUCache {
+	static class Cache<K, V> extends OverflowingLRUCache<K, V> {
 
 		/**
 		 * Constructor
@@ -40,13 +40,13 @@ public final class ApiModelCache {
 		}
 
 		@Override
-		protected boolean close(LRUCacheEntry entry) {
+		protected boolean close(LRUCacheEntry<K, V> entry) {
 			return true;
 		}
 
 		@Override
-		protected LRUCache newInstance(int size, int newOverflow) {
-			return new Cache(size, newOverflow);
+		protected LRUCache<K, V> newInstance(int size, int newOverflow) {
+			return new Cache<>(size, newOverflow);
 		}
 
 		/**
@@ -63,8 +63,8 @@ public final class ApiModelCache {
 	static final int DEFAULT_OVERFLOW = (int) (DEFAULT_CACHE_SIZE * 0.1f);
 	static ApiModelCache fInstance = null;
 
-	Cache fRootCache = null;
-	Cache fMemberTypeCache = null;
+	Cache<String, Cache<String, Cache<String, IApiElement>>> fRootCache;
+	Cache<String, Cache<String, ApiType>> fMemberTypeCache;
 
 	/**
 	 * Constructor - no instantiation
@@ -112,7 +112,7 @@ public final class ApiModelCache {
 		switch (element.getType()) {
 			case IApiElement.TYPE: {
 				if (fRootCache == null) {
-					fRootCache = new Cache(DEFAULT_CACHE_SIZE / 10, DEFAULT_OVERFLOW / 10);
+					fRootCache = new Cache<>(DEFAULT_CACHE_SIZE / 10, DEFAULT_OVERFLOW / 10);
 				}
 				IApiComponent comp = element.getApiComponent();
 				if (comp != null) {
@@ -121,14 +121,14 @@ public final class ApiModelCache {
 					if (id == null) {
 						return;
 					}
-					Cache compcache = (Cache) fRootCache.get(baseline.getName());
+					Cache<String, Cache<String, IApiElement>> compcache = fRootCache.get(baseline.getName());
 					if (compcache == null) {
-						compcache = new Cache(DEFAULT_CACHE_SIZE / 2, DEFAULT_OVERFLOW / 2);
+						compcache = new Cache<>(DEFAULT_CACHE_SIZE / 2, DEFAULT_OVERFLOW / 2);
 						fRootCache.put(baseline.getName(), compcache);
 					}
-					Cache typecache = (Cache) compcache.get(id);
+					Cache<String, IApiElement> typecache = compcache.get(id);
 					if (typecache == null) {
-						typecache = new Cache(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
+						typecache = new Cache<>(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
 						compcache.put(comp.getSymbolicName(), typecache);
 					}
 					ApiType type = (ApiType) element;
@@ -149,12 +149,12 @@ public final class ApiModelCache {
 																			 * well
 																			 */) {
 						if (this.fMemberTypeCache == null) {
-							this.fMemberTypeCache = new Cache(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
+							this.fMemberTypeCache = new Cache<>(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
 						}
 						String key = getCacheKey(baseline.getName(), id, getRootName(type.getName()));
-						Cache mcache = (Cache) this.fMemberTypeCache.get(key);
+						Cache<String, ApiType> mcache = this.fMemberTypeCache.get(key);
 						if (mcache == null) {
-							mcache = new Cache(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
+							mcache = new Cache<>(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
 							this.fMemberTypeCache.put(key, mcache);
 						}
 						mcache.put(type.getName(), type);
@@ -217,18 +217,18 @@ public final class ApiModelCache {
 			case IApiElement.TYPE: {
 				if (isMemberType(identifier)) {
 					if (this.fMemberTypeCache != null) {
-						Cache mcache = (Cache) this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(identifier)));
+						Cache<String, ApiType> mcache = this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(identifier)));
 						if (mcache != null) {
-							return (IApiElement) mcache.get(identifier);
+							return mcache.get(identifier);
 						}
 					}
 				} else {
 					if (this.fRootCache != null) {
-						Cache compcache = (Cache) fRootCache.get(baselineid);
+						Cache<String, Cache<String, IApiElement>> compcache = fRootCache.get(baselineid);
 						if (compcache != null) {
-							Cache typecache = (Cache) compcache.get(componentid);
+							Cache<String, IApiElement> typecache = compcache.get(componentid);
 							if (typecache != null && identifier != null) {
-								return (IApiElement) typecache.get(identifier);
+								return typecache.get(identifier);
 							}
 						}
 					}
@@ -262,7 +262,7 @@ public final class ApiModelCache {
 					// clean member type cache
 					if (this.fMemberTypeCache != null) {
 						if (isMemberType(identifier)) {
-							Cache mcache = (Cache) this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(identifier)));
+							Cache<String, ApiType> mcache = this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(identifier)));
 							if (mcache != null) {
 								return mcache.remove(identifier) != null;
 							}
@@ -271,9 +271,9 @@ public final class ApiModelCache {
 						}
 					}
 					if (fRootCache != null) {
-						Cache compcache = (Cache) fRootCache.get(baselineid);
+						Cache<String, Cache<String, IApiElement>> compcache = fRootCache.get(baselineid);
 						if (compcache != null) {
-							Cache typecache = (Cache) compcache.get(componentid);
+							Cache<String, IApiElement> typecache = compcache.get(componentid);
 							if (typecache != null) {
 								removed &= typecache.remove(identifier) != null;
 								if (typecache.isEmpty()) {
@@ -295,7 +295,7 @@ public final class ApiModelCache {
 			case IApiElement.COMPONENT: {
 				flushMemberCache();
 				if (fRootCache != null && componentid != null) {
-					Cache compcache = (Cache) fRootCache.get(baselineid);
+					Cache<String, Cache<String, IApiElement>> compcache = fRootCache.get(baselineid);
 					if (compcache != null) {
 						boolean removed = compcache.remove(componentid) != null;
 						if (compcache.isEmpty()) {
