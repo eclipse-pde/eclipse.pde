@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.internal.core.OverflowingLRUCache;
-import org.eclipse.jdt.internal.core.util.LRUCache;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -61,7 +60,7 @@ public class UseScanManager {
 	 * Cache to maintain the list of least recently used
 	 * <code>UseScanReferences</code>
 	 */
-	private static class UseScanCache extends OverflowingLRUCache {
+	private static class UseScanCache extends OverflowingLRUCache<IApiComponent, IReferenceCollection> {
 
 		public UseScanCache(int size) {
 			super(size);
@@ -72,14 +71,14 @@ public class UseScanManager {
 		}
 
 		@Override
-		protected boolean close(LRUCacheEntry entry) {
-			IReferenceCollection references = (IReferenceCollection) entry.value;
+		protected boolean close(LRUCacheEntry<IApiComponent, IReferenceCollection> entry) {
+			IReferenceCollection references = entry.value;
 			references.clear();
 			return true;
 		}
 
 		@Override
-		protected LRUCache newInstance(int size, int newOverflow) {
+		protected UseScanCache newInstance(int size, int newOverflow) {
 			return new UseScanCache(size, newOverflow);
 		}
 
@@ -127,7 +126,7 @@ public class UseScanManager {
 	 * @return the array of reference descriptors
 	 */
 	public IReferenceDescriptor[] getExternalDependenciesFor(IApiComponent apiComponent, String[] apiUseTypes, IProgressMonitor monitor) {
-		IReferenceCollection references = (IReferenceCollection) fApiComponentCache.get(apiComponent);
+		IReferenceCollection references = fApiComponentCache.get(apiComponent);
 		if (references == null) {
 			references = apiComponent.getExternalDependencies();
 		}
@@ -405,9 +404,9 @@ public class UseScanManager {
 	 * Purges all reference information
 	 */
 	public void clearCache() {
-		Enumeration<?> elementss = fApiComponentCache.elements();
-		while (elementss.hasMoreElements()) {
-			IReferenceCollection reference = (IReferenceCollection) elementss.nextElement();
+		Enumeration<IReferenceCollection> elements = fApiComponentCache.elements();
+		while (elements.hasMoreElements()) {
+			IReferenceCollection reference = elements.nextElement();
 			reference.clear();
 		}
 		fApiComponentCache.flush();
