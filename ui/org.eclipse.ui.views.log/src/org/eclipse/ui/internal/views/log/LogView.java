@@ -787,14 +787,16 @@ public class LogView extends ViewPart implements ILogListener {
 	public void fillContextMenu(IMenuManager manager) { // nothing
 	}
 
-	public AbstractEntry[] getElements() {
+	public synchronized AbstractEntry[] getElements() {
 		return elements.toArray(new AbstractEntry[elements.size()]);
 	}
 
 	protected void handleClear() {
 		BusyIndicator.showWhile(fTree.getDisplay(), () -> {
-			elements.clear();
-			groups.clear();
+			synchronized (this) {
+				elements.clear();
+				groups.clear();
+			}
 			if (currentSession != null) {
 				currentSession.removeAllChildren();
 			}
@@ -828,8 +830,10 @@ public class LogView extends ViewPart implements ILogListener {
 	 * Reads the chosen backing log file
 	 */
 	void readLogFile() {
-		elements.clear();
-		groups.clear();
+		synchronized (this) {
+			elements.clear();
+			groups.clear();
+		}
 
 		List<LogEntry> result = new ArrayList<>();
 		LogSession lastLogSession = LogReader.parseLogFile(this.fInputFile, getLogMaxTailSize(), result, this.fMemento);
@@ -900,7 +904,7 @@ public class LogView extends ViewPart implements ILogListener {
 	 * Limits the number of entries according to the max entries limit set in
 	 * memento.
 	 */
-	private void limitEntriesCount() {
+	private synchronized void limitEntriesCount() {
 		int limit = Integer.MAX_VALUE;
 		if (fMemento.getString(LogView.P_USE_LIMIT).equals("true")) {//$NON-NLS-1$
 			limit = fMemento.getInteger(LogView.P_LOG_LIMIT).intValue();
