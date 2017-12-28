@@ -1595,7 +1595,7 @@ public class PublishingTests extends P2TestCase {
 		}
 
 		assertLogContainsLines(buildFolder.getFile("director.log"), new String[] { "Installation failed.",
-				"Missing requirement: rcp.product 1.0.0.I10232 (uid.product 1.0.0.I10232) requires 'foo bar [1.0.0]' but it could not be found" });
+				"Missing requirement: rcp.product 1.0.0.I10232 (uid.product 1.0.0.I10232) requires 'foo bar [1.0.0,1.0.0]' but it could not be found" });
 	}
 
 	public void testBug272907() throws Exception {

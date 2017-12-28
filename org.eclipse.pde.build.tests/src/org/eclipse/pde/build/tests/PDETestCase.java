@@ -60,7 +60,7 @@ public abstract class PDETestCase extends TestCase {
 	protected void runTest() throws Throwable {
 		super.runTest();
 
-		//clean up after success
+		// clean up after success
 		if (buildFolder != null && buildFolder.exists() && !Boolean.getBoolean("pde.build.noCleanup")) {
 			try {
 				buildFolder.delete(true, null);
@@ -97,7 +97,8 @@ public abstract class PDETestCase extends TestCase {
 			buildFolder.create(true, true, null);
 		}
 
-		URL resource = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/" + resources), null);
+		URL resource = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/" + resources),
+				null);
 		if (resource != null) {
 			String path = FileLocator.toFileURL(resource).getPath();
 
@@ -113,31 +114,37 @@ public abstract class PDETestCase extends TestCase {
 	}
 
 	protected void runBuild(IFolder buildFolder) throws Exception {
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/build.xml"), null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/build.xml"),
+				null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 
-		runAntScript(buildXMLPath, new String[] {"main"}, buildFolder.getLocation().toOSString(), null);
+		runAntScript(buildXMLPath, new String[] { "main" }, buildFolder.getLocation().toOSString(), null);
 	}
 
 	protected void runProductBuild(IFolder buildFolder) throws Exception {
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/productBuild/productBuild.xml"), null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
+				new Path("/scripts/productBuild/productBuild.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 
-		runAntScript(buildXMLPath, new String[] {"main"}, buildFolder.getLocation().toOSString(), null);
+		runAntScript(buildXMLPath, new String[] { "main" }, buildFolder.getLocation().toOSString(), null);
 	}
 
 	protected void generateScripts(IFolder buildFolder, Properties generateProperties) throws Exception {
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
+				new Path("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 
-		runAntScript(buildXMLPath, new String[] {"generateScript"}, buildFolder.getLocation().toOSString(), generateProperties);
+		runAntScript(buildXMLPath, new String[] { "generateScript" }, buildFolder.getLocation().toOSString(),
+				generateProperties);
 	}
 
-	protected void runAntScript(String script, String[] targets, String antHome, Properties additionalProperties) throws Exception {
+	protected void runAntScript(String script, String[] targets, String antHome, Properties additionalProperties)
+			throws Exception {
 		runAntScript(script, targets, antHome, additionalProperties, null, null);
 	}
 
-	protected void runAntScript(String script, String[] targets, String antHome, Properties additionalProperties, String listener, String logger) throws Exception {
+	protected void runAntScript(String script, String[] targets, String antHome, Properties additionalProperties,
+			String listener, String logger) throws Exception {
 		String[] args = createAntRunnerArgs(script, targets, antHome, additionalProperties, listener, logger);
 		try {
 			AntRunner runner = new AntRunner();
@@ -150,7 +157,8 @@ public abstract class PDETestCase extends TestCase {
 		}
 	}
 
-	protected String[] createAntRunnerArgs(String script, String[] targets, String antHome, Properties additionalProperties, String listener, String logger) {
+	protected String[] createAntRunnerArgs(String script, String[] targets, String antHome,
+			Properties additionalProperties, String listener, String logger) {
 		int numArgs = 5 + targets.length + (additionalProperties != null ? additionalProperties.size() : 0);
 		if (listener != null)
 			numArgs += 2;
@@ -190,7 +198,8 @@ public abstract class PDETestCase extends TestCase {
 	}
 
 	/**
-	 * Assert that the zip file contains at least the given entries 
+	 * Assert that the zip file contains at least the given entries
+	 * 
 	 * @param buildFolder
 	 * @param archive
 	 * @param entries
@@ -223,7 +232,8 @@ public abstract class PDETestCase extends TestCase {
 			assertTrue("Missing entry in archive: " + entries, entries.size() == 0);
 	}
 
-	public static void assertZipContents(IFolder buildFolder, String archive, Set<String> entries, boolean assertEmpty) throws Exception {
+	public static void assertZipContents(IFolder buildFolder, String archive, Set<String> entries, boolean assertEmpty)
+			throws Exception {
 		File folder = new File(buildFolder.getLocation().toOSString());
 		File archiveFile = new File(folder, archive);
 		assertZipContents(archiveFile, entries, assertEmpty);
@@ -231,6 +241,7 @@ public abstract class PDETestCase extends TestCase {
 
 	/**
 	 * Assert that the given resource exists and has size > 0
+	 * 
 	 * @param buildFolder
 	 * @param fileName
 	 * @throws Exception
@@ -252,19 +263,21 @@ public abstract class PDETestCase extends TestCase {
 	}
 
 	/**
-	 * Assert that the given log file contains the given message
-	 * The message is expected to be contained on a single line
+	 * Assert that the given log file contains the given message The message is
+	 * expected to be contained on a single line
+	 * 
 	 * @param log
 	 * @param msg
 	 * @throws Exception
 	 */
 	public static void assertLogContainsLine(IFile log, String msg) throws Exception {
-		assertLogContainsLines(log, new String[] {msg});
+		assertLogContainsLines(log, new String[] { msg });
 	}
 
 	/**
-	 * Assert that the given log file contains the given lines
-	 * Lines are expected to appear in order
+	 * Assert that the given log file contains the given lines Lines are expected to
+	 * appear in order
+	 * 
 	 * @param log
 	 * @param lines
 	 * @throws Exception
@@ -289,11 +302,12 @@ public abstract class PDETestCase extends TestCase {
 				}
 			}
 		}
-		assertTrue(false);
+		fail();
 	}
 
 	/**
 	 * assert that the given xml file exists, has size > 0 and is a valid ant script
+	 * 
 	 * @param buildXML
 	 * @throws Exception
 	 */
@@ -319,7 +333,8 @@ public abstract class PDETestCase extends TestCase {
 		project.init();
 
 		// this will throw an exception if it is not a valid ant script
-		helper.parse(project, buildXML.getLocation().toFile(), new ProjectHelper2.RootHandler(context, new ProjectHelper2.MainHandler()));
+		helper.parse(project, buildXML.getLocation().toFile(),
+				new ProjectHelper2.RootHandler(context, new ProjectHelper2.MainHandler()));
 		return project;
 	}
 
@@ -349,18 +364,21 @@ public abstract class PDETestCase extends TestCase {
 
 	public void assertZipPermissions(IFile zip, String file, String permissions) throws Exception {
 		if (Platform.getOS().equals("linux")) {
-			IFolder tempFolder = org.eclipse.pde.build.internal.tests.Utils.createFolder(buildFolder, "permissions" + String.valueOf(Math.random()).substring(2, 7));
+			IFolder tempFolder = org.eclipse.pde.build.internal.tests.Utils.createFolder(buildFolder,
+					"permissions" + String.valueOf(Math.random()).substring(2, 7));
 			try {
-				String[] command = new String[] {"unzip", "-qq", zip.getLocation().toOSString(), file, "-d", tempFolder.getLocation().toOSString()};
+				String[] command = new String[] { "unzip", "-qq", zip.getLocation().toOSString(), file, "-d",
+						tempFolder.getLocation().toOSString() };
 				Process proc = Runtime.getRuntime().exec(command);
 				proc.waitFor();
 
 				IFile extractedFile = tempFolder.getFile(file);
 				assertResourceFile(extractedFile);
 
-				command = new String[] {"ls", "-la", extractedFile.getLocation().toOSString()};
+				command = new String[] { "ls", "-la", extractedFile.getLocation().toOSString() };
 				proc = Runtime.getRuntime().exec(command);
-				Utils.transferStreams(proc.getInputStream(), new FileOutputStream(tempFolder.getFile("ls.out").getLocation().toFile()));
+				Utils.transferStreams(proc.getInputStream(),
+						new FileOutputStream(tempFolder.getFile("ls.out").getLocation().toFile()));
 				proc.waitFor();
 
 				assertLogContainsLine(tempFolder.getFile("ls.out"), permissions);
