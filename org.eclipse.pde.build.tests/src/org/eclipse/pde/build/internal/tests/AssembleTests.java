@@ -18,36 +18,33 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 
-/**
- * NOTE:  To run some of these tests, you must have the delta pack installed in your target.  Any 
- * test that calls {@link Utils#findDeltaPack()} will fail without the delta pack being available
- */
 public class AssembleTests extends PDETestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AssembleTests.class.getName());
 
-		//add all the normal tests
+		// add all the normal tests
 		suite.addTestSuite(AssembleTests.class);
 
-		//If running the intermittent tests:
-		//		if (System.getProperties().get("pde.build.intermittent") != null) {
-		//		}
+		// If running the intermittent tests:
+		// if (System.getProperties().get("pde.build.intermittent") != null) {
+		// }
 		return suite;
 	}
 
 	public void testCustomAssembly() throws Exception {
 		IFolder buildFolder = newTest("customAssembly");
 
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
+		File executable = Utils.findExecutable();
+		assertNotNull(executable);
 
-		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"org.eclipse.swt;unpack=\"false\"", "org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\""});
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "org.eclipse.swt;unpack=\"false\"",
+				"org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"" });
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
-		if (!delta.equals(new File((String) buildProperties.get("baseLocation"))))
-			buildProperties.put("pluginPath", delta.getAbsolutePath());
+		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
+			buildProperties.put("pluginPath", executable.getAbsolutePath());
 		buildProperties.put("configs", "win32, win32, x86");
 
 		Utils.storeBuildProperties(buildFolder, buildProperties);
@@ -55,22 +52,29 @@ public class AssembleTests extends PDETestCase {
 		runBuild(buildFolder);
 
 		String buildLocation = buildFolder.getLocation().toOSString();
-		String[] log = new String[] {"post.gather.bin.parts", "eclipse.base: " + buildLocation + "/tmp/eclipse", "post.jarUp", "plugins: " + buildLocation + "/tmp/eclipse/plugins", "features: " + buildLocation + "/tmp/eclipse/features", "pre.archive", "rootFolder: " + buildLocation + "/tmp/eclipse/win32.win32.x86/eclipse", "archiveFullPath: " + buildLocation + "/I.TestBuild/eclipse-win32.win32.x86.zip"};
+		String[] log = new String[] { "post.gather.bin.parts", "eclipse.base: " + buildLocation + "/tmp/eclipse",
+				"post.jarUp", "plugins: " + buildLocation + "/tmp/eclipse/plugins",
+				"features: " + buildLocation + "/tmp/eclipse/features", "pre.archive",
+				"rootFolder: " + buildLocation + "/tmp/eclipse/win32.win32.x86/eclipse",
+				"archiveFullPath: " + buildLocation + "/I.TestBuild/eclipse-win32.win32.x86.zip" };
 		assertLogContainsLines(buildFolder.getFile("log.log"), log);
 	}
 
 	public void testBug179612_default() throws Exception {
 		IFolder buildFolder = newTest("179612");
 
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
+		File executable = Utils.findExecutable();
+		assertNotNull(executable);
 
-		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"org.eclipse.swt;unpack=\"false\"", "org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"", "org.eclipse.swt.gtk.linux.x86;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86\""});
+		Utils.generateFeature(buildFolder, "sdk", null,
+				new String[] { "org.eclipse.swt;unpack=\"false\"",
+						"org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"",
+						"org.eclipse.swt.gtk.linux.x86;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86\"" });
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
-		if (!delta.equals(new File((String) buildProperties.get("baseLocation"))))
-			buildProperties.put("pluginPath", delta.getAbsolutePath());
+		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
+			buildProperties.put("pluginPath", executable.getAbsolutePath());
 		buildProperties.put("configs", "*,*,* & win32, win32, x86 & linux, gtk, x86");
 
 		Utils.storeBuildProperties(buildFolder, buildProperties);
@@ -83,25 +87,30 @@ public class AssembleTests extends PDETestCase {
 	}
 
 	public void testBug179612_custom() throws Exception {
-		//we have a custom allElements.xml coming from the resources folder
+		// we have a custom allElements.xml coming from the resources folder
 		IFolder buildFolder = newTest("179612_custom");
 
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
+		File executable = Utils.findExecutable();
+		assertNotNull(executable);
 
-		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"org.eclipse.swt;unpack=\"false\"", "org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"", "org.eclipse.swt.gtk.linux.x86;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86\""});
+		Utils.generateFeature(buildFolder, "sdk", null,
+				new String[] { "org.eclipse.swt;unpack=\"false\"",
+						"org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"",
+						"org.eclipse.swt.gtk.linux.x86;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86\"" });
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
-		if (!delta.equals(new File((String) buildProperties.get("baseLocation"))))
-			buildProperties.put("pluginPath", delta.getAbsolutePath());
+		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
+			buildProperties.put("pluginPath", executable.getAbsolutePath());
 		buildProperties.put("configs", "*,*,* & win32, win32, x86 & linux, gtk, x86");
 
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 
 		runBuild(buildFolder);
 
-		String[] log = new String[] {"preAssemble", "defaultAssemble", "assemble.sdk.win32.win32.x86", "defaultAssemble", "postAssemble", "prePackage", "defaultAssemble", "assemble.sdk.win32.win32.x86", "defaultAssemble", "postPackage"};
+		String[] log = new String[] { "preAssemble", "defaultAssemble", "assemble.sdk.win32.win32.x86",
+				"defaultAssemble", "postAssemble", "prePackage", "defaultAssemble", "assemble.sdk.win32.win32.x86",
+				"defaultAssemble", "postPackage" };
 		assertLogContainsLines(buildFolder.getFile("log.log"), log);
 
 		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild.zip");
@@ -112,17 +121,19 @@ public class AssembleTests extends PDETestCase {
 	public void testBug196754() throws Exception {
 		IFolder buildFolder = newTest("196754");
 
-		// pde.build and equinox.launcher.win32.win32.x86 exist as signed folders in the base location,
+		// pde.build and equinox.launcher.win32.win32.x86 exist as signed folders in the
+		// base location,
 		// jar them up in the build and assert they still verify
-		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"org.eclipse.pde.build;unpack=\"false\"", "org.eclipse.equinox.launcher.win32.win32.x86;unpack=\"false\""});
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "org.eclipse.pde.build;unpack=\"false\"",
+				"org.eclipse.equinox.launcher.win32.win32.x86;unpack=\"false\"" });
 
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
+		File executable = Utils.findExecutable();
+		assertNotNull(executable);
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("archivesFormat", "*, *, * - folder");
-		if (!delta.equals(new File((String) buildProperties.get("baseLocation"))))
-			buildProperties.put("pluginPath", delta.getAbsolutePath());
+		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
+			buildProperties.put("pluginPath", executable.getAbsolutePath());
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 		Utils.generateAllElements(buildFolder, "sdk");
 
@@ -138,15 +149,18 @@ public class AssembleTests extends PDETestCase {
 	public void testBug211605() throws Exception {
 		IFolder buildFolder = newTest("211605");
 
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
+		File executable = Utils.findExecutable();
+		assertNotNull(executable);
 
-		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"org.eclipse.swt;unpack=\"false\"", "org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"", "org.eclipse.swt.gtk.linux.x86;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86\""});
+		Utils.generateFeature(buildFolder, "sdk", null,
+				new String[] { "org.eclipse.swt;unpack=\"false\"",
+						"org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"",
+						"org.eclipse.swt.gtk.linux.x86;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86\"" });
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
-		if (!delta.equals(new File((String) buildProperties.get("baseLocation"))))
-			buildProperties.put("pluginPath", delta.getAbsolutePath());
+		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
+			buildProperties.put("pluginPath", executable.getAbsolutePath());
 		buildProperties.put("configs", "win32, win32, x86 & linux, gtk, x86");
 		buildProperties.put("archivesFormat", "group,group,group-folder");
 		buildProperties.put("groupConfigurations", "true");
@@ -170,7 +184,7 @@ public class AssembleTests extends PDETestCase {
 		Utils.generateBundle(b, "B");
 		b.getFile("build.properties").delete(true, null);
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"A;unpack=false", "B"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] { "A;unpack=false", "B" });
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "F");
@@ -193,79 +207,4 @@ public class AssembleTests extends PDETestCase {
 		assertResourceFile(buildFolder, "tmp/e4/plugins/A_1.0.0.jar");
 		assertResourceFile(buildFolder, "tmp/e4/plugins/B_1.0.0/META-INF/MANIFEST.MF");
 	}
-
-	// Test disabled 23 July 2013 as changes to the Equinox framework break the feature dependencies in this test (Bug 411907)
-	//	public void testPackager_bug315710() throws Exception {
-	//		IFolder buildFolder = newTest("315710");
-	//
-	//		Utils.generateFeature(buildFolder, "F1", null, new String[] {"org.eclipse.swt;unpack=\"false\""});
-	//		Utils.generateFeature(buildFolder, "F2", null, new String[] {"org.eclipse.pde;unpack=\"false\""});
-	//		Utils.writeBuffer(buildFolder.getFile("features/F1/notice.html"), new StringBuffer("be nice to clowns\n"));
-	//		Utils.writeBuffer(buildFolder.getFile("features/F1/build.properties"), new StringBuffer("bin.includes=feature.xml\nroot=file:notice.html\n"));
-	//		Utils.writeBuffer(buildFolder.getFile("features/F2/build.properties"), new StringBuffer("bin.includes=feature.xml\n"));
-	//
-	//		StringBuffer customBuffer = new StringBuffer();
-	//		customBuffer.append("<project name=\"custom\" default=\"noDefault\">										\n");
-	//		customBuffer.append("   <import file=\"${eclipse.pdebuild.templates}/headless-build/allElements.xml\"/>	\n");
-	//		customBuffer.append("   <target name=\"allElementsDelegator\">												\n");
-	//		customBuffer.append("      <ant antfile=\"${genericTargets}\" target=\"${target}\">							\n");
-	//		customBuffer.append("         <property name=\"type\" value=\"feature\" />									\n");
-	//		customBuffer.append("         <property name=\"id\" value=\"F1\" />											\n");
-	//		customBuffer.append("      </ant>																			\n");
-	//		customBuffer.append("      <ant antfile=\"${genericTargets}\" target=\"${target}\">							\n");
-	//		customBuffer.append("         <property name=\"type\" value=\"feature\" />									\n");
-	//		customBuffer.append("         <property name=\"id\" value=\"F2\" />											\n");
-	//		customBuffer.append("      </ant>																			\n");
-	//		customBuffer.append("   </target>																			\n");
-	//		customBuffer.append("</project>																				\n");
-	//		Utils.writeBuffer(buildFolder.getFile("allElements.xml"), customBuffer);
-	//
-	//		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
-	//		runBuild(buildFolder);
-	//
-	//		IFile f1zip = buildFolder.getFile("I.TestBuild/F1-TestBuild.zip");
-	//		IFile f2zip = buildFolder.getFile("I.TestBuild/F2-TestBuild.zip");
-	//
-	//		assertResourceFile(f1zip);
-	//		assertResourceFile(f2zip);
-	//
-	//		IFolder packageFolder = Utils.createFolder(buildFolder, "packager");
-	//
-	//		Properties properties = new Properties();
-	//		properties.put("F1-TestBuild.zip", URIUtil.toUnencodedString(buildFolder.getFolder("I.TestBuild").getLocationURI()) + "/|||stuff|components");
-	//		properties.put("F2-TestBuild.zip", URIUtil.toUnencodedString(buildFolder.getFolder("I.TestBuild").getLocationURI()) + "/|||stuff|other");
-	//		Utils.storeProperties(packageFolder.getFile("packager.map"), properties);
-	//
-	//		URL templates = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/templates/packager"), null);
-	//		Utils.copy(new File(FileLocator.toFileURL(templates).getPath()), new File(packageFolder.getLocationURI()));
-	//		packageFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
-	//
-	//		properties = Utils.loadProperties(packageFolder.getFile("packager.properties"));
-	//		properties.put("baseDirectory", packageFolder.getLocation().toOSString());
-	//		properties.put("featureList", "F1, F2");
-	//		properties.put("componentFilter", "*");
-	//		properties.put("contentFilter", "");
-	//		properties.put("packagerMapURL", URIUtil.toUnencodedString(packageFolder.getFile("packager.map").getLocationURI()));
-	//		properties.put("config", "win32,win32,x86");
-	//		properties.remove("prefilledTarget");
-	//		Utils.storeProperties(packageFolder.getFile("packager.properties"), properties);
-	//
-	//		Utils.writeBuffer(packageFolder.getFile("packaging.properties"), new StringBuffer("root=notice.html\n"));
-	//
-	//		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/package.xml"), null);
-	//		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
-	//		properties.clear();
-	//		properties.put("packagingInfo", packageFolder.getLocation().toOSString());
-	//		runAntScript(buildXMLPath, new String[] {"main"}, packageFolder.getLocation().toOSString(), properties);
-	//
-	//		properties = Utils.loadProperties(buildFolder.getFile("finalPluginsVersions.properties"));
-	//
-	//		Set set = new HashSet();
-	//		set.add("eclipse/notice.html");
-	//		set.add("eclipse/features/F1_1.0.0/feature.xml");
-	//		set.add("eclipse/features/F2_1.0.0/feature.xml");
-	//		set.add("eclipse/plugins/org.eclipse.pde_" + properties.get("org.eclipse.pde") + ".jar");
-	//		set.add("eclipse/plugins/org.eclipse.swt_" + properties.get("org.eclipse.swt") + ".jar");
-	//		assertZipContents(packageFolder, "workingPlace/I.MyProduct/MyProduct-win32.win32.win32.zip", set);
-	//	}
 }

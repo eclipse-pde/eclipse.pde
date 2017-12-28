@@ -38,8 +38,8 @@ public class P2Tests extends P2TestCase {
 		IFolder buildFolder = newTest("p2.SimpleProduct");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
+		File executable = Utils.findExecutable();
+		assertNotNull(executable);
 
 		String os = Platform.getOS();
 		String ws = Platform.getWS();
@@ -48,8 +48,8 @@ public class P2Tests extends P2TestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/test/test.product");
 		properties.put("configs", os + ',' + ws + ',' + arch);
-		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-			properties.put("pluginPath", delta.getAbsolutePath());
+		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", executable.getAbsolutePath());
 
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		properties.put("generate.p2.metadata", "true");
@@ -66,14 +66,14 @@ public class P2Tests extends P2TestCase {
 		IMetadataRepository repository = loadMetadataRepository(repoLocation);
 		assertNotNull(repository);
 
-		//some basic existance
+		// some basic existance
 		ArrayList<IInstallableUnit> ius = new ArrayList<>();
 		ius.add(getIU(repository, "test"));
 		ius.add(getIU(repository, "org.eclipse.equinox.launcher"));
 		ius.add(getIU(repository, OSGI));
 		ius.add(getIU(repository, CORE_RUNTIME));
 
-		//check some start level info
+		// check some start level info
 		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + CORE_RUNTIME);
 		assertTouchpoint(iu, "configure", "markStarted(started: true);");
 		ius.add(iu);
@@ -82,32 +82,35 @@ public class P2Tests extends P2TestCase {
 		assertTouchpoint(iu, "configure", "setStartLevel(startLevel:2);markStarted(started: true);");
 		ius.add(iu);
 
-		//product settings
+		// product settings
 		getIU(repository, "toolingtest.product.ini." + p2Config);
 
 		iu = getIU(repository, "toolingtest.product.config." + p2Config);
-		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application,propValue:test.application);");
+		assertTouchpoint(iu, "configure",
+				"setProgramProperty(propName:eclipse.application,propValue:test.application);");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product,propValue:test.product);");
 		assertProvides(iu, "toolingtest.product", "test.product.config");
 
-		//some launcher stuff
+		// some launcher stuff
 		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher");
 		assertTouchpoint(iu, "configure", "addProgramArg(programArg:-startup);addProgramArg(programArg:@artifact);");
 		ius.add(iu);
 		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher." + p2Config);
-		assertTouchpoint(iu, "configure", "addProgramArg(programArg:--launcher.library);addProgramArg(programArg:@artifact);");
+		assertTouchpoint(iu, "configure",
+				"addProgramArg(programArg:--launcher.library);addProgramArg(programArg:@artifact);");
 		ius.add(iu);
 
 		iu = getIU(repository, "test.product.rootfiles." + p2Config);
 		assertProvides(iu, "toolingtest.product", "test.product.rootfiles");
-		//		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.launcher." + launcherConfig);
+		// assertRequires(iu, "org.eclipse.equinox.p2.iu",
+		// "org.eclipse.equinox.launcher." + launcherConfig);
 
-		//And the main product IU
+		// And the main product IU
 		iu = getIU(repository, "test.product");
-		//		assertRequires(iu, "toolingtest.product", "test.product.launcher");
-		//		assertRequires(iu, "toolingtest.product", "test.product.ini");
-		//		assertRequires(iu, "toolingtest.product", "test.product.config");
-		//		assertRequires(iu, ius, true);
+		// assertRequires(iu, "toolingtest.product", "test.product.launcher");
+		// assertRequires(iu, "toolingtest.product", "test.product.ini");
+		// assertRequires(iu, "toolingtest.product", "test.product.config");
+		// assertRequires(iu, ius, true);
 
 		if (!Platform.getOS().equals(Platform.OS_MACOSX)) {
 			iu = getIU(repository, "toolingtest.product.rootfiles." + p2Config);
@@ -123,12 +126,15 @@ public class P2Tests extends P2TestCase {
 		properties.put("os", os);
 		properties.put("ws", ws);
 		properties.put("arch", arch);
-		properties.put("equinoxLauncherJar", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		properties.put("equinoxLauncherJar",
+				FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
+				new Path("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
-		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] { "runDirector" }, buildFolder.getLocation().toOSString(), properties);
 
-		IFile iniFile = os.equals("macosx") ? installFolder.getFile("Contents/Eclipse/test.ini") : installFolder.getFile("test.ini");
+		IFile iniFile = os.equals("macosx") ? installFolder.getFile("Contents/Eclipse/test.ini")
+				: installFolder.getFile("test.ini");
 		assertLogContainsLine(iniFile, "-startup");
 		assertLogContainsLine(iniFile, "--launcher.library");
 		assertLogContainsLine(iniFile, "-foo");
@@ -138,7 +144,8 @@ public class P2Tests extends P2TestCase {
 		IFolder buildFolder = newTest("237096");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {OSGI + ";unpack=false", CORE_RUNTIME + ";unpack=false"});
+		Utils.generateFeature(buildFolder, "F", null,
+				new String[] { OSGI + ";unpack=false", CORE_RUNTIME + ";unpack=false" });
 		Properties featureProperties = new Properties();
 		featureProperties.put("root", "rootfiles");
 		Utils.storeBuildProperties(buildFolder.getFolder("features/F"), featureProperties);
@@ -182,10 +189,11 @@ public class P2Tests extends P2TestCase {
 		IFile productFile = buildFolder.getFile("rcp.product");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {OSGI, SIMPLE_CONFIGURATOR}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] { OSGI, SIMPLE_CONFIGURATOR },
+				false);
 
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
+		File executable = Utils.findExecutable();
+		assertNotNull(executable);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String repoLocation = "file:" + repo.getLocation().toOSString();
@@ -196,10 +204,11 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.artifact.repo", repoLocation);
 		properties.put("p2.flavor", "tooling");
 		properties.put("p2.publish.artifacts", "true");
-		//		properties.put("p2.product.qualifier", "v1234"); //bug 246060 //commented out for bug 297064
+		// properties.put("p2.product.qualifier", "v1234"); //bug 246060 //commented out
+		// for bug 297064
 		Utils.storeBuildProperties(buildFolder, properties);
-		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-			properties.put("pluginPath", delta.getAbsolutePath());
+		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", executable.getAbsolutePath());
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
@@ -221,8 +230,9 @@ public class P2Tests extends P2TestCase {
 
 		iu = getIU(repository, "rcp.product");
 		assertRequires(iu, requiredIUs, true);
-		//check up to the date on the timestamp, don't worry about hours/mins
-		assertTrue(PublisherHelper.toOSGiVersion(iu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
+		// check up to the date on the timestamp, don't worry about hours/mins
+		assertTrue(PublisherHelper.toOSGiVersion(iu.getVersion()).getQualifier()
+				.startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
 
 		IFolder installFolder = buildFolder.getFolder("install");
 		properties.put("p2.director.installPath", installFolder.getLocation().toOSString());
@@ -231,20 +241,24 @@ public class P2Tests extends P2TestCase {
 		properties.put("os", "win32");
 		properties.put("ws", "win32");
 		properties.put("arch", "x86");
-		properties.put("equinoxLauncherJar", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		properties.put("equinoxLauncherJar",
+				FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
+				new Path("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
-		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] { "runDirector" }, buildFolder.getLocation().toOSString(), properties);
 
 		assertResourceFile(installFolder, "eclipse.exe");
-		assertLogContainsLine(installFolder.getFile("configuration/config.ini"), "org.eclipse.equinox.simpleconfigurator.configUrl=file\\:org.eclipse.equinox.simpleconfigurator");
+		assertLogContainsLine(installFolder.getFile("configuration/config.ini"),
+				"org.eclipse.equinox.simpleconfigurator.configUrl=file\\:org.eclipse.equinox.simpleconfigurator");
 	}
 
 	public void testBug222962_305837() throws Exception {
 		IFolder buildFolder = newTest("222962");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {OSGI + ";unpack=false", CORE_RUNTIME + ";unpack=false"});
+		Utils.generateFeature(buildFolder, "F", null,
+				new String[] { OSGI + ";unpack=false", CORE_RUNTIME + ";unpack=false" });
 		Properties featureProperties = new Properties();
 		featureProperties.put("bin.includes", "feature.xml");
 		Utils.storeProperties(buildFolder.getFile("features/F/build.properties"), featureProperties);
@@ -291,16 +305,17 @@ public class P2Tests extends P2TestCase {
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 		IFile productFile = buildFolder.getFile("rcp.product");
 
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
+		File executable = Utils.findExecutable();
+		assertNotNull(executable);
 
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {OSGI, CORE_RUNTIME, SIMPLE_CONFIGURATOR, EQUINOX_PREFERENCES}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0",
+				new String[] { OSGI, CORE_RUNTIME, SIMPLE_CONFIGURATOR, EQUINOX_PREFERENCES }, false);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("configs", Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch());
-		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-			properties.put("pluginPath", delta.getAbsolutePath());
+		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", executable.getAbsolutePath());
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		properties.put("generate.p2.metadata", "true");
 		properties.put("p2.metadata.repo", repoLocation);
@@ -321,11 +336,11 @@ public class P2Tests extends P2TestCase {
 
 		boolean fail = false;
 		try {
-			//bug 270524
+			// bug 270524
 			getIU(repository, "tooling" + p2Config + EQUINOX_PREFERENCES);
 			fail = true;
 		} catch (AssertionFailedError e) {
-			//expected
+			// expected
 		}
 		if (fail)
 			fail("Unexpected CU found");
@@ -336,7 +351,8 @@ public class P2Tests extends P2TestCase {
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.junit", "org.eclipse.pde.build"}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0",
+				new String[] { "org.junit", "org.eclipse.pde.build" }, false);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
@@ -354,7 +370,8 @@ public class P2Tests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		File plugins = repo.getFolder("plugins").getLocation().toFile();
-		File[] bundles = plugins.listFiles((FilenameFilter) (dir, name) -> name.startsWith("org.junit_") || name.startsWith("org.eclipse.pde.build"));
+		File[] bundles = plugins.listFiles((FilenameFilter) (dir, name) -> name.startsWith("org.junit_")
+				|| name.startsWith("org.eclipse.pde.build"));
 		assertTrue(bundles.length == 2);
 		assertJarVerifies(bundles[0]);
 		assertJarVerifies(bundles[1]);
@@ -363,12 +380,13 @@ public class P2Tests extends P2TestCase {
 	public void testBug258126() throws Exception {
 		IFolder buildFolder = newTest("258126");
 
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
+		File executable = Utils.findExecutable();
+		assertNotNull(executable);
 
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {OSGI + ";unpack=false", CORE_RUNTIME + ";unpack=false"});
+		Utils.generateFeature(buildFolder, "F", null,
+				new String[] { OSGI + ";unpack=false", CORE_RUNTIME + ";unpack=false" });
 		Properties featureProperties = new Properties();
 		featureProperties.put("root", "rootfiles");
 		Utils.storeBuildProperties(buildFolder.getFolder("features/F"), featureProperties);
@@ -376,14 +394,14 @@ public class P2Tests extends P2TestCase {
 		Utils.writeBuffer(rootFiles.getFile("eclipse.ini"), new StringBuffer("-foo\n-vmargs\n-Xmx540m\n"));
 
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"F"}, true);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] { "F" }, true);
 
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("configs", "win32,win32,x86");
-		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-			properties.put("pluginPath", delta.getAbsolutePath());
+		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", executable.getAbsolutePath());
 
 		properties.put("archivesFormat", "win32,win32,x86-folder");
 		properties.put("generate.p2.metadata", "true");
@@ -411,11 +429,12 @@ public class P2Tests extends P2TestCase {
 		IFolder buildFolder = newTest("262421");
 
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {OSGI}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] { OSGI }, false);
 
 		IFile p2Inf = buildFolder.getFile("p2.inf");
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("instructions.configure=addRepository(type:0,location:http${#58}//download.eclipse.org/eclipse/updates/3.4);");
+		buffer.append(
+				"instructions.configure=addRepository(type:0,location:http${#58}//download.eclipse.org/eclipse/updates/3.4);");
 		Utils.writeBuffer(p2Inf, buffer);
 
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
@@ -442,7 +461,7 @@ public class P2Tests extends P2TestCase {
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
 		IFolder b = Utils.createFolder(buildFolder, "plugins/b");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=false", "b;unpack=true"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] { "a;unpack=false", "b;unpack=true" });
 		Utils.generateBundle(a, "a");
 		Utils.writeBuffer(a.getFile("src/a.java"), new StringBuffer("class A {}"));
 		Utils.generateBundle(b, "b");
@@ -463,29 +482,33 @@ public class P2Tests extends P2TestCase {
 
 		properties.put("repoBaseLocation", buildFolder.getFolder("repo").getLocation().toOSString());
 		properties.put("transformedRepoLocation", buildFolder.getFolder("outRepo").getLocation().toOSString());
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
+				new Path("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
-		runAntScript(buildXMLPath, new String[] {"transformRepos"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] { "transformRepos" }, buildFolder.getLocation().toOSString(),
+				properties);
 
 		assertResourceFile(buildFolder, "outRepo/plugins/b_1.0.0/B.class");
 		assertResourceFile(buildFolder, "outRepo/plugins/a_1.0.0.jar");
 		assertResourceFile(buildFolder, "outRepo/artifacts.jar");
 		assertResourceFile(buildFolder, "outRepo/content.jar");
 
-		//part 2, zipped repos
+		// part 2, zipped repos
 		IFolder zipped = Utils.createFolder(buildFolder, "zipped");
-		ZipOutputStream output = new ZipOutputStream(new FileOutputStream(new File(zipped.getLocation().toFile(), "zipped repo.zip")));
+		ZipOutputStream output = new ZipOutputStream(
+				new FileOutputStream(new File(zipped.getLocation().toFile(), "zipped repo.zip")));
 		File root = buildFolder.getFolder("repo/r1").getLocation().toFile();
 		FileUtils.zip(output, root, Collections.emptySet(), FileUtils.createRootPathComputer(root));
 		org.eclipse.pde.internal.build.Utils.close(output);
 
-		//bug 318144
+		// bug 318144
 		Utils.writeBuffer(zipped.getFile(".repo/not.a.repo"), new StringBuffer("I am not a repo"));
 
 		IFolder outRepo2 = Utils.createFolder(buildFolder, "outRepo2");
 		properties.put("repoBaseLocation", zipped.getLocation().toOSString());
 		properties.put("transformedRepoLocation", outRepo2.getLocation().toOSString());
-		runAntScript(buildXMLPath, new String[] {"transformRepos"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] { "transformRepos" }, buildFolder.getLocation().toOSString(),
+				properties);
 
 		assertResourceFile(outRepo2, "plugins/b_1.0.0/B.class");
 		assertResourceFile(outRepo2, "plugins/a_1.0.0.jar");
@@ -499,7 +522,7 @@ public class P2Tests extends P2TestCase {
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 
-		Utils.generateFeature(buildFolder, "F", new String[] {"org.eclipse.cvs"}, null);
+		Utils.generateFeature(buildFolder, "F", new String[] { "org.eclipse.cvs" }, null);
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
 		properties.put("generate.p2.metadata", "true");
@@ -514,14 +537,15 @@ public class P2Tests extends P2TestCase {
 		IInstallableUnit iu = getIU(metadata, "org.eclipse.cvs");
 		assertNotNull(iu);
 
-		//bug 289866
+		// bug 289866
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("pack.excludes=plugins/org.eclipse.cvs_" + iu.getVersion() + ".jar\n");
 		Utils.writeBuffer(repo.getFile("pack.properties"), buffer);
 
 		assertResourceFile(buildFolder, "repo/artifacts.xml");
 
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new Path("/resources/keystore/keystore"), null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"),
+				new Path("/resources/keystore/keystore"), null);
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
 
@@ -542,7 +566,8 @@ public class P2Tests extends P2TestCase {
 		final IFile buildXML = buildFolder.getFile("build.xml");
 		Utils.writeBuffer(buildXML, buffer);
 
-		runAntScript(buildXML.getLocation().toOSString(), new String[] {"default"}, buildFolder.getLocation().toOSString(), null);
+		runAntScript(buildXML.getLocation().toOSString(), new String[] { "default" },
+				buildFolder.getLocation().toOSString(), null);
 
 		IFolder repoFolder = buildFolder.getFolder("repo");
 		IArtifactRepository repository = loadArtifactRepository(repoLocation);
@@ -561,7 +586,8 @@ public class P2Tests extends P2TestCase {
 
 			if (IArtifactDescriptor.FORMAT_PACKED.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))) {
 				assertMD5(repoFolder, descriptors[1]);
-			} else if (IArtifactDescriptor.FORMAT_PACKED.equals(descriptors[1].getProperty(IArtifactDescriptor.FORMAT))) {
+			} else if (IArtifactDescriptor.FORMAT_PACKED
+					.equals(descriptors[1].getProperty(IArtifactDescriptor.FORMAT))) {
 				assertMD5(repoFolder, descriptors[0]);
 			} else {
 				fail("No pack.gz desriptor");
@@ -596,7 +622,8 @@ public class P2Tests extends P2TestCase {
 		IFolder b = Utils.createFolder(buildFolder, "plugins/b");
 		IFolder c = Utils.createFolder(buildFolder, "plugins/c");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=false", "b;unpack=false;os=linux", "b;unpack=false;os=win32", "c;unpack=false"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] { "a;unpack=false", "b;unpack=false;os=linux",
+				"b;unpack=false;os=win32", "c;unpack=false" });
 		Properties featureProperties = new Properties();
 		featureProperties.put("bin.includes", "feature.xml");
 		Utils.storeProperties(buildFolder.getFile("features/F/build.properties"), featureProperties);
@@ -644,13 +671,14 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.publish.artifacts", "true");
 		properties.put("forceContextQualifier", "v1");
 		properties.put("baseLocation", "");
-		properties.put("pluginPath", "${buildDirectory}"); //178449
+		properties.put("pluginPath", "${buildDirectory}"); // 178449
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runBuild(buildFolder);
 
-		//now change A and recompile
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=true", "b;os=linux;optional=true", "c;unpack=false"});
+		// now change A and recompile
+		Utils.generateFeature(buildFolder, "F", null,
+				new String[] { "a;unpack=true", "b;os=linux;optional=true", "c;unpack=false" });
 		Utils.storeProperties(buildFolder.getFile("features/F/build.properties"), featureProperties);
 
 		code = new StringBuffer();
@@ -670,7 +698,8 @@ public class P2Tests extends P2TestCase {
 		properties.put("forceContextQualifier", "v2");
 		Utils.storeBuildProperties(buildFolder, properties);
 
-		//bug 271034 same properties file, touched with new timestamp, perhaps new order
+		// bug 271034 same properties file, touched with new timestamp, perhaps new
+		// order
 		properties = new Properties();
 		properties.put("bin.includes", "META-INF/, ., build.properties");
 		Utils.generatePluginBuildProperties(c, properties);
@@ -685,18 +714,30 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(buildFolder, "repo2/plugins/c_1.0.0.jar");
 
 		StringBuffer test = new StringBuffer();
-		test.append("<project default=\"mirror\">                                                                    \n");
-		test.append("  <target name=\"mirror\">                                                                      \n");
-		test.append("    <p2.artifact.mirror baseLine=\"${compareAgainst}\"                                          \n");
-		test.append("                        source=\"${compareFrom}\"                                               \n");
-		test.append("                        destination=\"${newLocation}\"                                          \n");
-		test.append("                        destinationName=\"testRepoName\"                                        \n");
-		test.append("                        comparatorId=\"org.eclipse.equinox.p2.repository.tools.jar.comparator\" \n");
-		test.append("                        comparatorLog=\"${basedir}/compare.log\"                                \n");
-		test.append("                        ignoreErrors=\"true\"                                                   \n");
-		test.append("    />                                                                                          \n");
-		test.append("  </target>                                                                                     \n");
-		test.append("</project>                                                                                      \n");
+		test.append(
+				"<project default=\"mirror\">                                                                    \n");
+		test.append(
+				"  <target name=\"mirror\">                                                                      \n");
+		test.append(
+				"    <p2.artifact.mirror baseLine=\"${compareAgainst}\"                                          \n");
+		test.append(
+				"                        source=\"${compareFrom}\"                                               \n");
+		test.append(
+				"                        destination=\"${newLocation}\"                                          \n");
+		test.append(
+				"                        destinationName=\"testRepoName\"                                        \n");
+		test.append(
+				"                        comparatorId=\"org.eclipse.equinox.p2.repository.tools.jar.comparator\" \n");
+		test.append(
+				"                        comparatorLog=\"${basedir}/compare.log\"                                \n");
+		test.append(
+				"                        ignoreErrors=\"true\"                                                   \n");
+		test.append(
+				"    />                                                                                          \n");
+		test.append(
+				"  </target>                                                                                     \n");
+		test.append(
+				"</project>                                                                                      \n");
 
 		IFile testXML = buildFolder.getFile("test.xml");
 		Utils.writeBuffer(testXML, test);
@@ -705,19 +746,25 @@ public class P2Tests extends P2TestCase {
 		properties.put("compareAgainst", repo1Location);
 		properties.put("compareFrom", repo2Location);
 		properties.put("newLocation", finalLocation);
-		runAntScript(testXML.getLocation().toOSString(), new String[] {"mirror"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(testXML.getLocation().toOSString(), new String[] { "mirror" },
+				buildFolder.getLocation().toOSString(), properties);
 
 		IArtifactRepository artifact = loadArtifactRepository(finalLocation);
-		assertEquals(artifact.getName(), "testRepoName"); //bug 274094
+		assertEquals(artifact.getName(), "testRepoName"); // bug 274094
 		assertLogContainsLine(buildFolder.getFile("log.log"), "Messages while mirroring artifact descriptors");
-		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] {"canonical: org.eclipse.update.feature,F,1.0.0", "The feature has a different number of entries", "The entry \"Plugin: a 1.0.0.v2\" is not present in both features", "The entry \"Plugin: b 1.0.0\" has different unpack attribute values"});
-		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] {"canonical: osgi.bundle,b,1.0.0", "The class B.class is different."});
+		assertLogContainsLines(buildFolder.getFile("compare.log"),
+				new String[] { "canonical: org.eclipse.update.feature,F,1.0.0",
+						"The feature has a different number of entries",
+						"The entry \"Plugin: a 1.0.0.v2\" is not present in both features",
+						"The entry \"Plugin: b 1.0.0\" has different unpack attribute values" });
+		assertLogContainsLines(buildFolder.getFile("compare.log"),
+				new String[] { "canonical: osgi.bundle,b,1.0.0", "The class B.class is different." });
 		boolean failed = true;
 		try {
 			assertLogContainsLine(buildFolder.getFile("compare.log"), "build.properties");
 			failed = false;
 		} catch (AssertionFailedError e) {
-			//expected
+			// expected
 		}
 		assertTrue(failed);
 	}
@@ -734,7 +781,7 @@ public class P2Tests extends P2TestCase {
 
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=false"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] { "a;unpack=false" });
 
 		Attributes additionalAttributes = new Attributes();
 		additionalAttributes = new Attributes();
@@ -764,7 +811,7 @@ public class P2Tests extends P2TestCase {
 
 		runBuild(buildFolder);
 
-		//now change A and recompile
+		// now change A and recompile
 		code = new StringBuffer();
 		code.append("package a;                                   \n");
 		code.append("public class A {                             \n");
@@ -787,16 +834,26 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(buildFolder, "repo2/plugins/a_1.0.0.jar");
 
 		StringBuffer test = new StringBuffer();
-		test.append("<project default=\"mirror\">                                                                    \n");
-		test.append("  <target name=\"mirror\">                                                                      \n");
-		test.append("    <p2.artifact.mirror baseLine=\"${compareAgainst}\"                                          \n");
-		test.append("                        source=\"${compareFrom}\"                                               \n");
-		test.append("                        destination=\"${newLocation}\"                                          \n");
-		test.append("                        comparatorId=\"org.eclipse.equinox.p2.repository.tools.jar.comparator\" \n");
-		test.append("                        comparatorLog=\"${basedir}/compare.log\"                                \n");
-		test.append("    />                                                                                          \n");
-		test.append("  </target>                                                                                     \n");
-		test.append("</project>                                                                                      \n");
+		test.append(
+				"<project default=\"mirror\">                                                                    \n");
+		test.append(
+				"  <target name=\"mirror\">                                                                      \n");
+		test.append(
+				"    <p2.artifact.mirror baseLine=\"${compareAgainst}\"                                          \n");
+		test.append(
+				"                        source=\"${compareFrom}\"                                               \n");
+		test.append(
+				"                        destination=\"${newLocation}\"                                          \n");
+		test.append(
+				"                        comparatorId=\"org.eclipse.equinox.p2.repository.tools.jar.comparator\" \n");
+		test.append(
+				"                        comparatorLog=\"${basedir}/compare.log\"                                \n");
+		test.append(
+				"    />                                                                                          \n");
+		test.append(
+				"  </target>                                                                                     \n");
+		test.append(
+				"</project>                                                                                      \n");
 
 		IFile testXML = buildFolder.getFile("test.xml");
 		Utils.writeBuffer(testXML, test);
@@ -805,32 +862,34 @@ public class P2Tests extends P2TestCase {
 		properties.put("compareAgainst", repo1Location);
 		properties.put("compareFrom", repo2Location);
 		properties.put("newLocation", finalLocation);
-		runAntScript(testXML.getLocation().toOSString(), new String[] {"mirror"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(testXML.getLocation().toOSString(), new String[] { "mirror" },
+				buildFolder.getLocation().toOSString(), properties);
 
 		boolean warnings = false;
 		try {
 			assertLogContainsLine(buildFolder.getFile("log.log"), "Mirroring completed with warnings and/or errors.");
 			warnings = true;
 		} catch (AssertionFailedError e) {
-			//expected
+			// expected
 		}
 		assertFalse(warnings);
 	}
 
 	public void testBug267461() throws Exception {
 		IFolder buildFolder = newTest("267461");
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
+		File executable = Utils.findExecutable();
+		assertNotNull(executable);
 
 		IFile productFile = buildFolder.getFile("rcp.product");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
-		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0", "my.app", null, new String[] {OSGI, SIMPLE_CONFIGURATOR}, false, null);
+		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0", "my.app", null,
+				new String[] { OSGI, SIMPLE_CONFIGURATOR }, false, null);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		properties.put("configs", "win32,win32,x86");
-		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-			properties.put("pluginPath", delta.getAbsolutePath());
+		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", executable.getAbsolutePath());
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("generate.p2.metadata", "true");
 		properties.put("p2.metadata.repo", repoLocation);
@@ -853,23 +912,35 @@ public class P2Tests extends P2TestCase {
 		IFolder buildFolder = newTest("304736");
 
 		StringBuffer customBuffer = new StringBuffer();
-		customBuffer.append("<project name=\"custom\" default=\"noDefault\">										\n");
+		customBuffer
+				.append("<project name=\"custom\" default=\"noDefault\">										\n");
 		customBuffer.append("   <import file=\"${eclipse.pdebuild.templates}/headless-build/allElements.xml\"/>	\n");
-		customBuffer.append("   <target name=\"allElementsDelegator\">												\n");
-		customBuffer.append("      <ant antfile=\"${genericTargets}\" target=\"${target}\">							\n");
-		customBuffer.append("         <property name=\"type\" value=\"feature\" />									\n");
-		customBuffer.append("         <property name=\"id\" value=\"F1\" />											\n");
-		customBuffer.append("      </ant>																			\n");
-		customBuffer.append("      <ant antfile=\"${genericTargets}\" target=\"${target}\">							\n");
-		customBuffer.append("         <property name=\"type\" value=\"feature\" />									\n");
-		customBuffer.append("         <property name=\"id\" value=\"F2\" />											\n");
-		customBuffer.append("      </ant>																			\n");
-		customBuffer.append("   </target>																			\n");
-		customBuffer.append("</project>																				\n");
+		customBuffer
+				.append("   <target name=\"allElementsDelegator\">												\n");
+		customBuffer
+				.append("      <ant antfile=\"${genericTargets}\" target=\"${target}\">							\n");
+		customBuffer
+				.append("         <property name=\"type\" value=\"feature\" />									\n");
+		customBuffer
+				.append("         <property name=\"id\" value=\"F1\" />											\n");
+		customBuffer
+				.append("      </ant>																			\n");
+		customBuffer
+				.append("      <ant antfile=\"${genericTargets}\" target=\"${target}\">							\n");
+		customBuffer
+				.append("         <property name=\"type\" value=\"feature\" />									\n");
+		customBuffer
+				.append("         <property name=\"id\" value=\"F2\" />											\n");
+		customBuffer
+				.append("      </ant>																			\n");
+		customBuffer
+				.append("   </target>																			\n");
+		customBuffer
+				.append("</project>																				\n");
 		Utils.writeBuffer(buildFolder.getFile("allElements.xml"), customBuffer);
 
-		Utils.generateFeature(buildFolder, "F1", null, new String[] {"A"});
-		Utils.generateFeature(buildFolder, "F2", null, new String[] {"B"});
+		Utils.generateFeature(buildFolder, "F1", null, new String[] { "A" });
+		Utils.generateFeature(buildFolder, "F2", null, new String[] { "B" });
 
 		IFolder A = Utils.createFolder(buildFolder, "plugins/a");
 		IFolder B = Utils.createFolder(buildFolder, "plugins/b");
@@ -886,14 +957,15 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.publish.artifacts", "false");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		//test passes if there was no build failure
+		// test passes if there was no build failure
 	}
 
 	public void testBug271373() throws Exception {
 		IFolder buildFolder = newTest("271373_generator");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"A;os=win32,linux;unpack=false"});
-		Utils.writeBuffer(buildFolder.getFile("features/F/build.properties"), new StringBuffer("bin.includes=feature.xml\n"));
+		Utils.generateFeature(buildFolder, "F", null, new String[] { "A;os=win32,linux;unpack=false" });
+		Utils.writeBuffer(buildFolder.getFile("features/F/build.properties"),
+				new StringBuffer("bin.includes=feature.xml\n"));
 
 		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
 		Attributes manifestAdditions = new Attributes();
@@ -903,7 +975,7 @@ public class P2Tests extends P2TestCase {
 		Utils.writeBuffer(A.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
 
 		IFile product = buildFolder.getFile("foo.product");
-		Utils.generateProduct(product, "foo.product", "1.0.0", new String[] {"F"}, true);
+		Utils.generateProduct(product, "foo.product", "1.0.0", new String[] { "F" }, true);
 
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 		URI repoLocation = repo.getLocationURI();
@@ -929,96 +1001,13 @@ public class P2Tests extends P2TestCase {
 		properties.put("os", "win32");
 		properties.put("ws", "win32");
 		properties.put("arch", "x86");
-		properties.put("equinoxLauncherJar", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		properties.put("equinoxLauncherJar",
+				FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
+				new Path("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
-		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] { "runDirector" }, buildFolder.getLocation().toOSString(), properties);
 
 		assertResourceFile(installFolder, "plugins/A_1.0.0.jar");
 	}
-
-	// Test disabled and resources deleted 23 July 2013 as the Plugin Converter is no longer available in the SDK (Bug 411907)
-	// It isn't clear where the plugin converter is required, but the build log indicates it was unavailable at three different points
-	//	public void testMetadataGenerator_BootStrap() throws Exception {
-	//		IFolder testFolder = newTest("metadataGenerator_Bootstrap");
-	//
-	//		File delta = Utils.findDeltaPack();
-	//		assertNotNull(delta);
-	//
-	//		IFile productFile = testFolder.getFile("Bootstrap.product");
-	//
-	//		//Step one, build old fashioned product
-	//		IFolder buildFolder = Utils.createFolder(testFolder, "build");
-	//		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-	//		properties.put("configs", "win32,win32,x86");
-	//		properties.put("archivesFormat", "win32,win32,x86-folder");
-	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-	//			properties.put("pluginPath", delta.getAbsolutePath());
-	//		properties.put("product", productFile.getLocation().toOSString());
-	//		Utils.storeBuildProperties(buildFolder, properties);
-	//
-	//		runProductBuild(buildFolder);
-	//
-	//		IFolder repoFolder = testFolder.getFolder("repository");
-	//		IFolder installFolder = testFolder.getFolder("install");
-	//
-	//		//step two, invoke the metadata generator on the product
-	//		StringBuffer scriptBuffer = new StringBuffer();
-	//		scriptBuffer.append("<project name=\"project\" default=\"go\">																\n");
-	//		scriptBuffer.append("   <target name=\"go\">																				\n");
-	//		scriptBuffer.append("		<last id=\"launcher\">																			\n");
-	//		scriptBuffer.append("			<sort>																						\n");
-	//		scriptBuffer.append("				<fileset dir=\"${eclipse.home}/plugins\" includes=\"org.eclipse.equinox.launcher_*\" />	\n");
-	//		scriptBuffer.append("			</sort>																						\n");
-	//		scriptBuffer.append("		</last>																							\n");
-	//		scriptBuffer.append("      <property name=\"launcher\" refid=\"launcher\" />												\n");
-	//		scriptBuffer.append("      <condition property=\"p2.director.devMode\" value=\"-dev &quot;${osgi.dev}&quot;\" else=\"\">	\n");
-	//		scriptBuffer.append("         <isset property=\"osgi.dev\" />																\n");
-	//		scriptBuffer.append("      </condition>																						\n");
-	//		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">										\n");
-	//		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.publisher.EclipseGenerator\" />				\n");
-	//		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
-	//		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
-	//		scriptBuffer.append("         <arg line=\"-metadataRepositoryName BootStrapRepo\" />										\n");
-	//		scriptBuffer.append("         <arg value=\"-metadataRepository\" />															\n");
-	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-	//		scriptBuffer.append("         <arg value=\"-artifactRepository\" />															\n");
-	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-	//		scriptBuffer.append("         <arg value=\"-source\" />																		\n");
-	//		scriptBuffer.append("         <arg value=\"" + buildFolder.getFolder("tmp/eclipse").getLocation().toOSString() + "\" />		\n");
-	//		scriptBuffer.append("         <arg line=\"-root bootstrap -rootVersion 1.2.0.12345\" />										\n");
-	//		scriptBuffer.append("         <arg line=\"-flavor tooling -publishArtifacts -append\" />									\n");
-	//		//scriptBuffer.append(" <jvmarg line=\"-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000\" /> 	\n");
-	//		scriptBuffer.append("      </java>																							\n");
-	//
-	//		//step three call the director
-	//		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">				\n");
-	//		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
-	//		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
-	//		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.director\" />									\n");
-	//		scriptBuffer.append("         <arg value=\"-metadataRepository\" />															\n");
-	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-	//		scriptBuffer.append("         <arg value=\"-artifactRepository\" />															\n");
-	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-	//		scriptBuffer.append("         <arg line=\"-installIU bootstrap/1.2.0.12345 -profile bootProfile\" />						\n");
-	//		scriptBuffer.append("         <arg line=\"-profileProperties org.eclipse.update.install.features=true\" />					\n");
-	//		scriptBuffer.append("         <arg line=\"-p2.os win32 -p2.ws win32 -p2.arch x86\" />										\n");
-	//		scriptBuffer.append("         <arg value=\"-destination\" />																\n");
-	//		scriptBuffer.append("         <arg value=\"" + installFolder.getLocation().toOSString() + "\" />							\n");
-	//		//scriptBuffer.append(" <jvmarg value=\"-Declipse.p2.data.area=" + installFolder.getLocation().toOSString() + "/p2\" />		\n");
-	//		//scriptBuffer.append(" <jvmarg line=\"-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000\" /> 	\n");
-	//		scriptBuffer.append("      </java>																							\n");
-	//		scriptBuffer.append("   </target>																							\n");
-	//		scriptBuffer.append("</project>																								\n");
-	//		IFile script = buildFolder.getFile("build.xml");
-	//		Utils.writeBuffer(script, scriptBuffer);
-	//
-	//		runAntScript(script.getLocation().toOSString(), new String[] {"go"}, testFolder.getLocation().toOSString(), null);
-	//
-	//		IMetadataRepository metaRepo = loadMetadataRepository(repoFolder.getLocationURI());
-	//		assertEquals(metaRepo.getName(), "BootStrapRepo");
-	//		IInstallableUnit iu = getIU(metaRepo, "bootstrap");
-	//		assertEquals(iu.getVersion().toString(), "1.2.0.12345");
-	//		assertResourceFile(installFolder, "eclipse.exe");
-	//	}
 }

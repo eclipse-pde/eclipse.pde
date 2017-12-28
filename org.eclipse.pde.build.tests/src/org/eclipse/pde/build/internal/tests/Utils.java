@@ -168,9 +168,9 @@ public class Utils {
 			AbstractScriptGenerator.setConfigInfo("*,*,*");
 			String baseLocation = Platform.getInstallLocation().getURL().getPath();
 			BuildTimeSiteFactory.setInstalledBaseSite(baseLocation);
-			File delta = findDeltaPack();
-			if (delta != null && !delta.equals(new File(baseLocation)))
-				generator.setPluginPath(new String[] { delta.getAbsolutePath() });
+			File executable = findExecutable();
+			if (executable != null && !executable.equals(new File(baseLocation)))
+				generator.setPluginPath(new String[] { executable.getAbsolutePath() });
 		}
 		generator.setIncludeLaunchers(includeLaunchers);
 		generator.setVerify(verify);
@@ -305,26 +305,26 @@ public class Utils {
 	}
 
 	private static File findExecutable(File baseLocation) {
-		File plugins = new File(baseLocation, "features");
+		File features = new File(baseLocation, "features");
 		FilenameFilter filter = (dir, name) -> name.startsWith("org.eclipse.equinox.executable");
-		String[] files = plugins.list(filter);
+		String[] files = features.list(filter);
 
 		if (files != null && files.length > 0)
 			return baseLocation;
 		return null;
 	}
 
-	static private File deltaLocation = null;
+	static private File executableLocation = null;
 
-	public static File findDeltaPack() throws IOException {
-		if (deltaLocation != null)
-			return deltaLocation;
+	public static File findExecutable() throws IOException {
+		if (executableLocation != null)
+			return executableLocation;
 
 		File baseLocation = new File(Platform.getInstallLocation().getURL().getPath());
 
-		deltaLocation = findExecutable(baseLocation);
-		if (deltaLocation != null)
-			return deltaLocation;
+		executableLocation = findExecutable(baseLocation);
+		if (executableLocation != null)
+			return executableLocation;
 
 		SimpleConfiguratorManipulator manipulator = BundleHelper.getDefault()
 				.acquireService(SimpleConfiguratorManipulator.class);
@@ -337,23 +337,14 @@ public class Utils {
 			for (int i = 0; i < bundles.length; i++) {
 				if (bundles[i].getSymbolicName().equals(id)) {
 					URI location = bundles[i].getLocation();
-					deltaLocation = findExecutable(URIUtil.toFile(URIUtil.append(location, "../..")));
-					if (deltaLocation != null)
-						return deltaLocation;
+					executableLocation = findExecutable(URIUtil.toFile(URIUtil.append(location, "../..")));
+					if (executableLocation != null)
+						return executableLocation;
 					break;
 				}
 			}
 		}
-
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
-			// After https://bugs.eclipse.org/431116 and related changes, the install
-			// location on the Mac
-			// moved down two directories (from <folder-containing-Eclipse.app> to
-			// Eclipse.app/Contents/Eclipse).
-			baseLocation = baseLocation.getParentFile().getParentFile();
-		}
-		deltaLocation = findExecutable(new File(baseLocation.getParent(), "deltapack/eclipse"));
-		return deltaLocation;
+		return executableLocation;
 	}
 
 	public static void writeBuffer(IFile outputFile, StringBuffer buffer) throws IOException, CoreException {
