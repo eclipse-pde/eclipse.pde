@@ -16,8 +16,6 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
-import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
@@ -79,10 +77,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public boolean addBundleDescription(BundleDescription toAdd) {
 		return state.addBundle(toAdd);
-	}
-
-	private PluginConverter acquirePluginConverter() throws Exception {
-		return BundleHelper.getDefault().acquireService(PluginConverter.class);
 	}
 
 	//Add a bundle to the state, updating the version number 
@@ -300,7 +294,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 		//It is not a manifest, but a plugin or a fragment
 		if (manifestStream == null)
-			return convertPluginManifest(bundleLocation, true);
+			return null;
 
 		try {
 			Hashtable<String, String> result = new Hashtable<>();
@@ -329,18 +323,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (BundleHelper.getManifestHeader(initialManifest, Constants.BUNDLE_SYMBOLICNAME) != null)
 			return true;
 
-		Dictionary<String, String> generatedManifest = convertPluginManifest(bundleLocation, false);
-		if (generatedManifest == null)
-			return false;
-
-		//merge manifests. The values from the generated manifest are added to the initial one. Values from the initial one are not deleted 
-		Enumeration<String> enumeration = generatedManifest.keys();
-		while (enumeration.hasMoreElements()) {
-			String key = enumeration.nextElement();
-			if (BundleHelper.getManifestHeader(initialManifest, key) == null)
-				initialManifest.put(key, generatedManifest.get(key));
-		}
-		return true;
+		return false;
 	}
 
 	private void enforceClasspath(Dictionary<String, String> manifest) {
@@ -366,31 +349,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		enforceVersion(manifest);
 		enforceClasspath(manifest);
 		return manifest;
-	}
-
-	private Dictionary<String, String> convertPluginManifest(File bundleLocation, boolean logConversionException) {
-		PluginConverter converter;
-		try {
-			converter = acquirePluginConverter();
-			Dictionary<String, String> manifest = converter.convertManifest(bundleLocation, false, null, false, null);
-			if (convertedManifests != null)
-				convertedManifests.add(manifest);
-			return manifest;
-		} catch (PluginConversionException convertException) {
-			if (bundleLocation.getName().equals(org.eclipse.pde.build.Constants.FEATURE_FILENAME_DESCRIPTOR))
-				return null;
-			if (!new File(bundleLocation, org.eclipse.pde.build.Constants.PLUGIN_FILENAME_DESCRIPTOR).exists() && !new File(bundleLocation, org.eclipse.pde.build.Constants.FRAGMENT_FILENAME_DESCRIPTOR).exists())
-				return null;
-			if (logConversionException) {
-				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, NLS.bind(Messages.exception_errorConverting, bundleLocation.getAbsolutePath()), convertException);
-				BundleHelper.getDefault().getLog().log(status);
-			}
-			return null;
-		} catch (Exception serviceException) {
-			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, NLS.bind(Messages.exception_cannotAcquireService, "Plugin converter"), serviceException); //$NON-NLS-1$
-			BundleHelper.getDefault().getLog().log(status);
-			return null;
-		}
 	}
 
 	public void addBundles(Collection<File> bundles) {
