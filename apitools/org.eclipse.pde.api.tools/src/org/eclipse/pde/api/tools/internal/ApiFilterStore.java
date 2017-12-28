@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -45,6 +49,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -132,6 +138,15 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 						return Status.OK_STATUS;
 					}
 					String lineDelimiter = getLineDelimiterPreference(file);
+					if (lineDelimiter == null) {
+						// Get line delimiter from existing file
+						ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+						manager.connect(file.getFullPath(), LocationKind.IFILE, null);
+						ITextFileBuffer textFileBuffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+						IDocument document = textFileBuffer.getDocument();
+						lineDelimiter = TextUtilities.getDefaultLineDelimiter(document);
+					}
+
 					String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 					if (lineDelimiter != null && !lineDelimiter.equals(lineSeparator)) {
 						xml = xml.replaceAll(lineSeparator, lineDelimiter);
