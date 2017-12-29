@@ -786,6 +786,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					int length2 = requiredComponents2.length;
 					loop2: for (int j = 0; j < length2; j++) {
 						IRequiredComponentDescription description2 = requiredComponents2[j];
+						IRequiredComponentDescription bestMatch = getBestMatchFromMultipleReqComponents(requiredComponents2, description);
+						if(bestMatch !=null) {
+							description2 = bestMatch;
+						}
 						if (description2.getId().equals(id)) {
 							if (description2.isExported()) {
 								referenceDescription = description2;
@@ -821,6 +825,23 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 		}
 		return info;
+	}
+
+	private IRequiredComponentDescription getBestMatchFromMultipleReqComponents(IRequiredComponentDescription[] requiredComponents2, IRequiredComponentDescription description) {
+		IVersionRange versionRange = description.getVersionRange();
+		Version currentLowerBound = new Version(versionRange.getMinimumVersion());
+		int major = currentLowerBound.getMajor();
+		for (IRequiredComponentDescription iRequiredComponentDescription : requiredComponents2) {
+			if (!description.getId().equals(iRequiredComponentDescription.getId())) {
+				continue;
+			}
+			IVersionRange versionRange2 = iRequiredComponentDescription.getVersionRange();
+			Version currentLowerBound2 = new Version(versionRange2.getMinimumVersion());
+			if (currentLowerBound2.getMajor() == major) {
+				return iRequiredComponentDescription;
+			}
+		}
+		return null;
 	}
 
 	/**
