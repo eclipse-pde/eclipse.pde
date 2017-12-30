@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -293,9 +293,59 @@ public class ApiType extends ApiMember implements IApiType {
 		}
 		String packageName = Signatures.getPackageName(qName);
 		IApiComponent[] components = getApiComponent().getBaseline().resolvePackage(getApiComponent(), packageName);
+		// If system package, then reorganize library component to consider the
+		// java EE of the component as the preferred library
+		if (qName.startsWith("java.") && components.length > 1) { //$NON-NLS-1$
+			reOrganizeComponents(components);
+		}
 		IApiTypeRoot result = Util.getClassFile(components, qName);
 		if (result != null) {
 			return result.getStructure();
+		}
+		return null;
+	}
+
+	private void reOrganizeComponents(IApiComponent[] components) throws CoreException {
+		IApiElement parent = getParentComponent(this);
+		if (parent == null) {
+			return;
+		}
+		Component component = (Component) parent;
+		String[] executionEnvironments = component.getExecutionEnvironments();
+		String javaEE = getJavaEE(executionEnvironments);
+		if (javaEE != null) {
+			for (int i = 0; i < components.length; i++) {
+				IApiComponent iComponent = components[i];
+				if (iComponent instanceof SystemLibraryApiComponent) {
+					SystemLibraryApiComponent sysCom = (SystemLibraryApiComponent) iComponent;
+					if (sysCom.getSymbolicName().equals(javaEE)) {
+						// swap i and 0;
+						IApiComponent temp = components[i];
+						components[i] = components[0];
+						components[0] = temp;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	private IApiElement getParentComponent(IApiElement apiElement) {
+		IApiElement parent = apiElement.getParent();
+		if (parent == null) {
+			return null;
+		}
+		if (parent instanceof Component) {
+			return parent;
+		}
+		return getParentComponent(parent);
+	}
+
+	private String getJavaEE(String[] executionEnvironments) {
+		for (String ee : executionEnvironments) {
+			if (ee.startsWith("JavaSE-") || ee.startsWith("J2SE-")) { //$NON-NLS-1$ //$NON-NLS-2$
+				return ee;
+			}
 		}
 		return null;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,9 +91,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	private String fExecutionEnvironment;
 
 	/**
-	 * Component representing the system library
+	 * Components representing the system library
 	 */
-	private IApiComponent fSystemLibraryComponent;
+	// private IApiComponent fSystemLibraryComponent;
+	private ArrayList<IApiComponent> fSystemLibraryComponentList = new ArrayList<>();
 
 	/**
 	 * Whether an execution environment should be automatically resolved as API
@@ -293,8 +294,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			getState().setPlatformProperties(dictionary);
 		}
 		// clean up previous system library
-		if (fSystemLibraryComponent != null && fComponentsById != null) {
-			fComponentsById.remove(fSystemLibraryComponent.getSymbolicName());
+		if (!fSystemLibraryComponentList.isEmpty() && fComponentsById != null) {
+			for (IApiComponent comp : fSystemLibraryComponentList) {
+				fComponentsById.remove(comp.getSymbolicName());
+
+			}
 		}
 		if (fSystemPackageNames != null) {
 			fSystemPackageNames.clear();
@@ -302,8 +306,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 		clearComponentsCache();
 		// set new system library
-		fSystemLibraryComponent = new SystemLibraryApiComponent(this, description, systemPackages);
+		SystemLibraryApiComponent fSystemLibraryComponent = new SystemLibraryApiComponent(this, description, systemPackages);
 		addComponent(fSystemLibraryComponent);
+		fSystemLibraryComponentList.add(fSystemLibraryComponent);
 	}
 
 	/**
@@ -406,46 +411,46 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				}
 			}
 			// select VM that is compatible with most required environments
-			IVMInstall bestFit = null;
-			int bestCount = 0;
+			// keep list of all VMs
+			ArrayList<IVMInstall> allVMInstalls = new ArrayList<>();
 			for (Entry<IVMInstall, Set<String>> entry : VMsToEEs.entrySet()) {
-				Set<String> EEs = entry.getValue();
-				if (EEs.size() > bestCount) {
-					bestCount = EEs.size();
-					bestFit = entry.getKey();
-				}
+				allVMInstalls.add(entry.getKey());
 			}
 			String systemEE = null;
-			if (bestFit != null) {
-				// find the EE this VM is strictly compatible with
-				IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
-				for (IExecutionEnvironment environment : environments) {
-					if (environment.isStrictlyCompatible(bestFit)) {
-						systemEE = environment.getId();
-						break;
+			if (!allVMInstalls.isEmpty()) {
+				for (IVMInstall iVMInstall : allVMInstalls) {
+					// find the EE this VM is strictly compatible with
+					IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
+					for (IExecutionEnvironment environment : environments) {
+						if (environment.isStrictlyCompatible(iVMInstall)) {
+							systemEE = environment.getId();
+							break;
+						}
 					}
-				}
-				if (systemEE == null) {
-					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=383261
-					// we don't need to compute anything here, in all cases if
-					// we fail to find a compatible EE, fall back to highest
-					// known.
-					// TODO this should be updated for each new EE that gets
-					// added
-					systemEE = "JavaSE-1.7"; //$NON-NLS-1$
-				}
-				// only update if different from current or missing VM binding
-				if (!systemEE.equals(getExecutionEnvironment()) || fVMBinding == null) {
-					try {
-						File file = Util.createEEFile(bestFit, systemEE);
-						JavaRuntime.addVMInstallChangedListener(this);
-						fVMBinding = bestFit;
-						ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
-						initialize(ee);
-					} catch (CoreException e) {
-						error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
-					} catch (IOException e) {
-						error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
+					if (systemEE == null) {
+						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=383261
+						// we don't need to compute anything here, in all cases
+						// if
+						// we fail to find a compatible EE, fall back to highest
+						// known.
+						// TODO this should be updated for each new EE that gets
+						// added
+						systemEE = "JavaSE-1.7"; //$NON-NLS-1$
+					}
+					// only update if different from current or missing VM
+					// binding
+					if (!systemEE.equals(getExecutionEnvironment()) || fVMBinding == null) {
+						try {
+							File file = Util.createEEFile(iVMInstall, systemEE);
+							JavaRuntime.addVMInstallChangedListener(this);
+							fVMBinding = iVMInstall;
+							ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
+							initialize(ee);
+						} catch (CoreException e) {
+							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
+						} catch (IOException e) {
+							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
+						}
 					}
 				}
 			} else {
@@ -455,7 +460,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			if (error == null) {
 				// build status for unbound required EE's
 				Set<String> missing = new HashSet<>(ees);
-				Set<String> covered = new HashSet<>(VMsToEEs.get(bestFit));
+				Set<String> covered = new HashSet<>();
+				for (IVMInstall fit : allVMInstalls) {
+					covered.addAll(VMsToEEs.get(fit));
+				}
 				missing.removeAll(covered);
 				if (missing.isEmpty()) {
 					fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_1, systemEE));
@@ -524,15 +532,13 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			}
 		}
 		if (isSystemPackage(packageName)) {
-			if (fSystemLibraryComponent != null) {
+			if (!fSystemLibraryComponentList.isEmpty()) {
 				if (cachedComponents == null) {
-					cachedComponents = new IApiComponent[] {
-							fSystemLibraryComponent };
+					cachedComponents = fSystemLibraryComponentList.toArray(new IApiComponent[] {});
 				} else {
-					IApiComponent[] cachedComponents2 = new IApiComponent[cachedComponents.length + 1];
-					System.arraycopy(cachedComponents, 0, cachedComponents2, 0, cachedComponents.length);
-					cachedComponents2[cachedComponents.length] = fSystemLibraryComponent;
-					cachedComponents = cachedComponents2;
+					List<IApiComponent> list = Arrays.asList(cachedComponents);
+					list.addAll(fSystemLibraryComponentList);
+					cachedComponents = list.toArray(new IApiComponent[] {});
 				}
 			}
 		}
@@ -787,9 +793,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (fSystemPackageNames != null) {
 			fSystemPackageNames.clear();
 		}
-		if (fSystemLibraryComponent != null) {
-			fSystemLibraryComponent.dispose();
-			fSystemLibraryComponent = null;
+		if (!fSystemLibraryComponentList.isEmpty()) {
+			for (IApiComponent iApiComponent : fSystemLibraryComponentList) {
+				iApiComponent.dispose();
+			}
+			fSystemLibraryComponentList = new ArrayList<>();
 		}
 	}
 
