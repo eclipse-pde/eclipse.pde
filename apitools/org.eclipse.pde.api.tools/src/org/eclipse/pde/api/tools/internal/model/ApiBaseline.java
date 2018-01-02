@@ -536,7 +536,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				if (cachedComponents == null) {
 					cachedComponents = fSystemLibraryComponentList.toArray(new IApiComponent[] {});
 				} else {
-					List<IApiComponent> list = Arrays.asList(cachedComponents);
+					List<IApiComponent> list = new ArrayList<>(Arrays.asList(cachedComponents));
 					list.addAll(fSystemLibraryComponentList);
 					cachedComponents = list.toArray(new IApiComponent[] {});
 				}
