@@ -1,0 +1,4 @@
+<target><locations><location>
+<unit id="org.eclipse.fake" version="0.0.0"/>
+<repository location="REPO_LOCATION"/>
+</location></locations></target>

@@ -104,8 +104,13 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 					scheduleUpdateJob(location);
 					return getInformativeProposal();
 				}
-				List<UnitNode> byPrefix = cache.getUnitsByPrefix(repoLocation, node.getId());
-				List<String> versions = byPrefix.get(0).getAvailableVersions();
+				List<UnitNode> repositoryUnits = cache.fetchP2UnitsFromRepo(repoLocation, false);
+				List<String> versions = null;
+				for (UnitNode unit : repositoryUnits) {
+					if (unit.getId().equals(node.getId())) {
+						versions = unit.getAvailableVersions();
+					}
+				}
 				replaceVersion = !("".equals(node.getVersion()));//$NON-NLS-1$
 				return convertToVersionProposals(versions, replaceVersion);
 			}

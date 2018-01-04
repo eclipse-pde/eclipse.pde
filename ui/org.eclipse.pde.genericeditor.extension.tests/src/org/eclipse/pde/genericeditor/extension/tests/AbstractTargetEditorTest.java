@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others
+ * Copyright (c) 2017, 2018 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 package org.eclipse.pde.genericeditor.extension.tests;
 
 import junit.framework.TestCase;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
@@ -20,6 +22,7 @@ import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.Targ
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.osgi.framework.FrameworkUtil;
 
 public class AbstractTargetEditorTest extends TestCase {
 
@@ -46,11 +49,16 @@ public class AbstractTargetEditorTest extends TestCase {
 
 	protected ITextViewer getTextViewerForTarget(String name) throws Exception {
 		IFile targetFile = project.getFile(name + ".target");
-		targetFile.create(getClass().getResourceAsStream("targetfiles/" + name + ".txt"), true,
-				new NullProgressMonitor());
+		targetFile.create(FrameworkUtil.getBundle(this.getClass())
+				.getEntry("testing-files/target-files/" + name + ".txt").openStream(), true, new NullProgressMonitor());
 		IEditorPart editor = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
 				targetFile, "org.eclipse.ui.genericeditor.GenericEditor");
 		return (ITextViewer) editor.getAdapter(ITextOperationTarget.class);
+	}
+
+	protected String getLocationForSite(String name) {
+		return FrameworkUtil.getBundle(this.getClass()).getEntry("testing-files/testing-sites/" + name + "/")
+				.toString();
 	}
 
 	@Override
@@ -62,10 +70,12 @@ public class AbstractTargetEditorTest extends TestCase {
 	}
 
 	protected String proposalListToString(ICompletionProposal[] proposals) {
-		if (proposals == null)
+		if (proposals == null) {
 			return "null";
-		if (proposals.length == 0)
+		}
+		if (proposals.length == 0) {
 			return "[]";
+		}
 		StringBuilder builder = new StringBuilder();
 		builder.append('[');
 		for (ICompletionProposal proposal : proposals) {
