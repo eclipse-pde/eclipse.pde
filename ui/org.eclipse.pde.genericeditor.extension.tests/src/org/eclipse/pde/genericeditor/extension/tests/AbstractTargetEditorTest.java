@@ -8,7 +8,7 @@
  * Contributors:
  *     Lucas Bullen (Red Hat Inc.)
  *******************************************************************************/
-package org.eclipse.pde.ui.tests.target.editor;
+package org.eclipse.pde.genericeditor.extension.tests;
 
 import junit.framework.TestCase;
 import org.eclipse.core.resources.*;

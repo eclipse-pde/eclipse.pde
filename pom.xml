@@ -9,6 +9,7 @@
   Contributors:
      Igor Fedorenko - initial implementation
      Lars Vogel <Lars.Vogel@vogella.com> - Bug 471835, 488051
+     Lucas Bullen <lbullen@redhat.com> - Bug 529467 - Move genericeditor.extension tests to own project
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -93,6 +94,7 @@
     <module>ui/org.eclipse.ui.trace</module>
     <module>ui/org.eclipse.ui.views.log</module>
     <module>ui/org.eclipse.pde.genericeditor.extension</module>
+    <module>ui/org.eclipse.pde.genericeditor.extension.tests</module>
     <module>features/org.eclipse.pde-feature</module>
   </modules>
 </project>

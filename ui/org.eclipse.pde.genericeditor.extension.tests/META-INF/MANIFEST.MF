@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests for Generic Target Platform Editor
+Bundle-SymbolicName: org.eclipse.pde.genericeditor.extension.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.junit;bundle-version="4.12.0",
+ org.eclipse.core.runtime;bundle-version="3.13.0",
+ org.eclipse.core.resources;bundle-version="3.12.0",
+ org.eclipse.jface.text;bundle-version="3.13.0",
+ org.eclipse.ui;bundle-version="3.109.100",
+ org.eclipse.ui.ide;bundle-version="3.14.0",
+ org.eclipse.pde.genericeditor.extension
+Automatic-Module-Name: org.eclipse.pde.genericeditor.extension.tests
