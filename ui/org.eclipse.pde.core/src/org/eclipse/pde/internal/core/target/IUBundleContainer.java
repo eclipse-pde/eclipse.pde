@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -326,7 +326,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * This is a callback method used by the synchronizer.
 	 * It should NOT be called any other time.
 	 */
-	void synchronizerChanged(ITargetDefinition target) throws CoreException {
+	void synchronizerChanged(ITargetDefinition target) {
 		try {
 			// cache the IUs first as they are used to slice the profile for the other caches.
 			cacheIUs(target);

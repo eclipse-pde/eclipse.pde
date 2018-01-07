@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2018 EclipseSource Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -793,7 +793,7 @@ public class P2TargetUtils {
 	/**
 	 * Signal the relevant bundle containers that the given profile has changed.
 	 */
-	private void notify(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
+	private void notify(ITargetDefinition target, IProgressMonitor monitor) {
 		// flush the target caches first since some of them are used in rebuilding
 		// the container caches (e.g., featureModels)
 		((TargetDefinition) target).flushCaches(P2TargetUtils.BUNDLE_POOL.toOSString());
