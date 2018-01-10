@@ -17,7 +17,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.filebuffers
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %providerName
-Eclipse-BundleShape: dir
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.pde.internal.genericeditor.target.extension.autocomplete;x-friends:="org.eclipse.pde.ui.tests",
  org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;x-internal:=true,
