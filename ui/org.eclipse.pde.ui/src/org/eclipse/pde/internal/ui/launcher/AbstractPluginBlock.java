@@ -10,7 +10,6 @@
  *     Ian Bull <irbull@cs.uvic.ca> - bug 204404 and bug 207064
  *     EclipseSource Corporation - ongoing enhancements
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
- *     Karsten Thoms <karsten.thoms@itemis.de> - Bug 522332
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -18,7 +17,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -830,19 +828,31 @@ public abstract class AbstractPluginBlock {
 	 */
 	protected void addRequiredPlugins() {
 		Object[] checked = fPluginTreeViewer.getCheckedElements();
-		Set<IPluginModelBase> toCheck = Arrays.stream(checked).filter(IPluginModelBase.class::isInstance)
-				.map(IPluginModelBase.class::cast).collect(Collectors.toSet());
+		ArrayList<Object> toCheck = new ArrayList<>(checked.length);
+		for (Object checkedElement : checked) {
+			if (checkedElement instanceof IPluginModelBase) {
+				toCheck.add(checkedElement);
+			}
+		}
 
-		Set<String> additionalIds = DependencyManager.getDependencies(toCheck.toArray(),
-				fIncludeOptionalButton.getSelection(), null);
+		Set<?> additionalIds = DependencyManager.getDependencies(checked, fIncludeOptionalButton.getSelection(), null);
 
-		additionalIds.stream().map(id -> PluginRegistry.findEntry(id))
-				.filter(Objects::nonNull).map(entry -> entry.getModel())
-				.forEach(model -> toCheck.add(model));
+		Iterator<?> it = additionalIds.iterator();
+		while (it.hasNext()) {
+			String id = (String) it.next();
+			if (findPlugin(id) == null) {
+				ModelEntry entry = PluginRegistry.findEntry(id);
+				if (entry != null) {
+					IPluginModelBase model = entry.getModel();
+					if (model != null) {
+						toCheck.add(model);
+					}
+				}
+			}
+		}
 
 		checked = toCheck.toArray();
 		setCheckedElements(checked);
-
 		fNumExternalChecked = 0;
 		fNumWorkspaceChecked = 0;
 		for (Object checkedElement : checked) {
