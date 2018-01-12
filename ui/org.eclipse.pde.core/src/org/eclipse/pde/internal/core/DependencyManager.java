@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2017 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,14 +7,16 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Karsten Thoms <karsten.thoms@itemis.de> - Bug 522332
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.osgi.framework.Constants;
@@ -27,7 +29,6 @@ import org.osgi.framework.Constants;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DependencyManager {
-
 	/**
 	 * Returns a {@link Set} of bundle ids for the dependents of the given
 	 * {@link IPluginModelBase}. The set includes the id of the given model base
@@ -39,7 +40,8 @@ public class DependencyManager {
 	 * @return a set of bundle IDs
 	 */
 	public static Set<String> getSelfAndDependencies(IPluginModelBase model, String[] excludeFragments) {
-		return getDependencies(new Object[] {model}, getImplicitDependencies(), TargetPlatformHelper.getState(), false, true, toSet(excludeFragments));
+		return getDependencies(Collections.singleton(model), getImplicitDependencies(), TargetPlatformHelper.getState(),
+				false, true, toSet(excludeFragments));
 	}
 
 	/**
@@ -53,7 +55,8 @@ public class DependencyManager {
 	 * @return a set of bundle IDs
 	 */
 	public static Set<String> getSelfandDependencies(IPluginModelBase[] models, String[] excludeFragments) {
-		return getDependencies(models, getImplicitDependencies(), TargetPlatformHelper.getState(), false, true, toSet(excludeFragments));
+		return getDependencies(getPluginModels(models), getImplicitDependencies(), TargetPlatformHelper.getState(),
+				false, true, toSet(excludeFragments));
 	}
 
 	/**
@@ -71,7 +74,7 @@ public class DependencyManager {
 	 * @return a set of bundle IDs
 	 */
 	public static Set<String> getDependencies(Object[] selected, String[] implicit, State state, String[] excludeFragments) {
-		return getDependencies(selected, implicit, state, true, true, toSet(excludeFragments));
+		return getDependencies(getPluginModels(selected), implicit, state, true, true, toSet(excludeFragments));
 	}
 
 	/**
@@ -87,46 +90,65 @@ public class DependencyManager {
 	 * @return a set of bundle IDs
 	 */
 	public static Set<String> getDependencies(Object[] selected, boolean includeOptional, String[] excludeFragments) {
-		return getDependencies(selected, getImplicitDependencies(), TargetPlatformHelper.getState(), true, includeOptional, toSet(excludeFragments));
+		return getDependencies(getPluginModels(selected), getImplicitDependencies(), TargetPlatformHelper.getState(),
+				true, includeOptional, toSet(excludeFragments));
 	}
 
 	/**
-	 * Returns the array as a set or <code>null</code>
-	 * @param array array or <code>null</code>
+	 * Returns the array as a set
+	 *
+	 * @param array
+	 *            array or <code>null</code>
 	 * @return set
 	 */
 	private static Set<String> toSet(String[] array) {
-		Set<String> set = new HashSet<>();
-		if (array != null) {
-			for (String element : array) {
-				set.add(element);
-			}
+		if (array == null || array.length == 0) {
+			return Collections.emptySet();
 		}
-		return set;
+		return Arrays.stream(array).collect(Collectors.toSet());
 	}
 
 	/**
-	 * Returns a {@link Set} of bundle ids for the dependents of the given
-	 * objects from the given {@link State}.
-	 * The set additionally only includes the given set of implicit dependencies.
+	 * Collects {@link IPluginModelBase}s into a set
+	 */
+	private static Set<IPluginModelBase> getPluginModels(Object[] selected) {
+		return Arrays.stream(selected).filter(IPluginModelBase.class::isInstance).map(IPluginModelBase.class::cast)
+				.collect(Collectors.toSet());
+	}
+
+	/**
+	 * Returns a {@link Set} of bundle ids for the dependents of the given objects
+	 * from the given {@link State}. The set additionally only includes the given
+	 * set of implicit dependencies.
 	 *
-	 * @param selected selected the group of objects to compute dependencies for. Any items
-	 * in this array that are not {@link IPluginModelBase}s are ignored.
-	 * @param implicit the array of additional implicit dependencies to add to the {@link Set}
-	 * @param state the {@link State} to compute the dependencies in
-	 * @param removeSelf if the id of one of the bundles were are computing dependencies for should be
-	 * included in the result {@link Set} or not
-	 * @param includeOptional if optional bundle ids should be included
-	 * @param excludeFragments a collection of <b>fragment</b> bundle symbolic names to exclude from the dependency resolution
+	 * @param selected
+	 *            selected the group of {@link IPluginModelBase}s to compute
+	 *            dependencies for.
+	 * @param implicit
+	 *            the array of additional implicit dependencies to add to the
+	 *            {@link Set}
+	 * @param state
+	 *            the {@link State} to compute the dependencies in
+	 * @param removeSelf
+	 *            if the id of one of the bundles were are computing dependencies
+	 *            for should be included in the result {@link Set} or not
+	 * @param includeOptional
+	 *            if optional bundle ids should be included
+	 * @param excludeFragments
+	 *            a collection of <b>fragment</b> bundle symbolic names to exclude
+	 *            from the dependency resolution
 	 * @return a set of bundle IDs
 	 */
-	private static Set<String> getDependencies(Object[] selected, String[] implicit, State state, boolean removeSelf, boolean includeOptional, Set<String> excludeFragments) {
-		Set<String> set = new TreeSet<>();
-		for (int i = 0; i < selected.length; i++) {
-			if (!(selected[i] instanceof IPluginModelBase))
-				continue;
-			IPluginModelBase model = (IPluginModelBase) selected[i];
-			addBundleAndDependencies(model.getBundleDescription(), set, includeOptional, excludeFragments);
+	private static Set<String> getDependencies(Set<IPluginModelBase> selected, String[] implicit, State state,
+			boolean removeSelf,
+			boolean includeOptional, Set<String> excludeFragments) {
+		Set<String> bundleIds = new TreeSet<>();
+		Set<IPluginModelBase> models = new HashSet<>(selected);
+
+		// For all selected bundles add their bundle dependencies.
+		// Also consider plugin extensions and their dependencies.
+		for (IPluginModelBase model : selected) {
+			addBundleAndDependencies(model.getBundleDescription(), bundleIds, includeOptional, excludeFragments);
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			for (IPluginExtension extension : extensions) {
 				String point = extension.getPoint();
@@ -134,26 +156,49 @@ public class DependencyManager {
 					int dot = point.lastIndexOf('.');
 					if (dot != -1) {
 						String id = point.substring(0, dot);
-						addBundleAndDependencies(state.getBundle(id, null), set, includeOptional, excludeFragments);
+						addBundleAndDependencies(state.getBundle(id, null), bundleIds, includeOptional, excludeFragments);
 					}
 				}
 			}
 		}
 
 		for (String element : implicit) {
-			addBundleAndDependencies(state.getBundle(element, null), set, includeOptional, excludeFragments);
+			addBundleAndDependencies(state.getBundle(element, null), bundleIds, includeOptional, excludeFragments);
+		}
+
+		Set<String> selectedBundleIds = selected.stream().map(model -> model.getPluginBase().getId())
+				.collect(Collectors.toSet());
+
+		// where any bundle ids collected that did not belong to the already selected
+		// bunlde set? => recursively collect dependencies with them included
+		boolean hasAdditionallySelectedBundles = bundleIds.stream()
+				.anyMatch(bundleId -> !selectedBundleIds.contains(bundleId));
+		if (hasAdditionallySelectedBundles) {
+			// validate all models and try to add bundles that resolve constraint violations
+			for (IPluginModelBase model : DependencyManager.getDependencies(TargetPlatformHelper.getState(),
+					models.toArray(new IPluginModelBase[models.size()]))) {
+				bundleIds.add(model.getBundleDescription().getSymbolicName());
+			}
+
+			// build array with all selected plus calculated dependencies and recurse
+			// loop ends when no more additional dependencies are calculated
+			for (String id : bundleIds) {
+				ModelEntry entry = PluginRegistry.findEntry(id);
+				if (entry != null) {
+					models.add(entry.getModel());
+				}
+			}
+
+			Set<String> additionalIds = getDependencies(models, implicit, state, removeSelf, includeOptional,
+					excludeFragments);
+			bundleIds.addAll(additionalIds);
 		}
 
 		if (removeSelf) {
-			for (int i = 0; i < selected.length; i++) {
-				if (!(selected[i] instanceof IPluginModelBase)) {
-					continue;
-				}
-				IPluginModelBase model = (IPluginModelBase) selected[i];
-				set.remove(model.getPluginBase().getId());
-			}
+			bundleIds.removeAll(selectedBundleIds);
 		}
-		return set;
+
+		return bundleIds;
 	}
 
 	/**
@@ -219,6 +264,75 @@ public class DependencyManager {
 				addBundleAndDependencies((BundleDescription) host.getSupplier(), set, includeOptional, excludeFragments);
 			}
 		}
+	}
+
+	/**
+	 * Validates the given models and retrieves bundle IDs that satisfy violated
+	 * constraints. This method uses the {@link BundleValidationOperation} to
+	 * determine unsatisfied constraints for the given plugin models.
+	 *
+	 * @param state
+	 *            the {@link State} to compute the dependencies in
+	 * @param models
+	 *            the array of {@link IPluginModelBase}s to compute dependencies for
+	 *
+	 * @return a set of bundle IDs
+	 */
+	private static Set<IPluginModelBase> getDependencies(State state, IPluginModelBase[] models) {
+		Set<IPluginModelBase> dependencies = new HashSet<>();
+		BundleValidationOperation operation = new BundleValidationOperation(models);
+		try {
+			operation.run(new NullProgressMonitor());
+			Map<Object, Object[]> input = operation.getResolverErrors();
+			// extract the unsatisfied constraints from the operation's result structure
+			VersionConstraint[] unsatisfiedConstraints = input.values().stream()
+					.filter(ResolverError[].class::isInstance)
+					.map(ResolverError[].class::cast)
+					.flatMap(arr -> Arrays.stream(arr))
+					.filter(err -> err.getUnsatisfiedConstraint() != null)
+					.map(err -> err.getUnsatisfiedConstraint())
+					.toArray(VersionConstraint[]::new);
+
+			for (VersionConstraint constraint : unsatisfiedConstraints) {
+				// first try to find a solution in the set of additionally computed
+				// bundles that satisfy constraints.
+				if (dependencies.stream()
+						.anyMatch(pmb -> satisfiesConstraint(pmb.getBundleDescription(), constraint))) {
+					continue;
+				}
+				// determine all bundles from the target platform state that satisfy the current
+				// constraint
+				List<BundleDescription> satisfyingBundles = Arrays.stream(state.getBundles())
+						.filter(desc -> satisfiesConstraint(desc, constraint)).collect(Collectors.toList());
+
+				// It is possible to have none, exactly one, or in rare cases multiple bundles
+				// that satisfy the constraint.
+				for (BundleDescription bundle : satisfyingBundles) {
+					ModelEntry entry = PluginRegistry.findEntry(bundle.getSymbolicName());
+					if (entry != null) {
+						dependencies.add(entry.getModel());
+					}
+				}
+			}
+			return dependencies;
+		} catch (CoreException e) {
+			PDECore.log(e);
+			return Collections.emptySet();
+		}
+	}
+
+	private static boolean satisfiesConstraint(BundleDescription desc, VersionConstraint constraint) {
+		if (constraint instanceof GenericSpecification) {
+			for (GenericDescription description : desc.getGenericCapabilities()) {
+				if (constraint.isSatisfiedBy(description)) {
+					return true;
+				}
+			}
+		} else if (constraint instanceof BundleSpecification) {
+			return constraint.getName().equals(desc.getName())
+					&& constraint.getVersionRange().isIncluded(desc.getVersion());
+		}
+		return false;
 	}
 
 }
