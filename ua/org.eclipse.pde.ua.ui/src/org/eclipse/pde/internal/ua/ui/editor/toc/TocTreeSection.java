@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ua.ui.editor.toc;
 
 import java.util.ArrayList;
@@ -217,7 +216,7 @@ public class TocTreeSection extends TreeSection {
 	 */
 	private void createTree(Composite container, FormToolkit toolkit) {
 		TreePart treePart = getTreePart();
-		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI | SWT.BORDER, 2, toolkit);
 
 		fTocTree = treePart.getTreeViewer();
 		fTocTree.setContentProvider(new TocContentProvider());
@@ -426,8 +425,8 @@ public class TocTreeSection extends TreeSection {
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		// Get the current selection
-		ISelection selection = fTocTree.getSelection();
-		Object object = ((IStructuredSelection) selection).getFirstElement();
+		IStructuredSelection selection = fTocTree.getStructuredSelection();
+		Object object = selection.getFirstElement();
 		// Has to be null or a TOC object
 		TocObject tocObject = (TocObject) object;
 
@@ -1039,8 +1038,8 @@ public class TocTreeSection extends TreeSection {
 		// Currently, all additions in the TOC editor are semantically similar
 		// Thus, all addition operations can follow the same procedure
 
-		ISelection sel = fTocTree.getSelection();
-		Object object = ((IStructuredSelection) sel).getFirstElement();
+		IStructuredSelection sel = fTocTree.getStructuredSelection();
+		Object object = sel.getFirstElement();
 		if (object == null) {
 			return;
 		}
