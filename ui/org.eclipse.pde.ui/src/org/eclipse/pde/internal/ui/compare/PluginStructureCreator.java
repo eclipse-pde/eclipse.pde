@@ -155,9 +155,18 @@ public class PluginStructureCreator extends StructureCreator {
 		return model;
 	}
 
-	private String getCharset(Object input) throws CoreException {
-		if (input instanceof IEncodedStreamContentAccessor)
-			return ((IEncodedStreamContentAccessor) input).getCharset();
+	private String getCharset(Object input) {
+		String charset = null;
+		if (input instanceof IEncodedStreamContentAccessor) {
+			try {
+				charset = ((IEncodedStreamContentAccessor) input).getCharset();
+			} catch (Exception e) {
+				// ignore, will use default
+			}
+		}
+		if (charset != null) {
+			return charset;
+		}
 		return ResourcesPlugin.getEncoding();
 	}
 
