@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import com.ibm.icu.text.MessageFormat;
 import java.util.*;
 import java.util.List;
+import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -924,16 +925,21 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 						IProject projectToBuild = project;
 						if (!projectToBuild.isOpen())
 							continue;
+						ICommand[] commands;
+						if (projectToBuild.isAccessible())
+							commands = ((Project) projectToBuild).internalGetDescription().getBuildSpec(false);
+						else
+							commands = null;
 						if (projectToBuild.hasNature(PDE.PLUGIN_NATURE)) {
-							if (fBuilders.contains(PDE.MANIFEST_BUILDER_ID)) {
+							if (fBuilders.contains(PDE.MANIFEST_BUILDER_ID)	&& hasBuilder(commands, "org.eclipse.pde.ManifestBuilder")) { //$NON-NLS-1$
 								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.MANIFEST_BUILDER_ID,
 										null, iterationMonitor.split(1));
 							}
-							if (fBuilders.contains(PDE.SCHEMA_BUILDER_ID)) {
+							if (fBuilders.contains(PDE.SCHEMA_BUILDER_ID) && hasBuilder(commands,"org.eclipse.pde.SchemaBuilder")) { //$NON-NLS-1$
 								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.SCHEMA_BUILDER_ID, null,
 										iterationMonitor.split(1));
 							}
-						} else if (projectToBuild.hasNature(PDE.FEATURE_NATURE)) {
+						} else if (projectToBuild.hasNature(PDE.FEATURE_NATURE)  && hasBuilder(commands,"org.eclipse.pde.FeatureBuilder")) { //$NON-NLS-1$
 							if (fBuilders.contains(PDE.FEATURE_BUILDER_ID)) {
 								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.FEATURE_BUILDER_ID, null,
 										iterationMonitor.split(2));
@@ -946,6 +952,18 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 					return Status.CANCEL_STATUS;
 				}
 				return Status.OK_STATUS;
+			}
+
+			private boolean hasBuilder(ICommand[] commands, String string) {
+				if(commands == null)
+					return false;
+				if(commands.length == 0)
+					return false;
+				for (ICommand iCommand : commands) {
+					if (iCommand.getBuilderName().equals(string))
+						return true;
+				}
+				return false;
 			}
 		};
 		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
