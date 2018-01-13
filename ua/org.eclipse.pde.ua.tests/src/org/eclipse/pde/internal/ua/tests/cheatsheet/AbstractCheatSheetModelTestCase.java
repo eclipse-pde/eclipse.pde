@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ua.tests.cheatsheet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.plugin.XMLTextChangeListener;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSModel;
@@ -28,7 +29,7 @@ public abstract class AbstractCheatSheetModelTestCase extends TestCase {
 	protected static final String CR = "\r"; //$NON-NLS-1$
 	protected static final String CRLF = CR + LF;
 
-	protected Document fDocument;
+	protected IDocument fDocument;
 	protected SimpleCSModel fModel;
 	protected IModelTextChangeListener fListener;
 

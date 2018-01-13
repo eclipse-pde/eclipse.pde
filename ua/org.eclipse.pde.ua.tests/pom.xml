@@ -23,8 +23,41 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-    <code.ignoredWarnings>-warn:-deprecation,unavoidableGenericProblems</code.ignoredWarnings>
-  	<!-- Tests not yet ready for surefire -->
-  	<skipTests>true</skipTests>
+  	<testSuite>${project.artifactId}</testSuite>
+  	<testClass>org.eclipse.pde.internal.ua.tests.AllUATests</testClass>
   </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <useUIHarness>true</useUIHarness>
+          <useUIThread>true</useUIThread>
+        </configuration>
+      </plugin>
+      <plugin>
+   		<groupId>org.eclipse.tycho</groupId>
+   		<artifactId>target-platform-configuration</artifactId>
+  		<version>${tycho.version}</version>
+   		<configuration>
+      		<dependency-resolution>
+         		<extraRequirements>
+             <requirement>
+              <type>eclipse-feature</type>
+              <id>org.eclipse.platform</id>
+              <versionRange>0.0.0</versionRange>
+            </requirement>
+            <requirement>
+              <type>eclipse-feature</type>
+              <id>org.eclipse.pde</id>
+              <versionRange>0.0.0</versionRange>
+            </requirement> 
+         		</extraRequirements>
+      		</dependency-resolution>
+   		</configuration>
+	  </plugin>
+    </plugins>
+  </build>
 </project>
