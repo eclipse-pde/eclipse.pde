@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -268,7 +268,7 @@ public class TargetContentsGroup {
 			handleTreeStateChange();
 		});
 		fTree.addSelectionChangedListener(event -> updateButtons());
-		fTree.setSorter(new ViewerSorter() {
+		fTree.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (fFeaureModeButton.getSelection()) {
