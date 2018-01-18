@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,7 +172,7 @@ public class TocEditor extends MultiSourceEditor {
 	 * @return the <code>IShowInTargetList</code>
 	 */
 	private IShowInTargetList getShowInTargetList() {
-		return () -> new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER };
+		return () -> new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };
 	}
 
 	@Override
