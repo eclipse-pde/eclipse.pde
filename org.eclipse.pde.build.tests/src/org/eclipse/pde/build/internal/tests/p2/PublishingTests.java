@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2018 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -1595,7 +1595,7 @@ public class PublishingTests extends P2TestCase {
 		}
 
 		assertLogContainsLines(buildFolder.getFile("director.log"), new String[] { "Installation failed.",
-				"Missing requirement: rcp.product 1.0.0.I10232 (uid.product 1.0.0.I10232) requires 'foo bar [1.0.0,1.0.0]' but it could not be found" });
+				"Missing requirement: rcp.product 1.0.0.I10232 (uid.product 1.0.0.I10232) requires 'foo; bar [1.0.0,1.0.0]' but it could not be found" });
 	}
 
 	public void testBug272907() throws Exception {
