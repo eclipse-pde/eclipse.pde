@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.use.ApiUsePatternTab.Pattern;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
@@ -57,24 +55,18 @@ public class ArchivePatternPage extends UsePatternPage {
 		if (this.bundle != null) {
 			this.bundletext.setText(this.bundle);
 		}
-		this.bundletext.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setDirty();
-				setPageComplete(isPageComplete());
-			}
+		this.bundletext.addModifyListener(e -> {
+			setDirty();
+			setPageComplete(isPageComplete());
 		});
 		SWTFactory.createLabel(comp, Messages.ArchivePatternPage_archive_name, 1);
 		this.patterntext = SWTFactory.createSingleText(comp, 1);
 		if (this.archive != null) {
 			this.patterntext.setText(this.archive);
 		}
-		this.patterntext.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setDirty();
-				setPageComplete(isPageComplete());
-			}
+		this.patterntext.addModifyListener(e -> {
+			setDirty();
+			setPageComplete(isPageComplete());
 		});
 		setControl(comp);
 		this.bundletext.setFocus();

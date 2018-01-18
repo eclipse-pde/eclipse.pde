@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ public class DeltaSession implements ISession {
 
 		private static List<PropertyDescriptor> Descriptors;
 		static {
-			Descriptors = new ArrayList<PropertyDescriptor>();
+			Descriptors = new ArrayList<>();
 
 			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(ID_MESSAGE, P_MESSAGE);
 			propertyDescriptor.setCategory(P_MESSAGE_CATEGORY);
@@ -166,7 +166,7 @@ public class DeltaSession implements ISession {
 
 		public void add(DeltaSession.TreeNode node) {
 			if (this.children == null) {
-				this.children = new HashMap<String, TreeNode>();
+				this.children = new HashMap<>();
 			}
 			this.children.put(node.name, node);
 		}

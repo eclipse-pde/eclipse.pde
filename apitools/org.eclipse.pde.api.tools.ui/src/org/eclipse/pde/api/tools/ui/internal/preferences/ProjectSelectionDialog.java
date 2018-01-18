@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,11 +26,7 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -62,7 +58,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		public Object[] getChildren(Object element) {
 			if (element instanceof IJavaModel) {
 				IJavaModel model = (IJavaModel) element;
-				HashSet<IJavaProject> set = new HashSet<IJavaProject>();
+				HashSet<IJavaProject> set = new HashSet<>();
 				try {
 					IJavaProject[] projects = model.getJavaProjects();
 					for (IJavaProject project : projects) {
@@ -127,18 +123,9 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		createMessageArea(composite);
 
 		fTableViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				doSelectionChanged(((IStructuredSelection) event.getSelection()).toArray());
-			}
-		});
-		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		fTableViewer.addSelectionChangedListener(
+				event -> doSelectionChanged(((IStructuredSelection) event.getSelection()).toArray()));
+		fTableViewer.addDoubleClickListener(event -> okPressed());
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;

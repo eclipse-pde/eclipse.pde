@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,11 +26,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
@@ -41,10 +37,8 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -75,7 +69,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	private IWorkingCopyManager fManager;
 	CheckboxTableViewer fTableViewer;
-	HashSet<String> fLocationList = new HashSet<String>();
+	HashSet<String> fLocationList = new HashSet<>();
 	Button remove = null;
 	Button editbutton = null;
 
@@ -124,95 +118,58 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridData gd = (GridData) table.getLayoutData();
 		gd.widthHint = 250;
-		table.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if (e.stateMask == SWT.NONE && e.keyCode == SWT.DEL) {
-					removeLocation();
-				}
+		table.addKeyListener(KeyListener.keyReleasedAdapter(e -> {
+			if (e.stateMask == SWT.NONE && e.keyCode == SWT.DEL) {
+				removeLocation();
 			}
-		});
+		}));
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TableColumnLabelProvider());
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		Composite bcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
 		Button button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_3, null);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				select(true);
-			}
-		});
+		button.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> select(true)));
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_10, null);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				select(false);
-			}
-		});
+		button.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> select(false)));
 
 		SWTFactory.createHorizontalSpacer(bcomp, 1);
 
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_4, null);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String loc = getDirectory(null);
-				if (loc != null) {
-					String exactLocation = UseScanManager.getExactScanLocation(loc);
-					if (exactLocation == null) {
-						addLocation(loc);
-					} else {
-						addLocation(exactLocation);
-					}
-				}
-			}
-		});
-		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_5, null);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String loc = getArchive(null);
-				if (loc != null) {
+		button.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			String loc = getDirectory(null);
+			if (loc != null) {
+				String exactLocation = UseScanManager.getExactScanLocation(loc);
+				if (exactLocation == null) {
 					addLocation(loc);
+				} else {
+					addLocation(exactLocation);
 				}
 			}
-		});
+		}));
+		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_5, null);
+		button.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			String loc = getArchive(null);
+			if (loc != null) {
+				addLocation(loc);
+			}
+		}));
 
 		editbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_1, null);
 		editbutton.setEnabled(false);
-		editbutton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				edit();
-			}
-		});
+		editbutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> edit()));
 		remove = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_6, null);
 		remove.setEnabled(false);
-		remove.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				removeLocation();
-			}
-		});
+		remove.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> removeLocation()));
 
-		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = fTableViewer.getStructuredSelection();
-				remove.setEnabled(!selection.isEmpty());
-				editbutton.setEnabled(selection.size() == 1);
-			}
+		fTableViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection selection = fTableViewer.getStructuredSelection();
+			remove.setEnabled(!selection.isEmpty());
+			editbutton.setEnabled(selection.size() == 1);
 		});
-		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				edit();
-			}
-		});
+		fTableViewer.addDoubleClickListener(event -> edit());
 
-		HashMap<String, Object> linkdata = new HashMap<String, Object>();
+		HashMap<String, Object> linkdata = new HashMap<>();
 		linkdata.put(ApiErrorsWarningsPreferencePage.INITIAL_TAB, Integer.valueOf(ApiErrorsWarningsConfigurationBlock.API_USE_SCANS_PAGE_ID));
 		PreferenceLinkArea apiErrorLinkArea = new PreferenceLinkArea(comp, SWT.NONE, ApiErrorsWarningsPreferencePage.ID, PreferenceMessages.ApiUseScanPreferencePage_9, (IWorkbenchPreferenceContainer) getContainer(), linkdata);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -366,7 +323,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 		String location = getStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, null);
 
-		ArrayList<String> checkedLocations = new ArrayList<String>();
+		ArrayList<String> checkedLocations = new ArrayList<>();
 		if (location != null && location.length() > 0) {
 			String[] locations = location.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
 			for (String locationString : locations) {
@@ -431,7 +388,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			return false;
 		}
 
-		ArrayList<String> oldCheckedElements = new ArrayList<String>();
+		ArrayList<String> oldCheckedElements = new ArrayList<>();
 		if (oldLocations != null && oldLocations.length() > 0) {
 			String[] locations = oldLocations.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
 			for (String location : locations) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.ui.internal.use;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -38,10 +37,8 @@ import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -68,22 +65,12 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Default selection adapter for updating the launch dialog
 	 */
-	SelectionAdapter selectionadapter = new SelectionAdapter() {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			updateDialog();
-		}
-	};
+	SelectionListener selectionadapter = SelectionListener.widgetSelectedAdapter(e -> updateDialog());
 
 	/**
 	 * Default modify adapter for updating the launch dialog
 	 */
-	ModifyListener modifyadapter = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			updateDialog();
-		}
-	};
+	ModifyListener modifyadapter = e -> updateDialog();
 
 	boolean initializing = false;
 	Combo baseline, targetCombo, reportTypeCombo;
@@ -106,109 +93,75 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 		Group reportGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_analuze, 3, 3, GridData.FILL_HORIZONTAL);
 		this.radioBaseline = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_api_baseline);
-		this.radioBaseline.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateTarget();
-			}
-		});
+		this.radioBaseline.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> updateTarget()));
 		this.baseline = SWTFactory.createCombo(reportGroup, SWT.BORDER | SWT.FLAT | SWT.READ_ONLY, 1, GridData.BEGINNING | GridData.FILL_HORIZONTAL, null);
 		GridData gd = (GridData) this.baseline.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		this.baseline.addSelectionListener(selectionadapter);
 		this.baselinesButton = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_baselines, null);
-		this.baselinesButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int bef = ApiUseScanTab.this.baseline.getSelectionIndex();
-				String name = null;
-				if (bef >= 0) {
-					name = ApiUseScanTab.this.baseline.getItem(bef);
-				}
-				SWTFactory.showPreferencePage(getTabShell(), "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage", null); //$NON-NLS-1$
-				updateAvailableBaselines();
-				if (name != null) {
-					String[] items = ApiUseScanTab.this.baseline.getItems();
-					for (int i = 0; i < items.length; i++) {
-						if (name.equals(items[i])) {
-							ApiUseScanTab.this.baseline.select(i);
-							break;
-						}
+		this.baselinesButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			int bef = ApiUseScanTab.this.baseline.getSelectionIndex();
+			String name = null;
+			if (bef >= 0) {
+				name = ApiUseScanTab.this.baseline.getItem(bef);
+			}
+			SWTFactory.showPreferencePage(getTabShell(), "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage", null); //$NON-NLS-1$
+			updateAvailableBaselines();
+			if (name != null) {
+				String[] items = ApiUseScanTab.this.baseline.getItems();
+				for (int i = 0; i < items.length; i++) {
+					if (name.equals(items[i])) {
+						ApiUseScanTab.this.baseline.select(i);
+						break;
 					}
 				}
-				updateDialog();
 			}
-		});
+			updateDialog();
+		}));
 
 		this.radioTarget = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_target_definitions);
-		this.radioTarget.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateTarget();
-			}
-		});
+		this.radioTarget.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> updateTarget()));
 		this.targetCombo = SWTFactory.createCombo(reportGroup, SWT.BORDER | SWT.FLAT | SWT.READ_ONLY, 1, GridData.BEGINNING | GridData.FILL_HORIZONTAL, null);
 		gd = (GridData) this.targetCombo.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		this.targetCombo.addSelectionListener(selectionadapter);
 		this.targetsButton = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_targets, null);
-		this.targetsButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int index = ApiUseScanTab.this.targetCombo.getSelectionIndex();
-				ITargetHandle handle = null;
-				if (index >= 0) {
-					handle = ApiUseScanTab.this.targetHandles[index];
-				}
-				SWTFactory.showPreferencePage(getTabShell(), "org.eclipse.pde.ui.TargetPlatformPreferencePage", null); //$NON-NLS-1$
-				updateAvailableTargets();
-				if (handle != null) {
-					for (int i = 0; i < targetHandles.length; i++) {
-						if (handle.equals(targetHandles[i])) {
-							targetCombo.select(i);
-							break;
-						}
+		this.targetsButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			int index = ApiUseScanTab.this.targetCombo.getSelectionIndex();
+			ITargetHandle handle = null;
+			if (index >= 0) {
+				handle = ApiUseScanTab.this.targetHandles[index];
+			}
+			SWTFactory.showPreferencePage(getTabShell(), "org.eclipse.pde.ui.TargetPlatformPreferencePage", null); //$NON-NLS-1$
+			updateAvailableTargets();
+			if (handle != null) {
+				for (int i = 0; i < targetHandles.length; i++) {
+					if (handle.equals(targetHandles[i])) {
+						targetCombo.select(i);
+						break;
 					}
 				}
-				updateDialog();
 			}
-		});
+			updateDialog();
+		}));
 
 		this.radioInstall = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_install_location);
-		this.radioInstall.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateTarget();
-			}
-		});
+		this.radioInstall.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> updateTarget()));
 		this.installLocation = SWTFactory.createText(reportGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		gd = (GridData) this.installLocation.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
-		this.installLocation.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				scheduleUpdate();
-			}
-		});
+		this.installLocation.addModifyListener(e -> scheduleUpdate());
 
 		this.installButton = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_browse, null);
-		this.installButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleFolderBrowse(ApiUseScanTab.this.installLocation, Messages.ApiUseScanTab_select_install_location);
-				updateDialog();
-			}
-		});
+		this.installButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			handleFolderBrowse(ApiUseScanTab.this.installLocation, Messages.ApiUseScanTab_select_install_location);
+			updateDialog();
+		}));
 		this.radioReportOnly = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_generate_html_only);
 		gd = (GridData) this.radioReportOnly.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = 2;
-		this.radioReportOnly.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateTarget();
-			}
-		});
+		this.radioReportOnly.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> updateTarget()));
 
 		searchForGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_for, 2, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createLabel(searchForGroup, Messages.ApiUseScanTab_references_to, 1);
@@ -234,12 +187,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		BidiUtils.applyBidiProcessing(this.filterRoot, StructuredTextTypeHandlerFactory.FILE);
 		this.filterRoot.addModifyListener(modifyadapter);
 		Button filterBrowse = SWTFactory.createPushButton(filterGroup, Messages.ApiUseScanTab_Browse, null);
-		filterBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleFolderBrowse(ApiUseScanTab.this.filterRoot, Messages.ApiUseScanTab_FilterBrowseTitle);
-			}
-		});
+		filterBrowse.addSelectionListener(SelectionListener.widgetSelectedAdapter(
+				e -> handleFolderBrowse(ApiUseScanTab.this.filterRoot, Messages.ApiUseScanTab_FilterBrowseTitle)));
 
 		reportGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_HORIZONTAL);
 
@@ -257,25 +206,18 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		gd = (GridData) this.reportlocation.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		Button browse = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_brows_e_, null);
-		browse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleFolderBrowse(ApiUseScanTab.this.reportlocation, Messages.ApiUseScanTab_SelectDirectory);
-			}
-		});
+		browse.addSelectionListener(SelectionListener.widgetSelectedAdapter(
+				e -> handleFolderBrowse(ApiUseScanTab.this.reportlocation, Messages.ApiUseScanTab_SelectDirectory)));
 		this.cleanreportlocation = SWTFactory.createCheckButton(reportGroup, Messages.ApiUseScanTab_clean_report_dir, null, false, 2);
 		gd = (GridData) this.cleanreportlocation.getLayoutData();
 		this.cleanreportlocation.addSelectionListener(selectionadapter);
 		gd.horizontalIndent = 10;
 
 		this.createhtml = SWTFactory.createCheckButton(reportGroup, Messages.ApiUseScanTab_create_html_report, null, false, 2);
-		this.createhtml.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateReportOptions();
-				updateDialog();
-			}
-		});
+		this.createhtml.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			updateReportOptions();
+			updateDialog();
+		}));
 		this.cleanhtmllocation = SWTFactory.createCheckButton(reportGroup, Messages.ApiUseScanTab_clean_html_report_dir, null, false, 2);
 		gd = (GridData) this.cleanhtmllocation.getLayoutData();
 		gd.horizontalIndent = 10;
@@ -442,11 +384,11 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 * Updates available target definitions.
 	 */
 	void updateAvailableTargets() {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		ITargetPlatformService service = getTargetService();
 		if (service != null) {
 			ITargetHandle[] handles = service.getTargets(null);
-			List<ITargetDefinition> defs = new ArrayList<ITargetDefinition>();
+			List<ITargetDefinition> defs = new ArrayList<>();
 			for (ITargetHandle handle : handles) {
 				try {
 					defs.add(handle.getTargetDefinition());
@@ -454,24 +396,21 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 					// Suppress
 				}
 			}
-			Collections.sort(defs, new Comparator<Object>() {
-				@Override
-				public int compare(Object o1, Object o2) {
-					ITargetDefinition d1 = (ITargetDefinition) o1;
-					ITargetDefinition d2 = (ITargetDefinition) o2;
+			Collections.sort(defs, (o1, o2) -> {
+				ITargetDefinition d1 = o1;
+				ITargetDefinition d2 = o2;
 
-					final String name1 = d1.getName();
-					final String name2 = d2.getName();
-					if (name1 == null) {
-						if (name2 == null) {
-							return d1.getHandle().toString().compareTo(d2.getHandle().toString());
-						}
-						return -1;
-					} else if (name2 == null) {
-						return 1;
+				final String name1 = d1.getName();
+				final String name2 = d2.getName();
+				if (name1 == null) {
+					if (name2 == null) {
+						return d1.getHandle().toString().compareTo(d2.getHandle().toString());
 					}
-					return name1.compareTo(name2);
+					return -1;
+				} else if (name2 == null) {
+					return 1;
 				}
+				return name1.compareTo(name2);
 			});
 			targetHandles = new ITargetHandle[defs.size()];
 			for (int i = 0; i < defs.size(); i++) {
@@ -498,7 +437,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 * Updates available baselines.
 	 */
 	void updateAvailableBaselines() {
-		HashSet<String> ids = new HashSet<String>();
+		HashSet<String> ids = new HashSet<>();
 		IApiBaseline[] baselines = ApiPlugin.getDefault().getApiBaselineManager().getApiBaselines();
 		for (IApiBaseline apiBaseline : baselines) {
 			ids.add(apiBaseline.getName());

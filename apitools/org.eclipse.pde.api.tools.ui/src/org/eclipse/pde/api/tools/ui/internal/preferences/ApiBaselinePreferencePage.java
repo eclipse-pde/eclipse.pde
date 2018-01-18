@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,14 +22,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -45,10 +39,8 @@ import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiBaselineWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -85,9 +77,9 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 
 	IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 
-	private static HashSet<String> removed = new HashSet<String>(8);
+	private static HashSet<String> removed = new HashSet<>(8);
 	CheckboxTableViewer tableviewer = null;
-	ArrayList<IApiBaseline> backingcollection = new ArrayList<IApiBaseline>(8);
+	ArrayList<IApiBaseline> backingcollection = new ArrayList<>(8);
 	String newdefault = null;
 	private Button newbutton = null;
 
@@ -115,51 +107,39 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		SWTFactory.createWrapLabel(lcomp, PreferenceMessages.ApiProfilesPreferencePage_1, 2);
 		Table table = new Table(lcomp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		table.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if (e.stateMask == SWT.NONE && e.keyCode == SWT.DEL) {
-					doRemove();
-				}
+		table.addKeyListener(KeyListener.keyReleasedAdapter(e -> {
+			if (e.stateMask == SWT.NONE && e.keyCode == SWT.DEL) {
+				doRemove();
 			}
-		});
+		}));
 		tableviewer = new CheckboxTableViewer(table);
 		tableviewer.setLabelProvider(new BaselineLabelProvider());
 		tableviewer.setContentProvider(ArrayContentProvider.getInstance());
-		tableviewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
-				doEdit((IApiBaseline) ss.getFirstElement());
-			}
+		tableviewer.addDoubleClickListener(event -> {
+			IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+			doEdit((IApiBaseline) ss.getFirstElement());
 		});
-		tableviewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IApiBaseline[] state = getCurrentSelection();
-				removebutton.setEnabled(state.length > 0);
-				editbutton.setEnabled(state.length == 1);
-			}
+		tableviewer.addSelectionChangedListener(event -> {
+			IApiBaseline[] state = getCurrentSelection();
+			removebutton.setEnabled(state.length > 0);
+			editbutton.setEnabled(state.length == 1);
 		});
-		tableviewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				IApiBaseline baseline = (IApiBaseline) event.getElement();
-				boolean checked = event.getChecked();
-				if (checked) {
-					tableviewer.setCheckedElements(new Object[] { baseline });
-					newdefault = baseline.getName();
-					defaultchanged = !newdefault.equals(origdefault);
-				} else {
-					tableviewer.setChecked(baseline, checked);
-					newdefault = null;
-					manager.setDefaultApiBaseline(null);
-					defaultchanged = true;
-				}
-				rebuildcount = 0;
-				tableviewer.refresh(true);
-				dirty = true;
+		tableviewer.addCheckStateListener(event -> {
+			IApiBaseline baseline = (IApiBaseline) event.getElement();
+			boolean checked = event.getChecked();
+			if (checked) {
+				tableviewer.setCheckedElements(new Object[] { baseline });
+				newdefault = baseline.getName();
+				defaultchanged = !newdefault.equals(origdefault);
+			} else {
+				tableviewer.setChecked(baseline, checked);
+				newdefault = null;
+				manager.setDefaultApiBaseline(null);
+				defaultchanged = true;
 			}
+			rebuildcount = 0;
+			tableviewer.refresh(true);
+			dirty = true;
 		});
 		tableviewer.setComparator(new ViewerComparator() {
 			@Override
@@ -167,53 +147,37 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 				return ((IApiBaseline) e1).getName().compareTo(((IApiBaseline) e2).getName());
 			}
 		});
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				backingcollection.addAll(Arrays.asList(manager.getApiBaselines()));
-				tableviewer.setInput(backingcollection);
-			}
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			backingcollection.addAll(Arrays.asList(manager.getApiBaselines()));
+			tableviewer.setInput(backingcollection);
 		});
 		Composite bcomp = SWTFactory.createComposite(lcomp, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
 		newbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_2, null);
-		newbutton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ApiBaselineWizard wizard = new ApiBaselineWizard(null);
-				WizardDialog dialog = new WizardDialog(getShell(), wizard);
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					IApiBaseline profile = wizard.getProfile();
-					if (profile != null) {
-						backingcollection.add(profile);
-						tableviewer.refresh();
-						tableviewer.setSelection(new StructuredSelection(profile), true);
-						if (backingcollection.size() == 1) {
-							newdefault = profile.getName();
-							tableviewer.setCheckedElements(new Object[] { profile });
-							tableviewer.refresh(profile);
-							defaultchanged = true;
-							rebuildcount = 0;
-						}
-						dirty = true;
+		newbutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			ApiBaselineWizard wizard = new ApiBaselineWizard(null);
+			WizardDialog dialog = new WizardDialog(getShell(), wizard);
+			if (dialog.open() == IDialogConstants.OK_ID) {
+				IApiBaseline profile = wizard.getProfile();
+				if (profile != null) {
+					backingcollection.add(profile);
+					tableviewer.refresh();
+					tableviewer.setSelection(new StructuredSelection(profile), true);
+					if (backingcollection.size() == 1) {
+						newdefault = profile.getName();
+						tableviewer.setCheckedElements(new Object[] { profile });
+						tableviewer.refresh(profile);
+						defaultchanged = true;
+						rebuildcount = 0;
 					}
+					dirty = true;
 				}
 			}
-		});
+		}));
 		editbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_4, null);
-		editbutton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				doEdit(getCurrentSelection()[0]);
-			}
-		});
+		editbutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> doEdit(getCurrentSelection()[0])));
 		editbutton.setEnabled(false);
 		removebutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_3, null);
-		removebutton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				doRemove();
-			}
-		});
+		removebutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> doRemove()));
 		removebutton.setEnabled(false);
 
 		SWTFactory.createVerticalSpacer(bcomp, 1);

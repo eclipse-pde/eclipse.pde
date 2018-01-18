@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public class UnsupportedTagResolution extends WorkbenchMarkerResolution {
 
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
-		HashSet<IMarker> mset = new HashSet<IMarker>(markers.length);
+		HashSet<IMarker> mset = new HashSet<>(markers.length);
 		for (int i = 0; i < markers.length; i++) {
 			if (Util.isApiProblemMarker(markers[i]) && !fBackingMarker.equals(markers[i]) && markers[i].getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1) == IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID) {
 				mset.add(markers[i]);

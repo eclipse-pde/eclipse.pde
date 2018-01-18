@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,8 +104,8 @@ public class ApiUseScanJob extends Job {
 				localmonitor.setWorkRemaining((isSpecified(ApiUseLaunchDelegate.CREATE_HTML) ? 14 : 13));
 				// create baseline
 				IApiBaseline baseline = createApiBaseline(kind, localmonitor.split(1));
-				Set<String> ids = new HashSet<String>();
-				TreeSet<IApiComponent> scope = new TreeSet<IApiComponent>(Util.componentsorter);
+				Set<String> ids = new HashSet<>();
+				TreeSet<IApiComponent> scope = new TreeSet<>(Util.componentsorter);
 				getContext(baseline, ids, scope, localmonitor.split(2));
 				int kinds = 0;
 				if (isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES)) {
@@ -273,7 +273,7 @@ public class ApiUseScanJob extends Job {
 	 */
 	private void getContext(IApiBaseline baseline, Set<String> ids, Set<IApiComponent> scope, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_collecting_target_components, 10);
-		this.notsearched = new TreeSet<SkippedComponent>(Util.componentsorter);
+		this.notsearched = new TreeSet<>(Util.componentsorter);
 		String regex = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String) null);
 		Pattern pattern = getPattern(regex);
 		regex = this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String) null);
@@ -458,7 +458,7 @@ public class ApiUseScanJob extends Job {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_reading_target, 10);
 		definition.resolve(localmonitor.split(2));
 		TargetBundle[] bundles = definition.getBundles();
-		List<IApiComponent> components = new ArrayList<IApiComponent>();
+		List<IApiComponent> components = new ArrayList<>();
 		IApiBaseline profile = ApiModelFactory.newApiBaseline(definition.getName());
 		localmonitor.setWorkRemaining(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {

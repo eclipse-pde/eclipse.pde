@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,7 @@ import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.actions.ActionMessages;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiBaselinePreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -78,30 +77,24 @@ public class CompareToBaselineWizardPage extends WizardPage {
 
 		SWTFactory.createLabel(comp, ActionMessages.SelectABaseline, 1);
 		this.baselinecombo = SWTFactory.createCombo(comp, SWT.BORDER | SWT.FLAT | SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, null);
-		this.baselinecombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Combo combo = (Combo) e.widget;
-				String[] baselineNames = (String[]) combo.getData();
-				String selectedBaselineName = baselineNames[combo.getSelectionIndex()];
-				CompareToBaselineWizardPage.this.baselineName = selectedBaselineName;
-				setPageComplete(isPageComplete());
-			}
-		});
+		this.baselinecombo.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			Combo combo = (Combo) e.widget;
+			String[] baselineNames = (String[]) combo.getData();
+			String selectedBaselineName = baselineNames[combo.getSelectionIndex()];
+			CompareToBaselineWizardPage.this.baselineName = selectedBaselineName;
+			setPageComplete(isPageComplete());
+		}));
 		this.link = SWTFactory.createLink(comp, ActionMessages.AddNewBaseline, JFaceResources.getDialogFont(), 1, GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
-		link.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IAdaptable element = getAdaptable();
-				if (element == null) {
-					return;
-				}
-				CompareToBaselineWizardPage.this.baselineName = null;
-				SWTFactory.showPreferencePage(getShell(), ApiBaselinePreferencePage.ID, element);
-				initialize();
-				setPageComplete(isPageComplete());
+		link.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			IAdaptable element = getAdaptable();
+			if (element == null) {
+				return;
 			}
-		});
+			CompareToBaselineWizardPage.this.baselineName = null;
+			SWTFactory.showPreferencePage(getShell(), ApiBaselinePreferencePage.ID, element);
+			initialize();
+			setPageComplete(isPageComplete());
+		}));
 		link.setToolTipText(ActionMessages.CompareToBaselineWizardPage_open_baseline_pref_page);
 		// do initialization
 		initialize();

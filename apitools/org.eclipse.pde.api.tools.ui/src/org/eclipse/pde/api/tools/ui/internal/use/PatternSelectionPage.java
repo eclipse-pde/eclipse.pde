@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,8 @@
 package org.eclipse.pde.api.tools.ui.internal.use;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -91,13 +89,11 @@ public class PatternSelectionPage extends WizardPage {
 		this.viewer.setLabelProvider(new LP());
 		this.viewer.setContentProvider(ArrayContentProvider.getInstance());
 		this.viewer.setInput(fgelements);
-		this.viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				String desc = getSelectedElement().desc;
-				PatternSelectionPage.this.description.setText((desc == null ? Messages.PatternSelectionPage_no_desc : desc));
-				setPageComplete(isPageComplete());
-			}
+		this.viewer.addSelectionChangedListener(event -> {
+			String desc = getSelectedElement().desc;
+			PatternSelectionPage.this.description
+					.setText((desc == null ? Messages.PatternSelectionPage_no_desc : desc));
+			setPageComplete(isPageComplete());
 		});
 		this.viewer.setComparator(new ViewerComparator() {
 			@Override

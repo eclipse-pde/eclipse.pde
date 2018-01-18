@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,9 +36,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -57,12 +55,8 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -139,7 +133,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	private static final String SETTINGS_REMOVECXML = "remove_componentxml"; //$NON-NLS-1$
 
 	CheckboxTableViewer tableviewer = null;
-	HashSet<Object> checkedset = new HashSet<Object>();
+	HashSet<Object> checkedset = new HashSet<>();
 	Button removecxml = null;
 	UpdateJob updatejob = new UpdateJob();
 	StringFilter filter = new StringFilter();
@@ -166,24 +160,18 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiToolingSetupWizardPage_6, 1, 50);
 
 		final Text text = SWTFactory.createText(comp, SWT.BORDER, 1);
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updatejob.setFilter(text.getText().trim());
-				updatejob.cancel();
-				updatejob.schedule();
-			}
+		text.addModifyListener(e -> {
+			updatejob.setFilter(text.getText().trim());
+			updatejob.cancel();
+			updatejob.schedule();
 		});
-		text.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_DOWN) {
-					if (tableviewer != null) {
-						tableviewer.getTable().setFocus();
-					}
+		text.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+			if (e.keyCode == SWT.ARROW_DOWN) {
+				if (tableviewer != null) {
+					tableviewer.getTable().setFocus();
 				}
 			}
-		});
+		}));
 
 		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_8, 1, 50);
 
@@ -197,39 +185,30 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		tableviewer.setInput(getInputProjects());
 		tableviewer.setComparator(new ViewerComparator());
 		tableviewer.addFilter(filter);
-		tableviewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getChecked()) {
-					checkedset.add(event.getElement());
-				} else {
-					checkedset.remove(event.getElement());
-				}
-				setPageComplete(pageValid());
+		tableviewer.addCheckStateListener(event -> {
+			if (event.getChecked()) {
+				checkedset.add(event.getElement());
+			} else {
+				checkedset.remove(event.getElement());
 			}
+			setPageComplete(pageValid());
 		});
 		Composite bcomp = SWTFactory.createComposite(comp, 3, 1, GridData.FILL_HORIZONTAL | GridData.END, 0, 0);
 		Button button = SWTFactory.createPushButton(bcomp, WizardMessages.UpdateJavadocTagsWizardPage_10, null);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				tableviewer.setAllChecked(true);
-				checkedset.addAll(Arrays.asList(tableviewer.getCheckedElements()));
-				setPageComplete(pageValid());
-			}
-		});
+		button.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			tableviewer.setAllChecked(true);
+			checkedset.addAll(Arrays.asList(tableviewer.getCheckedElements()));
+			setPageComplete(pageValid());
+		}));
 		button = SWTFactory.createPushButton(bcomp, WizardMessages.UpdateJavadocTagsWizardPage_11, null);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				tableviewer.setAllChecked(false);
-				TableItem[] items = tableviewer.getTable().getItems();
-				for (TableItem item : items) {
-					checkedset.remove(item.getData());
-				}
-				setPageComplete(pageValid());
+		button.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			tableviewer.setAllChecked(false);
+			TableItem[] items = tableviewer.getTable().getItems();
+			for (TableItem item : items) {
+				checkedset.remove(item.getData());
 			}
-		});
+			setPageComplete(pageValid());
+		}));
 
 		checkcount = SWTFactory.createText(bcomp, SWT.FLAT | SWT.READ_ONLY, 1, GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 		checkcount.setBackground(bcomp.getBackground());
@@ -250,9 +229,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.jface.wizard.WizardPage#setPageComplete(boolean)
-	 */
 	@Override
 	public void setPageComplete(boolean complete) {
 		super.setPageComplete(complete);
@@ -278,7 +254,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 */
 	private IProject[] getInputProjects() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		ArrayList<IProject> pjs = new ArrayList<IProject>();
+		ArrayList<IProject> pjs = new ArrayList<>();
 		for (IProject project : projects) {
 			try {
 				if (acceptProject(project)) {
@@ -315,7 +291,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 							ISelection selection = provider.getSelection();
 							if (selection instanceof IStructuredSelection) {
 								Object[] jps = ((IStructuredSelection) provider.getSelection()).toArray();
-								ArrayList<IProject> pjs = new ArrayList<IProject>();
+								ArrayList<IProject> pjs = new ArrayList<>();
 								for (Object jp : jps) {
 									if (jp instanceof IAdaptable) {
 										IAdaptable adapt = (IAdaptable) jp;
@@ -374,7 +350,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 */
 	void createTagChanges(CompositeChange projectchange, IJavaProject project, File cxml) {
 		try {
-			HashMap<IFile, Set<TextEdit>> map = new HashMap<IFile, Set<TextEdit>>();
+			HashMap<IFile, Set<TextEdit>> map = new HashMap<>();
 			ApiDescriptionProcessor.collectTagUpdates(project, cxml, map);
 			IFile file = null;
 			TextFileChange change = null;
@@ -405,33 +381,31 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 */
 	private void collectChanges() {
 		final ApiToolingSetupRefactoring refactoring = (ApiToolingSetupRefactoring) getRefactoring();
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				Object[] projects = checkedset.toArray(new IProject[checkedset.size()]);
-				IProject project = null;
-				SubMonitor localmonitor = SubMonitor.convert(monitor);
-				localmonitor.beginTask(IApiToolsConstants.EMPTY_STRING, projects.length);
-				localmonitor.setTaskName(WizardMessages.ApiToolingSetupWizardPage_7);
-				refactoring.resetRefactoring();
-				boolean remove = removecxml.getSelection();
-				CompositeChange pchange = null;
-				for (Object project2 : projects) {
-					project = (IProject) project2;
-					pchange = new CompositeChange(project.getName());
-					refactoring.addChange(pchange);
-					pchange.add(new ProjectUpdateChange(project));
-					localmonitor.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, project.getName()));
-					IResource cxml = project.findMember(IApiCoreConstants.COMPONENT_XML_NAME);
-					if (cxml != null) {
-						// collect the changes for doc
-						createTagChanges(pchange, JavaCore.create(project), new File(cxml.getLocationURI()));
-						if (remove) {
-							pchange.add(new DeleteResourceChange(cxml.getFullPath(), true));
-						}
+		IRunnableWithProgress op = monitor -> {
+			Object[] projects = checkedset.toArray(new IProject[checkedset.size()]);
+			IProject project = null;
+			SubMonitor localmonitor = SubMonitor.convert(monitor);
+			localmonitor.beginTask(IApiToolsConstants.EMPTY_STRING, projects.length);
+			localmonitor.setTaskName(WizardMessages.ApiToolingSetupWizardPage_7);
+			refactoring.resetRefactoring();
+			boolean remove = removecxml.getSelection();
+			CompositeChange pchange = null;
+			for (Object project2 : projects) {
+				project = (IProject) project2;
+				pchange = new CompositeChange(project.getName());
+				refactoring.addChange(pchange);
+				pchange.add(new ProjectUpdateChange(project));
+				localmonitor
+						.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, project.getName()));
+				IResource cxml = project.findMember(IApiCoreConstants.COMPONENT_XML_NAME);
+				if (cxml != null) {
+					// collect the changes for doc
+					createTagChanges(pchange, JavaCore.create(project), new File(cxml.getLocationURI()));
+					if (remove) {
+						pchange.add(new DeleteResourceChange(cxml.getFullPath(), true));
 					}
-					localmonitor.split(1);
 				}
+				localmonitor.split(1);
 			}
 		};
 		try {

@@ -18,8 +18,6 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -63,13 +61,10 @@ public class SelectApiBaselineTypeWizardPage extends WizardPage {
 				widgetSelected(e);
 			}
 		};
-		MouseListener mouseClickListener = new MouseAdapter() {
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				update();
-				getContainer().showPage(getNextPage());
-			}
-		};
+		MouseListener mouseClickListener = MouseListener.mouseDoubleClickAdapter(e -> {
+			update();
+			getContainer().showPage(getNextPage());
+		});
 		locationIsTarget.addSelectionListener(typeListener);
 		locationIsTarget.addMouseListener(mouseClickListener);
 		locationIsDirectory.addSelectionListener(typeListener);

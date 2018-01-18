@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Sep 12, 2013 IBM Corporation and others.
+ * Copyright (c) Sep 12, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class RemoveUnsupportedAnnotationOperation extends UIJob {
 	@Override
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, MarkerMessages.RemoveUnsupportedTagOperation_removeing_unsupported_tag, fMarkers.length + 6);
-		HashMap<ICompilationUnit, Boolean> seen = new HashMap<ICompilationUnit, Boolean>();
+		HashMap<ICompilationUnit, Boolean> seen = new HashMap<>();
 		for (IMarker fMarker : fMarkers) {
 			// retrieve the AST node compilation unit
 			IResource resource = fMarker.getResource();

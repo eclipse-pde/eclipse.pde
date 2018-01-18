@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,7 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -97,17 +94,14 @@ public class ExportDialog extends Dialog {
 	 * @param title
 	 */
 	public ExportDialog(Shell shell, String title) {
-		this(shell, title, ActionMessages.ExportDialogDescription, Util.EMPTY_STRING, new IInputValidator() {
-			@Override
-			public String isValid(String newText) {
-				if (newText != null && newText.length() > 0) {
-					if (!newText.endsWith(".html") & !newText.endsWith(".xml")) { //$NON-NLS-1$ //$NON-NLS-2$
-						return ActionMessages.ExportDialogErrorMessage;
-					}
-					return null;
+		this(shell, title, ActionMessages.ExportDialogDescription, Util.EMPTY_STRING, newText -> {
+			if (newText != null && newText.length() > 0) {
+				if (!newText.endsWith(".html") & !newText.endsWith(".xml")) { //$NON-NLS-1$ //$NON-NLS-2$
+					return ActionMessages.ExportDialogErrorMessage;
 				}
-				return ActionMessages.ExportDialogErrorMessage;
+				return null;
 			}
+			return ActionMessages.ExportDialogErrorMessage;
 		});
 	}
 
@@ -192,34 +186,26 @@ public class ExportDialog extends Dialog {
 		}
 		text = new Text(comp, getInputTextStyle());
 		text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validateInput();
-			}
-		});
+		text.addModifyListener(e -> validateInput());
 		Button browseButton = SWTFactory.createPushButton(comp, ActionMessages.Browse, null, SWT.RIGHT);
 		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		browseButton.setLayoutData(data);
 
-		browseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog(getShell());
-				dialog.setText(ActionMessages.SelectFileName);
-				String loctext = ExportDialog.this.getValue().trim();
-				if (loctext.length() > 0) {
-					File file = new File(loctext).getParentFile();
-					if (file != null && file.exists()) {
-						dialog.setFilterPath(file.getAbsolutePath());
-					}
-				}
-				String newPath = dialog.open();
-				if (newPath != null) {
-					ExportDialog.this.getText().setText(newPath);
+		browseButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			FileDialog dialog = new FileDialog(getShell());
+			dialog.setText(ActionMessages.SelectFileName);
+			String loctext = ExportDialog.this.getValue().trim();
+			if (loctext.length() > 0) {
+				File file = new File(loctext).getParentFile();
+				if (file != null && file.exists()) {
+					dialog.setFilterPath(file.getAbsolutePath());
 				}
 			}
-		});
+			String newPath = dialog.open();
+			if (newPath != null) {
+				ExportDialog.this.getText().setText(newPath);
+			}
+		}));
 		errorMessageText = new Text(comp, SWT.READ_ONLY | SWT.WRAP);
 		GridData layoutData = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
 		layoutData.horizontalSpan = 2;

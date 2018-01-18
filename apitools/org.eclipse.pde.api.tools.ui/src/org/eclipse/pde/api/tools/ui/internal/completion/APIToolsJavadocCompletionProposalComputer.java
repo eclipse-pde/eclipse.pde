@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 			Set<String> tagnames = ApiPlugin.getJavadocTagManager().getAllTagNames();
 			List<TagElement> tags = node.tags();
 			if (fExistingTags == null) {
-				fExistingTags = new HashMap<String, Boolean>(tags.size());
+				fExistingTags = new HashMap<>(tags.size());
 			}
 			String name = null;
 			for (TagElement tag : tags) {
@@ -169,7 +169,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 						completiontext = tags[i].getCompleteTag(type, member);
 						if (appliesToContext(jcontext.getDocument(), completiontext, tokenstart, (length > 0 ? length : 1))) {
 							if (list == null) {
-								list = new ArrayList<ICompletionProposal>(tagcount - i);
+								list = new ArrayList<>(tagcount - i);
 							}
 							list.add(new APIToolsJavadocCompletionProposal(corecontext, completiontext, tags[i].getTagName(), fImageHandle));
 						}

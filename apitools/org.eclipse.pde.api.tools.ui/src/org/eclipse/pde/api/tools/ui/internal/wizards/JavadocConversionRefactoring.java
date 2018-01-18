@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2016 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,7 +97,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 	static Map<String, String> ALL_API_IMPORTS;
 	static {
-		ALL_API_IMPORTS = new HashMap<String, String>();
+		ALL_API_IMPORTS = new HashMap<>();
 		ALL_API_IMPORTS.put(JavadocTagManager.ANNOTATION_NOEXTEND, "org.eclipse.pde.api.tools.annotations.NoExtend"); //$NON-NLS-1$
 		ALL_API_IMPORTS.put(JavadocTagManager.ANNOTATION_NOIMPLEMENT, "org.eclipse.pde.api.tools.annotations.NoImplement"); //$NON-NLS-1$
 		ALL_API_IMPORTS.put(JavadocTagManager.ANNOTATION_NOINSTANTIATE, "org.eclipse.pde.api.tools.annotations.NoInstantiate"); //$NON-NLS-1$
@@ -108,7 +108,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 	/**
 	 * The projects to check
 	 */
-	private HashSet<IProject> projects = new HashSet<IProject>();
+	private HashSet<IProject> projects = new HashSet<>();
 
 	/**
 	 * Whether to remove the existing javadoc tags
@@ -209,7 +209,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 	 * @throws CoreException
 	 */
 	RefactoringStatus createChanges(CompositeChange projectchange, IJavaProject project, boolean remove, SubMonitor monitor) throws CoreException {
-		HashMap<IFile, Set<TextEdit>> map = new HashMap<IFile, Set<TextEdit>>();
+		HashMap<IFile, Set<TextEdit>> map = new HashMap<>();
 		// XXX visit all CU's -> all doc nodes -> create add annotations
 		RefactoringStatus status = collectAnnotationEdits(project, map, remove, monitor.split(75));
 		if (status.isOK()) {
@@ -268,7 +268,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 	 */
 	class AnnotVisitor extends ApiDescriptionVisitor {
 
-		Map<IFile, Set<TextEdit>> changes = new HashMap<IFile, Set<TextEdit>>();
+		Map<IFile, Set<TextEdit>> changes = new HashMap<>();
 		boolean remove = false;
 		IJavaProject project = null;
 		IApiComponent component = null;
@@ -354,7 +354,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 						IFile file = (IFile) cunit.getUnderlyingResource();
 						Set<TextEdit> edits = changes.get(file);
 						if (edits == null) {
-							edits = new HashSet<TextEdit>(3);
+							edits = new HashSet<>(3);
 							changes.put(file, edits);
 						}
 						edits.add(edit);
@@ -376,8 +376,8 @@ public class JavadocConversionRefactoring extends Refactoring {
 		IApiDescription apidescription = null;
 		ASTRewrite rewrite = null;
 		boolean remove = false;
-		List<String> existingImports = new ArrayList<String>();
-		List<String> missingImports = new ArrayList<String>();
+		List<String> existingImports = new ArrayList<>();
+		List<String> missingImports = new ArrayList<>();
 
 		/**
 		 * Constructor
@@ -516,10 +516,10 @@ public class JavadocConversionRefactoring extends Refactoring {
 				AST ast = body.getAST();
 				List<IExtendedModifier> mods = body.modifiers();
 				if (mods == null) {
-					mods = new ArrayList<IExtendedModifier>();
+					mods = new ArrayList<>();
 					rewrite.set(body, body.getModifiersProperty(), mods, null);
 				}
-				List<String> existing = new ArrayList<String>();
+				List<String> existing = new ArrayList<>();
 				for (IExtendedModifier modifier : mods) {
 					if (modifier.isAnnotation()) {
 						Annotation annot = (Annotation) modifier;

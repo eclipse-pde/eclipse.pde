@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -376,12 +374,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	}
 
 	private void hookDoubleClickAction() {
-		this.viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				APIToolingView.this.doubleClickAction.run();
-			}
-		});
+		this.viewer.addDoubleClickListener(event -> APIToolingView.this.doubleClickAction.run());
 	}
 
 	@Override
@@ -444,23 +437,20 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	}
 
 	private void updateActions() {
-		this.viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				ISessionManager sessionManager = ApiPlugin.getDefault().getSessionManager();
-				ISession active = sessionManager.getActiveSession();
-				APIToolingView.this.sessionDescription.setText(active == null ? "No Description" : active.getDescription()); //$NON-NLS-1$
-				ISession[] sessions = sessionManager.getSessions();
-				boolean atLeastOne = sessions.length >= 1;
-				APIToolingView.this.removeActiveSessionAction.setEnabled(atLeastOne);
-				APIToolingView.this.removeAllSessionsAction.setEnabled(atLeastOne);
-				APIToolingView.this.selectSessionAction.setEnabled(atLeastOne);
-				APIToolingView.this.exportSessionAction.setEnabled(active != null);
-				APIToolingView.this.expandallAction.setEnabled(atLeastOne);
-				APIToolingView.this.collapseallAction.setEnabled(atLeastOne);
-				APIToolingView.this.nextAction.setEnabled(atLeastOne);
-				APIToolingView.this.previousAction.setEnabled(atLeastOne);
-			}
+		this.viewer.getControl().getDisplay().asyncExec(() -> {
+			ISessionManager sessionManager = ApiPlugin.getDefault().getSessionManager();
+			ISession active = sessionManager.getActiveSession();
+			APIToolingView.this.sessionDescription.setText(active == null ? "No Description" : active.getDescription()); //$NON-NLS-1$
+			ISession[] sessions = sessionManager.getSessions();
+			boolean atLeastOne = sessions.length >= 1;
+			APIToolingView.this.removeActiveSessionAction.setEnabled(atLeastOne);
+			APIToolingView.this.removeAllSessionsAction.setEnabled(atLeastOne);
+			APIToolingView.this.selectSessionAction.setEnabled(atLeastOne);
+			APIToolingView.this.exportSessionAction.setEnabled(active != null);
+			APIToolingView.this.expandallAction.setEnabled(atLeastOne);
+			APIToolingView.this.collapseallAction.setEnabled(atLeastOne);
+			APIToolingView.this.nextAction.setEnabled(atLeastOne);
+			APIToolingView.this.previousAction.setEnabled(atLeastOne);
 		});
 	}
 
@@ -474,12 +464,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 
 	@Override
 	public void sessionAdded(final ISession session) {
-		this.viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				APIToolingView.this.viewer.setInput(session);
-			}
-		});
+		this.viewer.getControl().getDisplay().asyncExec(() -> APIToolingView.this.viewer.setInput(session));
 		updateActions();
 	}
 
@@ -491,12 +476,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 
 	@Override
 	public void sessionActivated(final ISession session) {
-		this.viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				APIToolingView.this.viewer.setInput(session);
-			}
-		});
+		this.viewer.getControl().getDisplay().asyncExec(() -> APIToolingView.this.viewer.setInput(session));
 		updateActions();
 	}
 

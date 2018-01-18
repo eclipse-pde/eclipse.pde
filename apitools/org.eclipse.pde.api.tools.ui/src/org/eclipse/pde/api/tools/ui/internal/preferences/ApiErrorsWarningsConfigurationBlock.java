@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.internal.ui.preferences.ConfigurationBlock;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -57,11 +56,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
@@ -697,17 +694,17 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Listing of all of the {@link ExpandableComposite}s in the block
 	 */
-	private ArrayList<ExpandableComposite> fExpComps = new ArrayList<ExpandableComposite>();
+	private ArrayList<ExpandableComposite> fExpComps = new ArrayList<>();
 
 	/**
 	 * Listing of all of the {@link Combo}s added to the block
 	 */
-	private ArrayList<Combo> fCombos = new ArrayList<Combo>();
+	private ArrayList<Combo> fCombos = new ArrayList<>();
 
 	/**
 	 * Listing of all of the {@link Checkbox}es added to the block
 	 */
-	private ArrayList<Button> fCheckBoxes = new ArrayList<Button>();
+	private ArrayList<Button> fCheckBoxes = new ArrayList<>();
 
 	/**
 	 * Control used inside the system library ee group
@@ -784,7 +781,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		if (fProject == null || hasProjectSpecificSettings(fProject)) {
 			fOldProjectSettings = null;
 		} else {
-			fOldProjectSettings = new IdentityHashMap<Key, String>();
+			fOldProjectSettings = new IdentityHashMap<>();
 			for (Key key : fgAllKeys) {
 				fOldProjectSettings.put(key, key.getStoredValue(fLookupOrder, false, fManager));
 			}
@@ -887,16 +884,12 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 					+ PreferenceMessages.ApiErrorsWarningsConfigurationBlock_4 + "</a>"; //$NON-NLS-1$
 			link.setText(NLS.bind(PreferenceMessages.ApiErrorsWarningsConfigurationBlock_5, linkHttp));
 			link.setSize(400, 100);
-			link.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					try {
-						PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(e.text));
-					} catch (Exception ex) {
-
-					}
+			link.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+				try {
+					PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(e.text));
+				} catch (Exception ex) {
 				}
-			});
+			}));
 		}
 
 		SWTFactory.createWrapLabel(page, description, 1);
@@ -957,12 +950,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		scomp.setExpandVertical(true);
 		scomp.setLayout(new GridLayout(1, false));
 		scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		scomp.addListener(SWT.Resize, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				handleExpand(getScrollingParent(event.widget));
-			}
-		});
+		scomp.addListener(SWT.Resize, event -> handleExpand(getScrollingParent(event.widget)));
 		Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
 		scomp.setContent(sbody);
 
@@ -1154,12 +1142,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		scomp.setExpandVertical(true);
 		scomp.setLayout(new GridLayout(2, false));
 		scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		scomp.addListener(SWT.Resize, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				handleExpand(getScrollingParent(event.widget));
-			}
-		});
+		scomp.addListener(SWT.Resize, event -> handleExpand(getScrollingParent(event.widget)));
 		Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
 		scomp.setContent(sbody);
 
@@ -1203,7 +1186,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		gd.horizontalIndent = 15;
 		Group group = SWTFactory.createGroup(comp, PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees, 3, 3, GridData.FILL_BOTH);
 		String[] stubs = StubApiComponent.getInstalledMetadata();
-		this.fSystemLibraryControls = new ArrayList<Control>(stubs.length + 1);
+		this.fSystemLibraryControls = new ArrayList<>(stubs.length + 1);
 		this.fSystemLibraryControls.add(group);
 		boolean installMore = (stubs.length < ProfileModifiers.getAllIds().length);
 		if (stubs.length == 0) {
@@ -1225,23 +1208,20 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 				SWTFactory.createVerticalSpacer(group, 1);
 				Link link = SWTFactory.createLink(group, linkedName, JFaceResources.getDialogFont(), 3);
 				link.setToolTipText(PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip);
-				link.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
-						try {
-							handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
-						} catch (ExecutionException ex) {
-							handleCommandException();
-						} catch (NotDefinedException ex) {
-							handleCommandException();
-						} catch (NotEnabledException ex) {
-							handleCommandException();
-						} catch (NotHandledException ex) {
-							handleCommandException();
-						}
+				link.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+					try {
+						handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
+					} catch (ExecutionException ex) {
+						handleCommandException();
+					} catch (NotDefinedException ex) {
+						handleCommandException();
+					} catch (NotEnabledException ex) {
+						handleCommandException();
+					} catch (NotHandledException ex) {
+						handleCommandException();
 					}
-				});
+				}));
 				this.fSystemLibraryControls.add(link);
 			}
 		}
@@ -1357,7 +1337,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	private void save() {
 		if (fDirty) {
 			try {
-				ArrayList<Key> changes = new ArrayList<Key>();
+				ArrayList<Key> changes = new ArrayList<>();
 				collectChanges(fLookupOrder[0], changes);
 				if (changes.size() > 0) {
 					if (fRebuildcount < 1) {
@@ -1521,7 +1501,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 				fOldProjectSettings = null;
 				updateControls();
 			} else {
-				fOldProjectSettings = new IdentityHashMap<Key, String>();
+				fOldProjectSettings = new IdentityHashMap<>();
 				String old = null;
 				for (Key key : fgAllKeys) {
 					old = key.getStoredValue(fLookupOrder, false, fManager);

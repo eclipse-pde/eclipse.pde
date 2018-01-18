@@ -19,8 +19,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ISessionManager;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -58,12 +57,7 @@ public class SelectSessionAction extends Action implements IMenuCreator {
 					Integer.valueOf(i + 1), session.getDescription() };
 			item.setText(NLS.bind(ActionMessages.SelectSessionActionEntry_label, labelparams));
 			item.setSelection(session == active);
-			item.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					manager.activateSession(session);
-				}
-			});
+			item.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> manager.activateSession(session)));
 		}
 		return menu;
 	}

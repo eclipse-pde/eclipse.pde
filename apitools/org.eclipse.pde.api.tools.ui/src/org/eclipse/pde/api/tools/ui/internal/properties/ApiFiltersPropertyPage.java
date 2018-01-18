@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,12 +25,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -52,10 +48,8 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -173,8 +167,8 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	Button fEditButton = null;
 	Text fCommentText = null;
 	private IProject fProject = null;
-	ArrayList<Object> fDeleteSet = new ArrayList<Object>();
-	ArrayList<CommentChange> fEditSet = new ArrayList<CommentChange>();
+	ArrayList<Object> fDeleteSet = new ArrayList<>();
+	ArrayList<CommentChange> fEditSet = new ArrayList<>();
 	private ArrayList<IResource> fInputset = null;
 
 	@Override
@@ -187,14 +181,11 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 		gd.widthHint = 300;
 		gd.heightHint = 200;
 		tree.setLayoutData(gd);
-		tree.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.character == SWT.DEL && e.stateMask == 0) {
-					handleRemove((IStructuredSelection) fViewer.getSelection());
-				}
+		tree.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+			if (e.character == SWT.DEL && e.stateMask == 0) {
+				handleRemove((IStructuredSelection) fViewer.getSelection());
 			}
-		});
+		}));
 		fViewer = new TreeViewer(tree);
 		fViewer.setContentProvider(new TreeContentProvider());
 		fViewer.setLabelProvider(new ApiToolsLabelProvider());
@@ -208,72 +199,60 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 		try {
 			IApiFilterStore store = getFilterStore();
 			if (store != null) {
-				fInputset = new ArrayList<IResource>(Arrays.asList(store.getResources()));
+				fInputset = new ArrayList<>(Arrays.asList(store.getResources()));
 				fViewer.setInput(fInputset);
 			}
 		} catch (CoreException e) {
 			ApiUIPlugin.log(e);
 		}
-		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
-				int size = ss.size();
-				fRemoveButton.setEnabled(size > 0);
-				if (size == 1) {
-					Object element = ss.getFirstElement();
-					if (element instanceof IApiProblemFilter) {
-						IApiProblemFilter filter = (IApiProblemFilter) element;
-						String comment = filter.getComment();
-						fEditButton.setEnabled(true);
-						if (comment != null) {
-							fCommentText.setText(comment);
-						} else {
-							fCommentText.setText(IApiToolsConstants.EMPTY_STRING);
-						}
+		fViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+			int size = ss.size();
+			fRemoveButton.setEnabled(size > 0);
+			if (size == 1) {
+				Object element = ss.getFirstElement();
+				if (element instanceof IApiProblemFilter) {
+					IApiProblemFilter filter = (IApiProblemFilter) element;
+					String comment = filter.getComment();
+					fEditButton.setEnabled(true);
+					if (comment != null) {
+						fCommentText.setText(comment);
 					} else {
-						fEditButton.setEnabled(false);
 						fCommentText.setText(IApiToolsConstants.EMPTY_STRING);
 					}
 				} else {
 					fEditButton.setEnabled(false);
 					fCommentText.setText(IApiToolsConstants.EMPTY_STRING);
 				}
+			} else {
+				fEditButton.setEnabled(false);
+				fCommentText.setText(IApiToolsConstants.EMPTY_STRING);
 			}
 		});
-		fViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				Object o = ((IStructuredSelection) event.getSelection()).getFirstElement();
-				if (fViewer.isExpandable(o)) {
-					fViewer.setExpandedState(o, !fViewer.getExpandedState(o));
-				} else {
-					if (o instanceof IApiProblemFilter) {
-						IApiProblemFilter filter = (IApiProblemFilter) o;
-						handleEdit(filter);
-					}
+		fViewer.addDoubleClickListener(event -> {
+			Object o = ((IStructuredSelection) event.getSelection()).getFirstElement();
+			if (fViewer.isExpandable(o)) {
+				fViewer.setExpandedState(o, !fViewer.getExpandedState(o));
+			} else {
+				if (o instanceof IApiProblemFilter) {
+					IApiProblemFilter filter = (IApiProblemFilter) o;
+					handleEdit(filter);
 				}
 			}
 		});
 
 		Composite bcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 		fEditButton = SWTFactory.createPushButton(bcomp, PropertiesMessages.ApiFiltersPropertyPage_edit_button, null, SWT.LEFT);
-		fEditButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection ss = (IStructuredSelection) fViewer.getSelection();
-				handleEdit((IApiProblemFilter) ss.getFirstElement());
-			}
-		});
+		fEditButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			IStructuredSelection ss = (IStructuredSelection) fViewer.getSelection();
+			handleEdit((IApiProblemFilter) ss.getFirstElement());
+		}));
 		fEditButton.setEnabled(false);
 		fRemoveButton = SWTFactory.createPushButton(bcomp, PropertiesMessages.ApiFiltersPropertyPage_57, null, SWT.LEFT);
-		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection ss = (IStructuredSelection) fViewer.getSelection();
-				handleRemove(ss);
-			}
-		});
+		fRemoveButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			IStructuredSelection ss = (IStructuredSelection) fViewer.getSelection();
+			handleRemove(ss);
+		}));
 		fRemoveButton.setEnabled(false);
 
 		SWTFactory.createLabel(comp, PropertiesMessages.ApiFiltersPropertyPage_comment, 2);
@@ -322,7 +301,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	 * @param selection
 	 */
 	void handleRemove(IStructuredSelection selection) {
-		ArrayList<Object> comments = new ArrayList<Object>();
+		ArrayList<Object> comments = new ArrayList<>();
 		HashSet<Object> deletions = collectDeletions(selection, comments);
 		boolean refresh = false;
 		if (deletions.size() > 0) {
@@ -430,7 +409,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	 * @return the set of elements to be added to the change set for deletion
 	 */
 	private HashSet<Object> collectDeletions(IStructuredSelection selection, ArrayList<Object> comments) {
-		HashSet<Object> filters = new HashSet<Object>();
+		HashSet<Object> filters = new HashSet<>();
 		Object node = null;
 		Object[] children = null;
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {

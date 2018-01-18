@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,9 +89,9 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 		try {
 			IApiProblemFilter filter = fFilter;
 			IApiComponent component = null;
-			HashMap<IApiComponent, Set<IApiProblemFilter>> map = new HashMap<IApiComponent, Set<IApiProblemFilter>>();
+			HashMap<IApiComponent, Set<IApiProblemFilter>> map = new HashMap<>();
 			Set<IApiProblemFilter> filters = null;
-			HashSet<IResource> resources = new HashSet<IResource>(markers.length);
+			HashSet<IResource> resources = new HashSet<>(markers.length);
 			IResource resource = null;
 			// collate the filters by IApiComponent
 			for (IMarker marker : markers) {
@@ -105,7 +105,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 				if (component instanceof ProjectComponent) {
 					filters = map.get(component);
 					if (filters == null) {
-						filters = new HashSet<IApiProblemFilter>();
+						filters = new HashSet<>();
 						map.put(component, filters);
 					}
 					filters.add(filter);
@@ -126,7 +126,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 				localmonitor.split(1);
 			}
 			// touch resources to mark them as needing build
-			HashSet<IProject> pjs = new HashSet<IProject>();
+			HashSet<IProject> pjs = new HashSet<>();
 			for (Iterator<IResource> iter = resources.iterator(); iter.hasNext();) {
 				try {
 					resource = iter.next();
@@ -153,7 +153,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
-		HashSet<IMarker> mset = new HashSet<IMarker>(markers.length);
+		HashSet<IMarker> mset = new HashSet<>(markers.length);
 		for (int i = 0; i < markers.length; i++) {
 			try {
 				if (markers[i].getType().equals(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER) && !fMarker.equals(markers[i])) {

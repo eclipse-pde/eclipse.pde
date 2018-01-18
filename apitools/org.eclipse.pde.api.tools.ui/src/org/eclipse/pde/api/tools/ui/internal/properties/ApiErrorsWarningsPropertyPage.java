@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,7 @@ import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsConfigurationBlock;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsPreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -57,30 +56,24 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage {
 		GridData gd = (GridData) pspecific.getLayoutData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.verticalAlignment = GridData.CENTER;
-		pspecific.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean psp = pspecific.getSelection();
-				block.useProjectSpecificSettings(psp);
-				if (link != null) {
-					link.setEnabled(!psp);
-				}
+		pspecific.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			boolean psp = pspecific.getSelection();
+			block.useProjectSpecificSettings(psp);
+			if (link != null) {
+				link.setEnabled(!psp);
 			}
-		});
+		}));
 
 		if (offerLink()) {
 			link = new Link(tcomp, SWT.NONE);
 			link.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
 			link.setFont(comp.getFont());
 			link.setText(PropertiesMessages.ApiErrorWarningsPropertyPage_1);
-			link.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					HashMap<String, Object> data = new HashMap<String, Object>();
-					data.put(ApiErrorsWarningsPreferencePage.NO_LINK, Boolean.TRUE);
-					SWTFactory.showPreferencePage(getShell(), IApiToolsConstants.ID_ERRORS_WARNINGS_PREF_PAGE, data);
-				}
-			});
+			link.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+				HashMap<String, Object> data = new HashMap<>();
+				data.put(ApiErrorsWarningsPreferencePage.NO_LINK, Boolean.TRUE);
+				SWTFactory.showPreferencePage(getShell(), IApiToolsConstants.ID_ERRORS_WARNINGS_PREF_PAGE, data);
+			}));
 		}
 		// collect project
 		block = new ApiErrorsWarningsConfigurationBlock(getProject(), (IWorkbenchPreferenceContainer) getContainer());
@@ -130,9 +123,6 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage {
 		return super.performOk();
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		block.performDefaults();
@@ -151,9 +141,6 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage {
 		super.dispose();
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void applyData(Object data) {

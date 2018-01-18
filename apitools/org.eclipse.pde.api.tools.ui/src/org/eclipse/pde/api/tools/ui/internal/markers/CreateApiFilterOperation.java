@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,11 +70,11 @@ public class CreateApiFilterOperation extends UIJob {
 	@Override
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		try {
-			HashMap<IApiComponent, HashSet<IApiProblemFilter>> map = new HashMap<IApiComponent, HashSet<IApiProblemFilter>>(fMarkers.length);
+			HashMap<IApiComponent, HashSet<IApiProblemFilter>> map = new HashMap<>(fMarkers.length);
 			IResource resource = null;
 			IProject project = null;
 			String comment = null;
-			HashSet<IProject> projects = new HashSet<IProject>();
+			HashSet<IProject> projects = new HashSet<>();
 			if (fAddingComment) {
 				InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), MarkerMessages.CreateApiFilterOperation_add_filter_comment, MarkerMessages.CreateApiFilterOperation_filter_comment, null, null);
 				int okCancel = dialog.open();
@@ -106,7 +106,7 @@ public class CreateApiFilterOperation extends UIJob {
 				projects.add(project);
 				filters = map.get(component);
 				if (filters == null) {
-					filters = new HashSet<IApiProblemFilter>();
+					filters = new HashSet<>();
 					map.put(component, filters);
 				}
 				String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
@@ -137,7 +137,7 @@ public class CreateApiFilterOperation extends UIJob {
 	 * @return the listing of message arguments from the marker.
 	 */
 	private String[] getMessageArgumentsFromMarker(IMarker marker) {
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 		String arguments = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS, null);
 		if (arguments != null) {
 			return arguments.split("#"); //$NON-NLS-1$

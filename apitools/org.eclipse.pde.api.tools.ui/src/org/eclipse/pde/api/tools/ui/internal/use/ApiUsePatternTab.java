@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.ui.internal.use;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -26,13 +25,9 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -42,10 +37,8 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -141,12 +134,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	TreeSet<Pattern> patterns = new TreeSet<Pattern>(new Comparator<Object>() {
-		@Override
-		public int compare(Object o1, Object o2) {
-			return ((Pattern) o1).pattern.compareTo(((Pattern) o2).pattern);
-		}
-	});
+	TreeSet<Pattern> patterns = new TreeSet<>((o1, o2) -> o1.pattern.compareTo(o2.pattern));
 	TableViewer viewer = null;
 	Image image = null;
 	Button addbutton = null, editbutton = null, removebutton = null;
@@ -184,18 +172,8 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		});
 		this.viewer.setLabelProvider(new Labels());
 		this.viewer.setContentProvider(ArrayContentProvider.getInstance());
-		this.viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons((IStructuredSelection) event.getSelection());
-			}
-		});
-		this.viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				doEdit();
-			}
-		});
+		this.viewer.addSelectionChangedListener(event -> updateButtons((IStructuredSelection) event.getSelection()));
+		this.viewer.addDoubleClickListener(event -> doEdit());
 		TableColumn column = null;
 		for (String columnname : columnnames) {
 			column = new TableColumn(table, SWT.NONE);
@@ -204,45 +182,29 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 			column.setText(columnname);
 		}
 		this.viewer.setInput(this.patterns);
-		table.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent event) {
-				if (event.character == SWT.DEL && event.stateMask == 0) {
-					doRemove();
-				}
+		table.addKeyListener(KeyListener.keyPressedAdapter(event -> {
+			if (event.character == SWT.DEL && event.stateMask == 0) {
+				doRemove();
 			}
-		});
+		}));
 
 		Composite bcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 		this.addbutton = SWTFactory.createPushButton(bcomp, Messages.ApiUsePatternTab_add, null);
-		this.addbutton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				PatternWizard wizard = new PatternWizard(null, -1);
-				WizardDialog dialog = new WizardDialog(getShell(), wizard);
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					addPattern(wizard.getPattern(), wizard.getKind());
-					ApiUsePatternTab.this.viewer.refresh(true, true);
-					updateLaunchConfigurationDialog();
-				}
+		this.addbutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			PatternWizard wizard = new PatternWizard(null, -1);
+			WizardDialog dialog = new WizardDialog(getShell(), wizard);
+			if (dialog.open() == IDialogConstants.OK_ID) {
+				addPattern(wizard.getPattern(), wizard.getKind());
+				ApiUsePatternTab.this.viewer.refresh(true, true);
+				updateLaunchConfigurationDialog();
 			}
-		});
+		}));
 		this.editbutton = SWTFactory.createPushButton(bcomp, Messages.ApiUsePatternTab_edit, null);
 		this.editbutton.setEnabled(false);
-		this.editbutton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				doEdit();
-			}
-		});
+		this.editbutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> doEdit()));
 		this.removebutton = SWTFactory.createPushButton(bcomp, Messages.ApiUsePatternTab_remove, null);
 		this.removebutton.setEnabled(false);
-		this.removebutton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				doRemove();
-			}
-		});
+		this.removebutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> doRemove()));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.API_USE_PATTERN_TAB);
 		setControl(comp);
 	}
@@ -369,11 +331,11 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		ArrayList<String> api = new ArrayList<String>();
-		ArrayList<String> internal = new ArrayList<String>();
-		ArrayList<String> jar = new ArrayList<String>();
-		ArrayList<String> report = new ArrayList<String>();
-		ArrayList<String> reportto = new ArrayList<String>();
+		ArrayList<String> api = new ArrayList<>();
+		ArrayList<String> internal = new ArrayList<>();
+		ArrayList<String> jar = new ArrayList<>();
+		ArrayList<String> report = new ArrayList<>();
+		ArrayList<String> reportto = new ArrayList<>();
 		for (Pattern pattern : this.patterns) {
 			switch (pattern.kind) {
 				case Pattern.API: {

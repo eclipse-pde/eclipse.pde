@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public class RefactoringUtils {
 	 *         list, never <code>null</code>
 	 */
 	static IApiProblemFilter[] collectAllAffectedFilters(IApiFilterStore store, IType[] types) {
-		HashSet<IApiProblemFilter> filters = new HashSet<IApiProblemFilter>();
+		HashSet<IApiProblemFilter> filters = new HashSet<>();
 		IApiProblemFilter[] fs = null;
 		IResource resource = null;
 		for (IType type : types) {
@@ -130,7 +130,7 @@ public class RefactoringUtils {
 	 *         list, never <code>null</code>
 	 */
 	static IType[] collectAffectedTypes(IPackageFragment fragment) {
-		HashSet<IType> types = new HashSet<IType>();
+		HashSet<IType> types = new HashSet<>();
 		try {
 			if (fragment.containsJavaResources()) {
 				ICompilationUnit[] cunits = fragment.getCompilationUnits();

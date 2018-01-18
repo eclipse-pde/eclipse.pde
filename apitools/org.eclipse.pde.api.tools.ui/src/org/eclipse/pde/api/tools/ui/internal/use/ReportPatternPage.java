@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,19 +16,13 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.use.ApiUsePatternTab.Pattern;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-/**
- *
- */
 public class ReportPatternPage extends UsePatternPage {
 
 	static final String PAGE_NAME = "report"; //$NON-NLS-1$
@@ -64,19 +58,11 @@ public class ReportPatternPage extends UsePatternPage {
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 		this.to = SWTFactory.createRadioButton(comp, Messages.ReportPatternPage_filter_to_pattern);
-		this.to.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ReportPatternPage.this.kind = Pattern.REPORT_TO;
-			}
-		});
+		this.to.addSelectionListener(
+				SelectionListener.widgetSelectedAdapter(e -> ReportPatternPage.this.kind = Pattern.REPORT_TO));
 		this.from = SWTFactory.createRadioButton(comp, Messages.ReportPatternPage_filter_from_pattern);
-		this.from.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ReportPatternPage.this.kind = Pattern.REPORT;
-			}
-		});
+		this.from.addSelectionListener(
+				SelectionListener.widgetSelectedAdapter(e -> ReportPatternPage.this.kind = Pattern.REPORT));
 		if (this.kind == Pattern.REPORT) {
 			this.from.setSelection(true);
 		} else {
@@ -88,12 +74,9 @@ public class ReportPatternPage extends UsePatternPage {
 		if (this.pattern != null) {
 			this.patterntext.setText(this.pattern);
 		}
-		this.patterntext.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setDirty();
-				setPageComplete(isPageComplete());
-			}
+		this.patterntext.addModifyListener(e -> {
+			setDirty();
+			setPageComplete(isPageComplete());
 		});
 		this.patterntext.selectAll();
 		this.patterntext.setFocus();

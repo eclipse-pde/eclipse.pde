@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,11 +25,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -55,10 +51,7 @@ import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -157,7 +150,7 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 	 * Initial collection of targets (handles are realized into definitions as
 	 * working copies)
 	 */
-	private List<ITargetDefinition> fTargets = new ArrayList<ITargetDefinition>();
+	private List<ITargetDefinition> fTargets = new ArrayList<>();
 
 	private ITargetDefinition selectedTargetDefinition;
 
@@ -178,12 +171,7 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 		Composite comp = SWTFactory.createComposite(parent, 4, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_5, 1);
 		nametext = SWTFactory.createText(comp, SWT.BORDER | SWT.SINGLE, 3, GridData.FILL_HORIZONTAL | GridData.BEGINNING);
-		nametext.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setPageComplete(pageValid());
-			}
-		});
+		nametext.addModifyListener(e -> setPageComplete(pageValid()));
 
 		SWTFactory.createVerticalSpacer(comp, 1);
 		targetsViewer = CheckboxTableViewer.newCheckList(comp, SWT.MULTI | SWT.BORDER);
@@ -191,19 +179,15 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 
 		targetsViewer.setLabelProvider(new TargetLabelProvider());
 		targetsViewer.setContentProvider(ArrayContentProvider.getInstance());
-		targetsViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getChecked()) {
-					targetsViewer.setCheckedElements(new Object[] {
-							event.getElement() });
-					selectedTargetDefinition = (ITargetDefinition) event.getElement();
-				} else {
-					selectedTargetDefinition = null;
-				}
-				updateButtons();
-				setPageComplete(pageValid());
+		targetsViewer.addCheckStateListener(event -> {
+			if (event.getChecked()) {
+				targetsViewer.setCheckedElements(new Object[] { event.getElement() });
+				selectedTargetDefinition = (ITargetDefinition) event.getElement();
+			} else {
+				selectedTargetDefinition = null;
 			}
+			updateButtons();
+			setPageComplete(pageValid());
 		});
 
 		// add the targets
@@ -244,12 +228,7 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 
 		reloadbutton = SWTFactory.createPushButton(comp, WizardMessages.ApiProfileWizardPage_12, null);
 		reloadbutton.setEnabled(targetsViewer.getCheckedElements().length == 1);
-		reloadbutton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				doReload();
-			}
-		});
+		reloadbutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> doReload()));
 
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_13, 4);
 		Tree tree = new Tree(comp, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
@@ -262,12 +241,7 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 		treeviewer.setContentProvider(new ContentProvider());
 		treeviewer.setComparator(new ViewerComparator());
 		treeviewer.setInput(getCurrentComponents());
-		treeviewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
-			}
-		});
+		treeviewer.addSelectionChangedListener(event -> updateButtons());
 		treeviewer.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {

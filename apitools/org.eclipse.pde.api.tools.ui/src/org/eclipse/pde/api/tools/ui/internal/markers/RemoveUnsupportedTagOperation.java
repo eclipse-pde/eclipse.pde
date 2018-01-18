@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 	@Override
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, MarkerMessages.RemoveUnsupportedTagOperation_removeing_unsupported_tag, this.markers.length + 6);
-		HashMap<ICompilationUnit, Boolean> seen = new HashMap<ICompilationUnit, Boolean>();
+		HashMap<ICompilationUnit, Boolean> seen = new HashMap<>();
 		for (int i = 0; i < this.markers.length; i++) {
 			// retrieve the AST node compilation unit
 			IResource resource = this.markers[i].getResource();

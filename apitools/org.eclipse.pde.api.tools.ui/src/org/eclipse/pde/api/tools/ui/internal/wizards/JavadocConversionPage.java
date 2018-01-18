@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -37,12 +35,8 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -88,9 +82,6 @@ public class JavadocConversionPage extends UserInputWizardPage {
 			this.pattern = pattern;
 		}
 
-		/**
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (tableviewer != null) {
@@ -115,7 +106,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 
 	Button removetags = null;
 	CheckboxTableViewer tableviewer = null;
-	HashSet<Object> checkedset = new HashSet<Object>();
+	HashSet<Object> checkedset = new HashSet<>();
 	UpdateJob updatejob = new UpdateJob();
 	StringFilter filter = new StringFilter();
 	private Text checkcount = null;
@@ -141,24 +132,18 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiToolingSetupWizardPage_6, 1, 50);
 
 		final Text text = SWTFactory.createText(comp, SWT.BORDER, 1);
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updatejob.setFilter(text.getText().trim());
-				updatejob.cancel();
-				updatejob.schedule();
-			}
+		text.addModifyListener(e -> {
+			updatejob.setFilter(text.getText().trim());
+			updatejob.cancel();
+			updatejob.schedule();
 		});
-		text.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_DOWN) {
-					if (tableviewer != null) {
-						tableviewer.getTable().setFocus();
-					}
+		text.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+			if (e.keyCode == SWT.ARROW_DOWN) {
+				if (tableviewer != null) {
+					tableviewer.getTable().setFocus();
 				}
 			}
-		});
+		}));
 
 		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_8, 1, 50);
 
@@ -177,39 +162,30 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		}
 		tableviewer.setComparator(new ViewerComparator());
 		tableviewer.addFilter(filter);
-		tableviewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getChecked()) {
-					checkedset.add(event.getElement());
-				} else {
-					checkedset.remove(event.getElement());
-				}
-				setPageComplete(pageValid());
+		tableviewer.addCheckStateListener(event -> {
+			if (event.getChecked()) {
+				checkedset.add(event.getElement());
+			} else {
+				checkedset.remove(event.getElement());
 			}
+			setPageComplete(pageValid());
 		});
 		Composite bcomp = SWTFactory.createComposite(comp, 3, 1, GridData.FILL_HORIZONTAL | GridData.END, 0, 0);
 		Button button = SWTFactory.createPushButton(bcomp, WizardMessages.UpdateJavadocTagsWizardPage_10, null);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				tableviewer.setAllChecked(true);
-				checkedset.addAll(Arrays.asList(tableviewer.getCheckedElements()));
-				setPageComplete(pageValid());
-			}
-		});
+		button.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			tableviewer.setAllChecked(true);
+			checkedset.addAll(Arrays.asList(tableviewer.getCheckedElements()));
+			setPageComplete(pageValid());
+		}));
 		button = SWTFactory.createPushButton(bcomp, WizardMessages.UpdateJavadocTagsWizardPage_11, null);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				tableviewer.setAllChecked(false);
-				TableItem[] items = tableviewer.getTable().getItems();
-				for (TableItem item : items) {
-					checkedset.remove(item.getData());
-				}
-				setPageComplete(pageValid());
+		button.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			tableviewer.setAllChecked(false);
+			TableItem[] items = tableviewer.getTable().getItems();
+			for (TableItem item : items) {
+				checkedset.remove(item.getData());
 			}
-		});
+			setPageComplete(pageValid());
+		}));
 
 		checkcount = SWTFactory.createText(bcomp, SWT.FLAT | SWT.READ_ONLY, 1, GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 		checkcount.setBackground(bcomp.getBackground());
@@ -259,7 +235,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		// and forth,
 		// as a change cannot ever have more than one parent - EVER
 		JavadocConversionRefactoring refactoring = (JavadocConversionRefactoring) getRefactoring();
-		HashSet<IProject> projects = new HashSet<IProject>();
+		HashSet<IProject> projects = new HashSet<>();
 		for (Object object : checkedset) {
 			IProject current = (IProject) object;
 			projects.add(current);
@@ -279,7 +255,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		// and forth,
 		// as a change cannot ever have more than one parent - EVER
 		JavadocConversionRefactoring refactoring = (JavadocConversionRefactoring) getRefactoring();
-		HashSet<IProject> projects = new HashSet<IProject>();
+		HashSet<IProject> projects = new HashSet<>();
 		for (Object object : checkedset) {
 			IProject current = (IProject) object;
 			projects.add(current);
@@ -306,7 +282,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 							ISelection selection = provider.getSelection();
 							if (selection instanceof IStructuredSelection) {
 								Object[] jps = ((IStructuredSelection) provider.getSelection()).toArray();
-								ArrayList<IProject> pjs = new ArrayList<IProject>();
+								ArrayList<IProject> pjs = new ArrayList<>();
 								for (Object jp : jps) {
 									if (jp instanceof IAdaptable) {
 										IAdaptable adapt = (IAdaptable) jp;

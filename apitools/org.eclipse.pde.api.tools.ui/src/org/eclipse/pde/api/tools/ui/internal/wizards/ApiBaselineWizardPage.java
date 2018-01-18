@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 				try {
 					IApiComponent component = (IApiComponent) parentElement;
 					String[] ees = component.getExecutionEnvironments();
-					ArrayList<EEEntry> entries = new ArrayList<EEEntry>(ees.length);
+					ArrayList<EEEntry> entries = new ArrayList<>(ees.length);
 					for (String ee : ees) {
 						entries.add(new EEEntry(ee));
 					}
@@ -139,7 +139,7 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 				workingcopy = ApiModelFactory.newApiBaseline(original.getName(), original.getLocation());
 				localmonitor.worked(1);
 				localmonitor.subTask(WizardMessages.ApiProfileWizardPage_copy_api_components);
-				ArrayList<IApiComponent> comps = new ArrayList<IApiComponent>();
+				ArrayList<IApiComponent> comps = new ArrayList<>();
 				IApiComponent comp = null;
 				for (IApiComponent component : components) {
 					comp = ApiModelFactory.newApiComponent(workingcopy, component.getLocation());

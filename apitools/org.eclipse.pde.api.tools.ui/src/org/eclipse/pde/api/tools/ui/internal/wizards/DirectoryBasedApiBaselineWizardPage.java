@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -42,10 +40,7 @@ import org.eclipse.pde.api.tools.ui.internal.ApiToolsLabelProvider;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -131,67 +126,51 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 		Composite comp = SWTFactory.createComposite(parent, 4, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_5, 1);
 		nametext = SWTFactory.createText(comp, SWT.BORDER | SWT.SINGLE, 3, GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL | GridData.BEGINNING);
-		nametext.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setPageComplete(pageValid());
-			}
-		});
+		nametext.addModifyListener(e -> setPageComplete(pageValid()));
 
 		SWTFactory.createVerticalSpacer(comp, 1);
 
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_9, 1);
 		locationcombo = SWTFactory.createCombo(comp, SWT.BORDER | SWT.SINGLE, 1, GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL | GridData.BEGINNING, null);
-		locationcombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setPageComplete(pageValid());
-				updateButtons();
-			}
+		locationcombo.addModifyListener(e -> {
+			setPageComplete(pageValid());
+			updateButtons();
 		});
 		browsebutton = SWTFactory.createPushButton(comp, WizardMessages.ApiProfileWizardPage_10, null);
-		browsebutton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setMessage(WizardMessages.ApiProfileWizardPage_11);
-				String loctext = locationcombo.getText().trim();
-				if (loctext.length() > 0) {
-					dialog.setFilterPath(loctext);
-				}
-				String newPath = dialog.open();
-				if (newPath != null && (!new Path(loctext).equals(new Path(newPath)) || getCurrentComponents().length == 0)) {
-					/*
-					 * If the path is identical, but there is no component
-					 * loaded, we still want to reload. This might be the case
-					 * if the combo is initialized by copy/paste with a path
-					 * that points to a plugin directory
-					 */
-					String updatedLocation = getUpdatedLocationForMacOS(newPath);
-					locationcombo.setText(updatedLocation);
-					// If current name matches with the last segment of old location then
-					// update the current name with last segment of new location
-					if (nametext.getText().equals(new Path(loctext).lastSegment())) {
-						nametext.setText(new Path(updatedLocation).lastSegment() == null ? "" //$NON-NLS-1$
-								: new Path(updatedLocation).lastSegment());
-						nametext.setFocus();
-						nametext.selectAll();
-					}
-
-					setErrorMessage(null);
-					doReload();
-				}
+		browsebutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			DirectoryDialog dialog = new DirectoryDialog(getShell());
+			dialog.setMessage(WizardMessages.ApiProfileWizardPage_11);
+			String loctext = locationcombo.getText().trim();
+			if (loctext.length() > 0) {
+				dialog.setFilterPath(loctext);
 			}
-		});
+			String newPath = dialog.open();
+			if (newPath != null
+					&& (!new Path(loctext).equals(new Path(newPath)) || getCurrentComponents().length == 0)) {
+				/*
+				 * If the path is identical, but there is no component loaded, we still want to
+				 * reload. This might be the case if the combo is initialized by copy/paste with
+				 * a path that points to a plugin directory
+				 */
+				String updatedLocation = getUpdatedLocationForMacOS(newPath);
+				locationcombo.setText(updatedLocation);
+				// If current name matches with the last segment of old location then
+				// update the current name with last segment of new location
+				if (nametext.getText().equals(new Path(loctext).lastSegment())) {
+					nametext.setText(new Path(updatedLocation).lastSegment() == null ? "" //$NON-NLS-1$
+							: new Path(updatedLocation).lastSegment());
+					nametext.setFocus();
+					nametext.selectAll();
+				}
+
+				setErrorMessage(null);
+				doReload();
+			}
+		}));
 
 		reloadbutton = SWTFactory.createPushButton(comp, WizardMessages.ApiProfileWizardPage_12, null);
 		reloadbutton.setEnabled(locationcombo.getText().trim().length() > 0);
-		reloadbutton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				doReload();
-			}
-		});
+		reloadbutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> doReload()));
 
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_13, 4);
 		Tree tree = new Tree(comp, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
@@ -204,12 +183,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 		treeviewer.setContentProvider(new ContentProvider());
 		treeviewer.setComparator(new ViewerComparator());
 		treeviewer.setInput(getCurrentComponents());
-		treeviewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
-			}
-		});
+		treeviewer.addSelectionChangedListener(event -> updateButtons());
 		treeviewer.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -265,7 +239,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 			if (fProfile != null) {
 				nametext.setText(fProfile.getName());
 				IApiComponent[] components = fProfile.getApiComponents();
-				HashSet<String> locations = new HashSet<String>();
+				HashSet<String> locations = new HashSet<>();
 				String loc = fProfile.getLocation();
 				IPath location = null;
 				if (loc != null) {

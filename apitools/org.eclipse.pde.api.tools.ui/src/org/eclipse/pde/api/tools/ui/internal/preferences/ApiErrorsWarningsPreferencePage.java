@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,7 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -103,34 +102,33 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		link.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
 		link.setFont(comp.getFont());
 		link.setText(PreferenceMessages.ApiErrorsWarningsPreferencePage_1);
-		link.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				HashSet<IJavaProject> set = new HashSet<IJavaProject>();
-				try {
-					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
-					IProject project = null;
-					for (IJavaProject p : projects) {
-						project = p.getProject();
-						try {
-							if (project.hasNature(ApiPlugin.NATURE_ID) && block.hasProjectSpecificSettings(project)) {
-								set.add(p);
-							}
-						} catch (CoreException ce) {
-							// do nothing ignore the project
+		link.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			HashSet<IJavaProject> set = new HashSet<>();
+			try {
+				IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
+				IProject project = null;
+				for (IJavaProject p : projects) {
+					project = p.getProject();
+					try {
+						if (project.hasNature(ApiPlugin.NATURE_ID) && block.hasProjectSpecificSettings(project)) {
+							set.add(p);
 						}
+					} catch (CoreException ce) {
+						// do nothing ignore the project
 					}
-				} catch (JavaModelException jme) {
-					// ignore
 				}
-				ProjectSelectionDialog psd = new ProjectSelectionDialog(getShell(), set);
-				if (psd.open() == IDialogConstants.OK_ID) {
-					HashMap<String, Boolean> data = new HashMap<String, Boolean>();
-					data.put(NO_LINK, Boolean.TRUE);
-					PreferencesUtil.createPropertyDialogOn(getShell(), ((IJavaProject) psd.getFirstResult()).getProject(), IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE, new String[] { IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE }, data).open();
-				}
+			} catch (JavaModelException jme) {
+				// ignore
 			}
-		});
+			ProjectSelectionDialog psd = new ProjectSelectionDialog(getShell(), set);
+			if (psd.open() == IDialogConstants.OK_ID) {
+				HashMap<String, Boolean> data = new HashMap<>();
+				data.put(NO_LINK, Boolean.TRUE);
+				PreferencesUtil.createPropertyDialogOn(getShell(), ((IJavaProject) psd.getFirstResult()).getProject(),
+						IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE,
+						new String[] { IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE }, data).open();
+			}
+		}));
 		block = new ApiErrorsWarningsConfigurationBlock(null, (IWorkbenchPreferenceContainer) getContainer());
 		block.createControl(comp);
 

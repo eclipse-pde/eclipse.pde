@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.use.ApiUsePatternTab.Pattern;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -57,12 +55,9 @@ public class DescriptionPatternPage extends UsePatternPage {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createLabel(comp, Messages.DescriptionPatternPage_patetern, 1);
 		this.patterntext = SWTFactory.createSingleText(comp, 1);
-		this.patterntext.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setDirty();
-				setPageComplete(isPageComplete());
-			}
+		this.patterntext.addModifyListener(e -> {
+			setDirty();
+			setPageComplete(isPageComplete());
 		});
 		if (this.pattern != null) {
 			this.patterntext.setText(this.pattern);
