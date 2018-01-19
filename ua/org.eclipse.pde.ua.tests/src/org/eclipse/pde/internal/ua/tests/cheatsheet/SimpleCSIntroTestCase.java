@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSIntro;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
+import org.junit.Test;
 
 /**
  * Basic tests.
@@ -23,6 +27,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 	protected static String INTRO_HREF = "/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm"; //$NON-NLS-1$
 	protected static String DESCRIPTION = "some description"; //$NON-NLS-1$
 
+	@Test
 	public void testReadSimpleCSIntro() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<intro href=\"").append(INTRO_HREF).append("\">");
@@ -39,7 +44,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		String title = model.getTitle();
 		assertEquals("Incorrect title", "sample cheatsheet", title);
 		assertEquals(title, model.getName());
-		assertEquals(ISimpleCS.TYPE_CHEAT_SHEET, model.getType());
+		assertEquals(ISimpleCSConstants.TYPE_CHEAT_SHEET, model.getType());
 		assertTrue(model.isRoot());
 
 		// check intro
@@ -47,15 +52,16 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		assertNotNull(intro);
 		assertEquals(intro.getHref(), INTRO_HREF);
 		assertNull(intro.getContextId());
-		assertEquals(ISimpleCS.TYPE_INTRO, intro.getType());
+		assertEquals(ISimpleCSConstants.TYPE_INTRO, intro.getType());
 
 		// check description
 		ISimpleCSDescription description = intro.getDescription();
 		assertNotNull(description);
 		assertEquals(DESCRIPTION, description.getContent());
-		assertEquals(ISimpleCS.TYPE_DESCRIPTION, description.getType());
+		assertEquals(ISimpleCSConstants.TYPE_DESCRIPTION, description.getType());
 	}
 
+	@Test
 	public void testSetModelAttributes() {
 		setXMLContents(null, LF);
 		load();
@@ -72,6 +78,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		assertEquals(intro, model.getIntro());
 	}
 
+	@Test
 	public void testSetIntroDescription() {
 		setXMLContents(null, LF);
 		load();
@@ -88,6 +95,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		assertEquals("description content", model.getIntro().getDescription().getContent());
 	}
 
+	@Test
 	public void testAddSimpleCSItem() {
 		setXMLContents(null, LF);
 		load();
@@ -120,6 +128,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		assertEquals(0, model.indexOfItem(item));
 	}
 
+	@Test
 	public void testAddSimpleCSItem2() {
 		setXMLContents(null, LF);
 		load();
@@ -138,6 +147,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		assertTrue(model.isLastItem(itemA));
 	}
 
+	@Test
 	public void testRemoveSimpleCSItem() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<intro></intro>");
@@ -153,6 +163,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		assertEquals(0, model.getItemCount());
 	}
 
+	@Test
 	public void testRemoveSimpleCSItem2() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<intro></intro>");
@@ -175,6 +186,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		assertEquals(1, model.indexOfItem(model.getItems()[0]));
 	}
 
+	@Test
 	public void testMoveSimpleCSItem() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<intro></intro>");
@@ -220,6 +232,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 	}
 
 	//bug 285134
+	@Test
 	public void testSingleQuoteAttributes() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<intro></intro>");

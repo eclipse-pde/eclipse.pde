@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -20,10 +22,9 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSModel;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Before;
 
-import junit.framework.TestCase;
-
-public abstract class AbstractCheatSheetModelTestCase extends TestCase {
+public abstract class AbstractCheatSheetModelTestCase {
 
 	protected static final String LF = "\n"; //$NON-NLS-1$
 	protected static final String CR = "\r"; //$NON-NLS-1$
@@ -33,10 +34,8 @@ public abstract class AbstractCheatSheetModelTestCase extends TestCase {
 	protected SimpleCSModel fModel;
 	protected IModelTextChangeListener fListener;
 
-	public AbstractCheatSheetModelTestCase() {
-	}
-
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 		fDocument = new Document();
 	}
 

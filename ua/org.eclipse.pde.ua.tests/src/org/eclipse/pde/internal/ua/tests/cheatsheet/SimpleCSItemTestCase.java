@@ -12,28 +12,34 @@ package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
+import org.junit.Test;
 
 /**
  * Cheatsheet items tests for XML-generated models.
  */
 public class SimpleCSItemTestCase extends CheatSheetModelTestCase  {
 
+	@Test
 	public void testSimpleCSItemTestCase() {
 		simpleCSItemTestCase("");
 	}
 
+	@Test
 	public void testSimpleCSItemTestCaseSpace() {
 		simpleCSItemTestCase(" ");
 	}
 
+	@Test
 	public void testSimpleCSItemTestCaseCR() {
 		simpleCSItemTestCase(CR);
 	}
 
+	@Test
 	public void testSimpleCSItemTestCaseLF() {
 		simpleCSItemTestCase(LF);
 	}
 
+	@Test
 	public void testSimpleCSItemTestCaseCRLF() {
 		simpleCSItemTestCase(CRLF);
 	}
@@ -49,6 +55,7 @@ public class SimpleCSItemTestCase extends CheatSheetModelTestCase  {
 		validateComplexCSItem(item);
 	}
 
+	@Test
 	public void testItemActionTestCase() {
 		String action = createAction(LF);
 		StringBuilder buffer = createComplexCSItem(action, LF);
@@ -62,6 +69,7 @@ public class SimpleCSItemTestCase extends CheatSheetModelTestCase  {
 		validateAction(item.getExecutable());
 	}
 
+	@Test
 	public void testItemCommandTestCase() {
 		String command = createCommand(LF);
 		StringBuilder buffer = createComplexCSItem(command, LF);
@@ -75,6 +83,7 @@ public class SimpleCSItemTestCase extends CheatSheetModelTestCase  {
 		validateCommand(item.getExecutable());
 	}
 
+	@Test
 	public void testItemPerformWhenTestCase() {
 		String command = createPerformWhen("", LF);
 		StringBuilder buffer = createComplexCSItem(command, LF);

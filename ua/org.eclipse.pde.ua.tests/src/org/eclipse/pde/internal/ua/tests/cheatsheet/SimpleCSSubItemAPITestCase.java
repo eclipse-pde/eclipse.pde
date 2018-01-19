@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSSubItem;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Cheatsheet subitems tests for API-generated models.
@@ -22,48 +24,60 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSSubItem;
  */
 public class SimpleCSSubItemAPITestCase extends CheatSheetModelTestCase {
 
-	protected void setUp() throws Exception {
+	@Override
+	@Before
+	public void setUp() {
 		super.setUp();
 		setXMLContents(new StringBuilder(), LF);
 		load();
 	}
 
+	@Test
 	public void testSimpleSubItemTestCase() {
 		simpleSubItemTestCase(1, LF);
 	}
 
+	@Test
 	public void testSimpleSubItemCommandTestCase() {
 		simpleSubItemCommandTestCase(1, LF);
 	}
 
+	@Test
 	public void testSimpleSubItemActionTestCase() {
 		simpleSubItemActionTestCase(1, LF);
 	}
 
+	@Test
 	public void testSimpleRepeatedSubItemTestCase() {
 		simpleRepeatedSubItemTestCase(1, LF);
 	}
 
+	@Test
 	public void testSimpleConditionalSubItemTestCase() {
 		simpleConditionalSubItemTestCase(1, LF);
 	}
 
+	@Test
 	public void testSimpleSubItemTestCase3() {
 		simpleSubItemTestCase(3, LF);
 	}
 
+	@Test
 	public void testSimpleSubItemCommandTestCase3() {
 		simpleSubItemCommandTestCase(3, LF);
 	}
 
+	@Test
 	public void testSimpleSubItemActionTestCase3() {
 		simpleSubItemActionTestCase(3, LF);
 	}
 
+	@Test
 	public void testSimpleRepeatedSubItemTestCase3() {
 		simpleRepeatedSubItemTestCase(3, LF);
 	}
 
+	@Test
 	public void testSimpleConditionalSubItemTestCase3() {
 		simpleConditionalSubItemTestCase(3, LF);
 	}

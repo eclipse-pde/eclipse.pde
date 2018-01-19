@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,34 +12,41 @@ package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Cheatsheet items tests for API-generated models.
  */
 public class SimpleCSItemAPITestCase extends CheatSheetModelTestCase {
 
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpLocal() {
 		setXMLContents(new StringBuilder(), LF);
 		load();
 	}
 
+	@Test
 	public void testSimpleCSItemTestCase() {
 		simpleCSItemTestCase("");
 	}
 
+	@Test
 	public void testSimpleCSItemTestCaseSpace() {
 		simpleCSItemTestCase(" ");
 	}
 
+	@Test
 	public void testSimpleCSItemTestCaseCR() {
 		simpleCSItemTestCase(CR);
 	}
 
+	@Test
 	public void testSimpleCSItemTestCaseLF() {
 		simpleCSItemTestCase(LF);
 	}
 
+	@Test
 	public void testSimpleCSItemTestCaseCRLF() {
 		simpleCSItemTestCase(CRLF);
 	}
@@ -55,6 +62,7 @@ public class SimpleCSItemAPITestCase extends CheatSheetModelTestCase {
 		validateComplexCSItem(item);
 	}
 
+	@Test
 	public void testItemActionTestCase() {
 		ISimpleCSItem item = createComplexCSItem();
 		item.setExecutable(createAction());
@@ -68,6 +76,7 @@ public class SimpleCSItemAPITestCase extends CheatSheetModelTestCase {
 		validateAction(item.getExecutable());
 	}
 
+	@Test
 	public void testItemCommandTestCase() {
 		ISimpleCSItem item = createComplexCSItem();
 		item.setExecutable(createCommand());
@@ -81,6 +90,7 @@ public class SimpleCSItemAPITestCase extends CheatSheetModelTestCase {
 		validateCommand(item.getExecutable());
 	}
 
+	@Test
 	public void testItemPerformWhenTestCase() {
 		ISimpleCSItem item = createComplexCSItem();
 		item.setExecutable(createPerformWhen());

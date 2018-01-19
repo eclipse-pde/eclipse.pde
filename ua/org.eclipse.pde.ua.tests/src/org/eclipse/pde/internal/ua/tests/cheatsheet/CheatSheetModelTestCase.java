@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
 
@@ -186,14 +190,14 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 
 		ISimpleCSDescription description = item.getDescription();
 		assertNotNull(description);
-		assertEquals(ISimpleCS.TYPE_DESCRIPTION, description.getType());
+		assertEquals(ISimpleCSConstants.TYPE_DESCRIPTION, description.getType());
 		assertEquals(description.getContent(), description.getName());
 		assertEquals("Description1", description.getContent());
 
 		ISimpleCSOnCompletion onCompletion = item.getOnCompletion();
 		assertNotNull(onCompletion);
-		assertEquals(ISimpleCS.TYPE_ON_COMPLETION, onCompletion.getType());
-		assertEquals(ISimpleCS.ELEMENT_ONCOMPLETION, onCompletion.getName());
+		assertEquals(ISimpleCSConstants.TYPE_ON_COMPLETION, onCompletion.getType());
+		assertEquals(ISimpleCSConstants.ELEMENT_ONCOMPLETION, onCompletion.getName());
 		assertEquals("On.Completion.Contents", onCompletion.getContent());
 	}
 

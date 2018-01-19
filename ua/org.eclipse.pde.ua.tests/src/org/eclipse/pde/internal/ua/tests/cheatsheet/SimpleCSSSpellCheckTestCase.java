@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.*;
 import java.util.Iterator;
 
@@ -29,6 +32,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
+import org.junit.Before;
 
 /**
  * Tests the spelling annotations in a Simple Cheat sheet editor.
@@ -40,7 +44,8 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	private IProject fProject;
 	private static final String EDITOR_ID = "org.eclipse.pde.ua.ui.simpleCheatSheetEditor";
 
-	protected void setUp() throws Exception {
+	@Before
+	public void setUpLocal() throws Exception {
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		fProject = root.getProject("ua.tests.cs");
@@ -178,7 +183,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 		int actualSpellingAnnotationCount = 0;
 		while (iter.hasNext()) {
 			actualTotalAnnotationCount++;
-			Annotation annotation = (Annotation) iter.next();
+			Annotation annotation = iter.next();
 			if (annotation instanceof SpellingAnnotation) {
 				actualSpellingAnnotationCount++;
 				if (position != 0) {
@@ -390,12 +395,12 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 		file.createNewFile();
 		projectFile.create(new FileInputStream(file), true, null);
 
-		FileOutputStream fos = new FileOutputStream(file);
-		OutputStreamWriter osw = new OutputStreamWriter(fos);
-		BufferedWriter bw = new BufferedWriter(osw);
-		bw.write(fileContents);
-		bw.flush();
-		bw.close();
+		try (FileOutputStream fos = new FileOutputStream(file);
+				OutputStreamWriter osw = new OutputStreamWriter(fos);
+				BufferedWriter bw = new BufferedWriter(osw)) {
+			bw.write(fileContents);
+			bw.flush();
+		}
 
 		projectFile.refreshLocal(IResource.DEPTH_INFINITE, null);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,21 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.pde.internal.ua.tests.cheatsheet.AllCheatSheetModelTests;
-import org.eclipse.pde.internal.ua.tests.ctxhelp.AllCtxHelpModelTests;
-import org.eclipse.pde.internal.ua.tests.toc.AllTocModelTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ AllCheatSheetModelTests.class })
 public class AllUATests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for testing all ua related models"); //$NON-NLS-1$
-		suite.addTest(AllCheatSheetModelTests.suite());
-		suite.addTest(AllTocModelTests.suite());
-		suite.addTest(AllCtxHelpModelTests.suite());
-		return suite;
-	}
-
 }

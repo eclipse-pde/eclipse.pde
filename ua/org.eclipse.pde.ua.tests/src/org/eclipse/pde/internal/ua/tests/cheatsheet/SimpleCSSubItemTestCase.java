@@ -14,48 +14,59 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSSubItem;
+import org.junit.Test;
 
 /**
  * Cheatsheet subitems tests for XML-generated models.
  */
 public class SimpleCSSubItemTestCase extends CheatSheetModelTestCase  {
 
+	@Test
 	public void testSimpleSubItemTestCase() {
 		simpleSubItemTestCase(1, LF);
 	}
 
+	@Test
 	public void testSimpleSubItemCommandTestCase() {
 		simpleSubItemCommandTestCase(1, LF);
 	}
 
+	@Test
 	public void testSimpleSubItemActionTestCase() {
 		simpleSubItemActionTestCase(1, LF);
 	}
 
+	@Test
 	public void testSimpleRepeatedSubItemTestCase() {
 		simpleRepeatedSubItemTestCase(1, LF);
 	}
 
+	@Test
 	public void testSimpleConditionalSubItemTestCase() {
 		simpleConditionalSubItemTestCase(1, LF);
 	}
 
+	@Test
 	public void testSimpleSubItemTestCase3() {
 		simpleSubItemTestCase(3, LF);
 	}
 
+	@Test
 	public void testSimpleSubItemCommandTestCase3() {
 		simpleSubItemCommandTestCase(3, LF);
 	}
 
+	@Test
 	public void testSimpleSubItemActionTestCase3() {
 		simpleSubItemActionTestCase(3, LF);
 	}
 
+	@Test
 	public void testSimpleRepeatedSubItemTestCase3() {
 		simpleRepeatedSubItemTestCase(3, LF);
 	}
 
+	@Test
 	public void testSimpleConditionalSubItemTestCase3() {
 		simpleConditionalSubItemTestCase(3, LF);
 	}
