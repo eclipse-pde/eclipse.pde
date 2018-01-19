@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2018 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,9 +13,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.*;
 
-/**
- *
- */
 public class CompilationScriptGenerator extends AbstractScriptGenerator {
 
 	private String featureId = "all"; //$NON-NLS-1$
@@ -27,9 +24,6 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 	protected AssemblyInformation assemblyData;
 	protected BuildDirector director;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.build.AbstractScriptGenerator#generate()
-	 */
 	@Override
 	public void generate() throws CoreException {
 		openScript(getWorkingDirectory(), getScriptName());

@@ -15,10 +15,6 @@ public class Activator {
 	private Activator() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext context) throws Exception {
 		myContext = context;
 		myApplication = new Application();

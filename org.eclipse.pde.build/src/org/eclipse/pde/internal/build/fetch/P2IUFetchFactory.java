@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,9 +86,6 @@ public class P2IUFetchFactory implements IFetchFactory {
 		throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, 0, message, e));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.build.IFetchFactory#addTargets(org.eclipse.pde.build.IAntScript)
-	 */
 	@Override
 	public void addTargets(IAntScript script) {
 		// single target to fetch all IUs from different repos
@@ -139,9 +136,6 @@ public class P2IUFetchFactory implements IFetchFactory {
 		iusToFetchBySource.clear();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveElementCall(java.util.Map, org.eclipse.core.runtime.IPath, org.eclipse.pde.build.IAntScript)
-	 */
 	@Override
 	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script) {
 		// generate at most one fetch call
@@ -165,9 +159,6 @@ public class P2IUFetchFactory implements IFetchFactory {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveFilesCall(java.util.Map, org.eclipse.core.runtime.IPath, java.lang.String[], org.eclipse.pde.build.IAntScript)
-	 */
 	@Override
 	public void generateRetrieveFilesCall(Map<String, Object> entryInfos, IPath destination, String[] files, IAntScript script) {
 		Map<String, String> args = new HashMap<>();
@@ -205,9 +196,6 @@ public class P2IUFetchFactory implements IFetchFactory {
 		script.printEndTag("move"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.build.IFetchFactory#parseMapFileEntry(java.lang.String, java.util.Properties, java.util.Map)
-	 */
 	@Override
 	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map<String, Object> entryInfos) throws CoreException {
 		String[] arguments = Utils.getArrayFromStringWithBlank(rawEntry, SEPARATOR);

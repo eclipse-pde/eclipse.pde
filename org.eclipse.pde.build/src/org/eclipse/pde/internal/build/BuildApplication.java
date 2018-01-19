@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,6 @@ import org.eclipse.equinox.app.IApplicationContext;
 
 public class BuildApplication implements IApplication {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		//take down splash
@@ -69,9 +66,6 @@ public class BuildApplication implements IApplication {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
 	@Override
 	public void stop() {
 		// do nothing for now
