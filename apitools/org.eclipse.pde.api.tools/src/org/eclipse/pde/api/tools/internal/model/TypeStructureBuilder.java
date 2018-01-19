@@ -54,7 +54,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 	 *            unknown
 	 */
 	TypeStructureBuilder(ClassVisitor cv, IApiComponent component, IApiTypeRoot file) {
-		super(Opcodes.ASM5, cv);
+		super(Opcodes.ASM6, cv);
 		fComponent = component;
 		fFile = file;
 	}
@@ -151,7 +151,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 			}
 		}
 		final ApiMethod method = fType.addMethod(name, desc, signature, laccess, names);
-		return new MethodVisitor(Opcodes.ASM5, super.visitMethod(laccess, name, desc, signature, exceptions)) {
+		return new MethodVisitor(Opcodes.ASM6, super.visitMethod(laccess, name, desc, signature, exceptions)) {
 			@Override
 			public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
 				if (visible && "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;".equals(sig)) { //$NON-NLS-1$
@@ -186,7 +186,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		int traceCount = 0;
 
 		public AnnotationDefaultVisitor(ApiMethod method) {
-			super(Opcodes.ASM5);
+			super(Opcodes.ASM6);
 			this.method = method;
 		}
 
@@ -304,7 +304,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		String typeName;
 
 		public EnclosingMethodSetter(ClassVisitor cv, String typeName) {
-			super(Opcodes.ASM5, cv);
+			super(Opcodes.ASM6, cv);
 			this.typeName = typeName.replace('.', '/');
 		}
 
@@ -337,7 +337,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		protected EnclosingMethodSetter setter;
 
 		public TypeNameFinder(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
-			super(Opcodes.ASM5, mv);
+			super(Opcodes.ASM6, mv);
 			this.setter = enclosingMethodSetter;
 		}
 

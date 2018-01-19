@@ -57,17 +57,16 @@ import org.eclipse.jdt.core.util.IInnerClassesAttribute;
 import org.eclipse.jdt.core.util.IInnerClassesAttributeEntry;
 import org.eclipse.jdt.core.util.IMethodInfo;
 import org.eclipse.jdt.core.util.ISignatureAttribute;
+import org.eclipse.jdt.internal.compiler.codegen.Opcodes;
 import org.eclipse.pde.api.tools.generator.util.Util;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
 import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1174,7 +1173,7 @@ public class EEGenerator {
 		 * @param stubtype
 		 */
 		public StubClassAdapter(Type stubtype) {
-			super(Opcodes.ASM5, new ClassWriter(0));
+			super(Opcodes.ASM6, new ClassWriter(0));
 			this.type = stubtype;
 		}
 
@@ -1270,7 +1269,7 @@ public class EEGenerator {
 				return null;
 			}
 			final StubMethod method = this.stub.addMethod(methodName, desc);
-			return new MethodVisitor(Opcodes.ASM5, super.visitMethod(access, methodName, desc, signature, exceptions)) {
+			return new MethodVisitor(Opcodes.ASM6, super.visitMethod(access, methodName, desc, signature, exceptions)) {
 				@Override
 				public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
 					if (visible && "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;".equals(sig)) { //$NON-NLS-1$
