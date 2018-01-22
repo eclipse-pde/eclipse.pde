@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.osgi.internal.framework.EquinoxBundle;
 import org.eclipse.osgi.storage.BundleInfo.Generation;
 import org.eclipse.pde.core.target.*;
@@ -116,6 +117,16 @@ public class TestPDETemplates {
 		data.setSourceFolderName("src");
 		data.setOutputFolderName("bin");
 		data.setExecutionEnvironment("JavaSE-1.8");
+		IVMInstall defaultVMInstall = JavaRuntime.getDefaultVMInstall();
+		if (defaultVMInstall != null) {
+			if (JavaRuntime.isModularJava(defaultVMInstall) && defaultVMInstall instanceof AbstractVMInstall) {
+				String vmver = ((AbstractVMInstall) defaultVMInstall).getJavaVersion();
+				if (vmver != null) {
+					data.setExecutionEnvironment("JavaSE-" + vmver);
+				}
+			}
+		}
+
 		data.setTargetVersion(ICoreConstants.TARGET_VERSION_LATEST);
 		data.setDoGenerateClass(true);
 		String pureOSGi = template.getConfigurationElement().getAttribute("pureOSGi");
