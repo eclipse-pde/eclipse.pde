@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2013 IBM Corporation and others.
+ *  Copyright (c) 2007, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -246,14 +246,22 @@ public class TargetPlatform {
 	 * Creates a platform configuration to be used when launching an Eclipse
 	 * application that uses Update Manager as a configurator
 	 *
-	 * @param location the location where the configuration should be persisted
-	 * @param plugins the list of plug-ins that make up the configuration
-	 * @param brandingPlugin  if specified, a entry for the feature containing the branding plug-in will
-	 * 					be created in the platform configuration
+	 * @param location
+	 *            the location where the configuration should be persisted
+	 * @param plugins
+	 *            the list of plug-ins that make up the configuration
+	 * @param brandingPlugin
+	 *            if specified, a entry for the feature containing the branding
+	 *            plug-in will be created in the platform configuration
 	 *
-	 * @throws CoreException an exception is thrown if there was a problem writing the platform
-	 * 			configuration file
+	 * @throws CoreException
+	 *             an exception is thrown if there was a problem writing the
+	 *             platform configuration file
+	 * @deprecated Old Update Manager is planned for removal and so it this API.
+	 * @noreference Old Update Manager is planned for removal and so it this API.
+	 *              See bug 527378 for details.
 	 */
+	@Deprecated
 	public static void createPlatformConfiguration(File location, IPluginModelBase[] plugins, IPluginModelBase brandingPlugin) throws CoreException {
 		UpdateManagerHelper.createPlatformConfiguration(location, plugins, brandingPlugin);
 	}
