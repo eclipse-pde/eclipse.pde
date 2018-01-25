@@ -19,7 +19,6 @@ import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.launching.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -232,23 +231,6 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 */
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String[] vmArgs = new ExecutionArguments(LaunchArgumentsHelper.getUserVMArguments(configuration), "").getVMArgumentsArray(); //$NON-NLS-1$
-		// For p2 target, add "-Declipse.p2.data.area=@config.dir/p2" unless already specified by user
-		Map<IPluginModelBase, String> bundleMap = BundleLauncherHelper.getMergedBundleMap(configuration, false);
-
-		Set<String> pluginIds = new HashSet<>(bundleMap.size());
-		bundleMap.keySet().forEach(bundle -> pluginIds.add(bundle.getPluginBase().getId()));
-
-		if (pluginIds.contains("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$
-			for (String arg : vmArgs) {
-				if (arg.startsWith("-Declipse.p2.data.area=")) { //$NON-NLS-1$
-					return vmArgs;
-				}
-			}
-			String[] temp = new String[vmArgs.length + 1];
-			System.arraycopy(vmArgs, 0, temp, 0, vmArgs.length);
-			temp[vmArgs.length] = "-Declipse.p2.data.area=@config.dir" + File.separator + "p2"; //$NON-NLS-1$ //$NON-NLS-2$
-			return temp;
-		}
 		return vmArgs;
 	}
 
