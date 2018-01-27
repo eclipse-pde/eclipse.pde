@@ -12,19 +12,8 @@ package org.eclipse.pde.internal.core;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionDelta;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.core.runtime.Platform;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
 public class TargetDefinitionManager implements IRegistryChangeListener {
@@ -103,7 +92,7 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 				return false;
 		}
 		value = elem.getAttribute("definition"); //$NON-NLS-1$
-		String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
+		String symbolicName = elem.getDeclaringExtension().getContributor().getName();
 		URL url = getResourceURL(symbolicName, value);
 		try {
 			if (url != null && url.openStream().available() > 0)

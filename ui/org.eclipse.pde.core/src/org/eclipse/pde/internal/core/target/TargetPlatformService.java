@@ -368,7 +368,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_2, targetExtensionId)));
 		}
 		String path = elem.getAttribute("definition"); //$NON-NLS-1$
-		String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
+		String symbolicName = elem.getDeclaringExtension().getContributor().getName();
 		URL url = TargetDefinitionManager.getResourceURL(symbolicName, path);
 		if (url != null) {
 			try {
