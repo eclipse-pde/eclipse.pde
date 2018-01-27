@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Karsten Thoms (itemis) - Bug 530406
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
@@ -74,7 +75,7 @@ public class RequirementHelper {
 		for (IExtension extension : extensions) {
 
 			if (product.equals(extension.getUniqueIdentifier()) || product.equals(extension.getSimpleIdentifier())) {
-				requiredIds.add(extension.getNamespaceIdentifier());
+				requiredIds.add(extension.getContributor().getName());
 
 				IConfigurationElement[] elements = extension.getConfigurationElements();
 				for (IConfigurationElement element : elements) {
@@ -94,7 +95,7 @@ public class RequirementHelper {
 		IExtension[] extensions = registry.findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
 		for (IExtension extension : extensions) {
 			if (application.equals(extension.getUniqueIdentifier()) || application.equals(extension.getSimpleIdentifier())) {
-				requiredIds.add(extension.getNamespaceIdentifier());
+				requiredIds.add(extension.getContributor().getName());
 				// Only one extension should match the application so break out of the looop
 				break;
 			}
