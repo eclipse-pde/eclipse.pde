@@ -118,10 +118,14 @@ public class TestPDETemplates {
 		data.setOutputFolderName("bin");
 		data.setExecutionEnvironment("JavaSE-1.8");
 		IVMInstall defaultVMInstall = JavaRuntime.getDefaultVMInstall();
+		System.out.println("Bug 530132 - 24 pde.ui.templates.tests");
 		if (defaultVMInstall != null) {
+			System.out.println("Default Install found");
 			if (JavaRuntime.isModularJava(defaultVMInstall) && defaultVMInstall instanceof AbstractVMInstall) {
+				System.out.println("Modular Java found");
 				String vmver = ((AbstractVMInstall) defaultVMInstall).getJavaVersion();
 				if (vmver != null) {
+					System.out.println("Version String found=" + vmver);
 					data.setExecutionEnvironment("JavaSE-" + vmver);
 				}
 			}
