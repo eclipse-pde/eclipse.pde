@@ -1,2 +1,1 @@
-Bug 503393 - Move SWT layout spy to separate plug-in to remove PDE dependency for RCP apps 
 Bug 521182 - [compiler] method reference on null object should throw NPE at runtime (JLS compliance)
