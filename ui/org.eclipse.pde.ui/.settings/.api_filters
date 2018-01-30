@@ -75,11 +75,27 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/EclipseLauncherTabGroup.java" type="org.eclipse.pde.ui.launcher.EclipseLauncherTabGroup">
+        <filter id="576778288">
+            <message_arguments>
+                <message_argument value="AbstractPDELaunchConfigurationTabGroup"/>
+                <message_argument value="EclipseLauncherTabGroup"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/ui/launcher/IPDELauncherConstants.java" type="org.eclipse.pde.ui.launcher.IPDELauncherConstants">
         <filter comment="Code was moved to pde.launching, but we can't make breaking API changes" id="571473929">
             <message_arguments>
                 <message_argument value="IPDELauncherConstants"/>
                 <message_argument value="IPDELauncherConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/JUnitTabGroup.java" type="org.eclipse.pde.ui.launcher.JUnitTabGroup">
+        <filter id="576778288">
+            <message_arguments>
+                <message_argument value="AbstractPDELaunchConfigurationTabGroup"/>
+                <message_argument value="JUnitTabGroup"/>
             </message_arguments>
         </filter>
     </resource>
