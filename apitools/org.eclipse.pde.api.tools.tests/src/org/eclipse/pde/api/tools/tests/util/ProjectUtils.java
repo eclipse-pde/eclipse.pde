@@ -126,6 +126,17 @@ public class ProjectUtils {
 				} catch (NumberFormatException e) {
 				}
 			}
+			if (nums.length == 1) {
+				// java 9 and above
+				try {
+					int major = Integer.parseInt(nums[0]);
+					if (major >= ver) {
+						return true;
+					}
+
+				} catch (NumberFormatException e) {
+				}
+			}
 		}
 		return false;
 	}
