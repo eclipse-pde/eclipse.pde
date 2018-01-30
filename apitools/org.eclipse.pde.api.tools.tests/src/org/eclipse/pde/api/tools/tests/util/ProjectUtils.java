@@ -104,10 +104,21 @@ public class ProjectUtils {
 	}
 
 	/**
-	 * Returns if the current running system is compatible with the given Java
-	 * minor version
+	 * Returns if the currently running VM is version compatible with Java 9
 	 *
-	 * @param ver the version to test - either 4, 5, 6 , 7 or 8
+	 * @return <code>true</code> if a Java 9 (or greater) VM is running
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean isJava9Compatible() {
+		return isCompatible(9);
+	}
+
+	/**
+	 * Returns if the current running system is compatible with the given Java minor
+	 * version
+	 *
+	 * @param ver
+	 *            the version to test - either 4, 5, 6 , 7 or 8
 	 * @return <code>true</code> if compatible <code>false</code> otherwise
 	 */
 	static boolean isCompatible(int ver) {
