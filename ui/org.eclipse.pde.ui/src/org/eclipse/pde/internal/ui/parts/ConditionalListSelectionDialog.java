@@ -13,7 +13,9 @@ package org.eclipse.pde.internal.ui.parts;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -86,6 +88,12 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 		});
 
 		return list;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.ManifestEditor_addActionText, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
 }
