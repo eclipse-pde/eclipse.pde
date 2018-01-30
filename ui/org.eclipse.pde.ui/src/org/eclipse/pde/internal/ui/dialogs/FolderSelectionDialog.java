@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.dialogs;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -91,6 +92,12 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateNewFolderButtonState();
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.ManifestEditor_addActionText, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
 }
