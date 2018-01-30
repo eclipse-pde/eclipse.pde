@@ -935,6 +935,7 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestSourcePage_extensionPoints;
 
 	public static String ManifestSourcePage_renameActionText;
+	public static String ManifestEditor_addActionText;
 
 	public static String ManifestEditor_TestingSection_title;
 
