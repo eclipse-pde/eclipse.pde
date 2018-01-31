@@ -43,7 +43,26 @@ public class BuildConfiguration {
 		defaultBuildConfig.put("basews", Platform.getWS());
 		defaultBuildConfig.put("basearch", Platform.getOSArch());
 		defaultBuildConfig.put("filterP2Base", TRUE);
-		defaultBuildConfig.put("bootclasspath", System.getProperty("sun.boot.class.path"));
+
+		String version = System.getProperty("java.specification.version"); //$NON-NLS-1$
+		boolean isJava9OrGreater = false;
+		if (version != null) {
+			String[] nums = version.split("\\."); //$NON-NLS-1$
+			if (nums.length == 1) {
+				// java 9 and above
+				try {
+					int major = Integer.parseInt(nums[0]);
+					if (major >= 9) {
+						isJava9OrGreater = true;
+					}
+
+				} catch (NumberFormatException e) {
+				}
+			}
+		}
+		if (isJava9OrGreater == false)
+			defaultBuildConfig.put("bootclasspath", System.getProperty("sun.boot.class.path"));
+
 		defaultScriptConfig = (Properties) defaultBuildConfig.clone();
 		if (!defaultBuildConfig.containsKey("configs"))
 			defaultScriptConfig.put("configs", "*,*,*");
