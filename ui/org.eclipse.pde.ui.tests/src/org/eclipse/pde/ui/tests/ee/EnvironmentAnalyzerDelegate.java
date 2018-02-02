@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 		String javaVersion = vm2.getJavaVersion();
 		if (javaVersion != null) {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(EE_NO_SOUND);
-			String[] compatible = new String[] {"1.8", "1.7", "1.6", "1.5", "1.4"};
+			String[] compatible = new String[] { "9", "1.8", "1.7", "1.6", "1.5", "1.4" };
 			for (String element : compatible) {
 				if (javaVersion.startsWith(element)) {
 					result.add(new CompatibleEnvironment(env, false));
