@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.ui.dialogs;
 
 import java.util.Comparator;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.NLS;
@@ -209,6 +210,12 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 			return model.getFeature().getId();
 		}
 		return null;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.ManifestEditor_addActionText, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
 }
