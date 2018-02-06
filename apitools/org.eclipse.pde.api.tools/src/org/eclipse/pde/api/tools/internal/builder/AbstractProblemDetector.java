@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -566,6 +566,21 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 				return true;
 			}
 			try {
+				// If the exact same reference exist in another component id
+				IApiComponent apiComponent2 = apiComponent.getBaseline().getApiComponent(componentId);
+				String name = reference.getResolvedReference().getName();
+				if (Util.getClassFile(new IApiComponent[] {
+						apiComponent2 }, name) != null) {
+					IApiComponent[] components = reference.getMember().getApiComponent().getBaseline().getPrerequisiteComponents(new IApiComponent[] {
+							reference.getMember().getApiComponent() });
+					// and that component resides on prerequisite of component
+					// being analyzed - flag as error
+					for (IApiComponent iApiComponent : components) {
+						if (iApiComponent.getSymbolicName().equals(apiComponent2.getSymbolicName())) {
+							return true;
+						}
+					}
+				}
 				final IApiComponent host = apiComponent.getHost();
 				return host != null && host.getSymbolicName().equals(componentId);
 			} catch (CoreException e) {
