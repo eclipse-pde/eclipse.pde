@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,8 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.compiler.CharOperation;
 
 public class Util {
@@ -405,6 +407,20 @@ public class Util {
 		ArrayList<File> files = new ArrayList<File>();
 		if (root.isDirectory()) {
 			collectAllFiles(root, files, fileFilter);
+			// get the jmods
+			// assumption all the jmods are in jmod folder
+			// jmods are present post the jars
+			String path = root.toString();
+			IPath newPath = new Path(path);
+			newPath = newPath.removeLastSegments(1).addTrailingSeparator();
+			newPath = newPath.append("jmods"); //$NON-NLS-1$
+			File jmod = newPath.toFile();
+			if (jmod.exists()) {
+				File[] listFiles = jmod.listFiles(fileFilter);
+				for (File file : listFiles) {
+					files.add(file);
+				}
+			}
 			File[] result = new File[files.size()];
 			files.toArray(result);
 			return result;

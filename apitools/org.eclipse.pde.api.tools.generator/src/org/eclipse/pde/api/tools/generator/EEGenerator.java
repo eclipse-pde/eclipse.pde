@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 IBM Corporation and others.
+ * Copyright (c) 2011, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,7 +96,7 @@ import org.w3c.dom.Element;
  * This can be called using: -output c:/EE_descriptions -config
  * C:\OSGi_profiles\configuration.properties -EEs
  * JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-
- * 1.4,J2SE-1.5,JavaSE-1.6,JavaSE-1.7,JavaSE-1.8,CDC-
+ * 1.4,J2SE-1.5,JavaSE-1.6,JavaSE-1.7,JavaSE-1.8,JavaSE-9,CDC-
  * 1.0_Foundation-1.0,CDC-1.1_Foundation-1.1,OSGi_Minimum-1.0,OSGi_Minimum-1.1,OSGi_Minimum-1.
  * 2
  */
@@ -630,6 +630,9 @@ public class EEGenerator {
 				String zipFileEntryName = typeName.replace('.', '/') + ".class"; //$NON-NLS-1$
 				loop: for (int i = 0, max = this.allFiles.length; i < max; i++) {
 					ZipFile zipFile = new ZipFile(allFiles[i]);
+					if (allFiles[i].toString().endsWith(".jmod") && !zipFileEntryName.startsWith("classes/")) { //$NON-NLS-1$ //$NON-NLS-2$
+						zipFileEntryName = "classes/" + zipFileEntryName; //$NON-NLS-1$
+					}
 					try {
 						ZipEntry zipEntry = zipFile.getEntry(zipFileEntryName);
 						if (zipEntry == null) {
@@ -779,7 +782,8 @@ public class EEGenerator {
 			this.allFiles = Util.getAllFiles(new File(this.JRElib), new FileFilter() {
 				@Override
 				public boolean accept(File pathname) {
-					return pathname.isDirectory() || pathname.getName().toLowerCase().endsWith(".jar"); //$NON-NLS-1$
+					return pathname.isDirectory() || pathname.getName().toLowerCase().endsWith(".jar") //$NON-NLS-1$
+							|| pathname.getName().toLowerCase().endsWith(".jmod"); //$NON-NLS-1$
 				}
 			});
 			if (allFiles == null) {
@@ -1642,6 +1646,7 @@ public class EEGenerator {
 				"JavaSE-1.6", //$NON-NLS-1$
 				"JavaSE-1.7", //$NON-NLS-1$
 				"JavaSE-1.8", //$NON-NLS-1$
+				"JavaSE-9", //$NON-NLS-1$ ,
 				"CDC-1.0_Foundation-1.0", //$NON-NLS-1$
 				"CDC-1.1_Foundation-1.1", //$NON-NLS-1$
 				"OSGi_Minimum-1.0", //$NON-NLS-1$
