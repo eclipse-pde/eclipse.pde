@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -378,24 +378,15 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			}
 			String substring = referencedTypeName.substring(0, index);
 			IApiComponent[] resolvePackages = baseline.resolvePackage(apiComponent, substring);
-			switch (resolvePackages.length) {
-				case 1: {
-					if (resolvePackages[0].isSystemComponent()) {
-						switch (reference.getReferenceKind()) {
-							case IReference.REF_OVERRIDE:
-							case IReference.REF_CONSTANTPOOL:
-								return false;
-							default:
-								break;
-						}
-						((Reference) reference).setResolveStatus(false);
-						retainReference(reference);
-						return true;
+			if (resolvePackages.length > 0) {
+				if (resolvePackages[0].isSystemComponent()) {
+					if (reference.getReferenceKind() == IReference.REF_OVERRIDE || reference.getReferenceKind() == IReference.REF_CONSTANTPOOL) {
+						return false;
 					}
-					break;
+					((Reference) reference).setResolveStatus(false);
+					retainReference(reference);
+					return true;
 				}
-				default:
-					break;
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
