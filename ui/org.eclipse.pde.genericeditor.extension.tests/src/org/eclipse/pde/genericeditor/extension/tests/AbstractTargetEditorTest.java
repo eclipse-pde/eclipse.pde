@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,9 +23,11 @@ import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.Targ
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.junit.After;
+import org.junit.Before;
 import org.osgi.framework.FrameworkUtil;
 
-public class AbstractTargetEditorTest extends TestCase {
+public class AbstractTargetEditorTest {
 
 	static TargetDefinitionContentAssist contentAssist = new TargetDefinitionContentAssist();
 	private IProject project;
@@ -38,9 +41,8 @@ public class AbstractTargetEditorTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(getClass().getName() + "_" + System.currentTimeMillis());
 		project.create(new NullProgressMonitor());
@@ -61,12 +63,11 @@ public class AbstractTargetEditorTest extends TestCase {
 				.toString();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (project != null) {
 			project.delete(true, new NullProgressMonitor());
 		}
-		super.tearDown();
 	}
 
 	protected String proposalListToString(ICompletionProposal[] proposals) {

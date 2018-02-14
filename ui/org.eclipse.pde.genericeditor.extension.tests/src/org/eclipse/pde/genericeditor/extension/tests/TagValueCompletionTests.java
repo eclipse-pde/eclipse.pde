@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others
+ * Copyright (c) 2017, 2018 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,16 +12,20 @@ package org.eclipse.pde.genericeditor.extension.tests;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TagValueCompletionTests extends AbstractTargetEditorTest {
 
 	private List<Integer> expectedCompletionOffsets;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		expectedCompletionOffsets = new ArrayList<>();
@@ -32,6 +36,7 @@ public class TagValueCompletionTests extends AbstractTargetEditorTest {
 		expectedCompletionOffsets.add(61);
 	}
 
+	@Test
 	public void testAttributeNameSuggestions() throws Exception {
 		ITextViewer textViewer = getTextViewerForTarget("TagValuesTestCaseTarget");
 		String text = textViewer.getDocument().get();

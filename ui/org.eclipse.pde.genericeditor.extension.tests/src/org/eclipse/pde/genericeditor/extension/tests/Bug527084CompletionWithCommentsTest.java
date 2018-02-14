@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others
+ * Copyright (c) 2017, 2018 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,33 +11,40 @@
 package org.eclipse.pde.genericeditor.extension.tests;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.junit.Before;
+import org.junit.Test;
 
 public class Bug527084CompletionWithCommentsTest extends AbstractTargetEditorTest {
 	private ITextViewer textViewer;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		textViewer = getTextViewerForTarget("CommentsTestCaseTarget");
 	}
 
-	public void testTagNameCompletion() throws Exception {
+	@Test
+	public void testTagNameCompletion() {
 		confirmCompletionAtOffset(89, "unit");
 	}
 
-	public void testTagValueCompletion() throws Exception {
+	@Test
+	public void testTagValueCompletion() {
 		confirmCompletionAtOffset(219, "linux");
 	}
 
-	public void testAttributeNameCompletion() throws Exception {
+	@Test
+	public void testAttributeNameCompletion() {
 		confirmCompletionAtOffset(85, "version");
 	}
 
-	public void testAttributeValueCompletion() throws Exception {
+	@Test
+	public void testAttributeValueCompletion() {
 		confirmCompletionAtOffset(83, "Add repository URL first.");
 	}
 
-	private void confirmCompletionAtOffset(int offset, String expectedCompletion) throws Exception {
+	private void confirmCompletionAtOffset(int offset, String expectedCompletion) {
 		checkProposals(new String[] { expectedCompletion },
 				contentAssist.computeCompletionProposals(textViewer, offset + 1),
 				offset);

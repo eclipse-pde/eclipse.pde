@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -22,9 +26,11 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.junit.Test;
 
 public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
 
+	@Test
 	public void testUpdateRequired() throws Exception {
 
 		Map<String, String> expected = new HashMap<>();
@@ -34,6 +40,7 @@ public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
 		confirmVersionUpdates(expected);
 	}
 
+	@Test
 	public void testVersionSort() throws Exception {
 		Map<String, String> expected = new HashMap<>();
 		expected.put("org.eclipse.fake.1", "2.0.0"); // 2 vs 1

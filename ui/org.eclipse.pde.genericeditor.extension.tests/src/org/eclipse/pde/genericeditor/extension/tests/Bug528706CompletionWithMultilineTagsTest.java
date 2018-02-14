@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others
+ * Copyright (c) 2017, 2018 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,63 +11,76 @@
 package org.eclipse.pde.genericeditor.extension.tests;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.junit.Before;
+import org.junit.Test;
 
 public class Bug528706CompletionWithMultilineTagsTest extends AbstractTargetEditorTest {
 	private ITextViewer textViewer;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		textViewer = getTextViewerForTarget("MultilineTagTestCaseTarget");
 	}
 
-	public void testTagNameCompletionBeforeAMultiline() throws Exception {
+	@Test
+	public void testTagNameCompletionBeforeAMultiline() {
 		confirmCompletionAtOffset(21, "location");
 	}
 
-	public void testTagNameCompletionAfterAMultiline() throws Exception {
+	@Test
+	public void testTagNameCompletionAfterAMultiline() {
 		confirmCompletionAtOffset(109, "location");
 	}
 
-	public void testTagValueCompletionBeforeAMultiline() throws Exception {
+	@Test
+	public void testTagValueCompletionBeforeAMultiline() {
 		confirmCompletionAtOffset(145, "carbon");
 	}
 
-	public void testTagValueCompletionAsAMultiline() throws Exception {
+	@Test
+	public void testTagValueCompletionAsAMultiline() {
 		confirmCompletionAtOffset(161, "linux");
 	}
 
-	public void testTagValueCompletionAfterAMultiline() throws Exception {
+	@Test
+	public void testTagValueCompletionAfterAMultiline() {
 		confirmCompletionAtOffset(181, "PA_RISC");
 	}
 
-	public void testAttributeNameCompletionBeforeAMultiline() throws Exception {
+	@Test
+	public void testAttributeNameCompletionBeforeAMultiline() {
 		confirmCompletionAtOffset(39, "id");
 	}
 
-	public void testAttributeNameCompletionAsAMultiline() throws Exception {
+	@Test
+	public void testAttributeNameCompletionAsAMultiline() {
 		confirmCompletionAtOffset(60, "id");
 	}
 
-	public void testAttributeNameCompletionAfterAMultiline() throws Exception {
+	@Test
+	public void testAttributeNameCompletionAfterAMultiline() {
 		confirmCompletionAtOffset(82, "id");
 	}
 
-	public void testAttributeValueCompletionBeforeAMultiline() throws Exception {
+	@Test
+	public void testAttributeValueCompletionBeforeAMultiline() {
 		confirmCompletionAtOffset(49, "Add repository URL first.");
 	}
 
-	public void testAttributeValueCompletionAsAMultiline() throws Exception {
+	@Test
+	public void testAttributeValueCompletionAsAMultiline() {
 		confirmCompletionAtOffset(71, "Add repository URL first.");
 	}
 
-	public void testAttributeValueCompletionAfterAMultiline() throws Exception {
+	@Test
+	public void testAttributeValueCompletionAfterAMultiline() {
 		confirmCompletionAtOffset(92, "Add repository URL first.");
 	}
 
-	private void confirmCompletionAtOffset(int offset, String expectedCompletion) throws Exception {
+	private void confirmCompletionAtOffset(int offset, String expectedCompletion) {
 		checkProposals(new String[] { expectedCompletion },
-				contentAssist.computeCompletionProposals(textViewer, offset + 1),
-				offset);
+				contentAssist.computeCompletionProposals(textViewer, offset + 1), offset);
 	}
 }

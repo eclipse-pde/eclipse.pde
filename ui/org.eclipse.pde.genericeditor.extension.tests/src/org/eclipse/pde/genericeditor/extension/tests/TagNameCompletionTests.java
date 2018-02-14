@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others
+ * Copyright (c) 2017, 2018 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,15 @@ package org.eclipse.pde.genericeditor.extension.tests;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.junit.Assert;
+import org.junit.Test;
 
 public class TagNameCompletionTests extends AbstractTargetEditorTest {
+	@Test
 	public void testTagNameSuggestions() throws Exception {
 		Map<Integer, String[]> expectedProposalsByOffset = new HashMap<>();
 		// locations
@@ -50,6 +53,7 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 		}
 	}
 
+	@Test
 	public void testNoTagNameRepeatSuggestions() throws Exception {
 		ITextViewer textViewer = getTextViewerForTarget("TagNamesFullTestCaseTarget");
 		IDocument document = textViewer.getDocument();
