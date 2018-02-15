@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Rapicorp Corporation - ongoing enhancements
+ *     Lucas Bullen (Red Hat Inc.) - Bug 531226 - Update to reflect addition of source tab
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -268,6 +269,7 @@ public interface IHelpContextIds {
 	public static final String TARGET_EDITOR_ENVIRONMENT_PAGE = PREFIX + "target_editor_environment_page"; //$NON-NLS-1$
 	public static final String TARGET_EDITOR_DEFINITION_PAGE = PREFIX + "target_editor_definition_page"; //$NON-NLS-1$
 	public static final String TARGET_EDITOR_CONTENT_PAGE = PREFIX + "target_editor_content_page"; //$NON-NLS-1$
+	public static final String TARGET_EDITOR_SOURCE_PAGE = PREFIX + "target_editor_source_page"; //$NON-NLS-1$
 
 	// Tools
 	public static final String ORGANIZE_MANIFESTS = PREFIX + "organize_manifest"; //$NON-NLS-1$
