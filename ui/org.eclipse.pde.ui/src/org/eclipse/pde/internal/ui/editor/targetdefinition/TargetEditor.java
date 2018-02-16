@@ -62,6 +62,7 @@ public class TargetEditor extends FormEditor {
 
 	private List<IManagedForm> fManagedFormPages = new ArrayList<>(2);
 	private ExtensionBasedTextEditor fTextualEditor;
+	private int fSourceTabIndex;
 	private IDocument fTargetDocument;
 	private IDocumentListener fTargetDocumentListener;
 
@@ -84,6 +85,24 @@ public class TargetEditor extends FormEditor {
 			addTextualEditorPage();
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
+		}
+	}
+
+	@Override
+	protected void pageChange(int newPageIndex) {
+		try {
+			if (newPageIndex != fSourceTabIndex && getCurrentPage() != -1) {
+				InputStream stream = new ByteArrayInputStream(fTargetDocument.get().getBytes(StandardCharsets.UTF_8));
+				TargetDefinitionPersistenceHelper.initFromXML(getTarget(), stream);
+			}
+			super.pageChange(newPageIndex);
+		} catch (CoreException e) {
+			setActivePage(fSourceTabIndex);
+			showError(PDEUIMessages.TargetEditor_5, e);
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			setActivePage(fSourceTabIndex);
+			CoreException ce = new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), e.getMessage(), e));
+			showError(PDEUIMessages.TargetEditor_5, ce);
 		}
 	}
 
@@ -425,8 +444,8 @@ public class TargetEditor extends FormEditor {
 					TargetEditor.this.fDirty = false;
 					TargetEditor.this.editorDirtyStateChanged();
 				} catch (CoreException e) {
-					TargetEditor.this.showError(PDEUIMessages.TargetEditor_5, e);
-					TargetEditor.this.close(false);
+					PDEPlugin.log(e);
+					setActivePage(fSourceTabIndex);
 				}
 			}
 			return fTarget;
@@ -489,8 +508,8 @@ public class TargetEditor extends FormEditor {
 	 */
 	private void addTextualEditorPage() throws PartInitException {
 		fTextualEditor = new ExtensionBasedTextEditor();
-		int tabIndex = addPage(fTextualEditor, getEditorInput());
-		setPageText(tabIndex, PDEUIMessages.GenericEditorTab_title);
+		fSourceTabIndex = addPage(fTextualEditor, getEditorInput());
+		setPageText(fSourceTabIndex, PDEUIMessages.GenericEditorTab_title);
 
 		fTargetDocument = fTextualEditor.getDocumentProvider().getDocument(getEditorInput());
 
