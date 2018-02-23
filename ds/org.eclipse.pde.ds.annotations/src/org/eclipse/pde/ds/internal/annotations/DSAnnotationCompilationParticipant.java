@@ -278,9 +278,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				try {
 					IJavaElement cu = project.findElement(new Path(cuKey));
 					IResource file;
-					if (cu != null && cu.getElementType() == IJavaElement.COMPILATION_UNIT
-							&& (file = cu.getResource()) != null && file.exists()
-							&& file.getProject().equals(project.getProject()))
+					if (cu != null && cu.getElementType() == IJavaElement.COMPILATION_UNIT && (file = cu.getResource()) != null && file.exists())
 						exists = true;
 				} catch (JavaModelException e) {
 					Activator.log(e);
