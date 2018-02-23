@@ -772,7 +772,6 @@ public class ClassFileComparator {
 				collectAllInterfaces(superclass, set);
 			}
 		} catch (CoreException e) {
-			ApiPlugin.log(e);
 			reportStatus(e);
 		}
 	}
