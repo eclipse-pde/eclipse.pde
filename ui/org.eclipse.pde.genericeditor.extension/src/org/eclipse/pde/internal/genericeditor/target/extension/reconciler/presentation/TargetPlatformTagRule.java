@@ -17,8 +17,7 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Word rule feeding the tags of a target definition to be highlighted
@@ -31,7 +30,9 @@ public class TargetPlatformTagRule extends WordRule {
 			ITargetConstants.PROGRAM_ARGS_TAG, ITargetConstants.ENVIRONMENT_TAG, ITargetConstants.OS_TAG,
 			ITargetConstants.WS_TAG, ITargetConstants.ARCH_TAG, ITargetConstants.NL_TAG };
 
-	private IToken tagToken = new Token(new TextAttribute(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_CYAN)));
+	private IToken tagToken = new Token(
+			new TextAttribute(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry()
+					.get(IGETEColorConstants.P_TAG)));
 
 	public TargetPlatformTagRule() {
 		super(new AlphanumericDetector());

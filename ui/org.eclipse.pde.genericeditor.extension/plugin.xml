@@ -74,4 +74,56 @@
             class="org.eclipse.pde.internal.genericeditor.target.extension.command.UpdateUnitVersions">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.themes">
+      <themeElementCategory
+            id="org.eclipse.pde.genericeditor.target.extension.presentation"
+            label="%themeElementCategory.label">
+      </themeElementCategory>
+      <colorDefinition
+            categoryId="org.eclipse.pde.genericeditor.target.extension.presentation"
+            id="org.eclipse.pde.genericeditor.extension.editor.color.tag"
+            label="%colorDefinition.tag"
+            value="0,128,128">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.pde.genericeditor.target.extension.presentation"
+            id="org.eclipse.pde.genericeditor.extension.editor.color.attribute"
+            label="%colorDefinition.attribute"
+            value="128,0,0">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.pde.genericeditor.target.extension.presentation"
+            id="org.eclipse.pde.genericeditor.extension.editor.color.header"
+            label="%colorDefinition.header"
+            value="192,192,192">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.pde.genericeditor.target.extension.presentation"
+            id="org.eclipse.pde.genericeditor.extension.editor.color.text"
+            label="%colorDefinition.text"
+            value="0,128,0">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.pde.genericeditor.target.extension.presentation"
+            id="org.eclipse.pde.genericeditor.extension.editor.color.comment"
+            label="%colorDefinition.comment"
+            value="0,128,0">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.pde.genericeditor.target.extension.presentation"
+            id="org.eclipse.pde.genericeditor.extension.editor.color.quote"
+            label="%colorDefinition.quote"
+            value="0,0,255">
+      </colorDefinition>
+   </extension>
+   <extension
+          point="org.eclipse.e4.ui.css.swt.theme">
+       <stylesheet
+             uri="css/e4-dark_pde_prefstyle.css">
+          <themeid
+                refid="org.eclipse.e4.ui.css.theme.e4_dark">
+          </themeid>
+       </stylesheet>
+    </extension>
 </plugin>
