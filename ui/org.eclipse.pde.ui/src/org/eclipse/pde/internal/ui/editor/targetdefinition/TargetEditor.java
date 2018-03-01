@@ -32,8 +32,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
-import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.shared.target.*;
 import org.eclipse.pde.internal.ui.wizards.exports.TargetDefinitionExportWizard;
@@ -93,9 +92,12 @@ public class TargetEditor extends FormEditor {
 	@Override
 	protected void pageChange(int newPageIndex) {
 		try {
-			if (newPageIndex != fSourceTabIndex && getCurrentPage() != -1) {
+			if (newPageIndex != fSourceTabIndex && getCurrentPage() == fSourceTabIndex) {
 				InputStream stream = new ByteArrayInputStream(fTargetDocument.get().getBytes(StandardCharsets.UTF_8));
 				TargetDefinitionPersistenceHelper.initFromXML(getTarget(), stream);
+				if (!getTarget().isResolved()) {
+					getTargetChangedListener().contentsChanged(getTarget(), this, true, false);
+				}
 			}
 			super.pageChange(newPageIndex);
 		} catch (CoreException e) {
@@ -588,6 +590,13 @@ public class TargetEditor extends FormEditor {
 					fLocationTree.setInput(getTarget());
 				}
 				Job.getJobManager().cancel(getJobFamily());
+				// delete profile
+				try {
+					P2TargetUtils.forceCheckTarget(getTarget());
+					P2TargetUtils.deleteProfile(getTarget().getHandle());
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+				}
 				Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, getTarget().getName())) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
