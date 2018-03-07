@@ -105,7 +105,7 @@ public class Parser {
 
 	private Iterator<XMLElement> createXMLTagItterator(String document) {
 		return new Iterator<XMLElement>() {
-			private String tagRegex = "(?<tag><[\\w|/].+?>)";
+			private String tagRegex = "(?<tag><[\\w|/][^<]+?>)";
 			private String commentRegex = "(<!--.*?-->)";
 			private String beforeTagRegex = ".*?(?=".concat(tagRegex).concat(")");
 

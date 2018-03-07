@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others
+ * Copyright (c) 2017, 2018 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetCompletionProposal;
+import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetDefinitionContentAssist;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 
 /**
@@ -35,11 +37,12 @@ public class TagValueCompletionProcessor extends DelegateProcessor {
 		tagTextValues.put(ITargetConstants.NL_TAG, getLocales());
 	}
 
-	private String prefix;
+	private String searchTerm;
 	private String acKey;
 	private int offset;
-	public TagValueCompletionProcessor(String prefix, String acKey, int offset) {
-		this.prefix = prefix;
+
+	public TagValueCompletionProcessor(String searchTerm, String acKey, int offset) {
+		this.searchTerm = searchTerm;
 		this.offset = offset;
 		this.acKey = acKey;
 	}
@@ -50,11 +53,13 @@ public class TagValueCompletionProcessor extends DelegateProcessor {
 		String[] strings = tagTextValues.get(acKey);
 		if (strings != null) {
 			for (String string : strings) {
-				if (string == null || string.length() == 0 || !string.startsWith(prefix)) {
+				StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(string, searchTerm);
+				if (displayString == null || displayString.length() == 0) {
 					continue;
 				}
-				proposals.add(new CompletionProposal(string, offset - prefix.length(), prefix.length(),
-						string.length() - 1, null, string, null, null));
+				proposals.add(new TargetCompletionProposal(string, string.length(),
+						offset - searchTerm.length(), searchTerm.length(),
+						displayString));
 			}
 		}
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);

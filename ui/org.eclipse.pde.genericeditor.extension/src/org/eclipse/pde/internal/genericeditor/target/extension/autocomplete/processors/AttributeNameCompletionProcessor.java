@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2018 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
- *     Lucas Bullen (Red Hat Inc.) 520004, 528706
+ *     Lucas Bullen (Red Hat Inc.) 520004, 528706, 531918
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
@@ -18,8 +18,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetCompletionProposal;
+import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetDefinitionContentAssist;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 
 /**
@@ -29,7 +31,7 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetCons
  */
 public class AttributeNameCompletionProcessor extends DelegateProcessor {
 
-	private String prefix;
+	private String searchTerm;
 	private String acKey;
 	private int offset;
 	private String text;
@@ -47,8 +49,8 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 	private String[] targetJRE = new String[] { ITargetConstants.TARGET_JRE_PATH_ATTR };
 	private Map<String, String[]> completionMap = new HashMap<>();
 
-	public AttributeNameCompletionProcessor(String prefix, String acKey, int offset, String text) {
-		this.prefix = prefix;
+	public AttributeNameCompletionProcessor(String searchTerm, String acKey, int offset, String text) {
+		this.searchTerm = searchTerm;
 		this.acKey = acKey;
 		this.offset = offset;
 		this.text = text;
@@ -71,12 +73,14 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 		if (strings != null) {
 			List<String> attributeStrings = getSibblingAttributeNames();
 			for (String string : strings) {
-				if (!string.startsWith(prefix) || attributeStrings.contains(string)) {
+				StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(string, searchTerm);
+				if (displayString == null || displayString.length() == 0 || attributeStrings.contains(string)) {
 					continue;
 				}
 				String proposal = string + "=\"\""; //$NON-NLS-1$
-				proposals.add(new CompletionProposal(proposal, offset - prefix.length(), prefix.length(),
-						proposal.length() - 1, null, string, null, null));
+				proposals.add(new TargetCompletionProposal(proposal, proposal.length(),
+						offset - searchTerm.length(), searchTerm.length(),
+						displayString));
 			}
 		}
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);
@@ -88,9 +92,9 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 		String tagText = text.substring(offsetOfStart, offsetOfEnd == -1 ? text.length() : offsetOfEnd);
 		List<String> attributeStrings = new ArrayList<>();
 
-		Matcher prefixMatcher = ATT_NAME_PATTERN.matcher(tagText);
-		while (prefixMatcher.find()) {
-			attributeStrings.add(prefixMatcher.group(1));
+		Matcher searchTermMatcher = ATT_NAME_PATTERN.matcher(tagText);
+		while (searchTermMatcher.find()) {
+			attributeStrings.add(searchTermMatcher.group(1));
 		}
 		return attributeStrings;
 	}

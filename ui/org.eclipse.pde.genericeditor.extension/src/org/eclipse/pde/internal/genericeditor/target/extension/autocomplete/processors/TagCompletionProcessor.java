@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2018 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Sopot Cela (Red Hat Inc.)
  *     Lucas Bullen (Red Hat Inc.) - [Bug 522317] Support environment arguments tags in Generic TP editor
  *                                 - [Bug 520004] autocomplete does not respect tag hierarchy
+ *                                 - [Bug 531918] filter completions
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
@@ -16,8 +17,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetCompletionProposal;
+import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetDefinitionContentAssist;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.LocationNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.Node;
@@ -49,11 +52,11 @@ public class TagCompletionProcessor extends DelegateProcessor {
 		allowedDuplicatesTags.add(UnitNode.class);
 	}
 
-	private String prefix;
+	private String searchTerm;
 	private int offset;
 
-	public TagCompletionProcessor(String prefix, String acKey, int offset) {
-		this.prefix = prefix;
+	public TagCompletionProcessor(String searchTerm, String acKey, int offset) {
+		this.searchTerm = searchTerm;
 		this.offset = offset;
 	}
 
@@ -84,9 +87,15 @@ public class TagCompletionProcessor extends DelegateProcessor {
 					break;
 				}
 				node = selectedChildNode;
+				if (!tagChildren.containsKey(selectedChildNode.getNodeTag())) {
+					break;
+				}
 			}
 			if (tagChildren.containsKey(node.getNodeTag())) {
 				tags = tagChildren.get(node.getNodeTag());
+			} else if (node.getParentNode() != null && tagChildren.containsKey(node.getParentNode().getNodeTag())) {
+				tags = tagChildren.get(node.getParentNode().getNodeTag());
+				children = node.getParentNode().getChildNodes();
 			} else {
 				tags = tagChildren.get(null);
 			}
@@ -103,19 +112,22 @@ public class TagCompletionProcessor extends DelegateProcessor {
 		}
 
 		for (int i = 0; i < tags.length; i++) {
-			if (!tags[i].startsWith(prefix) || siblingTags.contains(tags[i]))
+			StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(tags[i], searchTerm);
+			if (displayString == null || displayString.length() == 0 || siblingTags.contains(tags[i])) {
 				continue;
+			}
 			String proposal = ""; //$NON-NLS-1$
 			if (tags[i].equalsIgnoreCase(ITargetConstants.UNIT_TAG)
-					|| tags[i].equalsIgnoreCase(ITargetConstants.REPOSITORY_TAG)) {
+					|| tags[i].equalsIgnoreCase(ITargetConstants.REPOSITORY_TAG)
+					|| tags[i].equalsIgnoreCase(ITargetConstants.TARGET_JRE_TAG)) {
 				handyAddition = "/>"; //$NON-NLS-1$
 				proposal = tags[i] + handyAddition;
 			} else {
 				handyAddition = "</" + tags[i] + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 				proposal = tags[i] + ">" + handyAddition; //$NON-NLS-1$
 			}
-			proposals.add(new CompletionProposal(proposal, offset - prefix.length(), prefix.length(),
-					proposal.length() - handyAddition.length(), null, tags[i], null, null));
+			proposals.add(new TargetCompletionProposal(proposal, proposal.length() - handyAddition.length(),
+					offset - searchTerm.length(), searchTerm.length(), displayString));
 		}
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);
 	}

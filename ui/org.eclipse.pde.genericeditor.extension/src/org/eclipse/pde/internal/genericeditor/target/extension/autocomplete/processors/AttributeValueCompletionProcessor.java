@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others
+ * Copyright (c) 2018 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
  *     Lucas Bullen (Red Hat Inc.) - [Bug 520004] autocomplete does not respect tag hierarchy
+ *                                 - [Bug 531918] filter suggestions
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
@@ -16,7 +17,9 @@ import java.util.List;
 
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.InstallableUnitProposal;
+import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetDefinitionContentAssist;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.LocationNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.Node;
@@ -32,12 +35,12 @@ import org.eclipse.pde.internal.genericeditor.target.extension.p2.UpdateJob;
  */
 public class AttributeValueCompletionProcessor extends DelegateProcessor {
 
-	private String prefix;
+	private String searchTerm;
 	private String acKey;
 	private int offset;
 
-	public AttributeValueCompletionProcessor(String prefix, String acKey, int offset) {
-		this.prefix = prefix;
+	public AttributeValueCompletionProcessor(String searchTerm, String acKey, int offset) {
+		this.searchTerm = searchTerm;
 		this.acKey = acKey;
 		this.offset = offset;
 	}
@@ -67,7 +70,6 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 				break;
 			}
 		}
-		boolean replaceId = false;
 		if (ITargetConstants.UNIT_ID_ATTR.equalsIgnoreCase(acKey)) {
 			if (node != null) {
 				if (!(node.getParentNode() instanceof LocationNode))
@@ -82,14 +84,12 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 					scheduleUpdateJob(location);
 					return getInformativeProposal();
 				}
-				List<UnitNode> units = cache.getUnitsByPrefix(repoLocation, prefix);
-				replaceId = !("".equals(node.getId()));//$NON-NLS-1$
-				return convertToProposals(units, replaceId);
+				List<UnitNode> units = cache.fetchP2UnitsFromRepo(repoLocation, false);
+				return convertToProposals(units);
 			}
 
 		}
 
-		boolean replaceVersion = false;
 		if (ITargetConstants.UNIT_VERSION_ATTR.equalsIgnoreCase(acKey)) {
 			if (node != null) {
 				if (!(node.getParentNode() instanceof LocationNode))
@@ -111,8 +111,7 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 						versions = unit.getAvailableVersions();
 					}
 				}
-				replaceVersion = !("".equals(node.getVersion()));//$NON-NLS-1$
-				return convertToVersionProposals(versions, replaceVersion);
+				return convertToVersionProposals(versions);
 			}
 
 		}
@@ -126,7 +125,7 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 		job.schedule();
 	}
 
-	private ICompletionProposal[] convertToVersionProposals(List<String> versions, boolean replace) {
+	private ICompletionProposal[] convertToVersionProposals(List<String> versions) {
 		List<String> dest = new ArrayList<>();
 		dest.addAll(versions);
 		if (!versions.contains(ITargetConstants.UNIT_VERSION_ATTR_GENERIC)) {
@@ -135,25 +134,24 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 
 		List<ICompletionProposal> result = new ArrayList<>();
 		for (String version : dest) {
-			if (version == null) {
+			StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(version, searchTerm);
+			if (displayString == null || displayString.length() == 0) {
 				continue;
 			}
-			if (!version.startsWith(prefix)){
-				continue;
-			}
-
-			ICompletionProposal proposal = new InstallableUnitProposal(version, offset, prefix.length(),
-					replace);
-			result.add(proposal);
+			result.add(new InstallableUnitProposal(displayString, offset - searchTerm.length(), searchTerm.length()));
 		}
 		return result.toArray(new ICompletionProposal[result.size()]);
 	}
 
-	private ICompletionProposal[] convertToProposals(List<UnitNode> units, boolean replace) {
+	private ICompletionProposal[] convertToProposals(List<UnitNode> units) {
 		List<ICompletionProposal> result = new ArrayList<>();
 		for (UnitNode unit : units) {
-			ICompletionProposal proposal = new InstallableUnitProposal(unit.getId(), offset, prefix.length(), replace);
-			result.add(proposal);
+			StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(unit.getId(),
+					searchTerm);
+			if (displayString == null || displayString.length() == 0) {
+				continue;
+			}
+			result.add(new InstallableUnitProposal(displayString, offset - searchTerm.length(), searchTerm.length()));
 		}
 		return result.toArray(new ICompletionProposal[result.size()]);
 	}

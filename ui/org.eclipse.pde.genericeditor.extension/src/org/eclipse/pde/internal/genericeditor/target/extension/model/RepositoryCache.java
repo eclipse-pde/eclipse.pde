@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
+ *     Lucas Bullen (Red Hat Inc.) - [Bug 531918] filter suggestions
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.model;
 
@@ -85,6 +86,33 @@ public class RepositoryCache {
 		List<UnitNode> result = new ArrayList<>();
 		for (UnitNode unit : allUnits) {
 			if (unit.getId().startsWith(prefix)) {
+				result.add(unit);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 *
+	 * Method used to narrow down proposals in case a prefix is provided. Example:
+	 *
+	 * <pre>
+	 *  &ltunit id="eclipse^
+	 * </pre>
+	 *
+	 * where ^ is an autocomplete call. Search term in this case will be '*eclipse*'
+	 *
+	 * @param repo
+	 *            repository URL
+	 * @param searchTerm
+	 *            A prefix used to narrow down the match list
+	 * @return A list of IUs whose id contains 'searchTerm'
+	 */
+	public List<UnitNode> getUnitsBySearchTerm(String repo, String searchTerm) {
+		List<UnitNode> allUnits = fetchP2UnitsFromRepo(repo, false);
+		List<UnitNode> result = new ArrayList<>();
+		for (UnitNode unit : allUnits) {
+			if (unit.getId().contains(searchTerm)) {
 				result.add(unit);
 			}
 		}
