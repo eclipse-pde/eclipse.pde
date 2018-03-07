@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.core.build;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -105,7 +106,7 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		ByteArrayInputStream stream = null;
 		try {
 			String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
-			stream = new ByteArrayInputStream(contents.getBytes("8859_1")); //$NON-NLS-1$
+			stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.ISO_8859_1));
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
