@@ -459,6 +459,17 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	}
 
 	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @param message
+	 */
+	public static void logInfoMessage(String message) {
+		// this message is intentionally not internationalized, as an exception
+		// may
+		// be due to the resource bundle itself
+		log(newInfoStatus("Internal message logged from API Tools Core: " + message, null)); //$NON-NLS-1$
+	}
+
+	/**
 	 * Returns a new error status for this plug-in with the given message
 	 *
 	 * @param message the message to be included in the status
@@ -468,6 +479,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 */
 	public static IStatus newErrorStatus(String message, Throwable exception) {
 		return new Status(IStatus.ERROR, PLUGIN_ID, INTERNAL_ERROR, message, exception);
+	}
+
+	private static IStatus newInfoStatus(String message, Throwable exception) {
+		return new Status(IStatus.INFO, PLUGIN_ID, INTERNAL_ERROR, message, exception);
 	}
 
 	/**
