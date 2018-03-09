@@ -69,6 +69,7 @@ public class PDEUIMessages extends NLS {
 	public static String DependenciesViewPage_showOptional;
 
 	public static String DependencyPropertiesDialog_exportGroupText;
+	public static String DependencyPropertiesDialog_closeButtonLabel;
 
 	public static String ExtensionsPage_toggleExpandState;
 	public static String ExternalizeStringsOperation_editNames_addComment;
