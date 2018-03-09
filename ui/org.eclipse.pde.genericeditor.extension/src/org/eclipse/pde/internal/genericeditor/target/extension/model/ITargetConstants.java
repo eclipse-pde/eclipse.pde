@@ -42,9 +42,19 @@ public interface ITargetConstants {
 	public static final String LOCATION_INCLUDE_CONFIG_PHASE_ATTR = "includeConfigurePhase"; //$NON-NLS-1$
 	public static final String LOCATION_INCLUDE_MODE_ATTR = "includeMode"; //$NON-NLS-1$
 	public static final String LOCATION_INCLUDE_SOURCE_ATTR = "includeSource"; //$NON-NLS-1$
+	public static final String LOCATION_ID_ATTR = "id"; //$NON-NLS-1$
+	public static final String LOCATION_PATH_ATTR = "path"; //$NON-NLS-1$
 	public static final String LOCATION_TYPE_ATTR = "type"; //$NON-NLS-1$
 	public static final String REPOSITORY_LOCATION_ATTR = "location"; //$NON-NLS-1$
 	public static final String TARGET_JRE_PATH_ATTR = "path"; //$NON-NLS-1$
 	public static final String UNIT_VERSION_ATTR_GENERIC = "0.0.0"; //$NON-NLS-1$
+	public static final String LOCATION_TYPE_ATTR_VALUE_IU = "InstallableUnit"; //$NON-NLS-1$
+	public static final String LOCATION_TYPE_ATTR_VALUE_DIRECTORY = "Directory"; //$NON-NLS-1$
+	public static final String LOCATION_TYPE_ATTR_VALUE_PROFILE = "Profile"; //$NON-NLS-1$
+	public static final String LOCATION_TYPE_ATTR_VALUE_FEATURE = "Feature"; //$NON-NLS-1$
+	public static final String LOCATION_IU_COMPLETION_LABEL = "location (Installable Unit)"; //$NON-NLS-1$
+	public static final String LOCATION_DIRECTORY_COMPLETION_LABEL = "location (Directory)"; //$NON-NLS-1$
+	public static final String LOCATION_PROFILE_COMPLETION_LABEL = "location (Profile)"; //$NON-NLS-1$
+	public static final String LOCATION_FEATURE_COMPLETION_LABEL = "location (Feature)"; //$NON-NLS-1$
 
 }

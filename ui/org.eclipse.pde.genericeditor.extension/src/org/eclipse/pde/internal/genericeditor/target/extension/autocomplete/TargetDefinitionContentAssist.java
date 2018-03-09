@@ -228,8 +228,8 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 		}
 		if (searchTerm.isEmpty()) {
 			return new StyledString(string);
-		} else if (string.contains(searchTerm)) {
-			int index = string.indexOf(searchTerm);
+		} else if (string.toLowerCase().contains(searchTerm.toLowerCase())) {
+			int index = string.toLowerCase().indexOf(searchTerm.toLowerCase());
 			int len = searchTerm.length();
 			StyledString styledString = new StyledString(string.substring(0, index));
 			styledString.append(string.substring(index, index + len), bold);

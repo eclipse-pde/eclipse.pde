@@ -1,6 +1,6 @@
 <target>
 <locations>
-<
+<pro
 <location>
 <unit  version=""/>
 <unit
@@ -8,7 +8,7 @@
 	version="" />
 <unit  version=""/>
 </location>
-<
+<pro
 </locations>
 <environment>
 <ws>carb</ws>

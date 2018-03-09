@@ -26,7 +26,8 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 		// locations
 		expectedProposalsByOffset.put(1, new String[] {});
 		expectedProposalsByOffset.put(12, new String[] { "targetJRE" });
-		expectedProposalsByOffset.put(26, new String[] { "location" });
+		expectedProposalsByOffset.put(26, new String[] { "location (Installable Unit)", "location (Profile)",
+				"location (Directory)", "location (Feature)" });
 		// location, full
 		expectedProposalsByOffset.put(39, new String[] { "unit" });
 		expectedProposalsByOffset.put(63, new String[] { "unit" });

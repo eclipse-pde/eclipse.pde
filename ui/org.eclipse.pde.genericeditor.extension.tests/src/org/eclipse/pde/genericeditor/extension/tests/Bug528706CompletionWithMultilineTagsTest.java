@@ -26,57 +26,57 @@ public class Bug528706CompletionWithMultilineTagsTest extends AbstractTargetEdit
 
 	@Test
 	public void testTagNameCompletionBeforeAMultiline() {
-		confirmCompletionAtOffset(21, "location");
+		confirmCompletionAtOffset(24, "location (Profile)");
 	}
 
 	@Test
 	public void testTagNameCompletionAfterAMultiline() {
-		confirmCompletionAtOffset(109, "location");
+		confirmCompletionAtOffset(115, "location (Profile)");
 	}
 
 	@Test
 	public void testTagValueCompletionBeforeAMultiline() {
-		confirmCompletionAtOffset(145, "carbon");
+		confirmCompletionAtOffset(151, "carbon");
 	}
 
 	@Test
 	public void testTagValueCompletionAsAMultiline() {
-		confirmCompletionAtOffset(161, "linux");
+		confirmCompletionAtOffset(167, "linux");
 	}
 
 	@Test
 	public void testTagValueCompletionAfterAMultiline() {
-		confirmCompletionAtOffset(181, "PA_RISC");
+		confirmCompletionAtOffset(187, "PA_RISC");
 	}
 
 	@Test
 	public void testAttributeNameCompletionBeforeAMultiline() {
-		confirmCompletionAtOffset(39, "id");
+		confirmCompletionAtOffset(42, "id");
 	}
 
 	@Test
 	public void testAttributeNameCompletionAsAMultiline() {
-		confirmCompletionAtOffset(60, "id");
+		confirmCompletionAtOffset(63, "id");
 	}
 
 	@Test
 	public void testAttributeNameCompletionAfterAMultiline() {
-		confirmCompletionAtOffset(82, "id");
+		confirmCompletionAtOffset(85, "id");
 	}
 
 	@Test
 	public void testAttributeValueCompletionBeforeAMultiline() {
-		confirmCompletionAtOffset(49, "Add repository URL first.");
+		confirmCompletionAtOffset(52, "Add repository URL first.");
 	}
 
 	@Test
 	public void testAttributeValueCompletionAsAMultiline() {
-		confirmCompletionAtOffset(71, "Add repository URL first.");
+		confirmCompletionAtOffset(74, "Add repository URL first.");
 	}
 
 	@Test
 	public void testAttributeValueCompletionAfterAMultiline() {
-		confirmCompletionAtOffset(92, "Add repository URL first.");
+		confirmCompletionAtOffset(95, "Add repository URL first.");
 	}
 
 	private void confirmCompletionAtOffset(int offset, String expectedCompletion) {

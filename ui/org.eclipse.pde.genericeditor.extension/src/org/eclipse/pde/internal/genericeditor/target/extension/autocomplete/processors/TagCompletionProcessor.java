@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetCompletionProposal;
+import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TagCompletionProposal;
 import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetDefinitionContentAssist;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.LocationNode;
@@ -44,7 +44,9 @@ public class TagCompletionProcessor extends DelegateProcessor {
 				ITargetConstants.WS_TAG, ITargetConstants.ARCH_TAG, ITargetConstants.NL_TAG });
 		tagChildren.put(ITargetConstants.LAUNCHER_ARGS_TAG,
 				new String[] { ITargetConstants.VM_ARGS_TAG, ITargetConstants.PROGRAM_ARGS_TAG });
-		tagChildren.put(ITargetConstants.LOCATIONS_TAG, new String[] { ITargetConstants.LOCATION_TAG });
+		tagChildren.put(ITargetConstants.LOCATIONS_TAG, new String[] { ITargetConstants.LOCATION_IU_COMPLETION_LABEL,
+				ITargetConstants.LOCATION_PROFILE_COMPLETION_LABEL, ITargetConstants.LOCATION_DIRECTORY_COMPLETION_LABEL,
+				ITargetConstants.LOCATION_FEATURE_COMPLETION_LABEL });
 		tagChildren.put(ITargetConstants.LOCATION_TAG,
 				new String[] { ITargetConstants.UNIT_TAG, ITargetConstants.REPOSITORY_TAG });
 
@@ -101,7 +103,6 @@ public class TagCompletionProcessor extends DelegateProcessor {
 			}
 		}
 
-		String handyAddition;
 		List<String> siblingTags = new ArrayList<>();
 		if (children != null) {
 			for (Node child : children) {
@@ -116,18 +117,8 @@ public class TagCompletionProcessor extends DelegateProcessor {
 			if (displayString == null || displayString.length() == 0 || siblingTags.contains(tags[i])) {
 				continue;
 			}
-			String proposal = ""; //$NON-NLS-1$
-			if (tags[i].equalsIgnoreCase(ITargetConstants.UNIT_TAG)
-					|| tags[i].equalsIgnoreCase(ITargetConstants.REPOSITORY_TAG)
-					|| tags[i].equalsIgnoreCase(ITargetConstants.TARGET_JRE_TAG)) {
-				handyAddition = "/>"; //$NON-NLS-1$
-				proposal = tags[i] + handyAddition;
-			} else {
-				handyAddition = "</" + tags[i] + ">"; //$NON-NLS-1$ //$NON-NLS-2$
-				proposal = tags[i] + ">" + handyAddition; //$NON-NLS-1$
-			}
-			proposals.add(new TargetCompletionProposal(proposal, proposal.length() - handyAddition.length(),
-					offset - searchTerm.length(), searchTerm.length(), displayString));
+			proposals.add(new TagCompletionProposal(tags[i], offset - searchTerm.length(), searchTerm.length(),
+					displayString));
 		}
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);
 	}
