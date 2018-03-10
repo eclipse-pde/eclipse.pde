@@ -51,7 +51,7 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 	private ViewerComparator fTreeViewerDefaultComparator;
 
 	public QuickOutlinePopupDialog(Shell parent, int shellStyle, IOutlineContentCreator creator, IOutlineSelectionHandler handler) {
-		super(parent, shellStyle, true, true, true, true, null, null);
+		super(parent, shellStyle, true, false, false, true, false, null, null);
 		// Set outline creator
 		fOutlineContentCreator = creator;
 		// Set outline handler
@@ -289,10 +289,11 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		 * the call to constrainShellSize in PopupDialog.open will still ensure that the shell is
 		 * entirely visible.
 		 */
-		if ((getPersistBounds() == false) || (getDialogSettings() == null)) {
+		if (((getPersistLocation() == false) && getPersistSize() == false) || (getDialogSettings() == null)) {
 			getShell().setLocation(location);
 		}
 	}
+
 
 	@Override
 	public void setSize(int width, int height) {
