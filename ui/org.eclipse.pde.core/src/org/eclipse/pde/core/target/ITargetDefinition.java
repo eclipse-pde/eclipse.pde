@@ -61,15 +61,17 @@ public interface ITargetDefinition {
 	 * and set to null to avoid out of sync documents
 	 *
 	 * @param document
-	 *            xml document or <code>null</code>
+	 *                     xml document or <code>null</code>
+	 * @since 3.12
 	 */
 	public void setDocument(Document document);
 
 	/**
 	 * Returns the Document that represents this target, or <code>null</code> if
 	 * none
-	 * 
+	 *
 	 * @return document or <code>null</code>
+	 * @since 3.12
 	 */
 	public Document getDocument();
 
