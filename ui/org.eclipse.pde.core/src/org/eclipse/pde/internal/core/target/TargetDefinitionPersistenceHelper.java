@@ -16,7 +16,8 @@ import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.*;
-import javax.xml.transform.*;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
@@ -97,10 +98,7 @@ public class TargetDefinitionPersistenceHelper {
 
 		StreamResult outputTarget = new StreamResult(output);
 		TransformerFactory factory = TransformerFactory.newInstance();
-		Transformer transformer = factory.newTransformer();
-		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-		transformer.transform(source, outputTarget);
+		factory.newTransformer().transform(source, outputTarget);
 
 	}
 
