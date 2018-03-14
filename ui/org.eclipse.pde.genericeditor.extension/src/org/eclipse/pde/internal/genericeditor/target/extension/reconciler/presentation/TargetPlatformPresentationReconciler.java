@@ -18,6 +18,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.TextUtilities;
@@ -112,8 +113,13 @@ public class TargetPlatformPresentationReconciler extends PresentationReconciler
 		IPresentationRepairer repairer = this.getRepairer(IDocument.DEFAULT_CONTENT_TYPE);
 		if (repairer != null)
 			try {
-				repairer.createPresentation(presentation, TextUtilities.computePartitioning(document,
-						getDocumentPartitioning(), 0, document.getLength(), false)[0]);
+				ITypedRegion[] regions = TextUtilities.computePartitioning(document, getDocumentPartitioning(), 0,
+						document.getLength(), false);
+				if (regions.length > 0) {
+					repairer.createPresentation(presentation, regions[0]);
+					return presentation;
+				}
+				return null;
 			} catch (BadLocationException e) {
 				return null;
 			}
