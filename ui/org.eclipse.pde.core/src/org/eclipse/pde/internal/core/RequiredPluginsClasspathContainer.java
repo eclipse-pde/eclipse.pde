@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,7 +29,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	private IPluginModelBase fModel;
 	private IBuild fBuild;
 
-	private IClasspathEntry[] fEntries = null;
+	private IClasspathEntry[] fEntries;
+	private boolean addImportedPackages;
 
 	/**
 	 * Cached list of {@link IClasspathContributor} from plug-in extensions
@@ -259,6 +260,18 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				addDependency((BundleDescription) element.getSupplier(), added, map, entries, useInclusion);
 			}
 		}
+
+		if (addImportedPackages) {
+			// add Import-Package
+			ImportPackageSpecification[] imports = desc.getImportPackages();
+			for (ImportPackageSpecification importSpec : imports) {
+				BaseDescription supplier = importSpec.getSupplier();
+				if (supplier instanceof ExportPackageDescription) {
+					addDependencyViaImportPackage(((ExportPackageDescription) supplier).getExporter(), added, map,
+							entries);
+				}
+			}
+		}
 	}
 
 	private boolean addPlugin(BundleDescription desc, boolean useInclusions, Map<BundleDescription, ArrayList<Rule>> map, ArrayList<IClasspathEntry> entries) throws CoreException {
@@ -480,5 +493,33 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			if (!entries.contains(clsEntry))
 				entries.add(clsEntry);
 		}
+	}
+
+	/**
+	 * Tries to compute a full set of bundle dependencies, including not exported
+	 * bundle dependencies and bundles contributing packages possibly imported by
+	 * any of bundles in the dependency graph.
+	 *
+	 * @return never null, but possibly empty project list which all projects in the
+	 *         workspace this container depends on, directly or indirectly.
+	 */
+	public List<IProject> getAllProjectDependencies() {
+		List<IProject> projects = new ArrayList<>();
+		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+		try {
+			addImportedPackages = true;
+			IClasspathEntry[] entries = computePluginEntries();
+			for (IClasspathEntry cpe : entries) {
+				if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+					IProject project = root.getProject(cpe.getPath().lastSegment());
+					if (project.exists()) {
+						projects.add(project);
+					}
+				}
+			}
+		} finally {
+			addImportedPackages = false;
+		}
+		return projects;
 	}
 }

@@ -127,6 +127,7 @@
          <run
                class="org.eclipse.pde.internal.core.builders.ManifestConsistencyChecker">
          </run>
+         <dynamicReference class="org.eclipse.pde.internal.core.DynamicPluginProjectReferences"/>
       </builder>
    </extension>
    <extension
