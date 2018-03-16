@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -210,16 +210,17 @@ public final class ApiModelCache {
 	 *         element is cached
 	 */
 	public IApiElement getElementInfo(String baselineid, String componentid, String identifier, int type) {
+		String updatedIdentifier = (identifier != null && identifier.startsWith("classes.java.")) ? identifier.substring(8) : identifier; //$NON-NLS-1$
 		if (baselineid == null || componentid == null) {
 			return null;
 		}
 		switch (type) {
 			case IApiElement.TYPE: {
-				if (isMemberType(identifier)) {
+				if (isMemberType(updatedIdentifier)) {
 					if (this.fMemberTypeCache != null) {
-						Cache<String, ApiType> mcache = this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(identifier)));
+						Cache<String, ApiType> mcache = this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(updatedIdentifier)));
 						if (mcache != null) {
-							return mcache.get(identifier);
+							return mcache.get(updatedIdentifier);
 						}
 					}
 				} else {
@@ -227,8 +228,8 @@ public final class ApiModelCache {
 						Cache<String, Cache<String, IApiElement>> compcache = fRootCache.get(baselineid);
 						if (compcache != null) {
 							Cache<String, IApiElement> typecache = compcache.get(componentid);
-							if (typecache != null && identifier != null) {
-								return typecache.get(identifier);
+							if (typecache != null && updatedIdentifier != null) {
+								return typecache.get(updatedIdentifier);
 							}
 						}
 					}
