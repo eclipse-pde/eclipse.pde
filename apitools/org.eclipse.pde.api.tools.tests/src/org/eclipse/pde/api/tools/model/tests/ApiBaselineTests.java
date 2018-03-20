@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 import junit.framework.TestCase;
 
@@ -143,7 +144,12 @@ public class ApiBaselineTests extends TestCase {
 		assertEquals("Wrong provider for package", fBaseline.getApiComponent(fBaseline.getExecutionEnvironment()), components[0]); //$NON-NLS-1$
 		IApiTypeRoot classFile = components[0].findTypeRoot("java.lang.Object"); //$NON-NLS-1$
 		assertNotNull("Missing java.lang.Object", classFile); //$NON-NLS-1$
-		assertEquals("Wrong type name", "java.lang.Object", classFile.getTypeName()); //$NON-NLS-1$ //$NON-NLS-2$
+		String objectTypeName = "java.lang.Object"; //$NON-NLS-1$
+		if (ProjectUtils.isJava9Compatible()) {
+			objectTypeName = "classes.java.lang.Object"; //$NON-NLS-1$
+
+		}
+		assertEquals("Wrong type name", objectTypeName, classFile.getTypeName()); //$NON-NLS-1$
 	}
 
 	/**

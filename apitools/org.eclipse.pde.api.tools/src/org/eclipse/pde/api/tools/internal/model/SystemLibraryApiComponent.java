@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
@@ -117,6 +119,15 @@ public class SystemLibraryApiComponent extends Component {
 		List<IApiTypeContainer> libs = new ArrayList<>(fLibraries.length);
 		for (LibraryLocation lib : fLibraries) {
 			libs.add(new ArchiveApiTypeContainer(this, lib.getSystemLibraryPath().toOSString()));
+		}
+		if (fLibraries.length == 0) {
+			if (fLocation != null) {
+				IPath newPath = new Path(fLocation);
+				newPath = newPath.append("jmods").append("java.base.jmod"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (newPath.toFile().exists()) {
+					libs.add(new ArchiveApiTypeContainer(this, newPath.toOSString()));
+				}
+			}
 		}
 		return libs;
 	}
