@@ -74,6 +74,11 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 
 				return Status.OK_STATUS;
 			};
+
+			@Override
+			public boolean belongsTo(Object family) {
+				return autoBuilding && ResourcesPlugin.FAMILY_AUTO_BUILD.equals(family);
+			}
 		};
 
 		Display display = Display.getCurrent();
