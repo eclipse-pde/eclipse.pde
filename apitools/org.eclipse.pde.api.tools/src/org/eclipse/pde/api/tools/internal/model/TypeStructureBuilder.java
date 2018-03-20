@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -256,7 +257,11 @@ public class TypeStructureBuilder extends ClassVisitor {
 	public static IApiType buildTypeStructure(byte[] bytes, IApiComponent component, IApiTypeRoot file) {
 		TypeStructureBuilder visitor = new TypeStructureBuilder(new ClassNode(), component, file);
 		try {
+			boolean updated = Util.updateVersionFrom10to9(bytes);
 			ClassReader classReader = new ClassReader(bytes);
+			if (updated) {
+				Util.updateVersionFrom9to10(bytes);
+			}
 			classReader.accept(visitor, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			logAndReturn(file, e);
@@ -283,7 +288,12 @@ public class TypeStructureBuilder extends ClassVisitor {
 			AbstractApiTypeRoot abstractApiTypeRoot = (AbstractApiTypeRoot) typeRoot;
 			EnclosingMethodSetter visitor = new EnclosingMethodSetter(new ClassNode(), currentAnonymousLocalType.getName());
 			try {
-				ClassReader classReader = new ClassReader(abstractApiTypeRoot.getContents());
+				byte[] bytes = abstractApiTypeRoot.getContents();
+				boolean updated = Util.updateVersionFrom10to9(bytes);
+				ClassReader classReader = new ClassReader(bytes);
+				if (updated) {
+					Util.updateVersionFrom9to10(bytes);
+				}
 				classReader.accept(visitor, ClassReader.SKIP_FRAMES);
 			} catch (ArrayIndexOutOfBoundsException e) {
 				ApiPlugin.log(e);
