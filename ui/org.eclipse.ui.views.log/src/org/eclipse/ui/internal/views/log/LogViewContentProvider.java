@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.views.log;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 
 public class LogViewContentProvider implements ITreeContentProvider {
 	private LogView logView;
@@ -21,9 +20,6 @@ public class LogViewContentProvider implements ITreeContentProvider {
 		this.logView = logView;
 	}
 
-	@Override
-	public void dispose() { // do nothing
-	}
 
 	@Override
 	public Object[] getChildren(Object element) {
@@ -46,10 +42,6 @@ public class LogViewContentProvider implements ITreeContentProvider {
 	@Override
 	public boolean hasChildren(Object element) {
 		return ((AbstractEntry) element).getChildren(element).length > 0;
-	}
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { // do nothing
 	}
 
 	public boolean isDeleted(Object element) {
