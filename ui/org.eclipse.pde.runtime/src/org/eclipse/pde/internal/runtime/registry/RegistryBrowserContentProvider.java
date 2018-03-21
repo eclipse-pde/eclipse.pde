@@ -13,7 +13,8 @@ package org.eclipse.pde.internal.runtime.registry;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.internal.runtime.registry.model.*;
 
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
@@ -168,10 +169,6 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 
 		Object[] children = getChildren(element);
 		return children != null && children.length > 0;
-	}
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { // do nothing
 	}
 
 }
