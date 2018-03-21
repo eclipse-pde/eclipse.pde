@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.util.ArrayList;
 import java.util.Locale;
-import java.util.TreeSet;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -28,7 +28,7 @@ import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -144,14 +144,14 @@ public class PluginContentPage extends ContentPage {
 
 		// Gather EEs
 		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
-		TreeSet<String> availableEEs = new TreeSet<>();
+		ArrayList<String> availableEEs = new ArrayList<>();
+		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
 		for (IExecutionEnvironment exeEnv : exeEnvs) {
 			availableEEs.add(exeEnv.getId());
 		}
-		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
 
 		// Set data
-		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size() - 1]));
+		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size()]));
 		fEEChoice.addSelectionListener(widgetSelectedAdapter(e -> validatePage()));
 
 		// Set default EE based on strict match to default VM
