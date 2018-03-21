@@ -210,16 +210,17 @@ public final class ApiModelCache {
 	 *         element is cached
 	 */
 	public IApiElement getElementInfo(String baselineid, String componentid, String identifier, int type) {
+		String updatedIdentifier = (identifier != null && identifier.startsWith("classes.java.")) ? identifier.substring(8) : identifier; //$NON-NLS-1$
 		if (baselineid == null || componentid == null) {
 			return null;
 		}
 		switch (type) {
 			case IApiElement.TYPE: {
-				if (isMemberType(identifier)) {
+				if (isMemberType(updatedIdentifier)) {
 					if (this.fMemberTypeCache != null) {
-						Cache mcache = (Cache) this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(identifier)));
+						Cache mcache = (Cache) this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(updatedIdentifier)));
 						if (mcache != null) {
-							return (IApiElement) mcache.get(identifier);
+							return (IApiElement) mcache.get(updatedIdentifier);
 						}
 					}
 				} else {
@@ -227,8 +228,8 @@ public final class ApiModelCache {
 						Cache compcache = (Cache) fRootCache.get(baselineid);
 						if (compcache != null) {
 							Cache typecache = (Cache) compcache.get(componentid);
-							if (typecache != null && identifier != null) {
-								return (IApiElement) typecache.get(identifier);
+							if (typecache != null && updatedIdentifier != null) {
+								return (IApiElement) typecache.get(updatedIdentifier);
 							}
 						}
 					}
