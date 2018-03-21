@@ -11,16 +11,11 @@
 package org.eclipse.pde.internal.ui.elements;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 
 public class TreeContentProvider extends ListContentProvider implements ITreeContentProvider {
 
 	public TreeContentProvider() {
 		super();
-	}
-
-	@Override
-	public void dispose() {
 	}
 
 	@Override
@@ -54,10 +49,6 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
 			return children != null && children.length > 0;
 		}
 		return false;
-	}
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 
 	public boolean isDeleted(Object element) {

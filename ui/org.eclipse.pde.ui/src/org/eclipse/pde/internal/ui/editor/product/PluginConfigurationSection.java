@@ -59,11 +59,6 @@ public class PluginConfigurationSection extends TableSection {
 		}
 
 		@Override
-		public void dispose() {
-
-		}
-
-		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (oldInput == newInput)
 				return;

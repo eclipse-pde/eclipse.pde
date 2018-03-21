@@ -378,13 +378,6 @@ public class FeatureImportWizardPage extends WizardPage {
 		FilteredCheckboxTree tree = new FilteredCheckboxTree(container, null, SWT.NONE, filter);
 		fFeatureViewer = tree.getCheckboxTreeViewer();
 		fFeatureViewer.setContentProvider(new ITreeContentProvider() {
-			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
-
-			@Override
-			public void dispose() {
-			}
 
 			@Override
 			public Object[] getElements(Object inputElement) {

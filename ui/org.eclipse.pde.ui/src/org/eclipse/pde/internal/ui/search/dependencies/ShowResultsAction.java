@@ -14,7 +14,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -60,14 +59,6 @@ public class ShowResultsAction extends Action {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				return fUnusedImports;
-			}
-
-			@Override
-			public void dispose() {
-			}
-
-			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 		});
 		dialog.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());

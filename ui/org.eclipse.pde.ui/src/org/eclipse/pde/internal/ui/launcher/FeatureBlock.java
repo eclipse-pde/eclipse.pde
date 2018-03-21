@@ -571,14 +571,6 @@ public class FeatureBlock {
 		}
 
 		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
-		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement == fAdditionalPluginsParentElement) {
 				return fAdditionalPlugins.toArray();

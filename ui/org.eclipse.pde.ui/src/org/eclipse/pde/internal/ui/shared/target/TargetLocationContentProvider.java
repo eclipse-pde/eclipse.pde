@@ -14,7 +14,6 @@ import java.util.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
@@ -130,13 +129,6 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 
-	@Override
-	public void dispose() {
-	}
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	}
 
 	/**
 	 * @return whether this content provider will include plug-in content as children of a location

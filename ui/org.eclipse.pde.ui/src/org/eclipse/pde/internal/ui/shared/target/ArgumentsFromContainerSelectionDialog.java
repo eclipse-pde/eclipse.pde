@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.core.target.ITargetDefinition;
-import org.eclipse.pde.core.target.ITargetLocation;
-
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
@@ -22,6 +19,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -123,14 +122,6 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 			@Override
 			public Object getParent(Object element) {
 				return null;
-			}
-
-			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
-
-			@Override
-			public void dispose() {
 			}
 
 		});

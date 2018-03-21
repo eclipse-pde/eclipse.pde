@@ -89,13 +89,6 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 			return element instanceof ModelChange;
 		}
 
-		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
 	}
 
 	private class ExternalizeStringsCellModifier implements ICellModifier {
@@ -350,13 +343,6 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 				return new Object[0];
 			}
 
-			@Override
-			public void dispose() {
-			}
-
-			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
 		});
 		fPropertiesViewer.setLabelProvider(new ExternalizeStringsLabelProvider());
 		fPropertiesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
