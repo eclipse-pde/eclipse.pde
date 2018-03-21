@@ -153,13 +153,6 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 			return null;
 		}
 
-		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
 	}
 
 	TreeViewer fViewer = null;

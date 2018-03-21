@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
@@ -99,18 +98,12 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 			return new Object[0];
 		}
 
-		@Override
-		public void dispose() {
-		}
 
 		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
 	}
 
 	/**

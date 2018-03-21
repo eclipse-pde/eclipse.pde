@@ -95,10 +95,6 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		}
 
 		@Override
-		public void dispose() {
-		}
-
-		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof ISession) {
 				ISession session = (ISession) parent;
