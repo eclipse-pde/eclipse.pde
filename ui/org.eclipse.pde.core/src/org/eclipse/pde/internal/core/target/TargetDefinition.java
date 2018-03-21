@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Manumitting Technologies Inc - bug 437726: wrong error messages opening target definition
- *     Lucas Bullen - Bug 531602 - [Generic TP Editor] formatting munged by editor
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.Map.Entry;
-import javax.xml.parsers.*;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -28,7 +25,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
-import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,9 +33,6 @@ import org.xml.sax.SAXException;
  * @since 3.5
  */
 public class TargetDefinition implements ITargetDefinition {
-	// xml document making the targetDefinition
-	private Document fDocument;
-	private Element fRoot;
 
 	// name and description
 	private String fName;
@@ -91,38 +84,6 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	TargetDefinition(ITargetHandle handle) {
 		fHandle = handle;
-		try {
-			DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
-			Document doc = docBuilder.newDocument();
-			ProcessingInstruction instruction = doc.createProcessingInstruction(
-					TargetDefinitionPersistenceHelper.PDE_INSTRUCTION,
-					TargetDefinitionPersistenceHelper.ATTR_VERSION + "=\"" + ICoreConstants.TARGET38 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-			doc.appendChild(instruction);
-			doc.appendChild(doc.createElement(TargetDefinitionPersistenceHelper.ROOT));
-			setDocument(doc);
-		} catch (ParserConfigurationException e) {
-			setDocument(null);
-		}
-	}
-
-	@Override
-	public void setDocument(Document document) {
-		if (document != null) {
-			Element root = document.getDocumentElement();
-			if (root != null && root.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.ROOT)) {
-				fDocument = document;
-				fRoot = root;
-			}
-			return;
-		}
-		fDocument = null;
-		fRoot = null;
-	}
-
-	@Override
-	public Document getDocument() {
-		return fDocument;
 	}
 
 	@Override
@@ -169,51 +130,23 @@ public class TargetDefinition implements ITargetDefinition {
 	public void setArch(String arch) {
 		incrementSequenceNumber();
 		fArch = arch;
-		if (fRoot != null && arch != null && arch.length() > 0) {
-			Element archNode = getChildElement(fRoot, TargetDefinitionPersistenceHelper.ENVIRONMENT,
-					TargetDefinitionPersistenceHelper.ARCH);
-			archNode.setTextContent(arch);
-		} else {
-			removeElement(TargetDefinitionPersistenceHelper.ENVIRONMENT, TargetDefinitionPersistenceHelper.ARCH);
-		}
 	}
 
 	@Override
 	public void setNL(String nl) {
 		incrementSequenceNumber();
 		fNL = nl;
-		if (fRoot != null && nl != null && nl.length() > 0) {
-			Element nlNode = getChildElement(fRoot, TargetDefinitionPersistenceHelper.ENVIRONMENT,
-					TargetDefinitionPersistenceHelper.NL);
-			nlNode.setTextContent(nl);
-		} else {
-			removeElement(TargetDefinitionPersistenceHelper.ENVIRONMENT, TargetDefinitionPersistenceHelper.NL);
-		}
 	}
 
 	@Override
 	public void setName(String name) {
 		fName = name;
-		if (fRoot != null) {
-			if (name != null && name.length() > 0) {
-				fRoot.setAttribute(TargetDefinitionPersistenceHelper.ATTR_NAME, name);
-			} else {
-				fRoot.removeAttribute(TargetDefinitionPersistenceHelper.ATTR_NAME);
-			}
-		}
 	}
 
 	@Override
 	public void setOS(String os) {
 		incrementSequenceNumber();
 		fOS = os;
-		if (fRoot != null && os != null && os.length() > 0) {
-			Element nlNode = getChildElement(fRoot, TargetDefinitionPersistenceHelper.ENVIRONMENT,
-					TargetDefinitionPersistenceHelper.OS);
-			nlNode.setTextContent(os);
-		} else {
-			removeElement(TargetDefinitionPersistenceHelper.ENVIRONMENT, TargetDefinitionPersistenceHelper.OS);
-		}
 	}
 
 	@Override
@@ -222,13 +155,6 @@ public class TargetDefinition implements ITargetDefinition {
 			args = null;
 		}
 		fProgramArgs = args;
-		if (fRoot != null && args != null) {
-			Element programArgsNode = getChildElement(fRoot, TargetDefinitionPersistenceHelper.ARGUMENTS,
-					TargetDefinitionPersistenceHelper.PROGRAM_ARGS);
-			programArgsNode.setTextContent(args);
-		} else {
-			removeElement(TargetDefinitionPersistenceHelper.ARGUMENTS, TargetDefinitionPersistenceHelper.PROGRAM_ARGS);
-		}
 	}
 
 	@Override
@@ -237,26 +163,12 @@ public class TargetDefinition implements ITargetDefinition {
 			args = null;
 		}
 		fVMArgs = args;
-		if (fRoot != null && args != null) {
-			Element programArgsNode = getChildElement(fRoot, TargetDefinitionPersistenceHelper.ARGUMENTS,
-					TargetDefinitionPersistenceHelper.VM_ARGS);
-			programArgsNode.setTextContent(args);
-		} else {
-			removeElement(TargetDefinitionPersistenceHelper.ARGUMENTS, TargetDefinitionPersistenceHelper.VM_ARGS);
-		}
 	}
 
 	@Override
 	public void setWS(String ws) {
 		incrementSequenceNumber();
 		fWS = ws;
-		if (fRoot != null && ws != null && ws.length() > 0) {
-			Element nlNode = getChildElement(fRoot, TargetDefinitionPersistenceHelper.ENVIRONMENT,
-					TargetDefinitionPersistenceHelper.WS);
-			nlNode.setTextContent(ws);
-		} else {
-			removeElement(TargetDefinitionPersistenceHelper.ENVIRONMENT, TargetDefinitionPersistenceHelper.WS);
-		}
 	}
 
 	@Override
@@ -273,26 +185,13 @@ public class TargetDefinition implements ITargetDefinition {
 		fContainers = locations;
 
 		if (locations == null) {
-			setIncluded(null);
+			fIncluded = null;
 		} else {
 			for (ITargetLocation location : locations) {
 				if (location instanceof AbstractBundleContainer) {
 					((AbstractBundleContainer) location).associateWithTarget(this);
 				}
 			}
-		}
-		try {
-			if (fRoot != null && locations != null) {
-				Element containersElement = getChildElement(fRoot, TargetDefinitionPersistenceHelper.LOCATIONS);
-				serializeBundleContainers(locations, containersElement);
-			} else {
-				removeElement(TargetDefinitionPersistenceHelper.LOCATIONS);
-			}
-		} catch (CoreException | DOMException | SAXException | IOException | ParserConfigurationException e) {
-			// Document is no longer in sync with target definition, remove to be generated
-			// at completion
-			fDocument = null;
-			fRoot = null;
 		}
 	}
 
@@ -311,7 +210,7 @@ public class TargetDefinition implements ITargetDefinition {
 			fFeaturesInLocation.remove(location);
 		}
 		if (fContainers == null) {
-			setIncluded(null);
+			fIncluded = null;
 		}
 	}
 
@@ -457,19 +356,6 @@ public class TargetDefinition implements ITargetDefinition {
 	@Override
 	public void setIncluded(NameVersionDescriptor[] included) {
 		fIncluded = included;
-		if (included != null && fRoot != null) {
-			Arrays.sort(included, (o1, o2) -> {
-				int compareType = o1.getType().compareTo(o2.getType());
-				if (compareType != 0) {
-					return compareType;
-				}
-				return o1.getId().compareTo(o2.getId());
-			});
-			Element includedElement = getChildElement(fRoot, TargetDefinitionPersistenceHelper.INCLUDE_BUNDLES);
-			serializeBundles(includedElement, included);
-		} else {
-			removeElement(TargetDefinitionPersistenceHelper.INCLUDE_BUNDLES);
-		}
 	}
 
 	@Override
@@ -751,8 +637,6 @@ public class TargetDefinition implements ITargetDefinition {
 			fVMArgs = null;
 			fWS = null;
 			fSequenceNumber = 0;
-			fDocument = null;
-			fRoot = null;
 			TargetDefinitionPersistenceHelper.initFromXML(this, stream);
 		} catch (ParserConfigurationException e) {
 			abort(Messages.TargetDefinition_0, e);
@@ -806,24 +690,6 @@ public class TargetDefinition implements ITargetDefinition {
 			bundles = null;
 		}
 		fImplicit = bundles;
-		if (fRoot != null && bundles != null && bundles.length > 0) {
-			Element implicitDependenciesElement = getChildElement(fRoot, TargetDefinitionPersistenceHelper.IMPLICIT);
-			List<Element> descriptorElements = new ArrayList<>();
-			for (NameVersionDescriptor descriptor : bundles) {
-				Element plugin = fDocument.createElement(TargetDefinitionPersistenceHelper.PLUGIN);
-				plugin.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID, descriptor.getId());
-				if (descriptor.getVersion() != null) {
-					plugin.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, descriptor.getVersion());
-				}
-				descriptorElements.add(plugin);
-			}
-
-			updateElements(implicitDependenciesElement, null, descriptorElements,
-					(Element o1, Element o2) -> o1.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID)
-							.compareTo(o2.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID)));
-		} else {
-			removeElement(TargetDefinitionPersistenceHelper.IMPLICIT);
-		}
 	}
 
 	@Override
@@ -834,13 +700,6 @@ public class TargetDefinition implements ITargetDefinition {
 	@Override
 	public void setJREContainer(IPath containerPath) {
 		fJREContainer = containerPath;
-		if (fRoot != null && containerPath != null) {
-			Element jreElement = getChildElement(fRoot, TargetDefinitionPersistenceHelper.TARGET_JRE);
-			jreElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH,
-					containerPath.toPortableString());
-		} else {
-			removeElement(TargetDefinitionPersistenceHelper.TARGET_JRE);
-		}
 	}
 
 	/**
@@ -1146,10 +1005,6 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public void setUIMode(int mode) {
 		fUIMode = mode;
-		if (fRoot != null && mode == TargetDefinition.MODE_FEATURE) {
-			fRoot.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_MODE,
-					TargetDefinitionPersistenceHelper.FEATURE);
-		}
 	}
 
 	/**
@@ -1180,311 +1035,4 @@ public class TargetDefinition implements ITargetDefinition {
 	void setSequenceNumber(int value) {
 		fSequenceNumber = value;
 	}
-
-	/**
-	 * From the given parent, follows the path of given names and returns the last
-	 * element in the path, if any element in the given path does not exist it is
-	 * created
-	 *
-	 * @param parent
-	 *            root of the name path
-	 * @param childNames
-	 *            path of element names leading to the desired element
-	 * @return final element in the given path
-	 */
-	private Element getChildElement(Element parent, String... childNames) {
-		if (fDocument != null && parent != null && childNames.length > 0) {
-			Element childNode = null;
-			NodeList list = parent.getChildNodes();
-			for (int i = 0; i < list.getLength(); ++i) {
-				Node node = list.item(i);
-				if (node instanceof Element && node.getNodeName().equalsIgnoreCase(childNames[0])) {
-						childNode = (Element) node;
-					break;
-					}
-				}
-			if (childNode == null) {
-				childNode = fDocument.createElement(childNames[0]);
-				parent.appendChild(childNode);
-			}
-				if (childNames.length > 1) {
-				return getChildElement(childNode, Arrays.copyOfRange(childNames, 1, childNames.length));
-				}
-			return childNode;
-			}
-		return null;
-	}
-
-	private void removeElement(String... childNames) {
-		if (fRoot != null) {
-			removeElement(fRoot, childNames);
-		}
-	}
-
-	private boolean removeElement(Element parent, String... childNames) {
-		if (parent != null && childNames.length > 0) {
-			Element childNode = null;
-			int otherChildElementCount = 0;
-			NodeList list = parent.getChildNodes();
-			for (int i = 0; i < list.getLength(); ++i) {
-				Node node = list.item(i);
-				if (node instanceof Element) {
-					if (childNode == null && node.getNodeName().equalsIgnoreCase(childNames[0])) {
-						childNode = (Element) node;
-					} else {
-						otherChildElementCount++;
-					}
-				}
-			}
-			boolean doesFirstChildExist = childNode != null;
-			if (doesFirstChildExist) {
-				if (childNames.length > 1) {
-					doesFirstChildExist = !removeElement(childNode,
-							Arrays.copyOf(childNames, childNames.length - 1));
-				} else {
-					parent.removeChild(childNode);
-					doesFirstChildExist = false;
-				}
-			}
-			if (otherChildElementCount == 0 && !doesFirstChildExist) {
-				if (parent.getParentNode() != null) {
-					parent.getParentNode().removeChild(parent);
-				}
-				return true;
-			}
-			return false;
-		}
-		return false;
-	}
-
-	private static Comparator<Element> elementAttributesComparator = (o1, o2) -> {
-		// compare attributes
-		NamedNodeMap expectedAttrs = o1.getAttributes();
-		NamedNodeMap actualAttrs = o2.getAttributes();
-		if (expectedAttrs.getLength() != actualAttrs.getLength()) {
-			return expectedAttrs.getLength() - actualAttrs.getLength();
-		}
-		for (int i = 0; i < expectedAttrs.getLength(); i++) {
-			Attr expectedAttr = (Attr) expectedAttrs.item(i);
-			Attr actualAttr = null;
-			if (expectedAttr.getNamespaceURI() == null) {
-				actualAttr = (Attr) actualAttrs.getNamedItem(expectedAttr.getName());
-			} else {
-				actualAttr = (Attr) actualAttrs.getNamedItemNS(expectedAttr.getNamespaceURI(),
-						expectedAttr.getLocalName());
-			}
-			if (actualAttr == null) {
-				return -1;
-			}
-			int comparedValue = expectedAttr.getValue().compareTo(actualAttr.getValue());
-			if (comparedValue != 0) {
-				return comparedValue;
-			}
-		}
-		return 0;
-	};
-
-	private void updateElements(Element parentElement, List<Element> oldElements, List<Element> newElements,
-			Comparator<Element> comparator) {
-		if (oldElements == null) {
-			oldElements = new ArrayList<>();
-			NodeList nodes = parentElement.getChildNodes();
-			for (int i = 0; i < nodes.getLength(); i++) {
-				Node node = nodes.item(i);
-				if (node instanceof Element) {
-					oldElements.add((Element) node);
-				}
-			}
-		}
-		for (Element element : oldElements) {
-			boolean matchFound = false;
-			for (int j = 0; j < newElements.size(); j++) {
-				if (comparator.compare(element, newElements.get(j)) == 0) {
-					if (elementAttributesComparator.compare(element, newElements.get(j)) != 0) {
-						parentElement.replaceChild(fDocument.importNode(newElements.get(j), true), element);
-					}
-					newElements.remove(j);
-					matchFound = true;
-					break;
-				}
-			}
-			if (!matchFound) {
-				parentElement.removeChild(element);
-			}
-		}
-		newElements.stream().forEach(element -> parentElement.appendChild(fDocument.importNode(element, true)));
-	}
-
-	private void serializeBundleContainers(ITargetLocation[] targetLocations, Element containersElement)
-			throws DOMException, CoreException, SAXException, IOException, ParserConfigurationException {
-
-		List<Element> newContainers = new ArrayList<>();
-		List<Element> newIUContainers = new ArrayList<>();
-		List<Element> oldContainers = new ArrayList<>();
-		List<Element> oldIUContainers = new ArrayList<>();
-
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
-		for (ITargetLocation targetLocation : targetLocations) {
-			if (targetLocation instanceof IUBundleContainer) {
-				String xml = targetLocation.serialize();
-				if (xml != null) {
-					Document document = docBuilder
-							.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
-					Element root = document.getDocumentElement();
-					if (!root.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATION)) {
-						throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-								NLS.bind(Messages.TargetDefinitionPersistenceHelper_WrongRootElementInXML,
-										targetLocation.getType(), xml)));
-					}
-					root.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE, targetLocation.getType());
-					newIUContainers.add(root);
-				}
-			} else {
-				Element containerElement = fDocument.createElement(TargetDefinitionPersistenceHelper.LOCATION);
-				containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE,
-						targetLocation.getType());
-				containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH,
-						targetLocation.getLocation(false));
-				if (targetLocation instanceof ProfileBundleContainer) {
-					String configurationArea = ((ProfileBundleContainer) targetLocation).getConfigurationLocation();
-					if (configurationArea != null) {
-						containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_CONFIGURATION,
-								configurationArea);
-					}
-				} else if (targetLocation instanceof FeatureBundleContainer) {
-					containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID,
-							((FeatureBundleContainer) targetLocation).getFeatureId());
-					String version = ((FeatureBundleContainer) targetLocation).getFeatureVersion();
-					if (version != null) {
-						containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, version);
-					}
-				}
-				newContainers.add(containerElement);
-			}
-		}
-
-		NodeList nodes = containersElement.getChildNodes();
-		for (int j = 0; j < nodes.getLength(); j++) {
-			Node node = nodes.item(j);
-			if (node instanceof Element
-					&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATION)) {
-				Element element = (Element) node;
-				String type = (element).getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE);
-				if (type.equals(IUBundleContainer.TYPE)) {
-					oldIUContainers.add(element);
-				} else {
-					oldContainers.add(element);
-				}
-			}
-		}
-
-		updateContainerElements(containersElement, oldContainers, newContainers);
-		updateIUContainerElements(containersElement, oldIUContainers, newIUContainers);
-	}
-
-	private void updateContainerElements(Element containersElement, List<Element> oldContainers,
-			List<Element> newContainers) {
-		updateElements(containersElement, oldContainers, newContainers, (Element o1, Element o2) -> {
-			int typeCompare = o1.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE)
-					.compareTo(o2.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE));
-			int pathCompare = o1.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH)
-					.compareTo(o2.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH));
-			int idCompare = 0;
-			if (o1 instanceof FeatureBundleContainer) {
-				idCompare = o1.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID)
-						.compareTo(o2.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID));
-			}
-			return typeCompare == 0 && pathCompare == 0 && idCompare == 0 ? 0 : 1;
-		});
-	}
-
-	private void updateIUContainerElements(Element containersElement, List<Element> oldContainers,
-			List<Element> newContainers) {
-		Map<String, Element> oldContainersByRepo = new HashMap<>();
-		Map<String, List<Element>> oldUnitsByRepo = new HashMap<>();
-		for (Element container : oldContainers) {
-			NodeList nodes = container.getChildNodes();
-			List<Element> units = new ArrayList<>();
-			String repoURL = null;
-			for (int i = 0; i < nodes.getLength(); i++) {
-				Node node = nodes.item(i);
-				if (node instanceof Element) {
-					if (repoURL == null
-							&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
-						repoURL = ((Element) node).getAttribute(TargetDefinitionPersistenceHelper.LOCATION);
-						oldContainersByRepo.put(repoURL, container);
-					} else if (node.getNodeName()
-							.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
-						units.add((Element) node);
-					}
-				}
-			}
-			if (repoURL != null) {
-				oldUnitsByRepo.put(repoURL, units);
-			} else {
-				containersElement.removeChild(container);
-			}
-		}
-
-		Map<String, Element> newContainersByRepo = new HashMap<>();
-		for (Element container : newContainers) {
-			NodeList nodes = container.getChildNodes();
-			List<Element> units = new ArrayList<>();
-			String repoURL = null;
-			for (int i = 0; i < nodes.getLength(); i++) {
-				Node node = nodes.item(i);
-				if (node instanceof Element) {
-					if (repoURL == null
-							&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
-						repoURL = ((Element) node).getAttribute(TargetDefinitionPersistenceHelper.LOCATION);
-						newContainersByRepo.put(repoURL, container);
-					} else if (node.getNodeName()
-							.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
-						units.add((Element) node);
-					}
-				}
-			}
-			if (repoURL != null) {
-				if (oldContainersByRepo.containsKey(repoURL)) {
-					updateElements(oldContainersByRepo.get(repoURL), oldUnitsByRepo.get(repoURL), units,
-							(Element o1, Element o2) -> o1.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID)
-									.compareTo(o2.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID)));
-					oldContainersByRepo.remove(repoURL);
-				} else {
-					containersElement.appendChild(fDocument.importNode(container, true));
-				}
-			}
-		}
-
-		for (Entry<String, Element> entry : oldContainersByRepo.entrySet()) {
-			containersElement.removeChild(entry.getValue());
-		}
-	}
-
-	private void serializeBundles(Element parent, NameVersionDescriptor[] bundles) {
-		List<Element> bundlElements = new ArrayList<>();
-		for (NameVersionDescriptor bundle : bundles) {
-			if (bundle.getType() == NameVersionDescriptor.TYPE_FEATURE) {
-				Element includedBundle = fDocument.createElement(TargetDefinitionPersistenceHelper.FEATURE);
-				includedBundle.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID, bundle.getId());
-				String version = bundle.getVersion();
-				if (version != null) {
-					includedBundle.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, version);
-				}
-				bundlElements.add(includedBundle);
-			} else {
-				Element includedBundle = fDocument.createElement(TargetDefinitionPersistenceHelper.PLUGIN);
-				includedBundle.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID, bundle.getId());
-				String version = bundle.getVersion();
-				if (version != null) {
-					includedBundle.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, version);
-				}
-				bundlElements.add(includedBundle);
-			}
-		}
-		updateElements(parent, null, bundlElements,
-				(Element o1, Element o2) -> o1.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID)
-						.compareTo(o2.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID)));
-		}
-	}
+}
