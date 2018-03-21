@@ -12,7 +12,6 @@ package org.eclipse.ui.trace.internal.providers;
 
 import java.util.Collection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.trace.internal.datamodel.TracingNode;
 
 /**
@@ -62,13 +61,4 @@ public class TracingComponentContentProvider implements ITreeContentProvider {
 		return node;
 	}
 
-	public void dispose() {
-
-		// do nothing (for now)
-	}
-
-	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-
-		// do nothing (for now)
-	}
 }
