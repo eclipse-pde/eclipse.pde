@@ -14,7 +14,6 @@ package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
@@ -56,16 +55,6 @@ public class SimpleCSContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
-	}
-
-	@Override
-	public void dispose() {
-		// no op
-	}
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// no op
 	}
 
 }

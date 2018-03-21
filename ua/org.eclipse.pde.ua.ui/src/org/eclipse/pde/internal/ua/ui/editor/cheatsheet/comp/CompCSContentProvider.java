@@ -14,7 +14,6 @@ package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.comp;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
 
@@ -56,14 +55,5 @@ public class CompCSContentProvider implements ITreeContentProvider {
 		return getChildren(inputElement);
 	}
 
-	@Override
-	public void dispose() {
-		// no op
-	}
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// no op
-	}
 
 }
