@@ -33,7 +33,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -126,16 +125,7 @@ public class DSReferenceSection extends TableSection implements
 			return new Object[0];
 		}
 
-		@Override
-		public void dispose() {
-			// do nothing
 
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// do nothing
-		}
 	}
 
 	public DSReferenceSection(PDEFormPage page, Composite parent) {

@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSObject;
 
@@ -53,16 +52,6 @@ public class DSContentProvider implements IContentProvider,
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
-	}
-
-	@Override
-	public void dispose() {
-
-	}
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
 	}
 
 }

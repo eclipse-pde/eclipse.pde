@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -87,16 +86,6 @@ public class DSProvideSection extends TableSection implements
 
 			}
 			return new Object[0];
-		}
-
-		@Override
-		public void dispose() {
-			// do nothing
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// do nothing
 		}
 	}
 
