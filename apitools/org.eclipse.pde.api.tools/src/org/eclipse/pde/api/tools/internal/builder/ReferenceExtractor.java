@@ -1340,7 +1340,12 @@ public class ReferenceExtractor extends ClassVisitor {
 	private Set<Reference> processInnerClass(IApiType type, int refkinds) throws CoreException {
 		HashSet<Reference> refs = new HashSet<>();
 		ReferenceExtractor extractor = new ReferenceExtractor(type, refs, refkinds, this.fieldtracker);
-		ClassReader reader = new ClassReader(((AbstractApiTypeRoot) type.getTypeRoot()).getContents());
+		byte[] bytes = ((AbstractApiTypeRoot) type.getTypeRoot()).getContents();
+		boolean updated = Util.updateVersionFrom10to9(bytes);
+		ClassReader reader = new ClassReader(bytes);
+		if (updated) {
+			Util.updateVersionFrom9to10(bytes);
+		}
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);
 		return refs;
 	}

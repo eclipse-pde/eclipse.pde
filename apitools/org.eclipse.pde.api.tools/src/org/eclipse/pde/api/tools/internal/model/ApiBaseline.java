@@ -14,6 +14,7 @@ package org.eclipse.pde.api.tools.internal.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -157,6 +159,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 */
 	private IVMInstall fVMBinding = null;
 
+	private String fVMPackages = null;
+
 	/**
 	 * Constructs a new API baseline with the given name.
 	 *
@@ -201,6 +205,51 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		this.fLocation = location;
 	}
 
+	/*
+	 * Copied from org.eclipse.osgi.storage.Storage.calculateVMPackages
+	 */
+
+	private String calculateVMPackages() {
+		try {
+			List<String> packages = new ArrayList<>();
+			Class<?> moduleLayerClass = Class.forName("java.lang.ModuleLayer"); //$NON-NLS-1$
+			Method boot = moduleLayerClass.getMethod("boot"); //$NON-NLS-1$
+			Method modules = moduleLayerClass.getMethod("modules"); //$NON-NLS-1$
+			Class<?> moduleClass = Class.forName("java.lang.Module"); //$NON-NLS-1$
+			Method getDescriptor = moduleClass.getMethod("getDescriptor"); //$NON-NLS-1$
+			Class<?> moduleDescriptorClass = Class.forName("java.lang.module.ModuleDescriptor"); //$NON-NLS-1$
+			Method exports = moduleDescriptorClass.getMethod("exports"); //$NON-NLS-1$
+			Class<?> exportsClass = Class.forName("java.lang.module.ModuleDescriptor$Exports"); //$NON-NLS-1$
+			Method targets = exportsClass.getMethod("targets"); //$NON-NLS-1$
+			Method source = exportsClass.getMethod("source"); //$NON-NLS-1$
+
+			Object bootLayer = boot.invoke(null);
+			Set<?> bootModules = (Set<?>) modules.invoke(bootLayer);
+			for (Object m : bootModules) {
+				Object descriptor = getDescriptor.invoke(m);
+				for (Object export : (Set<?>) exports.invoke(descriptor)) {
+					String pkg = (String) source.invoke(export);
+					if (((Set<?>) targets.invoke(export)).isEmpty() && !pkg.startsWith("java.")) { //$NON-NLS-1$
+						packages.add(pkg);
+					}
+				}
+			}
+			Collections.sort(packages);
+			StringBuilder result = new StringBuilder();
+			for (String pkg : packages) {
+				if (result.length() != 0) {
+					result.append(',').append(' ');
+				}
+				result.append(pkg);
+			}
+			return result.toString();
+		} catch (Exception e) {
+			// equinoxContainer.getLogServices().log(EquinoxContainer.NAME,
+			// FrameworkLogEntry.ERROR, "Error determining system packages.",
+			// e); //$NON-NLS-1$
+			return null;
+		}
+	}
 	/**
 	 * Initializes this baseline to resolve in the execution environment
 	 * associated with the given description.
@@ -213,6 +262,12 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		String environmentId = ee.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
 		if (ApiPlugin.isRunningInFramework()) {
 			properties = getJavaProfileProperties(environmentId);
+			if (properties == null) {
+				// Java10 onwards, we take profile via this method
+				IExecutionEnvironment ev = EnvironmentsManager.getDefault().getEnvironment(environmentId);
+				properties = ev.getProfileProperties();
+
+			}
 		} else {
 			properties = Util.getEEProfile(environmentId);
 		}
@@ -271,6 +326,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 */
 	private void initialize(Properties profile, ExecutionEnvironmentDescription description) throws CoreException {
 		String value = profile.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+		if (value == null) {
+			// Java 10 onwards calculate this on runtime.
+			value = getVMPackages();
+		}
 		String[] systemPackages = null;
 		if (value != null) {
 			systemPackages = value.split(","); //$NON-NLS-1$
@@ -284,7 +343,12 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			}
 			fExecutionEnvironment = profile.getProperty("osgi.java.profile.name"); //$NON-NLS-1$
 			if (fExecutionEnvironment == null) {
-				abort("Profile file missing 'osgi.java.profile.name'", null); //$NON-NLS-1$
+				// Java 10 onwards, profile id is same as class lib level.
+				String id = description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
+				fExecutionEnvironment = id;
+				if (fExecutionEnvironment == null) {
+					abort("Profile file missing 'osgi.java.profile.name'", null); //$NON-NLS-1$
+				}
 			}
 			dictionary.put("osgi.os", ANY_VALUE); //$NON-NLS-1$
 			dictionary.put("osgi.arch", ANY_VALUE); //$NON-NLS-1$
@@ -309,6 +373,14 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		SystemLibraryApiComponent fSystemLibraryComponent = new SystemLibraryApiComponent(this, description, systemPackages);
 		addComponent(fSystemLibraryComponent);
 		fSystemLibraryComponentList.add(fSystemLibraryComponent);
+	}
+
+	private String getVMPackages() {
+		if (fVMPackages == null) {
+			fVMPackages = calculateVMPackages();
+		}
+		return fVMPackages;
+
 	}
 
 	/**

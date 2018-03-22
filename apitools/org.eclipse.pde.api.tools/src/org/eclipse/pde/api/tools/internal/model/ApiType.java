@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,7 +158,12 @@ public class ApiType extends ApiMember implements IApiType {
 	public List<IReference> extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException {
 		HashSet<Reference> references = new HashSet<>();
 		ReferenceExtractor extractor = new ReferenceExtractor(this, references, referenceMask);
-		ClassReader reader = new ClassReader(((AbstractApiTypeRoot) fStorage).getContents());
+		byte[] bytes = ((AbstractApiTypeRoot) fStorage).getContents();
+		boolean updated = Util.updateVersionFrom10to9(bytes);
+		ClassReader reader = new ClassReader(bytes);
+		if (updated) {
+			Util.updateVersionFrom9to10(bytes);
+		}
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);
 		return new LinkedList<>(references);
 	}
