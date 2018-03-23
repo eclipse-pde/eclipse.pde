@@ -26,7 +26,6 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.Node;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.RepositoryCache;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.UnitNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
-import org.eclipse.pde.internal.genericeditor.target.extension.p2.UpdateJob;
 
 /**
  * Class that computes autocompletions for attribute values. Example:
@@ -80,10 +79,6 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 					return getErrorCompletion();
 				}
 				RepositoryCache cache = RepositoryCache.getDefault();
-				if (!cache.isUpToDate(repoLocation)) {
-					scheduleUpdateJob(location);
-					return getInformativeProposal();
-				}
 				List<UnitNode> units = cache.fetchP2UnitsFromRepo(repoLocation, false);
 				return convertToProposals(units);
 			}
@@ -100,10 +95,6 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 					return getErrorCompletion();
 				}
 				RepositoryCache cache = RepositoryCache.getDefault();
-				if (!cache.isUpToDate(repoLocation)) {
-					scheduleUpdateJob(location);
-					return getInformativeProposal();
-				}
 				List<UnitNode> repositoryUnits = cache.fetchP2UnitsFromRepo(repoLocation, false);
 				List<String> versions = null;
 				for (UnitNode unit : repositoryUnits) {
@@ -117,12 +108,6 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 		}
 
 		return new ICompletionProposal[] {};
-	}
-
-	private void scheduleUpdateJob(LocationNode location) {
-		UpdateJob job = new UpdateJob(location);
-		job.setUser(true);
-		job.schedule();
 	}
 
 	private ICompletionProposal[] convertToVersionProposals(List<String> versions) {
@@ -154,13 +139,6 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 			result.add(new InstallableUnitProposal(displayString, offset - searchTerm.length(), searchTerm.length()));
 		}
 		return result.toArray(new ICompletionProposal[result.size()]);
-	}
-
-	private ICompletionProposal[] getInformativeProposal() {
-		String displayString = Messages.AttributeValueCompletionProcessor_StartedJob;
-		CompletionProposal p = new CompletionProposal("", offset, 0, 0, null, //$NON-NLS-1$
-				displayString, null, null);
-		return new ICompletionProposal[] { p };
 	}
 
 	private ICompletionProposal[] getErrorCompletion() {
