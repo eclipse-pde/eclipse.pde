@@ -360,12 +360,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	private void initialize(Properties profile, ExecutionEnvironmentDescription description) throws CoreException {
 		String value = profile.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 		if (value == null) {
-			if (value == null) {
-				// Java 10 onwards calculate this via profile in this plugin
-				Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL));
-				value = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-			}
+			// Java 10 onwards calculate this via profile in this plugin
+			Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL));
+			value = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 		}
+
 		String[] systemPackages = null;
 		if (value != null) {
 			systemPackages = value.split(","); //$NON-NLS-1$
