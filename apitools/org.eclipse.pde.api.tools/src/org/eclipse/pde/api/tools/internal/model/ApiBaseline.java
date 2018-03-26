@@ -317,6 +317,39 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		return null;
 	}
 
+	private static Properties getJavaProfilePropertiesForVMPackage(String ee) {
+		Bundle osgiBundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
+		if (osgiBundle == null) {
+			return null;
+		}
+		URL profileURL = osgiBundle.getEntry(ee.replace('/', '_') + ".profile"); //$NON-NLS-1$
+		if (profileURL != null) {
+			InputStream is = null;
+			try {
+				profileURL = FileLocator.resolve(profileURL);
+				URLConnection openConnection = profileURL.openConnection();
+				openConnection.setUseCaches(false);
+				is = openConnection.getInputStream();
+				if (is != null) {
+					Properties profile = new Properties();
+					profile.load(is);
+					return profile;
+				}
+			} catch (IOException e) {
+				ApiPlugin.log(e);
+			} finally {
+				try {
+					if (is != null) {
+						is.close();
+					}
+				} catch (IOException e) {
+					ApiPlugin.log(e);
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Initializes this baseline from the given properties.
 	 *
@@ -327,8 +360,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	private void initialize(Properties profile, ExecutionEnvironmentDescription description) throws CoreException {
 		String value = profile.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 		if (value == null) {
-			// Java 10 onwards calculate this on runtime.
-			value = getVMPackages();
+			if (value == null) {
+				// Java 10 onwards calculate this via profile in this plugin
+				Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL));
+				value = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+			}
 		}
 		String[] systemPackages = null;
 		if (value != null) {
@@ -375,6 +411,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		fSystemLibraryComponentList.add(fSystemLibraryComponent);
 	}
 
+	@SuppressWarnings("unused")
 	private String getVMPackages() {
 		if (fVMPackages == null) {
 			fVMPackages = calculateVMPackages();
