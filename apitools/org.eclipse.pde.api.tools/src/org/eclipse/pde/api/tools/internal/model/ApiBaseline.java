@@ -362,7 +362,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (value == null) {
 			// Java 10 onwards calculate this via profile in this plugin
 			Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL));
-			value = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+			if (javaProfilePropertiesForVMPackage != null) {
+				value = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+			}
 		}
 
 		String[] systemPackages = null;
