@@ -11,9 +11,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import java.util.Arrays;
 import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
@@ -97,5 +100,11 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 			site.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
 			localmonitor.split(1);
 		}
+	}
+
+	@Override
+	public ISchedulingRule getRule(int kind, Map<String, String> args) {
+		return new MultiRule(Arrays.stream(getProject().getWorkspace().getRoot().getProjects())
+				.filter(PDEBuilderHelper::isPDEProject).toArray(ISchedulingRule[]::new));
 	}
 }

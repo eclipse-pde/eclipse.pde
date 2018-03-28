@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -19,6 +18,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.natures.PDE;
 
 public class PDEBuilderHelper {
 
@@ -60,6 +60,11 @@ public class PDEBuilderHelper {
 			}
 		}
 		return sourceEntryKeys;
+	}
+
+	public static boolean isPDEProject(IProject project) {
+		return project != null && project.isAccessible()
+				&& (PDE.hasPluginNature(project) || PDE.hasFeatureNature(project) || PDE.hasUpdateSiteNature(project));
 	}
 
 }

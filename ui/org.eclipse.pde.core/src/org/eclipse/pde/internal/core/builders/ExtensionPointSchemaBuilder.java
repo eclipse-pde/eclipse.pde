@@ -13,9 +13,12 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
@@ -224,5 +227,12 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		monitor.done();
+	}
+
+	@Override
+	public ISchedulingRule getRule(int kind, Map<String, String> args) {
+		return new MultiRule(Arrays.stream(getProject().getWorkspace().getRoot().getProjects())
+				.filter(PDEBuilderHelper::isPDEProject)
+				.toArray(ISchedulingRule[]::new));
 	}
 }
