@@ -97,6 +97,7 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 
 	@Override
 	public void close() throws CoreException {
+		//
 	}
 
 	@Override

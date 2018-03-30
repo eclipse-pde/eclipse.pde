@@ -349,24 +349,11 @@ public class ApiFileGenerationTask extends Task {
 				manifestFile = new File(manifestDir, "MANIFEST.MF"); //$NON-NLS-1$
 			}
 			if (manifestFile != null && manifestFile.exists()) {
-				BufferedInputStream inputStream = null;
-				try {
-					inputStream = new BufferedInputStream(new FileInputStream(manifestFile));
+				try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(manifestFile));) {
 					manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
 					this.apiPackages = collectApiPackageNames(manifestMap);
-				} catch (FileNotFoundException e) {
+				} catch (IOException | BundleException e) {
 					ApiPlugin.log(e);
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				} catch (BundleException e) {
-					ApiPlugin.log(e);
-				} finally {
-					if (inputStream != null) {
-						try {
-							inputStream.close();
-						} catch (IOException e) {
-						}
-					}
 				}
 			}
 			if (this.manifests != null) {
@@ -468,6 +455,7 @@ public class ApiFileGenerationTask extends Task {
 							classFileContainer.close();
 						}
 					} catch (CoreException e) {
+						// ignore
 					}
 				}
 			}
@@ -477,9 +465,7 @@ public class ApiFileGenerationTask extends Task {
 			apiDescription.accept(xmlVisitor, null);
 			String xml = xmlVisitor.getXML();
 			Util.saveFile(apiDescriptionFile, xml);
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		} catch (IOException e) {
+		} catch (CoreException | IOException e) {
 			ApiPlugin.log(e);
 		}
 	}

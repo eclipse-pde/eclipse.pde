@@ -536,10 +536,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						lineNumber = document.getLineOfOffset(charStart);
 					} catch (BadLocationException e) {
 						// ignore
-					} catch (CoreException ce) {
 					}
 				}
-			} catch (JavaModelException e) {
+			} catch (CoreException e) {
+				ApiPlugin.log("Failed to resolve problem details for " + referenceTypeName + " in " + fJavaProject.getElementName(), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		String[] msgArgs = new String[] {
@@ -882,6 +882,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				return state;
 			}
 		} catch (CoreException e) {
+			ApiPlugin.log("Failed to read last build state for " + project, e); //$NON-NLS-1$
 		}
 		return new BuildState();
 	}
@@ -1517,10 +1518,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			refExecutionEnv = reference.getExecutionEnvironments();
 		} catch (CoreException e) {
+			ApiPlugin.log(e);
 		}
 		try {
 			compExecutionEnv = component.getExecutionEnvironments();
 		} catch (CoreException e) {
+			ApiPlugin.log(e);
 		}
 		if (refExecutionEnv == null && compExecutionEnv != null) {
 			return true;
@@ -2404,6 +2407,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					return filterStore.isFiltered(problem);
 				}
 			} catch (CoreException e) {
+				ApiPlugin.log("Failed to get filter store for " + component.getName(), e); //$NON-NLS-1$
 			}
 		}
 		return false;

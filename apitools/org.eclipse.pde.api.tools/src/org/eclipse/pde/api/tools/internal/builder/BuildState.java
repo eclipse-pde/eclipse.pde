@@ -251,7 +251,7 @@ public class BuildState {
 			datas = new String[1];
 			datas[0] = typeName.replace('$', '.');
 		}
-		
+
 		int previousRestrictions = restrictions >>> Delta.PREVIOUS_RESTRICTIONS_OFFSET;
 		int currentRestrictions = restrictions & Delta.RESTRICTIONS_MASK;
 		return new Delta(componentID, elementType, kind, flags, currentRestrictions, previousRestrictions, oldModifiers, newModifiers, typeName, key, datas);
@@ -680,6 +680,7 @@ public class BuildState {
 			}
 			return crc32.getValue();
 		} catch (JavaModelException e) {
+			ApiPlugin.log("Failed to compute project CRC for " + project, e); //$NON-NLS-1$
 		}
 		return -1L;
 	}

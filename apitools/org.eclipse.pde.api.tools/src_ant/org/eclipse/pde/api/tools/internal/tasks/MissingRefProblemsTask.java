@@ -336,7 +336,6 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		if (notSearchedList.isEmpty()) {
 			return;
 		}
-		BufferedWriter writer = null;
 		try {
 			if (this.debug) {
 				System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
@@ -361,19 +360,12 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 				comp.setAttribute(IApiXmlConstants.SKIPPED_DETAILS, component.getErrorDetails());
 				root.appendChild(comp);
 			}
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
-			writer.write(Util.serializeDocument(doc));
-			writer.flush();
-		} catch (FileNotFoundException fnfe) {
-		} catch (IOException ioe) {
-		} catch (CoreException ce) {
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-				}
+			try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
+				writer.write(Util.serializeDocument(doc));
+				writer.flush();
 			}
+		} catch (IOException | CoreException e) {
+			ApiPlugin.log(e);
 		}
 	}
 

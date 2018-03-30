@@ -516,9 +516,8 @@ public class APIFreezeReportConversionTask extends Task {
 			try {
 				writeOutput(buffer);
 			} catch (IOException e1) {
-
+				// ignore
 			}
-			// ignore
 		} catch (IOException e) {
 			// ignore
 		}

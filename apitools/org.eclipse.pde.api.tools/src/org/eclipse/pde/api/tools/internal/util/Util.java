@@ -399,6 +399,7 @@ public final class Util {
 						temp.add(project);
 					}
 				} catch (CoreException e) {
+					// should not happen
 				}
 			}
 		}
@@ -433,6 +434,7 @@ public final class Util {
 						}
 					}
 				} catch (CoreException e) {
+					// should not happen
 				}
 			}
 		}
@@ -1732,7 +1734,7 @@ public final class Util {
 			return packageNames.length > 0;
 
 		} catch (CoreException e) {
-
+			ApiPlugin.log("Failed to check java packages for " + apiComponent.getName(), e); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -2013,12 +2015,9 @@ public final class Util {
 	 * it doesn't exist)
 	 */
 	public static void unzip(String zipPath, String destDirPath) throws IOException {
-		InputStream zipIn = new FileInputStream(zipPath);
 		byte[] buf = new byte[8192];
 		File destDir = new File(destDirPath);
-		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(zipIn));
-		BufferedOutputStream outputStream = null;
-		try {
+		try (InputStream zipIn = new FileInputStream(zipPath); ZipInputStream zis = new ZipInputStream(new BufferedInputStream(zipIn));) {
 			ZipEntry zEntry;
 			while ((zEntry = zis.getNextEntry()) != null) {
 				// if it is empty directory, create it
@@ -2037,25 +2036,12 @@ public final class Util {
 				new File(destDir, fileDir).mkdirs();
 				// write file
 				File outFile = new File(destDir, filePath);
-				outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
-				int n = 0;
-				while ((n = zis.read(buf)) >= 0) {
-					outputStream.write(buf, 0, n);
+				try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile))) {
+					int n = 0;
+					while ((n = zis.read(buf)) >= 0) {
+						outputStream.write(buf, 0, n);
+					}
 				}
-				outputStream.close();
-			}
-		} catch (IOException ioe) {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException ioe2) {
-				}
-			}
-		} finally {
-			try {
-				zipIn.close();
-				zis.close();
-			} catch (IOException ioe) {
 			}
 		}
 	}
@@ -2650,27 +2636,17 @@ public final class Util {
 		FilteredElements excludedElements = new FilteredElements();
 		if (location != null) {
 			File file = new File(location);
-			InputStream stream = null;
 			char[] contents = null;
-			try {
-				stream = new BufferedInputStream(new FileInputStream(file));
+			try (InputStream stream = new BufferedInputStream(new FileInputStream(file));) {
 				contents = getInputStreamAsCharArray(stream, -1, StandardCharsets.ISO_8859_1);
 			} catch (FileNotFoundException e) {
 				abort(NLS.bind(UtilMessages.Util_couldNotFindFilterFile, location), e);
 			} catch (IOException e) {
 				abort(NLS.bind(UtilMessages.Util_problemWithFilterFile, location), e);
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (IOException e) {
-					}
-				}
 			}
 			if (contents != null) {
-				LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
-				String line = null;
-				try {
+				try(LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));){
+					String line = null;
 					while ((line = reader.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("#") || line.length() == 0) { //$NON-NLS-1$
@@ -2686,11 +2662,6 @@ public final class Util {
 					}
 				} catch (IOException e) {
 					abort(NLS.bind(UtilMessages.Util_problemWithFilterFile, location), e);
-				} finally {
-					try {
-						reader.close();
-					} catch (IOException e) {
-					}
 				}
 			}
 		}

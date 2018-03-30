@@ -16,5 +16,5 @@ package org.eclipse.pde.api.tools.internal.provisional.descriptors;
  * @since 1.0.0
  */
 public interface IFieldDescriptor extends IMemberDescriptor {
-
+	//
 }

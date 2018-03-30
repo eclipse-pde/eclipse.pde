@@ -984,6 +984,7 @@ public class BundleComponent extends Component {
 				buffer.append("[dev bundle: ").append(fWorkspaceBinary).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 				return buffer.toString();
 			} catch (CoreException ce) {
+				// ignore
 			}
 		} else {
 			StringBuilder buffer = new StringBuilder();
@@ -1123,6 +1124,7 @@ public class BundleComponent extends Component {
 		try {
 			getApiDescription();
 		} catch (CoreException e) {
+			ApiPlugin.log("Failed to create API description for " + getName(), e); //$NON-NLS-1$
 		}
 		return fHasApiDescription;
 	}

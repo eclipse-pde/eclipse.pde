@@ -215,14 +215,17 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	@Override
 	public void doneSaving(ISaveContext context) {
+		//
 	}
 
 	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
+		//
 	}
 
 	@Override
 	public void rollback(ISaveContext context) {
+		//
 	}
 
 	@Override
@@ -394,6 +397,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 		try {
 			return Integer.parseInt(attribute);
 		} catch (NumberFormatException e) {
+			// ignore
 		}
 		return 0;
 	}
@@ -411,6 +415,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			try {
 				return Long.parseLong(attribute);
 			} catch (NumberFormatException e) {
+				// ignore
 			}
 		}
 		return 0L;

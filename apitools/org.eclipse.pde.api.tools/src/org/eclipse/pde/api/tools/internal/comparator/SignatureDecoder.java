@@ -91,6 +91,7 @@ final class SignatureDecoder extends SignatureVisitor {
 
 	@Override
 	public void visitInnerClassType(String name) {
+		//
 	}
 
 	@Override
@@ -122,6 +123,7 @@ final class SignatureDecoder extends SignatureVisitor {
 
 	@Override
 	public void visitTypeArgument() {
+		//
 	}
 
 	@Override
@@ -144,5 +146,6 @@ final class SignatureDecoder extends SignatureVisitor {
 
 	@Override
 	public void visitTypeVariable(String name) {
+		//
 	}
 }

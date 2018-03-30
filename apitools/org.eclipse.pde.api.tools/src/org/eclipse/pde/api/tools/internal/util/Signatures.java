@@ -367,6 +367,7 @@ public final class Signatures {
 					Integer.parseInt(num);
 					return null;
 				} catch (NumberFormatException nfe) {
+					// ignore
 				}
 				for (int i = 0; i < name.length(); i++) {
 					if (!Character.isDigit(num.charAt(i))) {

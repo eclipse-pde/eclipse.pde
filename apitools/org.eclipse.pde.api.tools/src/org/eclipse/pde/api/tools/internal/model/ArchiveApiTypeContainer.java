@@ -223,6 +223,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 */
 	@Override
 	public synchronized void close() throws CoreException {
+		//
 	}
 
 	/**

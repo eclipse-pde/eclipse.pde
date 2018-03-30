@@ -137,6 +137,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public void visitTypeVariable(String name) {
+			//
 		}
 
 		@Override
@@ -199,6 +200,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public void visitEnd() {
+			//
 		}
 
 		@Override
@@ -215,6 +217,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public void visitTypeArgument() {
+			//
 		}
 	}
 
@@ -639,6 +642,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public void visitAttribute(Attribute attr) {
+			//
 		}
 
 		@Override
@@ -1292,8 +1296,8 @@ public class ReferenceExtractor extends ClassVisitor {
 
 	@Override
 	public void visitInnerClass(String name, String outerName, String innerName, int access) {
+		String pname = processName(name);
 		try {
-			String pname = processName(name);
 			if (fType.getName().equals(pname) || !pname.startsWith(fType.getName())) {
 				return;
 			}
@@ -1326,6 +1330,7 @@ public class ReferenceExtractor extends ClassVisitor {
 				}
 			}
 		} catch (CoreException ce) {
+			ApiPlugin.log("Failed to compute types for " + pname, ce); //$NON-NLS-1$
 		}
 	}
 

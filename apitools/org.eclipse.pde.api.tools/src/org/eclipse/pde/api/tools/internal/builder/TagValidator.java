@@ -452,8 +452,8 @@ public class TagValidator extends Validator {
 			// unit cannot be null
 			IDocument document = Util.getDocument(fCompilationUnit);
 			linenumber = document.getLineOfOffset(charstart);
-		} catch (BadLocationException e) {
-		} catch (CoreException e) {
+		} catch (BadLocationException | CoreException e) {
+			// ignore
 		}
 		try {
 			IApiProblem problem = ApiProblemFactory.newApiProblem(fCompilationUnit.getCorrespondingResource().getProjectRelativePath().toPortableString(), typeName, new String[] {
@@ -465,6 +465,7 @@ public class TagValidator extends Validator {
 
 			addProblem(problem);
 		} catch (JavaModelException e) {
+			ApiPlugin.log("Failed to report problem for " + fCompilationUnit.getElementName(), e); //$NON-NLS-1$
 		}
 	}
 
@@ -765,6 +766,7 @@ public class TagValidator extends Validator {
 
 			addProblem(problem);
 		} catch (JavaModelException e) {
+			ApiPlugin.log("Failed to report problem for " + fCompilationUnit.getElementName(), e); //$NON-NLS-1$
 		}
 	}
 }

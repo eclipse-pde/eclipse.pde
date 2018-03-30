@@ -923,6 +923,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	@Override
 	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
+		//
 	}
 
 	@Override

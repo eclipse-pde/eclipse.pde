@@ -167,6 +167,7 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 				Integer.parseInt(getName());
 				return true;
 			} catch (NumberFormatException e) {
+				// ignore
 			}
 		}
 		return false;

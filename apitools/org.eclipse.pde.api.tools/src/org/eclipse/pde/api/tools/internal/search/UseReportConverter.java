@@ -875,7 +875,6 @@ public class UseReportConverter extends HTMLConvertor {
 				}
 				html = new File(getNameFromXMLFilename(xmlfile));
 				applyXSLT(xsltFile, xmlfile, html);
-			} catch (TransformerException te) {
 			} catch (Exception e) {
 				ApiPlugin.log(e);
 			}

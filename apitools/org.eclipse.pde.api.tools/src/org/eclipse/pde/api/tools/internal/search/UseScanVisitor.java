@@ -23,12 +23,14 @@ public abstract class UseScanVisitor {
 	 * Start visiting an API use scan
 	 */
 	public void visitScan() {
+		//
 	}
 
 	/**
 	 * Ends visiting an API use scan
 	 */
 	public void endVisitScan() {
+		//
 	}
 
 	/**
@@ -51,6 +53,7 @@ public abstract class UseScanVisitor {
 	 * @param target the component that was visited
 	 */
 	public void endVisitComponent(IComponentDescriptor target) {
+		//
 	}
 
 	/**
@@ -76,6 +79,7 @@ public abstract class UseScanVisitor {
 	 * @param component that component that was visited
 	 */
 	public void endVisitReferencingComponent(IComponentDescriptor component) {
+		//
 	}
 
 	/**
@@ -95,7 +99,7 @@ public abstract class UseScanVisitor {
 	 * @param referencedMember the member that was referenced
 	 */
 	public void endVisitMember(IMemberDescriptor referencedMember) {
-
+		//
 	}
 
 	/**
@@ -104,7 +108,7 @@ public abstract class UseScanVisitor {
 	 * @param reference the reference
 	 */
 	public void visitReference(IReferenceDescriptor reference) {
-
+		//
 	}
 
 }

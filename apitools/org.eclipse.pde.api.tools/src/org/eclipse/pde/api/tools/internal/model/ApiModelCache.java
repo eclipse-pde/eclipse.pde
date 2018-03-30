@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.model;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.core.OverflowingLRUCache;
 import org.eclipse.jdt.internal.core.util.LRUCache;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
@@ -344,6 +345,7 @@ public final class ApiModelCache {
 							IApiBaseline baseline = comp.getBaseline();
 							return removeElementInfo(baseline.getName(), comp.getSymbolicName(), element.getName(), element.getType());
 						} catch (CoreException ce) {
+							ApiPlugin.log("Failed to remove element info for " + comp.getName(), ce); //$NON-NLS-1$
 						}
 					}
 				}

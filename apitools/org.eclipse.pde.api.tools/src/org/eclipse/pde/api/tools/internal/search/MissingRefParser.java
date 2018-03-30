@@ -24,6 +24,7 @@ import javax.xml.parsers.SAXParser;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -48,7 +49,7 @@ class MissingRefParser extends UseScanParser {
 
 		@Override
 		public void startDocument() throws SAXException {
-
+			//
 		}
 
 		@Override
@@ -87,6 +88,7 @@ class MissingRefParser extends UseScanParser {
 
 		@Override
 		public void endDocument() throws SAXException {
+			//
 		}
 
 		public List<IApiProblem> getProblems() {
@@ -130,8 +132,8 @@ class MissingRefParser extends UseScanParser {
 								parser.parse(xmlfile, handler);
 								List<IApiProblem> apiProblems = handler.getProblems();
 								visitor.addToCurrentReport(apiProblems);
-							} catch (SAXException e) {
-							} catch (IOException e) {
+							} catch (SAXException | IOException e) {
+								ApiPlugin.log("Failed to load problems from " + xmlfile, e); //$NON-NLS-1$
 							}
 						}
 					}

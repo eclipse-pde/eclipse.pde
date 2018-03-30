@@ -117,6 +117,7 @@ public class CompositeApiDescription implements IApiDescription {
 
 	@Override
 	public void setAccessLevel(IElementDescriptor element, IPackageDescriptor pelement, int access) {
+		//
 	}
 
 	@Override

@@ -438,12 +438,21 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	}
 
 	/**
+	 * Logs the specified message and throwable with this plug-in's log.
+	 *
+	 * @param t throwable to log
+	 */
+	public static void log(String message, Throwable t) {
+		log(newErrorStatus(message, t));
+	}
+
+	/**
 	 * Logs the specified throwable with this plug-in's log.
 	 *
 	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {
-		log(newErrorStatus("Error logged from API Tools Core: ", t)); //$NON-NLS-1$
+		log("Error logged from API Tools Core: ", t); //$NON-NLS-1$
 	}
 
 	/**
@@ -455,7 +464,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		// this message is intentionally not internationalized, as an exception
 		// may
 		// be due to the resource bundle itself
-		log(newErrorStatus("Internal message logged from API Tools Core: " + message, null)); //$NON-NLS-1$
+		log("Internal message logged from API Tools Core: " + message, null); //$NON-NLS-1$
 	}
 
 	/**

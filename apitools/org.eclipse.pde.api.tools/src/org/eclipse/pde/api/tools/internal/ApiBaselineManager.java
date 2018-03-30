@@ -579,14 +579,17 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 
 	@Override
 	public void doneSaving(ISaveContext context) {
+		//
 	}
 
 	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
+		//
 	}
 
 	@Override
 	public void rollback(ISaveContext context) {
+		//
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
@@ -61,14 +62,15 @@ public class AntFilterStore extends FilterStore {
 		}
 		fFilterMap = new HashMap<>(5);
 		InputStream contents = null;
+		File filterFileParent = new File(fFiltersRoot, fComponentId);
 		try {
-			File filterFileParent = new File(fFiltersRoot, fComponentId);
 			if (!filterFileParent.exists()) {
 				return;
 			}
 			contents = new BufferedInputStream(new FileInputStream(new File(filterFileParent, IApiCoreConstants.API_FILTERS_XML_NAME)));
 			readFilterFile(contents);
 		} catch (IOException ioe) {
+			ApiPlugin.log("Failed to read filter file " + filterFileParent, ioe); //$NON-NLS-1$
 		} finally {
 			if (contents != null) {
 				try {

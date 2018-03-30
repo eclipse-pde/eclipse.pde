@@ -89,7 +89,7 @@ public class ApiProblemFactory {
 				String[] margs = splitHandle(args[3], ApiProblemFilter.HANDLE_ARGUMENTS_DELIMITER);
 				hashcode += argumentsHashcode(margs);
 			} catch (Exception e) {
-			} finally {
+				// ignore
 			}
 			return hashcode;
 		}
@@ -356,7 +356,7 @@ public class ApiProblemFactory {
 		int id = createProblemId(IApiProblem.CATEGORY_VERSION, element, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
-	
+
 	/**
 	 * Creates a new API Use Scan breakage {@link IApiProblem}
 	 *

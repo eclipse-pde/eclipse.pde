@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
@@ -88,6 +89,7 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 				return type.getPackageName();
 			}
 		} catch (CoreException ce) {
+			ApiPlugin.log("Failed to read package name for " + getName(), ce); //$NON-NLS-1$
 		}
 		return ""; //$NON-NLS-1$
 	}

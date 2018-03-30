@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.internal.search;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -206,14 +205,13 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 
 	@Override
 	public void endVisitScan() {
-		BufferedWriter writer = null;
+		File rootfile = new File(location);
+		File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
 		try {
 			// generate missing bundles information
-			File rootfile = new File(location);
 			if (!rootfile.exists()) {
 				rootfile.mkdirs();
 			}
-			File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -222,19 +220,12 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 			doc.appendChild(root);
 			addMissingComponents(missingComponents, SearchMessages.ReferenceLookupVisitor_0, doc, root);
 			addMissingComponents(skippedComponents, SearchMessages.SkippedComponent_component_was_excluded, doc, root);
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
-			writer.write(Util.serializeDocument(doc));
-			writer.flush();
-		} catch (FileNotFoundException fnfe) {
-		} catch (IOException ioe) {
-		} catch (CoreException ce) {
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-				}
+			try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
+				writer.write(Util.serializeDocument(doc));
+				writer.flush();
 			}
+		} catch (IOException | CoreException e) {
+			ApiPlugin.log("Failed to report missing bundles into " + file, e); //$NON-NLS-1$
 		}
 	}
 

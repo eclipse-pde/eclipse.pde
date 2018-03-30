@@ -99,6 +99,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 							}
 						}
 					} catch (JavaModelException jme) {
+						ApiPlugin.log(jme);
 					}
 					return false;
 				}
@@ -122,6 +123,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 							}
 						}
 					} catch (JavaModelException jme) {
+						ApiPlugin.log(jme);
 					}
 					return false;
 				}
@@ -727,6 +729,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 						int offset = document.getLineOffset(reference.getLineNumber());
 						method = quickLookup(jtype, document, reference, offset);
 					} catch (BadLocationException ble) {
+						// ignore
 					}
 				}
 				if (method == null) {

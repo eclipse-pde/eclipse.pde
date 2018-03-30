@@ -459,6 +459,7 @@ public class ApiType extends ApiMember implements IApiType {
 					}
 				}
 			} catch (CoreException ce) {
+				ApiPlugin.log("Failed to get enclosing type for " + getName(), ce); //$NON-NLS-1$
 			}
 		}
 		return fEnclosingMethod;

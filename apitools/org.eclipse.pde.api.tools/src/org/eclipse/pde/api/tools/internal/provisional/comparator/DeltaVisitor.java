@@ -28,5 +28,6 @@ public class DeltaVisitor {
 	 * @param delta the given delta
 	 */
 	public void endVisit(IDelta delta) {
+		//
 	}
 }

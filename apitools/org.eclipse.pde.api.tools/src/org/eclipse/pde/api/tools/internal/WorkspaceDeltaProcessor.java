@@ -79,6 +79,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 								try {
 									BuildState.setLastBuiltState(proj.getProject(), null);
 								} catch (CoreException e) {
+									ApiPlugin.log("Failed to save build state for " + proj.getProject(), e); //$NON-NLS-1$
 								}
 								dmanager.flushElementCache(delta.getElement());
 							} else if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {

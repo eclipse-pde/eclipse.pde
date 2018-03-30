@@ -75,6 +75,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 
 		@Override
 		public void visitReference(IReferenceDescriptor reference) {
+			//
 		}
 
 	}

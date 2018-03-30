@@ -711,7 +711,11 @@ public class ApiDescriptionProcessor {
 							if (typeInProject != null) {
 								type = typeInProject;
 							}
-							if (type != null) {
+						} catch (JavaModelException e) {
+							ApiPlugin.log("Failed to find type for " + rtype.getQualifiedName(), e); //$NON-NLS-1$
+						}
+						if (type != null) {
+							try {
 								if (Flags.isInterface(type.getFlags())) {
 									res &= ~RestrictionModifiers.NO_INSTANTIATE;
 								} else {
@@ -723,8 +727,9 @@ public class ApiDescriptionProcessor {
 										res &= ~RestrictionModifiers.NO_INSTANTIATE;
 									}
 								}
+							} catch (JavaModelException e) {
+								ApiPlugin.log("Failed to read type flags for " + type, e); //$NON-NLS-1$
 							}
-						} catch (JavaModelException e) {
 						}
 					}
 					break;

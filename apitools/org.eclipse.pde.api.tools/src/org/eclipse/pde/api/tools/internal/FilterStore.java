@@ -423,6 +423,7 @@ public class FilterStore implements IApiFilterStore {
 			int number = Integer.parseInt(value);
 			return number;
 		} catch (NumberFormatException nfe) {
+			// ignore
 		}
 		return -1;
 	}

@@ -276,23 +276,11 @@ public class UseScanParser {
 																	// determined
 																	// order
 										for (File xmlfile : xmlfiles) {
-											InputStream inputFile = null;
-											try {
-												ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfile));
-												inputFile = new FileInputStream(xmlfile.getAbsoluteFile());
+											ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfile));
+											try (InputStream inputFile = new FileInputStream(xmlfile.getAbsoluteFile());) {
 												parser.parse(inputFile, handler);
-											} catch (SAXException e) {
-											} catch (IOException e) {
+											} catch (SAXException | IOException e) {
 												ApiPlugin.log(e);
-											}
-											finally {
-												if (inputFile != null) {
-													try {
-														inputFile.close();
-													} catch (IOException e) {
-														// ignore
-													}
-												}
 											}
 										}
 									}

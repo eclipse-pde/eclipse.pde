@@ -139,16 +139,15 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		if (elements == null) {
 			return;
 		}
-		BufferedWriter writer = null;
+		if (this.debug) {
+			System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
+		}
+		File rootfile = new File(fLocation);
+		File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
 		try {
-			if (this.debug) {
-				System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
-			}
-			File rootfile = new File(fLocation);
 			if (!rootfile.exists()) {
 				rootfile.mkdirs();
 			}
-			File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -165,19 +164,12 @@ public class XmlSearchReporter implements IApiSearchReporter {
 				comp.setAttribute(IApiXmlConstants.SKIPPED_DETAILS, component.getErrorDetails());
 				root.appendChild(comp);
 			}
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
-			writer.write(Util.serializeDocument(doc));
-			writer.flush();
-		} catch (FileNotFoundException fnfe) {
-		} catch (IOException ioe) {
-		} catch (CoreException ce) {
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-				}
+			try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
+				writer.write(Util.serializeDocument(doc));
+				writer.flush();
 			}
+		} catch (IOException | CoreException e) {
+			ApiPlugin.log("Failed to report missing projects into " + file, e); //$NON-NLS-1$
 		}
 	}
 
@@ -210,16 +202,15 @@ public class XmlSearchReporter implements IApiSearchReporter {
 
 	@Override
 	public void reportCounts() {
-		BufferedWriter writer = null;
+		if (this.debug) {
+			System.out.println("Writing file for counting total references..."); //$NON-NLS-1$
+		}
+		File rootfile = new File(fLocation);
+		File file = new File(rootfile, "counts.xml"); //$NON-NLS-1$
 		try {
-			if (this.debug) {
-				System.out.println("Writing file for counting total references..."); //$NON-NLS-1$
-			}
-			File rootfile = new File(fLocation);
 			if (!rootfile.exists()) {
 				rootfile.mkdirs();
 			}
-			File file = new File(rootfile, "counts.xml"); //$NON-NLS-1$
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -232,19 +223,12 @@ public class XmlSearchReporter implements IApiSearchReporter {
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_INTERNAL, Integer.toString(internalCount));
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_FILTERED, Integer.toString(AntFilterStore.filteredAPIProblems.size()));
 
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
-			writer.write(Util.serializeDocument(doc));
-			writer.flush();
-		} catch (FileNotFoundException fnfe) {
-		} catch (IOException ioe) {
-		} catch (CoreException ce) {
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-				}
+			try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
+				writer.write(Util.serializeDocument(doc));
+				writer.flush();
 			}
+		} catch (IOException | CoreException e) {
+			ApiPlugin.log("Failed to report tota counts into " + file, e); //$NON-NLS-1$
 		}
 	}
 }
