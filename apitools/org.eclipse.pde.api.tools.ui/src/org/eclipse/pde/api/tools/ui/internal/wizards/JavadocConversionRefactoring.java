@@ -325,7 +325,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 		 * @throws CoreException
 		 */
 		void collectUpdates(IType type, IElementDescriptor element, IApiDescription description) throws CoreException {
-			ASTParser parser = ASTParser.newParser(AST.JLS8);
+			ASTParser parser = ASTParser.newParser(AST.JLS10);
 			ICompilationUnit cunit = type.getCompilationUnit();
 			if (cunit != null) {
 				if (this.monitor.isCanceled()) {

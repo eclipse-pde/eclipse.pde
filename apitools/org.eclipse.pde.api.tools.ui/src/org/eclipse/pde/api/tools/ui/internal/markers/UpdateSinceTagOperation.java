@@ -84,7 +84,7 @@ public class UpdateSinceTagOperation {
 					// quickfix change
 					JavaUI.openInEditor(compilationUnit);
 				}
-				ASTParser parser = ASTParser.newParser(AST.JLS8);
+				ASTParser parser = ASTParser.newParser(AST.JLS10);
 				parser.setSource(compilationUnit);
 				if (intValue <= 0) {
 					// try to use the name range of the corresponding element

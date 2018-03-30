@@ -607,7 +607,7 @@ public class TagScanner {
 	 */
 	public void scan(CompilationUnit source, IApiDescription description, IApiTypeContainer container, Map<String, String> options, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
-		ASTParser parser = ASTParser.newParser(AST.JLS8);
+		ASTParser parser = ASTParser.newParser(AST.JLS10);
 		InputStream inputStream = null;
 		try {
 			inputStream = source.getInputStream();

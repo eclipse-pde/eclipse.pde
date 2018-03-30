@@ -675,7 +675,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			String name = apitype.getSimpleName();
 			ICompilationUnit cunit = type.getCompilationUnit();
 			if (cunit.isWorkingCopy()) {
-				cunit.reconcile(AST.JLS8, false, null, null);
+				cunit.reconcile(AST.JLS10, false, null, null);
 			}
 			IMethod method = getEnclosingMethod(type, reference, doc);
 			if (method != null) {
@@ -732,7 +732,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 				if (method == null) {
 					// look it up the hard way
 					ISourceRange range = jtype.getCompilationUnit().getSourceRange();
-					ASTParser parser = ASTParser.newParser(AST.JLS8);
+					ASTParser parser = ASTParser.newParser(AST.JLS10);
 					parser.setSource(jtype.getCompilationUnit());
 					parser.setSourceRange(range.getOffset(), range.getLength());
 					parser.setResolveBindings(true);

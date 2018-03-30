@@ -87,7 +87,7 @@ public class JavadocTagOperation {
 	 * @return a new {@link AST}
 	 */
 	protected CompilationUnit createAST(final ICompilationUnit unit, int focalposition, boolean resolvebindings) {
-		ASTParser parser = ASTParser.newParser(AST.JLS8);
+		ASTParser parser = ASTParser.newParser(AST.JLS10);
 		parser.setSource(unit);
 		parser.setFocalPosition(focalposition);
 		parser.setResolveBindings(resolvebindings);

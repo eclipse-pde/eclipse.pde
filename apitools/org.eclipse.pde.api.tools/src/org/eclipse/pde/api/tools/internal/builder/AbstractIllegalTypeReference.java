@@ -116,7 +116,7 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 				String name = ltype.getSimpleName();
 				ICompilationUnit cunit = type.getCompilationUnit();
 				if (cunit.isWorkingCopy()) {
-					cunit.reconcile(AST.JLS8, false, null, null);
+					cunit.reconcile(AST.JLS10, false, null, null);
 				}
 				IType localtype = type;
 				method = getEnclosingMethod(type, reference, doc);
