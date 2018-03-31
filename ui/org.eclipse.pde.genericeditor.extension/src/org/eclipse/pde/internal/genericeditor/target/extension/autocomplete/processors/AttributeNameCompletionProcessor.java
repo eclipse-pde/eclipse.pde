@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetCons
 
 /**
  * Class that computes autocompletions for attribute names. Example:
- * <pre> &ltunit ver^ </pre> where ^ is autcomplete call.
+ * <pre> &ltunit ver^ </pre> where ^ is autocomplete call.
  *
  */
 public class AttributeNameCompletionProcessor extends DelegateProcessor {
@@ -71,6 +72,7 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 		List<ICompletionProposal> proposals = new ArrayList<>();
 		String[] strings = completionMap.get(acKey);
 		if (strings != null) {
+			Arrays.sort(strings);
 			List<String> attributeStrings = getSibblingAttributeNames();
 			for (String string : strings) {
 				StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(string, searchTerm);

@@ -26,17 +26,17 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 		// locations
 		expectedProposalsByOffset.put(1, new String[] {});
 		expectedProposalsByOffset.put(12, new String[] { "targetJRE" });
-		expectedProposalsByOffset.put(26, new String[] { "location (Installable Unit)", "location (Profile)",
-				"location (Directory)", "location (Feature)" });
+		expectedProposalsByOffset.put(26, new String[] { "location (Directory)", "location (Feature)",
+				"location (Installable Unit)", "location (Profile)" });
 		// location, full
 		expectedProposalsByOffset.put(39, new String[] { "unit" });
 		expectedProposalsByOffset.put(63, new String[] { "unit" });
 		// location, empty
-		expectedProposalsByOffset.put(88, new String[] { "unit", "repository" });
+		expectedProposalsByOffset.put(88, new String[] { "repository", "unit" });
 		// environment
-		expectedProposalsByOffset.put(129, new String[] { "os", "ws", "arch", "nl" });
+		expectedProposalsByOffset.put(129, new String[] { "arch", "nl", "os", "ws" });
 		// launcherArgs
-		expectedProposalsByOffset.put(161, new String[] { "vmArgs", "programArgs" });
+		expectedProposalsByOffset.put(161, new String[] { "programArgs", "vmArgs" });
 		// target
 		expectedProposalsByOffset.put(179, new String[] { "targetJRE" });
 

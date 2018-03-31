@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,7 +30,7 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
 
 /**
  * Class that computes autocompletions for tags. Example: <pre> &ltun^ </pre>
- * where ^ is autcomplete call.
+ * where ^ is autocomplete call.
  */
 public class TagCompletionProcessor extends DelegateProcessor {
 	private static final HashMap<String, String[]> tagChildren = new HashMap<>();
@@ -111,6 +112,8 @@ public class TagCompletionProcessor extends DelegateProcessor {
 				}
 			}
 		}
+
+		Arrays.sort(tags);
 
 		for (int i = 0; i < tags.length; i++) {
 			StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(tags[i], searchTerm);

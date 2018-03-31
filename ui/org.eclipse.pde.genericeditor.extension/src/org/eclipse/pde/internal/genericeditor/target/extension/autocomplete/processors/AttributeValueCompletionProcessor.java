@@ -13,6 +13,7 @@
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -26,6 +27,7 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.Node;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.RepositoryCache;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.UnitNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
+import org.osgi.framework.Version;
 
 /**
  * Class that computes autocompletions for attribute values. Example:
@@ -113,6 +115,7 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 	private ICompletionProposal[] convertToVersionProposals(List<String> versions) {
 		List<String> dest = new ArrayList<>();
 		dest.addAll(versions);
+		Collections.sort(dest, (v1, v2) -> (new Version(v2)).compareTo(new Version(v1)));
 		if (!versions.contains(ITargetConstants.UNIT_VERSION_ATTR_GENERIC)) {
 			dest.add(ITargetConstants.UNIT_VERSION_ATTR_GENERIC);
 		}
@@ -129,6 +132,7 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 	}
 
 	private ICompletionProposal[] convertToProposals(List<UnitNode> units) {
+		Collections.sort(units, (node1, node2) -> String.CASE_INSENSITIVE_ORDER.compare(node1.getId(), node2.getId()));
 		List<ICompletionProposal> result = new ArrayList<>();
 		for (UnitNode unit : units) {
 			StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(unit.getId(),
