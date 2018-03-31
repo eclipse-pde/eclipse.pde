@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -46,6 +47,28 @@ public class ExternalModelManager extends AbstractModelManager {
 	 */
 	public File[] getExtractedLibraries(IPluginModelBase model) {
 		return fLibCache.getExtractedLibraries(model);
+	}
+
+	/**
+	 * Returns the path of a nested library jar resolved against the external
+	 * model's {@link IPluginModelBase#getInstallLocation() install location}, or
+	 * {@code null} if no jar exists at that location.
+	 * <p>
+	 * If the external model is a jarred plugin, the library jar is extracted and
+	 * cached in PDE's metadata location; a previously cached library will be
+	 * returned if it already exists in the cache. Otherwise, if the external model
+	 * is a folder, the location of the jar within that folder is returned.
+	 * </p>
+	 *
+	 * @param model
+	 *            the model from which to extract the library.
+	 * @param path
+	 *            the path of the library relative to the model's install location.
+	 * @return the path of a library jar resolved against the external model's
+	 *         install location, or {@code null} if no jar exists at that location.
+	 */
+	public IPath getNestedLibrary(IPluginModelBase model, String path) {
+		return fLibCache.getNestedLibrary(model, path);
 	}
 
 }
@@ -148,6 +171,64 @@ class ExternalLibraryCache {
 
 		// Delete the cache folder if it is empty
 		fCacheDir.delete();
+	}
+
+	/**
+	 * Returns the path of a nested library jar resolved against the external
+	 * model's {@link IPluginModelBase#getInstallLocation() install location}, or
+	 * {@code null} if no jar exists at that location.
+	 * <p>
+	 * If the external model is a jarred plugin, the library jar is extracted and
+	 * cached in PDE's metadata location; a previously cached library will be
+	 * returned if it already exists in the cache. Otherwise, if the external model
+	 * is a folder, the location of the jar within that folder is returned.
+	 * </p>
+	 *
+	 * @param model
+	 *            the model from which to extract the library.
+	 * @param path
+	 *            the path of the library relative to the model's install location.
+	 * @return the path of a library jar resolved against the external model's
+	 *         install location, or {@code null} if no jar exists at that location.
+	 */
+	public IPath getNestedLibrary(IPluginModelBase model, String path) {
+		String installLocation = model.getInstallLocation();
+		if (installLocation != null) {
+			File location = new File(installLocation);
+			if (location.isDirectory()) {
+				File result = new File(location, path);
+				return result.exists() ? new Path(result.getAbsolutePath()) : null;
+			}
+
+			if (location.isFile()) {
+				BundleDescription desc = model.getBundleDescription();
+				File fCacheDir = new File(getLibraryCacheDir(), getBundleLibsCacheDirName(desc));
+				File fDestFile = new File(fCacheDir, path);
+				synchronized (this) {
+					if (!fDestFile.exists()) {
+						File extractedLib = null;
+						try {
+							extractedLib = extractJar(location, path, fDestFile);
+						} catch (IOException e) {
+						}
+						// If the library can't be extracted for any reason, create an empty file as a
+						// marker to avoid repeatedly trying to extract the library.
+						if (extractedLib == null) {
+							try {
+								fDestFile.getParentFile().mkdirs();
+								fDestFile.createNewFile();
+							} catch (IOException e) {
+							}
+						}
+					}
+				}
+				// Only return the resolved path if the destination file is non-empty, i.e.,
+				// return null for the empty marker file.
+				return fDestFile.length() == 0 ? null : new Path(fDestFile.getAbsolutePath());
+			}
+		}
+
+		return null;
 	}
 
 	/**

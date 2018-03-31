@@ -394,13 +394,15 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					if (model != null && model.isEnabled()) {
 						path = path.setDevice(null);
 						path = path.removeFirstSegments(count - 1);
-						if (model.getUnderlyingResource() == null) {
-							File file = new File(model.getInstallLocation(), path.toOSString());
-							if (file.exists()) {
-								addExtraLibrary(new Path(file.getAbsolutePath()), model, entries);
+						IResource underlyingResource = model.getUnderlyingResource();
+						if (underlyingResource == null) {
+							IPath result = PDECore.getDefault().getModelManager().getExternalModelManager()
+									.getNestedLibrary(model, path.toString());
+							if (result != null) {
+								addExtraLibrary(result, model, entries);
 							}
 						} else {
-							IProject project = model.getUnderlyingResource().getProject();
+							IProject project = underlyingResource.getProject();
 							IFile file = project.getFile(path);
 							if (file.exists()) {
 								addExtraLibrary(file.getFullPath(), model, entries);

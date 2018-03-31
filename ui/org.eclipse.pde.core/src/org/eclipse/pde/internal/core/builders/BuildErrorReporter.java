@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -710,15 +710,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						IResource resource = model.getUnderlyingResource();
 						path = path.substring(sep + 1);
 						if (resource == null) {
-							String location = model.getInstallLocation();
-							File external = new File(location);
-							if (external.isDirectory()) {
-								IPath p = new Path(location).addTrailingSeparator().append(path);
-								exists = new File(p.toOSString()).exists();
-							} else
-								// compiler will not recognize nested jars, if external location is not
-								// a directory this reference "does not exist"
+							IPath result = PDECore.getDefault().getModelManager().getExternalModelManager()
+									.getNestedLibrary(model, path.toString());
+							if (result == null) {
 								exists = false;
+							}
 						} else
 							exists = resource.getProject().findMember(path) != null;
 					}
@@ -1167,7 +1163,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 				String ct = entry.substring(0, cci).trim();
 				if (ct.equals(tokenString))
-					return doc.getLineOfOffset(currOffset) + 1;
+					return doc.getLineOfOffset(currOffset + entry.indexOf(tokenString)) + 1;
 
 				entry = entry.substring(++cci);
 				currOffset += cci;
