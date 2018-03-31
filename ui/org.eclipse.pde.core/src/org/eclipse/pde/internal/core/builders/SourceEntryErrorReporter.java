@@ -287,6 +287,19 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			for (IPluginLibrary library : pluginLibraries) {
 				pluginLibraryNames.add(library.getName());
 			}
+			for (IPluginExtension extension : pluginModel.getPluginBase().getExtensions()) {
+				if ("org.eclipse.ant.core.extraClasspathEntries".equals(extension.getPoint())) { //$NON-NLS-1$
+					for (IPluginObject pluginObject : extension.getChildren()) {
+						if ("extraClasspathEntry".equals(pluginObject.getName()) //$NON-NLS-1$
+								&& pluginObject instanceof IPluginElement) {
+							IPluginAttribute library = ((IPluginElement) pluginObject).getAttribute("library"); //$NON-NLS-1$
+							if (library != null) {
+								pluginLibraryNames.add(library.getValue().trim());
+							}
+						}
+					}
+				}
+			}
 		}
 		if (!pluginLibraryNames.contains(".")) { //$NON-NLS-1$
 			pluginLibraryNames.add("."); //$NON-NLS-1$)
