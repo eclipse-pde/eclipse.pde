@@ -39,8 +39,8 @@ public class CalleesListContentProvider extends CalleesContentProvider implement
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof IPluginModelBase) {
-			Map<String, Object> elements = new HashMap<>();
-			Set<Object> candidates = new HashSet<>();
+			Map<String, Object> elements = new LinkedHashMap<>();
+			Set<Object> candidates = new LinkedHashSet<>();
 			candidates.addAll(Arrays.asList(findCallees(((IPluginModelBase) inputElement))));
 
 			while (!candidates.isEmpty()) {

@@ -30,7 +30,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 
 	protected String fText;
 
-	protected Hashtable<String, IPluginAttribute> fAttributes;
+	protected Map<String, IPluginAttribute> fAttributes;
 
 	private IConfigurationElement fElement = null;
 
@@ -197,8 +197,8 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	public void setElementInfo(ISchemaElement newElementInfo) {
 		fElementInfo = newElementInfo;
 		if (fElementInfo == null) {
-			for (Enumeration<IPluginAttribute> atts = getAttributeMap().elements(); atts.hasMoreElements();) {
-				PluginAttribute att = (PluginAttribute) atts.nextElement();
+			for (IPluginAttribute atts : getAttributeMap().values()) {
+				PluginAttribute att = (PluginAttribute) atts;
 				att.setAttributeInfo(null);
 			}
 		}
@@ -240,9 +240,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		writer.println(indent + "</" + getName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	protected Hashtable<String, IPluginAttribute> getAttributeMap() {
+	protected Map<String, IPluginAttribute> getAttributeMap() {
 		if (fAttributes == null) {
-			fAttributes = new Hashtable<>();
+			fAttributes = new LinkedHashMap<>();
 			if (fElement != null) {
 				String[] names = fElement.getAttributeNames();
 				for (String name : names) {

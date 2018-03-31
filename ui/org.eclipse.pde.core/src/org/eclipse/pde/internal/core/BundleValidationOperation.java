@@ -55,7 +55,7 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 
 	public Map<Object, Object[]> getResolverErrors() {
 		Set<String> alreadyDuplicated = new HashSet<>();
-		Map<Object, Object[]> map = new HashMap<>();
+		Map<Object, Object[]> map = new LinkedHashMap<>();
 		BundleDescription[] bundles = fState.getBundles();
 		for (BundleDescription bundle : bundles) {
 			if (!bundle.isResolved()) {

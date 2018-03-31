@@ -10,13 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.build;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Properties;
-
+import java.io.*;
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -30,7 +25,7 @@ import org.eclipse.pde.internal.core.util.PropertiesUtil;
 public class Build implements IBuild {
 
 	private BuildModel fModel;
-	private HashMap<String, IBuildEntry> fEntries = new HashMap<>();
+	private HashMap<String, IBuildEntry> fEntries = new LinkedHashMap<>();
 
 	public Build(BuildModel model) {
 		fModel = model;

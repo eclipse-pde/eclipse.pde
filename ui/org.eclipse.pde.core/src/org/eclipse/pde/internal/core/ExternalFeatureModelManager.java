@@ -188,7 +188,7 @@ public class ExternalFeatureModelManager {
 
 	private static TargetFeature[] createFeatures(URL[] featurePaths, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, featurePaths.length);
-		Map<String, TargetFeature> uniqueFeatures = new HashMap<>();
+		Map<String, TargetFeature> uniqueFeatures = new LinkedHashMap<>();
 		for (URL featurePath : featurePaths) {
 			File manifest = new File(featurePath.getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {

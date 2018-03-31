@@ -80,7 +80,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		if (fModels != null)
 			return;
 
-		fModels = Collections.synchronizedMap(new HashMap<IProject, IModel>());
+		fModels = Collections.synchronizedMap(new LinkedHashMap<IProject, IModel>());
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
 			if (isInterestingProject(project))

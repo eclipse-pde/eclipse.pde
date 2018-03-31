@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.IModel;
@@ -33,7 +33,7 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 			IModel model = new WorkspaceFeatureModel(featureXml);
 			loadModel(model, false);
 			if (fModels == null)
-				fModels = new HashMap<>();
+				fModels = new LinkedHashMap<>();
 			fModels.put(project, model);
 			if (notify)
 				addChange(model, IModelProviderEvent.MODELS_ADDED);

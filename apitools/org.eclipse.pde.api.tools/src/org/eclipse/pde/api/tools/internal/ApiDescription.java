@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +101,7 @@ public class ApiDescription implements IApiDescription {
 		protected IElementDescriptor element = null;
 		protected int visibility, restrictions;
 		protected ManifestNode parent = null;
-		protected HashMap<IElementDescriptor, ManifestNode> children = new HashMap<>(1);
+		protected HashMap<IElementDescriptor, ManifestNode> children = new LinkedHashMap<>(1);
 
 		public ManifestNode(ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
 			this.element = element;
@@ -255,7 +256,7 @@ public class ApiDescription implements IApiDescription {
 	 * HashMap<IElementDescriptor(package), ManifestNode(package)>
 	 * </pre>
 	 */
-	protected HashMap<IElementDescriptor, ManifestNode> fPackageMap = new HashMap<>();
+	protected Map<IElementDescriptor, ManifestNode> fPackageMap = new LinkedHashMap<>();
 
 	/**
 	 * This map holds the mapping of special access kinds for packages and has

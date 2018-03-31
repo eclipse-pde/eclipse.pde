@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -81,10 +82,10 @@ public class BuildState {
 	 * Constructor
 	 */
 	BuildState() {
-		this.compatibleChanges = new HashMap<>();
-		this.breakingChanges = new HashMap<>();
-		this.manifestChanges = new HashMap<>();
-		this.buildPropChanges = new HashMap<>();
+		this.compatibleChanges = new LinkedHashMap<>();
+		this.breakingChanges = new LinkedHashMap<>();
+		this.manifestChanges = new LinkedHashMap<>();
+		this.buildPropChanges = new LinkedHashMap<>();
 	}
 
 	/**
@@ -147,7 +148,7 @@ public class BuildState {
 				count = in.readInt();
 				if (count > 0) {
 					// read the saved headers
-					HashMap<String, String> map = new HashMap<>(count);
+					HashMap<String, String> map = new LinkedHashMap<>(count);
 					for (int i = 0; i < count; i++) {
 						String key = in.readUTF();
 						String value = in.readUTF();
@@ -428,7 +429,7 @@ public class BuildState {
 	 */
 	public void setManifestState(Map<String, String> state) {
 		if (state != null) {
-			Map<String, String> compact = new HashMap<>(7);
+			Map<String, String> compact = new LinkedHashMap<>(7);
 			for (String key : ApiAnalysisBuilder.IMPORTANT_HEADERS) {
 				String val = state.get(key);
 				if (val != null) {

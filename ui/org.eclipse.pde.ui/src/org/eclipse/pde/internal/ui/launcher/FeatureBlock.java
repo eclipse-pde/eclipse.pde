@@ -1166,7 +1166,7 @@ public class FeatureBlock {
 	 */
 	protected void setInput(ILaunchConfiguration config, CheckboxTreeViewer tree) {
 		// Maps feature IDs to their models
-		Map<String, FeatureLaunchModel> featureModels = new HashMap<>();
+		Map<String, FeatureLaunchModel> featureModels = new LinkedHashMap<>();
 		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] workspaceModels = fmm.getWorkspaceModels();
 		for (IFeatureModel workspaceModel : workspaceModels) {

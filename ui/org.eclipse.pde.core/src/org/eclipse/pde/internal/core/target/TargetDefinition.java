@@ -892,7 +892,7 @@ public class TargetDefinition implements ITargetDefinition {
 		ITargetLocation[] containers = getTargetLocations();
 
 		// collect up all features from all containers and remove duplicates.
-		Map<NameVersionDescriptor, TargetFeature> result = new HashMap<>();
+		Map<NameVersionDescriptor, TargetFeature> result = new LinkedHashMap<>();
 		if (containers != null && containers.length > 0) {
 			for (ITargetLocation container : containers) {
 				TargetFeature[] currentFeatures = container.getFeatures();
@@ -928,7 +928,7 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 
 		TargetBundle[] allBundles = getAllBundles();
-		Map<String, TargetBundle> remaining = new HashMap<>();
+		Map<String, TargetBundle> remaining = new LinkedHashMap<>();
 		for (TargetBundle allBundle : allBundles) {
 			remaining.put(allBundle.getBundleInfo().getSymbolicName(), allBundle);
 		}

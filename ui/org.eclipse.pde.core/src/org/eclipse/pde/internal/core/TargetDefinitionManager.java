@@ -77,7 +77,7 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 	}
 
 	private void loadElements() {
-		fTargets = new HashMap<>();
+		fTargets = new LinkedHashMap<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		registry.addRegistryChangeListener(this);
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.core.targets"); //$NON-NLS-1$

@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -104,7 +106,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		if (!fNeedsSaving) {
 			return;
 		}
-		final HashMap<IResource, Map<String, Set<IApiProblemFilter>>> filters = new HashMap<>(fFilterMap);
+		final HashMap<IResource, Map<String, Set<IApiProblemFilter>>> filters = new LinkedHashMap<>(fFilterMap);
 		WorkspaceJob job = new WorkspaceJob(Util.EMPTY_STRING) {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
@@ -502,7 +504,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		if (ApiPlugin.DEBUG_FILTER_STORE) {
 			System.out.println("initializing api filter map for project [" + fProject.getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		fFilterMap = new HashMap<>(5);
+		fFilterMap = new LinkedHashMap<>(5);
 		IPath filepath = getFilterFilePath(true);
 		IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(filepath, true);
 		if (file == null) {
@@ -557,14 +559,14 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 				typeName = GLOBAL;
 			}
 			if (pTypeNames == null) {
-				filters = new HashSet<>();
-				pTypeNames = new HashMap<>();
+				filters = new LinkedHashSet<>();
+				pTypeNames = new LinkedHashMap<>();
 				pTypeNames.put(typeName, filters);
 				fFilterMap.put(resource, pTypeNames);
 			} else {
 				filters = pTypeNames.get(typeName);
 				if (filters == null) {
-					filters = new HashSet<>();
+					filters = new LinkedHashSet<>();
 					pTypeNames.put(typeName, filters);
 				}
 			}
@@ -613,13 +615,13 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 */
 	public synchronized void recordFilterUsage() {
 		initializeApiFilters();
-		fUnusedFilters = new HashMap<>();
+		fUnusedFilters = new LinkedHashMap<>();
 		Map<String, Set<IApiProblemFilter>> types = null;
 		Set<IApiProblemFilter> values = null;
 		for (Entry<IResource, Map<String, Set<IApiProblemFilter>>> filterEntry : fFilterMap.entrySet()) {
 			IResource resource = filterEntry.getKey();
 			types = filterEntry.getValue();
-			values = new HashSet<>();
+			values = new LinkedHashSet<>();
 			fUnusedFilters.put(resource, values);
 			for (Entry<String, Set<IApiProblemFilter>> entry : types.entrySet()) {
 				values.addAll(entry.getValue());

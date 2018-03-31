@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.views.dependencies;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.Constants;
@@ -69,7 +70,7 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 		// use map to store dependencies so if Import-Package is supplied by same BundleDescription as supplier of Require-Bundle, it only shows up once
 		// Also, have to use BundleSpecficiation instead of BundleDescroption to show re-exported icon on re-exported Required-Bundles
 		// Have to use ImportPackageSpecification to determine if an import is optional and should be filtered.
-		HashMap<Object, Object> dependencies = new HashMap<>();
+		HashMap<Object, Object> dependencies = new LinkedHashMap<>();
 		BundleSpecification[] requiredBundles = desc.getRequiredBundles();
 		for (BundleSpecification requiredBundle : requiredBundles) {
 			BaseDescription bd = requiredBundle.getSupplier();

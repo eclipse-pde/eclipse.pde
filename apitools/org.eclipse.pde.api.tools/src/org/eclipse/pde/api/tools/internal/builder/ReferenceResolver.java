@@ -11,7 +11,7 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +45,7 @@ public final class ReferenceResolver {
 	public static void resolveReferences(List<IReference> references, IProgressMonitor monitor) throws CoreException {
 		// sort references by target type for 'shared' resolution
 		int refcount = references.size();
-		Map<String, List<IReference>> sigtoref = new HashMap<>(refcount);
+		Map<String, List<IReference>> sigtoref = new LinkedHashMap<>(refcount);
 
 		List<IReference> refs = null;
 		String key = null;

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -254,7 +255,7 @@ public final class JavadocTagManager {
 	 */
 	private void initializeJavadocTags() {
 		if (tagcache == null) {
-			tagcache = new HashMap<>();
+			tagcache = new LinkedHashMap<>();
 			List<ApiJavadocTag> list = new ArrayList<>(4);
 
 			// noimplement tag

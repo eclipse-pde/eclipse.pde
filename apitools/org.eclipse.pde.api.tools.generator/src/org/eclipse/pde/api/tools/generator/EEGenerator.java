@@ -32,6 +32,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -453,7 +455,7 @@ public class EEGenerator {
 					String[] packages = property.split(","); //$NON-NLS-1$
 					for (int i = 0, max = packages.length; i < max; i++) {
 						if (knownPackages == null) {
-							knownPackages = new HashSet<String>();
+							knownPackages = new LinkedHashSet<String>();
 						}
 						knownPackages.add(packages[i]);
 					}
@@ -592,7 +594,7 @@ public class EEGenerator {
 		}
 
 		public Map<String, Type> getAllTypes() {
-			Map<String, Type> result = new HashMap<String, Type>();
+			Map<String, Type> result = new LinkedHashMap<String, Type>();
 			Set<String> keySet = this.data.keySet();
 			String[] sortedKeys = new String[keySet.size()];
 			keySet.toArray(sortedKeys);
@@ -799,8 +801,8 @@ public class EEGenerator {
 			} else {
 				this.whiteList = Collections.unmodifiableSet(knownPackages);
 			}
-			Map<String, Type> allVisibleTypes = new HashMap<String, Type>();
-			Map<String, Type> allTypes = new HashMap<String, Type>();
+			Map<String, Type> allVisibleTypes = new LinkedHashMap<>();
+			Map<String, Type> allTypes = new LinkedHashMap<>();
 			this.totalSize = 0;
 			for (int i = 0, max = allFiles.length; i < max; i++) {
 				File currentFile = allFiles[i];
@@ -894,7 +896,7 @@ public class EEGenerator {
 					docZip.close();
 				}
 			}
-			HashMap<String, Package> typesPerPackage = new HashMap<String, Package>();
+			HashMap<String, Package> typesPerPackage = new LinkedHashMap<String, Package>();
 			for (Iterator<Type> iterator = isInDoc.iterator(); iterator.hasNext();) {
 				Type type = iterator.next();
 				String packageName = type.getPackage();
@@ -1076,7 +1078,7 @@ public class EEGenerator {
 
 		public StubClass(int acc, String className2, String superName2, String[] interfaces2) {
 			this.access = acc;
-			this.pool = new HashMap<String, Integer>();
+			this.pool = new LinkedHashMap<String, Integer>();
 			this.classNameIndex = getIndex(className2);
 			this.superNameIndex = superName2 != null ? getIndex(superName2) : -1;
 			if (interfaces2 != null) {

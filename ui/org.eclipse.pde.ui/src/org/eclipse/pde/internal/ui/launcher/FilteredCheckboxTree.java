@@ -134,13 +134,13 @@ class FilteredCheckboxTree extends FilteredTree {
 		}
 
 		/* A cache of all the nodes */
-		Map<Object, FilteredCheckboxTreeItem> itemCache = new HashMap<>();
+		Map<Object, FilteredCheckboxTreeItem> itemCache = new LinkedHashMap<>();
 		/* The preRefresh Listeners */
 		List<PreRefreshNotifier> refreshingListeners = new ArrayList<>();
 
 		@Override
 		protected void unmapAllElements() {
-			itemCache = new HashMap<>();
+			itemCache = new LinkedHashMap<>();
 			super.unmapAllElements();
 		}
 
@@ -236,8 +236,8 @@ class FilteredCheckboxTree extends FilteredTree {
 
 		@Override
 		public void setCheckedElements(Object[] elements) {
-			Set<Object> s = new HashSet<>(itemCache.keySet());
-			s.removeAll(new HashSet<>(Arrays.asList(elements)));
+			Set<Object> s = new LinkedHashSet<>(itemCache.keySet());
+			s.removeAll(Arrays.asList(elements));
 			for (Object element : elements) {
 				FilteredCheckboxTreeItem item = itemCache.get(element);
 				if (item != null) {

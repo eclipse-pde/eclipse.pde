@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import java.util.Map;
-import java.util.Set;
-import org.eclipse.core.runtime.IPath;
-
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -107,7 +103,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	 */
 	public Map<String, Map<String, Set<IPath>>> getWorkspaceOutputFolders(Object[] exportedItems) throws CoreException {
 		IProject[] projects = getExportedWorkspaceProjects(exportedItems);
-		Map<String, Map<String, Set<IPath>>> result = new HashMap<>(projects.length);
+		Map<String, Map<String, Set<IPath>>> result = new LinkedHashMap<>(projects.length);
 		for (IProject project : projects) {
 			IFile buildFile = PDEProject.getBuildProperties(project);
 			if (buildFile.exists()) {
@@ -129,13 +125,13 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	}
 
 	private Map<String, Set<IPath>> getPluginOutputFolders(IBuildModel buildModel, IJavaProject javaProject) throws JavaModelException {
-		Map<String, Set<IPath>> outputEntries = new HashMap<>();
+		Map<String, Set<IPath>> outputEntries = new LinkedHashMap<>();
 
 		IBuildEntry[] buildEntries = buildModel.getBuild().getBuildEntries();
 		for (IBuildEntry buildEntry : buildEntries) {
 			String name = buildEntry.getName();
 			if (name.startsWith(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX)) {
-				Set<IPath> outputPaths = new HashSet<>();
+				Set<IPath> outputPaths = new LinkedHashSet<>();
 
 				String[] sourceFolders = buildEntry.getTokens();
 				for (String sourceFolder : sourceFolders) {

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -218,7 +217,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public ApiField addField(String name, String signature, String genericSig, int modifiers, Object value) {
 		if (fFields == null) {
-			fFields = new HashMap<>();
+			fFields = new LinkedHashMap<>();
 		}
 		ApiField field = new ApiField(this, name, signature, genericSig, modifiers, value);
 		fFields.put(name, field);
@@ -522,7 +521,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public void addMemberType(String name, int modifiers) {
 		if (fMemberTypes == null) {
-			fMemberTypes = new HashMap<>();
+			fMemberTypes = new LinkedHashMap<>();
 		}
 		int index = name.lastIndexOf('$');
 		String simpleName = name.substring(index + 1);

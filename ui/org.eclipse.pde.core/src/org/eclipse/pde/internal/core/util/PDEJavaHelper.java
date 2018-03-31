@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import org.eclipse.core.runtime.IPath;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -263,7 +262,7 @@ public class PDEJavaHelper {
 	}
 
 	public static HashMap<String, IPackageFragment> getPackageFragmentsHash(IJavaProject jProject, Collection<?> existingPackages, boolean allowJava) {
-		HashMap<String, IPackageFragment> map = new HashMap<>();
+		HashMap<String, IPackageFragment> map = new LinkedHashMap<>();
 		try {
 			IPackageFragmentRoot[] roots = getRoots(jProject);
 			for (IPackageFragmentRoot root : roots) {

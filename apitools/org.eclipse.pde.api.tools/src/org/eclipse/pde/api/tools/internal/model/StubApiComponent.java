@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +45,7 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 
 	public static IApiComponent getStubApiComponent(int eeValue) {
 		if (AllSystemLibraryApiComponents == null) {
-			AllSystemLibraryApiComponents = new HashMap<>();
+			AllSystemLibraryApiComponents = new LinkedHashMap<>();
 		}
 		String name = ProfileModifiers.getName(eeValue);
 		IApiComponent component = AllSystemLibraryApiComponents.get(name);

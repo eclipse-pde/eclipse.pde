@@ -501,7 +501,7 @@ public class TargetPlatformHelper {
 	}
 
 	public static Map<Long, String> getPatchMap(PDEState state) {
-		HashMap<Long, String> properties = new HashMap<>();
+		HashMap<Long, String> properties = new LinkedHashMap<>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
 		for (IPluginModelBase model : models) {
 			BundleDescription desc = model.getBundleDescription();
@@ -518,7 +518,7 @@ public class TargetPlatformHelper {
 	}
 
 	public static HashMap<Long, String[]> getBundleClasspaths(PDEState state) {
-		HashMap<Long, String[]> properties = new HashMap<>();
+		HashMap<Long, String[]> properties = new LinkedHashMap<>();
 		BundleDescription[] bundles = state.getState().getBundles();
 		for (BundleDescription bundle : bundles) {
 			properties.put(Long.valueOf(bundle.getBundleId()), getValue(bundle, state));

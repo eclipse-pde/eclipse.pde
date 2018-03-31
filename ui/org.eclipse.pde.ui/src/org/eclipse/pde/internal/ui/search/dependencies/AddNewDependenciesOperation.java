@@ -79,7 +79,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		addProjectPackages(bundle, ignorePkgs);
 		subMonitor.worked(4);
 
-		final Map<ExportPackageDescription, String> additionalDeps = new HashMap<>();
+		final Map<ExportPackageDescription, String> additionalDeps = new LinkedHashMap<>();
 		subMonitor.subTask(PDEUIMessages.AddNewDependenciesOperation_searchProject);
 
 		boolean useRequireBundle = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID).getBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, true);

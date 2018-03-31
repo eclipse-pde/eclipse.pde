@@ -25,6 +25,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -357,7 +358,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			return;
 		}
 		if (fComponentsById == null) {
-			fComponentsById = new HashMap<>();
+			fComponentsById = new LinkedHashMap<>();
 		}
 		if (fAllComponentsById == null) {
 			fAllComponentsById = new HashMap<>();

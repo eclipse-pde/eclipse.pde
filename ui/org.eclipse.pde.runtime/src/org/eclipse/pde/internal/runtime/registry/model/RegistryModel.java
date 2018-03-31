@@ -210,11 +210,11 @@ public class RegistryModel {
 	protected RegistryBackend backend;
 
 	public RegistryModel(RegistryBackend backend) {
-		bundles = Collections.synchronizedMap(new HashMap<>());
-		services = Collections.synchronizedMap(new HashMap<>());
-		extensionPoints = Collections.synchronizedMap(new HashMap<>());
-		serviceNames = Collections.synchronizedSet(new HashSet<>());
-		fragments = Collections.synchronizedMap(new HashMap<>());
+		bundles = Collections.synchronizedMap(new LinkedHashMap<>());
+		services = Collections.synchronizedMap(new LinkedHashMap<>());
+		extensionPoints = Collections.synchronizedMap(new LinkedHashMap<>());
+		serviceNames = Collections.synchronizedSet(new LinkedHashSet<>());
+		fragments = Collections.synchronizedMap(new LinkedHashMap<>());
 
 		this.backend = backend;
 		backend.setRegistryListener(backendListener);

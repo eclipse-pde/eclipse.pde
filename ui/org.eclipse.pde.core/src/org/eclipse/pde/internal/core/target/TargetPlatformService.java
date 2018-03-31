@@ -129,7 +129,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	@Override
 	public ITargetHandle getTarget(URI uri) {
 		if (fExtTargetHandles == null)
-			fExtTargetHandles = new HashMap<>(10);
+			fExtTargetHandles = new LinkedHashMap<>(10);
 		if (fExtTargetHandles.containsKey(uri)) {
 			return fExtTargetHandles.get(uri);
 		}
@@ -651,7 +651,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		// Get the current models from the target platform
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
 		Set<String> allLocations = new HashSet<>(models.length);
-		Map<String, IPluginModelBase> stateLocations = new HashMap<>(models.length);
+		Map<String, IPluginModelBase> stateLocations = new LinkedHashMap<>(models.length);
 		for (IPluginModelBase base : models) {
 			allLocations.add(base.getInstallLocation());
 			stateLocations.put(base.getInstallLocation(), base);

@@ -48,8 +48,7 @@ public class BundleLauncherHelper {
 	}
 
 	public static Map<IPluginModelBase, String> getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
-		Set<String> set = new HashSet<>();
-		Map<IPluginModelBase, String> map = new HashMap<>();
+		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 
 		// if we are using the eclipse-based launcher, we need special checks
 		if (!osgi) {
@@ -203,6 +202,7 @@ public class BundleLauncherHelper {
 
 		String workspace = osgi == false ? IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.WORKSPACE_BUNDLES;
 		String target = osgi == false ? IPDELauncherConstants.SELECTED_TARGET_PLUGINS : IPDELauncherConstants.TARGET_BUNDLES;
+		Set<String> set = new HashSet<>();
 		map = getWorkspaceBundleMap(configuration, set, workspace);
 		map.putAll(getTargetBundleMap(configuration, set, target));
 		return map;
@@ -297,7 +297,7 @@ public class BundleLauncherHelper {
 
 	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Set<String> set, String attribute) throws CoreException {
 		String selected = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
-		Map<IPluginModelBase, String> map = new HashMap<>();
+		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
@@ -420,7 +420,7 @@ public class BundleLauncherHelper {
 
 	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Set<String> set, String attribute) throws CoreException {
 		String selected = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
-		Map<IPluginModelBase, String> map = new HashMap<>();
+		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();

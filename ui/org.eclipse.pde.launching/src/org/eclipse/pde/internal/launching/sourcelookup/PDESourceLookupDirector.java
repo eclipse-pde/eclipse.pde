@@ -33,7 +33,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	/**
 	 * Cache of source containers by location and id (String & String)
 	 */
-	private Map<String, ISourceContainer[]> fSourceContainerMap = new HashMap<>();
+	private Map<String, ISourceContainer[]> fSourceContainerMap = new LinkedHashMap<>();
 
 	private static Set<String> fFilteredTypes;
 

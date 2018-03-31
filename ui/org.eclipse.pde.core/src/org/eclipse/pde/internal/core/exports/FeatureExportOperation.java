@@ -777,7 +777,7 @@ public class FeatureExportOperation extends Job {
 	}
 
 	protected String[] getPaths() {
-		Map<String, String> map = new HashMap<>(); // merge workspace and external features using workspace over external
+		Map<String, String> map = new LinkedHashMap<>(); // merge workspace and external features using workspace over external
 		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] models = fmm.getExternalModels();
 		for (IFeatureModel model : models) {

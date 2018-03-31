@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -385,7 +386,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		Map<String, IApiProblem[]> allProblems = new HashMap<>();
 		List<String> allNonApiBundles = new ArrayList<>();
 		List<String> allApiBundles = new ArrayList<>();
-		Map<String, Object> bundlesWithErrors = new HashMap<>();
+		Map<String, Object> bundlesWithErrors = new LinkedHashMap<>();
 		try {
 			IApiComponent[] apiComponents = currentBaseline.getApiComponents();
 			int length = apiComponents.length;

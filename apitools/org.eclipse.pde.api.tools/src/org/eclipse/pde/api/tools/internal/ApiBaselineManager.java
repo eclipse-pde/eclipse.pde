@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -253,7 +254,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if (baselinecache == null) {
 			handlecache = new HashMap<>(8);
 			hasinfos = new HashSet<>(8);
-			baselinecache = new HashMap<>(8);
+			baselinecache = new LinkedHashMap<>(8);
 			if (!ApiPlugin.isRunningInFramework()) {
 				return;
 			}

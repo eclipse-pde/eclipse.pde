@@ -11,7 +11,7 @@
 package org.eclipse.pde.api.tools.internal.search;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 	Map<String, List<IReferenceDescriptor>> fReferencesMap;
 
 	public UseScanReferences() {
-		fReferencesMap = new HashMap<>();
+		fReferencesMap = new LinkedHashMap<>();
 	}
 
 	@Override

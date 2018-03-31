@@ -170,7 +170,7 @@ public class ClasspathHelper {
 	private static Map<IPath, ArrayList<IPath>> getClasspathMap(IProject project, boolean checkExcluded, boolean absolutePaths) throws JavaModelException {
 		List<Path> excluded = getFoldersToExclude(project, checkExcluded);
 		IJavaProject jProject = JavaCore.create(project);
-		HashMap<IPath, ArrayList<IPath>> map = new HashMap<>();
+		HashMap<IPath, ArrayList<IPath>> map = new LinkedHashMap<>();
 		IClasspathEntry[] entries = jProject.getRawClasspath();
 		for (IClasspathEntry entry : entries) {
 			// most of the paths we get will be project relative, so we need to make the paths relative

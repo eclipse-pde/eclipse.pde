@@ -170,7 +170,7 @@ public class PDEState extends MinimalState {
 	}
 
 	private IPluginModelBase[] createTargetModels(BundleDescription[] bundleDescriptions) {
-		HashMap<String, IPluginModelBase> models = new HashMap<>((4 / 3) * bundleDescriptions.length + 1);
+		HashMap<String, IPluginModelBase> models = new LinkedHashMap<>((4 / 3) * bundleDescriptions.length + 1);
 		for (BundleDescription desc : bundleDescriptions) {
 			IPluginModelBase base = createExternalModel(desc);
 			fTargetModels.add(base);

@@ -32,7 +32,7 @@ public class BundleManifestSourceLocationManager {
 	/**
 	 * Maps SourceLocationKeys (plugin name and version) to IPluginModelBase objects representing source bundles
 	 */
-	private Map<SourceLocationKey, IPluginModelBase> fPluginToSourceBundle = new HashMap<>(0);
+	private Map<SourceLocationKey, IPluginModelBase> fPluginToSourceBundle = new LinkedHashMap<>(0);
 
 	/**
 	 * Returns a source location that provides source for a specific plugin (specified by name and version)
@@ -184,7 +184,7 @@ public class BundleManifestSourceLocationManager {
 	 * @param externalModels bundles to search through
 	 */
 	public void setPlugins(IPluginModelBase[] externalModels) {
-		fPluginToSourceBundle = new HashMap<>();
+		fPluginToSourceBundle = new LinkedHashMap<>();
 		for (IPluginModelBase model : externalModels) {
 			IPluginBase currentPlugin = model.getPluginBase();
 			if (currentPlugin instanceof PluginBase) {
