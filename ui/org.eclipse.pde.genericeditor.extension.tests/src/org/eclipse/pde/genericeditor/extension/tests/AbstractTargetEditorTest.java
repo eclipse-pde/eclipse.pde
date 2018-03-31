@@ -12,6 +12,13 @@ package org.eclipse.pde.genericeditor.extension.tests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -51,8 +58,12 @@ public class AbstractTargetEditorTest {
 
 	protected ITextViewer getTextViewerForTarget(String name) throws Exception {
 		IFile targetFile = project.getFile(name + ".target");
-		targetFile.create(FrameworkUtil.getBundle(this.getClass())
-				.getEntry("testing-files/target-files/" + name + ".txt").openStream(), true, new NullProgressMonitor());
+		InputStream testStream = FrameworkUtil.getBundle(this.getClass())
+				.getEntry("testing-files/target-files/" + name + ".txt").openStream();
+		String normalizedLineFeeds = new BufferedReader(new InputStreamReader(testStream)).lines()
+				.collect(Collectors.joining("\n"));
+		InputStream normalizedStream = new ByteArrayInputStream(normalizedLineFeeds.getBytes(StandardCharsets.UTF_8));
+		targetFile.create(normalizedStream, true, new NullProgressMonitor());
 		IEditorPart editor = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
 				targetFile, "org.eclipse.ui.genericeditor.GenericEditor");
 		return (ITextViewer) editor.getAdapter(ITextOperationTarget.class);
