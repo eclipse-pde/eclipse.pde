@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -232,7 +232,7 @@ public class SpyFormToolkit extends FormToolkit {
 			bundleClassByName.put(clazz.getName(), bundle);
 			buffer.append("<a href=\"").append(CLASS_PROTOCOL_PREFIX).append( //$NON-NLS-1$
 					clazz.getName()).append("\">") //$NON-NLS-1$
-					.append(clazz.getSimpleName()).append("</a>"); //$NON-NLS-1$
+					.append(clazz.getSimpleName().isEmpty() ? clazz.getName() : clazz.getSimpleName()).append("</a>"); //$NON-NLS-1$
 		} else {
 			buffer.append(clazz.getName());
 		}
