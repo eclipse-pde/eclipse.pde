@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -252,7 +252,8 @@ public class PluginImportHelper {
 				Object curr = children.get(i);
 				String name = provider.getLabel(curr);
 				if (provider.isFolder(curr)) {
-					if (!name.equals("src") && !isClassFolder(provider, curr)) { //$NON-NLS-1$
+					boolean isNotSrcClassFolder = !name.equals("src") && !isClassFolder(provider, curr);//$NON-NLS-1$
+					if (isNotSrcClassFolder || name.equals("META-INF")) { //$NON-NLS-1$
 						// Do not import source folders and class folders
 						collectRequiredBundleFiles(provider, curr, collected);
 					}
