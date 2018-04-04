@@ -11,9 +11,7 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.*;
@@ -21,8 +19,8 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.w3c.dom.*;
@@ -93,125 +91,13 @@ public class TargetDefinitionPersistenceHelper {
 	 * @throws SAXException
 	 */
 	public static void persistXML(ITargetDefinition definition, OutputStream output) throws CoreException, ParserConfigurationException, TransformerException, IOException, SAXException {
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
-		Document doc = docBuilder.newDocument();
-
-		ProcessingInstruction instruction = doc.createProcessingInstruction(PDE_INSTRUCTION,
-				ATTR_VERSION + "=\"" + ICoreConstants.TARGET38 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		doc.appendChild(instruction);
-
-		Element rootElement = doc.createElement(ROOT);
-
-		if (definition.getName() != null) {
-			rootElement.setAttribute(ATTR_NAME, definition.getName());
-		}
-
-		if (((TargetDefinition) definition).getUIMode() == TargetDefinition.MODE_FEATURE) {
-			rootElement.setAttribute(ATTR_INCLUDE_MODE, FEATURE);
-		}
-
-		rootElement.setAttribute(ATTR_SEQUENCE_NUMBER,
-				Integer.toString(((TargetDefinition) definition).getSequenceNumber()));
-
-		ITargetLocation[] containers = definition.getTargetLocations();
-		if (containers != null && containers.length > 0) {
-			Element containersElement = doc.createElement(LOCATIONS);
-			for (ITargetLocation container : containers) {
-				Element containerElement = serializeBundleContainer(docBuilder, doc, container);
-				if (containerElement != null) {
-					containersElement.appendChild(containerElement);
-				}
-			}
-			rootElement.appendChild(containersElement);
-		}
-
-		NameVersionDescriptor[] included = definition.getIncluded();
-		if (included != null) {
-			Arrays.sort(included, (o1, o2) -> {
-				int compareType = o1.getType().compareTo(o2.getType());
-				if (compareType != 0) {
-					return compareType;
-				}
-				return o1.getId().compareTo(o2.getId());
-			});
-			Element includedElement = doc.createElement(INCLUDE_BUNDLES);
-			serializeBundles(doc, includedElement, included);
-			rootElement.appendChild(includedElement);
-		}
-
-		if (definition.getOS() != null || definition.getWS() != null || definition.getArch() != null
-				|| definition.getNL() != null) {
-			Element envElement = doc.createElement(ENVIRONMENT);
-			if (definition.getOS() != null) {
-				Element element = doc.createElement(OS);
-				setTextContent(element, definition.getOS());
-				envElement.appendChild(element);
-			}
-			if (definition.getWS() != null) {
-				Element element = doc.createElement(WS);
-				setTextContent(element, definition.getWS());
-				envElement.appendChild(element);
-			}
-			if (definition.getArch() != null) {
-				Element element = doc.createElement(ARCH);
-				setTextContent(element, definition.getArch());
-				envElement.appendChild(element);
-			}
-			if (definition.getNL() != null) {
-				Element element = doc.createElement(NL);
-				setTextContent(element, definition.getNL());
-				envElement.appendChild(element);
-			}
-			rootElement.appendChild(envElement);
-		}
-
-		if (definition.getJREContainer() != null) {
-			Element jreElement = doc.createElement(TARGET_JRE);
-			IPath path = definition.getJREContainer();
-			jreElement.setAttribute(ATTR_LOCATION_PATH, path.toPortableString());
-			rootElement.appendChild(jreElement);
-		}
-
-		if (definition.getVMArguments() != null || definition.getProgramArguments() != null) {
-			Element argElement = doc.createElement(ARGUMENTS);
-			if (definition.getVMArguments() != null) {
-				Element element = doc.createElement(VM_ARGS);
-				setTextContent(element, definition.getVMArguments());
-				argElement.appendChild(element);
-			}
-			if (definition.getProgramArguments() != null) {
-				Element element = doc.createElement(PROGRAM_ARGS);
-				setTextContent(element, definition.getProgramArguments());
-				argElement.appendChild(element);
-			}
-			rootElement.appendChild(argElement);
-		}
-
-		NameVersionDescriptor[] implicitDependencies = definition.getImplicitDependencies();
-		if (implicitDependencies != null && implicitDependencies.length > 0) {
-			Element implicit = doc.createElement(IMPLICIT);
-			for (NameVersionDescriptor implicitDependency : implicitDependencies) {
-				Element plugin = doc.createElement(PLUGIN);
-				plugin.setAttribute(ATTR_ID, implicitDependency.getId());
-				if (implicitDependency.getVersion() != null) {
-					plugin.setAttribute(ATTR_VERSION, implicitDependency.getVersion());
-				}
-				implicit.appendChild(plugin);
-			}
-			rootElement.appendChild(implicit);
-		}
-
-		doc.appendChild(rootElement);
-		DOMSource source = new DOMSource(doc);
+		Document document = definition.getDocument();
+		DOMSource source = new DOMSource(document);
 
 		StreamResult outputTarget = new StreamResult(output);
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer transformer = factory.newTransformer();
-		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 		transformer.transform(source, outputTarget);
-
 	}
 
 	/**
@@ -251,7 +137,9 @@ public class TargetDefinitionPersistenceHelper {
 				}
 			}
 		}
-
+		// Avoid doing the rebuilding of each part of the document, just set the
+		// document at the end
+		definition.setDocument(null);
 		// Select the correct helper class to use
 		// Note: If file structure is updated, make sure to update both default cases
 		if (version == null || version.length() == 0) {
@@ -271,6 +159,7 @@ public class TargetDefinitionPersistenceHelper {
 			PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, MessageFormat.format(Messages.TargetDefinitionPersistenceHelper_2, version, name)));
 			TargetPersistence38Helper.initFromDoc(definition, root);
 		}
+		definition.setDocument(doc);
 	}
 
 	static ITargetPlatformService getTargetPlatformService() throws CoreException {
@@ -300,90 +189,4 @@ public class TargetDefinitionPersistenceHelper {
 		}
 		return result.toString();
 	}
-
-	private static Element serializeBundleContainer(DocumentBuilder docBuilder, Document doc,
-			ITargetLocation targetLocation) throws CoreException, SAXException, IOException {
-		if (targetLocation instanceof DirectoryBundleContainer) {
-			Element containerElement = doc.createElement(LOCATION);
-			containerElement.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
-			containerElement.setAttribute(ATTR_LOCATION_PATH, targetLocation.getLocation(false));
-			return containerElement;
-		} else if (targetLocation instanceof FeatureBundleContainer) {
-			Element containerElement = doc.createElement(LOCATION);
-			containerElement.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
-			containerElement.setAttribute(ATTR_LOCATION_PATH, targetLocation.getLocation(false));
-			containerElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) targetLocation).getFeatureId());
-			String version = ((FeatureBundleContainer) targetLocation).getFeatureVersion();
-			if (version != null) {
-				containerElement.setAttribute(ATTR_VERSION, version);
-			}
-			return containerElement;
-		} else if (targetLocation instanceof ProfileBundleContainer) {
-			Element containerElement = doc.createElement(LOCATION);
-			containerElement.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
-			containerElement.setAttribute(ATTR_LOCATION_PATH, targetLocation.getLocation(false));
-			String configurationArea = ((ProfileBundleContainer) targetLocation).getConfigurationLocation();
-			if (configurationArea != null) {
-				containerElement.setAttribute(ATTR_CONFIGURATION, configurationArea);
-			}
-			return containerElement;
-		} else {
-			String xml = targetLocation.serialize();
-			if (xml == null)
-				return null;
-			Document document = docBuilder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
-			Element root = document.getDocumentElement();
-			if (!root.getNodeName().equalsIgnoreCase(LOCATION)) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-						NLS.bind(Messages.TargetDefinitionPersistenceHelper_WrongRootElementInXML,
-								targetLocation.getType(), xml)));
-			}
-			root.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
-			return (Element) doc.importNode(root, true);
-		}
-	}
-
-	private static void serializeBundles(Document doc, Element parent, NameVersionDescriptor[] bundles) {
-		for (NameVersionDescriptor bundle : bundles) {
-			if (bundle.getType() == NameVersionDescriptor.TYPE_FEATURE) {
-				Element includedBundle = doc.createElement(FEATURE);
-				includedBundle.setAttribute(ATTR_ID, bundle.getId());
-				String version = bundle.getVersion();
-				if (version != null) {
-					includedBundle.setAttribute(ATTR_VERSION, version);
-				}
-				parent.appendChild(includedBundle);
-			} else {
-				Element includedBundle = doc.createElement(PLUGIN);
-				includedBundle.setAttribute(ATTR_ID, bundle.getId());
-				String version = bundle.getVersion();
-				if (version != null) {
-					includedBundle.setAttribute(ATTR_VERSION, version);
-				}
-				parent.appendChild(includedBundle);
-			}
-		}
-	}
-
-	/**
-	 * Removes any existing child content and inserts a text node with the given
-	 * text
-	 *
-	 * @param element
-	 *            element to add text content to
-	 * @param text
-	 *            text to add as value
-	 * @throws DOMException
-	 */
-	private static void setTextContent(Element element, String text) throws DOMException {
-		Node child;
-		while ((child = element.getFirstChild()) != null) {
-			element.removeChild(child);
-		}
-		if (text != null && text.length() > 0) {
-			Text textNode = element.getOwnerDocument().createTextNode(text);
-			element.appendChild(textNode);
-		}
-	}
-
 }

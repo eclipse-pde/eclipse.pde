@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lucas Bullen (Red Hat Inc.) - [Bug 531602] formatting munged by editor
  *******************************************************************************/
 package org.eclipse.pde.core.target;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.environment.Constants;
+import org.w3c.dom.Document;
 
 /**
  * Defines a target platform. A target platform is a collection of bundles and
@@ -51,6 +53,25 @@ public interface ITargetDefinition {
 	 * @return <code>true</code> if all locations are currently resolved
 	 */
 	public boolean isResolved();
+
+	/**
+	 * Sets the XML document that stores the state of this target. The document is
+	 * updated with each setter that has an affect on the target file source.
+	 *
+	 * @param document
+	 *                     xml document or <code>null</code>
+	 * @since 3.12
+	 */
+	public void setDocument(Document document);
+
+	/**
+	 * Returns the Document that represents this target, or <code>null</code> if
+	 * none
+	 *
+	 * @return document or <code>null</code>
+	 * @since 3.12
+	 */
+	public Document getDocument();
 
 	/**
 	 * Returns all bundles included in this target definition or <code>null</code>
