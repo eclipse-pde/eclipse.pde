@@ -367,6 +367,8 @@ public class BundleLauncherHelper {
 				return "default"; //$NON-NLS-1$
 			}
 			return "2"; //$NON-NLS-1$
+		} else if (IPDEBuildConstants.BUNDLE_FELIX_SCR.equals(modelName)) {
+			return "1"; //$NON-NLS-1$
 		} else {
 			return null;
 		}
@@ -388,6 +390,8 @@ public class BundleLauncherHelper {
 			if (TargetPlatformHelper.getTargetVersion() > 3.1) {
 				return "true"; //$NON-NLS-1$
 			}
+			return "true"; //$NON-NLS-1$
+		} else if (IPDEBuildConstants.BUNDLE_FELIX_SCR.equals(modelName)) {
 			return "true"; //$NON-NLS-1$
 		} else {
 			return null;
