@@ -31,5 +31,9 @@ public class E4ApplicationNewWizard extends AbstractE4NewPluginTemplateWizard {
 	protected String getFilenameToEdit() {
 		return E4ApplicationTemplate.E4_MODEL_FILE;
 	}
+	@Override
+	public String[] getImportPackages() {
+		return new String[] { "javax.annotation;version=\"0.0.0\"" }; //$NON-NLS-1$
+	}
 
 }
