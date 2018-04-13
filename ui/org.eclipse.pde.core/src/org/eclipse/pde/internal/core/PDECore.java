@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,12 +155,12 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	/**
 	 * Target platform service.
 	 */
-	private ServiceRegistration<?> fTargetPlatformService;
+	private ServiceRegistration<ITargetPlatformService> fTargetPlatformService;
 
 	/**
 	 * Bundle project service.
 	 */
-	private ServiceRegistration<?> fBundleProjectService;
+	private ServiceRegistration<IBundleProjectService> fBundleProjectService;
 
 	public PDECore() {
 		inst = this;
@@ -268,8 +268,10 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		fFeatureRebuilder = new FeatureRebuilder();
 		fFeatureRebuilder.start();
 
-		fTargetPlatformService = context.registerService(ITargetPlatformService.class.getName(), TargetPlatformService.getDefault(), new Hashtable<String, Object>());
-		fBundleProjectService = context.registerService(IBundleProjectService.class.getName(), BundleProjectService.getDefault(), new Hashtable<String, Object>());
+		fTargetPlatformService = context.registerService(ITargetPlatformService.class,
+				TargetPlatformService.getDefault(), new Hashtable<String, Object>());
+		fBundleProjectService = context.registerService(IBundleProjectService.class, BundleProjectService.getDefault(),
+				new Hashtable<String, Object>());
 
 		// Register the debug options listener service (tracing)
 		Hashtable<String, String> props = new Hashtable<>(2);
