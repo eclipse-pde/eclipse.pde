@@ -85,15 +85,17 @@ public class TargetDefinitionDocumentTools {
 		}
 		for (Element element : oldElements) {
 			boolean matchFound = false;
-			for (int j = 0; j < newElements.size(); j++) {
-				if (comparator.compare(element, newElements.get(j)) == 0) {
-					if (elementAttributesComparator.compare(element, newElements.get(j)) != 0) {
-						parentElement.replaceChild(
-								parentElement.getOwnerDocument().importNode(newElements.get(j), true), element);
+			if (comparator != null) {
+				for (int j = 0; j < newElements.size(); j++) {
+					if (comparator.compare(element, newElements.get(j)) == 0) {
+						if (elementAttributesComparator.compare(element, newElements.get(j)) != 0) {
+							parentElement.replaceChild(
+									parentElement.getOwnerDocument().importNode(newElements.get(j), true), element);
+						}
+						newElements.remove(j);
+						matchFound = true;
+						break;
 					}
-					newElements.remove(j);
-					matchFound = true;
-					break;
 				}
 			}
 			if (!matchFound) {

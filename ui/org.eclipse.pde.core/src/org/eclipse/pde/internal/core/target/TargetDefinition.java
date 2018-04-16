@@ -777,6 +777,11 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	void write(OutputStream stream) throws CoreException {
 		try {
+			if (fContainers != null && fContainers.length != 0) {
+				Element containersElement = TargetDefinitionDocumentTools.getChildElement(fRoot,
+						TargetDefinitionPersistenceHelper.LOCATIONS);
+				serializeBundleContainers(fContainers, containersElement);
+			}
 			TargetDefinitionPersistenceHelper.persistXML(this, stream);
 		} catch (IOException | ParserConfigurationException | TransformerException | SAXException e) {
 			abort(Messages.TargetDefinition_3, e);
@@ -1194,13 +1199,34 @@ public class TargetDefinition implements ITargetDefinition {
 
 		List<Element> newContainers = new ArrayList<>();
 		List<Element> newIUContainers = new ArrayList<>();
+		List<Element> newGenericContainers = new ArrayList<>();
 		List<Element> oldContainers = new ArrayList<>();
 		List<Element> oldIUContainers = new ArrayList<>();
+		List<Element> oldGenericContainers = new ArrayList<>();
 
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
 		for (ITargetLocation targetLocation : targetLocations) {
-			if (targetLocation instanceof IUBundleContainer) {
+			String type = targetLocation.getType();
+			if (targetLocation instanceof DirectoryBundleContainer) {
+				Element containerElement = createContainerElement(type, targetLocation.getLocation(false));
+				newContainers.add(containerElement);
+			} else if (targetLocation instanceof FeatureBundleContainer) {
+				Element containerElement = createContainerElement(type, targetLocation.getLocation(false));
+				String version = ((FeatureBundleContainer) targetLocation).getFeatureVersion();
+				if (version != null) {
+					containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, version);
+				}
+				newContainers.add(containerElement);
+			} else if (targetLocation instanceof ProfileBundleContainer) {
+				Element containerElement = createContainerElement(type, targetLocation.getLocation(false));
+				String configurationArea = ((ProfileBundleContainer) targetLocation).getConfigurationLocation();
+				if (configurationArea != null) {
+					containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_CONFIGURATION,
+							configurationArea);
+				}
+				newContainers.add(containerElement);
+			} else {
 				String xml = targetLocation.serialize();
 				if (xml != null) {
 					Document document = docBuilder
@@ -1208,33 +1234,15 @@ public class TargetDefinition implements ITargetDefinition {
 					Element root = document.getDocumentElement();
 					if (!root.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATION)) {
 						throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-								NLS.bind(Messages.TargetDefinitionPersistenceHelper_WrongRootElementInXML,
-										targetLocation.getType(), xml)));
+								NLS.bind(Messages.TargetDefinitionPersistenceHelper_WrongRootElementInXML, type, xml)));
 					}
-					root.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE, targetLocation.getType());
-					newIUContainers.add(root);
-				}
-			} else {
-				Element containerElement = fDocument.createElement(TargetDefinitionPersistenceHelper.LOCATION);
-				containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE,
-						targetLocation.getType());
-				containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH,
-						targetLocation.getLocation(false));
-				if (targetLocation instanceof ProfileBundleContainer) {
-					String configurationArea = ((ProfileBundleContainer) targetLocation).getConfigurationLocation();
-					if (configurationArea != null) {
-						containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_CONFIGURATION,
-								configurationArea);
-					}
-				} else if (targetLocation instanceof FeatureBundleContainer) {
-					containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID,
-							((FeatureBundleContainer) targetLocation).getFeatureId());
-					String version = ((FeatureBundleContainer) targetLocation).getFeatureVersion();
-					if (version != null) {
-						containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, version);
+					root.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE, type);
+					if (IUBundleContainer.TYPE.equals(type)) {
+						newIUContainers.add(root);
+					} else {
+						newGenericContainers.add(root);
 					}
 				}
-				newContainers.add(containerElement);
 			}
 		}
 
@@ -1247,14 +1255,30 @@ public class TargetDefinition implements ITargetDefinition {
 				String type = (element).getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE);
 				if (type.equals(IUBundleContainer.TYPE)) {
 					oldIUContainers.add(element);
-				} else {
+				} else if (type.equals(DirectoryBundleContainer.TYPE) || type.equals(FeatureBundleContainer.TYPE)
+						|| type.equals(ProfileBundleContainer.TYPE)) {
 					oldContainers.add(element);
+				} else {
+					oldGenericContainers.add(element);
 				}
 			}
 		}
 
 		updateContainerElements(containersElement, oldContainers, newContainers);
+		updateGenericContainerElements(containersElement, oldGenericContainers, newGenericContainers);
 		updateIUContainerElements(containersElement, oldIUContainers, newIUContainers);
+	}
+
+	private Element createContainerElement(String type, String path) {
+		Element containerElement = fDocument.createElement(TargetDefinitionPersistenceHelper.LOCATION);
+		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE, type);
+		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH, path);
+		return containerElement;
+	}
+
+	private void updateGenericContainerElements(Element containersElement, List<Element> oldContainers,
+			List<Element> newContainers) {
+		TargetDefinitionDocumentTools.updateElements(containersElement, oldContainers, newContainers, null);
 	}
 
 	private void updateContainerElements(Element containersElement, List<Element> oldContainers,
