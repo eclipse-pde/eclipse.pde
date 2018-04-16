@@ -1214,8 +1214,12 @@ public class TargetDefinition implements ITargetDefinition {
 			} else if (targetLocation instanceof FeatureBundleContainer) {
 				Element containerElement = createContainerElement(type, targetLocation.getLocation(false));
 				String version = ((FeatureBundleContainer) targetLocation).getFeatureVersion();
+				String id = ((FeatureBundleContainer) targetLocation).getFeatureId();
 				if (version != null) {
 					containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, version);
+				}
+				if (id != null) {
+					containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID, id);
 				}
 				newContainers.add(containerElement);
 			} else if (targetLocation instanceof ProfileBundleContainer) {
@@ -1300,8 +1304,8 @@ public class TargetDefinition implements ITargetDefinition {
 
 	private void updateIUContainerElements(Element containersElement, List<Element> oldContainers,
 			List<Element> newContainers) {
-		Map<String, Element> oldContainersByRepo = new HashMap<>();
-		Map<String, List<Element>> oldUnitsByRepo = new HashMap<>();
+		Map<String, List<Element>> oldContainersByRepo = new HashMap<>();
+		Map<Element, List<Element>> oldUnitsByContainer = new HashMap<>();
 		for (Element container : oldContainers) {
 			NodeList nodes = container.getChildNodes();
 			List<Element> units = new ArrayList<>();
@@ -1312,7 +1316,10 @@ public class TargetDefinition implements ITargetDefinition {
 					if (repoURL == null
 							&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
 						repoURL = ((Element) node).getAttribute(TargetDefinitionPersistenceHelper.LOCATION);
-						oldContainersByRepo.put(repoURL, container);
+						if (!oldContainersByRepo.containsKey(repoURL)) {
+							oldContainersByRepo.put(repoURL, new ArrayList<>());
+						}
+						oldContainersByRepo.get(repoURL).add(container);
 					} else if (node.getNodeName()
 							.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
 						units.add((Element) node);
@@ -1320,13 +1327,12 @@ public class TargetDefinition implements ITargetDefinition {
 				}
 			}
 			if (repoURL != null) {
-				oldUnitsByRepo.put(repoURL, units);
+				oldUnitsByContainer.put(container, units);
 			} else {
 				TargetDefinitionDocumentTools.removeChildAndWhitespace(container);
 			}
 		}
 
-		Map<String, Element> newContainersByRepo = new HashMap<>();
 		for (Element container : newContainers) {
 			NodeList nodes = container.getChildNodes();
 			List<Element> units = new ArrayList<>();
@@ -1337,7 +1343,6 @@ public class TargetDefinition implements ITargetDefinition {
 					if (repoURL == null
 							&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
 						repoURL = ((Element) node).getAttribute(TargetDefinitionPersistenceHelper.LOCATION);
-						newContainersByRepo.put(repoURL, container);
 					} else if (node.getNodeName()
 							.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
 						units.add((Element) node);
@@ -1346,19 +1351,25 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 			if (repoURL != null) {
 				if (oldContainersByRepo.containsKey(repoURL)) {
-					TargetDefinitionDocumentTools.updateElements(oldContainersByRepo.get(repoURL),
-							oldUnitsByRepo.get(repoURL), units,
+					Element oldContainer = oldContainersByRepo.get(repoURL).get(0);
+					TargetDefinitionDocumentTools.updateElements(oldContainer, oldUnitsByContainer.get(oldContainer),
+							units,
 							(Element o1, Element o2) -> o1.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID)
 									.compareTo(o2.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID)));
-					oldContainersByRepo.remove(repoURL);
+					if (oldContainersByRepo.get(repoURL).size() == 1) {
+						oldContainersByRepo.remove(repoURL);
+					} else {
+						oldContainersByRepo.get(repoURL).remove(0);
+					}
 				} else {
-					containersElement.appendChild(fDocument.importNode(container, true));
+					Node movedContainer = fDocument.importNode(container, true);
+					TargetDefinitionDocumentTools.addChildWithIndent(containersElement, movedContainer);
 				}
 			}
 		}
 
-		for (Entry<String, Element> entry : oldContainersByRepo.entrySet()) {
-			TargetDefinitionDocumentTools.removeChildAndWhitespace(entry.getValue());
+		for (Entry<String, List<Element>> entry : oldContainersByRepo.entrySet()) {
+			entry.getValue().forEach(element -> TargetDefinitionDocumentTools.removeChildAndWhitespace(element));
 		}
 	}
 

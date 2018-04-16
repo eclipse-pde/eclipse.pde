@@ -42,13 +42,7 @@ public class TargetDefinitionDocumentTools {
 			if (childNode == null) {
 				Document parentDocument = parent.getOwnerDocument();
 				childNode = parentDocument.createElement(childNames[0]);
-				Node lastChild = parent.getLastChild();
-				if (isWhitespaceNode(lastChild)) {
-					parent.removeChild(lastChild);
-				}
-				appendTextNode(parent, true);
-				parent.appendChild(childNode);
-				appendTextNode(parent, false);
+				addChildWithIndent(parent, childNode);
 			}
 			if (childNames.length > 1) {
 				return getChildElement(childNode, Arrays.copyOfRange(childNames, 1, childNames.length));
@@ -56,6 +50,27 @@ public class TargetDefinitionDocumentTools {
 			return childNode;
 		}
 		return null;
+	}
+
+	public static void addChildWithIndent(Node parent, Node child) {
+		Node lastChild = parent.getLastChild();
+		if (isWhitespaceNode(lastChild)) {
+			parent.removeChild(lastChild);
+		}
+		appendTextNode(parent, true);
+		parent.appendChild(child);
+		// Recursively adds children with indents
+		final int initalLength = child.getChildNodes().getLength();
+		int editIndex = 0;
+		for (int i = 0; i < initalLength; i++) {
+			Node node = child.getChildNodes().item(editIndex);
+			if (node instanceof Element) {
+				addChildWithIndent(child, child.removeChild(node));
+			} else {
+				editIndex++;
+			}
+		}
+		appendTextNode(parent, false);
 	}
 
 	/**
@@ -108,10 +123,9 @@ public class TargetDefinitionDocumentTools {
 				parentElement.removeChild(lastChild);
 			}
 			newElements.stream().forEach(element -> {
-				appendTextNode(parentElement, true);
-				parentElement.appendChild(parentElement.getOwnerDocument().importNode(element, true));
+				TargetDefinitionDocumentTools.addChildWithIndent(parentElement,
+						parentElement.getOwnerDocument().importNode(element, true));
 			});
-			appendTextNode(parentElement, false);
 		}
 	}
 

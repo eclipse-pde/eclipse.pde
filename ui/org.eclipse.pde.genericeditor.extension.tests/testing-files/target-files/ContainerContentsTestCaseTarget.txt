@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target>
+	<includeBundles>
+		<plugin id="org.eclipse.test1"/>
+		<plugin id="org.eclipse.test2"/>
+	</includeBundles>
+	<locations>
+		<location path="/test/path/to/eclipse/plugins" type="Directory"/>
+		<location configuration="/test/path/to/configuration/location/" path="/test/path/to/eclipse/" type="Profile"/>
+		<location id="org.eclipse.test" path="${eclipse_home}" type="Feature" version="1.2.3"/>
+		<location path="/test/path/to/eclipse/" type="Profile"/>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+			<unit id="unit1" version="1.0.0"/>
+			<unit id="unit2" version="2.0.0"/>
+			<repository location="TESTURI"/>
+			<repository location="TESTURI2"/>
+		</location>
+	</locations>
+</target>
